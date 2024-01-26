@@ -35,8 +35,9 @@ The branch or PR name should have the form: `FEATURE/INITIALS/DESCRIPTOR`
 `FEATURE` is one of the following:  
 - ENG: (Engine) for changes related to core algorithms and data structures  
 - RI:  (Read Input) for changes related to the processing of DOE2 input files  
-- RO: (Read Output) for changes related to the processing of DOE2 Output files  
+- RO:  (Read Output) for changes related to the processing of DOE2 Output files  
 - GUI: (Graphic User Inteface) for changes related to the application interface
+- REF: (Refactoring) for changes related to nonfunctional attributes of the software (renaming files or variables, restructuring files or directories, etc.) 
 
 `INIITIALS` refers to the initials of the owner of the branch or PR.
 
