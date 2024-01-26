@@ -18,7 +18,7 @@ The RCT development continues at: [https://github.com/pnnl/ruleset-checking-tool
 ## Developing the DOE2-229RPDGenerator
 This package is developed using Pipenv to manage packages during the build process.  First, make sure Pipenv is installed on your system using the following commands. Any new dependencies that are added to the package must be included in the Pipfile.  The package is currently being developed for Python 3.11.  This version of Python must be installed on your machine for Pipenv to work properly.
 
-Install `pipenv` using `pip`
+Install `pipenv` using `pip` with the following command.
 `pip install pipenv`
 
 All project dependencies can be installed with the following command.
