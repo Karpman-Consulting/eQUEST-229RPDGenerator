@@ -3,7 +3,7 @@ This repository provides the application and source code for a compliance wizard
 
 ## About ASHRAE 229P
 
-ASHRAE Standard 229P is a proposed standard entitled, "Protocols for Evaluating Ruleset Implementation in Building Performance Modeling Software". To learn more about the title/scope/purpose and status of the proposed standard development visit the standards project committee site at [ASHRAE SPC 229](http://spc229.ashraepcs.org/).
+ASHRAE Standard 229P is a proposed standard entitled "Protocols for Evaluating Ruleset Implementation in Building Performance Modeling Software". To learn more about the title/scope/purpose and status of the proposed standard development visit the standards project committee site at [ASHRAE SPC 229](http://spc229.ashraepcs.org/).
 
 ## ASHRAE Standard 229 RPD Schema
 The RPD schema development continues at: [https://github.com/open229/ruleset-model-description-schema](https://github.com/open229/ruleset-model-description-schema)
@@ -33,11 +33,11 @@ The `development` branch will merge into the `main` branch only for major releas
 #### Branch and Pull Request naming convention:
 The branch or PR name should have the form: `FEATURE/INITIALS/DESCRIPTOR`   
 `FEATURE` is one of the following:  
-- ENG: (Engine) for changes related to core algorithms and data structures  
-- RI:  (Read Input) for changes related to the processing of DOE2 input files  
-- RO:  (Read Output) for changes related to the processing of DOE2 Output files  
-- GUI: (Graphic User Inteface) for changes related to the application interface
-- REF: (Refactoring) for changes related to nonfunctional attributes of the software (renaming files or variables, restructuring files or directories, etc.) 
+- `ENG`: (Engine) for changes related to core algorithms and data structures  
+- `RI`:  (Read Input) for changes related to the processing of DOE2 input files  
+- `RO`:  (Read Output) for changes related to the processing of DOE2 output files  
+- `GUI`: (Graphic User Inteface) for changes related to the application interface
+- `REF`: (Refactoring/Reference) for changes related to nonfunctional attributes of the software (renaming files or variables, restructuring files or directories, or functions related to processing of DOE2/schema reference documentation) 
 
 `INIITIALS` refers to the initials of the owner of the branch or PR.
 
