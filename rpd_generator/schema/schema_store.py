@@ -1,4 +1,4 @@
-from rct229.rule_engine.rulesets import RuleSet
+from rpd_generator.schema.rule_set import RuleSet
 
 
 class SchemaStore:
