@@ -1,0 +1,2 @@
+class DesignDay:
+    """DesignDay class"""
