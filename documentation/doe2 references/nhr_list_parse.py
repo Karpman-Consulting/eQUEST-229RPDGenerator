@@ -30,9 +30,10 @@ def parse_header(line):
 
 def parse_line_item(line, current_header):
     entry_id = line[5:12]
+    n_i = line[35:37]
     report_name = line[78:].strip(" \n")
 
-    return [entry_id, report_name, current_header]
+    return [entry_id, int(n_i), report_name, current_header]
 
 
 def process_file(file_path, header_regex, line_item_regex):
