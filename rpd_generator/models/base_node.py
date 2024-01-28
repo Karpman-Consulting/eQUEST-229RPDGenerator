@@ -7,10 +7,13 @@ class BaseNode:
     'Node' refers to rpd_generator objects that map directly to a 229 schema data group.
     """
 
-    def __init__(self, obj_id):
+    def __init__(self, u_name):
         self.keyword_value_pairs = {}
         self.schema_structure = {}
-        self.obj_id = obj_id
+        self.obj_id = u_name
+
+    def __repr__(self):
+        return f"BaseNode('{self.obj_id}')"
 
     def get_object_json(self):
         """Return the object json of the node."""

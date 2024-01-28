@@ -8,6 +8,9 @@ class ParentNode(BaseNode):
         super().__init__(obj_id)
         self.children = []
 
+    def __repr__(self):
+        return f"ParentNode('{self.obj_id}')"
+
     def add_child(self, child):
         """Add a child to the node."""
         self.children.append(child)
