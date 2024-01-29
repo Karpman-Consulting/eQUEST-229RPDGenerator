@@ -4,8 +4,8 @@ from .base_node import BaseNode
 class ParentNode(BaseNode):
     """Base class for all parent nodes in the tree."""
 
-    def __init__(self, obj_id):
-        super().__init__(obj_id)
+    def __init__(self, u_name):
+        super().__init__(u_name)
         self.children = []
 
     def __repr__(self):
