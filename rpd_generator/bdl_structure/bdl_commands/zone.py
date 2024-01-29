@@ -1,4 +1,4 @@
-from rpd_generator.models.child_node import ChildNode
+from rpd_generator.bdl_structure.child_node import ChildNode
 
 
 class Zone(ChildNode):

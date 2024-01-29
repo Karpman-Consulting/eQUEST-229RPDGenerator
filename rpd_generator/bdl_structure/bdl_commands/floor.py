@@ -1,4 +1,4 @@
-from rpd_generator.models.parent_definition import ParentDefinition
+from rpd_generator.bdl_structure.parent_definition import ParentDefinition
 
 
 class Floor(ParentDefinition):

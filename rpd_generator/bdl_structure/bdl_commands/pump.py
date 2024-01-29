@@ -1,4 +1,4 @@
-from rpd_generator.models.base_node import BaseNode
+from rpd_generator.bdl_structure.base_node import BaseNode
 
 
 class Pump(BaseNode):

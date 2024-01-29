@@ -1,16 +1,17 @@
-from rpd_generator.models.parent_definition import ParentDefinition
-from rpd_generator.models.child_node import ChildNode
+from rpd_generator.bdl_structure.parent_definition import ParentDefinition
+from rpd_generator.bdl_structure.child_node import ChildNode
 
 
 class Space(
     ChildNode, ParentDefinition
-):  # Inherit ChildNode first so that the MRO does not try to call ParentNode.__init__ twice
+):
     """Space object in the tree."""
 
     bdl_command = "SPACE"
 
     def __init__(self, u_name, parent):
         super().__init__(u_name, parent)
+        ParentDefinition.__init__(self, u_name)
 
     def __repr__(self):
         parent_repr = (

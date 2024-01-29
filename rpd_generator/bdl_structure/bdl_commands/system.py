@@ -1,4 +1,4 @@
-from rpd_generator.models.parent_node import ParentNode
+from rpd_generator.bdl_structure.parent_node import ParentNode
 
 
 class System(ParentNode):

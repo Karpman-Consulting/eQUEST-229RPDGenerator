@@ -1,4 +1,4 @@
-from rpd_generator.models.base_definition import BaseDefinition
+from rpd_generator.bdl_structure.base_definition import BaseDefinition
 
 
 class LightingSystem(BaseDefinition):
