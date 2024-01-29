@@ -126,8 +126,8 @@ class ModelInputReader:
         """
         is_parent = issubclass(command_class, ParentNode) or issubclass(command_class, ParentDefinition)
         is_child = issubclass(command_class, ChildNode)
-        is_int_ext_wall = issubclass(command_class, ParentNode) and is_child
-        is_space = issubclass(command_class, ParentDefinition) and is_child
+        is_int_ext_wall = command_class.__name__ == "ExteriorWall" or command_class.__name__ == "InteriorWall"
+        is_space = command_class.__name__ == "Space"
 
         return is_parent, is_child, is_int_ext_wall, is_space
 

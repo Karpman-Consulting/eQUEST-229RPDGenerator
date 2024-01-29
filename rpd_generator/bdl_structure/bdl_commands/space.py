@@ -1,9 +1,9 @@
-from rpd_generator.bdl_structure.parent_definition import ParentDefinition
+from rpd_generator.bdl_structure.parent_node import ParentNode
 from rpd_generator.bdl_structure.child_node import ChildNode
 
 
 class Space(
-    ChildNode, ParentDefinition
+    ChildNode, ParentNode
 ):
     """Space object in the tree."""
 
@@ -11,7 +11,7 @@ class Space(
 
     def __init__(self, u_name, parent):
         super().__init__(u_name, parent)
-        ParentDefinition.__init__(self, u_name)
+        ParentNode.__init__(self, u_name)
 
     def __repr__(self):
         parent_repr = (
