@@ -15,7 +15,3 @@ class Boiler(BaseNode):
     def populate_schema_structure(self):
         """Populate schema structure for boiler object."""
         return {}
-
-
-boiler = Boiler("boiler")
-print(boiler)
