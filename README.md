@@ -1,6 +1,8 @@
 # eQUEST-229RPDGenerator
 This repository provides the application and source code for a compliance wizard which allows users to select eQUEST/DOE2 files, enter additional compliance details, and create and pre-validate RPD json files for use with the ASHRAE Standard 229 Ruleset Checking Tool (RCT). 
 
+**Please note that this project is currently in its initial stages of development. It is not yet operational for practical use. We are actively working on its development and enhancement. Contributions, suggestions, and feedback are welcome as we progress towards a fully functional version. Stay tuned for updates and feel free to explore the existing codebase.**
+
 ## About ASHRAE 229P
 
 ASHRAE Standard 229P is a proposed standard entitled "Protocols for Evaluating Ruleset Implementation in Building Performance Modeling Software". To learn more about the title/scope/purpose and status of the proposed standard development visit the standards project committee site at [ASHRAE SPC 229](http://spc229.ashraepcs.org/).
@@ -34,8 +36,8 @@ The `development` branch will merge into the `main` branch only for major releas
 The branch or PR name should have the form: `FEATURE/INITIALS/DESCRIPTOR`   
 `FEATURE` is one of the following:  
 - `ENG`: (Engine) for changes related to core algorithms and data structures  
-- `RI`:  (Read Input) for changes related to the processing of DOE2 input files  
-- `RO`:  (Read Output) for changes related to the processing of DOE2 output files  
+- `RI`:  (Read Input) for changes related to the processing of DOE-2 input files  
+- `RO`:  (Read Output) for changes related to the processing of DOE-2 output files  
 - `GUI`: (Graphic User Inteface) for changes related to the application interface
 - `REF`: (Refactoring/Reference) for changes related to nonfunctional attributes of the software (renaming files or variables, restructuring files or directories, or functions related to processing of DOE2/schema reference documentation) 
 
