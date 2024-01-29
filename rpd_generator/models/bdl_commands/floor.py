@@ -1,7 +1,7 @@
-from rpd_generator.models.base_definition import BaseDefinition
+from rpd_generator.models.parent_definition import ParentDefinition
 
 
-class Floor(BaseDefinition):
+class Floor(ParentDefinition):
     """Floor object in the tree."""
 
     bdl_command = "FLOOR"
