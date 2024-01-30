@@ -2,9 +2,7 @@ from rpd_generator.bdl_structure.parent_node import ParentNode
 from rpd_generator.bdl_structure.child_node import ChildNode
 
 
-class Space(
-    ChildNode, ParentNode
-):
+class Space(ChildNode, ParentNode):
     """Space object in the tree."""
 
     bdl_command = "SPACE"

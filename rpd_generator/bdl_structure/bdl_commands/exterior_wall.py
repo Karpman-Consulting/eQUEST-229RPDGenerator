@@ -2,9 +2,7 @@ from rpd_generator.bdl_structure.parent_node import ParentNode
 from rpd_generator.bdl_structure.child_node import ChildNode
 
 
-class ExteriorWall(
-    ChildNode, ParentNode
-):
+class ExteriorWall(ChildNode, ParentNode):
     """ExteriorWall object in the tree."""
 
     bdl_command = "EXTERIOR-WALL"

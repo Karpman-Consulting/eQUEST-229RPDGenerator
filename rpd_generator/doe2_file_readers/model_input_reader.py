@@ -41,14 +41,21 @@ class ModelInputReader:
                         command_instances[obj_instance.u_name] = obj_instance
                         active_obj_instance = obj_instance
 
-                elif 'DATA FOR' in line:
+                elif "DATA FOR" in line:
                     record_data_for = True
                     obj_u_name = line.split("DATA FOR ")[1].strip()
-                    if active_obj_instance is None or obj_u_name != active_obj_instance.u_name:
+                    if (
+                        active_obj_instance is None
+                        or obj_u_name != active_obj_instance.u_name
+                    ):
                         active_obj_instance = command_instances.get(obj_u_name)
                     continue
 
-                elif record_data_for and " = " in line and active_obj_instance is not None:
+                elif (
+                    record_data_for
+                    and " = " in line
+                    and active_obj_instance is not None
+                ):
                     keyword, value, units = self._parse_definition_line(line)
                     # TODO add pint units to the keyword-value pairs
                     active_obj_instance.keyword_value_pairs[keyword] = value
@@ -75,7 +82,9 @@ class ModelInputReader:
             Object: Created object instance.
         """
         command_class = self.bdl_command_dict[command]
-        is_parent, is_child, is_int_ext_wall, is_space = self._determine_instance_type(command_class)
+        is_parent, is_child, is_int_ext_wall, is_space = self._determine_instance_type(
+            command_class
+        )
 
         if is_int_ext_wall:
             obj_instance = command_class(unique_name, self.current_parent_space)
@@ -121,9 +130,8 @@ class ModelInputReader:
             tuple: Keyword and value extracted from the line.
         """
         parts, units = line[:104].split(" = "), line[104:].strip()
-        keyword = re.split(r' {2,}', parts[0])[1].strip()
+        keyword = re.split(r" {2,}", parts[0])[1].strip()
         value = parts[1].strip()
-        print(keyword, value, units)
         return keyword, value, units
 
     @staticmethod
@@ -157,9 +165,14 @@ class ModelInputReader:
         Returns:
             tuple: Indicates if the class is parent, child, int_ext_wall, or space.
         """
-        is_parent = issubclass(command_class, ParentNode) or issubclass(command_class, ParentDefinition)
+        is_parent = issubclass(command_class, ParentNode) or issubclass(
+            command_class, ParentDefinition
+        )
         is_child = issubclass(command_class, ChildNode)
-        is_int_ext_wall = command_class.__name__ == "ExteriorWall" or command_class.__name__ == "InteriorWall"
+        is_int_ext_wall = (
+            command_class.__name__ == "ExteriorWall"
+            or command_class.__name__ == "InteriorWall"
+        )
         is_space = command_class.__name__ == "Space"
 
         return is_parent, is_child, is_int_ext_wall, is_space
@@ -167,4 +180,3 @@ class ModelInputReader:
 
 reader = ModelInputReader()
 model_object_structure = reader.read_input_bdl_file(r"../../test/example/INP.BDL")
-print(model_object_structure["G - Lockers"].keyword_value_pairs)
