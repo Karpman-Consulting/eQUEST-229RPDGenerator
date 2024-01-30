@@ -10,7 +10,7 @@ class Boiler(BaseNode):
         super().__init__(u_name)
 
     def __repr__(self):
-        return f"Boiler('{self.obj_id}')"
+        return f"Boiler('{self.u_name}')"
 
     def populate_schema_structure(self):
         """Populate schema structure for boiler object."""

@@ -10,7 +10,7 @@ class Chiller(BaseNode):
         super().__init__(u_name)
 
     def __repr__(self):
-        return f"Chiller({self.obj_id})"
+        return f"Chiller({self.u_name})"
 
     def populate_schema_structure(self):
         """Populate schema structure for chiller object."""

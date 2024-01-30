@@ -10,7 +10,7 @@ class DomesticWaterHeater(BaseNode):
         super().__init__(u_name)
 
     def __repr__(self):
-        return f"DomesticWaterHeater({self.obj_id})"
+        return f"DomesticWaterHeater({self.u_name})"
 
     def populate_schema_structure(self):
         """Populate schema structure for domestic water heater object."""

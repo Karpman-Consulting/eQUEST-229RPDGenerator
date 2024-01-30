@@ -10,4 +10,4 @@ class ChildNode(BaseNode):
         self.parent.add_child(self)
 
     def __repr__(self):
-        return f"ChildNode('{self.obj_id, self.parent}')"
+        return f"ChildNode('{self.u_name, self.parent}')"

@@ -10,7 +10,7 @@ class Construction(BaseNode):
         super().__init__(u_name)
 
     def __repr__(self):
-        return f"Construction({self.obj_id})"
+        return f"Construction({self.u_name})"
 
     def populate_schema_structure(self):
         """Populate schema structure for construction object."""

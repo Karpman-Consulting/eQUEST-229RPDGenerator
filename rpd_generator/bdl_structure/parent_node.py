@@ -9,7 +9,7 @@ class ParentNode(BaseNode):
         self.children = []
 
     def __repr__(self):
-        return f"ParentNode('{self.obj_id}')"
+        return f"ParentNode('{self.u_name}')"
 
     def add_child(self, child):
         """Add a child to the node."""

@@ -10,7 +10,7 @@ class Window(ChildNode):
         super().__init__(u_name, parent)
 
     def __repr__(self):
-        return f"Window({self.obj_id})"
+        return f"Window({self.u_name})"
 
     def populate_schema_structure(self):
         """Populate schema structure for window object."""

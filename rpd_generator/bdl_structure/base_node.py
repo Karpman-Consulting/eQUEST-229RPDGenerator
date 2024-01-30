@@ -10,10 +10,10 @@ class BaseNode:
     def __init__(self, u_name):
         self.keyword_value_pairs = {}
         self.schema_structure = {}
-        self.obj_id = u_name
+        self.u_name = u_name
 
     def __repr__(self):
-        return f"BaseNode('{self.obj_id}')"
+        return f"BaseNode('{self.u_name}')"
 
     def get_object_json(self):
         """Return the object json of the node."""

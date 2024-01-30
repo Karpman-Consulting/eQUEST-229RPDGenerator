@@ -10,7 +10,7 @@ class Schedule(BaseNode):
         super().__init__(u_name)
 
     def __repr__(self):
-        return f"Schedule({self.obj_id})"
+        return f"Schedule({self.u_name})"
 
     def populate_schema_structure(self):
         """Populate schema structure for schedule object."""

@@ -10,7 +10,7 @@ class Zone(ChildNode):
         super().__init__(u_name, parent)
 
     def __repr__(self):
-        return f"Zone(obj_id='{self.obj_id}', parent={self.parent.__class__.__name__}('{self.parent.obj_id}'))"
+        return f"Zone(u_name='{self.u_name}', parent={self.parent.__class__.__name__}('{self.parent.u_name}'))"
 
     def populate_schema_structure(self):
         """Populate schema structure for zone object."""

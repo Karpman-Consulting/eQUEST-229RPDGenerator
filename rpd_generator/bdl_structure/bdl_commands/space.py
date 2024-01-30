@@ -19,7 +19,7 @@ class Space(
             if self.parent
             else "None"
         )
-        return f"Space(obj_id='{self.obj_id}', parent={parent_repr})"
+        return f"Space(u_name='{self.u_name}', parent={parent_repr})"
 
     def populate_schema_structure(self):
         """Populate schema structure for space object."""

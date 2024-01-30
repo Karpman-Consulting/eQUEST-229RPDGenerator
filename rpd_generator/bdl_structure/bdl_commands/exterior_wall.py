@@ -4,7 +4,7 @@ from rpd_generator.bdl_structure.child_node import ChildNode
 
 class ExteriorWall(
     ChildNode, ParentNode
-):  # Inherit ChildNode first so that the MRO does not try to call ParentNode.__init__ twice
+):
     """ExteriorWall object in the tree."""
 
     bdl_command = "EXTERIOR-WALL"
@@ -18,7 +18,7 @@ class ExteriorWall(
             if self.parent
             else "None"
         )
-        return f"ExteriorWall(obj_id='{self.obj_id}', parent={parent_repr})"
+        return f"ExteriorWall(u_name='{self.u_name}', parent={parent_repr})"
 
     def populate_schema_structure(self):
         """Populate schema structure for exterior wall object."""

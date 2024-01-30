@@ -10,7 +10,7 @@ class BelowGradeWall(ChildNode):
         super().__init__(u_name, parent)
 
     def __repr__(self):
-        return f"BelowGradeWall({self.obj_id})"
+        return f"BelowGradeWall({self.u_name})"
 
     def populate_schema_structure(self):
         """Populate schema structure for below grade wall object."""

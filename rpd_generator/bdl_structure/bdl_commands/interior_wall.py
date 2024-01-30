@@ -13,7 +13,7 @@ class InteriorWall(
         super().__init__(u_name, parent)
 
     def __repr__(self):
-        return f"InteriorWall(obj_id='{self.obj_id}', parent={self.parent.__class__.__name__}('{self.parent.u_name}')"
+        return f"InteriorWall(u_name='{self.u_name}', parent={self.parent.__class__.__name__}('{self.parent.u_name}')"
 
     def populate_schema_structure(self):
         """Populate schema structure for interior wall object."""
