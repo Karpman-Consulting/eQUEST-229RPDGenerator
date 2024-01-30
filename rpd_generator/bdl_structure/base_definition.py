@@ -6,7 +6,6 @@ class BaseDefinition:
     def __init__(self, u_name):
         self.u_name = u_name
         self.keyword_value_pairs = {}
-        self.schema_structure = {}
 
     def __repr__(self):
         return f"BaseDefinition('{self.u_name}')"
