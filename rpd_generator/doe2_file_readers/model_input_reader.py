@@ -1,6 +1,7 @@
 import inspect
 import pkgutil
 import importlib
+import re
 from rpd_generator.bdl_structure import *
 
 
@@ -24,18 +25,33 @@ class ModelInputReader:
             dict: A dictionary with BDL commands as keys and lists of their respective instances as values.
         """
         with open(bdl_file_path, "r") as bdl_file:
-            command_instances = {cmd: [] for cmd in self.bdl_command_dict}
-            previous_line = ""
+            command_instances = {}
+
+            active_obj_instance = None
+            record_data_for = False
 
             for line in bdl_file:
-                # TODO: Implement a definitive way to know if the line is a bdl command. Parameter catch may not be enough.
-                if '" = ' in line and "PARAMETER" not in previous_line:
-                    unique_name, command = self._parse_line(line)
+                if record_data_for and line[0] != "-":
+                    record_data_for = False
+
+                if '" = ' in line:
+                    unique_name, command = self._parse_command_line(line)
                     if command in self.bdl_command_dict:
                         obj_instance = self._create_obj_instance(unique_name, command)
-                        command_instances[command].append(obj_instance)
+                        command_instances[obj_instance.u_name] = obj_instance
+                        active_obj_instance = obj_instance
 
-                previous_line = line
+                elif 'DATA FOR' in line:
+                    record_data_for = True
+                    obj_u_name = line.split("DATA FOR ")[1].strip()
+                    if active_obj_instance is None or obj_u_name != active_obj_instance.u_name:
+                        active_obj_instance = command_instances.get(obj_u_name)
+                    continue
+
+                elif record_data_for and " = " in line and active_obj_instance is not None:
+                    keyword, value, units = self._parse_definition_line(line)
+                    # TODO add pint units to the keyword-value pairs
+                    active_obj_instance.keyword_value_pairs[keyword] = value
 
             return command_instances
 
@@ -78,7 +94,7 @@ class ModelInputReader:
         return obj_instance
 
     @staticmethod
-    def _parse_line(line):
+    def _parse_command_line(line):
         """
         Parse the line to extract unique name and command.
 
@@ -92,6 +108,23 @@ class ModelInputReader:
         unique_name = parts[0].strip().split('"')[1]
         command = parts[1].strip()
         return unique_name, command
+
+    @staticmethod
+    def _parse_definition_line(line):
+        """
+        Parse the line to extract keyword and value.
+
+        Args:
+            line (str): Line to be parsed.
+
+        Returns:
+            tuple: Keyword and value extracted from the line.
+        """
+        parts, units = line[:104].split(" = "), line[104:].strip()
+        keyword = re.split(r' {2,}', parts[0])[1].strip()
+        value = parts[1].strip()
+        print(keyword, value, units)
+        return keyword, value, units
 
     @staticmethod
     def _get_bdl_commands_for_rpd() -> dict:
@@ -134,3 +167,4 @@ class ModelInputReader:
 
 reader = ModelInputReader()
 model_object_structure = reader.read_input_bdl_file(r"../../test/example/INP.BDL")
+print(model_object_structure["G - Lockers"].keyword_value_pairs)
