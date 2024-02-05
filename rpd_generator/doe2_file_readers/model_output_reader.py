@@ -62,7 +62,6 @@ pMRTs: Pointer to an array of MultResultsType structures:
 
 
 def get_multiple_results(d2_result_dll, doe2_dir, project_fname, entry_id):
-    d2_result_dll = ctypes.CDLL('C:\\doe23\\DLL50e\\32-bit D2Result.dll\\D2Result.dll')
     multiple_result_dll = d2_result_dll['D2R_GetMultipleResult']
 
     file_type = 1
