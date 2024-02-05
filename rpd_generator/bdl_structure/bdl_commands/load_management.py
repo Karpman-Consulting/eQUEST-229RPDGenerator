@@ -11,3 +11,7 @@ class LoadManagement(BaseDefinition):
 
     def __repr__(self):
         return f"LoadManagement('{self.u_name}')"
+
+    def populate_schema_structure(self):
+        """Populate schema structure for load management object."""
+        return {}

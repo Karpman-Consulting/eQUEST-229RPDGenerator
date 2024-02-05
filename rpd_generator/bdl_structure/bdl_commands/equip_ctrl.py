@@ -11,3 +11,7 @@ class EquipCtrl(BaseDefinition):
 
     def __repr__(self):
         return f"EquipCtrl('{self.u_name}')"
+
+    def populate_schema_structure(self):
+        """Populate schema structure for equip ctrl object."""
+        return {}

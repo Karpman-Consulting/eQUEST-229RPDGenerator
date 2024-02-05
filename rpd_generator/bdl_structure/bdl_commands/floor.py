@@ -11,3 +11,7 @@ class Floor(ParentDefinition):
 
     def __repr__(self):
         return f"Floor('{self.u_name}')"
+
+    def populate_schema_structure(self):
+        """Populate schema structure for floor object."""
+        return {}

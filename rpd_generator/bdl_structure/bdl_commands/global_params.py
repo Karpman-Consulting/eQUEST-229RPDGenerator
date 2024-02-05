@@ -11,3 +11,7 @@ class GlobalParams(BaseDefinition):
 
     def __repr__(self):
         return f"GlobalParams('{self.u_name}')"
+
+    def populate_schema_structure(self):
+        """Populate schema structure for global params object."""
+        return {}

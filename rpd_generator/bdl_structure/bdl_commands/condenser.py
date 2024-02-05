@@ -11,3 +11,7 @@ class Condenser(BaseDefinition):
 
     def __repr__(self):
         return f"Condenser('{self.u_name}')"
+
+    def populate_schema_structure(self):
+        """Populate schema structure for condenser object."""
+        return {}

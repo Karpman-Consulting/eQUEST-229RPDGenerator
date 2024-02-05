@@ -11,3 +11,7 @@ class LightingSystem(BaseDefinition):
 
     def __repr__(self):
         return f"LightingSystem('{self.u_name}')"
+
+    def populate_schema_structure(self):
+        """Populate schema structure for lighting system object."""
+        return {}

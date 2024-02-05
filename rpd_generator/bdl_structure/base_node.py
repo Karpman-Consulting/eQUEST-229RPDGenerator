@@ -8,21 +8,20 @@ class BaseNode:
     """
 
     def __init__(self, u_name):
+        self.u_name = u_name
+        self.reporting_name = None
+        self.notes = None
         self.keyword_value_pairs = {}
         self.schema_structure = {}
-        self.u_name = u_name
 
     def __repr__(self):
         return f"BaseNode('{self.u_name}')"
 
-    def get_object_json(self):
-        """Return the object json of the node."""
-        return json.dumps(self.schema_structure)
-
-    def populate_schema_structure(self):
+    def populate_data_group(self):
         """This method will be overridden by each child class"""
         return None
 
-    def add_input(self, keyword, value):
+    def add_inputs(self, key_val_dict):
         """Insert a keyword-value pair for the BDL command."""
-        self.keyword_value_pairs[keyword] = value
+        # TODO for repeated keywords create list and append values
+        self.keyword_value_pairs = key_val_dict

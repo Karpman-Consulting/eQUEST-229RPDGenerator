@@ -11,3 +11,7 @@ class DaySchedulePD(BaseDefinition):
 
     def __repr__(self):
         return f"DaySchedulePD('{self.u_name}')"
+
+    def populate_schema_structure(self):
+        """Populate schema structure for day schedule PD object."""
+        return {}
