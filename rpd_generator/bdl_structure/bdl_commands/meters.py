@@ -1,0 +1,1 @@
+from rpd_generator.bdl_structure.base_definition import BaseDefinition
