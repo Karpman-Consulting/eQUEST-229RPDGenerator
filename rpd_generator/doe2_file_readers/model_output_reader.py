@@ -23,7 +23,7 @@ def get_single_results(d2_result_dll, doe2_dir, project_fname, entry_id):
         ctypes.POINTER(ctypes.c_float),  # pfData
         ctypes.c_int,  # iMaxValues
         ctypes.c_char_p,  # pszReportKey
-        ctypes.c_char_p  # pszRowKey
+        ctypes.c_char_p,  # pszRowKey
     ]
     single_result_dll.restype = ctypes.c_long
 
@@ -33,7 +33,15 @@ def get_single_results(d2_result_dll, doe2_dir, project_fname, entry_id):
     pszRowKey = None
 
     # Call the function
-    single_result_dll(doe2_dir, project_fname, entry_id, pfData_array, IMAX_VALUES, pszReportKey, pszRowKey)
+    single_result_dll(
+        doe2_dir,
+        project_fname,
+        entry_id,
+        pfData_array,
+        IMAX_VALUES,
+        pszReportKey,
+        pszRowKey,
+    )
     return pfData_array[0]
 
 
@@ -62,7 +70,7 @@ pMRTs: Pointer to an array of MultResultsType structures:
 
 
 def get_multiple_results(d2_result_dll, doe2_dir, project_fname, entry_id):
-    multiple_result_dll = d2_result_dll['D2R_GetMultipleResult']
+    multiple_result_dll = d2_result_dll["D2R_GetMultipleResult"]
 
     file_type = 1
     pf_data = (ctypes.c_float * 13)()
@@ -70,10 +78,12 @@ def get_multiple_results(d2_result_dll, doe2_dir, project_fname, entry_id):
     num_mrts = 1
 
     class MRTArray(ctypes.Structure):
-        _fields_ = [("entry_id", ctypes.c_int),
-                    ("return_value", ctypes.c_int),
-                    ("psz_report_key", ctypes.c_char * 34),
-                    ("psz_row_key", ctypes.c_char * 34)]
+        _fields_ = [
+            ("entry_id", ctypes.c_int),
+            ("return_value", ctypes.c_int),
+            ("psz_report_key", ctypes.c_char * 34),
+            ("psz_row_key", ctypes.c_char * 34),
+        ]
 
     mrt = MRTArray()
     mrt_array = (MRTArray * num_mrts)()
@@ -84,19 +94,29 @@ def get_multiple_results(d2_result_dll, doe2_dir, project_fname, entry_id):
 
     p_mrts = mrt_array
 
-    multiple_result_dll(doe2_dir, project_fname, file_type, pf_data, max_values, num_mrts, p_mrts)
+    multiple_result_dll(
+        doe2_dir, project_fname, file_type, pf_data, max_values, num_mrts, p_mrts
+    )
 
     return [data for data in pf_data]
 
 
 # Examples
 if __name__ == "__main__":
-    print(get_single_results('C:\\Program Files (x86)\\eQUEST 3-65-7175\\D2Result.dll',
-                             b'C:\\doe23\\EXE50e\\',
-                             b"C:\\Users\\JacksonJarboe\\Documents\\Local Models\\CT Children's Hospital\\Final Model\\Proposed\\CT Childrens Hospital - Final - Baseline Design",
-                             2001001))
+    print(
+        get_single_results(
+            "C:\\Program Files (x86)\\eQUEST 3-65-7175\\D2Result.dll",
+            b"C:\\doe23\\EXE50e\\",
+            b"C:\\Users\\JacksonJarboe\\Documents\\Local Models\\CT Children's Hospital\\Final Model\\Proposed\\CT Childrens Hospital - Final - Baseline Design",
+            2001001,
+        )
+    )
 
-    print(get_multiple_results('C:\\Program Files (x86)\\eQUEST 3-65-7175\\D2Result.dll',
-                               b'C:\\doe23\\EXE50e\\',
-                               b"C:\\Users\\JacksonJarboe\\Documents\\Local Models\\CT Children's Hospital\\Final Model\\Proposed\\CT Childrens Hospital - Final - Baseline Design",
-                               2309007))
+    print(
+        get_multiple_results(
+            "C:\\Program Files (x86)\\eQUEST 3-65-7175\\D2Result.dll",
+            b"C:\\doe23\\EXE50e\\",
+            b"C:\\Users\\JacksonJarboe\\Documents\\Local Models\\CT Children's Hospital\\Final Model\\Proposed\\CT Childrens Hospital - Final - Baseline Design",
+            2309007,
+        )
+    )
