@@ -158,5 +158,5 @@ class RulesetProjectDescription:
 
 
 rpd = RulesetProjectDescription()
-rpd.selected_models = [f"../test/example/CHR HOSP.bdl"]
+rpd.selected_models = [f"../test/example/INP.bdl"]
 rpd.generate_rpd()
