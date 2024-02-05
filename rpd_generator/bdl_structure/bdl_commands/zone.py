@@ -73,7 +73,7 @@ class Zone(ChildNode):
             "non_mechanical_cooling_fan_power"
             "non_mechanical_cooling_fan_airflow"
             "air_distribution_effectiveness"
-            "aggregation_factor"
+            "aggregation_factor",
         ]
 
         # Iterate over the no_children_attributes list and populate if the value is not None

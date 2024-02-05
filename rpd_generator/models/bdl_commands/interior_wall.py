@@ -2,7 +2,9 @@ from rpd_generator.models.parent_node import ParentNode
 from rpd_generator.models.child_node import ChildNode
 
 
-class InteriorWall(ChildNode, ParentNode):  # Inherit ChildNode first so that the MRO does not try to call ParentNode.__init__ twice
+class InteriorWall(
+    ChildNode, ParentNode
+):  # Inherit ChildNode first so that the MRO does not try to call ParentNode.__init__ twice
     """InteriorWall object in the tree."""
 
     bdl_command = "INTERIOR-WALL"

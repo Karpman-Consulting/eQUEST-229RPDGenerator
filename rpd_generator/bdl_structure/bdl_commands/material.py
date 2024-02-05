@@ -30,7 +30,7 @@ class Material(BaseNode):
             "thermal_conductivity",
             "density",
             "specific_heat",
-            "r_value"
+            "r_value",
         ]
 
         # Iterate over the no_children_attributes list and populate if the value is not None
@@ -41,4 +41,3 @@ class Material(BaseNode):
 
     def insert_to_rpd(self, rmd):
         """Insert window object into the rpd data structure."""
-

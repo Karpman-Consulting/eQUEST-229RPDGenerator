@@ -61,12 +61,15 @@ class CirculationLoop(BaseNode):
         return f"CirculationLoop({self.u_name})"
 
     def populate_data_elements(self):
-        """ Populate data elements from the keyword_value pairs returned from model_input_reader"""
+        """Populate data elements from the keyword_value pairs returned from model_input_reader"""
         self.determine_circ_loop_type()
 
     def populate_data_group(self):
         """Populate schema structure for circulation loop object."""
-        if self.keyword_value_pairs["TYPE"] == "DHW" and self.keyword_value_pairs["SUBTYPE"] == "SECONDARY":
+        if (
+            self.keyword_value_pairs["TYPE"] == "DHW"
+            and self.keyword_value_pairs["SUBTYPE"] == "SECONDARY"
+        ):
             self.swh_piping_data_structure[self.u_name] = {}
         elif self.keyword_value_pairs["TYPE"] == "DHW":
             self.swh_distribution_data_structure[self.u_name] = {
@@ -112,7 +115,7 @@ class CirculationLoop(BaseNode):
                 structure_map = {
                     "FluidLoop": self.fluid_loop_data_structure,
                     "ServiceWaterHeatingDistributionSystem": self.swh_distribution_data_structure,
-                    "ServiceWaterPiping": self.swh_piping_data_structure
+                    "ServiceWaterPiping": self.swh_piping_data_structure,
                 }
                 data_structure = structure_map.get(self.circulation_loop_type)
                 data_structure[self.u_name][attr] = value
@@ -121,15 +124,19 @@ class CirculationLoop(BaseNode):
         if self.circulation_loop_type == "FluidLoop":
             rmd.fluid_loops.append(self.fluid_loop_data_structure)
         elif self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":
-            rmd.service_water_heating_distribution_systems.append(self.swh_distribution_data_structure)
+            rmd.service_water_heating_distribution_systems.append(
+                self.swh_distribution_data_structure
+            )
         elif self.circulation_loop_type == "ServiceWaterPiping":
             primary_loop = self.keyword_value_pairs["PRIMARY-LOOP"]
 
     def determine_circ_loop_type(self):
-        if self.keyword_value_pairs["TYPE"] == "DHW" and self.keyword_value_pairs["SUBTYPE"] == "SECONDARY":
+        if (
+            self.keyword_value_pairs["TYPE"] == "DHW"
+            and self.keyword_value_pairs["SUBTYPE"] == "SECONDARY"
+        ):
             self.circulation_loop_type = "ServiceWaterPiping"
         elif self.keyword_value_pairs["TYPE"] == "DHW":
             self.circulation_loop_type = "ServiceWaterHeatingDistributionSystem"
         else:
             self.circulation_loop_type = "FluidLoop"
-

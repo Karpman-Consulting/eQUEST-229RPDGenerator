@@ -11,7 +11,9 @@ class RulesetProjectDescription:
     instantiated upon opening the GUI
     """
 
-    bdl_command_dict = doe2_file_readers.model_input_reader.ModelInputReader.bdl_command_dict
+    bdl_command_dict = (
+        doe2_file_readers.model_input_reader.ModelInputReader.bdl_command_dict
+    )
 
     def __init__(self):
         self.selected_models = []
