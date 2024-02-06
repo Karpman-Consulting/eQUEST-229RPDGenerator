@@ -41,13 +41,13 @@ class ModelInputReader:
         Read BDL input file and return a dictionary of object instances.
 
         :param bdl_file_path: Path to the BDL file.
-        :return: A dictionary with BDL unique names as keys and their respective object instances as values.
+        :return: A dictionary with BDL commands as keys and lists of .
         """
 
         with open(bdl_file_path, "r") as bdl_file:
             file_commands = {}
 
-            active_command = None
+            active_command_dict = None
             record_data_for = False
 
             for line in bdl_file:
@@ -57,22 +57,26 @@ class ModelInputReader:
                 if '" = ' in line:
                     unique_name, command = self._parse_command_line(line)
                     if command in self.bdl_command_dict:
+                        # start a command_dict with unique_name
                         command_dict = {"unique_name": unique_name}
+                        self._track_current_parents(command, command_dict)
+                        # add parent to the command_dict if applicable
+                        command_dict = self._set_parent(command, command_dict)
                         if command not in file_commands:
                             file_commands[command] = [command_dict]
                         else:
                             file_commands[command].append(command_dict)
-                        active_command = command_dict
+                        active_command_dict = command_dict
                     continue
 
                 elif "DATA FOR" in line:
                     record_data_for = True
                     obj_u_name = line.split("DATA FOR ")[1].strip()
                     if (
-                        active_command is None
-                        or obj_u_name != active_command["unique_name"]
+                        active_command_dict is None
+                        or obj_u_name != active_command_dict["unique_name"]
                     ):
-                        active_command = next(
+                        active_command_dict = next(
                             (
                                 cmd_dict
                                 for cmd_list in file_commands.values()
@@ -83,18 +87,19 @@ class ModelInputReader:
                         )
                     continue
 
-                elif record_data_for and " = " in line and active_command is not None:
+                elif record_data_for and " = " in line and active_command_dict is not None:
                     # TODO add pint units to the values
                     keyword, value, units = self._parse_definition_line(line)
-                    if keyword in active_command and isinstance(
-                        active_command[keyword], list
+                    if keyword in active_command_dict and isinstance(
+                        active_command_dict[keyword], list
                     ):
-                        active_command[keyword] = active_command[keyword].append(value)
-                    elif keyword in active_command:
-                        active_command[keyword] = [active_command[keyword], value]
+                        active_command_dict[keyword] = active_command_dict[keyword].append(value)
+
+                    elif keyword in active_command_dict:
+                        active_command_dict[keyword] = [active_command_dict[keyword], value]
 
                     else:
-                        active_command[keyword] = value
+                        active_command_dict[keyword] = value
 
             return file_commands
 
@@ -123,3 +128,35 @@ class ModelInputReader:
         keyword = re.split(r" {2,}", parts[0])[1].strip()
         value = parts[1].strip()
         return keyword, value, units
+
+    def _track_current_parents(self, command, command_dict):
+        """
+        Keep track of the most recent floor, space, or other parent objects. Floor and space parents are stored
+        separately to ensure that the correct parent is set for child objects in multi-tiered nodes.
+        :param command:
+        :param command_dict:
+        :return: None
+        """
+        plain_parent_commands = ["SYSTEM", "EXTERIOR-WALL", "INTERIOR-WALL"]
+        if command == "FLOOR":
+            self.current_parent_floor = command_dict["unique_name"]
+        elif command == "SPACE":
+            self.current_parent_space = command_dict["unique_name"]
+        elif command in plain_parent_commands:
+            self.current_parent = command_dict["unique_name"]
+        return
+
+    def _set_parent(self, command, command_dict):
+        """
+        Set the parent of the object based on the command type.
+        :param command:
+        :param command_dict:
+        :return: command_dict
+        """
+        if command in ["EXTERIOR-WALL", "INTERIOR-WALL", "UNDERGROUND-WALL"]:
+            command_dict["parent"] = self.current_parent_space
+        elif command == "SPACE":
+            command_dict["parent"] = self.current_parent_floor
+        elif command in ["ZONE", "WINDOW", "DOOR"]:
+            command_dict["parent"] = self.current_parent
+        return command_dict
