@@ -108,27 +108,34 @@ class CirculationLoop(BaseNode):
             "diameter",
         ]
 
+        structure_map = {
+            "FluidLoop": self.fluid_loop_data_structure,
+            "ServiceWaterHeatingDistributionSystem": self.swh_distribution_data_structure,
+            "ServiceWaterPiping": self.swh_piping_data_structure,
+        }
+
         # Iterate over the no_children_attributes list and populate if the value is not None
         for attr in no_children_attributes:
             value = getattr(self, attr, None)
             if value is not None:
-                structure_map = {
-                    "FluidLoop": self.fluid_loop_data_structure,
-                    "ServiceWaterHeatingDistributionSystem": self.swh_distribution_data_structure,
-                    "ServiceWaterPiping": self.swh_piping_data_structure,
-                }
                 data_structure = structure_map.get(self.circulation_loop_type)
                 data_structure[self.u_name][attr] = value
 
     def insert_to_rpd(self, rmd):
+        self.determine_circ_loop_type()
         if self.circulation_loop_type == "FluidLoop":
             rmd.fluid_loops.append(self.fluid_loop_data_structure)
+        elif self.circulation_loop_type == "SecondaryFluidLoop":
+            primary_loop = self.keyword_value_pairs.get("PRIMARY-LOOP")
+            for fluid_loop in rmd.fluid_loops:
+                if fluid_loop["id"] == primary_loop:
+                    fluid_loop["child_loops"].append(self.fluid_loop_data_structure)
         elif self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":
             rmd.service_water_heating_distribution_systems.append(
                 self.swh_distribution_data_structure
             )
         elif self.circulation_loop_type == "ServiceWaterPiping":
-            primary_loop = self.keyword_value_pairs["PRIMARY-LOOP"]
+            primary_loop = self.keyword_value_pairs.get("PRIMARY-LOOP")
 
     def determine_circ_loop_type(self):
         if (
@@ -138,5 +145,7 @@ class CirculationLoop(BaseNode):
             self.circulation_loop_type = "ServiceWaterPiping"
         elif self.keyword_value_pairs["TYPE"] == "DHW":
             self.circulation_loop_type = "ServiceWaterHeatingDistributionSystem"
-        else:
+        elif self.keyword_value_pairs.get("PRIMARY-LOOP") is None:
             self.circulation_loop_type = "FluidLoop"
+        else:
+            self.circulation_loop_type = "SecondaryFluidLoop"
