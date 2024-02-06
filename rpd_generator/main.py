@@ -19,11 +19,18 @@ def generate_rpd(selected_models):
         building_segment = BuildingSegment("Test Building Segment")
         bdl_input_reader = doe2_file_readers.model_input_reader.ModelInputReader()
 
-
         # get all BDL commands from the BDL input file
         file_bdl_commands = bdl_input_reader.read_input_bdl_file(model)
 
-        rmd_data_groups = ["PUMP", "DW-HEATER", "BOILER", "CHILLER", "HEAT-REJECTION", "DW-HEATER", "CIRCULATION-LOOP"]
+        rmd_data_groups = [
+            "PUMP",
+            "DW-HEATER",
+            "BOILER",
+            "CHILLER",
+            "HEAT-REJECTION",
+            "DW-HEATER",
+            "CIRCULATION-LOOP",
+        ]
         # Retrieve commands for the current equipment type
         for data_group in rmd_data_groups:
             # Retrieve commands for the current equipment type
@@ -58,7 +65,14 @@ def generate_rpd(selected_models):
             obj.add_inputs(cmd_dict)
             rmd.bdl_obj_instances[cmd_dict["unique_name"]] = obj
 
-        zone_data_groups = ["SPACE", "EXTERIOR-WALL", "INTERIOR-WALL", "UNDERGROUND-WALL", "WINDOW", "DOOR"]
+        zone_data_groups = [
+            "SPACE",
+            "EXTERIOR-WALL",
+            "INTERIOR-WALL",
+            "UNDERGROUND-WALL",
+            "WINDOW",
+            "DOOR",
+        ]
         # Retrieve commands for the current equipment type
         for data_group in zone_data_groups:
             # Retrieve commands for the current equipment type
@@ -75,7 +89,6 @@ def generate_rpd(selected_models):
         building.insert_to_rpd(rmd)
         rmd.populate_data_group()
         print(json.dumps(rmd.rmd_data_structure, indent=4))
-
 
         # iterate through the objects
         # for cmd, lst in file_bdl_commands.items():
@@ -112,12 +125,26 @@ def _create_obj_instance(command, command_dict, obj_instance_dict):
     :return: object: Created object instance.
     """
     command_class = RulesetProjectDescription.bdl_command_dict[command]
-    is_child = command in ["SPACE", "EXTERIOR-WALL", "INTERIOR-WALL", "UNDERGROUND-WALL", "ZONE", "WINDOW", "DOOR"]
+    is_child = command in [
+        "SPACE",
+        "EXTERIOR-WALL",
+        "INTERIOR-WALL",
+        "UNDERGROUND-WALL",
+        "ZONE",
+        "WINDOW",
+        "DOOR",
+    ]
     if is_child:
-        obj_instance = command_class(command_dict["unique_name"], obj_instance_dict[command_dict["parent"]])
+        obj_instance = command_class(
+            command_dict["unique_name"], obj_instance_dict[command_dict["parent"]]
+        )
     else:
         obj_instance = command_class(command_dict["unique_name"])
     return obj_instance
 
 
-generate_rpd([r"C:\Users\JacksonJarboe\Documents\Development\DOE2-229RPDGenerator\test\example\INP.BDL"])
+generate_rpd(
+    [
+        r"C:\Users\JacksonJarboe\Documents\Development\DOE2-229RPDGenerator\test\example\INP.BDL"
+    ]
+)

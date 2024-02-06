@@ -87,16 +87,25 @@ class ModelInputReader:
                         )
                     continue
 
-                elif record_data_for and " = " in line and active_command_dict is not None:
+                elif (
+                    record_data_for
+                    and " = " in line
+                    and active_command_dict is not None
+                ):
                     # TODO add pint units to the values
                     keyword, value, units = self._parse_definition_line(line)
                     if keyword in active_command_dict and isinstance(
                         active_command_dict[keyword], list
                     ):
-                        active_command_dict[keyword] = active_command_dict[keyword].append(value)
+                        active_command_dict[keyword] = active_command_dict[
+                            keyword
+                        ].append(value)
 
                     elif keyword in active_command_dict:
-                        active_command_dict[keyword] = [active_command_dict[keyword], value]
+                        active_command_dict[keyword] = [
+                            active_command_dict[keyword],
+                            value,
+                        ]
 
                     else:
                         active_command_dict[keyword] = value
