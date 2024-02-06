@@ -71,6 +71,7 @@ class Door(ChildNode):
             if value is not None:
                 self.door_data_structure[attr] = value
 
-    def insert_to_rpd(self, surface):
+    def insert_to_rpd(self, rmd):
         """Insert window object into the rpd data structure."""
+        surface = rmd.bdl_obj_instances.get(self.parent.u_name)
         surface.subsurfaces.append(self.door_data_structure)

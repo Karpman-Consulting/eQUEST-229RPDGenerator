@@ -49,4 +49,4 @@ class System(ParentNode):
 
     def insert_to_rpd(self, building_segment):
         """Insert zone object into the rpd data structure."""
-        building_segment.hvac_systems.append(self)
+        building_segment.hvac_systems.append(self.system_data_structure)

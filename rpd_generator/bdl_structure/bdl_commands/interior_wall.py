@@ -61,6 +61,7 @@ class InteriorWall(
             if value is not None:
                 self.interior_wall_data_structure[attr] = value
 
-    def insert_to_rpd(self, zone):
+    def insert_to_rpd(self, rmd):
         """Insert exterior wall object into the rpd data structure."""
+        zone = rmd.space_map.get(self.parent.u_name)
         zone.surfaces.append(self.interior_wall_data_structure)

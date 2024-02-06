@@ -43,6 +43,8 @@ class Space(ChildNode, ParentNode):
             "service_water_heating_uses": self.service_water_heating_uses,
         }
 
-    def insert_to_rpd(self, zone):
+    def insert_to_rpd(self, rmd):
         """Insert space object into the rpd data structure."""
-        zone.spaces.append(self)
+        # find the zone that has the "SPACE" attribute value equal to the space object's u_name
+        zone = rmd.space_map.get(self.u_name)
+        zone.spaces.append(self.space_data_structure)
