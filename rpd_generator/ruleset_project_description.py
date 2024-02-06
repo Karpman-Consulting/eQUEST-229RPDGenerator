@@ -16,7 +16,6 @@ class RulesetProjectDescription:
     )
 
     def __init__(self):
-        self.selected_models = []
 
         self.rpd_data_structure = {}
 
@@ -37,7 +36,8 @@ class RulesetProjectDescription:
         """
         Populate the RPD data group (only data elements directly under the RPD Data Group)
         """
-        self.rpd_data_structure["ASHRAE 229"] = {
+        self.rpd_data_structure = {
+            "id": "ASHRAE 229",
             "ruleset_model_descriptions": self.ruleset_model_descriptions,
             "calendar": self.calendar,
             "weather": self.weather,

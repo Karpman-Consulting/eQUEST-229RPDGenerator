@@ -27,12 +27,13 @@ class Pump(BaseNode):
         self.is_flow_sized_bsed_on_design_day = None
 
     def __repr__(self):
-        return f"Pump({self.u_name})"
+        return f"Pump(u_name='{self.u_name}')"
 
     def populate_data_group(self):
         """Populate schema structure for pump object."""
 
-        self.pump_data_structure[self.u_name] = {
+        self.pump_data_structure = {
+            "id": self.u_name,
             "output_validation_points": self.output_validation_points,
         }
 
@@ -55,7 +56,7 @@ class Pump(BaseNode):
         for attr in no_children_attributes:
             value = getattr(self, attr, None)
             if value is not None:
-                self.pump_data_structure[self.u_name][attr] = value
+                self.pump_data_structure[attr] = value
 
     def insert_to_rpd(self, rmd):
         """Insert window object into the rpd data structure."""

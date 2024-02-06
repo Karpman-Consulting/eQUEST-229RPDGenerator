@@ -32,16 +32,12 @@ class Space(ChildNode, ParentNode):
         self.service_water_heating_space_type = None
 
     def __repr__(self):
-        parent_repr = (
-            f"{self.parent.__class__.__name__}('{self.parent.u_name}')"
-            if self.parent
-            else "None"
-        )
-        return f"Space(u_name='{self.u_name}', parent={parent_repr})"
+        return f"Space(u_name='{self.u_name}', parent={self.parent})"
 
     def populate_data_group(self):
         """Populate schema structure for space object."""
-        self.space_data_structure[self.u_name] = {
+        self.space_data_structure = {
+            "id": self.u_name,
             "interior_lighting": self.interior_lighting,
             "miscellaneous_equipment": self.miscellaneous_equipment,
             "service_water_heating_uses": self.service_water_heating_uses,

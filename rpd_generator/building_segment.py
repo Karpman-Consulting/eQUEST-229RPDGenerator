@@ -24,7 +24,8 @@ class BuildingSegment:
 
     def populate_data_group(self):
         """Populate the building segment data structure."""
-        self.building_segment_data_structure[self.obj_id] = {
+        self.building_segment_data_structure = {
+            "id": self.obj_id,
             "zones": self.zones,
             "heating_ventilating_air_conditioning_systems": self.hvac_systems,
         }
@@ -42,7 +43,7 @@ class BuildingSegment:
         for attr in no_children_attributes:
             value = getattr(self, attr, None)
             if value is not None:
-                self.building_segment_data_structure[self.obj_id][attr] = value
+                self.building_segment_data_structure[attr] = value
 
     def insert_to_rpd(self, building):
         """Insert building segment object into the rpd data structure."""

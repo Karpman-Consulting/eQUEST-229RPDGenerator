@@ -10,7 +10,7 @@ class LoadManagement(BaseDefinition):
         super().__init__(u_name)
 
     def __repr__(self):
-        return f"LoadManagement('{self.u_name}')"
+        return f"LoadManagement(u_name='{self.u_name}')"
 
     def populate_schema_structure(self):
         """Populate schema structure for load management object."""

@@ -28,10 +28,14 @@ class Schedule(BaseNode):
         self.is_modified_for_workaround = None
 
     def __repr__(self):
-        return f"Schedule({self.u_name})"
+        return f"Schedule(u_name='{self.u_name}')"
 
     def populate_data_group(self):
         """Populate schema structure for schedule object."""
+        self.schedule_data_structure = {
+            "id": self.u_name,
+        }
+
         no_children_attributes = [
             "reporting_name",
             "notes",

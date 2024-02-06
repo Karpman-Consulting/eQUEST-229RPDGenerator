@@ -40,11 +40,12 @@ class Zone(ChildNode):
         self.aggregation_factor = None
 
     def __repr__(self):
-        return f"Zone(u_name='{self.u_name}', parent={self.parent.__class__.__name__}('{self.parent.u_name}'))"
+        return f"Zone(u_name='{self.u_name}', parent='{self.parent}')"
 
     def populate_data_group(self):
         """Populate schema structure for zone object."""
-        self.zone_data_structure[self.u_name] = {
+        self.zone_data_structure = {
+            "id": self.u_name,
             "spaces": self.spaces,
             "surfaces": self.surfaces,
             "terminals": self.terminals,
@@ -80,7 +81,7 @@ class Zone(ChildNode):
         for attr in no_children_attributes:
             value = getattr(self, attr, None)
             if value is not None:
-                self.zone_data_structure[self.u_name][attr] = value
+                self.zone_data_structure[attr] = value
 
     def insert_to_rpd(self, building_segment):
         """Insert zone object into the rpd data structure."""

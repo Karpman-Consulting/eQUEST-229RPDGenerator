@@ -26,11 +26,12 @@ class Boiler(BaseNode):
         self.operation_upper_limit = None
 
     def __repr__(self):
-        return f"Boiler('{self.u_name}')"
+        return f"Boiler(u_name='{self.u_name}')"
 
     def populate_data_group(self):
         """Populate schema structure for boiler object."""
-        self.boiler_data_structure[self.u_name] = {
+        self.boiler_data_structure = {
+            "id": self.u_name,
             "output_validation_points": self.output_validation_points,
         }
 
@@ -52,7 +53,7 @@ class Boiler(BaseNode):
         for attr in no_children_attributes:
             value = getattr(self, attr, None)
             if value is not None:
-                self.boiler_data_structure[self.u_name][attr] = value
+                self.boiler_data_structure[attr] = value
 
     def insert_to_rpd(self, rmd):
         rmd.boilers.append(self.boiler_data_structure)

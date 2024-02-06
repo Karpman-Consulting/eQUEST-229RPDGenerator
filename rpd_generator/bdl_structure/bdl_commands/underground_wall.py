@@ -27,11 +27,12 @@ class BelowGradeWall(ChildNode):
         self.status_type = None
 
     def __repr__(self):
-        return f"BelowGradeWall({self.u_name})"
+        return f"BelowGradeWall(u_name='{self.u_name}')"
 
     def populate_data_group(self):
         """Populate schema structure for below grade wall object."""
-        self.underground_wall_data_structure[self.u_name] = {
+        self.underground_wall_data_structure = {
+            "id": self.u_name,
             "construction": self.construction,
             "surface_optical_properties": self.surface_optical_properties,
         }
@@ -53,7 +54,7 @@ class BelowGradeWall(ChildNode):
         for attr in no_children_attributes:
             value = getattr(self, attr, None)
             if value is not None:
-                self.underground_wall_data_structure[self.u_name][attr] = value
+                self.underground_wall_data_structure[attr] = value
 
     def insert_to_rpd(self, zone):
         """Insert below grade wall object into the rpd data structure."""

@@ -29,16 +29,12 @@ class ExteriorWall(ChildNode, ParentNode):
         self.status_type = None
 
     def __repr__(self):
-        parent_repr = (
-            f"{self.parent.__class__.__name__}('{self.parent.u_name}')"
-            if self.parent
-            else "None"
-        )
-        return f"ExteriorWall(u_name='{self.u_name}', parent={parent_repr})"
+        return f"ExteriorWall(u_name='{self.u_name}', parent={self.parent})"
 
     def populate_data_group(self):
         """Populate schema structure for exterior wall object."""
-        self.exterior_wall_data_structure[self.u_name] = {
+        self.exterior_wall_data_structure = {
+            "id": self.u_name,
             "subsurfaces": self.subsurfaces,
             "construction": self.construction,
             "surface_optical_properties": self.surface_optical_properties,
@@ -60,7 +56,7 @@ class ExteriorWall(ChildNode, ParentNode):
         for attr in no_children_attributes:
             value = getattr(self, attr, None)
             if value is not None:
-                self.exterior_wall_data_structure[self.u_name][attr] = value
+                self.exterior_wall_data_structure[attr] = value
 
     def insert_to_rpd(self, zone):
         """Insert exterior wall object into the rpd data structure."""

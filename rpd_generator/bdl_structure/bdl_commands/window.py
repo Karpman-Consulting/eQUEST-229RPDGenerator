@@ -35,10 +35,14 @@ class Window(ChildNode):
         self.status_type = None
 
     def __repr__(self):
-        return f"Window({self.u_name})"
+        return f"Window(u_name='{self.u_name}')"
 
     def populate_data_group(self):
         """Populate schema structure for window object."""
+        self.window_data_structure = {
+            "id": self.u_name,
+        }
+
         no_children_attributes = [
             "reporting_name",
             "notes",
@@ -65,7 +69,7 @@ class Window(ChildNode):
         for attr in no_children_attributes:
             value = getattr(self, attr, None)
             if value is not None:
-                self.window_data_structure[self.u_name][attr] = value
+                self.window_data_structure[attr] = value
 
     def insert_to_rpd(self, surface):
         """Insert window object into the rpd data structure."""
