@@ -10,7 +10,7 @@ class GlassType(BaseDefinition):
         super().__init__(u_name)
 
     def __repr__(self):
-        return f"GlassType('{self.u_name}')"
+        return f"GlassType(u_name='{self.u_name}')"
 
     def populate_schema_structure(self):
         """Populate schema structure for glass type object."""

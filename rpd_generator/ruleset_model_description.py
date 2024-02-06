@@ -4,8 +4,10 @@ class RulesetModelDescription:
     """
 
     def __init__(self, obj_id):
-        # store BDL commands for the model associated with the RMD
-        self.bdl_commands = {}
+        # store BDL objects for the model associated with the RMD
+        self.bdl_obj_instances = {}
+        # store space names mapped to their zone objects for quick access
+        self.space_map = {}
 
         self.rmd_data_structure = {}
 
@@ -38,7 +40,8 @@ class RulesetModelDescription:
 
     def populate_data_group(self):
         """Populate the RMD data structure."""
-        self.rmd_data_structure[self.obj_id] = {
+        self.rmd_data_structure = {
+            "id": self.obj_id,
             "buildings": self.buildings,
             "schedules": self.schedules,
             "fluid_loops": self.fluid_loops,

@@ -22,11 +22,12 @@ class System(ParentNode):
         self.status_type = None
 
     def __repr__(self):
-        return f"System({self.u_name})"
+        return f"System(u_name='{self.u_name}')"
 
     def populate_data_group(self):
         """Populate schema structure for system object."""
-        self.system_data_structure[self.u_name] = {
+        self.system_data_structure = {
+            "id": self.u_name,
             "fan_systems": self.fan_systems,
             "heating_systems": self.heating_systems,
             "cooling_systems": self.cooling_systems,
@@ -44,7 +45,7 @@ class System(ParentNode):
         for attr in no_children_attributes:
             value = getattr(self, attr, None)
             if value is not None:
-                self.system_data_structure[self.u_name][attr] = value
+                self.system_data_structure[attr] = value
 
     def insert_to_rpd(self, building_segment):
         """Insert zone object into the rpd data structure."""

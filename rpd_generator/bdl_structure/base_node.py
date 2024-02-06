@@ -23,5 +23,4 @@ class BaseNode:
 
     def add_inputs(self, key_val_dict):
         """Insert a keyword-value pair for the BDL command."""
-        # TODO for repeated keywords create list and append values
         self.keyword_value_pairs = key_val_dict

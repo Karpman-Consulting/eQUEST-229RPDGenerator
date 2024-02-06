@@ -58,7 +58,7 @@ class CirculationLoop(BaseNode):
         # self.child = None   this is commented out because eQUEST can only have a single tier of secondary loops
 
     def __repr__(self):
-        return f"CirculationLoop({self.u_name})"
+        return f"CirculationLoop(u_name='{self.u_name}')"
 
     def populate_data_elements(self):
         """Populate data elements from the keyword_value pairs returned from model_input_reader"""
@@ -70,14 +70,18 @@ class CirculationLoop(BaseNode):
             self.keyword_value_pairs["TYPE"] == "DHW"
             and self.keyword_value_pairs["SUBTYPE"] == "SECONDARY"
         ):
-            self.swh_piping_data_structure[self.u_name] = {}
+            self.swh_piping_data_structure = {
+                "id": self.u_name,
+            }
         elif self.keyword_value_pairs["TYPE"] == "DHW":
-            self.swh_distribution_data_structure[self.u_name] = {
+            self.swh_distribution_data_structure = {
+                "id": self.u_name,
                 "tanks": self.tanks,
                 "service_water_piping": self.service_water_piping,
             }
         else:
-            self.fluid_loop_data_structure[self.u_name] = {
+            self.fluid_loop_data_structure = {
+                "id": self.u_name,
                 "cooling_or_condensing_design_and_control": self.cooling_or_condensing_design_and_control,
                 "heating_design_and_control": self.heating_design_and_control,
                 "child_loops": self.child_loops,
@@ -118,7 +122,7 @@ class CirculationLoop(BaseNode):
                     "ServiceWaterPiping": self.swh_piping_data_structure,
                 }
                 data_structure = structure_map.get(self.circulation_loop_type)
-                data_structure[self.u_name][attr] = value
+                data_structure[attr] = value
 
     def insert_to_rpd(self, rmd):
         if self.circulation_loop_type == "FluidLoop":

@@ -28,10 +28,14 @@ class HeatRejection(BaseNode):
         self.leaving_water_setpoint_temperature = None
 
     def __repr__(self):
-        return f"HeatRejection({self.u_name})"
+        return f"HeatRejection(u_name='{self.u_name}')"
 
     def populate_data_group(self):
         """Populate schema structure for heat rejection object."""
+        self.heat_rejection_data_structure = {
+            "id": self.u_name,
+        }
+
         no_children_attributes = [
             "reporting_name",
             "notes",
@@ -55,7 +59,7 @@ class HeatRejection(BaseNode):
         for attr in no_children_attributes:
             value = getattr(self, attr, None)
             if value is not None:
-                self.heat_rejection_data_structure[self.u_name][attr] = value
+                self.heat_rejection_data_structure[attr] = value
 
     def insert_to_rpd(self, rmd):
         """Insert window object into the rpd data structure."""

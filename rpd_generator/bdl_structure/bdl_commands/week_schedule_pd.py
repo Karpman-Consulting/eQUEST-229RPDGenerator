@@ -10,7 +10,7 @@ class WeekSchedulePD(BaseDefinition):
         super().__init__(u_name)
 
     def __repr__(self):
-        return f"WeekSchedulePD('{self.u_name}')"
+        return f"WeekSchedulePD(u_name='{self.u_name}')"
 
     def populate_schema_structure(self):
         """Populate schema structure for week schedule object."""

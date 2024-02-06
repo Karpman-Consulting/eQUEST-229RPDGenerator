@@ -42,12 +42,13 @@ class DomesticWaterHeater(BaseNode):
         self.hot_water_loop = None
 
     def __repr__(self):
-        return f"DomesticWaterHeater({self.u_name})"
+        return f"DomesticWaterHeater(u_name='{self.u_name}')"
 
     def populate_data_group(self):
         """Populate schema structure for domestic water heater object."""
 
-        self.swh_equipment_data_structure[self.u_name] = {
+        self.swh_equipment_data_structure = {
+            "id": self.u_name,
             "output_validation_points": self.output_validation_points,
             "tank": self.tank,
             "solar_thermal_systems": self.solar_thermal_systems,
@@ -81,7 +82,7 @@ class DomesticWaterHeater(BaseNode):
         for attr in no_children_attributes:
             value = getattr(self, attr, None)
             if value is not None:
-                self.swh_equipment_data_structure[self.u_name][attr] = value
+                self.swh_equipment_data_structure[attr] = value
 
     def insert_to_rpd(self, rmd):
         """Insert window object into the rpd data structure."""

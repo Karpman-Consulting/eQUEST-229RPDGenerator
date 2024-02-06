@@ -19,10 +19,14 @@ class Material(BaseNode):
         self.r_value = None
 
     def __repr__(self):
-        return f"Material({self.u_name})"
+        return f"Material(u_name='{self.u_name}')"
 
     def populate_data_group(self):
         """Populate schema structure for material object."""
+        self.material_data_structure = {
+            "id": self.u_name,
+        }
+
         no_children_attributes = [
             "reporting_name",
             "notes",

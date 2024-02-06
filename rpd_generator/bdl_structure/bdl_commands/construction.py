@@ -30,11 +30,12 @@ class Construction(BaseNode):
         self.has_radiant_cooling = None
 
     def __repr__(self):
-        return f"Construction({self.u_name})"
+        return f"Construction(u_name='{self.u_name}')"
 
     def populate_data_group(self):
         """Populate schema structure for construction object."""
-        self.construction_data_structure[self.u_name] = {
+        self.construction_data_structure = {
+            "id": self.u_name,
             "primary_layers": self.primary_layers,
             "framing_layers": self.framing_layers,
             "insulation_locations": self.insulation_locations,
@@ -58,7 +59,7 @@ class Construction(BaseNode):
         for attr in no_children_attributes:
             value = getattr(self, attr, None)
             if value is not None:
-                self.construction_data_structure[self.u_name][attr] = value
+                self.construction_data_structure[attr] = value
 
     def insert_to_rpd(self, rmd):
         """Insert construction object into the rpd data structure."""
