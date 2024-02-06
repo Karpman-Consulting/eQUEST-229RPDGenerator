@@ -35,10 +35,14 @@ class Door(ChildNode):
         self.status_type = None
 
     def __repr__(self):
-        return f"Door({self.u_name})"
+        return f"Door(u_name='{self.u_name}')"
 
     def populate_data_group(self):
         """Populate schema structure for door object."""
+        self.door_data_structure = {
+            "id": self.u_name,
+        }
+
         no_children_attributes = [
             "reporting_name",
             "notes",
@@ -65,9 +69,9 @@ class Door(ChildNode):
         for attr in no_children_attributes:
             value = getattr(self, attr, None)
             if value is not None:
-                self.door_data_structure[self.u_name][attr] = value
+                self.door_data_structure[attr] = value
 
-    def insert_to_rpd(self, surface):
+    def insert_to_rpd(self, rmd):
         """Insert window object into the rpd data structure."""
         surface = rmd.bdl_obj_instances.get(self.parent.u_name)
         surface.subsurfaces.append(self.door_data_structure)
