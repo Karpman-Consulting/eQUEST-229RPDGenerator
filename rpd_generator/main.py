@@ -23,19 +23,53 @@ def generate_rpd(selected_models):
 
         # Define data groups and their processing containers
         data_group_mappings = [
-            (["MATERIAL", "CONSTRUCTION", "SCHEDULE-PD", "BOILER", "CHILLER", "DW-HEATER", "HEAT-REJECTION", "PUMP",
-              "CIRCULATION-LOOP"], rmd),
+            (
+                [
+                    "MATERIAL",
+                    "CONSTRUCTION",
+                    "SCHEDULE-PD",
+                    "BOILER",
+                    "CHILLER",
+                    "DW-HEATER",
+                    "HEAT-REJECTION",
+                    "PUMP",
+                    "CIRCULATION-LOOP",
+                ],
+                rmd,
+            ),
             (["SYSTEM", "ZONE"], building_segment),
-            (["SPACE", "EXTERIOR-WALL", "INTERIOR-WALL", "UNDERGROUND-WALL", "WINDOW", "DOOR"], rmd),
+            (
+                [
+                    "SPACE",
+                    "EXTERIOR-WALL",
+                    "INTERIOR-WALL",
+                    "UNDERGROUND-WALL",
+                    "WINDOW",
+                    "DOOR",
+                ],
+                rmd,
+            ),
         ]
-        _process_data_group("FLOOR", file_bdl_commands, rmd, rmd.bdl_obj_instances, skip_methods=True)
+        _process_data_group(
+            "FLOOR", file_bdl_commands, rmd, rmd.bdl_obj_instances, skip_methods=True
+        )
         # Process each data group according to its container
         for data_groups, container in data_group_mappings:
             for data_group in data_groups:
                 special_handling = {}
                 if data_group == "ZONE":
-                    special_handling["ZONE"] = lambda obj, cmd_dict: rmd.space_map.setdefault(cmd_dict["SPACE"], obj)
-                _process_data_group(data_group, file_bdl_commands, container, rmd.bdl_obj_instances, special_handling)
+                    special_handling["ZONE"] = (
+                        lambda obj, cmd_dict: rmd.space_map.setdefault(
+                            cmd_dict["SPACE"], obj
+                        )
+                    )
+                _process_data_group(
+                    data_group,
+                    file_bdl_commands,
+                    container,
+                    rmd.bdl_obj_instances,
+                    special_handling,
+                )
 
         # Final integration steps
         building_segment.populate_data_group()
@@ -80,7 +114,14 @@ def _create_obj_instance(command, command_dict, obj_instance_dict):
     return obj_instance
 
 
-def _process_data_group(data_group, file_bdl_commands, container, obj_instances, special_handling=None, skip_methods=False):
+def _process_data_group(
+    data_group,
+    file_bdl_commands,
+    container,
+    obj_instances,
+    special_handling=None,
+    skip_methods=False,
+):
     for cmd_dict in file_bdl_commands.get(data_group, []):
         obj = _create_obj_instance(data_group, cmd_dict, obj_instances)
         if special_handling and data_group in special_handling:

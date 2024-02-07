@@ -9,45 +9,77 @@ from tkinter import Canvas
 
 
 class CTkXYFrame(customtkinter.CTkFrame):
-    def __init__(self,
-                 master: any,
-                 width: int = 100,
-                 height: int = 100,
-                 scrollbar_fg_color=None,
-                 scrollbar_button_color=None,
-                 scrollbar_button_hover_color=None,
-                 **kwargs):
+    def __init__(
+        self,
+        master: any,
+        width: int = 100,
+        height: int = 100,
+        scrollbar_fg_color=None,
+        scrollbar_button_color=None,
+        scrollbar_button_hover_color=None,
+        **kwargs
+    ):
 
         self.parent_frame = customtkinter.CTkFrame(master=master, **kwargs)
         self.bg_color = self.parent_frame.cget("fg_color")
-        self.xy_canvas = Canvas(self.parent_frame, width=width, height=height,
-                                bg=self.parent_frame._apply_appearance_mode(self.bg_color),
-                                borderwidth=0, highlightthickness=0)
+        self.xy_canvas = Canvas(
+            self.parent_frame,
+            width=width,
+            height=height,
+            bg=self.parent_frame._apply_appearance_mode(self.bg_color),
+            borderwidth=0,
+            highlightthickness=0,
+        )
         self.parent_frame.rowconfigure(0, weight=1)
         self.parent_frame.columnconfigure(0, weight=1)
 
-        customtkinter.CTkFrame.__init__(self, master=self.xy_canvas, fg_color=self.parent_frame.cget("fg_color"),
-                                        bg_color=self.parent_frame.cget("fg_color"))
+        customtkinter.CTkFrame.__init__(
+            self,
+            master=self.xy_canvas,
+            fg_color=self.parent_frame.cget("fg_color"),
+            bg_color=self.parent_frame.cget("fg_color"),
+        )
         self.xy_canvas.create_window((0, 0), window=self, anchor="nw")
 
-        self.vsb = customtkinter.CTkScrollbar(self.parent_frame, orientation="vertical", command=self.xy_canvas.yview,
-                                              fg_color=scrollbar_fg_color, button_color=scrollbar_button_color,
-                                              button_hover_color=scrollbar_button_hover_color)
-        self.hsb = customtkinter.CTkScrollbar(self.parent_frame, orientation="horizontal", command=self.xy_canvas.xview,
-                                              fg_color=scrollbar_fg_color, button_color=scrollbar_button_color,
-                                              button_hover_color=scrollbar_button_hover_color)
+        self.vsb = customtkinter.CTkScrollbar(
+            self.parent_frame,
+            orientation="vertical",
+            command=self.xy_canvas.yview,
+            fg_color=scrollbar_fg_color,
+            button_color=scrollbar_button_color,
+            button_hover_color=scrollbar_button_hover_color,
+        )
+        self.hsb = customtkinter.CTkScrollbar(
+            self.parent_frame,
+            orientation="horizontal",
+            command=self.xy_canvas.xview,
+            fg_color=scrollbar_fg_color,
+            button_color=scrollbar_button_color,
+            button_hover_color=scrollbar_button_hover_color,
+        )
 
-        self.xy_canvas.configure(yscrollcommand=lambda x, y: self.dynamic_scrollbar_vsb(x, y),
-                                 xscrollcommand=lambda x, y: self.dynamic_scrollbar_hsb(x, y))
+        self.xy_canvas.configure(
+            yscrollcommand=lambda x, y: self.dynamic_scrollbar_vsb(x, y),
+            xscrollcommand=lambda x, y: self.dynamic_scrollbar_hsb(x, y),
+        )
         self.xy_canvas.grid(row=0, column=0, sticky="nsew", padx=(7, 0), pady=(7, 0))
 
-        self.bind("<Configure>", lambda event, canvas=self.xy_canvas: self.on_frame_configure(canvas))
+        self.bind(
+            "<Configure>",
+            lambda event, canvas=self.xy_canvas: self.on_frame_configure(canvas),
+        )
         self.xy_canvas.bind_all("<MouseWheel>", lambda e: self._on_mousewheel(e.delta))
-        self.xy_canvas.bind_all("<Shift-MouseWheel>", lambda e: self._on_mousewheel_shift(e.delta))
+        self.xy_canvas.bind_all(
+            "<Shift-MouseWheel>", lambda e: self._on_mousewheel_shift(e.delta)
+        )
         self.xy_canvas.bind_all("<Button-4>", lambda e: self._on_mousewheel(120))
         self.xy_canvas.bind_all("<Button-5>", lambda e: self._on_mousewheel(-120))
-        self.xy_canvas.bind_all("<Shift-Button-4>", lambda e: self._on_mousewheel_shift(120))
-        self.xy_canvas.bind_all("<Shift-Button-5>", lambda e: self._on_mousewheel_shift(-120))
+        self.xy_canvas.bind_all(
+            "<Shift-Button-4>", lambda e: self._on_mousewheel_shift(120)
+        )
+        self.xy_canvas.bind_all(
+            "<Shift-Button-5>", lambda e: self._on_mousewheel_shift(-120)
+        )
 
     def destroy(self):
         customtkinter.CTkFrame.destroy(self)
@@ -55,7 +87,9 @@ class CTkXYFrame(customtkinter.CTkFrame):
 
     def _set_appearance_mode(self, mode_string):
         super()._set_appearance_mode(mode_string)
-        self.xy_canvas.config(bg=self.parent_frame._apply_appearance_mode(self.bg_color))
+        self.xy_canvas.config(
+            bg=self.parent_frame._apply_appearance_mode(self.bg_color)
+        )
 
     def dynamic_scrollbar_vsb(self, x, y):
         if float(x) == 0.0 and float(y) == 1.0:
