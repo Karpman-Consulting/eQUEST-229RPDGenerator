@@ -1,12 +1,11 @@
 import customtkinter as ctk
-import tkinter as tk
 
 
-class LicenseWindow(ctk.CTkToplevel):
+class DisclaimerWindow(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.title("LICENSE")
+        self.title("DISCLAIMER")
         self.geometry("400x400")
         self.resizable(False, False)
 
