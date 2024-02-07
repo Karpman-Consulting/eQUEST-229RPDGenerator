@@ -19,99 +19,36 @@ def generate_rpd(selected_models):
         building_segment = BuildingSegment("Test Building Segment")
         bdl_input_reader = doe2_file_readers.model_input_reader.ModelInputReader()
 
-        # get all BDL commands from the BDL input file
         file_bdl_commands = bdl_input_reader.read_input_bdl_file(model)
 
-        rmd_data_groups = [
-            "PUMP",
-            "DW-HEATER",
-            "BOILER",
-            "CHILLER",
-            "HEAT-REJECTION",
-            "DW-HEATER",
-            "CIRCULATION-LOOP",
+        # Define data groups and their processing containers
+        data_group_mappings = [
+            (["MATERIAL", "CONSTRUCTION", "SCHEDULE-PD", "BOILER", "CHILLER", "DW-HEATER", "HEAT-REJECTION", "PUMP",
+              "CIRCULATION-LOOP"], rmd),
+            (["SYSTEM", "ZONE"], building_segment),
+            (["SPACE", "EXTERIOR-WALL", "INTERIOR-WALL", "UNDERGROUND-WALL", "WINDOW", "DOOR"], rmd),
         ]
-        # Retrieve commands for the current equipment type
-        for data_group in rmd_data_groups:
-            # Retrieve commands for the current equipment type
-            for cmd_dict in file_bdl_commands.get(data_group, []):
-                # Create object instance for the current equipment type
-                obj = _create_obj_instance(data_group, cmd_dict, rmd.bdl_obj_instances)
-                # Add inputs and populate data
-                obj.add_inputs(cmd_dict)
-                rmd.bdl_obj_instances[cmd_dict["unique_name"]] = obj
-                obj.populate_data_group()
-                obj.insert_to_rpd(rmd)
-
-        b_segment_data_groups = ["SYSTEM", "ZONE"]
-        # Retrieve commands for the current equipment type
-        for data_group in b_segment_data_groups:
-            # Retrieve commands for the current equipment type
-            for cmd_dict in file_bdl_commands.get(data_group, []):
-                # Create object instance for the current equipment type
-                obj = _create_obj_instance(data_group, cmd_dict, rmd.bdl_obj_instances)
+        _process_data_group("FLOOR", file_bdl_commands, rmd, rmd.bdl_obj_instances, skip_methods=True)
+        # Process each data group according to its container
+        for data_groups, container in data_group_mappings:
+            for data_group in data_groups:
+                special_handling = {}
                 if data_group == "ZONE":
-                    rmd.space_map[cmd_dict["SPACE"]] = obj
-                # Add inputs and populate data
-                obj.add_inputs(cmd_dict)
-                rmd.bdl_obj_instances[cmd_dict["unique_name"]] = obj
-                obj.populate_data_group()
-                obj.insert_to_rpd(building_segment)
+                    special_handling["ZONE"] = lambda obj, cmd_dict: rmd.space_map.setdefault(cmd_dict["SPACE"], obj)
+                _process_data_group(data_group, file_bdl_commands, container, rmd.bdl_obj_instances, special_handling)
+
+        # Final integration steps
         building_segment.populate_data_group()
         building_segment.insert_to_rpd(building)
-
-        for cmd_dict in file_bdl_commands.get("FLOOR", []):
-            obj = _create_obj_instance("FLOOR", cmd_dict, rmd.bdl_obj_instances)
-            obj.add_inputs(cmd_dict)
-            rmd.bdl_obj_instances[cmd_dict["unique_name"]] = obj
-
-        zone_data_groups = [
-            "SPACE",
-            "EXTERIOR-WALL",
-            "INTERIOR-WALL",
-            "UNDERGROUND-WALL",
-            "WINDOW",
-            "DOOR",
-        ]
-        # Retrieve commands for the current equipment type
-        for data_group in zone_data_groups:
-            # Retrieve commands for the current equipment type
-            for cmd_dict in file_bdl_commands.get(data_group, []):
-                # Create object instance for the current equipment type
-                obj = _create_obj_instance(data_group, cmd_dict, rmd.bdl_obj_instances)
-                # Add inputs and populate data
-                obj.add_inputs(cmd_dict)
-                rmd.bdl_obj_instances[cmd_dict["unique_name"]] = obj
-                obj.populate_data_group()
-                obj.insert_to_rpd(rmd)
-
         building.populate_data_group()
         building.insert_to_rpd(rmd)
         rmd.populate_data_group()
+
+        # Output the RMD data structure
         print(json.dumps(rmd.rmd_data_structure, indent=4))
-
-        # iterate through the objects
-        # for cmd, lst in file_bdl_commands.items():
-        #     for cmd_dict in lst:
-        #
-        #         obj.add_inputs(cmd_dict)
-        #         obj_instance_dict[cmd_dict["unique_name"]] = obj
-        # try:
-        #     obj.populate_data_elements()
-        # except AttributeError:
-        #     print(f"populate_data_elements method not yet written for {obj.__class__.__name__}")
-        # try:
-        #     obj.populate_data_group()
-        # except AttributeError:
-        #     print(f"populate_data_group method does not apply to {obj.__class__.__name__}")
-
-        # push the rmd object to the rpd list of rmds
-        # self.ruleset_model_descriptions.append(rmd.rmd_data_structure)
-        # print(rmd.rmd_data_structure)
 
     # fill/replace data with data from the simulation output
     # fill/replace data with data from the GUI inputs
-    # call each object's populate_data_group method
 
 
 def _create_obj_instance(command, command_dict, obj_instance_dict):
@@ -141,6 +78,18 @@ def _create_obj_instance(command, command_dict, obj_instance_dict):
     else:
         obj_instance = command_class(command_dict["unique_name"])
     return obj_instance
+
+
+def _process_data_group(data_group, file_bdl_commands, container, obj_instances, special_handling=None, skip_methods=False):
+    for cmd_dict in file_bdl_commands.get(data_group, []):
+        obj = _create_obj_instance(data_group, cmd_dict, obj_instances)
+        if special_handling and data_group in special_handling:
+            special_handling[data_group](obj, cmd_dict)
+        obj.add_inputs(cmd_dict)
+        obj_instances[cmd_dict["unique_name"]] = obj
+        if not skip_methods:
+            obj.populate_data_group()
+            obj.insert_to_rpd(container)
 
 
 generate_rpd(
