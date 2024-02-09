@@ -3,7 +3,7 @@ from tkinter import Menu
 from interface.disclaimer_window import DisclaimerWindow
 from interface.ctk_xyframe import CTkXYFrame
 from PIL import Image
-import rpd_generator.doe2_file_readers.file_finder as file_finder
+from interface.main_app_data import MainAppData
 
 
 ctk.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
@@ -15,6 +15,7 @@ ctk.set_default_color_theme(
 class MainApplicationWindow(ctk.CTk):
     def __init__(self):
         super().__init__()
+        self.app_data = MainAppData()
 
         self.title("eQUEST 229 RPD Generator")
         self.geometry(f"{1300}x{700}")
