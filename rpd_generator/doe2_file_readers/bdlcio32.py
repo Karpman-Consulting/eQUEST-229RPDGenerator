@@ -31,7 +31,7 @@ def process_input_file(bdlcio_dll, doe2_dir, work_dir, file_name, lib_file_name=
         ctypes.c_char_p,
         ctypes.c_long,
         ctypes.c_int,
-        ctypes.POINTER(ctypes.c_int)
+        ctypes.POINTER(ctypes.c_int),
     ]
     bdlcio32.BDLCIO32_ReadInput.restype = ctypes.c_long
 
@@ -48,7 +48,7 @@ def process_input_file(bdlcio_dll, doe2_dir, work_dir, file_name, lib_file_name=
             lib_file_name,
             no_scrn_msg,
             write_nhk_file,
-            callback_func_pointer
+            callback_func_pointer,
         )
     except OSError:
         print("Bypassing OSError from eQUEST installation DLL file")
