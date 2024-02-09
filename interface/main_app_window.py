@@ -16,7 +16,7 @@ class MainApplicationWindow(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.title("DOE2/eQUEST-Standard 229 RPD Generator")
+        self.title("eQUEST 229 RPD Generator")
         self.geometry(f"{1300}x{700}")
         self.minsize(1300, 350)
 
@@ -48,11 +48,9 @@ class MainApplicationWindow(ctk.CTk):
         self.scrollable_frame = None
         self.license_window = None
         self.disclaimer_window = None
+        self.continue_button = None
 
-        self.path_entry = None
-        self.installation_path = ctk.StringVar()
-
-        # Initialize the configuration window
+        # Initialize the configuration window to select and test the eQUEST installation path
         self.configuration_window()
 
         # Define scrollable frame
@@ -141,38 +139,65 @@ class MainApplicationWindow(ctk.CTk):
             justify="left",
             font=("Arial", 14, "bold"),
         )
-        directions_label.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        directions_label.grid(row=1, column=0, sticky="ew", padx=5, pady=20)
         instruction_text = (
-            "Use the buttons below to select and validate the path to your eQUEST 3-65-7175 installation. "
-            "The 'Auto' button will attempt to find the installation directory automatically. \n"
-            "Click the 'Test' button to validate the installation files required for this application. Upon a "
-            "successful test, you will be able to continue to the next page."
+            "Use the buttons below to select and validate the path to your eQUEST 3-65-7175 installation directory. \n"
+            "The 'Auto' button will attempt to find the directory automatically. If manually browsing, you will select "
+            "the folders that contain your eQUEST installation files and library data files. \n"
+            "Click the 'Test' button to validate the eQUEST files required for this application. Upon a successful "
+            "test, you will be able to continue to the next page."
         )
-        instructions = ctk.CTkLabel(
+        directions = ctk.CTkLabel(
             self, text=instruction_text, anchor="w", justify="left"
         )
-        instructions.grid(row=1, column=1, columnspan=8, sticky="ew", padx=5, pady=5)
+        directions.grid(row=1, column=1, columnspan=8, sticky="ew", padx=5, pady=20)
 
-        # Create the label for the path entry field
-        path_label = ctk.CTkLabel(
-            self, text="Path: ", anchor="e", justify="right", font=("Arial", 14, "bold")
+        # Create the labels for the path entry fields
+        install_path_label = ctk.CTkLabel(
+            self, text="Installation Path: ", anchor="e", justify="right", font=("Arial", 14, "bold")
         )
-        path_label.grid(row=2, column=0, sticky="nsew", padx=5, pady=(40, 5))
+        install_path_label.grid(row=2, column=0, sticky="nsew", padx=5, pady=5)
 
         # Create the path entry field
-        self.path_entry = ctk.CTkEntry(
-            self, width=50, corner_radius=5, textvariable=self.installation_path
+        install_path_entry = ctk.CTkEntry(
+            self, width=50, corner_radius=5, textvariable=self.app_data.installation_path
         )
-        self.path_entry.grid(
-            row=2, column=1, columnspan=7, sticky="ew", padx=5, pady=(40, 5)
+        install_path_entry.grid(
+            row=2, column=1, columnspan=7, sticky="ew", padx=5, pady=5
         )
+
+        # Create the button to manually browse for the eQUEST installation
+        install_browse_button = ctk.CTkButton(
+            self, text="Browse", width=100, corner_radius=12
+        )
+        install_browse_button.grid(row=2, column=8, padx=5, pady=5)
+
+        # Create the labels for the path entry fields
+        userlib_path_label = ctk.CTkLabel(
+            self, text="(Optional)      \nUser Library: ", anchor="e", justify="right", font=("Arial", 14, "bold")
+        )
+        userlib_path_label.grid(row=3, column=0, sticky="nsew", padx=5, pady=5)
+
+        # Create the path entry field
+        user_lib_path_entry = ctk.CTkEntry(
+            self, width=50, corner_radius=5, textvariable=self.app_data.user_lib_path
+        )
+        user_lib_path_entry.grid(
+            row=3, column=1, columnspan=7, sticky="ew", padx=5, pady=(20, 5)
+        )
+
+        # Create the button to manually browse for the eQUEST installation
+        user_lib_browse_button = ctk.CTkButton(
+            self, text="Browse", width=100, corner_radius=12
+        )
+        user_lib_browse_button.grid(row=3, column=8, padx=5, pady=(20, 5))
 
         # Create a frame to hold the file path Auto and Browse buttons
         path_button_frame = ctk.CTkFrame(self, fg_color=self.bg_color)
         path_button_frame.grid(
-            row=3, column=1, columnspan=7, sticky="ew", padx=5, pady=5
+            row=4, column=1, columnspan=7, sticky="ew", padx=5, pady=5
         )
-        path_button_frame.grid_columnconfigure((0, 1, 2, 3), weight=1)
+        path_button_frame.grid_columnconfigure((0, 1, 2), weight=1)
 
         # Create the button to run the automated attempt to find the eQUEST installation
         auto_button = ctk.CTkButton(
@@ -180,46 +205,44 @@ class MainApplicationWindow(ctk.CTk):
             text="Auto",
             width=100,
             corner_radius=12,
-            command=self.find_equest_installation,
+            command=self.app_data.find_equest_installation,
         )
         auto_button.grid(row=0, column=1, padx=5, pady=5)
-        # Create the button to manually browse for the eQUEST installation
-        browse_button = ctk.CTkButton(
-            path_button_frame, text="Browse", width=100, corner_radius=12
-        )
-        browse_button.grid(row=0, column=2, padx=5, pady=5)
 
         # Create a frame to hold the Test button
-        test_button_frame = ctk.CTkFrame(self, fg_color=self.bg_color)
-        test_button_frame.grid(
-            row=4, column=1, columnspan=7, sticky="ew", padx=5, pady=5
+        lower_button_frame = ctk.CTkFrame(self, fg_color=self.bg_color)
+        lower_button_frame.grid(
+            row=5, column=1, columnspan=7, sticky="ew", padx=5, pady=(20, 5)
         )
-        test_button_frame.grid_columnconfigure((0, 1, 2), weight=1)
+        lower_button_frame.grid_columnconfigure((0, 1, 2, 3), weight=1)
 
         # Create the button to test the eQUEST installation files
         test_button = ctk.CTkButton(
-            test_button_frame, text="Test", width=100, corner_radius=12
+            lower_button_frame,
+            text="Test",
+            width=100,
+            corner_radius=12,
+            command=self.verify_files
         )
-        test_button.grid(row=0, column=1, padx=5, pady=5)
-
-        # Create a frame to hold the Continue button
-        continue_button_frame = ctk.CTkFrame(self, fg_color=self.bg_color)
-        continue_button_frame.grid(
-            row=5, column=1, columnspan=7, sticky="ew", padx=5, pady=(60, 5)
-        )
-        continue_button_frame.grid_columnconfigure((0, 1, 2), weight=1)
+        test_button.grid(row=0, column=1, padx=(350, 5), pady=5)
 
         # Create the button to continue to the Project Info page
-        continue_button = ctk.CTkButton(
-            continue_button_frame,
+        self.continue_button = ctk.CTkButton(
+            lower_button_frame,
             text="Continue",
             width=100,
             corner_radius=12,
             state="disabled",
         )
-        continue_button.grid(row=0, column=1, padx=5, pady=5)
+        self.continue_button.grid(row=0, column=2, padx=(5, 350), pady=5)
 
-    def find_equest_installation(self):
-        path = file_finder.find_equest_files()
-        if path is not None:
-            self.installation_path.set(path)
+    def verify_files(self):
+        self.app_data.verify_equest_installation()
+        self.toggle_continue_button()
+
+    def toggle_continue_button(self):
+        if self.app_data.files_verified:
+            print(self.app_data.files_verified)
+            self.continue_button.configure(state="normal")
+        else:
+            self.continue_button.configure(state="disabled")
