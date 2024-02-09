@@ -70,7 +70,16 @@ pMRTs: Pointer to an array of MultResultsType structures:
 
 
 def get_multiple_results(d2_result_dll, doe2_dir, project_fname, entry_id):
-    multiple_result_dll = d2_result_dll["D2R_GetMultipleResult"]
+    """
+    Get Multiple Results from the simulation output files
+    :param d2_result_dll: (string) path to user's eQUEST D2Result.dll file included with installation files
+    :param doe2_dir: (binary string) path to DOE-2 data directory with NHRList.txt
+    :param project_fname: (binary string) path to project with project name NOT INCLUDING FILE EXTENSION
+    :param entry_id: (int) id from NHRList.txt corresponding to the value to retrieve
+    :return: list of returned values from the binary simulation output files
+    """
+    d2_result_dll = ctypes.CDLL(d2_result_dll)
+    multiple_result_dll = d2_result_dll.D2R_GetMultipleResult
 
     file_type = 1
     pf_data = (ctypes.c_float * 13)()
@@ -99,24 +108,3 @@ def get_multiple_results(d2_result_dll, doe2_dir, project_fname, entry_id):
     )
 
     return [data for data in pf_data]
-
-
-# Examples
-if __name__ == "__main__":
-    print(
-        get_single_results(
-            "C:\\Program Files (x86)\\eQUEST 3-65-7175\\D2Result.dll",
-            b"C:\\doe23\\EXE50e\\",
-            b"C:\\Users\\JacksonJarboe\\Documents\\Local Models\\CT Children's Hospital\\Final Model\\Proposed\\CT Childrens Hospital - Final - Baseline Design",
-            2001001,
-        )
-    )
-
-    print(
-        get_multiple_results(
-            "C:\\Program Files (x86)\\eQUEST 3-65-7175\\D2Result.dll",
-            b"C:\\doe23\\EXE50e\\",
-            b"C:\\Users\\JacksonJarboe\\Documents\\Local Models\\CT Children's Hospital\\Final Model\\Proposed\\CT Childrens Hospital - Final - Baseline Design",
-            2309007,
-        )
-    )
