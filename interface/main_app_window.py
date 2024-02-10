@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from tkinter import Menu
 from interface.disclaimer_window import DisclaimerWindow
+from interface.error_window import ErrorWindow
 from interface.ctk_xyframe import CTkXYFrame
 from PIL import Image
 from interface.main_app_data import MainAppData
@@ -50,6 +51,7 @@ class MainApplicationWindow(ctk.CTk):
         self.license_window = None
         self.disclaimer_window = None
         self.continue_button = None
+        self.error_window = None
 
         # Initialize the configuration window to select and test the eQUEST installation path
         self.configuration_window()
@@ -114,24 +116,6 @@ class MainApplicationWindow(ctk.CTk):
             # Keep a reference to the image to prevent garbage collection
             button.image = icon_image
 
-    def clear_window(self):
-        # Clear the window of all widgets after the first row which contains the button bar
-        for widget in self.winfo_children():
-            if int(widget.grid_info()["row"]) > 0:
-                widget.grid_forget()
-
-    def create_scrollable_frame(self):
-        self.scrollable_frame = CTkXYFrame(self, width=1175, height=700)
-
-        self.scrollable_frame.grid(row=1, column=0, columnspan=8, sticky="nsew")
-
-    def open_disclaimer(self):
-        if self.disclaimer_window is None or not self.disclaimer_window.winfo_exists():
-            self.disclaimer_window = DisclaimerWindow(self)
-            self.disclaimer_window.after(100, self.disclaimer_window.lift)
-        else:
-            self.disclaimer_window.focus()  # if window exists, focus it
-
     def configuration_window(self):
         directions_label = ctk.CTkLabel(
             self,
@@ -144,7 +128,7 @@ class MainApplicationWindow(ctk.CTk):
         instruction_text = (
             "Use the buttons below to select and validate the path to your eQUEST 3-65-7175 installation directory. \n"
             "The 'Auto' button will attempt to find the directory automatically. If manually browsing, you will select "
-            "the folders that contain your eQUEST installation files and library data files. \n"
+            "the folder that contains your eQUEST installation files, and optionally, your custom User Library file. \n"
             "Click the 'Test' button to validate the eQUEST files required for this application. Upon a successful "
             "test, you will be able to continue to the next page."
         )
@@ -234,16 +218,41 @@ class MainApplicationWindow(ctk.CTk):
             width=100,
             corner_radius=12,
             state="disabled",
+            command=self.clear_window
         )
         self.continue_button.grid(row=0, column=2, padx=(5, 350), pady=5)
 
+    def clear_window(self):
+        # Clear the window of all widgets after the first row which contains the button bar
+        for widget in self.winfo_children():
+            if "row" in widget.grid_info() and int(widget.grid_info()["row"]) > 0:
+                widget.grid_forget()
+
+    def create_scrollable_frame(self):
+        self.scrollable_frame = CTkXYFrame(self, width=1175, height=700)
+
+        self.scrollable_frame.grid(row=1, column=0, columnspan=8, sticky="nsew")
+
+    def open_disclaimer(self):
+        if self.disclaimer_window is None or not self.disclaimer_window.winfo_exists():
+            self.disclaimer_window = DisclaimerWindow(self)
+            self.disclaimer_window.after(100, self.disclaimer_window.lift)
+        else:
+            self.disclaimer_window.focus()  # if window exists, focus it
+
+    def raise_error_window(self, error_text):
+        self.error_window = ErrorWindow(self, error_text)
+        self.error_window.after(100, self.error_window.lift)
+
     def verify_files(self):
-        self.app_data.verify_equest_installation()
-        self.toggle_continue_button()
+        error = self.app_data.verify_equest_installation()
+        if error is None:
+            self.toggle_continue_button()
+        else:
+            self.raise_error_window(error)
 
     def toggle_continue_button(self):
         if self.app_data.files_verified:
-            print(self.app_data.files_verified)
             self.continue_button.configure(state="normal")
         else:
             self.continue_button.configure(state="disabled")
