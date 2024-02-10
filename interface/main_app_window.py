@@ -55,6 +55,8 @@ class MainApplicationWindow(ctk.CTk):
 
         # Initialize the configuration window to select and test the eQUEST installation path
         self.configuration_window()
+        # Attempt to automatically find the eQUEST installation path and set the data paths from the config files
+        self.app_data.find_equest_installation()
 
         # Define scrollable frame
         # self.create_scrollable_frame()
@@ -177,27 +179,10 @@ class MainApplicationWindow(ctk.CTk):
         )
         user_lib_browse_button.grid(row=3, column=8, padx=5, pady=(20, 5))
 
-        # Create a frame to hold the file path Auto and Browse buttons
-        path_button_frame = ctk.CTkFrame(self, fg_color=self.bg_color)
-        path_button_frame.grid(
-            row=4, column=1, columnspan=7, sticky="ew", padx=5, pady=5
-        )
-        path_button_frame.grid_columnconfigure((0, 1, 2), weight=1)
-
-        # Create the button to run the automated attempt to find the eQUEST installation
-        auto_button = ctk.CTkButton(
-            path_button_frame,
-            text="Auto",
-            width=100,
-            corner_radius=12,
-            command=self.app_data.find_equest_installation,
-        )
-        auto_button.grid(row=0, column=1, padx=5, pady=5)
-
         # Create a frame to hold the Test button
         lower_button_frame = ctk.CTkFrame(self, fg_color=self.bg_color)
         lower_button_frame.grid(
-            row=5, column=1, columnspan=7, sticky="ew", padx=5, pady=(20, 5)
+            row=4, column=1, columnspan=7, sticky="ew", padx=5, pady=(30, 5)
         )
         lower_button_frame.grid_columnconfigure((0, 1, 2, 3), weight=1)
 
