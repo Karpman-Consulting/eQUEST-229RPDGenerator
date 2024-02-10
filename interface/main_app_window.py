@@ -124,24 +124,27 @@ class MainApplicationWindow(ctk.CTk):
             text="Directions: ",
             anchor="e",
             justify="left",
-            font=("Arial", 14, "bold"),
+            font=("Arial", 16, "bold"),
         )
         directions_label.grid(row=1, column=0, sticky="ew", padx=5, pady=20)
         instruction_text = (
-            "Use the buttons below to select and validate the path to your eQUEST 3-65-7175 installation directory. \n"
-            "The 'Auto' button will attempt to find the directory automatically. If manually browsing, you will select "
-            "the folder that contains your eQUEST installation files, and optionally, your custom User Library file. \n"
-            "Click the 'Test' button to validate the eQUEST files required for this application. Upon a successful "
+            "1) Use the buttons below to select and validate the path to your eQUEST 3-65-7175 installation directory. \n"
+            "       a. If the path populated automatically, your installation path was located by the application. \n"
+            "       b. If the path did not populate automatically, you can manually enter the path or use the 'Browse' button "
+            "to find the folder that contains your eQUEST installation files\n"
+            "2) Optionally, provide the path to your custom User Library file. This is only needed if your model uses "
+            "references to custom library entries.\n"
+            "3) Click the 'Test' button to validate the eQUEST files required by this application. Upon a successful "
             "test, you will be able to continue to the next page."
         )
         directions = ctk.CTkLabel(
-            self, text=instruction_text, anchor="w", justify="left"
+            self, text=instruction_text, anchor="w", justify="left",  font=("Arial", 14)
         )
         directions.grid(row=1, column=1, columnspan=8, sticky="ew", padx=5, pady=20)
 
         # Create the labels for the path entry fields
         install_path_label = ctk.CTkLabel(
-            self, text="Installation Path: ", anchor="e", justify="right", font=("Arial", 14, "bold")
+            self, text="Installation Path: ", anchor="e", justify="right", font=("Arial", 16, "bold")
         )
         install_path_label.grid(row=2, column=0, sticky="nsew", padx=5, pady=5)
 
@@ -161,7 +164,7 @@ class MainApplicationWindow(ctk.CTk):
 
         # Create the labels for the path entry fields
         userlib_path_label = ctk.CTkLabel(
-            self, text="(Optional)      \nUser Library: ", anchor="e", justify="right", font=("Arial", 14, "bold")
+            self, text="(Optional)      \nUser Library: ", anchor="e", justify="right", font=("Arial", 16, "bold")
         )
         userlib_path_label.grid(row=3, column=0, sticky="nsew", padx=5, pady=5)
 
