@@ -54,7 +54,7 @@ class MainApplicationWindow(ctk.CTk):
         self.error_window = None
 
         # Initialize the configuration window to select and test the eQUEST installation path
-        self.configuration_window()
+        self.create_configuration_window()
         # Attempt to automatically find the eQUEST installation path and set the data paths from the config files
         self.app_data.find_equest_installation()
 
@@ -118,7 +118,7 @@ class MainApplicationWindow(ctk.CTk):
             # Keep a reference to the image to prevent garbage collection
             button.image = icon_image
 
-    def configuration_window(self):
+    def create_configuration_window(self):
         directions_label = ctk.CTkLabel(
             self,
             text="Directions: ",
@@ -206,9 +206,12 @@ class MainApplicationWindow(ctk.CTk):
             width=100,
             corner_radius=12,
             state="disabled",
-            command=self.clear_window
+            command=self.continue_past_configuration
         )
         self.continue_button.grid(row=0, column=2, padx=(5, 350), pady=5)
+
+    def create_project_info_page(self):
+        pass
 
     def clear_window(self):
         # Clear the window of all widgets after the first row which contains the button bar
@@ -244,3 +247,11 @@ class MainApplicationWindow(ctk.CTk):
             self.continue_button.configure(state="normal")
         else:
             self.continue_button.configure(state="disabled")
+
+    def toggle_project_info_button(self):
+        print(self.winfo_children())
+
+    def continue_past_configuration(self):
+        self.clear_window()
+        self.toggle_project_info_button()
+        self.create_project_info_page()
