@@ -57,16 +57,23 @@ class CirculationLoop(BaseNode):
         self.circulation_loop_type = self.determine_circ_loop_type()
         if self.circulation_loop_type in ["FluidLoop", "SecondaryFluidLoop"]:
             loop_type = self.keyword_value_pairs.get("TYPE")
-            loop_type_map = {"CHW": "COOLING",
-                             "HW": "HEATING",
-                             "CW": "CONDENSER",
-                             "PIPE2": "HEATING_AND_COOLING",
-                             "WLHP": "OTHER"}
+            loop_type_map = {
+                "CHW": "COOLING",
+                "HW": "HEATING",
+                "CW": "CONDENSER",
+                "PIPE2": "HEATING_AND_COOLING",
+                "WLHP": "OTHER",
+            }
             self.type = loop_type_map.get(loop_type, "OTHER")
+        elif self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":
+            pass
+        elif self.circulation_loop_type == "ServiceWaterPiping":
+            pass
 
     def populate_data_group(self):
         """Populate schema structure for circulation loop object. These data elements will be used in every instance of
-        circulation loop. Other data elements may or may not be present depending on the model"""
+        circulation loop. Other data elements may or may not be present depending on the model
+        """
         self.circulation_loop_type = self.determine_circ_loop_type()
 
         if self.circulation_loop_type == "ServiceWaterPiping":
@@ -129,9 +136,7 @@ class CirculationLoop(BaseNode):
                 if fluid_loop["id"] == primary_loop:
                     fluid_loop["child_loops"].append(self.data_structure)
         elif self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":
-            rmd.service_water_heating_distribution_systems.append(
-                self.data_structure
-            )
+            rmd.service_water_heating_distribution_systems.append(self.data_structure)
         elif self.circulation_loop_type == "ServiceWaterPiping":
             primary_loop = self.keyword_value_pairs.get("PRIMARY-LOOP")
             for fluid_loop in rmd.fluid_loops:
@@ -140,8 +145,8 @@ class CirculationLoop(BaseNode):
 
     def determine_circ_loop_type(self):
         if (
-                self.keyword_value_pairs["TYPE"] == "DHW"
-                and self.keyword_value_pairs["SUBTYPE"] == "SECONDARY"
+            self.keyword_value_pairs["TYPE"] == "DHW"
+            and self.keyword_value_pairs["SUBTYPE"] == "SECONDARY"
         ):
             return "ServiceWaterPiping"
         elif self.keyword_value_pairs["TYPE"] == "DHW":
