@@ -54,7 +54,15 @@ class CirculationLoop(BaseNode):
 
     def populate_data_elements(self):
         """Populate data elements from the keyword_value pairs returned from model_input_reader"""
-        self.determine_circ_loop_type()
+        self.circulation_loop_type = self.determine_circ_loop_type()
+        if self.circulation_loop_type in ["FluidLoop", "SecondaryFluidLoop"]:
+            loop_type = self.keyword_value_pairs.get("TYPE")
+            loop_type_map = {"CHW": "COOLING",
+                             "HW": "HEATING",
+                             "CW": "CONDENSER",
+                             "PIPE2": "HEATING_AND_COOLING",
+                             "WLHP": "OTHER"}
+            self.type = loop_type_map.get(loop_type, "OTHER")
 
     def populate_data_group(self):
         """Populate schema structure for circulation loop object. These data elements will be used in every instance of
