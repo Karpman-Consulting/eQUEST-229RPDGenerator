@@ -10,14 +10,20 @@ class System(ParentNode):
         super().__init__(u_name)
 
         self.system_data_structure = {}
+        self.fan_system_data_structure = {}
 
-        # data elements with children
-        self.fan_system = {}
+        # system data elements with children
+        self.fan_system = {
+            "supply_fans": [],
+            "return_fans": [],
+            "exhaust_fans": [],
+            "relief_fans": [],
+            "air_economizer": {},
+            "air_energy_recovery": {},
+        }
         self.heating_system = {}
         self.cooling_system = {}
         self.preheat_system = {}
-        self.air_economizer = {}
-        self.air_energy_recovery = {}
 
         # data elements with no children
         self.status_type = None
@@ -144,21 +150,21 @@ class System(ParentNode):
                 self.keyword_value_pairs.get("PREHEAT-SOURCE")
             ]
         if self.keyword_value_pairs.get("OA-CONTROL") is not None:
-            self.air_economizer["type"] = economizer_map[
+            self.fan_system["air_economizer"]["type"] = economizer_map[
                 self.keyword_value_pairs.get("OA-CONTROL")
             ]
         if self.keyword_value_pairs.get("RECOVER-EXHAUST") is not None:
-            self.air_energy_recovery["type"] = air_energy_recovery_map[
+            self.fan_system["air_energy_recovery"]["type"] = air_energy_recovery_map[
                 self.keyword_value_pairs.get("RECOVER-EXHAUST")
             ]
         if self.keyword_value_pairs.get("ERV-RUN-CTRL") is not None:
-            self.air_energy_recovery["energy_recovery_operation"] = er_operation_map[
-                self.keyword_value_pairs.get("ERV-RUN-CTRL")
-            ]
+            self.fan_system["air_energy_recovery"]["energy_recovery_operation"] = (
+                er_operation_map[self.keyword_value_pairs.get("ERV-RUN-CTRL")]
+            )
         if self.keyword_value_pairs.get("ERV-TEMP-CTRL") is not None:
-            self.air_energy_recovery["energy_recovery_supply_air_temperature_control"] = er_sat_control_map[
-                self.keyword_value_pairs.get("ERV-TEMP-CTRL")
-            ]
+            self.fan_system["air_energy_recovery"][
+                "energy_recovery_supply_air_temperature_control"
+            ] = er_sat_control_map[self.keyword_value_pairs.get("ERV-TEMP-CTRL")]
         if self.keyword_value_pairs.get("MIN-OA-METHOD") is not None:
             self.fan_system["demand_control_ventilation_control"] = dcv_map[
                 self.keyword_value_pairs.get("MIN-OA-METHOD")
@@ -173,8 +179,6 @@ class System(ParentNode):
             "heating_system": self.heating_system,
             "cooling_system": self.cooling_system,
             "preheat_system": self.preheat_system,
-            "air_economizer": self.air_economizer,
-            "air_energy_recovery": self.air_energy_recovery,
         }
 
         self.populate_data_elements()
