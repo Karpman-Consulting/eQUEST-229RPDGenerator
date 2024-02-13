@@ -14,6 +14,7 @@ class InteriorWall(
         super().__init__(u_name, parent)
 
         self.interior_wall_data_structure = {}
+        self.omit = False
 
         # data elements with children
         self.subsurfaces = []
@@ -39,6 +40,12 @@ class InteriorWall(
             "YES": True,
             "NO": False,
         }
+        int_wall_type_map = {
+            "STANDARD": "INTERIOR",
+            "AIR": "OMIT",  # Ignore air walls and omit the associated RCT Surface if INT-WALL-TYPE = AIR
+            "ADIABATIC": "IDENTICAL",
+            "INTERNAL": "OMIT",  # Ignore internal walls and omit the associated RCT Surface if INT-WALL-TYPE = INTERNAL
+        }
 
         self.area = self.keyword_value_pairs.get("AREA")
         if (
@@ -59,6 +66,14 @@ class InteriorWall(
         self.azimuth = self.keyword_value_pairs.get("AZIMUTH")
         if self.azimuth is not None:
             self.azimuth = float(self.azimuth)
+
+        int_wall_type = int_wall_type_map.get(self.keyword_value_pairs.get("INT-WALL-TYPE"))
+        if int_wall_type == "OMIT":
+            self.omit = True
+        else:
+            self.adjacent_to = int_wall_type
+            if int_wall_type == "INTERIOR":
+                self.adjacent_zone = self.keyword_value_pairs.get("NEXT-TO")
 
         self.does_cast_shade = is_shading_map.get(self.keyword_value_pairs.get("SHADING-SURFACE"))
 
@@ -92,6 +107,8 @@ class InteriorWall(
                 self.interior_wall_data_structure[attr] = value
 
     def insert_to_rpd(self, rmd):
-        """Insert exterior wall object into the rpd data structure."""
+        """Insert interior wall object into the rpd data structure."""
+        if self.omit:
+            return
         zone = rmd.space_map.get(self.parent.u_name)
         zone.surfaces.append(self.interior_wall_data_structure)

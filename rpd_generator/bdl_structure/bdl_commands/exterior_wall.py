@@ -58,6 +58,7 @@ class ExteriorWall(ChildNode, ParentNode):
         if self.azimuth is not None:
             self.azimuth = float(self.azimuth)
 
+        self.adjacent_to = "EXTERIOR"
         self.does_cast_shade = is_shading_map.get(self.keyword_value_pairs.get("SHADING-SURFACE"))
 
     def populate_data_group(self):
