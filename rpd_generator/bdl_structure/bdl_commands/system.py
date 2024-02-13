@@ -44,10 +44,16 @@ class System(ParentNode):
         supply_fan_map = {
             "CONSTANT-VOLUME": "CONSTANT",
             "SPEED": "VARIABLE_SPEED_DRIVE",
-            "CYCLING": "MULTISPEED",
+            #  "": "MULTISPEED",  no eQUEST options map to MULTISPEED in DOE2.3
             "INLET": "INLET_VANE",
             "DISCHARGE": "DISCHARGE_DAMPER",
             "FAN-EIR-FPLR": "VARIABLE_SPEED_DRIVE",
+        }
+        unocc_fan_operation_map = {
+            "CYCLE-ON-ANY": "CYCLING",
+            "CYCLE-ON-FIRST": "CYCLING",
+            "STAY-OFF": "KEEP_OFF",
+            "ZONE-FANS-ONLY": "OTHER",
         }
         system_cooling_type_map = {
             "PSZ": "DIRECT_EXPANSION",
@@ -125,6 +131,10 @@ class System(ParentNode):
         if self.keyword_value_pairs.get("FAN-CONTROL") is not None:
             self.fan_system["fan_control"] = supply_fan_map[
                 self.keyword_value_pairs.get("FAN-CONTROL")
+            ]
+        if self.keyword_value_pairs.get("NIGHT-CYCLE-CTRL") is not None:
+            self.fan_system["operation_during_unoccupied"] = unocc_fan_operation_map[
+                self.keyword_value_pairs.get("NIGHT-CYCLE-CTRL")
             ]
         self.cooling_system["type"] = system_cooling_type_map[
             self.keyword_value_pairs.get("TYPE")
