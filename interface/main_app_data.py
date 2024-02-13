@@ -22,7 +22,9 @@ class MainAppData:
         """
         start_path = os.environ.get("ProgramFiles(x86)", "C:/")
         target_dir = "eQUEST 3-65-7175".lower()  # Convert target directory to lowercase
-        target_files = [file.lower() for file in ["D2RESULT.DLL", "BDLCIO32.DLL"]]  # Convert target files to lowercase
+        target_files = [
+            file.lower() for file in ["D2RESULT.DLL", "BDLCIO32.DLL"]
+        ]  # Convert target files to lowercase
         for dirpath, dirnames, filenames in os.walk(start_path):
             # Convert the filenames in current directory to lowercase for case-insensitive comparison
             filenames_lower = [file.lower() for file in filenames]
@@ -40,14 +42,16 @@ class MainAppData:
             return error_message
 
         # List of files to check
-        files_to_check = [os.path.join(install_path, "BDLCIO32.DLL"),
-                          os.path.join(install_path, "D2Result.dll"),
-                          os.path.join(self.doe22_data_path, "DOE-2\\eQ_Lib.dat"),
-                          os.path.join(self.doe23_data_path, "DOE23\\eQ_Lib.dat"),
-                          os.path.join(self.doe22_data_path, "DOE-2\\BDLLIB.DAT"),
-                          os.path.join(self.doe23_data_path, "DOE23\\BDLLIB.DAT"),
-                          os.path.join(self.doe22_data_path, "DOE-2\\Usrlib.dat"),
-                          os.path.join(self.doe23_data_path, "DOE23\\Usrlib.dat")]
+        files_to_check = [
+            os.path.join(install_path, "BDLCIO32.DLL"),
+            os.path.join(install_path, "D2Result.dll"),
+            os.path.join(self.doe22_data_path, "DOE-2\\eQ_Lib.dat"),
+            os.path.join(self.doe23_data_path, "DOE23\\eQ_Lib.dat"),
+            os.path.join(self.doe22_data_path, "DOE-2\\BDLLIB.DAT"),
+            os.path.join(self.doe23_data_path, "DOE23\\BDLLIB.DAT"),
+            os.path.join(self.doe22_data_path, "DOE-2\\Usrlib.dat"),
+            os.path.join(self.doe23_data_path, "DOE23\\Usrlib.dat"),
+        ]
 
         # Check each file and raise an error if it doesn't exist
         for file_path in files_to_check:
@@ -69,7 +73,7 @@ class MainAppData:
             return f"{doe22_ini_path} or {doe23_ini_path} not found. Please verify the installation path."
         config = configparser.ConfigParser()
         config.read(doe22_ini_path)
-        self.doe22_data_path = config.get('paths', 'DataPath').strip('"')
+        self.doe22_data_path = config.get("paths", "DataPath").strip('"')
         config.read(doe23_ini_path)
-        self.doe23_data_path = config.get('paths', 'DataPath').strip('"')
+        self.doe23_data_path = config.get("paths", "DataPath").strip('"')
         return None

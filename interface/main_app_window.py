@@ -138,19 +138,26 @@ class MainApplicationWindow(ctk.CTk):
             "test, you will be able to continue to the next page."
         )
         directions = ctk.CTkLabel(
-            self, text=instruction_text, anchor="w", justify="left",  font=("Arial", 14)
+            self, text=instruction_text, anchor="w", justify="left", font=("Arial", 14)
         )
         directions.grid(row=1, column=1, columnspan=8, sticky="ew", padx=5, pady=20)
 
         # Create the labels for the path entry fields
         install_path_label = ctk.CTkLabel(
-            self, text="Installation Path: ", anchor="e", justify="right", font=("Arial", 16, "bold")
+            self,
+            text="Installation Path: ",
+            anchor="e",
+            justify="right",
+            font=("Arial", 16, "bold"),
         )
         install_path_label.grid(row=2, column=0, sticky="nsew", padx=5, pady=5)
 
         # Create the path entry field
         install_path_entry = ctk.CTkEntry(
-            self, width=50, corner_radius=5, textvariable=self.app_data.installation_path
+            self,
+            width=50,
+            corner_radius=5,
+            textvariable=self.app_data.installation_path,
         )
         install_path_entry.grid(
             row=2, column=1, columnspan=7, sticky="ew", padx=5, pady=5
@@ -164,7 +171,11 @@ class MainApplicationWindow(ctk.CTk):
 
         # Create the labels for the path entry fields
         userlib_path_label = ctk.CTkLabel(
-            self, text="(Optional)      \nUser Library: ", anchor="e", justify="right", font=("Arial", 16, "bold")
+            self,
+            text="(Optional)      \nUser Library: ",
+            anchor="e",
+            justify="right",
+            font=("Arial", 16, "bold"),
         )
         userlib_path_label.grid(row=3, column=0, sticky="nsew", padx=5, pady=5)
 
@@ -195,7 +206,7 @@ class MainApplicationWindow(ctk.CTk):
             text="Test",
             width=100,
             corner_radius=12,
-            command=self.verify_files
+            command=self.verify_files,
         )
         test_button.grid(row=0, column=1, padx=(350, 5), pady=5)
 
@@ -206,7 +217,7 @@ class MainApplicationWindow(ctk.CTk):
             width=100,
             corner_radius=12,
             state="disabled",
-            command=self.continue_past_configuration
+            command=self.continue_past_configuration,
         )
         self.continue_button.grid(row=0, column=2, padx=(5, 350), pady=5)
 
