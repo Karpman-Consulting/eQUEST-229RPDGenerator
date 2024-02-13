@@ -17,7 +17,7 @@ jobs:
         # Note: This will also fail if there are syntax errors
       - uses: psf/black@stable
         with:
-          version: "22.6.0"
+          version: "24.1.1"
 #  run-unit-tests:
 #    name: Run unit tests
 #    runs-on: 'ubuntu-latest'
