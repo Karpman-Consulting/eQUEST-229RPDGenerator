@@ -1,1 +1,10 @@
-"""This is the driver file for the project. It will be used to handle the main loop of the program"""
+from interface.main_app_window import MainApplicationWindow
+
+
+def main():
+    app = MainApplicationWindow()
+    app.mainloop()
+
+
+if __name__ == "__main__":
+    main()
