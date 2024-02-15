@@ -6,8 +6,8 @@ class Schedule(BaseNode):
 
     bdl_command = "SCHEDULE-PD"
 
-    def __init__(self, u_name):
-        super().__init__(u_name)
+    def __init__(self, u_name, rmd):
+        super().__init__(u_name, rmd)
 
         self.schedule_data_structure = {}
 

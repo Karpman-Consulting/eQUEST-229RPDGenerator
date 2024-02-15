@@ -6,8 +6,8 @@ class System(ParentNode):
 
     bdl_command = "SYSTEM"
 
-    def __init__(self, u_name):
-        super().__init__(u_name)
+    def __init__(self, u_name, rmd):
+        super().__init__(u_name, rmd)
 
         self.system_data_structure = {}
 

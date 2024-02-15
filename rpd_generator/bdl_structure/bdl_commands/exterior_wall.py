@@ -8,8 +8,8 @@ class ExteriorWall(ChildNode, ParentNode):
     bdl_command = "EXTERIOR-WALL"
     used_constructions = []
 
-    def __init__(self, u_name, parent):
-        super().__init__(u_name, parent)
+    def __init__(self, u_name, parent, rmd):
+        super().__init__(u_name, parent, rmd)
 
         self.exterior_wall_data_structure = {}
 

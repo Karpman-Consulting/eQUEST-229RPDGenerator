@@ -6,8 +6,8 @@ class Construction(BaseNode):
 
     bdl_command = "CONSTRUCTION"
 
-    def __init__(self, u_name):
-        super().__init__(u_name)
+    def __init__(self, u_name, rmd):
+        super().__init__(u_name, rmd)
 
         self.construction_data_structure = {}
 
