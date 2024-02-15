@@ -25,24 +25,6 @@ def get_single_results(d2_result_dll, doe2_dir, project_fname, entry_id):
         ctypes.c_char_p,  # pszReportKey
         ctypes.c_char_p,  # pszRowKey
     ]
-    single_result_dll.restype = ctypes.c_long
-
-    pfData_array = (ctypes.c_float * 1)()  # Initialize the array
-    IMAX_VALUES = 1
-    pszReportKey = None
-    pszRowKey = None
-
-    # Call the function
-    single_result_dll(
-        doe2_dir,
-        project_fname,
-        entry_id,
-        pfData_array,
-        IMAX_VALUES,
-        pszReportKey,
-        pszRowKey,
-    )
-    return pfData_array[0]
 
 
 """
