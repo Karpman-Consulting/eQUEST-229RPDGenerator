@@ -5,6 +5,40 @@ from rpd_generator.building import Building
 import doe2_file_readers
 from rpd_generator.bdl_structure import *
 import json
+import os
+
+"""Once development is complete, this can be replaced with a list of all bdl_command attribute values from classes that 
+inherit from BaseNode or BaseDefinition. Each class will also need a priority attribute in this case.
+For now, this is a list of BDL commands that are ready to be processed, in the order they should be processed."""
+COMMAND_PROCESSING_ORDER = [
+    "MATERIAL",
+    "CONSTRUCTION",
+    "SCHEDULE-PD",
+    "BOILER",
+    "CHILLER",
+    "DW-HEATER",
+    "HEAT-REJECTION",
+    "PUMP",
+    "CIRCULATION-LOOP",
+    "FLOOR",
+    "SYSTEM",
+    "ZONE",
+    "SPACE",
+    "EXTERIOR-WALL",
+    "INTERIOR-WALL",
+    "UNDERGROUND-WALL",
+    "WINDOW",
+    "DOOR",
+]
+
+
+def generate_rpd_json(selected_models):
+    """
+    Generate the RPD data structure (RulesetProjectDescription, RulesetModelDescription, Building, BuildingSegment,
+    and all data groups available from doe2_file_readers)
+    """
+    rpd, json_file_path = generate_rpd(selected_models)
+    write_rpd_json(rpd, json_file_path)
 
 
 def generate_rpd(selected_models):
@@ -13,86 +47,74 @@ def generate_rpd(selected_models):
     and all data groups available from doe2_file_readers)
     """
     rpd = RulesetProjectDescription()
-    for model in selected_models:
-        rmd = RulesetModelDescription("Test RMD")
-        building = Building("Test Building")
-        building_segment = BuildingSegment("Test Building Segment")
-        bdl_input_reader = doe2_file_readers.model_input_reader.ModelInputReader()
+    # Set the output directory to the directory of the first selected model
+    output_dir = os.path.dirname(selected_models[0])
+
+    # Get the base file name from the first selected model and replace its extension with .json
+    base_file_name = os.path.basename(selected_models[0])
+    json_file_name = os.path.splitext(base_file_name)[0] + ".json"
+
+    # Construct the full path to the new JSON file in the same directory as model_path
+    json_file_path = os.path.join(output_dir, json_file_name)
+
+    # Iterate through each selected model, creating a RulesetModelDescription for each
+    for model_path in selected_models:
+        rmd = RulesetModelDescription(os.path.splitext(os.path.basename(model_path))[0])
+
+        # Set up default building and building segment to display in GUI
+        default_building = Building("Default Building")
+        default_building_segment = BuildingSegment("Default Building Segment", default_building)
+        rmd.bdl_obj_instances["Default Building"] = default_building
+        rmd.bdl_obj_instances["Default Building Segment"] = default_building_segment
 
         # get all BDL commands from the BDL input file
-        file_bdl_commands = bdl_input_reader.read_input_bdl_file(model)
+        bdl_input_reader = doe2_file_readers.model_input_reader.ModelInputReader()
+        file_bdl_commands = bdl_input_reader.read_input_bdl_file(model_path)
 
-        # Define data groups and their processing containers
-        data_group_mappings = [
-            (
-                [
-                    "MATERIAL",
-                    "CONSTRUCTION",
-                    "SCHEDULE-PD",
-                    "FLOOR",
-                    "BOILER",
-                    "CHILLER",
-                    "DW-HEATER",
-                    "HEAT-REJECTION",
-                    "PUMP",
-                    "CIRCULATION-LOOP",
-                ],
-                rmd,
-            ),
-            (["SYSTEM", "ZONE"], building_segment),
-            (
-                [
-                    "SPACE",
-                    "EXTERIOR-WALL",
-                    "INTERIOR-WALL",
-                    "UNDERGROUND-WALL",
-                    "WINDOW",
-                    "DOOR",
-                ],
-                rmd,
-            ),
-        ]
-
-        # Process each data group according to its container
-        for data_groups, container in data_group_mappings:
-            for data_group in data_groups:
-                special_handling = {}
-                skip_methods = False
-
-                if data_group == "ZONE":
-                    special_handling["ZONE"] = (
-                        lambda obj, cmd_dict: rmd.space_map.setdefault(
-                            cmd_dict["SPACE"], obj
-                        )
+        # Process each data group in the order specified in COMMAND_PROCESSING_ORDER
+        for command in COMMAND_PROCESSING_ORDER:
+            special_handling = {}
+            if command == "ZONE":
+                special_handling["ZONE"] = (
+                    lambda obj, cmd_dict: rmd.space_map.setdefault(
+                        cmd_dict["SPACE"], obj
                     )
-
-                elif data_group == "FLOOR":
-                    skip_methods = True
-
-                _process_data_group(
-                    data_group,
-                    file_bdl_commands,
-                    container,
-                    rmd.bdl_obj_instances,
-                    special_handling,
-                    skip_methods,
                 )
+            # Process the command group by creating object instances and populating the rmd object instance dictionary
+            _process_command_group(
+                command,
+                file_bdl_commands,
+                rmd,
+                special_handling,
+            )
+        # fill/replace data with data from the simulation output
+        # fill/replace data with data from the GUI inputs
+
+        # Once all objects have been created, populate the data groups, data elements, and insert the into the rpd
+        for obj_instance in rmd.bdl_obj_instances.values():
+            obj_instance.populate_data_elements()
+            if isinstance(obj_instance, BaseNode):
+                obj_instance.populate_data_group()
+                obj_instance.insert_to_rpd(rmd)
 
         # Final integration steps
-        building_segment.populate_data_group()
-        building_segment.insert_to_rpd(building)
-        building.populate_data_group()
-        building.insert_to_rpd(rmd)
+        default_building_segment.populate_data_group()
+        default_building_segment.insert_to_rpd()
+        default_building.populate_data_group()
+        default_building.insert_to_rpd(rmd)
         rmd.populate_data_group()
-
-        # Output the RMD data structure
-        print(json.dumps(rmd.rmd_data_structure, indent=4))
-
-    # fill/replace data with data from the simulation output
-    # fill/replace data with data from the GUI inputs
+        rmd.insert_to_rpd(rpd)
+    rpd.populate_data_group()
+    return rpd, json_file_path
 
 
-def _create_obj_instance(command, command_dict, obj_instance_dict):
+def write_rpd_json(rpd, json_file_path):
+    # Save the JSON data to the file
+    with open(json_file_path, 'w') as json_file:
+        json.dump(rpd.rpd_data_structure, json_file, indent=4)
+
+
+def _create_obj_instance(command, command_dict, rmd):
     """
     Create an object instance based on the command type. This is needed to determine the arguments to pass to the
     __init__ methods of each class. Any object with a parent needs to know which parent it belongs to in the model.
@@ -112,35 +134,44 @@ def _create_obj_instance(command, command_dict, obj_instance_dict):
         "WINDOW",
         "DOOR",
     ]
-    if is_child:
+    inherits_base_node = issubclass(command_class, BaseNode)
+
+    if inherits_base_node and is_child:
         obj_instance = command_class(
-            command_dict["unique_name"], obj_instance_dict[command_dict["parent"]]
+            command_dict["unique_name"], rmd.bdl_obj_instances[command_dict["parent"]], rmd
+        )
+    elif inherits_base_node:
+        obj_instance = command_class(
+            command_dict["unique_name"], rmd
         )
     else:
         obj_instance = command_class(command_dict["unique_name"])
     return obj_instance
 
 
-def _process_data_group(
+def _process_command_group(
     data_group,
     file_bdl_commands,
-    container,
-    obj_instances,
+    rmd,
     special_handling=None,
-    skip_methods=False,
 ):
+    """
+    Process the data group and create object instances for each command in the data group.
+    :param data_group:
+    :param file_bdl_commands:
+    :param rmd:
+    :param special_handling:
+    :return:
+    """
     for cmd_dict in file_bdl_commands.get(data_group, []):
-        obj = _create_obj_instance(data_group, cmd_dict, obj_instances)
+        obj = _create_obj_instance(data_group, cmd_dict, rmd)
         if special_handling and data_group in special_handling:
             special_handling[data_group](obj, cmd_dict)
         obj.add_inputs(cmd_dict)
-        obj_instances[cmd_dict["unique_name"]] = obj
-        if not skip_methods:
-            obj.populate_data_group()
-            obj.insert_to_rpd(container)
+        rmd.bdl_obj_instances[cmd_dict["unique_name"]] = obj
 
 
-generate_rpd(
+generate_rpd_json(
     [
         r"C:\Users\JacksonJarboe\Documents\Development\DOE2-229RPDGenerator\test\example\INP.BDL"
     ]

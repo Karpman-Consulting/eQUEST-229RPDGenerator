@@ -8,6 +8,8 @@ class Zone(ChildNode):
 
     def __init__(self, u_name, parent, rmd):
         super().__init__(u_name, parent, rmd)
+        # On initialization the parent building segment is not known. It will be set in the GUI.
+        self.parent_building_segment = rmd.bdl_obj_instances.get("Default Building Segment", None)
 
         self.zone_data_structure = {}
 
@@ -83,6 +85,15 @@ class Zone(ChildNode):
             if value is not None:
                 self.zone_data_structure[attr] = value
 
-    def insert_to_rpd(self, building_segment):
+    def populate_data_elements(self):
+        pass
+
+    def get_output_data(self):
+        pass
+
+    def get_output_requests(self):
+        pass
+
+    def insert_to_rpd(self, rmd):
         """Insert zone object into the rpd data structure."""
-        building_segment.zones.append(self.zone_data_structure)
+        self.parent_building_segment.zones.append(self.zone_data_structure)

@@ -5,10 +5,9 @@ OUTPUT_SCHEMA_ASHRAE901_2019 = "OUTPUT_SCHEMA_ASHRAE901_2019"
 
 class RulesetProjectDescription:
     """
-    This class is used to store project-level data and generate the project description for a project. Object will be
-    instantiated upon opening the GUI
+    This class is used to store project-level data, including the main rpd_data_structure that is output to json.
     """
-
+    # BDL Command Dictionary maps BDL commands to their corresponding class in the bdl_commands package
     bdl_command_dict = (
         doe2_file_readers.model_input_reader.ModelInputReader.bdl_command_dict
     )

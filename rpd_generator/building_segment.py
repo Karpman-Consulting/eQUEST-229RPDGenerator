@@ -3,8 +3,9 @@ class BuildingSegment:
     This class is used to describe a building segment
     """
 
-    def __init__(self, obj_id):
+    def __init__(self, obj_id, parent_building):
         self.obj_id = obj_id
+        self.parent_building = parent_building
 
         self.building_segment_data_structure = {}
 
@@ -21,6 +22,9 @@ class BuildingSegment:
         self.area_type_vertical_fenestration = None
         self.lighting_building_area_type = None
         self.area_type_heating_ventilating_air_conditioning_system = None
+
+    def populate_data_elements(self):
+        pass
 
     def populate_data_group(self):
         """Populate the building segment data structure."""
@@ -45,6 +49,6 @@ class BuildingSegment:
             if value is not None:
                 self.building_segment_data_structure[attr] = value
 
-    def insert_to_rpd(self, building):
+    def insert_to_rpd(self):
         """Insert building segment object into the rpd data structure."""
-        building.building_segments.append(self.building_segment_data_structure)
+        self.parent_building.building_segments.append(self.building_segment_data_structure)
