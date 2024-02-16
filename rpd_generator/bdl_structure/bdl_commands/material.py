@@ -6,8 +6,8 @@ class Material(BaseNode):
 
     bdl_command = "MATERIAL"
 
-    def __init__(self, u_name):
-        super().__init__(u_name)
+    def __init__(self, u_name, rmd):
+        super().__init__(u_name, rmd)
 
         self.material_data_structure = {}
 

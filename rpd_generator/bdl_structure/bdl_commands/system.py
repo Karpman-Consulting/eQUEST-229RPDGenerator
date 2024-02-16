@@ -410,7 +410,6 @@ class System(ParentNode):
             self.system_data_structure["cooling_system"] = self.cooling_system
             self.populate_preheat_system()
             self.system_data_structure["preheat_system"] = self.preheat_system
-        self.populate_data_elements()
 
     def insert_to_rpd(self, building_segment):
         """Insert system data structure into the rpd data structure."""

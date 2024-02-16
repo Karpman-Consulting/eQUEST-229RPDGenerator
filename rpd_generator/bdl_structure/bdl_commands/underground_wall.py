@@ -7,8 +7,8 @@ class BelowGradeWall(ChildNode):
     bdl_command = "UNDERGROUND-WALL"
     used_constructions = []
 
-    def __init__(self, u_name, parent):
-        super().__init__(u_name, parent)
+    def __init__(self, u_name, parent, rmd):
+        super().__init__(u_name, parent, rmd)
 
         self.underground_wall_data_structure = {}
 
@@ -29,6 +29,39 @@ class BelowGradeWall(ChildNode):
     def __repr__(self):
         return f"BelowGradeWall(u_name='{self.u_name}')"
 
+    def populate_data_elements(self):
+        """Populate data elements for below grade wall object."""
+        is_shading_map = {
+            "YES": True,
+            "NO": False,
+        }
+
+        self.area = self.keyword_value_pairs.get("AREA")
+        if (
+            self.area is None
+            and self.keyword_value_pairs.get("HEIGHT") is not None
+            and self.keyword_value_pairs.get("WIDTH") is not None
+        ):
+            self.area = float(self.keyword_value_pairs.get("HEIGHT", 0)) * float(
+                self.keyword_value_pairs.get("WIDTH", 0)
+            )
+        if self.area is not None:
+            self.area = float(self.area)
+
+        self.tilt = self.keyword_value_pairs.get("TILT")
+        if self.tilt is not None:
+            self.tilt = float(self.tilt)
+
+        self.azimuth = self.keyword_value_pairs.get("AZIMUTH")
+        if self.azimuth is not None:
+            self.azimuth = float(self.azimuth)
+
+        self.adjacent_to = "GROUND"
+
+        self.does_cast_shade = is_shading_map.get(
+            self.keyword_value_pairs.get("SHADING-SURFACE")
+        )
+
     def populate_data_group(self):
         """Populate schema structure for below grade wall object."""
         self.underground_wall_data_structure = {
@@ -36,6 +69,7 @@ class BelowGradeWall(ChildNode):
             "construction": self.construction,
             "surface_optical_properties": self.surface_optical_properties,
         }
+        self.populate_data_elements()
 
         no_children_attributes = [
             "reporting_name",

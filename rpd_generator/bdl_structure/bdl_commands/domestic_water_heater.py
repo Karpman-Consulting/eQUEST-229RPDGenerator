@@ -6,8 +6,8 @@ class DomesticWaterHeater(BaseNode):
 
     bdl_command = "DW-HEATER"
 
-    def __init__(self, u_name):
-        super().__init__(u_name)
+    def __init__(self, u_name, rmd):
+        super().__init__(u_name, rmd)
 
         self.swh_equipment_data_structure = {}
 

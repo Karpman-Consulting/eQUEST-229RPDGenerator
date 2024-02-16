@@ -6,8 +6,8 @@ class Door(ChildNode):
 
     bdl_command = "DOOR"
 
-    def __init__(self, u_name, parent):
-        super().__init__(u_name, parent)
+    def __init__(self, u_name, parent, rmd):
+        super().__init__(u_name, parent, rmd)
 
         self.door_data_structure = {}
 

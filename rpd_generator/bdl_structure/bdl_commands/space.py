@@ -7,9 +7,9 @@ class Space(ChildNode, ParentNode):
 
     bdl_command = "SPACE"
 
-    def __init__(self, u_name, parent):
-        super().__init__(u_name, parent)
-        ParentNode.__init__(self, u_name)
+    def __init__(self, u_name, parent, rmd):
+        super().__init__(u_name, parent, rmd)
+        ParentNode.__init__(self, u_name, rmd)
 
         self.space_data_structure = {}
 
@@ -34,6 +34,30 @@ class Space(ChildNode, ParentNode):
     def __repr__(self):
         return f"Space(u_name='{self.u_name}', parent={self.parent})"
 
+    def populate_data_elements(self):
+        """Populate data elements for space object."""
+        self.floor_area = self.keyword_value_pairs.get("AREA")
+        if self.floor_area is not None:
+            self.floor_area = float(self.floor_area)
+
+        self.number_of_occupants = self.keyword_value_pairs.get("NUMBER-OF-PEOPLE")
+        if self.number_of_occupants is not None:
+            self.number_of_occupants = float(self.number_of_occupants)
+
+        self.occupant_multiplier_schedule = self.keyword_value_pairs.get(
+            "PEOPLE-SCHEDULE"
+        )
+
+        self.occupant_sensible_heat_gain = self.keyword_value_pairs.get(
+            "PEOPLE-HG-SENS"
+        )
+        if self.occupant_sensible_heat_gain is not None:
+            self.occupant_sensible_heat_gain = float(self.occupant_sensible_heat_gain)
+
+        self.occupant_latent_heat_gain = self.keyword_value_pairs.get("PEOPLE-HG-LAT")
+        if self.occupant_latent_heat_gain is not None:
+            self.occupant_latent_heat_gain = float(self.occupant_latent_heat_gain)
+
     def populate_data_group(self):
         """Populate schema structure for space object."""
         self.space_data_structure = {
@@ -42,6 +66,28 @@ class Space(ChildNode, ParentNode):
             "miscellaneous_equipment": self.miscellaneous_equipment,
             "service_water_heating_uses": self.service_water_heating_uses,
         }
+
+        no_children_attributes = [
+            "reporting_name",
+            "notes",
+            "floor_area",
+            "number_of_occupants",
+            "occupant_multiplier_schedule",
+            "occupant_sensible_heat_gain",
+            "occupant_latent_heat_gain",
+            "status_type",
+            "function",
+            "envelope_space_type",
+            "lighting_space_type",
+            "ventilation_space_type",
+            "service_water_heating_space_type",
+        ]
+
+        # Iterate over the no_children_attributes list and populate if the value is not None
+        for attr in no_children_attributes:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.space_data_structure[attr] = value
 
     def insert_to_rpd(self, rmd):
         """Insert space object into the rpd data structure."""

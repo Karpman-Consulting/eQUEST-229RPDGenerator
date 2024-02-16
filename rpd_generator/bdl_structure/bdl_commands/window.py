@@ -6,8 +6,8 @@ class Window(ChildNode):
 
     bdl_command = "WINDOW"
 
-    def __init__(self, u_name, parent):
-        super().__init__(u_name, parent)
+    def __init__(self, u_name, parent, rmd):
+        super().__init__(u_name, parent, rmd)
 
         self.window_data_structure = {}
 
@@ -37,11 +37,18 @@ class Window(ChildNode):
     def __repr__(self):
         return f"Window(u_name='{self.u_name}')"
 
+    def populate_data_elements(self):
+        """Populate data elements for window object."""
+        self.glazed_area = float(self.keyword_value_pairs.get("HEIGHT", 0)) * float(
+            self.keyword_value_pairs.get("WIDTH", 0)
+        )
+
     def populate_data_group(self):
         """Populate schema structure for window object."""
         self.window_data_structure = {
             "id": self.u_name,
         }
+        self.populate_data_elements()
 
         no_children_attributes = [
             "reporting_name",

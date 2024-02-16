@@ -6,8 +6,8 @@ class Pump(BaseNode):
 
     bdl_command = "PUMP"
 
-    def __init__(self, u_name):
-        super().__init__(u_name)
+    def __init__(self, u_name, rmd):
+        super().__init__(u_name, rmd)
 
         self.pump_data_structure = {}
 

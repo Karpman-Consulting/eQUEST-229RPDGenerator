@@ -22,6 +22,9 @@ class Building:
         self.number_of_floors_above_grade = None
         self.number_of_floors_below_grade = None
 
+    def populate_data_elements(self):
+        pass
+
     def populate_data_group(self):
         """Populate the building data structure."""
         self.building_data_structure = {
