@@ -34,6 +34,12 @@ class Space(ChildNode, ParentNode):
     def __repr__(self):
         return f"Space(u_name='{self.u_name}', parent={self.parent})"
 
+    def populate_data_elements(self):
+        """Populate data elements for space object."""
+        self.floor_area = self.keyword_value_pairs.get("AREA")
+        if self.floor_area is not None:
+            self.floor_area = float(self.floor_area)
+
     def populate_data_group(self):
         """Populate schema structure for space object."""
         self.space_data_structure = {
