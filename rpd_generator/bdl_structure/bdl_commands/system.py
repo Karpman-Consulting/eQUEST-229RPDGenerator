@@ -9,7 +9,9 @@ class System(ParentNode):
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
         # On initialization the parent building segment is not known. It will be set in the GUI.
-        self.parent_building_segment = rmd.bdl_obj_instances.get("Default Building Segment", None)
+        self.parent_building_segment = rmd.bdl_obj_instances.get(
+            "Default Building Segment", None
+        )
 
         self.system_data_structure = {}
 

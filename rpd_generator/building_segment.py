@@ -51,4 +51,6 @@ class BuildingSegment:
 
     def insert_to_rpd(self):
         """Insert building segment object into the rpd data structure."""
-        self.parent_building.building_segments.append(self.building_segment_data_structure)
+        self.parent_building.building_segments.append(
+            self.building_segment_data_structure
+        )

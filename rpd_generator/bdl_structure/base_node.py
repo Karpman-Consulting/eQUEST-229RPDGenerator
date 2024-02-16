@@ -1,5 +1,3 @@
-
-
 class BaseNode:
     """
     Base class for all nodes in the tree.
