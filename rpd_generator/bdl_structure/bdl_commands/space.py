@@ -44,6 +44,14 @@ class Space(ChildNode, ParentNode):
         if self.number_of_occupants is not None:
             self.number_of_occupants = float(self.number_of_occupants)
 
+        self.occupant_sensible_heat_gain = self.keyword_value_pairs.get("PEOPLE-HG-SENS")
+        if self.occupant_sensible_heat_gain is not None:
+            self.occupant_sensible_heat_gain = float(self.occupant_sensible_heat_gain)
+
+        self.occupant_latent_heat_gain = self.keyword_value_pairs.get("PEOPLE-HG-LAT")
+        if self.occupant_latent_heat_gain is not None:
+            self.occupant_latent_heat_gain = float(self.occupant_latent_heat_gain)
+
     def populate_data_group(self):
         """Populate schema structure for space object."""
         self.space_data_structure = {
