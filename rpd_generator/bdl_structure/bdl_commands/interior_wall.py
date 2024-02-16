@@ -10,10 +10,21 @@ class InteriorWall(
     bdl_command = "INTERIOR-WALL"
     used_constructions = []
 
+    is_shading_map = {
+        "YES": True,
+        "NO": False,
+    }
+    int_wall_type_map = {
+        "STANDARD": "INTERIOR",
+        "AIR": "OMIT",  # Ignore air walls and omit the associated RCT Surface if INT-WALL-TYPE = AIR
+        "ADIABATIC": "IDENTICAL",
+        "INTERNAL": "OMIT",  # Ignore internal walls and omit the associated RCT Surface if INT-WALL-TYPE = INTERNAL
+    }
+
     def __init__(self, u_name, parent):
         super().__init__(u_name, parent)
-
         self.interior_wall_data_structure = {}
+        self.omit = False
 
         # data elements with children
         self.subsurfaces = []
@@ -32,6 +43,43 @@ class InteriorWall(
 
     def __repr__(self):
         return f"InteriorWall(u_name='{self.u_name}', parent='{self.parent}')"
+
+    def populate_data_elements(self):
+        """Populate data elements for interior wall object."""
+        int_wall_type = self.int_wall_type_map.get(
+            self.keyword_value_pairs.get("INT-WALL-TYPE")
+        )
+        if int_wall_type == "OMIT":
+            self.omit = True
+            return
+
+        self.area = self.keyword_value_pairs.get("AREA")
+        if (
+            self.area is None
+            and self.keyword_value_pairs.get("HEIGHT") is not None
+            and self.keyword_value_pairs.get("WIDTH") is not None
+        ):
+            self.area = float(self.keyword_value_pairs.get("HEIGHT", 0)) * float(
+                self.keyword_value_pairs.get("WIDTH", 0)
+            )
+        if self.area is not None:
+            self.area = float(self.area)
+
+        self.tilt = self.keyword_value_pairs.get("TILT")
+        if self.tilt is not None:
+            self.tilt = float(self.tilt)
+
+        self.azimuth = self.keyword_value_pairs.get("AZIMUTH")
+        if self.azimuth is not None:
+            self.azimuth = float(self.azimuth)
+
+        self.adjacent_to = int_wall_type
+        if int_wall_type == "INTERIOR":
+            self.adjacent_zone = self.keyword_value_pairs.get("NEXT-TO")
+
+        self.does_cast_shade = self.is_shading_map.get(
+            self.keyword_value_pairs.get("SHADING-SURFACE")
+        )
 
     def populate_data_group(self):
         """Populate schema structure for interior wall object."""
@@ -62,6 +110,8 @@ class InteriorWall(
                 self.interior_wall_data_structure[attr] = value
 
     def insert_to_rpd(self, rmd):
-        """Insert exterior wall object into the rpd data structure."""
+        """Insert interior wall object into the rpd data structure."""
+        if self.omit:
+            return
         zone = rmd.space_map.get(self.parent.u_name)
         zone.surfaces.append(self.interior_wall_data_structure)
