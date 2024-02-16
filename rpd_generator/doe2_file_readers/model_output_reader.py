@@ -79,3 +79,79 @@ def get_multiple_results(d2_result_dll, doe2_data_dir, project_fname, request_ar
     )
 
     return [data for data in pf_data]
+
+
+# DW Heaters - Design Parameters - Capacity
+# 2321003
+# DW Heaters - Design Parameters - Flow
+# 2321004
+# DW Heaters - Design Parameters - Electric Input Ratio
+# 2321005
+# DW Heaters - Design Parameters - Fuel Input Ratio
+# 2321006
+# DW Heaters - Design Parameters - Auxiliary Power
+# 2321007
+# DW Heaters - Design Parameters - Tank Volume
+# 2321008
+# DW Heaters - Design Parameters - Tank Loss Coefficient
+# 2321009
+# Pump - Flow (gal/min)
+# 2401002
+# Pump - Head (ft)
+# 2401003
+# Pump - Power (kW)
+# 2401005
+# Pump - Mechanical Eff (frac)
+# 2401006
+# Pump - Motor Eff (frac)
+# 2401007
+# Cooling Tower - Capacity (Btu/hr)
+# 2401021
+# Cooling Tower - Flow (gal/min)
+# 2401022
+# Cooling Tower - Fan Power per Cell (kW)
+# 2401024
+# Cooling Tower - Spray Power per Cell (kW)
+# 2401025
+# Cooling Tower - Auxiliary (kW)
+# 2401026
+# Circulation Loop - Heating Capacity (Btu/hr)
+# 2401031
+# Circulation Loop - Cooling Capacity (Btu/hr)
+# 2401032
+# Circulation Loop - Flow (gal/min)
+# 2401033
+# Circulation Loop - Total Head (ft)
+# 2401034
+# Circulation Loop - Supply UA Product (Btu/hr-°F)
+# 2401035
+# Circulation Loop - Supply Loss DT (°F)
+# 2401036
+# Circulation Loop - Return UA Product (Btu/hr-°F)
+# 2401037
+# Circulation Loop - Return Loss DT (°F)
+# 2401038
+# Circulation Loop - Loop Volume (gal)
+# 2401039
+# Circulation Loop - Fluid Heat Capacity (Btu/lb-°F)
+# 2401040
+# Primary Equipment (Chillers) - Capacity (Btu/hr)
+# 2401051
+# Primary Equipment (Chillers) - Flow (gal/min)
+# 2401052
+# Primary Equipment (Chillers) - Rated EIR (frac)
+# 2401053
+# Primary Equipment (Chillers) - Rated HIR (frac)
+# 2401054
+# Primary Equipment (Chillers) - Auxiliary (kW)
+# 2401055
+# Primary Equipment (Boilers) - Capacity (Btu/hr)
+# 2401061
+# Primary Equipment (Boilers) - Flow (gal/min)
+# 2401062
+# Primary Equipment (Boilers) - Rated EIR (frac)
+# 2401063
+# Primary Equipment (Boilers) - Rated HIR (frac)
+# 2401064
+# Primary Equipment (Boilers) - Auxiliary (kW)
+# 2401065
