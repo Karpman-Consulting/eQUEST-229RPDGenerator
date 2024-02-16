@@ -9,9 +9,7 @@ class RulesetProjectDescription:
     """
 
     # BDL Command Dictionary maps BDL commands to their corresponding class in the bdl_commands package
-    bdl_command_dict = (
-        ModelInputReader.bdl_command_dict
-    )
+    bdl_command_dict = ModelInputReader.bdl_command_dict
 
     def __init__(self):
 
