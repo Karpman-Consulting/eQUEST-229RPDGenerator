@@ -6,6 +6,25 @@ class Boiler(BaseNode):
 
     bdl_command = "BOILER"
 
+    draft_type_map = {
+        "HW-BOILER": "NATURAL",
+        "HW-BOILER-W/DRAFT": "FORCED",
+        "ELEC-HW-BOILER": "NATURAL",
+        "STM-BOILER": "NATURAL",
+        "STM-BOILER-W/DRAFT": "FORCED",
+        "ELEC-STM-BOILER": "NATURAL",
+        "HW-CONDENSING": "FORCED",
+    }
+    energy_source_map = {
+        "HW-BOILER": None,
+        "HW-BOILER-W/DRAFT": None,
+        "ELEC-HW-BOILER": "ELECTRICITY",
+        "STM-BOILER": None,
+        "STM-BOILER-W/DRAFT": None,
+        "ELEC-STM-BOILER": "ELECTRICITY",
+        "HW-CONDENSING": None,
+    }
+
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
 
@@ -27,6 +46,10 @@ class Boiler(BaseNode):
 
     def __repr__(self):
         return f"Boiler(u_name='{self.u_name}')"
+
+    def populate_data_elements(self):
+        """Populate data elements for boiler object."""
+        self.draft_type = self.draft_type_map.get(self.keyword_value_pairs.get("TYPE"))
 
     def populate_data_group(self):
         """Populate schema structure for boiler object."""
