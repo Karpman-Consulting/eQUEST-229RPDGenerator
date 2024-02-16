@@ -269,7 +269,9 @@ class System(ParentNode):
             values_list = list(chunk.values())
 
             # Call the function with the current chunk of values
-            chunk_results = get_multiple_results(dll_path, doe2_data_path, project_path_name, values_list)
+            chunk_results = get_multiple_results(
+                dll_path, doe2_data_path, project_path_name, values_list
+            )
 
             # Reassociate returned values with their corresponding keys
             if len(chunk_results) == len(chunk):
@@ -280,28 +282,37 @@ class System(ParentNode):
         """Get the output requests for the system dependent on various system component types."""
         requests = {
             # HVAC Systems - Design Parameters - General - Outside Air Ratio
-            "Outside Air Ratio": (2201005, self.u_name.encode('utf-8'), b""),
+            "Outside Air Ratio": (2201005, self.u_name.encode("utf-8"), b""),
             # HVAC Systems - Design Parameters - General - Cooling Capacity
-            "Cooling Capacity": (2201006, self.u_name.encode('utf-8'), b""),
+            "Cooling Capacity": (2201006, self.u_name.encode("utf-8"), b""),
             # HVAC Systems - Design Parameters - General - Heating Capacity
-            "Heating Capacity": (2201008, self.u_name.encode('utf-8'), b""),
+            "Heating Capacity": (2201008, self.u_name.encode("utf-8"), b""),
             # HVAC Systems - Design Parameters - General - Cooling EIR
-            "Cooling EIR": (2201009, self.u_name.encode('utf-8'), b""),
+            "Cooling EIR": (2201009, self.u_name.encode("utf-8"), b""),
             # HVAC Systems - Design Parameters - General - Heating EIR
-            "Heating EIR": (2201010, self.u_name.encode('utf-8'), b"")}
+            "Heating EIR": (2201010, self.u_name.encode("utf-8"), b""),
+        }
 
         if len(self.fan_system["supply_fans"]) > 0:
             # HVAC Systems - Design Parameters - Supply Fan - Airflow
-            requests["Supply Fan - Airflow"] = (2201012, self.u_name.encode('utf-8'), b"")
+            requests["Supply Fan - Airflow"] = (
+                2201012,
+                self.u_name.encode("utf-8"),
+                b"",
+            )
             # HVAC Systems - Design Parameters - Supply Fan - Power
-            requests["Supply Fan - Power"] = (2201014, self.u_name.encode('utf-8'), b"")
+            requests["Supply Fan - Power"] = (2201014, self.u_name.encode("utf-8"), b"")
             # HVAC Systems - Design Parameters - Supply Fan - Total Static Pressure
             # 2201016
             # HVAC Systems - Design Parameters - Supply Fan - Overall Efficiency
             # 2201017
         if len(self.fan_system["return_fans"]) > 0:
             # HVAC Systems - Design Parameters - Return Fan - Airflow
-            requests["Return Fan - Airflow"] = (2201023, self.u_name.encode('utf-8'), b"")
+            requests["Return Fan - Airflow"] = (
+                2201023,
+                self.u_name.encode("utf-8"),
+                b"",
+            )
             # HVAC Systems - Design Parameters - Return Fan - Power
             # 2201025
             # HVAC Systems - Design Parameters - Return Fan - Total Static Pressure
@@ -311,9 +322,15 @@ class System(ParentNode):
 
         if self.cooling_system["type"] == "FLUID_LOOP":
             # Design Day data for Cooling - chilled water - SYSTEM - capacity, btu/hr
-            requests["Design Day Cooling - chilled water - SYSTEM - capacity, btu/hr"] = (2203006, self.u_name.encode('utf-8'), b"")
+            requests[
+                "Design Day Cooling - chilled water - SYSTEM - capacity, btu/hr"
+            ] = (2203006, self.u_name.encode("utf-8"), b"")
             # Design data for Cooling - chilled water - SYSTEM - capacity, btu/hr
-            requests["Design Cooling - chilled water - SYSTEM - capacity, btu/hr"] = (2203015, self.u_name.encode('utf-8'), b"")
+            requests["Design Cooling - chilled water - SYSTEM - capacity, btu/hr"] = (
+                2203015,
+                self.u_name.encode("utf-8"),
+                b"",
+            )
             # Rated data for Cooling - chilled water - SYSTEM - capacity, btu/hr
             # requests["Rated Cooling - chilled water - SYSTEM - capacity, btu/hr"] = (2203026, self.u_name.encode('utf-8'), b"")
 
@@ -332,7 +349,11 @@ class System(ParentNode):
                 # # Design Day data for Preheat - furnace - SYSTEM - capacity, btu/hr
                 # requests["Design Day Preheat - furnace - SYSTEM - capacity, btu/hr"] = (2203306, self.u_name.encode('utf-8'), b"")
                 # Design data for Preheat - furnace - SYSTEM - capacity, btu/hr
-                requests["Design Preheat - furnace - SYSTEM - capacity, btu/hr"] = (2203311, self.u_name.encode('utf-8'), b"")
+                requests["Design Preheat - furnace - SYSTEM - capacity, btu/hr"] = (
+                    2203311,
+                    self.u_name.encode("utf-8"),
+                    b"",
+                )
             # case "HEAT_PUMP":  # THIS IS COMMENTED OUT BECAUSE EQUEST DOES NOT LET YOU SELECT HEAT PUMP AS A PREHEAT SOURCE
             #     # Design Day data for Preheat - heat pump air cooled - SYSTEM - capacity, btu/hr
             #     requests["Design Day Preheat - heat pump air cooled - SYSTEM - capacity, btu/hr"] = (2203387, self.u_name.encode('utf-8'), b"")
@@ -343,7 +364,11 @@ class System(ParentNode):
 
         if self.heat_sys_type == "FLUID_LOOP":
             # Design Day data for Heating - hot water - SYSTEM - capacity, btu/hr
-            requests["Design Day Heating - hot water - SYSTEM - capacity, btu/hr"] = (2203258, self.u_name.encode('utf-8'), b"")
+            requests["Design Day Heating - hot water - SYSTEM - capacity, btu/hr"] = (
+                2203258,
+                self.u_name.encode("utf-8"),
+                b"",
+            )
 
             # HVAC Systems - Design Parameters - Zone Design Data - General - Supply Airflow
             # 2201045
@@ -387,10 +412,12 @@ class System(ParentNode):
         heat_type = self.heat_type_map.get(self.keyword_value_pairs.get("HEAT-SOURCE"))
 
         # Update the cooling type map according to the COOL-SOURCE keyword (only used for PIU and DOAS)
-        self.system_cooling_type_map.update({
-            "PIU": cool_type,
-            "DOAS": cool_type,
-        })
+        self.system_cooling_type_map.update(
+            {
+                "PIU": cool_type,
+                "DOAS": cool_type,
+            }
+        )
 
         if self.keyword_value_pairs.get("TYPE") == "SUM":
             self.omit = True
@@ -398,7 +425,10 @@ class System(ParentNode):
 
         self.system_data_structure["id"] = self.u_name
 
-        terminal_system_conditions = self.keyword_value_pairs.get("TYPE") in ["FC", "IU"] and heat_type == "FLUID_LOOP"
+        terminal_system_conditions = (
+            self.keyword_value_pairs.get("TYPE") in ["FC", "IU"]
+            and heat_type == "FLUID_LOOP"
+        )
         if terminal_system_conditions:
             self.populate_terminal_system()
         if not terminal_system_conditions:
@@ -418,38 +448,62 @@ class System(ParentNode):
         building_segment.hvac_systems.append(self.system_data_structure)
 
     def populate_fan_system(self):
-        self.fan_sys_fan_control = self.supply_fan_map.get(self.keyword_value_pairs.get("TYPE"))
-        self.fan_sys_operation_during_occ = self.unocc_fan_operation_map.get(self.keyword_value_pairs.get("NIGHT-CYCLE-CTRL"))
-        self.fan_sys_dcv_control = self.dcv_map.get(self.keyword_value_pairs.get("MIN-OA-METHOD"))
+        self.fan_sys_fan_control = self.supply_fan_map.get(
+            self.keyword_value_pairs.get("TYPE")
+        )
+        self.fan_sys_operation_during_occ = self.unocc_fan_operation_map.get(
+            self.keyword_value_pairs.get("NIGHT-CYCLE-CTRL")
+        )
+        self.fan_sys_dcv_control = self.dcv_map.get(
+            self.keyword_value_pairs.get("MIN-OA-METHOD")
+        )
 
     def populate_heating_system(self):
-        self.heat_sys_type = self.heat_type_map.get(self.keyword_value_pairs.get("HEAT-SOURCE"))
+        self.heat_sys_type = self.heat_type_map.get(
+            self.keyword_value_pairs.get("HEAT-SOURCE")
+        )
 
     def populate_cooling_system(self):
-        self.cool_sys_type = self.system_cooling_type_map.get(self.keyword_value_pairs.get("TYPE"))
+        self.cool_sys_type = self.system_cooling_type_map.get(
+            self.keyword_value_pairs.get("TYPE")
+        )
 
     def populate_preheat_system(self):
-        self.preheat_sys_type = self.heat_type_map.get(self.keyword_value_pairs.get("PREHEAT-SOURCE"))
+        self.preheat_sys_type = self.heat_type_map.get(
+            self.keyword_value_pairs.get("PREHEAT-SOURCE")
+        )
 
     def populate_fans(self):
         pass
 
     def populate_air_economizer(self):
-        self.air_econ_type = self.economizer_map.get(self.keyword_value_pairs.get("OA-CONTROL"))
+        self.air_econ_type = self.economizer_map.get(
+            self.keyword_value_pairs.get("OA-CONTROL")
+        )
 
     def populate_air_energy_recovery(self):
         recover_exhaust = self.keyword_value_pairs.get("RECOVER-EXHAUST")
-        recovery_type = self.recovery_type_map.get(self.keyword_value_pairs.get("ERV-RECOVER-TYPE"))
-        self.air_energy_recovery_map.update({
-            "RELIEF-ONLY": recovery_type,
-            "EXHAUST-ONLY": recovery_type,
-            "RELIEF+EXHAUST": recovery_type,
-            "YES": recovery_type,
-        })
+        recovery_type = self.recovery_type_map.get(
+            self.keyword_value_pairs.get("ERV-RECOVER-TYPE")
+        )
+        self.air_energy_recovery_map.update(
+            {
+                "RELIEF-ONLY": recovery_type,
+                "EXHAUST-ONLY": recovery_type,
+                "RELIEF+EXHAUST": recovery_type,
+                "YES": recovery_type,
+            }
+        )
 
-        self.air_energy_recovery_type = self.air_energy_recovery_map.get(recover_exhaust)
-        self.air_energy_recovery_operation = self.er_operation_map.get(self.keyword_value_pairs.get("ERV-RUN-CTRL"))
-        self.air_energy_recovery_sat_control = self.er_sat_control_map.get(self.keyword_value_pairs.get("ERV-TEMP-CTRL"))
+        self.air_energy_recovery_type = self.air_energy_recovery_map.get(
+            recover_exhaust
+        )
+        self.air_energy_recovery_operation = self.er_operation_map.get(
+            self.keyword_value_pairs.get("ERV-RUN-CTRL")
+        )
+        self.air_energy_recovery_sat_control = self.er_sat_control_map.get(
+            self.keyword_value_pairs.get("ERV-TEMP-CTRL")
+        )
 
     def populate_system_terminals(self):
         pass
