@@ -7,9 +7,9 @@ class Space(ChildNode, ParentNode):
 
     bdl_command = "SPACE"
 
-    def __init__(self, u_name, parent):
-        super().__init__(u_name, parent)
-        ParentNode.__init__(self, u_name)
+    def __init__(self, u_name, parent, rmd):
+        super().__init__(u_name, parent, rmd)
+        ParentNode.__init__(self, u_name, rmd)
 
         self.space_data_structure = {}
 

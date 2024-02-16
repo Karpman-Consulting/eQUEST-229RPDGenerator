@@ -9,7 +9,6 @@ class InteriorWall(
 
     bdl_command = "INTERIOR-WALL"
     used_constructions = []
-
     is_shading_map = {
         "YES": True,
         "NO": False,
@@ -21,8 +20,9 @@ class InteriorWall(
         "INTERNAL": "OMIT",  # Ignore internal walls and omit the associated RCT Surface if INT-WALL-TYPE = INTERNAL
     }
 
-    def __init__(self, u_name, parent):
-        super().__init__(u_name, parent)
+    def __init__(self, u_name, parent, rmd):
+        super().__init__(u_name, parent, rmd)
+
         self.interior_wall_data_structure = {}
         self.omit = False
 

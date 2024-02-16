@@ -6,8 +6,8 @@ class Window(ChildNode):
 
     bdl_command = "WINDOW"
 
-    def __init__(self, u_name, parent):
-        super().__init__(u_name, parent)
+    def __init__(self, u_name, parent, rmd):
+        super().__init__(u_name, parent, rmd)
 
         self.window_data_structure = {}
 

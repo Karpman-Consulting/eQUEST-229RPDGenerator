@@ -6,8 +6,12 @@ class System(ParentNode):
 
     bdl_command = "SYSTEM"
 
-    def __init__(self, u_name):
-        super().__init__(u_name)
+    def __init__(self, u_name, rmd):
+        super().__init__(u_name, rmd)
+        # On initialization the parent building segment is not known. It will be set in the GUI.
+        self.parent_building_segment = rmd.bdl_obj_instances.get(
+            "Default Building Segment", None
+        )
 
         self.system_data_structure = {}
         self.fan_system_data_structure = {}
@@ -193,6 +197,6 @@ class System(ParentNode):
             if value is not None:
                 self.system_data_structure[attr] = value
 
-    def insert_to_rpd(self, building_segment):
+    def insert_to_rpd(self, rmd):
         """Insert zone object into the rpd data structure."""
-        building_segment.hvac_systems.append(self.system_data_structure)
+        self.parent_building_segment.hvac_systems.append(self.system_data_structure)

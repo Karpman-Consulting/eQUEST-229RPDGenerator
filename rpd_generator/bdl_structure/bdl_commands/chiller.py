@@ -6,8 +6,8 @@ class Chiller(BaseNode):
 
     bdl_command = "CHILLER"
 
-    def __init__(self, u_name):
-        super().__init__(u_name)
+    def __init__(self, u_name, rmd):
+        super().__init__(u_name, rmd)
 
         self.chiller_data_structure = {}
 

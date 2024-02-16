@@ -6,8 +6,8 @@ class CirculationLoop(BaseNode):
 
     bdl_command = "CIRCULATION-LOOP"
 
-    def __init__(self, u_name):
-        super().__init__(u_name)
+    def __init__(self, u_name, rmd):
+        super().__init__(u_name, rmd)
 
         # keep track of the type of circulation loop (different from self.type which is the FluidLoop type)
         self.circulation_loop_type = None
@@ -23,9 +23,13 @@ class CirculationLoop(BaseNode):
         self.type = None
         self.pump_power_per_flow_rate = None
 
+        # ServiceWaterHeatingDistributionSystem data
+        self.swh_distribution_data_structure = {}
+
         # ServiceWaterHeatingDistributionSystem data elements with children
-        self.service_water_piping = None
-        self.tanks = None
+        self.service_water_piping = {}
+        self.tanks = {}
+
         # ServiceWaterHeatingDistributionSystem data elements with no children
         self.design_supply_temperature = None
         self.design_supply_temperature_difference = None
