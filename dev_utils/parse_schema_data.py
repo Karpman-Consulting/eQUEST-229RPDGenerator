@@ -4,7 +4,7 @@ import xlsxwriter
 
 def extract_definitions_with_properties_from_schema(file_path):
     # Open and read the JSON file
-    with open(file_path, 'r') as file:
+    with open(file_path, "r") as file:
         json_data = json.load(file)
 
     data = {}
@@ -20,7 +20,7 @@ def write_dict_to_excel(data, excel_file_path="schema_definitions.xlsx"):
     worksheet = workbook.add_worksheet()
 
     # Create a bold format for the first column
-    bold = workbook.add_format({'bold': True})
+    bold = workbook.add_format({"bold": True})
 
     # Start from the first cell
     row = 0

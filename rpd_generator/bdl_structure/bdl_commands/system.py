@@ -451,7 +451,7 @@ class System(ParentNode):
         self.fan_sys_fan_control = self.supply_fan_map.get(
             self.keyword_value_pairs.get("TYPE")
         )
-        self.fan_sys_operation_during_occ = self.unocc_fan_operation_map.get(
+        self.fan_sys_operation_during_unocc = self.unocc_fan_operation_map.get(
             self.keyword_value_pairs.get("NIGHT-CYCLE-CTRL")
         )
         self.fan_sys_dcv_control = self.dcv_map.get(
