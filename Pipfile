@@ -11,6 +11,7 @@ tksheet = "*"
 [dev-packages]
 pytest = "*"
 black = "*"
+xlsxwriter = "*"
 
 [requires]
 python_version = "3.11"
