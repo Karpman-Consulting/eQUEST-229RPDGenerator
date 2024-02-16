@@ -151,13 +151,3 @@ def get_multiple_results(d2_result_dll, doe2_data_dir, project_fname, request_ar
 # 2401054
 # Primary Equipment (Chillers) - Auxiliary (kW)
 # 2401055
-# Primary Equipment (Boilers) - Capacity (Btu/hr)
-# 2401061
-# Primary Equipment (Boilers) - Flow (gal/min)
-# 2401062
-# Primary Equipment (Boilers) - Rated EIR (frac)
-# 2401063
-# Primary Equipment (Boilers) - Rated HIR (frac)
-# 2401064
-# Primary Equipment (Boilers) - Auxiliary (kW)
-# 2401065
