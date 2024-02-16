@@ -29,7 +29,7 @@ class CirculationLoop(BaseNode):
         # ServiceWaterHeatingDistributionSystem data elements with children
         self.service_water_piping = {}
         self.tanks = {}
-        
+
         # ServiceWaterHeatingDistributionSystem data elements with no children
         self.design_supply_temperature = None
         self.design_supply_temperature_difference = None
