@@ -34,19 +34,18 @@ COMMAND_PROCESSING_ORDER = [
 
 def generate_rpd_json(selected_models):
     """
-    Generate the RPD data structure (RulesetProjectDescription, RulesetModelDescription, Building, BuildingSegment,
-    and all data groups available from doe2_file_readers)
+    Generate the RMDs, use Default Building and Building Segment, and write to JSON without GUI inputs
     """
-    rpd, json_file_path = generate_rpd(selected_models)
+    rmds, json_file_path = generate_rmds(selected_models)
+    rpd, json_file_path = generate_rpd(rmds, json_file_path)
     write_rpd_json(rpd, json_file_path)
 
 
-def generate_rpd(selected_models):
+def generate_rmds(selected_models):
     """
     Generate the RPD data structure (RulesetProjectDescription, RulesetModelDescription, Building, BuildingSegment,
     and all data groups available from doe2_file_readers)
     """
-    rpd = RulesetProjectDescription()
     # Set the output directory to the directory of the first selected model
     output_dir = os.path.dirname(selected_models[0])
 
@@ -57,13 +56,16 @@ def generate_rpd(selected_models):
     # Construct the full path to the new JSON file in the same directory as model_path
     json_file_path = os.path.join(output_dir, json_file_name)
 
+    rmds = []
     # Iterate through each selected model, creating a RulesetModelDescription for each
     for model_path in selected_models:
         rmd = RulesetModelDescription(os.path.splitext(os.path.basename(model_path))[0])
 
-        # Set up default building and building segment to display in GUI
+        # Set up default building and building segment
         default_building = Building("Default Building")
-        default_building_segment = BuildingSegment("Default Building Segment", default_building)
+        default_building_segment = BuildingSegment(
+            "Default Building Segment", default_building
+        )
         rmd.bdl_obj_instances["Default Building"] = default_building
         rmd.bdl_obj_instances["Default Building Segment"] = default_building_segment
 
@@ -87,9 +89,13 @@ def generate_rpd(selected_models):
                 rmd,
                 special_handling,
             )
-        # fill/replace data with data from the simulation output
-        # fill/replace data with data from the GUI inputs
+        rmds.append(rmd)
+    return rmds, json_file_path
 
+
+def generate_rpd(rmds, json_file_path):
+    rpd = RulesetProjectDescription()
+    for rmd in rmds:
         # Once all objects have been created, populate the data groups, data elements, and insert the into the rpd
         for obj_instance in rmd.bdl_obj_instances.values():
             obj_instance.populate_data_elements()
@@ -98,19 +104,20 @@ def generate_rpd(selected_models):
                 obj_instance.insert_to_rpd(rmd)
 
         # Final integration steps
-        default_building_segment.populate_data_group()
-        default_building_segment.insert_to_rpd()
-        default_building.populate_data_group()
-        default_building.insert_to_rpd(rmd)
+        rmd.bdl_obj_instances["Default Building Segment"].populate_data_group()
+        rmd.bdl_obj_instances["Default Building Segment"].insert_to_rpd()
+        rmd.bdl_obj_instances["Default Building"].populate_data_group()
+        rmd.bdl_obj_instances["Default Building"].insert_to_rpd(rmd)
         rmd.populate_data_group()
         rmd.insert_to_rpd(rpd)
+
     rpd.populate_data_group()
     return rpd, json_file_path
 
 
 def write_rpd_json(rpd, json_file_path):
     # Save the JSON data to the file
-    with open(json_file_path, 'w') as json_file:
+    with open(json_file_path, "w") as json_file:
         json.dump(rpd.rpd_data_structure, json_file, indent=4)
 
 
@@ -138,12 +145,12 @@ def _create_obj_instance(command, command_dict, rmd):
 
     if inherits_base_node and is_child:
         obj_instance = command_class(
-            command_dict["unique_name"], rmd.bdl_obj_instances[command_dict["parent"]], rmd
+            command_dict["unique_name"],
+            rmd.bdl_obj_instances[command_dict["parent"]],
+            rmd,
         )
     elif inherits_base_node:
-        obj_instance = command_class(
-            command_dict["unique_name"], rmd
-        )
+        obj_instance = command_class(command_dict["unique_name"], rmd)
     else:
         obj_instance = command_class(command_dict["unique_name"])
     return obj_instance
