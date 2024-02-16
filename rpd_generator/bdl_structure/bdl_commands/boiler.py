@@ -25,6 +25,26 @@ class Boiler(BaseNode):
         "HW-CONDENSING": None,
     }
 
+    draft_type_map = {
+        "HW-BOILER": "NATURAL",
+        "HW-BOILER-W/DRAFT": "FORCED",
+        "ELEC-HW-BOILER": "NATURAL",
+        "STM-BOILER": "NATURAL",
+        "STM-BOILER-W/DRAFT": "FORCED",
+        "ELEC-STM-BOILER": "NATURAL",
+        "HW-CONDENSING": "FORCED",
+    }
+    # NEED TO GET BOILER ENERGY SOURCE FROM THE ASSIGNED FUEL METER
+    energy_source_map = {
+        "HW-BOILER": None,
+        "HW-BOILER-W/DRAFT": None,
+        "ELEC-HW-BOILER": "ELECTRICITY",
+        "STM-BOILER": None,
+        "STM-BOILER-W/DRAFT": None,
+        "ELEC-STM-BOILER": "ELECTRICITY",
+        "HW-CONDENSING": None,
+    }
+
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
 
@@ -50,6 +70,30 @@ class Boiler(BaseNode):
     def populate_data_elements(self):
         """Populate data elements for boiler object."""
         self.draft_type = self.draft_type_map.get(self.keyword_value_pairs.get("TYPE"))
+
+    def populate_data_elements(self):
+        """Populate data elements for boiler object."""
+        self.draft_type = self.draft_type_map.get(self.keyword_value_pairs.get("TYPE"))
+        requests = self.get_output_requests()
+        self.get_output_data(r"C:\Program Files (x86)\eQUEST 3-65-7175\D2Result.dll", b"C:\\Users\\JacksonJarboe\\Documents\\eQUEST 3-65-7175 Data\\DOE23", b"C:\\Users\\JacksonJarboe\\Documents\\Local Models\\CT Children's Hospital\\Final Model\\Proposed\\CT Childrens Hospital - Final - Baseline Design", requests)
+
+    def get_output_requests(self):
+        """Get the output requests for the boiler object."""
+        requests = {
+            # Primary Equipment (Boilers) - Capacity (Btu/hr)
+            "Primary Equipment (Boilers) - Capacity (Btu/hr)": (2401061, self.u_name.encode("utf-8"), b""),
+            # Primary Equipment (Boilers) - Flow (gal/min)
+            "Primary Equipment (Boilers) - Flow (gal/min)": (2401062, self.u_name.encode("utf-8"), b""),
+            # Primary Equipment (Boilers) - Rated EIR (frac)
+            "Primary Equipment (Boilers) - Rated EIR (frac)": (2401063, self.u_name.encode("utf-8"), b""),
+            # Primary Equipment (Boilers) - Rated HIR (frac)
+            "Primary Equipment (Boilers) - Rated HIR (frac)": (2401064, self.u_name.encode("utf-8"), b""),
+            # Primary Equipment (Boilers) - Auxiliary (kW)
+            "Primary Equipment (Boilers) - Auxiliary (kW)": (2401065, self.u_name.encode("utf-8"), b""),
+            # Boilers - Sizing Info/Boiler - Capacity
+            "Boilers - Sizing Info/Boiler - Capacity": (2315911, self.u_name.encode("utf-8"), b""),
+        }
+        return requests
 
     def populate_data_group(self):
         """Populate schema structure for boiler object."""
