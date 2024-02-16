@@ -440,7 +440,7 @@ class System(ParentNode):
 
     def populate_air_energy_recovery(self):
         recover_exhaust = self.keyword_value_pairs.get("RECOVER-EXHAUST")
-        recovery_type = self.recovery_type_map.get(recover_exhaust)
+        recovery_type = self.recovery_type_map.get(self.keyword_value_pairs.get("ERV-RECOVER-TYPE"))
         self.air_energy_recovery_map.update({
             "RELIEF-ONLY": recovery_type,
             "EXHAUST-ONLY": recovery_type,
