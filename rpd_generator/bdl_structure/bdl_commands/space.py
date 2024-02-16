@@ -44,6 +44,8 @@ class Space(ChildNode, ParentNode):
         if self.number_of_occupants is not None:
             self.number_of_occupants = float(self.number_of_occupants)
 
+        self.occupant_multiplier_schedule = self.keyword_value_pairs.get("PEOPLE-SCHEDULE")
+
         self.occupant_sensible_heat_gain = self.keyword_value_pairs.get(
             "PEOPLE-HG-SENS"
         )
