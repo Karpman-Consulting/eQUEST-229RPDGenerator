@@ -40,6 +40,10 @@ class Space(ChildNode, ParentNode):
         if self.floor_area is not None:
             self.floor_area = float(self.floor_area)
 
+        self.number_of_occupants = self.keyword_value_pairs.get("NUMBER-OF-PEOPLE")
+        if self.number_of_occupants is not None:
+            self.number_of_occupants = float(self.number_of_occupants)
+
     def populate_data_group(self):
         """Populate schema structure for space object."""
         self.space_data_structure = {
