@@ -14,7 +14,6 @@ class BaseNode:
         self.reporting_name = None
         self.notes = None
         self.keyword_value_pairs = {}
-        self.schema_structure = {}
 
     def __repr__(self):
         return f"BaseNode('{self.u_name}')"

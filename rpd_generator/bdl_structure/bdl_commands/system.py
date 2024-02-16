@@ -95,8 +95,12 @@ class System(ParentNode):
         "DCV-ZONE-SENSORS": "CO2_ZONE",
     }
 
-    def __init__(self, u_name):
-        super().__init__(u_name)
+    def __init__(self, u_name, rmd):
+        super().__init__(u_name, rmd)
+        # On initialization the parent building segment is not known. It will be set in the GUI.
+        self.parent_building_segment = rmd.bdl_obj_instances.get(
+            "Default Building Segment", None
+        )
 
         self.system_data_structure = {}
         self.omit = False
@@ -393,8 +397,6 @@ class System(ParentNode):
             self.omit = True
             return
 
-        self.system_data_structure["id"] = self.u_name
-
         terminal_system_conditions = (
             self.keyword_value_pairs.get("TYPE") in ["FC", "IU"]
             and heat_type == "FLUID_LOOP"
@@ -402,6 +404,7 @@ class System(ParentNode):
         if terminal_system_conditions:
             self.populate_terminal_system()
         if not terminal_system_conditions:
+            self.system_data_structure["id"] = self.u_name
             self.populate_fan_system()
             self.system_data_structure["fan_system"] = self.fan_system
             self.populate_heating_system()
@@ -411,11 +414,11 @@ class System(ParentNode):
             self.populate_preheat_system()
             self.system_data_structure["preheat_system"] = self.preheat_system
 
-    def insert_to_rpd(self, building_segment):
+    def insert_to_rpd(self, rmd):
         """Insert system data structure into the rpd data structure."""
         if self.omit:
             return
-        building_segment.hvac_systems.append(self.system_data_structure)
+        self.parent_building_segment.hvac_systems.append(self.system_data_structure)
 
     def populate_fan_system(self):
         self.fan_sys_fan_control = self.supply_fan_map.get(
