@@ -1,29 +1,12 @@
 import ctypes
 
 
-def get_single_results(d2_result_dll, doe2_dir, project_fname, entry_id):
-    """
-    Get Single Results
-    ------------------
-    Arguments
-    ---------
-    :param d2_result_dll: (string) path to user's eQUEST D2Result.dll file included with installation files
-    :param project_fname: (binary string) path to project with project name NOT INCLUDING FILE EXTENSION
-    :param entry_id: (int) id from NHRList.txt corresponding to the value to retrieve
-    :param doe2_dir: (binary string) path to DOE-2 directory
-    :return: value from binary simulation output files
-    """
-    # Load DLL
-    d2_result_dll = ctypes.CDLL(d2_result_dll)
-    single_result_dll = d2_result_dll.D2R_GetSingleResult
-    single_result_dll.argtypes = [
-        ctypes.c_char_p,  # pszDOE2Dir
-        ctypes.c_char_p,  # pszFileName
-        ctypes.c_int,  # iEntryID
-        ctypes.POINTER(ctypes.c_float),  # pfData
-        ctypes.c_int,  # iMaxValues
-        ctypes.c_char_p,  # pszReportKey
-        ctypes.c_char_p,  # pszRowKey
+class MRTArray(ctypes.Structure):
+    _fields_ = [
+        ("entry_id", ctypes.c_int),
+        ("return_value", ctypes.c_int),
+        ("psz_report_key", ctypes.c_char * 40),
+        ("psz_row_key", ctypes.c_char * 40),
     ]
 
 
