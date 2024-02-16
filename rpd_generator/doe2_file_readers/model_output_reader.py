@@ -75,7 +75,13 @@ def get_multiple_results(d2_result_dll, doe2_data_dir, project_fname, request_ar
     pf_data = (ctypes.c_float * max_values)()
 
     multiple_result_dll(
-        doe2_data_dir, project_fname, file_type, pf_data, max_values, num_mrts, mrt_array
+        doe2_data_dir,
+        project_fname,
+        file_type,
+        pf_data,
+        max_values,
+        num_mrts,
+        mrt_array,
     )
 
     return [data for data in pf_data]
