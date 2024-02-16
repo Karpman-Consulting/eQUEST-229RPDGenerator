@@ -32,7 +32,7 @@ class ExteriorWall(ChildNode, ParentNode):
         return f"ExteriorWall(u_name='{self.u_name}', parent={self.parent})"
 
     def populate_data_elements(self):
-        """ Populate data elements for exterior wall object."""
+        """Populate data elements for exterior wall object."""
         is_shading_map = {
             "YES": True,
             "NO": False,
@@ -59,7 +59,9 @@ class ExteriorWall(ChildNode, ParentNode):
             self.azimuth = float(self.azimuth)
 
         self.adjacent_to = "EXTERIOR"
-        self.does_cast_shade = is_shading_map.get(self.keyword_value_pairs.get("SHADING-SURFACE"))
+        self.does_cast_shade = is_shading_map.get(
+            self.keyword_value_pairs.get("SHADING-SURFACE")
+        )
 
     def populate_data_group(self):
         """Populate schema structure for exterior wall object."""

@@ -46,7 +46,9 @@ class InteriorWall(
 
     def populate_data_elements(self):
         """Populate data elements for interior wall object."""
-        int_wall_type = self.int_wall_type_map.get(self.keyword_value_pairs.get("INT-WALL-TYPE"))
+        int_wall_type = self.int_wall_type_map.get(
+            self.keyword_value_pairs.get("INT-WALL-TYPE")
+        )
         if int_wall_type == "OMIT":
             self.omit = True
             return
@@ -75,7 +77,9 @@ class InteriorWall(
         if int_wall_type == "INTERIOR":
             self.adjacent_zone = self.keyword_value_pairs.get("NEXT-TO")
 
-        self.does_cast_shade = self.is_shading_map.get(self.keyword_value_pairs.get("SHADING-SURFACE"))
+        self.does_cast_shade = self.is_shading_map.get(
+            self.keyword_value_pairs.get("SHADING-SURFACE")
+        )
 
     def populate_data_group(self):
         """Populate schema structure for interior wall object."""

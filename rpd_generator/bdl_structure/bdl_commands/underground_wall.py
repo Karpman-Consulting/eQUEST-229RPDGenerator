@@ -58,7 +58,9 @@ class BelowGradeWall(ChildNode):
 
         self.adjacent_to = "GROUND"
 
-        self.does_cast_shade = is_shading_map.get(self.keyword_value_pairs.get("SHADING-SURFACE"))
+        self.does_cast_shade = is_shading_map.get(
+            self.keyword_value_pairs.get("SHADING-SURFACE")
+        )
 
     def populate_data_group(self):
         """Populate schema structure for below grade wall object."""
