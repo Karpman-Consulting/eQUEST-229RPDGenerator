@@ -49,6 +49,28 @@ class Space(ChildNode, ParentNode):
             "service_water_heating_uses": self.service_water_heating_uses,
         }
 
+        no_children_attributes = [
+            "reporting_name",
+            "notes",
+            "floor_area",
+            "number_of_occupants",
+            "occupant_multiplier_schedule",
+            "occupant_sensible_heat_gain",
+            "occupant_latent_heat_gain",
+            "status_type",
+            "function",
+            "envelope_space_type",
+            "lighting_space_type",
+            "ventilation_space_type",
+            "service_water_heating_space_type",
+        ]
+
+        # Iterate over the no_children_attributes list and populate if the value is not None
+        for attr in no_children_attributes:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.space_data_structure[attr] = value
+
     def insert_to_rpd(self, rmd):
         """Insert space object into the rpd data structure."""
         # find the zone that has the "SPACE" attribute value equal to the space object's u_name
