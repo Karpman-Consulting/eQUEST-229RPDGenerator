@@ -11,10 +11,6 @@ class MasterMeters(BaseDefinition):
     def __repr__(self):
         return f"MasterMeters(u_name='{self.u_name}')"
 
-    def populate_data_elements(self):
-        """Populate data elements from master meters object."""
-        return {}
-
 
 class FuelMeter(BaseDefinition):
 
@@ -25,10 +21,6 @@ class FuelMeter(BaseDefinition):
 
     def __repr__(self):
         return f"FuelMeter(u_name='{self.u_name}')"
-
-    def populate_data_elements(self):
-        """Populate data elements from fuel meter object."""
-        return {}
 
 
 class ElecMeter(BaseDefinition):
@@ -41,10 +33,6 @@ class ElecMeter(BaseDefinition):
     def __repr__(self):
         return f"ElecMeter(u_name='{self.u_name}')"
 
-    def populate_data_elements(self):
-        """Populate data elements from electric meter object."""
-        return {}
-
 
 class SteamMeter(BaseDefinition):
 
@@ -56,10 +44,6 @@ class SteamMeter(BaseDefinition):
     def __repr__(self):
         return f"SteamMeter(u_name='{self.u_name}')"
 
-    def populate_data_elements(self):
-        """Populate data elements from steam meter object."""
-        return {}
-
 
 class CHWMeter(BaseDefinition):
 
@@ -70,7 +54,3 @@ class CHWMeter(BaseDefinition):
 
     def __repr__(self):
         return f"CHWMeter(u_name='{self.u_name}')"
-
-    def populate_data_elements(self):
-        """Populate data elements from chilled water meter object."""
-        return {}
