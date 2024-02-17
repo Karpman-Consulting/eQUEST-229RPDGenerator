@@ -144,10 +144,20 @@ class System(ParentNode):
         self.heat_sys_reporting_name = None
         self.heat_sys_notes = None
         self.heat_sys_type = None
-        self.heat_sys_phase = None
-        self.heat_sys_efficiency = None
-        self.heat_sys_capacity = None
-        self.heat_sys_peak_load = None
+        self.heat_sys_energy_source_type = None
+        self.heat_sys_hot_water_loop = None
+        self.heat_sys_water_source_heat_pump_loop = None
+        self.heat_sys_design_capacity = None
+        self.heat_sys_rated_capacity = None
+        self.heat_sys_oversizing_factor = None
+        self.heat_sys_is_sized_based_on_design_day = None
+        self.heat_sys_heating_coil_setpoint = None
+        self.heat_sys_efficiency_metric_values = None
+        self.heat_sys_efficiency_metric_types = None
+        self.heat_sys_heatpump_auxiliary_heat_type = None
+        self.heat_sys_heatpump_auxiliary_heat_high_shutoff_temperature = None
+        self.heat_sys_heatpump_low_shutoff_temperature = None
+        self.heat_sys_humidification_type = None
 
         # cooling system data elements
         self.cool_sys_id = None
@@ -160,8 +170,8 @@ class System(ParentNode):
         self.cool_sys_rated_sensible_capacity = None
         self.cool_sys_oversizing_factor = None
         self.cool_sys_is_sized_based_on_design_day = None
-        self.cool_sys_chw_loop = None
-        self.cool_sys_cw_loop = None
+        self.cool_sys_chilled_water_loop = None
+        self.cool_sys_condenser_water_loop = None
         self.cool_sys_efficiency_metric_values = []
         self.cool_sys_efficiency_metric_types = []
         self.cool_sys_dehumidification_type = None
@@ -172,10 +182,20 @@ class System(ParentNode):
         self.preheat_sys_reporting_name = None
         self.preheat_sys_notes = None
         self.preheat_sys_type = None
-        self.preheat_sys_phase = None
-        self.preheat_sys_efficiency = None
-        self.preheat_sys_capacity = None
-        self.preheat_sys_peak_load = None
+        self.preheat_sys_energy_source_type = None
+        self.preheat_sys_hot_water_loop = None
+        self.preheat_sys_water_source_heat_pump_loop = None
+        self.preheat_sys_design_capacity = None
+        self.preheat_sys_rated_capacity = None
+        self.preheat_sys_oversizing_factor = None
+        self.preheat_sys_is_sized_based_on_design_day = None
+        self.preheat_sys_heating_coil_setpoint = None
+        self.preheat_sys_efficiency_metric_values = None
+        self.preheat_sys_efficiency_metric_types = None
+        self.preheat_sys_heatpump_auxiliary_heat_type = None
+        self.preheat_sys_heatpump_auxiliary_heat_high_shutoff_temperature = None
+        self.preheat_sys_heatpump_low_shutoff_temperature = None
+        self.preheat_sys_humidification_type = None
 
         # [supply, return, relief, exhaust] fan data elements
         self.fan_id = [None, None, None, None]
@@ -500,7 +520,7 @@ class System(ParentNode):
         if terminal_system_conditions:
             for attr in dir(self):
                 if attr.startswith("terminals_"):
-                    print(attr)
+                    pass
 
         else:
             self.system_data_structure["id"] = self.u_name
@@ -527,7 +547,7 @@ class System(ParentNode):
                     if value is not None:
                         self.preheat_system[attr.split("preheat_sys_")[1]] = value
                 elif attr.startswith("fan_") and not attr[4:7] == "sys":
-                    print(attr)
+                    pass
                 elif attr.startswith("air_econ_"):
                     value = getattr(self, attr, None)
                     if value is not None:
