@@ -102,9 +102,11 @@ def generate_rmds(selected_models):
 def generate_rpd(rmds, json_file_path):
     rpd = RulesetProjectDescription()
     for rmd in rmds:
+        rmd.bdl_obj_instances["ASHRAE 229"] = rpd
         # Once all objects have been created, populate data elements
         for obj_instance in rmd.bdl_obj_instances.values():
-            obj_instance.populate_data_elements()
+            if isinstance(obj_instance, BaseNode) or isinstance(obj_instance, BaseDefinition):
+                obj_instance.populate_data_elements()
         # Once all data elements are populated, populate the data group and insert the object into the rpd
         for obj_instance in rmd.bdl_obj_instances.values():
             if isinstance(obj_instance, BaseNode):
