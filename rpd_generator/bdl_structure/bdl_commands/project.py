@@ -18,9 +18,12 @@ class SiteParameters(BaseDefinition):
     def populate_data_elements(self):
         """Populate schema structure for site parameters object."""
         rpd = self.rmd.bdl_obj_instances["ASHRAE 229"]
-        rpd.calendar.setdefault("has_daylight_saving_time", self.has_daylight_savings_map.get(
-            self.keyword_value_pairs.get("DAYLIGHT-SAVINGS")
-        ))
+        rpd.calendar.setdefault(
+            "has_daylight_saving_time",
+            self.has_daylight_savings_map.get(
+                self.keyword_value_pairs.get("DAYLIGHT-SAVINGS")
+            ),
+        )
 
 
 class RunPeriod(BaseDefinition):
@@ -35,9 +38,10 @@ class RunPeriod(BaseDefinition):
     def populate_data_elements(self):
         """Populate schema structure for site parameters object."""
         rpd = self.rmd.bdl_obj_instances["ASHRAE 229"]
-        rpd.calendar.setdefault("day_of_week_for_january_1", get_day_of_week_jan_1(
-            int(float(self.keyword_value_pairs.get("END-YEAR")))
-        ))
+        rpd.calendar.setdefault(
+            "day_of_week_for_january_1",
+            get_day_of_week_jan_1(int(float(self.keyword_value_pairs.get("END-YEAR")))),
+        )
 
 
 def get_day_of_week_jan_1(year):
@@ -55,6 +59,14 @@ def get_day_of_week_jan_1(year):
     # Convert Zeller's result to weekday with 0 = Monday, 1 = Tuesday, ..., 6 = Sunday
     day_of_week = (h + 5) % 7
 
-    days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]
+    days = [
+        "MONDAY",
+        "TUESDAY",
+        "WEDNESDAY",
+        "THURSDAY",
+        "FRIDAY",
+        "SATURDAY",
+        "SUNDAY",
+    ]
 
     return days[day_of_week]
