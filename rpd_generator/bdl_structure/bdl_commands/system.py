@@ -581,27 +581,33 @@ class System(ParentNode):
         self.heat_sys_type = self.heat_type_map.get(
             self.keyword_value_pairs.get("HEAT-SOURCE")
         )
+
         sizing_ratio = self.keyword_value_pairs.get("SIZING-RATIO")
         heat_sizing_ratio = self.keyword_value_pairs.get("HEAT-SIZING-RATI")
-
         self.heat_sys_oversizing_factor = (
                 float(sizing_ratio) * float(heat_sizing_ratio)
         ) if sizing_ratio is not None and heat_sizing_ratio is not None else None
 
+        self.heat_sys_hot_water_loop = self.keyword_value_pairs.get("HW-LOOP")
+
         self.heat_sys_water_source_heat_pump_loop = self.keyword_value_pairs.get("CW-LOOP")
-
-
 
     def populate_cooling_system(self):
         self.cool_sys_id = self.u_name + " CoolSys"
+
         self.cool_sys_type = self.system_cooling_type_map.get(
             self.keyword_value_pairs.get("TYPE")
         )
+
         sizing_ratio = self.keyword_value_pairs.get("SIZING-RATIO")
         cool_sizing_ratio = self.keyword_value_pairs.get("COOL-SIZING-RATI")
         self.cool_sys_oversizing_factor = (
                 float(sizing_ratio) * float(cool_sizing_ratio)
         ) if sizing_ratio is not None and cool_sizing_ratio is not None else None
+
+        self.cool_sys_chilled_water_loop = self.keyword_value_pairs.get("CHW-LOOP")
+
+        self.cool_sys_condenser_water_loop = self.keyword_value_pairs.get("CW-LOOP")
 
     def populate_preheat_system(self):
         self.preheat_sys_id = self.u_name + " PreheatSys"
