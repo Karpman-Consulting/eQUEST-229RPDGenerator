@@ -476,8 +476,8 @@ class System(ParentNode):
             return
 
         terminal_system_conditions = (
-                self.keyword_value_pairs.get("TYPE") in ["FC", "IU"]
-                and heat_type == "FLUID_LOOP"
+            self.keyword_value_pairs.get("TYPE") in ["FC", "IU"]
+            and heat_type == "FLUID_LOOP"
         )
         if terminal_system_conditions:
             self.populate_terminal_system()
