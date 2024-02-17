@@ -51,11 +51,11 @@ class Boiler(BaseNode):
         """Populate data elements for boiler object."""
         self.draft_type = self.draft_type_map.get(self.keyword_value_pairs.get("TYPE"))
         requests = self.get_output_requests()
-        data = self.get_output_data(self.rmd.dll_path,
-                                    self.rmd.doe2_data_path,
-                                    self.rmd.file_path,
-                                    requests)
-        print(data)
+        output_data = self.get_output_data(self.rmd.dll_path,
+                                           self.rmd.doe2_data_path,
+                                           self.rmd.file_path,
+                                           requests)
+        self.auxiliary_power = output_data.get("Boilers - Sizing Info/Boiler - Aux kW")
 
     def get_output_requests(self):
         """Get the output requests for the boiler object."""
