@@ -2,7 +2,7 @@ from rpd_generator.ruleset_project_description import RulesetProjectDescription
 from rpd_generator.ruleset_model_description import RulesetModelDescription
 from rpd_generator.building_segment import BuildingSegment
 from rpd_generator.building import Building
-import doe2_file_readers
+from doe2_file_readers.model_input_reader import ModelInputReader
 from rpd_generator.bdl_structure import *
 import json
 import os
@@ -70,7 +70,7 @@ def generate_rmds(selected_models):
         rmd.bdl_obj_instances["Default Building Segment"] = default_building_segment
 
         # get all BDL commands from the BDL input file
-        bdl_input_reader = doe2_file_readers.model_input_reader.ModelInputReader()
+        bdl_input_reader = ModelInputReader()
         file_bdl_commands = bdl_input_reader.read_input_bdl_file(model_path)
 
         # Process each data group in the order specified in COMMAND_PROCESSING_ORDER
