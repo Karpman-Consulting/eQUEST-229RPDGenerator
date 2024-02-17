@@ -41,9 +41,18 @@ class HeatRejection(BaseNode):
     def populate_data_elements(self):
         """Populate data elements for heat rejection object."""
         self.loop = self.keyword_value_pairs.get("CW-LOOP")
+
         self.type = self.heat_rejection_type_map.get(
             self.keyword_value_pairs.get("TYPE")
         )
+
+        self.range = self.keyword_value_pairs.get("RATED-RANGE")
+        if self.range is not None:
+            self.range = float(self.range)
+
+        self.approach = self.keyword_value_pairs.get("RATED-APPROACH")
+        if self.approach is not None:
+            self.approach = float(self.approach)
 
     def populate_data_group(self):
         """Populate schema structure for heat rejection object."""
