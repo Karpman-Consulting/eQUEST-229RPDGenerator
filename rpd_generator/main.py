@@ -101,9 +101,11 @@ def generate_rmds(selected_models):
 def generate_rpd(rmds, json_file_path):
     rpd = RulesetProjectDescription()
     for rmd in rmds:
-        # Once all objects have been created, populate the data groups, data elements, and insert the into the rpd
+        # Once all objects have been created, populate data elements
         for obj_instance in rmd.bdl_obj_instances.values():
             obj_instance.populate_data_elements()
+        # Once all data elements are populated, populate the data group and insert the object into the rpd
+        for obj_instance in rmd.bdl_obj_instances.values():
             if isinstance(obj_instance, BaseNode):
                 obj_instance.populate_data_group()
                 obj_instance.insert_to_rpd(rmd)
