@@ -11,6 +11,7 @@ import os
 inherit from BaseNode or BaseDefinition. Each class will also need a priority attribute in this case.
 For now, this is a list of BDL commands that are ready to be processed, in the order they should be processed."""
 COMMAND_PROCESSING_ORDER = [
+    "RUN-PERIOD-PD",
     "SITE-PARAMETERS",
     "MASTER-METERS",
     "FUEL-METER",
