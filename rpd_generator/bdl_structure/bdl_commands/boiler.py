@@ -102,6 +102,7 @@ class Boiler(BaseNode):
         #      2401063,  12,  1,  7, 23,  1,  1,  1,  0, 22, 2064,  8,  1,  0,    0   ; Primary Equipment (Boilers) - Rated EIR (frac) !!! -99999.0 during trials
         #      2401064,  12,  1,  7, 24,  1,  1,  1,  0, 22, 2064,  8,  1,  0,    0   ; Primary Equipment (Boilers) - Rated HIR (frac) !!! -99999.0 during trials
         #      2401065,  12,  1,  7, 25,  1,  1,  1,  0, 28, 2064,  8,  1,  0,    0   ; Primary Equipment (Boilers) - Auxiliary (kW) !!! -99999.0 during trials
+
         # Selected requests to populate data elements
         requests = {
             "Boilers - Design Parameters - Fuel Input Ratio": (

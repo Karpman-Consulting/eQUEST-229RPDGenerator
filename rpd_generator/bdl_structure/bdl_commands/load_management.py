@@ -6,12 +6,8 @@ class LoadManagement(BaseDefinition):
 
     bdl_command = "LOAD-MANAGEMENT"
 
-    def __init__(self, u_name):
-        super().__init__(u_name)
+    def __init__(self, u_name, rmd):
+        super().__init__(u_name, rmd)
 
     def __repr__(self):
         return f"LoadManagement(u_name='{self.u_name}')"
-
-    def populate_schema_structure(self):
-        """Populate schema structure for load management object."""
-        return {}

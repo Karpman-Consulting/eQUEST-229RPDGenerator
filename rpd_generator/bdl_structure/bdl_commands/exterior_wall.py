@@ -71,7 +71,6 @@ class ExteriorWall(ChildNode, ParentNode):
             "construction": self.construction,
             "surface_optical_properties": self.surface_optical_properties,
         }
-        self.populate_data_elements()
 
         no_children_attributes = [
             "reporting_name",

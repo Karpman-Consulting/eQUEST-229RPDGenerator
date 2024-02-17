@@ -12,6 +12,6 @@ class GlassType(BaseDefinition):
     def __repr__(self):
         return f"GlassType(u_name='{self.u_name}')"
 
-    def populate_schema_structure(self):
+    def populate_data_elements(self):
         """Populate schema structure for glass type object."""
-        return {}
+        pass

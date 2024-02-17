@@ -6,8 +6,8 @@ class Floor(ParentDefinition):
 
     bdl_command = "FLOOR"
 
-    def __init__(self, u_name):
-        super().__init__(u_name)
+    def __init__(self, u_name, rmd):
+        super().__init__(u_name, rmd)
 
     def __repr__(self):
         return f"Floor(u_name='{self.u_name}')"
