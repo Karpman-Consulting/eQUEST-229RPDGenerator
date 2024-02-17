@@ -6,8 +6,8 @@ class ParentDefinition(BaseDefinition):
     Class for BDL commands that are parents to nodes in the tree but are not nodes in the tree themselves
     """
 
-    def __init__(self, u_name):
-        super().__init__(u_name)
+    def __init__(self, u_name, rmd):
+        super().__init__(u_name, rmd)
         self.children = []
 
     def __repr__(self):
