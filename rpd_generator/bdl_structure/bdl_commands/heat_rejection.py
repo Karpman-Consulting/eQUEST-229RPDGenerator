@@ -30,6 +30,10 @@ class HeatRejection(BaseNode):
     def __repr__(self):
         return f"HeatRejection(u_name='{self.u_name}')"
 
+    def populate_data_elements(self):
+        """Populate data elements for heat rejection object."""
+        self.loop = self.keyword_value_pairs.get("CW-LOOP")
+
     def populate_data_group(self):
         """Populate schema structure for heat rejection object."""
         self.heat_rejection_data_structure = {
