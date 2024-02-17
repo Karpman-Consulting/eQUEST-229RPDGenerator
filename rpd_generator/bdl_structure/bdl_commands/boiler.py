@@ -51,10 +51,9 @@ class Boiler(BaseNode):
         """Populate data elements for boiler object."""
         self.draft_type = self.draft_type_map.get(self.keyword_value_pairs.get("TYPE"))
         requests = self.get_output_requests()
-        output_data = self.get_output_data(self.rmd.dll_path,
-                                           self.rmd.doe2_data_path,
-                                           self.rmd.file_path,
-                                           requests)
+        output_data = self.get_output_data(
+            self.rmd.dll_path, self.rmd.doe2_data_path, self.rmd.file_path, requests
+        )
         self.auxiliary_power = output_data.get("Boilers - Sizing Info/Boiler - Aux kW")
 
     def get_output_requests(self):
@@ -105,12 +104,36 @@ class Boiler(BaseNode):
         #      2401065,  12,  1,  7, 25,  1,  1,  1,  0, 28, 2064,  8,  1,  0,    0   ; Primary Equipment (Boilers) - Auxiliary (kW) !!! -99999.0 during trials
         # Selected requests to populate data elements
         requests = {
-            "Boilers - Design Parameters - Fuel Input Ratio": (2315006, self.u_name.encode("utf-8"), b""),
-            "Boilers - Rated Capacity at Peak (Btu/hr)": (2315901, self.u_name.encode("utf-8"), b""),
-            "Boilers - Return Water Temperature at Peak (°F)": (2315902, self.u_name.encode("utf-8"), b""),
-            "Boilers - Sizing Info/Boiler - Capacity": (2315911, self.u_name.encode("utf-8"), b""),
-            "Boilers - Sizing Info/Boiler - Heat EIR": (2315914, self.u_name.encode("utf-8"), b""),
-            "Boilers - Sizing Info/Boiler - Aux kW": (2315915, self.u_name.encode("utf-8"), b""),
+            "Boilers - Design Parameters - Fuel Input Ratio": (
+                2315006,
+                self.u_name.encode("utf-8"),
+                b"",
+            ),
+            "Boilers - Rated Capacity at Peak (Btu/hr)": (
+                2315901,
+                self.u_name.encode("utf-8"),
+                b"",
+            ),
+            "Boilers - Return Water Temperature at Peak (°F)": (
+                2315902,
+                self.u_name.encode("utf-8"),
+                b"",
+            ),
+            "Boilers - Sizing Info/Boiler - Capacity": (
+                2315911,
+                self.u_name.encode("utf-8"),
+                b"",
+            ),
+            "Boilers - Sizing Info/Boiler - Heat EIR": (
+                2315914,
+                self.u_name.encode("utf-8"),
+                b"",
+            ),
+            "Boilers - Sizing Info/Boiler - Aux kW": (
+                2315915,
+                self.u_name.encode("utf-8"),
+                b"",
+            ),
         }
         return requests
 
