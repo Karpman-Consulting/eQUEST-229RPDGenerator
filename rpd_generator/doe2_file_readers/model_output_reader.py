@@ -66,7 +66,7 @@ def get_multiple_results(d2_result_dll, doe2_data_dir, project_fname, request_ar
 
         with open(nhr_list_path, "r") as nhr_list:
             for line in nhr_list:
-                parts = [part.strip() for part in line.split(",")]
+                parts = [part.strip(" ;") for part in line.split(",")]
                 if parts[0] == str(entry_id):
                     # Figure out the max_values for the value request (NI in NHRList.txt) and add to the total
                     max_values += int(parts[6])
