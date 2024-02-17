@@ -14,6 +14,14 @@ class HeatRejection(BaseNode):
         # "": "EVAPORATIVE_CONDENSER",  # Selecting Evap Condenser in eQUEST crashes the program. Not shown in Helptext.
     }
 
+    fan_spd_ctrl_map = {
+        "ONE-SPEED-FAN": "CONSTANT",
+        "FLUID-BYPASS": "CONSTANT",
+        "TWO-SPEED-FAN": "TWO_SPEED",
+        "VARIABLE-SPEED-FAN": "VARIABLE_SPEED",
+        "DISCHARGE-DAMPER": "OTHER",
+    }
+
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
 
@@ -44,6 +52,10 @@ class HeatRejection(BaseNode):
 
         self.type = self.heat_rejection_type_map.get(
             self.keyword_value_pairs.get("TYPE")
+        )
+
+        self.fan_speed_control = self.fan_spd_ctrl_map.get(
+            self.keyword_value_pairs.get("CAPACITY-CTRL")
         )
 
         self.range = self.keyword_value_pairs.get("RATED-RANGE")
