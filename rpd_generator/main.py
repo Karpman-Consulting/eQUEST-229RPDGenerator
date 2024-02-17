@@ -154,10 +154,8 @@ def _create_obj_instance(command, command_dict, rmd):
             rmd.bdl_obj_instances[command_dict["parent"]],
             rmd,
         )
-    elif inherits_base_node:
-        obj_instance = command_class(command_dict["unique_name"], rmd)
     else:
-        obj_instance = command_class(command_dict["unique_name"])
+        obj_instance = command_class(command_dict["unique_name"], rmd)
     return obj_instance
 
 
