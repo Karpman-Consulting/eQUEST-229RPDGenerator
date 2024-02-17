@@ -46,6 +46,10 @@ class Zone(ChildNode):
     def __repr__(self):
         return f"Zone(u_name='{self.u_name}', parent='{self.parent}')"
 
+    def populate_data_elements(self):
+        """Populate data elements for zone object."""
+        pass
+
     def populate_data_group(self):
         """Populate schema structure for zone object."""
         self.zone_data_structure = {
@@ -61,23 +65,23 @@ class Zone(ChildNode):
             "reporting_name",
             "notes",
             "floor_name",
-            "volume"
-            "conditioning_type"
-            "design_thermostat_cooling_setpoint"
-            "thermostat_cooling_setpoint_schedule"
-            "design_thermostat_heating_setpoint"
-            "heating_thermostat_setpoint_schedulue"
-            "minimum_humidity_setpoint_schedule"
-            "maximum_humidity_setpoint_schedule"
-            "served_by_service_water_heating_system"
-            "transfer_airflow_rate"
-            "transfer_airflow_source_zone"
-            "zonal_exhaust_flow"
-            "exhaust_airflow_rate_multiplier_schedule"
-            "makeup_airflow_rate"
-            "non_mechanical_cooling_fan_power"
-            "non_mechanical_cooling_fan_airflow"
-            "air_distribution_effectiveness"
+            "volume",
+            "conditioning_type",
+            "design_thermostat_cooling_setpoint",
+            "thermostat_cooling_setpoint_schedule",
+            "design_thermostat_heating_setpoint",
+            "heating_thermostat_setpoint_schedulue",
+            "minimum_humidity_setpoint_schedule",
+            "maximum_humidity_setpoint_schedule",
+            "served_by_service_water_heating_system",
+            "transfer_airflow_rate",
+            "transfer_airflow_source_zone",
+            "zonal_exhaust_flow",
+            "exhaust_airflow_rate_multiplier_schedule",
+            "makeup_airflow_rate",
+            "non_mechanical_cooling_fan_power",
+            "non_mechanical_cooling_fan_airflow",
+            "air_distribution_effectiveness",
             "aggregation_factor",
         ]
 
@@ -86,12 +90,6 @@ class Zone(ChildNode):
             value = getattr(self, attr, None)
             if value is not None:
                 self.zone_data_structure[attr] = value
-
-    def populate_data_elements(self):
-        pass
-
-    def get_output_data(self):
-        pass
 
     def get_output_requests(self):
         pass

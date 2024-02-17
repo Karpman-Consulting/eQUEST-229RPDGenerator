@@ -40,6 +40,12 @@ class Space(ChildNode, ParentNode):
         if self.floor_area is not None:
             self.floor_area = float(self.floor_area)
 
+        volume = self.keyword_value_pairs.get("VOLUME")
+        if volume is not None:
+            volume = float(volume)
+            zone = self.rmd.space_map.get(self.u_name)
+            zone.__setattr__("volume", volume)
+
         self.number_of_occupants = self.keyword_value_pairs.get("NUMBER-OF-PEOPLE")
         if self.number_of_occupants is not None:
             self.number_of_occupants = float(self.number_of_occupants)
