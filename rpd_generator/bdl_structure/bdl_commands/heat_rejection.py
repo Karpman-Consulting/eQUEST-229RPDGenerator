@@ -8,11 +8,10 @@ class HeatRejection(BaseNode):
 
     heat_rejection_type_map = {
         "OPEN-TWR": "OPEN_CIRCUIT_COOLING_TOWER",
-        "OPEN-TWR&HX": "OPEN_CIRCUIT_COOLING_TOWER",
+        "OPEN-TWR&HX": "OPEN_CIRCUIT_COOLING_TOWER",  # Should this be OTHER?
         "FLUID-COOLER": "CLOSED_CIRCUIT_COOLING_TOWER",
         "DRYCOOLER": "DRY_COOLER",
         # "": "EVAPORATIVE_CONDENSER",  # Selecting Evap Condenser in eQUEST crashes the program. Not shown in Helptext.
-        "": "OTHER",
     }
 
     def __init__(self, u_name, rmd):
