@@ -577,14 +577,20 @@ class System(ParentNode):
 
     def populate_heating_system(self):
         self.heat_sys_id = self.u_name + " HeatSys"
+
         self.heat_sys_type = self.heat_type_map.get(
             self.keyword_value_pairs.get("HEAT-SOURCE")
         )
         sizing_ratio = self.keyword_value_pairs.get("SIZING-RATIO")
         heat_sizing_ratio = self.keyword_value_pairs.get("HEAT-SIZING-RATI")
+
         self.heat_sys_oversizing_factor = (
                 float(sizing_ratio) * float(heat_sizing_ratio)
         ) if sizing_ratio is not None and heat_sizing_ratio is not None else None
+
+        self.heat_sys_water_source_heat_pump_loop = self.keyword_value_pairs.get("CW-LOOP")
+
+
 
     def populate_cooling_system(self):
         self.cool_sys_id = self.u_name + " CoolSys"
