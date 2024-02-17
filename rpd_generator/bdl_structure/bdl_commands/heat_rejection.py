@@ -6,6 +6,15 @@ class HeatRejection(BaseNode):
 
     bdl_command = "HEAT-REJECTION"
 
+    heat_rejection_type_map = {
+        "OPEN-TWR": "OPEN_CIRCUIT_COOLING_TOWER",
+        "OPEN-TWR&HX": "OPEN_CIRCUIT_COOLING_TOWER",
+        "FLUID-COOLER": "CLOSED_CIRCUIT_COOLING_TOWER",
+        "DRYCOOLER": "DRY_COOLER",
+        # "": "EVAPORATIVE_CONDENSER",  # Selecting Evap Condenser in eQUEST crashes the program. Not shown in Helptext.
+        "": "OTHER",
+    }
+
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
 
@@ -33,6 +42,9 @@ class HeatRejection(BaseNode):
     def populate_data_elements(self):
         """Populate data elements for heat rejection object."""
         self.loop = self.keyword_value_pairs.get("CW-LOOP")
+        self.type = self.heat_rejection_type_map.get(
+            self.keyword_value_pairs.get("TYPE")
+        )
 
     def populate_data_group(self):
         """Populate schema structure for heat rejection object."""
