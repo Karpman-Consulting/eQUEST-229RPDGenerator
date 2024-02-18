@@ -77,9 +77,12 @@ class Boiler(BaseNode):
             }
         )
 
+        self.loop = self.keyword_value_pairs.get("HW-LOOP")
+
         self.energy_source_type = self.energy_source_map.get(
             self.keyword_value_pairs.get("TYPE")
         )
+
         self.draft_type = self.draft_type_map.get(self.keyword_value_pairs.get("TYPE"))
         requests = self.get_output_requests()
         output_data = self.get_output_data(
