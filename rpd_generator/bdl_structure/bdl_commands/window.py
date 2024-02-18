@@ -43,6 +43,11 @@ class Window(ChildNode):
             self.keyword_value_pairs.get("WIDTH", 0)
         )
 
+        if self.parent.keyword_value_pairs.get("LOCATION") == "TOP":
+            self.classification = "SKYLIGHT"
+        else:
+            self.classification = "WINDOW"
+
     def populate_data_group(self):
         """Populate schema structure for window object."""
         self.window_data_structure = {
