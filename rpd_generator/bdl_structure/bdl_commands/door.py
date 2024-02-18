@@ -37,6 +37,10 @@ class Door(ChildNode):
     def __repr__(self):
         return f"Door(u_name='{self.u_name}')"
 
+    def populate_data_elements(self):
+        """Populate data elements for door object."""
+        self.classification = "DOOR"
+
     def populate_data_group(self):
         """Populate schema structure for door object."""
         self.door_data_structure = {
