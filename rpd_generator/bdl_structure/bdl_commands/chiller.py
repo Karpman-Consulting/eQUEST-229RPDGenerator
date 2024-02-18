@@ -6,6 +6,23 @@ class Chiller(BaseNode):
 
     bdl_command = "CHILLER"
 
+    compressor_type_map = {
+        "ELEC-OPEN-CENT": "CENTRIFUGAL",
+        "ELEC-OPEN-REC": "RECIPROCATING",
+        "ELEC-HERM-CENT": "CENTRIFUGAL",
+        "ELEC-HERM-REC": "RECIPROCATING",
+        "ELEC-SCREW": "SCREW",
+        "ELEC-HTREC": "OTHER",
+        "ABSOR-1": "SINGLE_EFFECT_DIRECT_FIRED_ABSORPTION",
+        "ABSOR-2": "DOUBLE_EFFECT_DIRECT_FIRED_ABSORPTION",
+        "GAS-ABSOR": "OTHER",
+        "ENGINE": "OTHER",
+        "HEAT-PUMP": "OMIT",  # Omit because it is not a chiller
+        "LOOP-TO-LOOP-HP": "OMIT",  # Omit because it is not a chiller
+        "WATER-ECONOMIZER": "OMIT",  # Omit because it is not a chiller
+        "STRAINER-CYCLE": "OMIT",  # Omit because it is not a chiller
+    }
+
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
 
@@ -17,7 +34,7 @@ class Chiller(BaseNode):
 
         # data elements with no children
         self.cooling_loop = None
-        self.condending_loop = None
+        self.condensing_loop = None
         self.compressor_type = None
         self.energy_source_type = None
         self.design_capacity = None
@@ -39,6 +56,16 @@ class Chiller(BaseNode):
 
     def __repr__(self):
         return f"Chiller(u_name='{self.u_name}')"
+
+    def populate_data_elements(self):
+        """Populate data elements for chiller object."""
+        self.cooling_loop = self.keyword_value_pairs.get("CHW-LOOP")
+
+        self.condensing_loop = self.keyword_value_pairs.get("CW-LOOP")
+
+        self.compressor_type = self.compressor_type_map.get(
+            self.keyword_value_pairs.get("TYPE")
+        )
 
     def populate_data_group(self):
         """Populate schema structure for chiller object."""
