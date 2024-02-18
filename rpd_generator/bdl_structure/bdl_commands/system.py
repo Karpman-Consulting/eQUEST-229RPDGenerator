@@ -285,8 +285,8 @@ class System(ParentNode):
 
         heat_type = self.heat_type_map.get(self.keyword_value_pairs.get("HEAT-SOURCE"))
         terminal_system_conditions = (
-                self.keyword_value_pairs.get("TYPE") in ["FC", "IU"]
-                and heat_type == "FLUID_LOOP"
+            self.keyword_value_pairs.get("TYPE") in ["FC", "IU"]
+            and heat_type == "FLUID_LOOP"
         )
 
         if terminal_system_conditions:
@@ -513,8 +513,8 @@ class System(ParentNode):
         heat_type = self.heat_type_map.get(self.keyword_value_pairs.get("HEAT-SOURCE"))
 
         terminal_system_conditions = (
-                self.keyword_value_pairs.get("TYPE") in ["FC", "IU"]
-                and heat_type == "FLUID_LOOP"
+            self.keyword_value_pairs.get("TYPE") in ["FC", "IU"]
+            and heat_type == "FLUID_LOOP"
         )
 
         if terminal_system_conditions:
@@ -555,7 +555,9 @@ class System(ParentNode):
                 elif attr.startswith("air_energy_recovery_"):
                     value = getattr(self, attr, None)
                     if value is not None:
-                        self.fan_sys_air_energy_recovery[attr.strip("air_energy_recovery_")] = value
+                        self.fan_sys_air_energy_recovery[
+                            attr.strip("air_energy_recovery_")
+                        ] = value
 
     def insert_to_rpd(self, rmd):
         """Insert system data structure into the rpd data structure."""
@@ -585,12 +587,16 @@ class System(ParentNode):
         sizing_ratio = self.keyword_value_pairs.get("SIZING-RATIO")
         heat_sizing_ratio = self.keyword_value_pairs.get("HEAT-SIZING-RATI")
         self.heat_sys_oversizing_factor = (
-                float(sizing_ratio) * float(heat_sizing_ratio)
-        ) if sizing_ratio is not None and heat_sizing_ratio is not None else None
+            (float(sizing_ratio) * float(heat_sizing_ratio))
+            if sizing_ratio is not None and heat_sizing_ratio is not None
+            else None
+        )
 
         self.heat_sys_hot_water_loop = self.keyword_value_pairs.get("HW-LOOP")
 
-        self.heat_sys_water_source_heat_pump_loop = self.keyword_value_pairs.get("CW-LOOP")
+        self.heat_sys_water_source_heat_pump_loop = self.keyword_value_pairs.get(
+            "CW-LOOP"
+        )
 
     def populate_cooling_system(self):
         self.cool_sys_id = self.u_name + " CoolSys"
@@ -602,8 +608,10 @@ class System(ParentNode):
         sizing_ratio = self.keyword_value_pairs.get("SIZING-RATIO")
         cool_sizing_ratio = self.keyword_value_pairs.get("COOL-SIZING-RATI")
         self.cool_sys_oversizing_factor = (
-                float(sizing_ratio) * float(cool_sizing_ratio)
-        ) if sizing_ratio is not None and cool_sizing_ratio is not None else None
+            (float(sizing_ratio) * float(cool_sizing_ratio))
+            if sizing_ratio is not None and cool_sizing_ratio is not None
+            else None
+        )
 
         self.cool_sys_chilled_water_loop = self.keyword_value_pairs.get("CHW-LOOP")
 
@@ -627,7 +635,9 @@ class System(ParentNode):
             "ECONO-LIMIT-T"
         )
         if self.air_econ_high_limit_shutoff_temperature is not None:
-            self.air_econ_high_limit_shutoff_temperature = float(self.air_econ_high_limit_shutoff_temperature)
+            self.air_econ_high_limit_shutoff_temperature = float(
+                self.air_econ_high_limit_shutoff_temperature
+            )
 
     def populate_air_energy_recovery(self):
         self.air_econ_id = self.u_name + " AirEnergyRecovery"
@@ -644,9 +654,7 @@ class System(ParentNode):
             }
         )
 
-        self.air_energy_recovery_type = self.has_recovery_map.get(
-            recover_exhaust
-        )
+        self.air_energy_recovery_type = self.has_recovery_map.get(recover_exhaust)
         self.air_energy_recovery_operation = self.er_operation_map.get(
             self.keyword_value_pairs.get("ERV-RUN-CTRL")
         )
