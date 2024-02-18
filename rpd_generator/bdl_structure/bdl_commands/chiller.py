@@ -63,6 +63,8 @@ class Chiller(BaseNode):
 
         self.condensing_loop = self.keyword_value_pairs.get("CW-LOOP")
 
+        self.heat_recovery_loop = self.keyword_value_pairs.get("HTREC-LOOP")
+
         self.compressor_type = self.compressor_type_map.get(
             self.keyword_value_pairs.get("TYPE")
         )
