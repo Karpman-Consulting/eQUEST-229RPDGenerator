@@ -69,7 +69,7 @@ class System(ParentNode):
         "ENTHALPY-WHEEL": "ENTHALPY_HEAT_WHEEL",
         "HEAT-PIPE": "HEAT_PIPE",
     }
-    air_energy_recovery_map = {
+    has_recovery_map = {
         "NO": "NONE",
         "RELIEF-ONLY": None,  # Mapping updated in populate_air_energy_recovery method
         "EXHAUST-ONLY": None,  # Mapping updated in populate_air_energy_recovery method
@@ -144,10 +144,20 @@ class System(ParentNode):
         self.heat_sys_reporting_name = None
         self.heat_sys_notes = None
         self.heat_sys_type = None
-        self.heat_sys_phase = None
-        self.heat_sys_efficiency = None
-        self.heat_sys_capacity = None
-        self.heat_sys_peak_load = None
+        self.heat_sys_energy_source_type = None
+        self.heat_sys_hot_water_loop = None
+        self.heat_sys_water_source_heat_pump_loop = None
+        self.heat_sys_design_capacity = None
+        self.heat_sys_rated_capacity = None
+        self.heat_sys_oversizing_factor = None
+        self.heat_sys_is_sized_based_on_design_day = None
+        self.heat_sys_heating_coil_setpoint = None
+        self.heat_sys_efficiency_metric_values = None
+        self.heat_sys_efficiency_metric_types = None
+        self.heat_sys_heatpump_auxiliary_heat_type = None
+        self.heat_sys_heatpump_auxiliary_heat_high_shutoff_temperature = None
+        self.heat_sys_heatpump_low_shutoff_temperature = None
+        self.heat_sys_humidification_type = None
 
         # cooling system data elements
         self.cool_sys_id = None
@@ -160,8 +170,8 @@ class System(ParentNode):
         self.cool_sys_rated_sensible_capacity = None
         self.cool_sys_oversizing_factor = None
         self.cool_sys_is_sized_based_on_design_day = None
-        self.cool_sys_chw_loop = None
-        self.cool_sys_cw_loop = None
+        self.cool_sys_chilled_water_loop = None
+        self.cool_sys_condenser_water_loop = None
         self.cool_sys_efficiency_metric_values = []
         self.cool_sys_efficiency_metric_types = []
         self.cool_sys_dehumidification_type = None
@@ -172,10 +182,20 @@ class System(ParentNode):
         self.preheat_sys_reporting_name = None
         self.preheat_sys_notes = None
         self.preheat_sys_type = None
-        self.preheat_sys_phase = None
-        self.preheat_sys_efficiency = None
-        self.preheat_sys_capacity = None
-        self.preheat_sys_peak_load = None
+        self.preheat_sys_energy_source_type = None
+        self.preheat_sys_hot_water_loop = None
+        self.preheat_sys_water_source_heat_pump_loop = None
+        self.preheat_sys_design_capacity = None
+        self.preheat_sys_rated_capacity = None
+        self.preheat_sys_oversizing_factor = None
+        self.preheat_sys_is_sized_based_on_design_day = None
+        self.preheat_sys_heating_coil_setpoint = None
+        self.preheat_sys_efficiency_metric_values = None
+        self.preheat_sys_efficiency_metric_types = None
+        self.preheat_sys_heatpump_auxiliary_heat_type = None
+        self.preheat_sys_heatpump_auxiliary_heat_high_shutoff_temperature = None
+        self.preheat_sys_heatpump_low_shutoff_temperature = None
+        self.preheat_sys_humidification_type = None
 
         # [supply, return, relief, exhaust] fan data elements
         self.fan_id = [None, None, None, None]
@@ -249,6 +269,34 @@ class System(ParentNode):
 
     def populate_data_elements(self):
         """Populate data elements from the keyword_value pairs returned from model_input_reader."""
+        if self.keyword_value_pairs.get("TYPE") == "SUM":
+            self.omit = True
+            return
+
+        cool_source = self.keyword_value_pairs.get("COOL-SOURCE")
+        cool_type = self.cool_type_map.get(cool_source)
+        # Update the cooling type map according to the COOL-SOURCE keyword (only used for PIU and DOAS)
+        self.system_cooling_type_map.update(
+            {
+                "PIU": cool_type,
+                "DOAS": cool_type,
+            }
+        )
+
+        heat_type = self.heat_type_map.get(self.keyword_value_pairs.get("HEAT-SOURCE"))
+        terminal_system_conditions = (
+            self.keyword_value_pairs.get("TYPE") in ["FC", "IU"]
+            and heat_type == "FLUID_LOOP"
+        )
+
+        if terminal_system_conditions:
+            self.populate_terminal_system()
+
+        else:
+            self.populate_fan_system()
+            self.populate_heating_system()
+            self.populate_cooling_system()
+            self.populate_preheat_system()
 
         # self.get_output_data()
 
@@ -458,39 +506,58 @@ class System(ParentNode):
         air system is used a second Zone Terminal should be specified with a separate
         HeatingVentilatingAirConditioningSystem.
         """
-
-        cool_source = self.keyword_value_pairs.get("COOL-SOURCE")
-        cool_type = self.cool_type_map.get(cool_source)
-        heat_type = self.heat_type_map.get(self.keyword_value_pairs.get("HEAT-SOURCE"))
-
-        # Update the cooling type map according to the COOL-SOURCE keyword (only used for PIU and DOAS)
-        self.system_cooling_type_map.update(
-            {
-                "PIU": cool_type,
-                "DOAS": cool_type,
-            }
-        )
-
         if self.keyword_value_pairs.get("TYPE") == "SUM":
             self.omit = True
             return
+
+        heat_type = self.heat_type_map.get(self.keyword_value_pairs.get("HEAT-SOURCE"))
 
         terminal_system_conditions = (
             self.keyword_value_pairs.get("TYPE") in ["FC", "IU"]
             and heat_type == "FLUID_LOOP"
         )
+
         if terminal_system_conditions:
-            self.populate_terminal_system()
-        if not terminal_system_conditions:
+            for attr in dir(self):
+                if attr.startswith("terminals_"):
+                    pass
+
+        else:
             self.system_data_structure["id"] = self.u_name
-            self.populate_fan_system()
             self.system_data_structure["fan_system"] = self.fan_system
-            self.populate_heating_system()
             self.system_data_structure["heating_system"] = self.heating_system
-            self.populate_cooling_system()
             self.system_data_structure["cooling_system"] = self.cooling_system
-            self.populate_preheat_system()
             self.system_data_structure["preheat_system"] = self.preheat_system
+
+            for attr in dir(self):
+                if attr.startswith("fan_sys_"):
+                    value = getattr(self, attr, None)
+                    if value is not None:
+                        self.fan_system[attr.split("fan_sys_")[1]] = value
+                elif attr.startswith("heat_sys_"):
+                    value = getattr(self, attr, None)
+                    if value is not None:
+                        self.heating_system[attr.split("heat_sys_")[1]] = value
+                elif attr.startswith("cool_sys_"):
+                    value = getattr(self, attr, None)
+                    if value is not None:
+                        self.cooling_system[attr.split("cool_sys_")[1]] = value
+                elif attr.startswith("preheat_sys_"):
+                    value = getattr(self, attr, None)
+                    if value is not None:
+                        self.preheat_system[attr.split("preheat_sys_")[1]] = value
+                elif attr.startswith("fan_") and not attr[4:7] == "sys":
+                    pass
+                elif attr.startswith("air_econ_"):
+                    value = getattr(self, attr, None)
+                    if value is not None:
+                        self.fan_sys_air_economizer[attr.split("air_econ_")[1]] = value
+                elif attr.startswith("air_energy_recovery_"):
+                    value = getattr(self, attr, None)
+                    if value is not None:
+                        self.fan_sys_air_energy_recovery[
+                            attr.strip("air_energy_recovery_")
+                        ] = value
 
     def insert_to_rpd(self, rmd):
         """Insert system data structure into the rpd data structure."""
@@ -499,6 +566,7 @@ class System(ParentNode):
         self.parent_building_segment.hvac_systems.append(self.system_data_structure)
 
     def populate_fan_system(self):
+        self.fan_sys_id = self.u_name + " FanSys"
         self.fan_sys_fan_control = self.supply_fan_map.get(
             self.keyword_value_pairs.get("TYPE")
         )
@@ -510,16 +578,47 @@ class System(ParentNode):
         )
 
     def populate_heating_system(self):
+        self.heat_sys_id = self.u_name + " HeatSys"
+
         self.heat_sys_type = self.heat_type_map.get(
             self.keyword_value_pairs.get("HEAT-SOURCE")
         )
 
+        sizing_ratio = self.keyword_value_pairs.get("SIZING-RATIO")
+        heat_sizing_ratio = self.keyword_value_pairs.get("HEAT-SIZING-RATI")
+        self.heat_sys_oversizing_factor = (
+            (float(sizing_ratio) * float(heat_sizing_ratio))
+            if sizing_ratio is not None and heat_sizing_ratio is not None
+            else None
+        )
+
+        self.heat_sys_hot_water_loop = self.keyword_value_pairs.get("HW-LOOP")
+
+        self.heat_sys_water_source_heat_pump_loop = self.keyword_value_pairs.get(
+            "CW-LOOP"
+        )
+
     def populate_cooling_system(self):
+        self.cool_sys_id = self.u_name + " CoolSys"
+
         self.cool_sys_type = self.system_cooling_type_map.get(
             self.keyword_value_pairs.get("TYPE")
         )
 
+        sizing_ratio = self.keyword_value_pairs.get("SIZING-RATIO")
+        cool_sizing_ratio = self.keyword_value_pairs.get("COOL-SIZING-RATI")
+        self.cool_sys_oversizing_factor = (
+            (float(sizing_ratio) * float(cool_sizing_ratio))
+            if sizing_ratio is not None and cool_sizing_ratio is not None
+            else None
+        )
+
+        self.cool_sys_chilled_water_loop = self.keyword_value_pairs.get("CHW-LOOP")
+
+        self.cool_sys_condenser_water_loop = self.keyword_value_pairs.get("CW-LOOP")
+
     def populate_preheat_system(self):
+        self.preheat_sys_id = self.u_name + " PreheatSys"
         self.preheat_sys_type = self.heat_type_map.get(
             self.keyword_value_pairs.get("PREHEAT-SOURCE")
         )
@@ -528,16 +627,25 @@ class System(ParentNode):
         pass
 
     def populate_air_economizer(self):
+        self.fan_sys_id = self.u_name + " AirEconomizer"
         self.air_econ_type = self.economizer_map.get(
             self.keyword_value_pairs.get("OA-CONTROL")
         )
+        self.air_econ_high_limit_shutoff_temperature = self.keyword_value_pairs.get(
+            "ECONO-LIMIT-T"
+        )
+        if self.air_econ_high_limit_shutoff_temperature is not None:
+            self.air_econ_high_limit_shutoff_temperature = float(
+                self.air_econ_high_limit_shutoff_temperature
+            )
 
     def populate_air_energy_recovery(self):
+        self.air_econ_id = self.u_name + " AirEnergyRecovery"
         recover_exhaust = self.keyword_value_pairs.get("RECOVER-EXHAUST")
         recovery_type = self.recovery_type_map.get(
             self.keyword_value_pairs.get("ERV-RECOVER-TYPE")
         )
-        self.air_energy_recovery_map.update(
+        self.has_recovery_map.update(
             {
                 "RELIEF-ONLY": recovery_type,
                 "EXHAUST-ONLY": recovery_type,
@@ -546,9 +654,7 @@ class System(ParentNode):
             }
         )
 
-        self.air_energy_recovery_type = self.air_energy_recovery_map.get(
-            recover_exhaust
-        )
+        self.air_energy_recovery_type = self.has_recovery_map.get(recover_exhaust)
         self.air_energy_recovery_operation = self.er_operation_map.get(
             self.keyword_value_pairs.get("ERV-RUN-CTRL")
         )
