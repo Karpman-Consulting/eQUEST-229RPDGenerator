@@ -6,6 +6,22 @@ class HeatRejection(BaseNode):
 
     bdl_command = "HEAT-REJECTION"
 
+    heat_rejection_type_map = {
+        "OPEN-TWR": "OPEN_CIRCUIT_COOLING_TOWER",
+        "OPEN-TWR&HX": "OPEN_CIRCUIT_COOLING_TOWER",  # Should this be OTHER?
+        "FLUID-COOLER": "CLOSED_CIRCUIT_COOLING_TOWER",
+        "DRYCOOLER": "DRY_COOLER",
+        # "": "EVAPORATIVE_CONDENSER",  # Selecting Evap Condenser in eQUEST crashes the program. Not shown in Helptext.
+    }
+
+    fan_spd_ctrl_map = {
+        "ONE-SPEED-FAN": "CONSTANT",
+        "FLUID-BYPASS": "CONSTANT",
+        "TWO-SPEED-FAN": "TWO_SPEED",
+        "VARIABLE-SPEED-FAN": "VARIABLE_SPEED",
+        "DISCHARGE-DAMPER": "OTHER",
+    }
+
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
 
@@ -29,6 +45,26 @@ class HeatRejection(BaseNode):
 
     def __repr__(self):
         return f"HeatRejection(u_name='{self.u_name}')"
+
+    def populate_data_elements(self):
+        """Populate data elements for heat rejection object."""
+        self.loop = self.keyword_value_pairs.get("CW-LOOP")
+
+        self.type = self.heat_rejection_type_map.get(
+            self.keyword_value_pairs.get("TYPE")
+        )
+
+        self.fan_speed_control = self.fan_spd_ctrl_map.get(
+            self.keyword_value_pairs.get("CAPACITY-CTRL")
+        )
+
+        self.range = self.keyword_value_pairs.get("RATED-RANGE")
+        if self.range is not None:
+            self.range = float(self.range)
+
+        self.approach = self.keyword_value_pairs.get("RATED-APPROACH")
+        if self.approach is not None:
+            self.approach = float(self.approach)
 
     def populate_data_group(self):
         """Populate schema structure for heat rejection object."""
