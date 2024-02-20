@@ -2,7 +2,7 @@ from rpd_generator.ruleset_project_description import RulesetProjectDescription
 from rpd_generator.ruleset_model_description import RulesetModelDescription
 from rpd_generator.building_segment import BuildingSegment
 from rpd_generator.building import Building
-from doe2_file_readers.model_input_reader import ModelInputReader
+from rpd_generator.doe2_file_readers import model_input_reader
 from rpd_generator.bdl_structure import *
 import json
 import os
@@ -39,19 +39,23 @@ COMMAND_PROCESSING_ORDER = [
 ]
 
 
-def generate_rpd_json(selected_models):
+def generate_rpd_json(selected_models, dll_path, doe2_data_path):
     """
     Generate the RMDs, use Default Building and Building Segment, and write to JSON without GUI inputs
     """
-    rmds, json_file_path = generate_rmds(selected_models)
+    rmds, json_file_path = generate_rmds(selected_models, dll_path, doe2_data_path)
     rpd, json_file_path = generate_rpd(rmds, json_file_path)
     write_rpd_json(rpd, json_file_path)
 
 
-def generate_rmds(selected_models):
+def generate_rmds(selected_models, dll_path, doe2_data_path):
     """
     Generate the RPD data structure (RulesetProjectDescription, RulesetModelDescription, Building, BuildingSegment,
     and all data groups available from doe2_file_readers)
+    :param selected_models: List of selected models
+    :param dll_path: (str) Path to the D2Result.dll file
+    :param doe2_data_path: (bytes) Path to the DOE-2 data directory
+
     """
     # Set the output directory to the directory of the first selected model
     output_dir = os.path.dirname(selected_models[0])
@@ -68,6 +72,10 @@ def generate_rmds(selected_models):
     for model_path in selected_models:
         rmd = RulesetModelDescription(os.path.splitext(os.path.basename(model_path))[0])
 
+        rmd.dll_path = dll_path
+        rmd.doe2_data_path = doe2_data_path
+        rmd.file_path = os.path.splitext(model_path)[0]
+
         # Set up default building and building segment
         default_building = Building("Default Building")
         default_building_segment = BuildingSegment(
@@ -77,7 +85,7 @@ def generate_rmds(selected_models):
         rmd.bdl_obj_instances["Default Building Segment"] = default_building_segment
 
         # get all BDL commands from the BDL input file
-        bdl_input_reader = ModelInputReader()
+        bdl_input_reader = model_input_reader.ModelInputReader()
         file_bdl_commands = bdl_input_reader.read_input_bdl_file(model_path)
 
         # Process each data group in the order specified in COMMAND_PROCESSING_ORDER
@@ -187,10 +195,3 @@ def _process_command_group(
             special_handling[data_group](obj, cmd_dict)
         obj.add_inputs(cmd_dict)
         rmd.bdl_obj_instances[cmd_dict["unique_name"]] = obj
-
-
-generate_rpd_json(
-    [
-        r"C:\Users\JacksonJarboe\Documents\Development\DOE2-229RPDGenerator\test\example\INP.BDL"
-    ]
-)

@@ -1,4 +1,4 @@
-from doe2_file_readers.model_input_reader import ModelInputReader
+from rpd_generator.doe2_file_readers import model_input_reader
 
 OUTPUT_SCHEMA_ASHRAE901_2019 = "OUTPUT_SCHEMA_ASHRAE901_2019"
 
@@ -9,7 +9,7 @@ class RulesetProjectDescription:
     """
 
     # BDL Command Dictionary maps BDL commands to their corresponding class in the bdl_commands package
-    bdl_command_dict = ModelInputReader.bdl_command_dict
+    bdl_command_dict = model_input_reader.ModelInputReader.bdl_command_dict
 
     def __init__(self):
 

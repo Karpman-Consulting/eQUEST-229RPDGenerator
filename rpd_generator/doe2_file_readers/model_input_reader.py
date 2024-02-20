@@ -2,6 +2,7 @@ import inspect
 import pkgutil
 import importlib
 import re
+import os
 from rpd_generator.bdl_structure import *
 
 
@@ -110,6 +111,33 @@ class ModelInputReader:
                         active_command_dict[keyword] = value
 
             return file_commands
+
+    @staticmethod
+    def copy_inp_with_diagnostic_comments(model_path):
+        model_dir = os.path.dirname(model_path)
+        model_name = os.path.basename(model_path)
+        base_name, extension = os.path.splitext(model_name)
+        temp_file_path = os.path.join(model_dir, base_name + "_temp" + extension)
+
+        with open(model_path, "r") as inp_file, open(temp_file_path, "w") as out_file:
+            lines_after_target = 0
+
+            for line in inp_file:
+
+                # Check if the current line contains the target text
+                if "$              Abort, Diagnostics" in line:
+                    lines_after_target = 3  # Set counter to insert after 3 lines
+
+                # If counter is 1, it means 3 lines have passed since the target, so insert the new line
+                elif lines_after_target == 1:
+                    out_file.write("DIAGNOSTIC COMMENTS ..")
+                    lines_after_target = 0  # Reset counter
+                elif lines_after_target > 0:
+                    lines_after_target -= (
+                        1  # Decrement counter if we're in the 3-line window
+                    )
+
+                out_file.write(line)
 
     @staticmethod
     def _parse_command_line(line):
