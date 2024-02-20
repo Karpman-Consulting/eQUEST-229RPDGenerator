@@ -9,10 +9,7 @@ class InteriorWall(
 
     bdl_command = "INTERIOR-WALL"
     used_constructions = []
-    is_shading_map = {
-        "YES": True,
-        "NO": False,
-    }
+
     int_wall_type_map = {
         "STANDARD": "INTERIOR",
         "AIR": "OMIT",  # Ignore air walls and omit the associated RCT Surface if INT-WALL-TYPE = AIR
@@ -77,7 +74,7 @@ class InteriorWall(
         if int_wall_type == "INTERIOR":
             self.adjacent_zone = self.keyword_value_pairs.get("NEXT-TO")
 
-        self.does_cast_shade = self.is_shading_map.get(
+        self.does_cast_shade = self.boolean_map.get(
             self.keyword_value_pairs.get("SHADING-SURFACE")
         )
 

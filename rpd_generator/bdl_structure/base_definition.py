@@ -3,6 +3,11 @@ class BaseDefinition:
     Base class for BDL commands that are not nodes in the tree, but used to populate 229 schema data elements.
     """
 
+    boolean_map = {
+        "YES": True,
+        "NO": False,
+    }
+
     def __init__(self, u_name, rmd):
         self.rmd = rmd
         self.u_name = u_name

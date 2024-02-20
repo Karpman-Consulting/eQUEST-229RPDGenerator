@@ -4,11 +4,6 @@ from rpd_generator.bdl_structure.base_definition import BaseDefinition
 class SiteParameters(BaseDefinition):
     bdl_command = "SITE-PARAMETERS"
 
-    has_daylight_savings_map = {
-        "YES": True,
-        "NO": False,
-    }
-
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
 
@@ -20,9 +15,7 @@ class SiteParameters(BaseDefinition):
         rpd = self.rmd.bdl_obj_instances["ASHRAE 229"]
         rpd.calendar.setdefault(
             "has_daylight_saving_time",
-            self.has_daylight_savings_map.get(
-                self.keyword_value_pairs.get("DAYLIGHT-SAVINGS")
-            ),
+            self.boolean_map.get(self.keyword_value_pairs.get("DAYLIGHT-SAVINGS")),
         )
 
 

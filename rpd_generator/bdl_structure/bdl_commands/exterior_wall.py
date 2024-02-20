@@ -33,10 +33,6 @@ class ExteriorWall(ChildNode, ParentNode):
 
     def populate_data_elements(self):
         """Populate data elements for exterior wall object."""
-        is_shading_map = {
-            "YES": True,
-            "NO": False,
-        }
 
         self.area = self.keyword_value_pairs.get("AREA")
         if (
@@ -59,7 +55,7 @@ class ExteriorWall(ChildNode, ParentNode):
             self.azimuth = float(self.azimuth)
 
         self.adjacent_to = "EXTERIOR"
-        self.does_cast_shade = is_shading_map.get(
+        self.does_cast_shade = self.boolean_map.get(
             self.keyword_value_pairs.get("SHADING-SURFACE")
         )
 
