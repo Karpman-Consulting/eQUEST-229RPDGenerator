@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from tkinter import Menu
+from tkinter import Menu, filedialog
 from interface.disclaimer_window import DisclaimerWindow
 from interface.error_window import ErrorWindow
 from interface.ctk_xyframe import CTkXYFrame
@@ -262,7 +262,39 @@ class MainApplicationWindow(ctk.CTk):
     def toggle_project_info_button(self):
         print(self.winfo_children())
 
+    def open_select_test_file_view(self):
+        # Create a disabled text entry box to display the selected file path
+        entry = ctk.CTkEntry(
+            self, textvariable=self.app_data.test_inp_path, state="disabled", width=200
+        )
+        entry.grid(row=2, column=1, columnspan=6, sticky="ew", padx=5, pady=(250, 5))
+
+        # Create a button to open the file selection dialog
+        select_button = ctk.CTkButton(
+            self, text="Select File", command=self.select_file
+        )
+        select_button.grid(
+            row=2, column=7, columnspan=1, sticky="ew", padx=5, pady=(250, 5)
+        )
+
+        continue_button = ctk.CTkButton(
+            self, text="Create JSON", command=self.create_test_json
+        )
+        continue_button.grid(row=3, column=4, sticky="ew", padx=5, pady=(150, 5))
+
     def continue_past_configuration(self):
         self.clear_window()
-        self.toggle_project_info_button()
-        self.create_project_info_page()
+        self.open_select_test_file_view()
+        # self.toggle_project_info_button()
+        # self.create_project_info_page()
+
+    def select_file(self):
+        # Open file dialog to select a file with .inp extension
+        filepath = filedialog.askopenfilename(filetypes=[("INP files", "*.inp")])
+        if filepath:
+            # Display the selected file path in the text entry box
+            self.app_data.test_inp_path.set(filepath)
+
+    def create_test_json(self):
+
+        self.app_data.process_inp_to_bdl()
