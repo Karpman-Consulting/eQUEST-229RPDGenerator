@@ -31,10 +31,6 @@ class BelowGradeWall(ChildNode):
 
     def populate_data_elements(self):
         """Populate data elements for below grade wall object."""
-        is_shading_map = {
-            "YES": True,
-            "NO": False,
-        }
 
         self.area = self.keyword_value_pairs.get("AREA")
         if (
@@ -58,7 +54,7 @@ class BelowGradeWall(ChildNode):
 
         self.adjacent_to = "GROUND"
 
-        self.does_cast_shade = is_shading_map.get(
+        self.does_cast_shade = self.boolean_map.get(
             self.keyword_value_pairs.get("SHADING-SURFACE")
         )
 

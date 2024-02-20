@@ -8,6 +8,11 @@ class BaseNode:
     'Node' refers to rpd_generator objects that map directly to a 229 schema data group.
     """
 
+    boolean_map = {
+        "YES": True,
+        "NO": False,
+    }
+
     def __init__(self, u_name, rmd):
         self.rmd = rmd
         self.u_name = u_name
@@ -41,7 +46,8 @@ class BaseNode:
         """
         return self.rmd.bdl_obj_instances.get(u_name, None)
 
-    def get_output_data(self, dll_path, doe2_data_path, project_path_name, requests):
+    @staticmethod
+    def get_output_data(dll_path, doe2_data_path, project_path_name, requests):
         """
         Get data from the simulation output.
         :param dll_path: (string) path to user's eQUEST D2Result.dll file included with installation files
