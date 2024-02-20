@@ -88,3 +88,24 @@ class MainAppData:
         config.read(doe23_ini_path)
         self.doe23_data_path = config.get("paths", "DataPath").strip('"')
         return None
+
+    def process_inp_to_bdl(self):
+        reader = ModelInputReader()
+        reader.copy_inp_with_diagnostic_comments(str(self.test_inp_path.get()))
+        test_inp_path = Path(self.test_inp_path.get())
+        base_name = test_inp_path.stem
+        dir_name = test_inp_path.parent
+        temp_file = f"{base_name}_temp{test_inp_path.suffix}"
+
+        process_input_file(
+            # Path to Bdlcio32.dll using self.installation_path
+            str(Path(__file__).parents[1] / "test/BDLCIO32.dll"),
+            bytes(str(Path(self.doe22_data_path) / "DOE23") + "\\", "utf-8"),
+            bytes(str(dir_name) + "\\", "utf-8"),
+            bytes(temp_file, "utf-8"),
+        )
+        rpd_generator.generate_rpd_json(
+            [str(dir_name / f"{base_name}_temp.BDL")],
+            str(Path(self.installation_path.get()) / "D2Result.dll"),
+            bytes(str(Path(self.doe22_data_path) / "DOE23/"), "utf-8"),
+        )
