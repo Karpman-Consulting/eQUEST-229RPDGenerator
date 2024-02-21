@@ -585,7 +585,9 @@ class System(ParentNode):
         )
 
         sizing_ratio = self.try_float(self.keyword_value_pairs.get("SIZING-RATIO"))
-        heat_sizing_ratio = self.try_float(self.keyword_value_pairs.get("HEAT-SIZING-RATI"))
+        heat_sizing_ratio = self.try_float(
+            self.keyword_value_pairs.get("HEAT-SIZING-RATI")
+        )
         if sizing_ratio is not None and heat_sizing_ratio is not None:
             self.heat_sys_oversizing_factor = sizing_ratio * heat_sizing_ratio
 
