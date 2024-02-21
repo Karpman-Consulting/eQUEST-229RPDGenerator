@@ -438,11 +438,13 @@ class System(ParentNode):
         #      2201055,  38,  1,  6, 19,  1,  1,  1,  0,  1, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Zone Multiplier
 
         requests = {
-            "Outside Air Ratio": (2201005, self.u_name.encode("utf-8"), b""),
-            "Cooling Capacity": (2201006, self.u_name.encode("utf-8"), b""),
-            "Heating Capacity": (2201008, self.u_name.encode("utf-8"), b""),
-            "Cooling EIR": (2201009, self.u_name.encode("utf-8"), b""),
-            "Heating EIR": (2201010, self.u_name.encode("utf-8"), b""),
+            "Outside Air Ratio": (2201005, self.u_name, ""),
+            "Cooling Capacity": (2201006, self.u_name, ""),
+            "Heating Capacity": (2201008, self.u_name, ""),
+            "Cooling EIR": (2201009, self.u_name, ""),
+            "Heating EIR": (2201010, self.u_name, ""),
+            "Supply Fan - Airflow": (2201012, self.u_name, ""),
+            "Supply Fan - Power": (2201014, self.u_name, ""),
         }
 
         if len(self.fan_system["supply_fans"]) > 0:
@@ -456,18 +458,23 @@ class System(ParentNode):
         if len(self.fan_system["return_fans"]) > 0:
             requests["Return Fan - Airflow"] = (
                 2201023,
-                self.u_name.encode("utf-8"),
-                b"",
+                self.u_name,
+                "",
+            )
+            requests["Return Fan - Power"] = (
+                2201025,
+                self.u_name,
+                "",
             )
 
         if self.cooling_system["type"] == "FLUID_LOOP":
             requests[
                 "Design Day Cooling - chilled water - SYSTEM - capacity, btu/hr"
-            ] = (2203006, self.u_name.encode("utf-8"), b"")
+            ] = (2203006, self.u_name, "")
             requests["Design Cooling - chilled water - SYSTEM - capacity, btu/hr"] = (
                 2203015,
-                self.u_name.encode("utf-8"),
-                b"",
+                self.u_name,
+                "",
             )
 
         match self.preheat_sys_type:
@@ -478,15 +485,15 @@ class System(ParentNode):
             case "FURNACE":
                 requests["Design Preheat - furnace - SYSTEM - capacity, btu/hr"] = (
                     2203311,
-                    self.u_name.encode("utf-8"),
-                    b"",
+                    self.u_name,
+                    "",
                 )
 
         if self.heat_sys_type == "FLUID_LOOP":
             requests["Design Day Heating - hot water - SYSTEM - capacity, btu/hr"] = (
                 2203258,
-                self.u_name.encode("utf-8"),
-                b"",
+                self.u_name,
+                "",
             )
 
         return requests

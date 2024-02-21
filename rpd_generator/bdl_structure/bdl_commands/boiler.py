@@ -141,33 +141,33 @@ class Boiler(BaseNode):
         requests = {
             "Boilers - Design Parameters - Fuel Input Ratio": (
                 2315006,
-                self.u_name.encode("utf-8"),
-                b"",
+                self.u_name,
+                "",
             ),
             "Boilers - Rated Capacity at Peak (Btu/hr)": (
                 2315901,
-                self.u_name.encode("utf-8"),
-                b"",
+                self.u_name,
+                "",
             ),
             "Boilers - Return Water Temperature at Peak (°F)": (
                 2315902,
-                self.u_name.encode("utf-8"),
-                b"",
+                self.u_name,
+                "",
             ),
             "Boilers - Sizing Info/Boiler - Capacity": (
                 2315911,
-                self.u_name.encode("utf-8"),
-                b"",
+                self.u_name,
+                "",
             ),
             "Boilers - Sizing Info/Boiler - Heat EIR": (
                 2315914,
-                self.u_name.encode("utf-8"),
-                b"",
+                self.u_name,
+                "",
             ),
             "Boilers - Sizing Info/Boiler - Aux kW": (
                 2315915,
-                self.u_name.encode("utf-8"),
-                b"",
+                self.u_name,
+                "",
             ),
         }
         return requests
