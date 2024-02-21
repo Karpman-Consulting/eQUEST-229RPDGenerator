@@ -32,25 +32,16 @@ class BelowGradeWall(ChildNode):
     def populate_data_elements(self):
         """Populate data elements for below grade wall object."""
 
-        self.area = self.keyword_value_pairs.get("AREA")
-        if (
-            self.area is None
-            and self.keyword_value_pairs.get("HEIGHT") is not None
-            and self.keyword_value_pairs.get("WIDTH") is not None
-        ):
-            self.area = float(self.keyword_value_pairs.get("HEIGHT", 0)) * float(
-                self.keyword_value_pairs.get("WIDTH", 0)
-            )
-        if self.area is not None:
-            self.area = float(self.area)
+        self.area = self.try_float(self.keyword_value_pairs.get("AREA"))
+        if self.area is None:
+            height = self.try_float(self.keyword_value_pairs.get("HEIGHT"))
+            width = self.try_float(self.keyword_value_pairs.get("WIDTH"))
+            if height is not None and width is not None:
+                self.area = height * width
 
-        self.tilt = self.keyword_value_pairs.get("TILT")
-        if self.tilt is not None:
-            self.tilt = float(self.tilt)
+        self.tilt = self.try_float(self.keyword_value_pairs.get("TILT"))
 
-        self.azimuth = self.keyword_value_pairs.get("AZIMUTH")
-        if self.azimuth is not None:
-            self.azimuth = float(self.azimuth)
+        self.azimuth = self.try_float(self.keyword_value_pairs.get("AZIMUTH"))
 
         self.adjacent_to = "GROUND"
 

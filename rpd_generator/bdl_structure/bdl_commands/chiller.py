@@ -69,37 +69,21 @@ class Chiller(BaseNode):
             self.keyword_value_pairs.get("TYPE")
         )
 
-        self.rated_leaving_evaporator_temperature = self.keyword_value_pairs.get(
+        self.rated_leaving_evaporator_temperature = self.try_float(self.keyword_value_pairs.get(
             "RATED-CHW-T"
-        )
-        if self.rated_leaving_evaporator_temperature is not None:
-            self.rated_leaving_evaporator_temperature = float(
-                self.rated_leaving_evaporator_temperature
-            )
+        ))
 
-        self.rated_entering_condenser_temperature = self.keyword_value_pairs.get(
+        self.rated_entering_condenser_temperature = self.try_float(self.keyword_value_pairs.get(
             "RATED-COND-T"
-        )
-        if self.rated_entering_condenser_temperature is not None:
-            self.rated_entering_condenser_temperature = float(
-                self.rated_entering_condenser_temperature
-            )
+        ))
 
-        self.design_leaving_evaporator_temperature = self.keyword_value_pairs.get(
+        self.design_leaving_evaporator_temperature = self.try_float(self.keyword_value_pairs.get(
             "DESIGN-CHW-T"
-        )
-        if self.design_leaving_evaporator_temperature is not None:
-            self.design_leaving_evaporator_temperature = float(
-                self.design_leaving_evaporator_temperature
-            )
+        ))
 
-        self.design_entering_condenser_temperature = self.keyword_value_pairs.get(
+        self.design_entering_condenser_temperature = self.try_float(self.keyword_value_pairs.get(
             "DESIGN-COND-T"
-        )
-        if self.design_entering_condenser_temperature is not None:
-            self.design_entering_condenser_temperature = float(
-                self.design_entering_condenser_temperature
-            )
+        ))
 
     def populate_data_group(self):
         """Populate schema structure for chiller object."""
