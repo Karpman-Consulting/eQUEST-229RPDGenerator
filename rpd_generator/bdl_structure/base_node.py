@@ -75,6 +75,17 @@ class BaseNode:
                 results.update(zip(chunk.keys(), chunk_results))
         return results
 
+    @staticmethod
+    def try_float(value):
+        """Attempt to convert a value to a float, returning None if it fails."""
+        if value is None:
+            return None
+        try:
+            return float(value)
+        except (ValueError, TypeError):
+            # TODO log error for future GUI error window
+            return None
+
 
 def _chunked_dict(d, n):
     """Yield successive n-sized chunks from dictionary d."""
