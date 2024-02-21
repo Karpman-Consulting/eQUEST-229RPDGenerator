@@ -584,13 +584,10 @@ class System(ParentNode):
             self.keyword_value_pairs.get("HEAT-SOURCE")
         )
 
-        sizing_ratio = self.keyword_value_pairs.get("SIZING-RATIO")
-        heat_sizing_ratio = self.keyword_value_pairs.get("HEAT-SIZING-RATI")
-        self.heat_sys_oversizing_factor = (
-            (float(sizing_ratio) * float(heat_sizing_ratio))
-            if sizing_ratio is not None and heat_sizing_ratio is not None
-            else None
-        )
+        sizing_ratio = self.try_float(self.keyword_value_pairs.get("SIZING-RATIO"))
+        heat_sizing_ratio = self.try_float(self.keyword_value_pairs.get("HEAT-SIZING-RATI"))
+        if sizing_ratio is not None and heat_sizing_ratio is not None:
+            self.heat_sys_oversizing_factor = sizing_ratio * heat_sizing_ratio
 
         self.heat_sys_hot_water_loop = self.keyword_value_pairs.get("HW-LOOP")
 
