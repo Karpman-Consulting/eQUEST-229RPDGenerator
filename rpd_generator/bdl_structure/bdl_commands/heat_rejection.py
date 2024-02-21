@@ -58,13 +58,9 @@ class HeatRejection(BaseNode):
             self.keyword_value_pairs.get("CAPACITY-CTRL")
         )
 
-        self.range = self.keyword_value_pairs.get("RATED-RANGE")
-        if self.range is not None:
-            self.range = float(self.range)
+        self.range = self.try_float(self.keyword_value_pairs.get("RATED-RANGE"))
 
-        self.approach = self.keyword_value_pairs.get("RATED-APPROACH")
-        if self.approach is not None:
-            self.approach = float(self.approach)
+        self.approach = self.try_float(self.keyword_value_pairs.get("RATED-APPROACH"))
 
     def populate_data_group(self):
         """Populate schema structure for heat rejection object."""

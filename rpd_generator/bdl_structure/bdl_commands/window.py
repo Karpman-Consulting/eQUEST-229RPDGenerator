@@ -39,9 +39,10 @@ class Window(ChildNode):
 
     def populate_data_elements(self):
         """Populate data elements for window object."""
-        self.glazed_area = float(self.keyword_value_pairs.get("HEIGHT", 0)) * float(
-            self.keyword_value_pairs.get("WIDTH", 0)
-        )
+        height = self.try_float(self.keyword_value_pairs.get("HEIGHT"))
+        width = self.try_float(self.keyword_value_pairs.get("WIDTH"))
+        if height is not None and width is not None:
+            self.glazed_area = height * width
 
         if self.parent.keyword_value_pairs.get("LOCATION") == "TOP":
             self.classification = "SKYLIGHT"

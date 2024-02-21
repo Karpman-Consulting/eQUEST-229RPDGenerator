@@ -36,19 +36,17 @@ class Space(ChildNode, ParentNode):
 
     def populate_data_elements(self):
         """Populate data elements for space object."""
-        self.floor_area = self.keyword_value_pairs.get("AREA")
-        if self.floor_area is not None:
-            self.floor_area = float(self.floor_area)
+        self.floor_area = self.try_float(self.keyword_value_pairs.get("AREA"))
 
         volume = self.keyword_value_pairs.get("VOLUME")
         if volume is not None:
-            volume = float(volume)
+            volume = self.try_float(volume)
             zone = self.rmd.space_map.get(self.u_name)
             zone.__setattr__("volume", volume)
 
-        self.number_of_occupants = self.keyword_value_pairs.get("NUMBER-OF-PEOPLE")
-        if self.number_of_occupants is not None:
-            self.number_of_occupants = float(self.number_of_occupants)
+        self.number_of_occupants = self.try_float(
+            self.keyword_value_pairs.get("NUMBER-OF-PEOPLE")
+        )
 
         self.occupant_multiplier_schedule = self.keyword_value_pairs.get(
             "PEOPLE-SCHEDULE"
@@ -57,12 +55,14 @@ class Space(ChildNode, ParentNode):
         self.occupant_sensible_heat_gain = self.keyword_value_pairs.get(
             "PEOPLE-HG-SENS"
         )
-        if self.occupant_sensible_heat_gain is not None:
-            self.occupant_sensible_heat_gain = float(self.occupant_sensible_heat_gain)
+
+        self.occupant_sensible_heat_gain = self.try_float(
+            self.occupant_sensible_heat_gain
+        )
 
         self.occupant_latent_heat_gain = self.keyword_value_pairs.get("PEOPLE-HG-LAT")
-        if self.occupant_latent_heat_gain is not None:
-            self.occupant_latent_heat_gain = float(self.occupant_latent_heat_gain)
+
+        self.occupant_latent_heat_gain = self.try_float(self.occupant_latent_heat_gain)
 
     def populate_data_group(self):
         """Populate schema structure for space object."""
