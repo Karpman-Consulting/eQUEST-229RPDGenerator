@@ -69,21 +69,21 @@ class Chiller(BaseNode):
             self.keyword_value_pairs.get("TYPE")
         )
 
-        self.rated_leaving_evaporator_temperature = self.try_float(self.keyword_value_pairs.get(
-            "RATED-CHW-T"
-        ))
+        self.rated_leaving_evaporator_temperature = self.try_float(
+            self.keyword_value_pairs.get("RATED-CHW-T")
+        )
 
-        self.rated_entering_condenser_temperature = self.try_float(self.keyword_value_pairs.get(
-            "RATED-COND-T"
-        ))
+        self.rated_entering_condenser_temperature = self.try_float(
+            self.keyword_value_pairs.get("RATED-COND-T")
+        )
 
-        self.design_leaving_evaporator_temperature = self.try_float(self.keyword_value_pairs.get(
-            "DESIGN-CHW-T"
-        ))
+        self.design_leaving_evaporator_temperature = self.try_float(
+            self.keyword_value_pairs.get("DESIGN-CHW-T")
+        )
 
-        self.design_entering_condenser_temperature = self.try_float(self.keyword_value_pairs.get(
-            "DESIGN-COND-T"
-        ))
+        self.design_entering_condenser_temperature = self.try_float(
+            self.keyword_value_pairs.get("DESIGN-COND-T")
+        )
 
     def populate_data_group(self):
         """Populate schema structure for chiller object."""

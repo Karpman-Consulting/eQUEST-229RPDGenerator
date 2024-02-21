@@ -25,11 +25,15 @@ class Material(BaseNode):
         """Populate data elements for material object."""
         self.thickness = self.try_float(self.keyword_value_pairs.get("THICKNESS"))
 
-        self.thermal_conductivity = self.try_float(self.keyword_value_pairs.get("CONDUCTIVITY"))
+        self.thermal_conductivity = self.try_float(
+            self.keyword_value_pairs.get("CONDUCTIVITY")
+        )
 
         self.density = self.try_float(self.keyword_value_pairs.get("DENSITY"))
 
-        self.specific_heat = self.try_float(self.keyword_value_pairs.get("SPECIFIC-HEAT"))
+        self.specific_heat = self.try_float(
+            self.keyword_value_pairs.get("SPECIFIC-HEAT")
+        )
 
         self.r_value = self.try_float(self.keyword_value_pairs.get("RESISTANCE"))
 

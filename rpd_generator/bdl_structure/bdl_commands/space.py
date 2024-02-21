@@ -44,7 +44,9 @@ class Space(ChildNode, ParentNode):
             zone = self.rmd.space_map.get(self.u_name)
             zone.__setattr__("volume", volume)
 
-        self.number_of_occupants = self.try_float(self.keyword_value_pairs.get("NUMBER-OF-PEOPLE"))
+        self.number_of_occupants = self.try_float(
+            self.keyword_value_pairs.get("NUMBER-OF-PEOPLE")
+        )
 
         self.occupant_multiplier_schedule = self.keyword_value_pairs.get(
             "PEOPLE-SCHEDULE"
@@ -54,7 +56,9 @@ class Space(ChildNode, ParentNode):
             "PEOPLE-HG-SENS"
         )
 
-        self.occupant_sensible_heat_gain = self.try_float(self.occupant_sensible_heat_gain)
+        self.occupant_sensible_heat_gain = self.try_float(
+            self.occupant_sensible_heat_gain
+        )
 
         self.occupant_latent_heat_gain = self.keyword_value_pairs.get("PEOPLE-HG-LAT")
 
