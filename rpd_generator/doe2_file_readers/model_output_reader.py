@@ -38,16 +38,17 @@ def get_multiple_results(d2_result_dll, doe2_data_dir, project_fname, request_ar
     """
     Get Multiple Results from the simulation output files
     :param d2_result_dll: (string) path to user's eQUEST D2Result.dll file included with installation files
-    :param doe2_data_dir: (binary string) path to DOE-2 data directory with NHRList.txt
-    :param project_fname: (binary string) path to project with project name NOT INCLUDING FILE EXTENSION
+    :param doe2_data_dir: (string) path to DOE-2 data directory with NHRList.txt
+    :param project_fname: (string) path to project with project name NOT INCLUDING FILE EXTENSION
     :param request_array: (list) list of entry_id: (int) from NHRList.txt corresponding to the value to retrieve,
-    report_key: (binary string) to use when RI > 0 and when value to retrieve refers to a particular BDL component,
-    and row_key: (binary string) to use when KT > 0 and when a report has multiple row where each row provides results for a separate building component or month of the year
+    report_key: (string) to use when RI > 0 and when value to retrieve refers to a particular BDL component,
+    and row_key: (string) to use when KT > 0 and when a report has multiple row where each row provides results for a separate building component or month of the year
     :return: list of returned values from the binary simulation output files
     """
     d2_result_dll = ctypes.CDLL(d2_result_dll)
     multiple_result_dll = d2_result_dll.D2R_GetMultipleResult
-    nhr_list_path = doe2_data_dir + rb"\NHRList.txt"
+    nhr_list_path = doe2_data_dir.encode("utf-8") + rb"\NHRList.txt"
+    project_fname = project_fname.encode("utf-8")
 
     num_mrts = len(request_array)
     mrt_array = (MRTArray * num_mrts)()
@@ -61,8 +62,8 @@ def get_multiple_results(d2_result_dll, doe2_data_dir, project_fname, request_ar
         entry_id, report_key, row_key = value_request
 
         mrt_array[i].entry_id = entry_id
-        mrt_array[i].psz_report_key = report_key
-        mrt_array[i].psz_row_key = row_key
+        mrt_array[i].psz_report_key = bytes(report_key, "utf-8")
+        mrt_array[i].psz_row_key = bytes(row_key, "utf-8")
 
         with open(nhr_list_path, "r") as nhr_list:
             for line in nhr_list:
