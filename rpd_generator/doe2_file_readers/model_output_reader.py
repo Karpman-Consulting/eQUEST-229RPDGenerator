@@ -47,8 +47,8 @@ def get_multiple_results(d2_result_dll, doe2_data_dir, project_fname, request_ar
     """
     d2_result_dll = ctypes.CDLL(d2_result_dll)
     multiple_result_dll = d2_result_dll.D2R_GetMultipleResult
-    nhr_list_path = (doe2_data_dir + "NHRList.txt").encode('utf-8')
-    project_fname = project_fname.encode('utf-8')
+    nhr_list_path = (doe2_data_dir + "NHRList.txt").encode("utf-8")
+    project_fname = project_fname.encode("utf-8")
 
     num_mrts = len(request_array)
     mrt_array = (MRTArray * num_mrts)()
@@ -62,13 +62,13 @@ def get_multiple_results(d2_result_dll, doe2_data_dir, project_fname, request_ar
         entry_id, report_key, row_key = value_request
 
         mrt_array[i].entry_id = entry_id
-        mrt_array[i].psz_report_key = report_key.encode('utf-8')
-        mrt_array[i].psz_row_key = row_key.encode('utf-8')
+        mrt_array[i].psz_report_key = report_key.encode("utf-8")
+        mrt_array[i].psz_row_key = row_key.encode("utf-8")
 
         with open(nhr_list_path, "rb") as nhr_list:
             for line in nhr_list:
                 parts = [part.strip(b" ;") for part in line.split(b",")]
-                if parts[0] == str(entry_id).encode('utf-8'):
+                if parts[0] == str(entry_id).encode("utf-8"):
                     # Figure out the max_values for the value request (NI in NHRList.txt) and add to the total
                     max_values += int(parts[6])
                     break
@@ -76,7 +76,7 @@ def get_multiple_results(d2_result_dll, doe2_data_dir, project_fname, request_ar
     pf_data = (ctypes.c_float * max_values)()
 
     multiple_result_dll(
-        ctypes.c_char_p(doe2_data_dir.encode('utf-8')),
+        ctypes.c_char_p(doe2_data_dir.encode("utf-8")),
         ctypes.c_char_p(project_fname),
         ctypes.c_int(file_type),
         pf_data,
