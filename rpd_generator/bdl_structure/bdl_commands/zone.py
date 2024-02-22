@@ -102,6 +102,11 @@ class Zone(ChildNode):
 
     def populate_data_elements(self):
         """Populate data elements for zone object."""
+        is_piu = self.keyword_value_pairs.get("TERMINAL-TYPE") in [
+            "SERIES-PIU",
+            "PARALLEL-PIU",
+        ]
+
         self.design_thermostat_cooling_setpoint = self.try_float(
             self.keyword_value_pairs.get("DESIGN-COOL-T")
         )
@@ -156,8 +161,6 @@ class Zone(ChildNode):
             )
         )
 
-        """Any data elements that are not available or not applicable should be set to None so that each terminal 
-        attribute list has the same number of elements"""
         self.terminals_id[0] = self.u_name + " MainTerminal"
         self.terminals_served_by_heating_ventilating_air_conditioning_system[0] = (
             self.parent.u_name
@@ -174,10 +177,7 @@ class Zone(ChildNode):
         )
 
         # Only populate MainTerminal Fan data elements here if the zone TERMINAL-TYPE is SERIES-PIU or PARALLEL-PIU
-        if self.keyword_value_pairs.get("TERMINAL-TYPE") in [
-            "SERIES-PIU",
-            "PARALLEL-PIU",
-        ]:
+        if is_piu:
 
             self.terminal_fan_id = self.u_name + " MainTerminal Fan"
 
@@ -195,6 +195,7 @@ class Zone(ChildNode):
                 )
             )
 
+        # Only populate MainTerminal Fan data elements here if the parent system type is FC with HW or no heat
         elif self.parent.is_terminal:
 
             self.terminal_fan_id = self.u_name + " MainTerminal Fan"
@@ -360,18 +361,8 @@ class Zone(ChildNode):
                 self.parent.u_name,
                 self.u_name,
             ),
-            "HVAC Systems - Design Parameters - Zone Design Data - General - Heat Extraction Rate": (
-                2201052,
-                self.parent.u_name,
-                self.u_name,
-            ),
             "HVAC Systems - Design Parameters - Zone Design Data - General - Heating Capacity": (
                 2201053,
-                self.parent.u_name,
-                self.u_name,
-            ),
-            "HVAC Systems - Design Parameters - Zone Design Data - General - Heat Addition Rate": (
-                2201054,
                 self.parent.u_name,
                 self.u_name,
             ),
