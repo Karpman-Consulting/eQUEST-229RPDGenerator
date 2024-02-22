@@ -63,7 +63,7 @@ class InteriorWall(
 
         self.adjacent_to = int_wall_type
         if int_wall_type == "INTERIOR":
-            self.adjacent_zone = self.keyword_value_pairs.get("NEXT-TO")
+            self.adjacent_zone = self.rmd.space_map[self.keyword_value_pairs.get("NEXT-TO")].u_name
 
         self.does_cast_shade = self.boolean_map.get(
             self.keyword_value_pairs.get("SHADING-SURFACE")
