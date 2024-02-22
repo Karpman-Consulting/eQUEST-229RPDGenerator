@@ -5,7 +5,7 @@ from rpd_generator.building import Building
 from rpd_generator.doe2_file_readers import model_input_reader
 from rpd_generator.bdl_structure import *
 import json
-import os
+from pathlib import Path
 
 """Once development is complete, this can be replaced with a list of all bdl_command attribute values from classes that 
 inherit from BaseNode or BaseDefinition. Each class will also need a priority attribute in this case.
@@ -50,31 +50,33 @@ def generate_rpd_json(selected_models, dll_path, doe2_data_path):
 
 def generate_rmds(selected_models, dll_path, doe2_data_path):
     """
-    Generate the RPD data structure (RulesetProjectDescription, RulesetModelDescription, Building, BuildingSegment,
-    and all data groups available from doe2_file_readers)
+    Generate the RMD data structures (RulesetModelDescription, Building, BuildingSegment, and all BDL object instances
+    from the ModelInputReader) for each selected model.
     :param selected_models: List of selected models
     :param dll_path: (str) Path to the D2Result.dll file
     :param doe2_data_path: (bytes) Path to the DOE-2 data directory
 
     """
-    # Set the output directory to the directory of the first selected model
-    output_dir = os.path.dirname(selected_models[0])
+    # Convert the first selected model path from str to Path and set the output directory to the directory of that model
+    output_dir = Path(selected_models[0]).parent
 
     # Get the base file name from the first selected model and replace its extension with .json
-    base_file_name = os.path.basename(selected_models[0])
-    json_file_name = os.path.splitext(base_file_name)[0] + ".json"
+    base_file_name = Path(selected_models[0]).name
+    json_file_name = Path(selected_models[0]).with_suffix(".json").name
 
     # Construct the full path to the new JSON file in the same directory as model_path
-    json_file_path = os.path.join(output_dir, json_file_name)
+    json_file_path = output_dir / json_file_name
 
     rmds = []
     # Iterate through each selected model, creating a RulesetModelDescription for each
-    for model_path in selected_models:
-        rmd = RulesetModelDescription(os.path.splitext(os.path.basename(model_path))[0])
-
-        rmd.dll_path = dll_path
+    for model_path_str in selected_models:
+        model_path = Path(model_path_str)
+        rmd = RulesetModelDescription(model_path.stem)
+        rmd.dll_path = str(dll_path)  # Convert Path objects to strings if necessary
         rmd.doe2_data_path = doe2_data_path
-        rmd.file_path = os.path.splitext(model_path)[0]
+        rmd.file_path = str(
+            model_path.with_suffix("")
+        )  # Convert to string and remove extension
 
         # Set up default building and building segment
         default_building = Building("Default Building")
@@ -86,7 +88,9 @@ def generate_rmds(selected_models, dll_path, doe2_data_path):
 
         # get all BDL commands from the BDL input file
         bdl_input_reader = model_input_reader.ModelInputReader()
-        file_bdl_commands = bdl_input_reader.read_input_bdl_file(model_path)
+        file_bdl_commands = bdl_input_reader.read_input_bdl_file(
+            str(model_path)
+        )  # Convert Path to string
 
         # Process each data group in the order specified in COMMAND_PROCESSING_ORDER
         for command in COMMAND_PROCESSING_ORDER:
@@ -105,7 +109,7 @@ def generate_rmds(selected_models, dll_path, doe2_data_path):
                 special_handling,
             )
         rmds.append(rmd)
-    return rmds, json_file_path
+    return rmds, str(json_file_path)
 
 
 def generate_rpd(rmds, json_file_path):
@@ -195,3 +199,12 @@ def _process_command_group(
             special_handling[data_group](obj, cmd_dict)
         obj.add_inputs(cmd_dict)
         rmd.bdl_obj_instances[cmd_dict["unique_name"]] = obj
+
+
+generate_rpd_json(
+    [
+        r"C:\Users\JacksonJarboe\Documents\Development\DOE2-229RPDGenerator\test\example\INP.BDL"
+    ],
+    r"C:\Program Files (x86)\eQUEST 3-65-7175\D2Result.dll",
+    r"C:\\Users\\JacksonJarboe\\Documents\\eQUEST 3-65-7175 Data\\DOE23\\",
+)

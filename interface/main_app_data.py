@@ -89,7 +89,7 @@ class MainAppData:
         self.doe23_data_path = config.get("paths", "DataPath").strip('"')
         return None
 
-    def process_inp_to_bdl(self):
+    def process_inp_to_rpd_json(self):
         reader = ModelInputReader()
         reader.copy_inp_with_diagnostic_comments(str(self.test_inp_path.get()))
         test_inp_path = Path(self.test_inp_path.get())
