@@ -29,19 +29,73 @@ class Zone(ChildNode):
         self.design_thermostat_cooling_setpoint = None
         self.thermostat_cooling_setpoint_schedule = None
         self.design_thermostat_heating_setpoint = None
-        self.heating_thermostat_setpoint_schedulue = None
+        self.thermostat_heating_setpoint_schedulue = None
         self.minimum_humidity_setpoint_schedule = None
         self.maximum_humidity_setpoint_schedule = None
         self.served_by_service_water_heating_system = None
         self.transfer_airflow_rate = None
         self.transfer_airflow_source_zone = None
-        self.zonal_exhaust_flow = None
         self.exhaust_airflow_rate_multiplier_schedule = None
         self.makeup_airflow_rate = None
         self.non_mechanical_cooling_fan_power = None
         self.non_mechanical_cooling_fan_airflow = None
         self.air_distribution_effectiveness = None
         self.aggregation_factor = None
+
+        # terminal data elements as a list of MainTerminal, Baseboard Terminal, DOAS Terminal
+        self.terminals_id = [None, None, None]
+        self.terminals_reporting_name = [None, None, None]
+        self.terminals_notes = [None, None, None]
+        self.terminals_type = [None, None, None]
+        self.terminals_served_by_heating_ventilating_air_conditioning_system = [
+            None,
+            None,
+            None,
+        ]
+        self.terminals_heating_source = [None, None, None]
+        self.terminals_heating_from_loop = [None, None, None]
+        self.terminals_cooling_source = [None, None, None]
+        self.terminals_cooling_from_loop = [None, None, None]
+        self.terminals_fan = [None, None, None]
+        self.terminals_fan_configuration = [None, None, None]
+        self.terminals_primary_airflow = [None, None, None]
+        self.terminals_secondary_airflow = [None, None, None]
+        self.terminals_max_heating_airflow = [None, None, None]
+        self.terminals_supply_design_heating_setpoint_temperature = [None, None, None]
+        self.terminals_supply_design_cooling_setpoint_temperature = [None, None, None]
+        self.terminals_temperature_control = [None, None, None]
+        self.terminals_minimum_airflow = [None, None, None]
+        self.terminals_minimum_outdoor_airflow = [None, None, None]
+        self.terminals_minimum_outdoor_airflow_multiplier_schedule = [None, None, None]
+        self.terminals_heating_capacity = [None, None, None]
+        self.terminals_cooling_capacity = [None, None, None]
+        self.terminals_is_supply_ducted = [None, None, None]
+        self.terminals_has_demand_control_ventilation = [None, None, None]
+        self.terminals_is_fan_first_stage_heat = [None, None, None]
+
+        # terminal fan data elements, maximum of 1 terminal fan per zone
+        self.terminal_fan_id = None
+        self.terminal_fan_reporting_name = None
+        self.terminal_fan_notes = None
+        self.terminal_fan_design_airflow = None
+        self.terminal_fan_is_airflow_sized_based_on_design_day = None
+        self.terminal_fan_specification_method = None
+        self.terminal_fan_design_electric_power = None
+        self.terminal_fan_design_pressure_rise = None
+        self.terminal_fan_total_efficiency = None
+        self.terminal_fan_output_validation_points = []
+
+        # terminal fan data elements, maximum of 1 terminal fan per zone
+        self.terminal_fan_id = None
+        self.terminal_fan_reporting_name = None
+        self.terminal_fan_notes = None
+        self.terminal_fan_design_airflow = None
+        self.terminal_fan_is_airflow_sized_based_on_design_day = None
+        self.terminal_fan_specification_method = None
+        self.terminal_fan_design_electric_power = None
+        self.terminal_fan_design_pressure_rise = None
+        self.terminal_fan_total_efficiency = None
+        self.terminal_fan_output_validation_points = []
 
     def __repr__(self):
         return f"Zone(u_name='{self.u_name}', parent='{self.parent}')"
@@ -70,7 +124,7 @@ class Zone(ChildNode):
             "design_thermostat_cooling_setpoint",
             "thermostat_cooling_setpoint_schedule",
             "design_thermostat_heating_setpoint",
-            "heating_thermostat_setpoint_schedulue",
+            "thermostat_heating_setpoint_schedulue",
             "minimum_humidity_setpoint_schedule",
             "maximum_humidity_setpoint_schedule",
             "served_by_service_water_heating_system",
