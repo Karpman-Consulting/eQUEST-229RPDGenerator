@@ -90,6 +90,13 @@ class Boiler(BaseNode):
         )
         self.auxiliary_power = output_data.get("Boilers - Sizing Info/Boiler - Aux kW")
 
+        # Assign pump data elements populated from the boiler keyword value pairs
+        pump_name = self.keyword_value_pairs.get("HW-PUMP")
+        if pump_name is not None:
+            pump = self.rmd.bdl_obj_instances.get(pump_name)
+            if pump is not None:
+                pump.loop_or_piping = [self.loop] * pump.qty
+
     def get_output_requests(self):
         """Get the output requests for the boiler object."""
         #      2315001,  59,  1,  2,  5,  2,  1,  8,  0,  1,    0,  0,  0,  0, 2064   ; Boilers - Design Parameters - Heating Loop

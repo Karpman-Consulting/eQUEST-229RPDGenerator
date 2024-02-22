@@ -74,10 +74,15 @@ class CirculationLoop(BaseNode):
         elif self.circulation_loop_type == "ServiceWaterPiping":
             pass
 
+        # Assign pump data elements populated from the circulation loop keyword value pairs
+        pump_name = self.keyword_value_pairs.get("LOOP-PUMP")
+        if pump_name is not None:
+            pump = self.rmd.bdl_obj_instances.get(pump_name)
+            if pump is not None:
+                pump.loop_or_piping = [self.u_name] * pump.qty
+
     def populate_data_group(self):
-        """Populate schema structure for circulation loop object. These data elements will be used in every instance of
-        circulation loop. Other data elements may or may not be present depending on the model
-        """
+        """Populate schema structure for circulation loop object."""
         self.circulation_loop_type = self.determine_circ_loop_type()
 
         if self.circulation_loop_type == "ServiceWaterPiping":
@@ -97,8 +102,6 @@ class CirculationLoop(BaseNode):
                 "heating_design_and_control": self.heating_design_and_control,
                 "child_loops": self.child_loops,
             }
-
-        self.populate_data_elements()
 
         no_children_attributes = [
             "reporting_name",
