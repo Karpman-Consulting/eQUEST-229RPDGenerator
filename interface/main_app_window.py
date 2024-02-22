@@ -296,5 +296,4 @@ class MainApplicationWindow(ctk.CTk):
             self.app_data.test_inp_path.set(filepath)
 
     def create_test_json(self):
-
-        self.app_data.process_inp_to_bdl()
+        self.app_data.process_inp_to_rpd_json()
