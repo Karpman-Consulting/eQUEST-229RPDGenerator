@@ -627,8 +627,55 @@ class System(ParentNode):
             self.keyword_value_pairs.get("PREHEAT-SOURCE")
         )
 
-    def populate_fans(self):
-        pass
+    def populate_fans(self, output_data):
+
+        # There is always a supply fan for a fan system in eQUEST so it is always populated
+        self.fan_id[0] = self.u_name + " SupplyFan"
+        self.fan_design_airflow[0] = output_data.get("Supply Fan - Airflow", None)
+        self.fan_design_electric_power[0] = output_data.get("Supply Fan - Power", None)
+        # noinspection PyTypeChecker
+        self.fan_specification_method[0] = (
+            "DETAILED"
+            if self.keyword_value_pairs.get("SUPPLY-STATIC") is not None
+            else "SIMPLE"
+        )
+
+        # Determine if there is a return or relief fan
+        return_or_relief = (
+            self.keyword_value_pairs.get("RETURN-STATIC") is not None
+            or self.keyword_value_pairs.get("RETURN-KW/FLOW") is not None
+        )
+
+        # If there is a return or relief fan and its location is set to RELIEF
+        if (
+            return_or_relief
+            and self.keyword_value_pairs.get("RETURN-FAN-LOC") == "RELIEF"
+        ):
+            self.fan_id[2] = self.u_name + " ReliefFan"
+            self.fan_design_airflow[2] = output_data.get("Return Fan - Airflow", None)
+            self.fan_design_electric_power[2] = output_data.get(
+                "Return Fan - Power", None
+            )
+            # noinspection PyTypeChecker
+            self.fan_specification_method[2] = (
+                "DETAILED"
+                if self.keyword_value_pairs.get("RETURN-STATIC") is not None
+                else "SIMPLE"
+            )
+
+        # If the return or relief fan location is not set to RELIEF, it is categorized as a return fan
+        elif return_or_relief:
+            self.fan_id[1] = self.u_name + " ReturnFan"
+            self.fan_design_airflow[1] = output_data.get("Return Fan - Airflow", None)
+            self.fan_design_electric_power[1] = output_data.get(
+                "Return Fan - Power", None
+            )
+            # noinspection PyTypeChecker
+            self.fan_specification_method[1] = (
+                "DETAILED"
+                if self.keyword_value_pairs.get("RETURN-STATIC") is not None
+                else "SIMPLE"
+            )
 
     def populate_air_economizer(self):
         self.air_econ_id = self.u_name + " AirEconomizer"
