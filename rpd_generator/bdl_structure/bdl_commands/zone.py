@@ -254,7 +254,112 @@ class Zone(ChildNode):
                 self.zone_data_structure[attr] = value
 
     def get_output_requests(self):
-        pass
+        """Get the output requests for the zone."""
+        #      2201045,  38,  1,  6,  9,  1,  1,  1,  0, 25, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Supply Airflow
+        #      2201046,  38,  1,  6, 10,  1,  1,  1,  0, 25, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Exhaust Airflow
+        #      2201047,  38,  1,  6, 11,  1,  1,  1,  0, 28, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Zone Fan Power
+        #      2201048,  38,  1,  6, 12,  1,  1,  1,  0, 22, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Minimum Airflow Ratio
+        #      2201049,  38,  1,  6, 13,  1,  1,  1,  0, 25, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Outside Airflow
+        #      2201050,  38,  1,  6, 14,  1,  1,  1,  0, 64, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Cooling Capacity
+        #      2201051,  38,  1,  6, 15,  1,  1,  1,  0, 22, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Sensible Heat Ratio
+        #      2201052,  38,  1,  6, 16,  1,  1,  1,  0, 64, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Heat Extraction Rate
+        #      2201053,  38,  1,  6, 17,  1,  1,  1,  0, 64, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Heating Capacity
+        #      2201054,  38,  1,  6, 18,  1,  1,  1,  0, 64, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Heat Addition Rate
+        #      2201055,  38,  1,  6, 19,  1,  1,  1,  0,  1, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Zone Multiplier
+        requests = {
+            "HVAC Systems - Design Parameters - Zone Design Data - General - Supply Airflow": (
+                2201045,
+                self.parent.u_name,
+                self.u_name,
+            ),
+            "HVAC Systems - Design Parameters - Zone Design Data - General - Exhaust Airflow": (
+                2201046,
+                self.parent.u_name,
+                self.u_name,
+            ),
+            "HVAC Systems - Design Parameters - Zone Design Data - General - Zone Fan Power": (
+                2201047,
+                self.parent.u_name,
+                self.u_name,
+            ),
+            "HVAC Systems - Design Parameters - Zone Design Data - General - Minimum Airflow Ratio": (
+                2201048,
+                self.parent.u_name,
+                self.u_name,
+            ),
+            "HVAC Systems - Design Parameters - Zone Design Data - General - Outside Airflow": (
+                2201049,
+                self.parent.u_name,
+                self.u_name,
+            ),
+            "HVAC Systems - Design Parameters - Zone Design Data - General - Cooling Capacity": (
+                2201050,
+                self.parent.u_name,
+                self.u_name,
+            ),
+            "HVAC Systems - Design Parameters - Zone Design Data - General - Sensible Heat Ratio": (
+                2201051,
+                self.parent.u_name,
+                self.u_name,
+            ),
+            "HVAC Systems - Design Parameters - Zone Design Data - General - Heat Extraction Rate": (
+                2201052,
+                self.parent.u_name,
+                self.u_name,
+            ),
+            "HVAC Systems - Design Parameters - Zone Design Data - General - Heating Capacity": (
+                2201053,
+                self.parent.u_name,
+                self.u_name,
+            ),
+            "HVAC Systems - Design Parameters - Zone Design Data - General - Heat Addition Rate": (
+                2201054,
+                self.parent.u_name,
+                self.u_name,
+            ),
+            "HVAC Systems - Design Parameters - Zone Design Data - General - Zone Multiplier": (
+                2201055,
+                self.parent.u_name,
+                self.u_name,
+            ),
+        }
+
+        if self.keyword_value_pairs.get("TERMINAL-TYPE") in [
+            "SERIES-PIU",
+            "PARALLEL-PIU",
+        ]:
+            #      2202001,  57,  1,  2,  9,  1,  1,  1,  0, 25, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Fan Flow
+            #      2202002,  57,  1,  2, 10,  1,  1,  1,  0, 25, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Cold Deck Flow
+            #      2202003,  57,  1,  2, 11,  1,  1,  1,  0, 22, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Cold Deck Minimum Airflow Ratio
+            #      2202004,  57,  1,  2, 12,  1,  1,  1,  0, 74, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Reheat Temperature Rise
+            #      2202005,  57,  1,  2, 13,  1,  1,  1,  0, 74, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Fan Air Temperature Rise
+            #      2202006,  57,  1,  2, 14,  1,  1,  1,  0, 28, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Fan kW
+            requests.update(
+                {
+                    "HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Fan Flow": (
+                        2202001,
+                        self.parent.u_name,
+                        self.u_name,
+                    ),
+                    "HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Cold Deck Flow": (
+                        2202002,
+                        self.parent.u_name,
+                        self.u_name,
+                    ),
+                    "HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Cold Deck Minimum Airflow Ratio": (
+                        2202003,
+                        self.parent.u_name,
+                        self.u_name,
+                    ),
+                    "HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Fan kW": (
+                        2202006,
+                        self.parent.u_name,
+                        self.u_name,
+                    ),
+                }
+            )
+
+        return requests
 
     def insert_to_rpd(self, rmd):
         """Insert zone object into the rpd data structure."""
