@@ -62,6 +62,13 @@ class HeatRejection(BaseNode):
 
         self.approach = self.try_float(self.keyword_value_pairs.get("RATED-APPROACH"))
 
+        # Assign pump data elements populated from the heat rejection keyword value pairs
+        cw_pump_name = self.keyword_value_pairs.get("CW-PUMP")
+        if cw_pump_name is not None:
+            pump = self.rmd.bdl_obj_instances.get(cw_pump_name)
+            if pump is not None:
+                pump.loop_or_piping = [self.loop] * pump.qty
+
     def populate_data_group(self):
         """Populate schema structure for heat rejection object."""
         self.heat_rejection_data_structure = {

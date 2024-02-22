@@ -85,6 +85,20 @@ class Chiller(BaseNode):
             self.keyword_value_pairs.get("DESIGN-COND-T")
         )
 
+        # Assign pump data elements populated from the boiler keyword value pairs
+        chw_pump_name = self.keyword_value_pairs.get("CHW-PUMP")
+        if chw_pump_name is not None:
+            pump = self.rmd.bdl_obj_instances.get(chw_pump_name)
+            if pump is not None:
+                pump.loop_or_piping = [self.cooling_loop] * pump.qty
+
+        # Assign pump data elements populated from the chiller keyword value pairs
+        cw_pump_name = self.keyword_value_pairs.get("CW-PUMP")
+        if cw_pump_name is not None:
+            pump = self.rmd.bdl_obj_instances.get(cw_pump_name)
+            if pump is not None:
+                pump.loop_or_piping = [self.condensing_loop] * pump.qty
+
     def populate_data_group(self):
         """Populate schema structure for chiller object."""
         self.chiller_data_structure = {
