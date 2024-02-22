@@ -284,11 +284,14 @@ class System(ParentNode):
                 self.rmd.dll_path, self.rmd.doe2_data_path, self.rmd.file_path, requests
             )
             self.populate_fan_system()
+            self.populate_fans(output_data)
             self.populate_heating_system()
             self.populate_cooling_system()
             self.populate_preheat_system()
 
         # self.get_output_data()
+            self.populate_air_economizer()
+            self.populate_air_energy_recovery()
 
     def get_output_requests(self):
         """Get the output requests for the system dependent on various system component types."""
