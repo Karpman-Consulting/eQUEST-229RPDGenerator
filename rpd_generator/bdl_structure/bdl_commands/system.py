@@ -103,6 +103,8 @@ class System(ParentNode):
         )
 
         self.system_data_structure = {}
+        self.terminal_data_structure = {}
+        # hvac system will be omitted when SYSTEM TYPE = SUM
         self.omit = False
         # HVACSystem data elements are not populated when SYSTEM TYPE = FC with HW or no heat
         self.is_terminal = False
@@ -123,23 +125,23 @@ class System(ParentNode):
         self.fan_sys_relief_fans = []
         self.fan_sys_air_economizer = {}
         self.fan_sys_air_energy_recovery = {}
-        self.fan_sys_temp_control = None
+        self.fan_sys_temperature_control = None
         self.fan_sys_operation_during_occ = None
         self.fan_sys_operation_during_unocc = None
         self.fan_sys_has_unocc_central_heat_lockout = None
         self.fan_sys_fan_control = None
         self.fan_sys_reset_diff_temp = None
-        self.fan_sys_sat_reset_load_fraction = None
-        self.fan_sys_sat_reset_schedule = None
+        self.fan_sys_supply_air_temperature_reset_load_fraction = None
+        self.fan_sys_supply_air_temperature_reset_schedule = None
         self.fan_sys_fan_volume_reset_type = None
         self.fan_sys_fan_volume_reset_fraction = None
         self.fan_sys_operating_schedule = None
-        self.fan_sys_min_airflow = None
-        self.fan_sys_min_oa_airflow = None
-        self.fan_sys_max_oa_airflow = None
-        self.fan_sys_air_filter_merv = None
+        self.fan_sys_minimum_airflow = None
+        self.fan_sys_minimum_outdoor_airflow = None
+        self.fan_sys_maximum_outdoor_airflow = None
+        self.fan_sys_air_filter_merv_rating = None
         self.fan_sys_has_fully_ducted_return = None
-        self.fan_sys_dcv_control = None
+        self.fan_sys_demand_control_ventilation_control = None
 
         # heating system data elements
         self.heat_sys_id = None
@@ -199,7 +201,16 @@ class System(ParentNode):
         self.preheat_sys_heatpump_low_shutoff_temperature = None
         self.preheat_sys_humidification_type = None
 
-        # [supply, return, relief, exhaust] fan data elements
+        # define the Fan data group instances from SYSTEM that are possible to model in DOE2
+        self.cooling_supply_fan = {}
+        self.return_fan = (
+            {}
+        )  # Return fan or Relief fan can be defined for a system, but not both
+        self.relief_fan = (
+            {}
+        )  # Return fan or Relief fan can be defined for a system, but not both
+        self.heating_supply_fan = {}
+        # [cooling supply, return, relief, heating supply] fan data elements
         self.fan_id = [None, None, None, None]
         self.fan_reporting_name = [None, None, None, None]
         self.fan_notes = [None, None, None, None]
@@ -233,38 +244,11 @@ class System(ParentNode):
         self.air_energy_recovery_type = None
         self.air_energy_recovery_enthalpy_recovery_ratio = None
         self.air_energy_recovery_operation = None
-        self.air_energy_recovery_sat_control = None
-        self.air_energy_recovery_sensible_effectiveness = None
-        self.air_energy_recovery_latent_effectiveness = None
+        self.air_energy_recovery_supply_air_temperature_control = None
+        self.air_energy_recovery_design_sensible_effectiveness = None
+        self.air_energy_recovery_design_latent_effectiveness = None
         self.air_energy_recovery_outdoor_airflow = None
         self.air_energy_recovery_exhaust_airflow = None
-
-        # terminal data elements
-        self.terminals_id = [None]
-        self.terminals_reporting_name = [None]
-        self.terminals_notes = [None]
-        self.terminals_type = [None]
-        self.terminals_served_by_hvac_system = [None]
-        self.terminals_heating_source = [None]
-        self.terminals_heating_from_loop = [None]
-        self.terminals_cooling_source = [None]
-        self.terminals_cooling_from_loop = [None]
-        self.terminals_fan = [{}]
-        self.terminals_fan_configuration = [None]
-        self.terminals_primary_airflow = [None]
-        self.terminals_secondary_airflow = [None]
-        self.terminals_max_heating_airflow = [None]
-        self.terminals_supply_design_heat_t_setpoint = [None]
-        self.terminals_supply_design_cool_t_setpoint = [None]
-        self.terminals_temp_control = [None]
-        self.terminals_minimum_airflow = [None]
-        self.terminals_minimum_outdoor_airflow = [None]
-        self.terminals_min_oa_multiplier_schedule = [None]
-        self.terminals_heating_capacity = [None]
-        self.terminals_cooling_capacity = [None]
-        self.terminals_is_supply_ducted = [None]
-        self.terminals_has_dcv = [None]
-        self.terminals_is_fan_first_stage_heat = [None]
 
     def __repr__(self):
         return f"System(u_name='{self.u_name}')"
