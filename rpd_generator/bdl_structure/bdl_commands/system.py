@@ -103,7 +103,11 @@ class System(ParentNode):
         )
 
         self.system_data_structure = {}
+        self.terminal_data_structure = {}
+        # hvac system will be omitted when SYSTEM TYPE = SUM
         self.omit = False
+        # HVACSystem data elements are not populated when SYSTEM TYPE = FC with HW or no heat
+        self.is_terminal = False
 
         # system data elements with children
         self.fan_system = {}
@@ -121,23 +125,23 @@ class System(ParentNode):
         self.fan_sys_relief_fans = []
         self.fan_sys_air_economizer = {}
         self.fan_sys_air_energy_recovery = {}
-        self.fan_sys_temp_control = None
+        self.fan_sys_temperature_control = None
         self.fan_sys_operation_during_occ = None
         self.fan_sys_operation_during_unocc = None
         self.fan_sys_has_unocc_central_heat_lockout = None
         self.fan_sys_fan_control = None
         self.fan_sys_reset_diff_temp = None
-        self.fan_sys_sat_reset_load_fraction = None
-        self.fan_sys_sat_reset_schedule = None
+        self.fan_sys_supply_air_temperature_reset_load_fraction = None
+        self.fan_sys_supply_air_temperature_reset_schedule = None
         self.fan_sys_fan_volume_reset_type = None
         self.fan_sys_fan_volume_reset_fraction = None
         self.fan_sys_operating_schedule = None
-        self.fan_sys_min_airflow = None
-        self.fan_sys_min_oa_airflow = None
-        self.fan_sys_max_oa_airflow = None
-        self.fan_sys_air_filter_merv = None
+        self.fan_sys_minimum_airflow = None
+        self.fan_sys_minimum_outdoor_airflow = None
+        self.fan_sys_maximum_outdoor_airflow = None
+        self.fan_sys_air_filter_merv_rating = None
         self.fan_sys_has_fully_ducted_return = None
-        self.fan_sys_dcv_control = None
+        self.fan_sys_demand_control_ventilation_control = None
 
         # heating system data elements
         self.heat_sys_id = None
@@ -197,7 +201,16 @@ class System(ParentNode):
         self.preheat_sys_heatpump_low_shutoff_temperature = None
         self.preheat_sys_humidification_type = None
 
-        # [supply, return, relief, exhaust] fan data elements
+        # define the Fan data group instances from SYSTEM that are possible to model in DOE2
+        self.cooling_supply_fan = {}
+        self.return_fan = (
+            {}
+        )  # Return fan or Relief fan can be defined for a system, but not both
+        self.relief_fan = (
+            {}
+        )  # Return fan or Relief fan can be defined for a system, but not both
+        self.heating_supply_fan = {}
+        # [cooling supply, return, relief, heating supply] fan data elements
         self.fan_id = [None, None, None, None]
         self.fan_reporting_name = [None, None, None, None]
         self.fan_notes = [None, None, None, None]
@@ -231,38 +244,11 @@ class System(ParentNode):
         self.air_energy_recovery_type = None
         self.air_energy_recovery_enthalpy_recovery_ratio = None
         self.air_energy_recovery_operation = None
-        self.air_energy_recovery_sat_control = None
-        self.air_energy_recovery_sensible_effectiveness = None
-        self.air_energy_recovery_latent_effectiveness = None
+        self.air_energy_recovery_supply_air_temperature_control = None
+        self.air_energy_recovery_design_sensible_effectiveness = None
+        self.air_energy_recovery_design_latent_effectiveness = None
         self.air_energy_recovery_outdoor_airflow = None
         self.air_energy_recovery_exhaust_airflow = None
-
-        # terminal data elements
-        self.terminals_id = [None]
-        self.terminals_reporting_name = [None]
-        self.terminals_notes = [None]
-        self.terminals_type = [None]
-        self.terminals_served_by_hvac_system = [None]
-        self.terminals_heating_source = [None]
-        self.terminals_heating_from_loop = [None]
-        self.terminals_cooling_source = [None]
-        self.terminals_cooling_from_loop = [None]
-        self.terminals_fan = [{}]
-        self.terminals_fan_configuration = [None]
-        self.terminals_primary_airflow = [None]
-        self.terminals_secondary_airflow = [None]
-        self.terminals_max_heating_airflow = [None]
-        self.terminals_supply_design_heat_t_setpoint = [None]
-        self.terminals_supply_design_cool_t_setpoint = [None]
-        self.terminals_temp_control = [None]
-        self.terminals_minimum_airflow = [None]
-        self.terminals_minimum_outdoor_airflow = [None]
-        self.terminals_min_oa_multiplier_schedule = [None]
-        self.terminals_heating_capacity = [None]
-        self.terminals_cooling_capacity = [None]
-        self.terminals_is_supply_ducted = [None]
-        self.terminals_has_dcv = [None]
-        self.terminals_is_fan_first_stage_heat = [None]
 
     def __repr__(self):
         return f"System(u_name='{self.u_name}')"
@@ -284,21 +270,26 @@ class System(ParentNode):
         )
 
         heat_type = self.heat_type_map.get(self.keyword_value_pairs.get("HEAT-SOURCE"))
-        terminal_system_conditions = (
-            self.keyword_value_pairs.get("TYPE") in ["FC", "IU"]
-            and heat_type == "FLUID_LOOP"
-        )
+        # if the system type is FC with HW or no heat, this system is represented as terminal fan, heating, cooling
+        terminal_system_conditions = self.keyword_value_pairs.get(
+            "TYPE"
+        ) == "FC" and heat_type in ["FLUID_LOOP", "NONE"]
 
         if terminal_system_conditions:
-            self.populate_terminal_system()
+            self.is_terminal = True
 
         else:
+            requests = self.get_output_requests()
+            output_data = self.get_output_data(
+                self.rmd.dll_path, self.rmd.doe2_data_path, self.rmd.file_path, requests
+            )
             self.populate_fan_system()
+            self.populate_fans(output_data)
             self.populate_heating_system()
             self.populate_cooling_system()
             self.populate_preheat_system()
-
-        # self.get_output_data()
+            self.populate_air_economizer()
+            self.populate_air_energy_recovery()
 
     def get_output_requests(self):
         """Get the output requests for the system dependent on various system component types."""
@@ -425,18 +416,6 @@ class System(ParentNode):
         #      2203401, 103,  1, 78, 17,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Rated data for Preheat - heat pump air cooled - SYSTEM - coil entering drybulb
         #      2203402, 103,  1, 78, 23,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Rated data for Preheat - heat pump air cooled - SYSTEM - outdoor temp
 
-        #      2201045,  38,  1,  6,  9,  1,  1,  1,  0, 25, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Supply Airflow
-        #      2201046,  38,  1,  6, 10,  1,  1,  1,  0, 25, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Exhaust Airflow
-        #      2201047,  38,  1,  6, 11,  1,  1,  1,  0, 28, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Zone Fan Power
-        #      2201048,  38,  1,  6, 12,  1,  1,  1,  0, 22, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Minimum Airflow Ratio
-        #      2201049,  38,  1,  6, 13,  1,  1,  1,  0, 25, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Outside Airflow
-        #      2201050,  38,  1,  6, 14,  1,  1,  1,  0, 64, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Cooling Capacity
-        #      2201051,  38,  1,  6, 15,  1,  1,  1,  0, 22, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Sensible Heat Ratio
-        #      2201052,  38,  1,  6, 16,  1,  1,  1,  0, 64, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Heat Extraction Rate
-        #      2201053,  38,  1,  6, 17,  1,  1,  1,  0, 64, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Heating Capacity
-        #      2201054,  38,  1,  6, 18,  1,  1,  1,  0, 64, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Heat Addition Rate
-        #      2201055,  38,  1,  6, 19,  1,  1,  1,  0,  1, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Zone Multiplier
-
         requests = {
             "Outside Air Ratio": (2201005, self.u_name, ""),
             "Cooling Capacity": (2201006, self.u_name, ""),
@@ -447,15 +426,12 @@ class System(ParentNode):
             "Supply Fan - Power": (2201014, self.u_name, ""),
         }
 
-        if len(self.fan_system["supply_fans"]) > 0:
-            requests["Supply Fan - Airflow"] = (
-                2201012,
-                self.u_name.encode("utf-8"),
-                b"",
-            )
-            requests["Supply Fan - Power"] = (2201014, self.u_name.encode("utf-8"), b"")
+        return_or_relief = (
+            self.keyword_value_pairs.get("RETURN-STATIC") is not None
+            or self.keyword_value_pairs.get("RETURN-KW/FLOW") is not None
+        )
 
-        if len(self.fan_system["return_fans"]) > 0:
+        if return_or_relief:
             requests["Return Fan - Airflow"] = (
                 2201023,
                 self.u_name,
@@ -467,7 +443,7 @@ class System(ParentNode):
                 "",
             )
 
-        if self.cooling_system["type"] == "FLUID_LOOP":
+        if self.cool_sys_type == "FLUID_LOOP":
             requests[
                 "Design Day Cooling - chilled water - SYSTEM - capacity, btu/hr"
             ] = (2203006, self.u_name, "")
@@ -513,58 +489,78 @@ class System(ParentNode):
         air system is used a second Zone Terminal should be specified with a separate
         HeatingVentilatingAirConditioningSystem.
         """
-        if self.keyword_value_pairs.get("TYPE") == "SUM":
-            self.omit = True
+        if self.omit is True:
             return
 
-        heat_type = self.heat_type_map.get(self.keyword_value_pairs.get("HEAT-SOURCE"))
-
-        terminal_system_conditions = (
-            self.keyword_value_pairs.get("TYPE") in ["FC", "IU"]
-            and heat_type == "FLUID_LOOP"
-        )
-
-        if terminal_system_conditions:
-            for attr in dir(self):
-                if attr.startswith("terminals_"):
-                    pass
-
         else:
+            for attr in dir(self):
+                value = getattr(self, attr, None)
+
+                if value is None:
+                    continue
+
+                if attr.startswith("fan_sys_"):
+                    self.fan_system[attr.split("fan_sys_")[1]] = value
+
+                elif attr.startswith("heat_sys_"):
+                    self.heating_system[attr.split("heat_sys_")[1]] = value
+
+                elif attr.startswith("cool_sys_"):
+                    self.cooling_system[attr.split("cool_sys_")[1]] = value
+
+                elif attr.startswith("preheat_sys_"):
+                    self.preheat_system[attr.split("preheat_sys_")[1]] = value
+
+                elif attr.startswith("fan_") and not attr[4:7] == "sys":
+                    key = attr.split("fan_")[1]  # Get the key by removing 'fan_' prefix
+                    for i, fan_dict_name in enumerate(
+                        [
+                            "cooling_supply_fan",
+                            "return_fan",
+                            "relief_fan",
+                            "heating_supply_fan",
+                        ]
+                    ):
+                        # Check if there is a non-None value for the current fan type
+                        if getattr(self, "fan_id")[i] is not None:
+                            fan_dict = getattr(self, fan_dict_name)
+                            if getattr(self, attr)[i] is not None:
+                                fan_dict[key] = getattr(self, attr)[i]
+                            # update the fan dictionary
+                            setattr(self, fan_dict_name, fan_dict)
+
+                elif attr.startswith("air_econ_"):
+                    value = getattr(self, attr, None)
+                    if value is not None:
+                        self.fan_sys_air_economizer[attr.split("air_econ_")[1]] = value
+
+                elif attr.startswith("air_energy_recovery_"):
+                    value = getattr(self, attr, None)
+                    if value is not None:
+                        self.fan_sys_air_energy_recovery[
+                            attr.split("air_energy_recovery_")[1]
+                        ] = value
+
+            for fan_dict_name in [
+                "cooling_supply_fan",
+                "return_fan",
+                "relief_fan",
+                "heating_supply_fan",
+            ]:
+                fan_dict = getattr(self, fan_dict_name)
+                # append to FanSystem
+                if fan_dict_name in ["cooling_supply_fan", "heating_supply_fan"]:
+                    self.fan_sys_supply_fans.append(fan_dict)
+                elif fan_dict_name == "return_fan":
+                    self.fan_sys_return_fans.append(fan_dict)
+                elif fan_dict_name == "relief_fan":
+                    self.fan_sys_relief_fans.append(fan_dict)
+
             self.system_data_structure["id"] = self.u_name
             self.system_data_structure["fan_system"] = self.fan_system
             self.system_data_structure["heating_system"] = self.heating_system
             self.system_data_structure["cooling_system"] = self.cooling_system
             self.system_data_structure["preheat_system"] = self.preheat_system
-
-            for attr in dir(self):
-                if attr.startswith("fan_sys_"):
-                    value = getattr(self, attr, None)
-                    if value is not None:
-                        self.fan_system[attr.split("fan_sys_")[1]] = value
-                elif attr.startswith("heat_sys_"):
-                    value = getattr(self, attr, None)
-                    if value is not None:
-                        self.heating_system[attr.split("heat_sys_")[1]] = value
-                elif attr.startswith("cool_sys_"):
-                    value = getattr(self, attr, None)
-                    if value is not None:
-                        self.cooling_system[attr.split("cool_sys_")[1]] = value
-                elif attr.startswith("preheat_sys_"):
-                    value = getattr(self, attr, None)
-                    if value is not None:
-                        self.preheat_system[attr.split("preheat_sys_")[1]] = value
-                elif attr.startswith("fan_") and not attr[4:7] == "sys":
-                    pass
-                elif attr.startswith("air_econ_"):
-                    value = getattr(self, attr, None)
-                    if value is not None:
-                        self.fan_sys_air_economizer[attr.split("air_econ_")[1]] = value
-                elif attr.startswith("air_energy_recovery_"):
-                    value = getattr(self, attr, None)
-                    if value is not None:
-                        self.fan_sys_air_energy_recovery[
-                            attr.strip("air_energy_recovery_")
-                        ] = value
 
     def insert_to_rpd(self, rmd):
         """Insert system data structure into the rpd data structure."""
@@ -574,13 +570,16 @@ class System(ParentNode):
 
     def populate_fan_system(self):
         self.fan_sys_id = self.u_name + " FanSys"
+
         self.fan_sys_fan_control = self.supply_fan_map.get(
             self.keyword_value_pairs.get("TYPE")
         )
+
         self.fan_sys_operation_during_unocc = self.unocc_fan_operation_map.get(
             self.keyword_value_pairs.get("NIGHT-CYCLE-CTRL")
         )
-        self.fan_sys_dcv_control = self.dcv_map.get(
+
+        self.fan_sys_demand_control_ventilation_control = self.dcv_map.get(
             self.keyword_value_pairs.get("MIN-OA-METHOD")
         )
 
@@ -611,13 +610,12 @@ class System(ParentNode):
             self.keyword_value_pairs.get("TYPE")
         )
 
-        sizing_ratio = self.keyword_value_pairs.get("SIZING-RATIO")
-        cool_sizing_ratio = self.keyword_value_pairs.get("COOL-SIZING-RATI")
-        self.cool_sys_oversizing_factor = (
-            (float(sizing_ratio) * float(cool_sizing_ratio))
-            if sizing_ratio is not None and cool_sizing_ratio is not None
-            else None
+        sizing_ratio = self.try_float(self.keyword_value_pairs.get("SIZING-RATIO"))
+        cool_sizing_ratio = self.try_float(
+            self.keyword_value_pairs.get("COOL-SIZING-RATI")
         )
+        if sizing_ratio is not None and cool_sizing_ratio is not None:
+            self.cool_sys_oversizing_factor = sizing_ratio * cool_sizing_ratio
 
         self.cool_sys_chilled_water_loop = self.keyword_value_pairs.get("CHW-LOOP")
 
@@ -629,24 +627,70 @@ class System(ParentNode):
             self.keyword_value_pairs.get("PREHEAT-SOURCE")
         )
 
-    def populate_fans(self):
-        pass
+    def populate_fans(self, output_data):
+
+        # There is always a supply fan for a fan system in eQUEST so it is always populated
+        self.fan_id[0] = self.u_name + " SupplyFan"
+        self.fan_design_airflow[0] = output_data.get("Supply Fan - Airflow", None)
+        self.fan_design_electric_power[0] = output_data.get("Supply Fan - Power", None)
+        # noinspection PyTypeChecker
+        self.fan_specification_method[0] = (
+            "DETAILED"
+            if self.keyword_value_pairs.get("SUPPLY-STATIC") is not None
+            else "SIMPLE"
+        )
+
+        # Determine if there is a return or relief fan
+        return_or_relief = (
+            self.keyword_value_pairs.get("RETURN-STATIC") is not None
+            or self.keyword_value_pairs.get("RETURN-KW/FLOW") is not None
+        )
+
+        # If there is a return or relief fan and its location is set to RELIEF
+        if (
+            return_or_relief
+            and self.keyword_value_pairs.get("RETURN-FAN-LOC") == "RELIEF"
+        ):
+            self.fan_id[2] = self.u_name + " ReliefFan"
+            self.fan_design_airflow[2] = output_data.get("Return Fan - Airflow", None)
+            self.fan_design_electric_power[2] = output_data.get(
+                "Return Fan - Power", None
+            )
+            # noinspection PyTypeChecker
+            self.fan_specification_method[2] = (
+                "DETAILED"
+                if self.keyword_value_pairs.get("RETURN-STATIC") is not None
+                else "SIMPLE"
+            )
+
+        # If the return or relief fan location is not set to RELIEF, it is categorized as a return fan
+        elif return_or_relief:
+            self.fan_id[1] = self.u_name + " ReturnFan"
+            self.fan_design_airflow[1] = output_data.get("Return Fan - Airflow", None)
+            self.fan_design_electric_power[1] = output_data.get(
+                "Return Fan - Power", None
+            )
+            # noinspection PyTypeChecker
+            self.fan_specification_method[1] = (
+                "DETAILED"
+                if self.keyword_value_pairs.get("RETURN-STATIC") is not None
+                else "SIMPLE"
+            )
 
     def populate_air_economizer(self):
-        self.fan_sys_id = self.u_name + " AirEconomizer"
+        self.air_econ_id = self.u_name + " AirEconomizer"
         self.air_econ_type = self.economizer_map.get(
             self.keyword_value_pairs.get("OA-CONTROL")
         )
-        self.air_econ_high_limit_shutoff_temperature = self.keyword_value_pairs.get(
-            "ECONO-LIMIT-T"
+        self.air_econ_high_limit_shutoff_temperature = self.try_float(
+            self.keyword_value_pairs.get("ECONO-LIMIT-T")
         )
-        if self.air_econ_high_limit_shutoff_temperature is not None:
-            self.air_econ_high_limit_shutoff_temperature = float(
-                self.air_econ_high_limit_shutoff_temperature
-            )
+
+        self.air_econ_is_integrated = self.keyword_value_pairs.get("ECONO-LOCKOUT")
 
     def populate_air_energy_recovery(self):
-        self.air_econ_id = self.u_name + " AirEnergyRecovery"
+        self.air_energy_recovery_id = self.u_name + " AirEnergyRecovery"
+
         recover_exhaust = self.keyword_value_pairs.get("RECOVER-EXHAUST")
         recovery_type = self.recovery_type_map.get(
             self.keyword_value_pairs.get("ERV-RECOVER-TYPE")
@@ -659,17 +703,20 @@ class System(ParentNode):
                 "YES": recovery_type,
             }
         )
-
         self.air_energy_recovery_type = self.has_recovery_map.get(recover_exhaust)
+
         self.air_energy_recovery_operation = self.er_operation_map.get(
             self.keyword_value_pairs.get("ERV-RUN-CTRL")
         )
-        self.air_energy_recovery_sat_control = self.er_sat_control_map.get(
-            self.keyword_value_pairs.get("ERV-TEMP-CTRL")
+
+        self.air_energy_recovery_supply_air_temperature_control = (
+            self.er_sat_control_map.get(self.keyword_value_pairs.get("ERV-TEMP-CTRL"))
         )
 
-    def populate_system_terminals(self):
-        pass
+        self.air_energy_recovery_design_sensible_effectiveness = self.try_float(
+            self.keyword_value_pairs.get("ERV-SENSIBLE-EFF")
+        )
 
-    def populate_terminal_system(self):
-        pass
+        self.air_energy_recovery_design_latent_effectiveness = self.try_float(
+            self.keyword_value_pairs.get("ERV-LATENT-EFF")
+        )
