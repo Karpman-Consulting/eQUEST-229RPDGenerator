@@ -578,7 +578,8 @@ class System(ParentNode):
         self.fan_sys_operation_during_unocc = self.unocc_fan_operation_map.get(
             self.keyword_value_pairs.get("NIGHT-CYCLE-CTRL")
         )
-        self.fan_sys_dcv_control = self.dcv_map.get(
+
+        self.fan_sys_demand_control_ventilation_control = self.dcv_map.get(
             self.keyword_value_pairs.get("MIN-OA-METHOD")
         )
 
@@ -609,13 +610,12 @@ class System(ParentNode):
             self.keyword_value_pairs.get("TYPE")
         )
 
-        sizing_ratio = self.keyword_value_pairs.get("SIZING-RATIO")
-        cool_sizing_ratio = self.keyword_value_pairs.get("COOL-SIZING-RATI")
-        self.cool_sys_oversizing_factor = (
-            (float(sizing_ratio) * float(cool_sizing_ratio))
-            if sizing_ratio is not None and cool_sizing_ratio is not None
-            else None
+        sizing_ratio = self.try_float(self.keyword_value_pairs.get("SIZING-RATIO"))
+        cool_sizing_ratio = self.try_float(
+            self.keyword_value_pairs.get("COOL-SIZING-RATI")
         )
+        if sizing_ratio is not None and cool_sizing_ratio is not None:
+            self.cool_sys_oversizing_factor = sizing_ratio * cool_sizing_ratio
 
         self.cool_sys_chilled_water_loop = self.keyword_value_pairs.get("CHW-LOOP")
 
@@ -631,17 +631,15 @@ class System(ParentNode):
         pass
 
     def populate_air_economizer(self):
-        self.fan_sys_id = self.u_name + " AirEconomizer"
+        self.air_econ_id = self.u_name + " AirEconomizer"
         self.air_econ_type = self.economizer_map.get(
             self.keyword_value_pairs.get("OA-CONTROL")
         )
-        self.air_econ_high_limit_shutoff_temperature = self.keyword_value_pairs.get(
-            "ECONO-LIMIT-T"
+        self.air_econ_high_limit_shutoff_temperature = self.try_float(
+            self.keyword_value_pairs.get("ECONO-LIMIT-T")
         )
-        if self.air_econ_high_limit_shutoff_temperature is not None:
-            self.air_econ_high_limit_shutoff_temperature = float(
-                self.air_econ_high_limit_shutoff_temperature
-            )
+
+        self.air_econ_is_integrated = self.keyword_value_pairs.get("ECONO-LOCKOUT")
 
     def populate_air_energy_recovery(self):
         self.air_energy_recovery_id = self.u_name + " AirEnergyRecovery"
@@ -658,18 +656,20 @@ class System(ParentNode):
                 "YES": recovery_type,
             }
         )
-
         self.air_energy_recovery_type = self.has_recovery_map.get(recover_exhaust)
 
         self.air_energy_recovery_operation = self.er_operation_map.get(
             self.keyword_value_pairs.get("ERV-RUN-CTRL")
         )
-        self.air_energy_recovery_sat_control = self.er_sat_control_map.get(
-            self.keyword_value_pairs.get("ERV-TEMP-CTRL")
+
+        self.air_energy_recovery_supply_air_temperature_control = (
+            self.er_sat_control_map.get(self.keyword_value_pairs.get("ERV-TEMP-CTRL"))
         )
 
-    def populate_system_terminals(self):
-        pass
+        self.air_energy_recovery_design_sensible_effectiveness = self.try_float(
+            self.keyword_value_pairs.get("ERV-SENSIBLE-EFF")
+        )
 
-    def populate_terminal_system(self):
-        pass
+        self.air_energy_recovery_design_latent_effectiveness = self.try_float(
+            self.keyword_value_pairs.get("ERV-LATENT-EFF")
+        )
