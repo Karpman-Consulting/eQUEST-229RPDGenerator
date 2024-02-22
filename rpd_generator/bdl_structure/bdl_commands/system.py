@@ -288,8 +288,6 @@ class System(ParentNode):
             self.populate_heating_system()
             self.populate_cooling_system()
             self.populate_preheat_system()
-
-        # self.get_output_data()
             self.populate_air_economizer()
             self.populate_air_energy_recovery()
 
