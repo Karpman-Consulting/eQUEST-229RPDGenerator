@@ -214,6 +214,23 @@ class Zone(ChildNode):
 
     def populate_data_group(self):
         """Populate schema structure for zone object."""
+
+        attributes = [attr for attr in dir(self) if attr.startswith("terminals_")]
+        keys = [
+            attr.replace("terminals_", "") for attr in attributes
+        ]  # Move outside the loop
+
+        # Extract values for each attribute from the object only once
+        terminal_value_lists = [getattr(self, attr) for attr in attributes]
+
+        # Iterate over the values, creating dictionaries directly from zipped keys and values
+        for values in zip(*terminal_value_lists):
+            terminal_dict = {
+                key: value for key, value in zip(keys, values) if value is not None
+            }
+            if terminal_dict:  # Only append if the dictionary is not empty
+                self.terminals.append(terminal_dict)
+
         self.zone_data_structure = {
             "id": self.u_name,
             "spaces": self.spaces,
