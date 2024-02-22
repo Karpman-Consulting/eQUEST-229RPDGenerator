@@ -85,17 +85,17 @@ class Zone(ChildNode):
         self.terminal_fan_total_efficiency = None
         self.terminal_fan_output_validation_points = []
 
-        # terminal fan data elements, maximum of 1 terminal fan per zone
-        self.terminal_fan_id = None
-        self.terminal_fan_reporting_name = None
-        self.terminal_fan_notes = None
-        self.terminal_fan_design_airflow = None
-        self.terminal_fan_is_airflow_sized_based_on_design_day = None
-        self.terminal_fan_specification_method = None
-        self.terminal_fan_design_electric_power = None
-        self.terminal_fan_design_pressure_rise = None
-        self.terminal_fan_total_efficiency = None
-        self.terminal_fan_output_validation_points = []
+        # zonal exhaust fan data elements, maximum of 1 zonal exhaust fan per zone
+        self.zonal_exhaust_fan_id = None
+        self.zonal_exhaust_fan_reporting_name = None
+        self.zonal_exhaust_fan_notes = None
+        self.zonal_exhaust_fan_design_airflow = None
+        self.zonal_exhaust_fan_is_airflow_sized_based_on_design_day = None
+        self.zonal_exhaust_fan_specification_method = None
+        self.zonal_exhaust_fan_design_electric_power = None
+        self.zonal_exhaust_fan_design_pressure_rise = None
+        self.zonal_exhaust_fan_total_efficiency = None
+        self.zonal_exhaust_fan_output_validation_points = []
 
     def __repr__(self):
         return f"Zone(u_name='{self.u_name}', parent='{self.parent}')"
@@ -169,6 +169,9 @@ class Zone(ChildNode):
         self.terminals_minimum_outdoor_airflow[0] = minimum_outdoor_airflow
         self.terminals_heating_capacity[0] = heating_capacity
         self.terminals_cooling_capacity[0] = cooling_capacity
+        exhaust_airflow = self.try_float(
+            self.keyword_value_pairs.get("EXHAUST-FLOW")
+        )
 
         # Only populate MainTerminal Fan data elements here if the zone TERMINAL-TYPE is SERIES-PIU or PARALLEL-PIU
         if self.keyword_value_pairs.get("TERMINAL-TYPE") in [
@@ -210,6 +213,27 @@ class Zone(ChildNode):
 
             self.terminal_fan_specification_method = "SIMPLE"
 
+        if exhaust_airflow is not None and exhaust_airflow > 0.0:
+            self.zonal_exhaust_fan_id = self.u_name + " EF"
+            self.zonal_exhaust_fan_design_airflow = exhaust_airflow
+            if self.keyword_value_pairs.get("EXHAUST-STATIC") is not None:
+                self.zonal_exhaust_fan_specification_method = "DETAILED"
+                self.zonal_exhaust_fan_design_pressure_rise = self.try_float(
+                    self.keyword_value_pairs.get("EXHAUST-STATIC")
+                )
+                self.zonal_exhaust_fan_total_efficiency = self.try_float(
+                    self.keyword_value_pairs.get("EXHAUST-EFF")
+                )
+                zone_fan_power = output_data.get(
+                    "HVAC Systems - Design Parameters - Zone Design Data - General - Zone Fan Power"
+                )
+                self.zonal_exhaust_fan_design_electric_power = zone_fan_power - self.terminal_fan_design_electric_power
+            else:
+                self.zonal_exhaust_fan_specification_method = "SIMPLE"
+                zone_ef_power_per_flow = self.try_float(
+                    self.keyword_value_pairs.get("EXHAUST-KW/FLOW")
+                )
+                self.zonal_exhaust_fan_design_electric_power = zone_ef_power_per_flow * exhaust_airflow
             return
 
     def populate_data_group(self):
@@ -230,6 +254,23 @@ class Zone(ChildNode):
             }
             if terminal_dict:  # Only append if the dictionary is not empty
                 self.terminals.append(terminal_dict)
+
+        zonal_exhaust_fan_attributes = [
+            "zonal_exhaust_fan_id",
+            "zonal_exhaust_fan_reporting_name",
+            "zonal_exhaust_fan_notes",
+            "zonal_exhaust_fan_design_airflow",
+            "zonal_exhaust_fan_is_airflow_sized_based_on_design_day",
+            "zonal_exhaust_fan_specification_method",
+            "zonal_exhaust_fan_design_electric_power",
+            "zonal_exhaust_fan_design_pressure_rise",
+            "zonal_exhaust_fan_total_efficiency",
+        ]
+
+        for attr in zonal_exhaust_fan_attributes:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.zonal_exhaust_fan[attr] = value
 
         self.zone_data_structure = {
             "id": self.u_name,
