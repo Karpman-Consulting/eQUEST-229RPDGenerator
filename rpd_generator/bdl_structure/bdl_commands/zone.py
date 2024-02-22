@@ -172,9 +172,7 @@ class Zone(ChildNode):
         self.terminals_minimum_outdoor_airflow[0] = minimum_outdoor_airflow
         self.terminals_heating_capacity[0] = heating_capacity
         self.terminals_cooling_capacity[0] = cooling_capacity
-        exhaust_airflow = self.try_float(
-            self.keyword_value_pairs.get("EXHAUST-FLOW")
-        )
+        exhaust_airflow = self.try_float(self.keyword_value_pairs.get("EXHAUST-FLOW"))
 
         # Only populate MainTerminal Fan data elements here if the zone TERMINAL-TYPE is SERIES-PIU or PARALLEL-PIU
         if is_piu:
@@ -228,13 +226,17 @@ class Zone(ChildNode):
                 zone_fan_power = output_data.get(
                     "HVAC Systems - Design Parameters - Zone Design Data - General - Zone Fan Power"
                 )
-                self.zonal_exhaust_fan_design_electric_power = zone_fan_power - self.terminal_fan_design_electric_power
+                self.zonal_exhaust_fan_design_electric_power = (
+                    zone_fan_power - self.terminal_fan_design_electric_power
+                )
             else:
                 self.zonal_exhaust_fan_specification_method = "SIMPLE"
                 zone_ef_power_per_flow = self.try_float(
                     self.keyword_value_pairs.get("EXHAUST-KW/FLOW")
                 )
-                self.zonal_exhaust_fan_design_electric_power = zone_ef_power_per_flow * exhaust_airflow
+                self.zonal_exhaust_fan_design_electric_power = (
+                    zone_ef_power_per_flow * exhaust_airflow
+                )
             return
 
     def populate_data_group(self):
