@@ -443,7 +443,7 @@ class System(ParentNode):
                 "",
             )
 
-        if self.cooling_system["type"] == "FLUID_LOOP":
+        if self.cool_sys_type == "FLUID_LOOP":
             requests[
                 "Design Day Cooling - chilled water - SYSTEM - capacity, btu/hr"
             ] = (2203006, self.u_name, "")
@@ -489,48 +489,46 @@ class System(ParentNode):
         air system is used a second Zone Terminal should be specified with a separate
         HeatingVentilatingAirConditioningSystem.
         """
-        if self.keyword_value_pairs.get("TYPE") == "SUM":
-            self.omit = True
+        if self.omit is True:
             return
 
-        heat_type = self.heat_type_map.get(self.keyword_value_pairs.get("HEAT-SOURCE"))
-
-        terminal_system_conditions = (
-            self.keyword_value_pairs.get("TYPE") in ["FC", "IU"]
-            and heat_type == "FLUID_LOOP"
-        )
-
-        if terminal_system_conditions:
-            for attr in dir(self):
-                if attr.startswith("terminals_"):
-                    pass
-
         else:
-            self.system_data_structure["id"] = self.u_name
-            self.system_data_structure["fan_system"] = self.fan_system
-            self.system_data_structure["heating_system"] = self.heating_system
-            self.system_data_structure["cooling_system"] = self.cooling_system
-            self.system_data_structure["preheat_system"] = self.preheat_system
-
             for attr in dir(self):
+                value = getattr(self, attr, None)
+
+                if value is None:
+                    continue
+
                 if attr.startswith("fan_sys_"):
-                    value = getattr(self, attr, None)
-                    if value is not None:
-                        self.fan_system[attr.split("fan_sys_")[1]] = value
+                    self.fan_system[attr.split("fan_sys_")[1]] = value
+
                 elif attr.startswith("heat_sys_"):
-                    value = getattr(self, attr, None)
-                    if value is not None:
-                        self.heating_system[attr.split("heat_sys_")[1]] = value
+                    self.heating_system[attr.split("heat_sys_")[1]] = value
+
                 elif attr.startswith("cool_sys_"):
-                    value = getattr(self, attr, None)
-                    if value is not None:
-                        self.cooling_system[attr.split("cool_sys_")[1]] = value
+                    self.cooling_system[attr.split("cool_sys_")[1]] = value
+
                 elif attr.startswith("preheat_sys_"):
-                    value = getattr(self, attr, None)
-                    if value is not None:
-                        self.preheat_system[attr.split("preheat_sys_")[1]] = value
+                    self.preheat_system[attr.split("preheat_sys_")[1]] = value
+
                 elif attr.startswith("fan_") and not attr[4:7] == "sys":
-                    pass
+                    key = attr.split("fan_")[1]  # Get the key by removing 'fan_' prefix
+                    for i, fan_dict_name in enumerate(
+                        [
+                            "cooling_supply_fan",
+                            "return_fan",
+                            "relief_fan",
+                            "heating_supply_fan",
+                        ]
+                    ):
+                        # Check if there is a non-None value for the current fan type
+                        if getattr(self, "fan_id")[i] is not None:
+                            fan_dict = getattr(self, fan_dict_name)
+                            if getattr(self, attr)[i] is not None:
+                                fan_dict[key] = getattr(self, attr)[i]
+                            # update the fan dictionary
+                            setattr(self, fan_dict_name, fan_dict)
+
                 elif attr.startswith("air_econ_"):
                     value = getattr(self, attr, None)
                     if value is not None:
@@ -540,8 +538,29 @@ class System(ParentNode):
                     value = getattr(self, attr, None)
                     if value is not None:
                         self.fan_sys_air_energy_recovery[
-                            attr.strip("air_energy_recovery_")
+                            attr.split("air_energy_recovery_")[1]
                         ] = value
+
+            for fan_dict_name in [
+                "cooling_supply_fan",
+                "return_fan",
+                "relief_fan",
+                "heating_supply_fan",
+            ]:
+                fan_dict = getattr(self, fan_dict_name)
+                # append to FanSystem
+                if fan_dict_name in ["cooling_supply_fan", "heating_supply_fan"]:
+                    self.fan_sys_supply_fans.append(fan_dict)
+                elif fan_dict_name == "return_fan":
+                    self.fan_sys_return_fans.append(fan_dict)
+                elif fan_dict_name == "relief_fan":
+                    self.fan_sys_relief_fans.append(fan_dict)
+
+            self.system_data_structure["id"] = self.u_name
+            self.system_data_structure["fan_system"] = self.fan_system
+            self.system_data_structure["heating_system"] = self.heating_system
+            self.system_data_structure["cooling_system"] = self.cooling_system
+            self.system_data_structure["preheat_system"] = self.preheat_system
 
     def insert_to_rpd(self, rmd):
         """Insert system data structure into the rpd data structure."""
