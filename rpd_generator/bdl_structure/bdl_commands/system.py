@@ -104,6 +104,8 @@ class System(ParentNode):
 
         self.system_data_structure = {}
         self.omit = False
+        # HVACSystem data elements are not populated when SYSTEM TYPE = FC with HW or no heat
+        self.is_terminal = False
 
         # system data elements with children
         self.fan_system = {}
@@ -284,13 +286,13 @@ class System(ParentNode):
         )
 
         heat_type = self.heat_type_map.get(self.keyword_value_pairs.get("HEAT-SOURCE"))
-        terminal_system_conditions = (
-            self.keyword_value_pairs.get("TYPE") in ["FC", "IU"]
-            and heat_type == "FLUID_LOOP"
-        )
+        # if the system type is FC with HW or no heat, this system is represented as terminal fan, heating, cooling
+        terminal_system_conditions = self.keyword_value_pairs.get(
+            "TYPE"
+        ) == "FC" and heat_type in ["FLUID_LOOP", "NONE"]
 
         if terminal_system_conditions:
-            self.populate_terminal_system()
+            self.is_terminal = True
 
         else:
             self.populate_fan_system()
