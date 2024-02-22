@@ -426,15 +426,12 @@ class System(ParentNode):
             "Supply Fan - Power": (2201014, self.u_name, ""),
         }
 
-        if len(self.fan_system["supply_fans"]) > 0:
-            requests["Supply Fan - Airflow"] = (
-                2201012,
-                self.u_name.encode("utf-8"),
-                b"",
-            )
-            requests["Supply Fan - Power"] = (2201014, self.u_name.encode("utf-8"), b"")
+        return_or_relief = (
+            self.keyword_value_pairs.get("RETURN-STATIC") is not None
+            or self.keyword_value_pairs.get("RETURN-KW/FLOW") is not None
+        )
 
-        if len(self.fan_system["return_fans"]) > 0:
+        if return_or_relief:
             requests["Return Fan - Airflow"] = (
                 2201023,
                 self.u_name,
@@ -538,6 +535,7 @@ class System(ParentNode):
                     value = getattr(self, attr, None)
                     if value is not None:
                         self.fan_sys_air_economizer[attr.split("air_econ_")[1]] = value
+
                 elif attr.startswith("air_energy_recovery_"):
                     value = getattr(self, attr, None)
                     if value is not None:
@@ -553,9 +551,11 @@ class System(ParentNode):
 
     def populate_fan_system(self):
         self.fan_sys_id = self.u_name + " FanSys"
+
         self.fan_sys_fan_control = self.supply_fan_map.get(
             self.keyword_value_pairs.get("TYPE")
         )
+
         self.fan_sys_operation_during_unocc = self.unocc_fan_operation_map.get(
             self.keyword_value_pairs.get("NIGHT-CYCLE-CTRL")
         )
@@ -625,7 +625,8 @@ class System(ParentNode):
             )
 
     def populate_air_energy_recovery(self):
-        self.air_econ_id = self.u_name + " AirEnergyRecovery"
+        self.air_energy_recovery_id = self.u_name + " AirEnergyRecovery"
+
         recover_exhaust = self.keyword_value_pairs.get("RECOVER-EXHAUST")
         recovery_type = self.recovery_type_map.get(
             self.keyword_value_pairs.get("ERV-RECOVER-TYPE")
@@ -640,6 +641,7 @@ class System(ParentNode):
         )
 
         self.air_energy_recovery_type = self.has_recovery_map.get(recover_exhaust)
+
         self.air_energy_recovery_operation = self.er_operation_map.get(
             self.keyword_value_pairs.get("ERV-RUN-CTRL")
         )
