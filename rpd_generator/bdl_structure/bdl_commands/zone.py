@@ -6,6 +6,16 @@ class Zone(ChildNode):
 
     bdl_command = "ZONE"
 
+    heat_source_map = {
+        "NONE": None,
+        "ELECTRIC": "ELECTRIC",
+        "HOT-WATER": "HOT_WATER",
+        "FURNACE": "OTHER",
+        "DHW-LOOP": "OTHER",
+        "STEAM": "OTHER",
+        "HEAT-PUMP": "OTHER",
+    }
+
     def __init__(self, u_name, parent, rmd):
         super().__init__(u_name, parent, rmd)
         # On initialization the parent building segment is not known. It will be set in the GUI.
@@ -161,9 +171,13 @@ class Zone(ChildNode):
             )
         )
 
+        # Populate MainTerminal data elements
         self.terminals_id[0] = self.u_name + " MainTerminal"
         self.terminals_served_by_heating_ventilating_air_conditioning_system[0] = (
             self.parent.u_name
+        )
+        self.terminals_heating_source[0] = self.heat_source_map.get(
+            self.parent.keyword_value_pairs.get("ZONE-HEAT-SOURCE")
         )
         self.terminals_heating_from_loop[0] = self.keyword_value_pairs.get("HW-LOOP")
         self.terminals_primary_airflow[0] = supply_airflow
@@ -173,6 +187,36 @@ class Zone(ChildNode):
         self.terminals_heating_capacity[0] = heating_capacity
         self.terminals_cooling_capacity[0] = cooling_capacity
         exhaust_airflow = self.try_float(self.keyword_value_pairs.get("EXHAUST-FLOW"))
+
+        # Populate Baseboard Terminal data elements if applicable
+        baseboard_control = self.keyword_value_pairs.get("BASEBOARD-CTRL")
+        if baseboard_control not in [None, "NONE"]:
+            self.terminals_id[1] = self.u_name + " Baseboard Terminal"
+            # noinspection PyTypeChecker
+            self.terminals_type[1] = "BASEBOARD"
+            # noinspection PyTypeChecker
+            self.terminals_is_supply_ducted[1] = False
+            self.terminals_heating_source[1] = self.heat_source_map.get(
+                self.keyword_value_pairs.get("BASEBOARD-SOURCE")
+            )
+            self.terminals_heating_from_loop[1] = self.parent.keyword_value_pairs.get("BBRD-LOOP")
+            # noinspection PyTypeChecker
+            self.terminals_primary_airflow[1] = 0.0
+            # noinspection PyTypeChecker
+            self.terminals_minimum_airflow[1] = 0.0
+            # noinspection PyTypeChecker
+            self.terminals_minimum_outdoor_airflow[1] = 0.0
+            self.terminals_heating_capacity[1] = self.keyword_value_pairs.get("BASEBOARD-RATING")
+            # noinspection PyTypeChecker
+            self.terminals_cooling_capacity[1] = 0.0
+
+        # Populate DOAS Terminal data elements if applicable
+        if self.keyword_value_pairs.get("DOA-SYSTEM") is not None:
+            self.terminals_id[2] = self.u_name + " DOAS Terminal"
+            # noinspection PyTypeChecker
+            self.terminals_heating_capacity[2] = 0.0
+            # noinspection PyTypeChecker
+            self.terminals_cooling_capacity[2] = 0.0
 
         # Only populate MainTerminal Fan data elements here if the zone TERMINAL-TYPE is SERIES-PIU or PARALLEL-PIU
         if is_piu:
@@ -273,7 +317,7 @@ class Zone(ChildNode):
         for attr in zonal_exhaust_fan_attributes:
             value = getattr(self, attr, None)
             if value is not None:
-                self.zonal_exhaust_fan[attr] = value
+                self.zonal_exhaust_fan[attr.split("zonal_exhaust_fan_")[1]] = value
 
         self.zone_data_structure = {
             "id": self.u_name,
