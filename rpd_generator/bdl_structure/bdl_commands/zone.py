@@ -199,14 +199,18 @@ class Zone(ChildNode):
             self.terminals_heating_source[1] = self.heat_source_map.get(
                 self.keyword_value_pairs.get("BASEBOARD-SOURCE")
             )
-            self.terminals_heating_from_loop[1] = self.parent.keyword_value_pairs.get("BBRD-LOOP")
+            self.terminals_heating_from_loop[1] = self.parent.keyword_value_pairs.get(
+                "BBRD-LOOP"
+            )
             # noinspection PyTypeChecker
             self.terminals_primary_airflow[1] = 0.0
             # noinspection PyTypeChecker
             self.terminals_minimum_airflow[1] = 0.0
             # noinspection PyTypeChecker
             self.terminals_minimum_outdoor_airflow[1] = 0.0
-            self.terminals_heating_capacity[1] = self.keyword_value_pairs.get("BASEBOARD-RATING")
+            self.terminals_heating_capacity[1] = self.keyword_value_pairs.get(
+                "BASEBOARD-RATING"
+            )
             # noinspection PyTypeChecker
             self.terminals_cooling_capacity[1] = 0.0
 
