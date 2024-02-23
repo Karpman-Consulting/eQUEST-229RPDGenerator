@@ -322,6 +322,17 @@ class System(ParentNode):
         #      2201031,  38,  1, 15, 13,  2,  1,  2,  0,  1,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Return Fan - Fan Control
         #      2201032,  38,  1, 15, 15,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Return Fan - Maximum Fan Output
         #      2201033,  38,  1, 15, 16,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Return Fan - Minimum Fan Output
+        #      2201034,  38,  1, 14,  3,  1,  1,  1,  0, 25,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Airflow
+        #      2201035,  38,  1, 14,  4,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Diversity Factor
+        #      2201036,  38,  1, 14,  5,  1,  1,  1,  0, 28,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Power
+        #      2201037,  38,  1, 14,  6,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Air Temperature Rise
+        #      2201038,  38,  1, 14,  7,  1,  1,  1,  0, 26,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Total Static Pressure
+        #      2201039,  38,  1, 14,  8,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Overall Efficiency
+        #      2201040,  38,  1, 14,  9,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Mechanical Efficiency
+        #      2201041,  38,  1, 14, 10,  2,  1,  3,  0,  1,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Fan Placement
+        #      2201042,  38,  1, 14, 13,  2,  1,  2,  0,  1,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Fan Control
+        #      2201043,  38,  1, 14, 15,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Maximum Fan Output
+        #      2201044,  38,  1, 14, 16,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Minimum Fan Output
 
         #      2203001, 103,  1,  7,  9,  0,  1,  1,  0,  0,    0,  0,  0,  0, 2010   ; Design Day data for Cooling - chilled water - SYSTEM - month of peak
         #      2203002, 103,  1,  7, 10,  0,  1,  1,  0,  0,    0,  0,  0,  0, 2010   ; Design Day data for Cooling - chilled water - SYSTEM - day of peak
@@ -442,6 +453,14 @@ class System(ParentNode):
                 self.u_name,
                 "",
             )
+
+        if self.keyword_value_pairs.get("DDS-TYPE") == "DUAL-FAN":
+            requests["Heating Supply Fan - Airflow"] = (
+                2201034,
+                self.u_name,
+                "",
+            )
+            requests["Heating Supply Fan - Power"] = (2201036, self.u_name, "")
 
         if self.cool_sys_type == "FLUID_LOOP":
             requests[
@@ -629,7 +648,7 @@ class System(ParentNode):
 
     def populate_fans(self, output_data):
 
-        # There is always a supply fan for a fan system in eQUEST so it is always populated
+        # There is always a supply fan for a fan system in eQUEST, so it is always populated
         self.fan_id[0] = self.u_name + " SupplyFan"
         self.fan_design_airflow[0] = output_data.get("Supply Fan - Airflow", None)
         self.fan_design_electric_power[0] = output_data.get("Supply Fan - Power", None)
@@ -674,6 +693,21 @@ class System(ParentNode):
             self.fan_specification_method[1] = (
                 "DETAILED"
                 if self.keyword_value_pairs.get("RETURN-STATIC") is not None
+                else "SIMPLE"
+            )
+
+        if self.keyword_value_pairs.get("DDS-TYPE") == "DUAL-FAN":
+            self.fan_id[3] = self.u_name + " HeatingSupplyFan"
+            self.fan_design_airflow[3] = output_data.get(
+                "Heating Supply Fan - Airflow", None
+            )
+            self.fan_design_electric_power[3] = output_data.get(
+                "Heating Supply Fan - Power", None
+            )
+            # noinspection PyTypeChecker
+            self.fan_specification_method[3] = (
+                "DETAILED"
+                if self.keyword_value_pairs.get("HSUPPLY-STATIC") is not None
                 else "SIMPLE"
             )
 
