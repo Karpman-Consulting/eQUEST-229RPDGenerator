@@ -2,6 +2,7 @@ import ctypes
 
 
 class MRTArray(ctypes.Structure):
+    # noinspection PyTypeChecker
     _fields_ = [
         ("entry_id", ctypes.c_int),
         ("return_value", ctypes.c_int),
@@ -57,7 +58,7 @@ def get_multiple_results(d2_result_dll, doe2_data_dir, project_fname, request_ar
     else:
         return []
 
-    max_values = 0
+    max_values: int = 0
     for i, value_request in enumerate(request_array):
         entry_id, report_key, row_key = value_request
 
@@ -73,6 +74,7 @@ def get_multiple_results(d2_result_dll, doe2_data_dir, project_fname, request_ar
                     max_values += int(parts[6])
                     break
 
+    # noinspection PyTypeChecker, PyCallingNonCallable
     pf_data = (ctypes.c_float * max_values)()
 
     multiple_result_dll(
@@ -102,26 +104,6 @@ def get_multiple_results(d2_result_dll, doe2_data_dir, project_fname, request_ar
 # 2321008
 # DW Heaters - Design Parameters - Tank Loss Coefficient
 # 2321009
-# Pump - Flow (gal/min)
-# 2401002
-# Pump - Head (ft)
-# 2401003
-# Pump - Power (kW)
-# 2401005
-# Pump - Mechanical Eff (frac)
-# 2401006
-# Pump - Motor Eff (frac)
-# 2401007
-# Cooling Tower - Capacity (Btu/hr)
-# 2401021
-# Cooling Tower - Flow (gal/min)
-# 2401022
-# Cooling Tower - Fan Power per Cell (kW)
-# 2401024
-# Cooling Tower - Spray Power per Cell (kW)
-# 2401025
-# Cooling Tower - Auxiliary (kW)
-# 2401026
 # Circulation Loop - Heating Capacity (Btu/hr)
 # 2401031
 # Circulation Loop - Cooling Capacity (Btu/hr)
@@ -142,13 +124,3 @@ def get_multiple_results(d2_result_dll, doe2_data_dir, project_fname, request_ar
 # 2401039
 # Circulation Loop - Fluid Heat Capacity (Btu/lb-°F)
 # 2401040
-# Primary Equipment (Chillers) - Capacity (Btu/hr)
-# 2401051
-# Primary Equipment (Chillers) - Flow (gal/min)
-# 2401052
-# Primary Equipment (Chillers) - Rated EIR (frac)
-# 2401053
-# Primary Equipment (Chillers) - Rated HIR (frac)
-# 2401054
-# Primary Equipment (Chillers) - Auxiliary (kW)
-# 2401055
