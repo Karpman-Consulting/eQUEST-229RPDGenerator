@@ -92,14 +92,7 @@ class CirculationLoop(BaseNode):
         self.circulation_loop_type = self.determine_circ_loop_type()
         if self.circulation_loop_type in ["FluidLoop", "SecondaryFluidLoop"]:
             loop_type = self.keyword_value_pairs.get("TYPE")
-            loop_type_map = {
-                "CHW": "COOLING",
-                "HW": "HEATING",
-                "CW": "CONDENSER",
-                "PIPE2": "HEATING_AND_COOLING",
-                "WLHP": "OTHER",
-            }
-            self.type = loop_type_map.get(loop_type, "OTHER")
+            self.type = self.loop_type_map.get(loop_type, "OTHER")
         elif self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":
             pass
         elif self.circulation_loop_type == "ServiceWaterPiping":
