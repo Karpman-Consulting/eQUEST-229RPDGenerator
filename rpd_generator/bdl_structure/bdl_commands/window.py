@@ -56,6 +56,22 @@ class Window(ChildNode):
             self.solar_heat_gain_coefficient = glass_type.shading_coefficient / 1.15
             self.visible_transmittance = glass_type.visible_transmittance
 
+        left_fin_depth = self.try_float(self.keyword_value_pairs.get("LEFT-FIN-D"))
+        right_fin_depth = self.try_float(self.keyword_value_pairs.get("RIGHT-FIN-D"))
+        if left_fin_depth not in [None, 0.0] or right_fin_depth not in [None, 0.0]:
+            self.has_shading_sidefins = True
+        overhang_depth = self.keyword_value_pairs.get("OVERHANG-D")
+        if overhang_depth not in [None, 0.0]:
+            self.depth_of_overhang = overhang_depth
+            self.has_shading_overhang = True
+
+        shade_schedule = self.keyword_value_pairs.get("SHADING-SCHEDULE")
+        shade_type = self.keyword_value_pairs.get("WIN-SHADE-TYPE")
+        if shade_type is not None:
+            adjustable_shade = shade_type.startswith("MOVABLE-")
+            if shade_schedule is not None and adjustable_shade:
+                self.has_manual_interior_shades = True
+
     def populate_data_group(self):
         """Populate schema structure for window object."""
         self.window_data_structure = {
