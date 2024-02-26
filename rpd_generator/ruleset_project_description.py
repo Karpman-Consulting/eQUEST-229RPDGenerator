@@ -21,6 +21,12 @@ class RulesetProjectDescription:
             "is_leap_year": False,
         }
         self.weather = {}
+        self.ground_temperature_schedule = None
+        self.file_name = None
+        self.data_source_type = None
+        self.climate_zone = None
+        self.cooling_design_day_type = None
+        self.heating_design_day_type = None
 
         # data elements with no children
         self.reporting_name = None
@@ -29,6 +35,9 @@ class RulesetProjectDescription:
         self.data_version = None
         self.compliance_path = None
         self.output_format_type = OUTPUT_SCHEMA_ASHRAE901_2019
+
+    def populate_data_elements(self):
+        """Populate the data elements in the RPD data group."""
 
     def populate_data_group(self):
         """
