@@ -13,26 +13,27 @@ For now, this is a list of BDL commands that are ready to be processed, in the o
 COMMAND_PROCESSING_ORDER = [
     "RUN-PERIOD-PD",
     "SITE-PARAMETERS",
-    "MASTER-METERS",
-    "FUEL-METER",
-    "ELEC-METER",
-    "STEAM-METER",
-    "CHW-METER",
+    "MASTER-METERS",  # Master meters must populate bofore other meters and before Systems, Boilers, DW-Heaters, Chillers
+    "FUEL-METER",  # Meters must populate before Systems, Boilers, DW-Heaters, Chillers
+    "ELEC-METER",  # Meters must populate before Systems, Boilers, DW-Heaters, Chillers
+    "STEAM-METER",  # Meters must populate before Systems, Boilers, DW-Heaters, Chillers
+    "CHW-METER",  # Meters must populate before Systems, Boilers, DW-Heaters, Chillers
+    "GLASS-TYPE",
     "MATERIAL",
     "CONSTRUCTION",
     "SCHEDULE-PD",
+    "PUMP",  # Pumps must populate before Boiler, Chiller, Heat-Rejection, and Circulation-Loop
+    "CIRCULATION-LOOP",  # Circulation loops must populate before Boiler, Chiller, DWHeater, Heat-Rejection
     "BOILER",
     "CHILLER",
     "DW-HEATER",
     "HEAT-REJECTION",
-    "PUMP",
-    "CIRCULATION-LOOP",
-    "FLOOR",
-    "SYSTEM",
-    "ZONE",
-    "SPACE",
-    "EXTERIOR-WALL",
-    "INTERIOR-WALL",
+    "FLOOR",  # Floors must populate before Spaces
+    "SYSTEM",  # Systems must populate before Zones
+    "ZONE",  # Zones must populate before Spaces
+    "SPACE",  # Spaces must populate before Surfaces
+    "EXTERIOR-WALL",  # Exterior walls must populate before Windows and Doors
+    "INTERIOR-WALL",  # Interior walls must populate before Windows and Doors
     "UNDERGROUND-WALL",
     "WINDOW",
     "DOOR",
@@ -61,7 +62,6 @@ def generate_rmds(selected_models, dll_path, doe2_data_path):
     output_dir = Path(selected_models[0]).parent
 
     # Get the base file name from the first selected model and replace its extension with .json
-    base_file_name = Path(selected_models[0]).name
     json_file_name = Path(selected_models[0]).with_suffix(".json").name
 
     # Construct the full path to the new JSON file in the same directory as model_path
