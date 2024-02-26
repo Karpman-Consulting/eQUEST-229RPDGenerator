@@ -6,6 +6,37 @@ class CirculationLoop(BaseNode):
 
     bdl_command = "CIRCULATION-LOOP"
 
+    loop_type_map = {
+        "CHW": "COOLING",
+        "HW": "HEATING",
+        "CW": "CONDENSER",
+        "PIPE2": "HEATING_AND_COOLING",
+        "WLHP": "OTHER",
+    }
+
+    sizing_option_map = {
+        "COINCIDENT": True,
+        "NON-COINCIDENT": False,
+        "PRIMARY": False,
+        "SECONDARY": True,
+    }
+
+    loop_operation_map = {
+        "STANDBY": "INTERMITTENT",
+        "DEMAND-ONLY": "INTERMITTENT",
+        "SNAP": "INTERMITTENT",
+        "SCHEDULED": "SCHEDULED",
+        "SUBHOUR-DEMAND": "INTERMITTENT",
+    }
+
+    temp_reset_map = {
+        "FIXED": "NO_RESET",
+        "OA-RESET": "OUTSIDE_AIR_RESET",
+        "SCHEDULED": "OTHER",
+        "LOAD-RESET": "LOAD_RESET",
+        "WETBULB-RESET": "OTHER",
+    }
+
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
 
