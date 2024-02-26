@@ -124,13 +124,3 @@ def get_multiple_results(d2_result_dll, doe2_data_dir, project_fname, request_ar
 # 2401039
 # Circulation Loop - Fluid Heat Capacity (Btu/lb-°F)
 # 2401040
-# Primary Equipment (Chillers) - Capacity (Btu/hr)
-# 2401051
-# Primary Equipment (Chillers) - Flow (gal/min)
-# 2401052
-# Primary Equipment (Chillers) - Rated EIR (frac)
-# 2401053
-# Primary Equipment (Chillers) - Rated HIR (frac)
-# 2401054
-# Primary Equipment (Chillers) - Auxiliary (kW)
-# 2401055
