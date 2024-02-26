@@ -61,8 +61,24 @@ class CirculationLoop(BaseNode):
         self.service_water_piping = {}
         self.tanks = {}
 
+        # FluidLoopDesignAndControl data elements with no children
+        self.design_supply_temperature = [None, None]
+        self.design_return_temperature = [None, None]
+        self.is_sized_using_coincident_loads = [None, None]
+        self.minimum_flow_fraction = [None, None]
+        self.operation = [None, None]
+        self.operation_schedule = [None, None]
+        self.flow_control = [None, None]
+        self.temperature_reset_type = [None, None]
+        self.outdoor_high_for_loop_supply_reset_temperature = [None, None]
+        self.outdoor_low_for_loop_supply_reset_temperature = [None, None]
+        self.loop_supply_temperature_at_outdoor_high = [None, None]
+        self.loop_supply_temperature_at_outdoor_low = [None, None]
+        self.loop_supply_temperature_at_low_load = [None, None]
+        self.has_integrated_waterside_economizer = [None, None]
+
         # ServiceWaterHeatingDistributionSystem data elements with no children
-        self.design_supply_temperature = None
+        self.swh_design_supply_temperature = None
         self.design_supply_temperature_difference = None
         self.is_central_system = None
         self.distribution_compactness = None
