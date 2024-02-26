@@ -26,6 +26,7 @@ class Chiller(BaseNode):
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
 
+        self.omit = False
         self.chiller_data_structure = {}
 
         # data elements with children
@@ -59,6 +60,15 @@ class Chiller(BaseNode):
 
     def populate_data_elements(self):
         """Populate data elements for chiller object."""
+        if self.compressor_type_map.get(self.keyword_value_pairs.get("TYPE")) == "OMIT":
+            self.omit = True
+            return
+
+        requests = self.get_output_requests()
+        output_data = self.get_output_data(
+            self.rmd.dll_path, self.rmd.doe2_data_path, self.rmd.file_path, requests
+        )
+
         self.cooling_loop = self.keyword_value_pairs.get("CHW-LOOP")
 
         self.condensing_loop = self.keyword_value_pairs.get("CW-LOOP")
@@ -69,12 +79,32 @@ class Chiller(BaseNode):
             self.keyword_value_pairs.get("TYPE")
         )
 
+        # This value comes out in tons of refrigeration
+        self.design_capacity = self.try_float(
+            output_data.get("Elec Chillers - Sizing Info - Capacity")
+        )
+
+        # This value comes out in Btu/hr
+        self.rated_capacity = self.try_float(
+            output_data.get(
+                "Elec Chillers - Normalized (ARI) Capacity at Peak (Btu/hr)"
+            )
+        )
+
         self.rated_leaving_evaporator_temperature = self.try_float(
             self.keyword_value_pairs.get("RATED-CHW-T")
         )
 
         self.rated_entering_condenser_temperature = self.try_float(
             self.keyword_value_pairs.get("RATED-COND-T")
+        )
+
+        self.design_flow_evaporator = self.try_float(
+            output_data.get("Elec Chillers - Design Parameters - Flow")
+        )
+
+        self.design_flow_condenser = self.try_float(
+            output_data.get("Elec Chillers - Design Parameters - Condenser Flow")
         )
 
         self.design_leaving_evaporator_temperature = self.try_float(
@@ -99,8 +129,67 @@ class Chiller(BaseNode):
             if pump is not None:
                 pump.loop_or_piping = [self.condensing_loop] * pump.qty
 
+    def get_output_requests(self):
+        """Get output data requests for chiller object."""
+        #      2318001,  74,  1,  2,  1,  2,  1,  4,  0,  1,    0,  0,  0,  0, 2063   ; Elec Chillers - Design Parameters - Type
+        #      2318002,  74,  1,  2,  5,  2,  1,  8,  0,  1,    0,  0,  0,  0, 2063   ; Elec Chillers - Design Parameters - Cooling Loop
+        #      2318003,  74,  1,  2, 13,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2063   ; Elec Chillers - Design Parameters - Capacity
+        #      2318004,  74,  1,  2, 14,  1,  1,  1,  0, 52,    0,  0,  0,  0, 2063   ; Elec Chillers - Design Parameters - Flow
+        #      2318005,  74,  1,  2, 15,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2063   ; Elec Chillers - Design Parameters - Electric Input Ratio
+        #      2318006,  74,  1,  2, 16,  1,  1,  1,  0, 28,    0,  0,  0,  0, 2063   ; Elec Chillers - Design Parameters - Auxiliary Power
+        #      2318007,  74,  1,  3,  1,  2,  1,  8,  0,  1,    0,  0,  0,  0, 2063   ; Elec Chillers - Design Parameters - Condenser Loop
+        #      2318008,  74,  1,  3,  9,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2063   ; Elec Chillers - Design Parameters - Condenser Load
+        #      2318009,  74,  1,  3, 10,  1,  1,  1,  0, 52,    0,  0,  0,  0, 2063   ; Elec Chillers - Design Parameters - Condenser Flow
+        #      2318010,  74,  1,  5,  1,  2,  1,  8,  0,  1,    0,  0,  0,  0, 2063   ; Elec Chillers - Design Parameters - Heat Recovery Loop
+        #      2318011,  74,  1,  5,  9,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2063   ; Elec Chillers - Design Parameters - Heat Recovery Capacity
+        #      2318012,  74,  1,  5, 10,  1,  1,  1,  0, 52,    0,  0,  0,  0, 2063   ; Elec Chillers - Design Parameters - Heat Recovery Flow
+        #      2318901,  74,  1,  9,  1,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2063   ; Elec Chillers - Normalized (ARI) Capacity at Peak (Btu/hr)
+        #      2318902,  74,  1,  9,  2,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2063   ; Elec Chillers - Normalized (ARI) Leaving Chilled Water Temperature (°F)
+        #      2318903,  74,  1,  9,  3,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2063   ; Elec Chillers - Normalized (ARI) Entering Condenser Water Temperature (°F)
+        #      2318904,  74,  1,  9,  4,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2063   ; Elec Chillers - Drybulb Temperature @ Peak (°F)
+        #      2318905,  74,  1,  9,  5,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2063   ; Elec Chillers - Wetbulb Temperature @ Peak (°F)
+        #      2318907,  74,  1, 10,  1,  2,  1,  4,  0,  1,    0,  0,  0,  0, 2063   ; Elec Chillers - Sizing Info - Equipment Type
+        #      2318908,  74,  1, 10,  5,  1,  1,  1,  0,129,    0,  0,  0,  0, 2063   ; Elec Chillers - Sizing Info - Capacity
+        #      2318909,  74,  1, 10,  6,  1,  1,  1,  0, 23,    0,  0,  0,  0, 2063   ; Elec Chillers - Sizing Info - Startup, Hours
+        #      2318910,  74,  1, 10,  7,  1,  1,  1,  0, 23,    0,  0,  0,  0, 2063   ; Elec Chillers - Sizing Info - Standby, Hours
+        #      2318911,  74,  1, 10,  8,  1,  1,  1,  0, 46,    0,  0,  0,  0, 2063   ; Elec Chillers - Sizing Info - Cool EIR, BTU/BTU
+        #      2318912,  74,  1, 10,  9,  1,  1,  1,  0, 49,    0,  0,  0,  0, 2063   ; Elec Chillers - Sizing Info - Cool EFF, KW/TON
+        #      2318913,  74,  1, 10, 10,  1,  1,  1,  0, 28,    0,  0,  0,  0, 2063   ; Elec Chillers - Sizing Info - Aux Elec, KW
+        #      2318914,  74,  1, 10, 11,  1,  1,  1,  0, 28,    0,  0,  0,  0, 2063   ; Elec Chillers - Sizing Info - Cond Fan, KW
+        #      2318915,  74,  1, 10, 12,  1,  1,  1,  0, 28,    0,  0,  0,  0, 2063   ; Elec Chillers - Sizing Info - Cond Pump, KW
+        #      2319901,  74,  1,  9,  1,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Normalized (ARI) Capacity at Peak (Btu/hr)
+        #      2319902,  74,  1,  9,  2,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Normalized (ARI) Leaving Chilled Water Temperature (°F)
+        #      2319903,  74,  1,  9,  3,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Normalized (ARI) Entering Condenser Water Temperature (°F)
+        #      2319904,  74,  1,  9,  4,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Drybulb Temperature @ Peak (°F)
+        #      2319905,  74,  1,  9,  5,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Wetbulb Temperature @ Peak (°F)
+        #      2319901,  74,  1,  9,  1,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Normalized (ARI) Capacity at Peak (Btu/hr)
+        # 	   2319902,  74,  1,  9,  2,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Normalized (ARI) Leaving Chilled Water Temperature (°F)
+        # 	   2319903,  74,  1,  9,  3,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Normalized (ARI) Entering Condenser Water Temperature (°F)
+        # 	   2319904,  74,  1,  9,  4,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Drybulb Temperature @ Peak (°F)
+        # 	   2319905,  74,  1,  9,  5,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Wetbulb Temperature @ Peak (°F)
+
+        requests = {
+            "Elec Chillers - Normalized (ARI) Capacity at Peak (Btu/hr)": (
+                2318901,
+                self.u_name,
+                "",
+            ),
+            "Elec Chillers - Sizing Info - Capacity": (2318908, self.u_name, ""),
+            "Elec Chillers - Design Parameters - Flow": (2318004, self.u_name, ""),
+            "Elec Chillers - Design Parameters - Condenser Flow": (
+                2318009,
+                self.u_name,
+                "",
+            ),
+        }
+
+        return requests
+
     def populate_data_group(self):
         """Populate schema structure for chiller object."""
+        if self.omit:
+            return
+
         self.chiller_data_structure = {
             "id": self.u_name,
             "capacity_validation_points": self.capacity_validation_points,
@@ -137,4 +226,8 @@ class Chiller(BaseNode):
                 self.chiller_data_structure[attr] = value
 
     def insert_to_rpd(self, rmd):
+        """Insert chiller object into the rpd data structure."""
+        if self.omit:
+            return
+
         rmd.chillers.append(self.chiller_data_structure)
