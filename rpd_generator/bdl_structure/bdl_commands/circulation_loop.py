@@ -241,29 +241,24 @@ class CirculationLoop(BaseNode):
         """Populate schema structure for circulation loop object."""
         self.circulation_loop_type = self.determine_circ_loop_type()
 
-        if self.circulation_loop_type == "ServiceWaterPiping":
-            self.data_structure = {
-                "id": self.u_name,
-            }
-        elif self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":
-            self.data_structure = {
-                "id": self.u_name,
-                "tanks": self.tanks,
-                "service_water_piping": self.service_water_piping,
-            }
-        else:
-            self.data_structure = {
-                "id": self.u_name,
-                "cooling_or_condensing_design_and_control": self.cooling_or_condensing_design_and_control,
-                "heating_design_and_control": self.heating_design_and_control,
-                "child_loops": self.child_loops,
-            }
+        design_and_control_elements = [
+            "design_supply_temperature",
+            "design_return_temperature",
+            "is_sized_using_coincident_loads",
+            "minimum_flow_fraction",
+            "operation",
+            "operation_schedule",
+            "flow_control",
+            "temperature_reset_type",
+            "outdoor_high_for_loop_supply_reset_temperature",
+            "outdoor_low_for_loop_supply_reset_temperature",
+            "loop_supply_temperature_at_outdoor_high",
+            "loop_supply_temperature_at_outdoor_low",
+            "loop_supply_temperature_at_low_load",
+            "has_integrated_waterside_economizer",
+        ]
 
-        no_children_attributes = [
-            "reporting_name",
-            "notes",
-            "type",
-            "pump_power_per_flow_rate",
+        service_water_heating_distribution_system_elements = [
             "design_supply_temperature",
             "design_supply_temperature_difference",
             "is_central_system",
@@ -276,6 +271,9 @@ class CirculationLoop(BaseNode):
             "flow_multiplier_schedule",
             "entering_water_mains_temperature_schedule",
             "is_ground_temperature_used_for_entering_water",
+        ]
+
+        service_water_piping_elements = [
             "is_recirculation_loop",
             "insulation_thickness",
             "loop_pipe_location",
@@ -284,11 +282,54 @@ class CirculationLoop(BaseNode):
             "diameter",
         ]
 
-        # Iterate over the no_children_attributes list and populate if the value is not None
-        for attr in no_children_attributes:
-            value = getattr(self, attr, None)
-            if value is not None:
-                self.data_structure[attr] = value
+        if self.circulation_loop_type == "ServiceWaterPiping":
+            for attr in service_water_piping_elements:
+                value = getattr(self, attr, None)
+                if value is not None:
+                    self.service_water_piping[attr] = value
+
+            self.data_structure = {
+                "id": self.u_name,
+            }
+
+        elif self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":
+            for attr in service_water_heating_distribution_system_elements:
+                value = getattr(self, attr, None)
+                if value is not None:
+                    self.swh_distribution_data_structure[attr] = value
+
+            self.data_structure = {
+                "id": self.u_name,
+                "tanks": self.tanks,
+                "service_water_piping": self.service_water_piping,
+            }
+        else:
+            for attr in design_and_control_elements:
+                value_list = getattr(self, attr, None)
+                if value_list[0] is not None:
+                    self.cooling_or_condensing_design_and_control[attr] = value_list[0]
+                if value_list[1] is not None:
+                    self.heating_design_and_control[attr] = value_list[1]
+
+            self.data_structure = {
+                "id": self.u_name,
+                "cooling_or_condensing_design_and_control": self.cooling_or_condensing_design_and_control,
+                "heating_design_and_control": self.heating_design_and_control,
+                "child_loops": self.child_loops,
+            }
+
+            fluid_loop_elements = [
+                "reporting_name",
+                "notes",
+                "type",
+                "pump_power_per_flow_rate",
+            ]
+
+            # Iterate over the no_children_attributes list and populate if the value is not None
+            for attr in fluid_loop_elements:
+                value = getattr(self, attr, None)
+                if value is not None:
+                    self.data_structure[attr] = value
 
     def insert_to_rpd(self, rmd):
         if self.circulation_loop_type == "FluidLoop":
