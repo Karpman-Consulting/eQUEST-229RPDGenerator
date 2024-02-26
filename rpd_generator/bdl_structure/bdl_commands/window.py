@@ -49,6 +49,29 @@ class Window(ChildNode):
         else:
             self.classification = "WINDOW"
 
+        glass_type_name = self.keyword_value_pairs.get("GLASS-TYPE")
+        glass_type = self.rmd.bdl_obj_instances.get(glass_type_name)
+        if glass_type is not None:
+            self.u_factor = glass_type.u_factor
+            self.solar_heat_gain_coefficient = glass_type.shading_coefficient / 1.15
+            self.visible_transmittance = glass_type.visible_transmittance
+
+        left_fin_depth = self.try_float(self.keyword_value_pairs.get("LEFT-FIN-D"))
+        right_fin_depth = self.try_float(self.keyword_value_pairs.get("RIGHT-FIN-D"))
+        if left_fin_depth not in [None, 0.0] or right_fin_depth not in [None, 0.0]:
+            self.has_shading_sidefins = True
+        overhang_depth = self.keyword_value_pairs.get("OVERHANG-D")
+        if overhang_depth not in [None, 0.0]:
+            self.depth_of_overhang = overhang_depth
+            self.has_shading_overhang = True
+
+        shade_schedule = self.keyword_value_pairs.get("SHADING-SCHEDULE")
+        shade_type = self.keyword_value_pairs.get("WIN-SHADE-TYPE")
+        if shade_type is not None:
+            adjustable_shade = shade_type.startswith("MOVABLE-")
+            if shade_schedule is not None and adjustable_shade:
+                self.has_manual_interior_shades = True
+
     def populate_data_group(self):
         """Populate schema structure for window object."""
         self.window_data_structure = {
@@ -62,6 +85,7 @@ class Window(ChildNode):
             "classification",
             "subclassification",
             "is_operable",
+            "has_open_sensor",
             "framing_type",
             "glazed_area",
             "opaque_area",
@@ -69,6 +93,9 @@ class Window(ChildNode):
             "dynamic_glazing_type",
             "solar_heat_gain_coefficient",
             "maximum_solar_heat_gain_coefficient",
+            "visible_transmittance",
+            "minimum_visible_transmittance",
+            "depth_of_overhang",
             "has_shading_overhang",
             "has_shading_sidefins",
             "has_manual_interior_shades",
