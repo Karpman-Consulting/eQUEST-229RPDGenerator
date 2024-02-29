@@ -60,11 +60,20 @@ class Chiller(BaseNode):
 
     def populate_data_elements(self):
         """Populate data elements for chiller object."""
+        absorp_or_engine = False
         if self.compressor_type_map.get(self.keyword_value_pairs.get("TYPE")) == "OMIT":
             self.omit = True
             return
 
-        requests = self.get_output_requests()
+        elif self.keyword_value_pairs.get("TYPE") in [
+            "ABSOR-1",
+            "ABSOR-2",
+            "GAS-ABSOR",
+            "ENGINE",
+        ]:
+            absorp_or_engine = True
+
+        requests = self.get_output_requests(absorp_or_engine)
         output_data = self.get_output_data(
             self.rmd.dll_path, self.rmd.doe2_data_path, self.rmd.file_path, requests
         )
@@ -79,17 +88,47 @@ class Chiller(BaseNode):
             self.keyword_value_pairs.get("TYPE")
         )
 
-        # This value comes out in tons of refrigeration
-        self.design_capacity = self.try_float(
-            output_data.get("Elec Chillers - Sizing Info - Capacity")
-        )
-
-        # This value comes out in Btu/hr
-        self.rated_capacity = self.try_float(
-            output_data.get(
-                "Elec Chillers - Normalized (ARI) Capacity at Peak (Btu/hr)"
+        if not absorp_or_engine:
+            # This value comes out in tons of refrigeration
+            self.design_capacity = self.try_float(
+                output_data.get("Elec Chillers - Sizing Info - Capacity")
             )
-        )
+
+            # This value comes out in Btu/hr
+            self.rated_capacity = self.try_float(
+                output_data.get(
+                    "Elec Chillers - Normalized (ARI) Capacity at Peak (Btu/hr)"
+                )
+            )
+
+            self.design_flow_evaporator = self.try_float(
+                output_data.get("Elec Chillers - Design Parameters - Flow")
+            )
+
+            self.design_flow_condenser = self.try_float(
+                output_data.get("Elec Chillers - Design Parameters - Condenser Flow")
+            )
+
+        else:
+            # This value comes out in tons of refrigeration
+            self.design_capacity = self.try_float(
+                output_data.get("Abs/Eng Chillers - Sizing Info - Capacity")
+            )
+
+            # This value comes out in Btu/hr
+            self.rated_capacity = self.try_float(
+                output_data.get(
+                    "Abs/Eng Chillers - Normalized (ARI) Capacity at Peak (Btu/hr)"
+                )
+            )
+
+            self.design_flow_evaporator = self.try_float(
+                output_data.get("Abs/Eng Chillers - Design Parameters - Flow")
+            )
+
+            self.design_flow_condenser = self.try_float(
+                output_data.get("Abs/Eng Chillers - Design Parameters - Condenser Flow")
+            )
 
         self.rated_leaving_evaporator_temperature = self.try_float(
             self.keyword_value_pairs.get("RATED-CHW-T")
@@ -97,14 +136,6 @@ class Chiller(BaseNode):
 
         self.rated_entering_condenser_temperature = self.try_float(
             self.keyword_value_pairs.get("RATED-COND-T")
-        )
-
-        self.design_flow_evaporator = self.try_float(
-            output_data.get("Elec Chillers - Design Parameters - Flow")
-        )
-
-        self.design_flow_condenser = self.try_float(
-            output_data.get("Elec Chillers - Design Parameters - Condenser Flow")
         )
 
         self.design_leaving_evaporator_temperature = self.try_float(
@@ -129,7 +160,7 @@ class Chiller(BaseNode):
             if pump is not None:
                 pump.loop_or_piping = [self.condensing_loop] * pump.qty
 
-    def get_output_requests(self):
+    def get_output_requests(self, absorp_or_engine):
         """Get output data requests for chiller object."""
         #      2318001,  74,  1,  2,  1,  2,  1,  4,  0,  1,    0,  0,  0,  0, 2063   ; Elec Chillers - Design Parameters - Type
         #      2318002,  74,  1,  2,  5,  2,  1,  8,  0,  1,    0,  0,  0,  0, 2063   ; Elec Chillers - Design Parameters - Cooling Loop
@@ -157,31 +188,63 @@ class Chiller(BaseNode):
         #      2318913,  74,  1, 10, 10,  1,  1,  1,  0, 28,    0,  0,  0,  0, 2063   ; Elec Chillers - Sizing Info - Aux Elec, KW
         #      2318914,  74,  1, 10, 11,  1,  1,  1,  0, 28,    0,  0,  0,  0, 2063   ; Elec Chillers - Sizing Info - Cond Fan, KW
         #      2318915,  74,  1, 10, 12,  1,  1,  1,  0, 28,    0,  0,  0,  0, 2063   ; Elec Chillers - Sizing Info - Cond Pump, KW
+        #      2319001,  75,  1,  2,  1,  2,  1,  4,  0,  1,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Design Parameters - Type
+        #      2319002,  75,  1,  2,  5,  2,  1,  8,  0,  1,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Design Parameters - Cooling Loop
+        #      2319003,  75,  1,  2, 13,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Design Parameters - Capacity
+        #      2319004,  75,  1,  2, 14,  1,  1,  1,  0, 52,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Design Parameters - Flow
+        #      2319005,  75,  1,  2, 15,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Design Parameters - Electric Input Ratio
+        #      2319006,  75,  1,  2, 16,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Design Parameters - Heating Input Ratio
+        #      2319007,  75,  1,  2, 17,  1,  1,  1,  0, 28,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Design Parameters - Auxiliary Power
+        #      2319008,  75,  1,  3,  1,  2,  1,  8,  0,  1,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Design Parameters - Condenser Loop
+        #      2319009,  75,  1,  3,  9,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Design Parameters - Condenser Load
+        #      2319010,  75,  1,  3, 10,  1,  1,  1,  0, 52,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Design Parameters - Condenser Flow
+        #      2319011,  75,  1,  4,  1,  2,  1,  8,  0,  1,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Design Parameters - Heating Loop (Absorption)
+        #      2319012,  75,  1,  4,  9,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Design Parameters - Heating Loop Load
+        #      2319013,  75,  1,  4, 10,  1,  1,  1,  0, 52,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Design Parameters - Heating Loop Flow
+        #      2319014,  75,  1,  5,  1,  2,  1,  8,  0,  1,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Design Parameters - Heat Recovery Loop
+        #      2319015,  75,  1,  5,  9,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Design Parameters - Heat Recovery Capacity
+        #      2319016,  75,  1,  5, 10,  1,  1,  1,  0, 52,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Design Parameters - Heat Recovery Flow
         #      2319901,  74,  1,  9,  1,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Normalized (ARI) Capacity at Peak (Btu/hr)
         #      2319902,  74,  1,  9,  2,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Normalized (ARI) Leaving Chilled Water Temperature (°F)
         #      2319903,  74,  1,  9,  3,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Normalized (ARI) Entering Condenser Water Temperature (°F)
         #      2319904,  74,  1,  9,  4,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Drybulb Temperature @ Peak (°F)
         #      2319905,  74,  1,  9,  5,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Wetbulb Temperature @ Peak (°F)
-        #      2319901,  74,  1,  9,  1,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Normalized (ARI) Capacity at Peak (Btu/hr)
-        # 	   2319902,  74,  1,  9,  2,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Normalized (ARI) Leaving Chilled Water Temperature (°F)
-        # 	   2319903,  74,  1,  9,  3,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Normalized (ARI) Entering Condenser Water Temperature (°F)
-        # 	   2319904,  74,  1,  9,  4,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Drybulb Temperature @ Peak (°F)
-        # 	   2319905,  74,  1,  9,  5,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2063   ; Abs/Eng Chillers - Wetbulb Temperature @ Peak (°F)
+        #
 
-        requests = {
-            "Elec Chillers - Normalized (ARI) Capacity at Peak (Btu/hr)": (
-                2318901,
-                self.u_name,
-                "",
-            ),
-            "Elec Chillers - Sizing Info - Capacity": (2318908, self.u_name, ""),
-            "Elec Chillers - Design Parameters - Flow": (2318004, self.u_name, ""),
-            "Elec Chillers - Design Parameters - Condenser Flow": (
-                2318009,
-                self.u_name,
-                "",
-            ),
-        }
+        if not absorp_or_engine:
+            requests = {
+                "Elec Chillers - Normalized (ARI) Capacity at Peak (Btu/hr)": (
+                    2318901,
+                    self.u_name,
+                    "",
+                ),
+                "Elec Chillers - Sizing Info - Capacity": (2318908, self.u_name, ""),
+                "Elec Chillers - Design Parameters - Flow": (2318004, self.u_name, ""),
+                "Elec Chillers - Design Parameters - Condenser Flow": (
+                    2318009,
+                    self.u_name,
+                    "",
+                ),
+            }
+        else:
+            requests = {
+                "Abs/Eng Chillers - Normalized (ARI) Capacity at Peak (Btu/hr)": (
+                    2319901,
+                    self.u_name,
+                    "",
+                ),
+                "Abs/Eng Chillers - Sizing Info - Capacity": (2319908, self.u_name, ""),
+                "Abs/Eng Chillers - Design Parameters - Flow": (
+                    2319004,
+                    self.u_name,
+                    "",
+                ),
+                "Abs/Eng Chillers - Design Parameters - Condenser Flow": (
+                    2319010,
+                    self.u_name,
+                    "",
+                ),
+            }
 
         return requests
 
