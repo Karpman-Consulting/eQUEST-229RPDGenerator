@@ -97,6 +97,8 @@ class DomesticWaterHeater(BaseNode):
         tank_stpt = self.keyword_value_pairs.get("AQUASTAT-SETPT-T")
         if tank_stpt is not None and loop_stpt is not None:
             self.setpoint_temperature = max(loop_stpt, tank_stpt)
+        elif tank_stpt is None:
+            self.setpoint_temperature = loop_stpt
         self.location = self.location_map.get(self.keyword_value_pairs.get("LOCATION"))
 
         self.location_zone = self.keyword_value_pairs.get("ZONE-NAME")
