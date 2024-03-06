@@ -37,6 +37,18 @@ class RunPeriod(BaseDefinition):
         )
 
 
+class FixedShade(BaseDefinition):
+    bdl_command = "FIXED-SHADE"
+
+    has_site_shading = False
+
+    def __init__(self, u_name, rmd):
+        super().__init__(u_name, rmd)
+
+        if not self.has_site_shading:
+            self.has_site_shading = True
+
+
 def get_day_of_week_jan_1(year):
     # Adjustments for January
     q = 1  # Day of the month
