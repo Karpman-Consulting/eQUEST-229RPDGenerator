@@ -41,6 +41,15 @@ class DomesticWaterHeater(BaseNode):
         self.status_type = None
         self.hot_water_loop = None
 
+        # Tank data elements
+        self.storage_capacity = None
+        self.type = None
+        self.height = None
+        self.interior_insulation = None
+        self.exterior_insulation = None
+        self.location = None
+        self.location_zone = None
+
     def __repr__(self):
         return f"DomesticWaterHeater(u_name='{self.u_name}')"
 
