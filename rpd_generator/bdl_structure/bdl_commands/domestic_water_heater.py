@@ -111,6 +111,11 @@ class DomesticWaterHeater(BaseNode):
         self.location = self.location_map.get(self.keyword_value_pairs.get("LOCATION"))
 
         self.location_zone = self.keyword_value_pairs.get("ZONE-NAME")
+
+    def get_output_requests(self):
+        """Get the output requests for the domestic water heater object."""
+        pass
+
     def populate_data_group(self):
         """Populate schema structure for domestic water heater object."""
 
