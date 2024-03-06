@@ -99,6 +99,11 @@ class DomesticWaterHeater(BaseNode):
             self.setpoint_temperature = max(loop_stpt, tank_stpt)
         elif tank_stpt is None:
             self.setpoint_temperature = loop_stpt
+
+        self.heater_type = self.heater_type_map.get(
+            self.keyword_value_pairs.get("TYPE")
+        )
+
         self.location = self.location_map.get(self.keyword_value_pairs.get("LOCATION"))
 
         self.location_zone = self.keyword_value_pairs.get("ZONE-NAME")
