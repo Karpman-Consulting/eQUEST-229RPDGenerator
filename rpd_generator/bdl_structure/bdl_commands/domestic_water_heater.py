@@ -104,6 +104,10 @@ class DomesticWaterHeater(BaseNode):
             self.keyword_value_pairs.get("TYPE")
         )
 
+        self.storage_capacity = self.try_float(
+            self.keyword_value_pairs.get("TANK-VOLUME")
+        )
+
         self.location = self.location_map.get(self.keyword_value_pairs.get("LOCATION"))
 
         self.location_zone = self.keyword_value_pairs.get("ZONE-NAME")
