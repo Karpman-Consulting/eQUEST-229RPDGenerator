@@ -115,6 +115,20 @@ class DomesticWaterHeater(BaseNode):
     def get_output_requests(self):
         """Get the output requests for the domestic water heater object."""
         pass
+        # DW Heaters - Design Parameters - Capacity
+        # 2321003
+        # DW Heaters - Design Parameters - Flow
+        # 2321004
+        # DW Heaters - Design Parameters - Electric Input Ratio
+        # 2321005
+        # DW Heaters - Design Parameters - Fuel Input Ratio
+        # 2321006
+        # DW Heaters - Design Parameters - Auxiliary Power
+        # 2321007
+        # DW Heaters - Design Parameters - Tank Volume
+        # 2321008
+        # DW Heaters - Design Parameters - Tank Loss Coefficient
+        # 2321009
 
     def populate_data_group(self):
         """Populate schema structure for domestic water heater object."""
@@ -127,6 +141,23 @@ class DomesticWaterHeater(BaseNode):
             "compressor_capacity_validation_points": self.compressor_capacity_validation_points,
             "compressor_power_validation_points": self.compressor_power_validation_points,
         }
+
+        if self.storage_capacity is not None and self.storage_capacity > 0:
+            self.tank["id"] = self.u_name + " Tank"
+            tank_data_elements = [
+                "storage_capacity",
+                "type",
+                "height",
+                "interior_insulation",
+                "exterior_insulation",
+                "location",
+                "location_zone",
+            ]
+
+            for attr in tank_data_elements:
+                value = getattr(self, attr, None)
+                if value is not None:
+                    self.tank[attr] = value
 
         no_children_attributes = [
             "reporting_name",
