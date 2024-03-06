@@ -88,6 +88,8 @@ class DomesticWaterHeater(BaseNode):
             fuel_meter_type = fuel_meter.keyword_value_pairs.get("TYPE")
             self.heater_fuel_type = self.fuel_type_map.get(fuel_meter_type)
 
+        self.distribution_system = self.keyword_value_pairs.get("DHW-LOOP")
+
         self.location = self.location_map.get(self.keyword_value_pairs.get("LOCATION"))
 
         self.location_zone = self.keyword_value_pairs.get("ZONE-NAME")
