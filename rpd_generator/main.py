@@ -18,6 +18,7 @@ COMMAND_PROCESSING_ORDER = [
     "ELEC-METER",  # Meters must populate before Systems, Boilers, DW-Heaters, Chillers
     "STEAM-METER",  # Meters must populate before Systems, Boilers, DW-Heaters, Chillers
     "CHW-METER",  # Meters must populate before Systems, Boilers, DW-Heaters, Chillers
+    "FIXED-SHADE",
     "GLASS-TYPE",
     "MATERIAL",
     "CONSTRUCTION",
@@ -79,7 +80,7 @@ def generate_rmds(selected_models, dll_path, doe2_data_path):
         )  # Convert to string and remove extension
 
         # Set up default building and building segment
-        default_building = Building("Default Building")
+        default_building = Building("Default Building", rmd)
         default_building_segment = BuildingSegment(
             "Default Building Segment", default_building
         )
