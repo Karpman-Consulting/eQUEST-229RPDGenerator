@@ -90,6 +90,13 @@ class DomesticWaterHeater(BaseNode):
 
         self.distribution_system = self.keyword_value_pairs.get("DHW-LOOP")
 
+        loop = self.rmd.bdl_obj_instances.get(self.distribution_system)
+        loop_stpt = None
+        if loop is not None:
+            loop_stpt = loop.design_supply_temperature[1]
+        tank_stpt = self.keyword_value_pairs.get("AQUASTAT-SETPT-T")
+        if tank_stpt is not None and loop_stpt is not None:
+            self.setpoint_temperature = max(loop_stpt, tank_stpt)
         self.location = self.location_map.get(self.keyword_value_pairs.get("LOCATION"))
 
         self.location_zone = self.keyword_value_pairs.get("ZONE-NAME")
