@@ -6,6 +6,23 @@ class DomesticWaterHeater(BaseNode):
 
     bdl_command = "DW-HEATER"
 
+    fuel_type_map = {
+        "ELECTRICITY": "ELECTRICITY",
+        "NATURAL-GAS": "NATURAL_GAS",
+        "LPG": "PROPANE",
+        "FUEL-OIL": "FUEL_OIL",
+        "DIESEL-OIL": "OTHER",
+        "COAL": "OTHER",
+        "METHANOL": "OTHER",
+        "OTHER-FUEL": "OTHER",
+    }
+
+    heater_type_map = {
+        "GAS": "CONVENTIONAL",
+        "ELEC": "CONVENTIONAL",
+        "HEAT-PUMP": "HEAT_PUMP_PACKAGED",
+    }
+
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
 
@@ -53,6 +70,20 @@ class DomesticWaterHeater(BaseNode):
     def __repr__(self):
         return f"DomesticWaterHeater(u_name='{self.u_name}')"
 
+    def populate_data_elements(self):
+        """Populate data elements for domestic water heater object."""
+
+        fuel_meter_ref = self.keyword_value_pairs.get("FUEL-METER")
+        fuel_meter = self.rmd.bdl_obj_instances.get(fuel_meter_ref)
+        # If the fuel meter is not found, then it must be a MasterMeter.
+        if fuel_meter is None:
+            # This assumes the Master Fuel Meter is Natural Gas
+            self.heater_fuel_type = "NATURAL_GAS"
+        else:
+            fuel_meter_type = fuel_meter.keyword_value_pairs.get("TYPE")
+            self.heater_fuel_type = self.fuel_type_map.get(fuel_meter_type)
+
+        self.location_zone = self.keyword_value_pairs.get("ZONE-NAME")
     def populate_data_group(self):
         """Populate schema structure for domestic water heater object."""
 
