@@ -27,7 +27,11 @@ class Building(BaseDefinition):
         self.number_of_floors_below_grade = None
 
     def populate_data_elements(self):
-        pass
+        """Populate data elements for building object."""
+        self.has_site_shading = any(
+            isinstance(value, FixedShade)
+            for value in self.rmd.bdl_obj_instances.values()
+        )
 
     def populate_data_group(self):
         """Populate the building data structure."""
