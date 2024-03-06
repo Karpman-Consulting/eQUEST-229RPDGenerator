@@ -23,6 +23,11 @@ class DomesticWaterHeater(BaseNode):
         "HEAT-PUMP": "HEAT_PUMP_PACKAGED",
     }
 
+    location_map = {
+        "OUTDOOR": "OUTSIDE",
+        "ZONE": "IN_ZONE",
+    }
+
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
 
@@ -82,6 +87,8 @@ class DomesticWaterHeater(BaseNode):
         else:
             fuel_meter_type = fuel_meter.keyword_value_pairs.get("TYPE")
             self.heater_fuel_type = self.fuel_type_map.get(fuel_meter_type)
+
+        self.location = self.location_map.get(self.keyword_value_pairs.get("LOCATION"))
 
         self.location_zone = self.keyword_value_pairs.get("ZONE-NAME")
     def populate_data_group(self):
