@@ -1,10 +1,14 @@
-class Building:
+from rpd_generator.bdl_structure.base_definition import BaseDefinition
+from rpd_generator.bdl_structure.bdl_commands.project import FixedShade
+
+
+class Building(BaseDefinition):
     """
     This class is used to describe a building
     """
 
-    def __init__(self, obj_id):
-        self.obj_id = obj_id
+    def __init__(self, u_name, rmd):
+        super().__init__(u_name, rmd)
 
         self.building_data_structure = {}
 
@@ -23,12 +27,16 @@ class Building:
         self.number_of_floors_below_grade = None
 
     def populate_data_elements(self):
-        pass
+        """Populate data elements for building object."""
+        self.has_site_shading = any(
+            isinstance(value, FixedShade)
+            for value in self.rmd.bdl_obj_instances.values()
+        )
 
     def populate_data_group(self):
         """Populate the building data structure."""
         self.building_data_structure = {
-            "id": self.obj_id,
+            "id": self.u_name,
             "building_segments": self.building_segments,
             "elevators": self.elevators,
             "exterior_lighting": self.exterior_lighting,
