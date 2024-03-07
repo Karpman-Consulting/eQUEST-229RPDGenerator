@@ -128,6 +128,20 @@ class CirculationLoop(BaseNode):
                 elif self.type == "HEATING_AND_COOLING":
                     self.populate_heat_cool_fluid_loop_design_and_control()
 
+        if self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":
+            self.swh_design_supply_temperature = self.try_float(
+                self.keyword_value_pairs.get("DESIGN-HEAT-T")
+            )
+            inlet_t = self.keyword_value_pairs.get("DHW-INLET-T")
+            inlet_t_sch = self.keyword_value_pairs.get("DHW-INLET-T-SCH")
+            if inlet_t is not None or inlet_t_sch is not None:
+                self.is_ground_temperature_used_for_entering_water = False
+            else:
+                self.is_ground_temperature_used_for_entering_water = True
+
+        if self.circulation_loop_type == "ServiceWaterPiping":
+            # None of the data elements for ServiceWaterPiping can be populated from model inputs or outputs
+            pass
 
     def populate_data_group(self):
         """Populate schema structure for circulation loop object."""
