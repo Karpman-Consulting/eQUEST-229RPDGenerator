@@ -246,7 +246,9 @@ class CirculationLoop(BaseNode):
             primary_loop = self.keyword_value_pairs.get("PRIMARY-LOOP")
             for swh_distribution_sys in rmd.service_water_heating_distribution_systems:
                 if swh_distribution_sys["id"] == primary_loop:
-                    swh_distribution_sys["service_water_piping"].append(self.data_structure)
+                    swh_distribution_sys["service_water_piping"].append(
+                        self.data_structure
+                    )
 
     def determine_circ_loop_type(self):
 
