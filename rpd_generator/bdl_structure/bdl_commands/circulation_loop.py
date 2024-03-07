@@ -1,6 +1,7 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
 
 
+# noinspection PyUnresolvedReferences
 class CirculationLoop(BaseNode):
     """CirculationLoop object in the tree."""
 
@@ -54,14 +55,11 @@ class CirculationLoop(BaseNode):
         self.type = None
         self.pump_power_per_flow_rate = None
 
-        # ServiceWaterHeatingDistributionSystem data
-        self.swh_distribution_data_structure = {}
-
         # ServiceWaterHeatingDistributionSystem data elements with children
         self.service_water_piping = {}
         self.tanks = {}
 
-        # FluidLoopDesignAndControl data elements with no children
+        # FluidLoopDesignAndControl data elements with no children [cooling, heating]
         self.design_supply_temperature = [None, None]
         self.design_return_temperature = [None, None]
         self.is_sized_using_coincident_loads = [None, None]
@@ -106,14 +104,6 @@ class CirculationLoop(BaseNode):
     # noinspection PyUnresolvedReferences
     def populate_data_elements(self):
         """Populate data elements from the keyword_value pairs returned from model_input_reader"""
-        self.circulation_loop_type = self.determine_circ_loop_type()
-        if self.circulation_loop_type in ["FluidLoop", "SecondaryFluidLoop"]:
-            loop_type = self.keyword_value_pairs.get("TYPE")
-            self.type = self.loop_type_map.get(loop_type, "OTHER")
-        elif self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":
-            pass
-        elif self.circulation_loop_type == "ServiceWaterPiping":
-            pass
 
         # Assign pump data elements populated from the circulation loop keyword value pairs
         pump_name = self.keyword_value_pairs.get("LOOP-PUMP")
@@ -122,120 +112,36 @@ class CirculationLoop(BaseNode):
             if pump is not None:
                 pump.loop_or_piping = [self.u_name] * pump.qty
 
-        # Populate the data elements for FluidLoopDesignAndControl
+        self.circulation_loop_type = self.determine_circ_loop_type()
         if self.circulation_loop_type in ["FluidLoop", "SecondaryFluidLoop"]:
-            loop_design_dt = self.try_float(
-                self.keyword_value_pairs.get("LOOP-DESIGN-DT")
+            loop_type = self.keyword_value_pairs.get("TYPE")
+            self.type = self.loop_type_map.get(loop_type, "OTHER")
+
+            # Populate the data elements for FluidLoopDesignAndControl
+            if self.circulation_loop_type in ["FluidLoop", "SecondaryFluidLoop"]:
+                if self.type == "COOLING":
+                    self.populate_cool_fluid_loop_design_and_control()
+                elif self.type == "CONDENSER":
+                    self.populate_cond_fluid_loop_design_and_control()
+                elif self.type == "HEATING":
+                    self.populate_heat_fluid_loop_design_and_control()
+                elif self.type == "HEATING_AND_COOLING":
+                    self.populate_heat_cool_fluid_loop_design_and_control()
+
+        if self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":
+            self.swh_design_supply_temperature = self.try_float(
+                self.keyword_value_pairs.get("DESIGN-HEAT-T")
             )
-            if self.type == "COOLING":
-                self.cooling_or_condensing_design_and_control["id"] = (
-                    self.u_name + " CoolingDesign/Control"
-                )
-                self.design_supply_temperature[0] = self.try_float(
-                    self.keyword_value_pairs.get("DESIGN-COOL-T")
-                )
-                self.design_return_temperature[0] = (
-                    self.design_supply_temperature[0] + loop_design_dt
-                )
-                self.is_sized_using_coincident_loads[0] = self.sizing_option_map.get(
-                    self.keyword_value_pairs.get("SIZING-OPTION")
-                )
-                self.minimum_flow_fraction[0] = self.try_float(
-                    self.keyword_value_pairs.get("LOOP-MIN-FLOW")
-                )
-                self.temperature_reset_type[0] = self.temp_reset_map.get(
-                    self.keyword_value_pairs.get("COOL-SETPT-CTRL")
-                )
-                self.loop_supply_temperature_at_low_load[0] = self.try_float(
-                    self.keyword_value_pairs.get("MAX-RESET-T")
-                )
-            elif self.type == "CONDENSER":
-                self.cooling_or_condensing_design_and_control["id"] = (
-                    self.u_name + " CondensingDesign/Control"
-                )
-                self.design_supply_temperature[0] = self.try_float(
-                    self.keyword_value_pairs.get("DESIGN-COOL-T")
-                )
-                self.design_return_temperature[0] = (
-                    self.design_supply_temperature[0] + loop_design_dt
-                )
-                self.is_sized_using_coincident_loads[0] = self.sizing_option_map.get(
-                    self.keyword_value_pairs.get("SIZING-OPTION")
-                )
-                self.minimum_flow_fraction[0] = self.try_float(
-                    self.keyword_value_pairs.get("LOOP-MIN-FLOW")
-                )
-                self.temperature_reset_type[0] = self.temp_reset_map.get(
-                    self.keyword_value_pairs.get("COOL-SETPT-CTRL")
-                )
-                self.loop_supply_temperature_at_low_load[0] = self.try_float(
-                    self.keyword_value_pairs.get("MAX-RESET-T")
-                )
-            elif self.type == "HEATING":
-                self.heating_design_and_control["id"] = (
-                    self.u_name + " HeatingDesign/Control"
-                )
-                self.design_supply_temperature[1] = self.try_float(
-                    self.keyword_value_pairs.get("DESIGN-HEAT-T")
-                )
-                self.design_return_temperature[1] = (
-                    self.design_supply_temperature[1] - loop_design_dt
-                )
-                self.is_sized_using_coincident_loads[1] = self.sizing_option_map.get(
-                    self.keyword_value_pairs.get("SIZING-OPTION")
-                )
-                self.minimum_flow_fraction[1] = self.try_float(
-                    self.keyword_value_pairs.get("LOOP-MIN-FLOW")
-                )
-                self.temperature_reset_type[1] = self.temp_reset_map.get(
-                    self.keyword_value_pairs.get("HEAT-SETPT-CTRL")
-                )
-                self.loop_supply_temperature_at_low_load[1] = self.try_float(
-                    self.keyword_value_pairs.get("MIN-RESET-T")
-                )
-            elif self.type == "HEATING_AND_COOLING":
-                self.cooling_or_condensing_design_and_control["id"] = (
-                    self.u_name + " CoolingDesign/Control"
-                )
-                self.design_supply_temperature[0] = self.try_float(
-                    self.keyword_value_pairs.get("DESIGN-COOL-T")
-                )
-                self.design_return_temperature[0] = (
-                    self.design_supply_temperature[0] + loop_design_dt
-                )
-                self.is_sized_using_coincident_loads[0] = self.sizing_option_map.get(
-                    self.keyword_value_pairs.get("SIZING-OPTION")
-                )
-                self.minimum_flow_fraction[0] = self.try_float(
-                    self.keyword_value_pairs.get("LOOP-MIN-FLOW")
-                )
-                self.temperature_reset_type[0] = self.temp_reset_map.get(
-                    self.keyword_value_pairs.get("COOL-SETPT-CTRL")
-                )
-                self.loop_supply_temperature_at_low_load[0] = self.try_float(
-                    self.keyword_value_pairs.get("MAX-RESET-T")
-                )
-                self.heating_design_and_control["id"] = (
-                    self.u_name + " HeatingDesign/Control"
-                )
-                self.design_supply_temperature[1] = self.try_float(
-                    self.keyword_value_pairs.get("DESIGN-HEAT-T")
-                )
-                self.design_return_temperature[1] = (
-                    self.design_supply_temperature[1] - loop_design_dt
-                )
-                self.is_sized_using_coincident_loads[1] = self.sizing_option_map.get(
-                    self.keyword_value_pairs.get("SIZING-OPTION")
-                )
-                self.minimum_flow_fraction[1] = self.try_float(
-                    self.keyword_value_pairs.get("LOOP-MIN-FLOW")
-                )
-                self.temperature_reset_type[1] = self.temp_reset_map.get(
-                    self.keyword_value_pairs.get("HEAT-SETPT-CTRL")
-                )
-                self.loop_supply_temperature_at_low_load[1] = self.try_float(
-                    self.keyword_value_pairs.get("MIN-RESET-T")
-                )
+            inlet_t = self.keyword_value_pairs.get("DHW-INLET-T")
+            inlet_t_sch = self.keyword_value_pairs.get("DHW-INLET-T-SCH")
+            if inlet_t is not None or inlet_t_sch is not None:
+                self.is_ground_temperature_used_for_entering_water = False
+            else:
+                self.is_ground_temperature_used_for_entering_water = True
+
+        if self.circulation_loop_type == "ServiceWaterPiping":
+            # None of the data elements for ServiceWaterPiping can be populated from model inputs or outputs
+            pass
 
     def populate_data_group(self):
         """Populate schema structure for circulation loop object."""
@@ -283,26 +189,31 @@ class CirculationLoop(BaseNode):
         ]
 
         if self.circulation_loop_type == "ServiceWaterPiping":
-            for attr in service_water_piping_elements:
-                value = getattr(self, attr, None)
-                if value is not None:
-                    self.service_water_piping[attr] = value
-
             self.data_structure = {
                 "id": self.u_name,
             }
 
-        elif self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":
-            for attr in service_water_heating_distribution_system_elements:
+            for attr in service_water_piping_elements:
                 value = getattr(self, attr, None)
                 if value is not None:
-                    self.swh_distribution_data_structure[attr] = value
+                    self.data_structure[attr] = value
 
+        elif self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":
             self.data_structure = {
                 "id": self.u_name,
                 "tanks": self.tanks,
                 "service_water_piping": self.service_water_piping,
             }
+
+            for attr in service_water_heating_distribution_system_elements:
+                # design_supply_temperature exists in both the circulation loop and the swh distribution system
+                if attr == "design_supply_temperature":
+                    value = self.swh_design_supply_temperature
+                else:
+                    value = getattr(self, attr, None)
+                if value is not None:
+                    self.data_structure[attr] = value
+
         else:
             for attr in design_and_control_elements:
                 value_list = getattr(self, attr, None)
@@ -332,30 +243,174 @@ class CirculationLoop(BaseNode):
                     self.data_structure[attr] = value
 
     def insert_to_rpd(self, rmd):
+
         if self.circulation_loop_type == "FluidLoop":
             rmd.fluid_loops.append(self.data_structure)
+
         elif self.circulation_loop_type == "SecondaryFluidLoop":
             primary_loop = self.keyword_value_pairs.get("PRIMARY-LOOP")
             for fluid_loop in rmd.fluid_loops:
                 if fluid_loop["id"] == primary_loop:
                     fluid_loop["child_loops"].append(self.data_structure)
+
         elif self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":
             rmd.service_water_heating_distribution_systems.append(self.data_structure)
+
         elif self.circulation_loop_type == "ServiceWaterPiping":
             primary_loop = self.keyword_value_pairs.get("PRIMARY-LOOP")
-            for fluid_loop in rmd.fluid_loops:
-                if fluid_loop["id"] == primary_loop:
-                    fluid_loop["child_loops"].append(self.data_structure)
+            for swh_distribution_sys in rmd.service_water_heating_distribution_systems:
+                if swh_distribution_sys["id"] == primary_loop:
+                    swh_distribution_sys["service_water_piping"].append(
+                        self.data_structure
+                    )
 
     def determine_circ_loop_type(self):
+
         if (
             self.keyword_value_pairs["TYPE"] == "DHW"
             and self.keyword_value_pairs["SUBTYPE"] == "SECONDARY"
         ):
             return "ServiceWaterPiping"
+
         elif self.keyword_value_pairs["TYPE"] == "DHW":
             return "ServiceWaterHeatingDistributionSystem"
+
         elif self.keyword_value_pairs.get("PRIMARY-LOOP") is None:
             return "FluidLoop"
+
         else:
             return "SecondaryFluidLoop"
+
+    def populate_heat_fluid_loop_design_and_control(self):
+        self.heating_design_and_control["id"] = self.u_name + " HeatingDesign/Control"
+        self.design_supply_temperature[1] = self.try_float(
+            self.keyword_value_pairs.get("DESIGN-HEAT-T")
+        )
+        loop_design_dt = self.try_float(self.keyword_value_pairs.get("LOOP-DESIGN-DT"))
+        if loop_design_dt is None:
+            pass
+        else:
+            self.design_return_temperature[1] = (
+                self.design_supply_temperature[1] - loop_design_dt
+            )
+        self.is_sized_using_coincident_loads[1] = self.sizing_option_map.get(
+            self.keyword_value_pairs.get("SIZING-OPTION")
+        )
+        self.minimum_flow_fraction[1] = self.try_float(
+            self.keyword_value_pairs.get("LOOP-MIN-FLOW")
+        )
+        self.temperature_reset_type[1] = self.temp_reset_map.get(
+            self.keyword_value_pairs.get("HEAT-SETPT-CTRL")
+        )
+        self.loop_supply_temperature_at_low_load[1] = self.try_float(
+            self.keyword_value_pairs.get("MIN-RESET-T")
+        )
+
+    def populate_cool_fluid_loop_design_and_control(self):
+        self.cooling_or_condensing_design_and_control["id"] = (
+            self.u_name + " CoolingDesign/Control"
+        )
+        self.design_supply_temperature[0] = self.try_float(
+            self.keyword_value_pairs.get("DESIGN-COOL-T")
+        )
+        loop_design_dt = self.try_float(self.keyword_value_pairs.get("LOOP-DESIGN-DT"))
+        if loop_design_dt is None:
+            pass
+        else:
+            self.design_return_temperature[0] = (
+                self.design_supply_temperature[0] + loop_design_dt
+            )
+        self.is_sized_using_coincident_loads[0] = self.sizing_option_map.get(
+            self.keyword_value_pairs.get("SIZING-OPTION")
+        )
+        self.minimum_flow_fraction[0] = self.try_float(
+            self.keyword_value_pairs.get("LOOP-MIN-FLOW")
+        )
+        self.temperature_reset_type[0] = self.temp_reset_map.get(
+            self.keyword_value_pairs.get("COOL-SETPT-CTRL")
+        )
+        self.loop_supply_temperature_at_low_load[0] = self.try_float(
+            self.keyword_value_pairs.get("MAX-RESET-T")
+        )
+
+    def populate_cond_fluid_loop_design_and_control(self):
+        self.cooling_or_condensing_design_and_control["id"] = (
+            self.u_name + " CondensingDesign/Control"
+        )
+        self.design_supply_temperature[0] = self.try_float(
+            self.keyword_value_pairs.get("DESIGN-COOL-T")
+        )
+        loop_design_dt = self.try_float(self.keyword_value_pairs.get("LOOP-DESIGN-DT"))
+        if loop_design_dt is None:
+            pass
+        else:
+            self.design_return_temperature[0] = (
+                self.design_supply_temperature[0] + loop_design_dt
+            )
+        self.is_sized_using_coincident_loads[0] = self.sizing_option_map.get(
+            self.keyword_value_pairs.get("SIZING-OPTION")
+        )
+        self.minimum_flow_fraction[0] = self.try_float(
+            self.keyword_value_pairs.get("LOOP-MIN-FLOW")
+        )
+        self.temperature_reset_type[0] = self.temp_reset_map.get(
+            self.keyword_value_pairs.get("COOL-SETPT-CTRL")
+        )
+        self.loop_supply_temperature_at_low_load[0] = self.try_float(
+            self.keyword_value_pairs.get("MAX-RESET-T")
+        )
+
+    def populate_heat_cool_fluid_loop_design_and_control(self):
+        self.cooling_or_condensing_design_and_control["id"] = (
+            self.u_name + " CoolingDesign/Control"
+        )
+        self.design_supply_temperature[0] = self.try_float(
+            self.keyword_value_pairs.get("DESIGN-COOL-T")
+        )
+        loop_design_dt = self.try_float(self.keyword_value_pairs.get("LOOP-DESIGN-DT"))
+        if loop_design_dt is None:
+            pass
+        else:
+            self.design_return_temperature[0] = (
+                self.design_supply_temperature[0] + loop_design_dt
+            )
+        self.is_sized_using_coincident_loads[0] = self.sizing_option_map.get(
+            self.keyword_value_pairs.get("SIZING-OPTION")
+        )
+        self.minimum_flow_fraction[0] = self.try_float(
+            self.keyword_value_pairs.get("LOOP-MIN-FLOW")
+        )
+        self.temperature_reset_type[0] = self.temp_reset_map.get(
+            self.keyword_value_pairs.get("COOL-SETPT-CTRL")
+        )
+        self.loop_supply_temperature_at_low_load[0] = self.try_float(
+            self.keyword_value_pairs.get("MAX-RESET-T")
+        )
+        self.heating_design_and_control["id"] = self.u_name + " HeatingDesign/Control"
+        self.design_supply_temperature[1] = self.try_float(
+            self.keyword_value_pairs.get("DESIGN-HEAT-T")
+        )
+        if loop_design_dt is None:
+            pass
+        else:
+            self.design_return_temperature[1] = (
+                self.design_supply_temperature[1] - loop_design_dt
+            )
+        self.is_sized_using_coincident_loads[1] = self.sizing_option_map.get(
+            self.keyword_value_pairs.get("SIZING-OPTION")
+        )
+        self.minimum_flow_fraction[1] = self.try_float(
+            self.keyword_value_pairs.get("LOOP-MIN-FLOW")
+        )
+        self.temperature_reset_type[1] = self.temp_reset_map.get(
+            self.keyword_value_pairs.get("HEAT-SETPT-CTRL")
+        )
+        self.loop_supply_temperature_at_low_load[1] = self.try_float(
+            self.keyword_value_pairs.get("MIN-RESET-T")
+        )
+
+    def populate_service_water_heating_distribution_system(self):
+        pass
+
+    def populate_service_water_piping(self):
+        pass
