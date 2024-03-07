@@ -236,6 +236,22 @@ class CirculationLoop(BaseNode):
                 self.loop_supply_temperature_at_low_load[1] = self.try_float(
                     self.keyword_value_pairs.get("MIN-RESET-T")
                 )
+        self.circulation_loop_type = self.determine_circ_loop_type()
+        if self.circulation_loop_type in ["FluidLoop", "SecondaryFluidLoop"]:
+            loop_type = self.keyword_value_pairs.get("TYPE")
+            self.type = self.loop_type_map.get(loop_type, "OTHER")
+
+            # Populate the data elements for FluidLoopDesignAndControl
+            if self.circulation_loop_type in ["FluidLoop", "SecondaryFluidLoop"]:
+                if self.type == "COOLING":
+                    self.populate_cool_fluid_loop_design_and_control()
+                elif self.type == "CONDENSER":
+                    self.populate_cond_fluid_loop_design_and_control()
+                elif self.type == "HEATING":
+                    self.populate_heat_fluid_loop_design_and_control()
+                elif self.type == "HEATING_AND_COOLING":
+                    self.populate_heat_cool_fluid_loop_design_and_control()
+
 
     def populate_data_group(self):
         """Populate schema structure for circulation loop object."""
