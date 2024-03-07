@@ -1,6 +1,7 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
 
 
+# noinspection PyUnresolvedReferences
 class CirculationLoop(BaseNode):
     """CirculationLoop object in the tree."""
 
@@ -54,14 +55,11 @@ class CirculationLoop(BaseNode):
         self.type = None
         self.pump_power_per_flow_rate = None
 
-        # ServiceWaterHeatingDistributionSystem data
-        self.swh_distribution_data_structure = {}
-
         # ServiceWaterHeatingDistributionSystem data elements with children
         self.service_water_piping = {}
         self.tanks = {}
 
-        # FluidLoopDesignAndControl data elements with no children
+        # FluidLoopDesignAndControl data elements with no children [cooling, heating]
         self.design_supply_temperature = [None, None]
         self.design_return_temperature = [None, None]
         self.is_sized_using_coincident_loads = [None, None]
@@ -177,26 +175,31 @@ class CirculationLoop(BaseNode):
         ]
 
         if self.circulation_loop_type == "ServiceWaterPiping":
-            for attr in service_water_piping_elements:
-                value = getattr(self, attr, None)
-                if value is not None:
-                    self.service_water_piping[attr] = value
-
             self.data_structure = {
                 "id": self.u_name,
             }
 
-        elif self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":
-            for attr in service_water_heating_distribution_system_elements:
+            for attr in service_water_piping_elements:
                 value = getattr(self, attr, None)
                 if value is not None:
-                    self.swh_distribution_data_structure[attr] = value
+                    self.data_structure[attr] = value
 
+        elif self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":
             self.data_structure = {
                 "id": self.u_name,
                 "tanks": self.tanks,
                 "service_water_piping": self.service_water_piping,
             }
+
+            for attr in service_water_heating_distribution_system_elements:
+                # design_supply_temperature exists in both the circulation loop and the swh distribution system
+                if attr == "design_supply_temperature":
+                    value = self.swh_design_supply_temperature
+                else:
+                    value = getattr(self, attr, None)
+                if value is not None:
+                    self.data_structure[attr] = value
+
         else:
             for attr in design_and_control_elements:
                 value_list = getattr(self, attr, None)
@@ -226,31 +229,39 @@ class CirculationLoop(BaseNode):
                     self.data_structure[attr] = value
 
     def insert_to_rpd(self, rmd):
+
         if self.circulation_loop_type == "FluidLoop":
             rmd.fluid_loops.append(self.data_structure)
+
         elif self.circulation_loop_type == "SecondaryFluidLoop":
             primary_loop = self.keyword_value_pairs.get("PRIMARY-LOOP")
             for fluid_loop in rmd.fluid_loops:
                 if fluid_loop["id"] == primary_loop:
                     fluid_loop["child_loops"].append(self.data_structure)
+
         elif self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":
             rmd.service_water_heating_distribution_systems.append(self.data_structure)
+
         elif self.circulation_loop_type == "ServiceWaterPiping":
             primary_loop = self.keyword_value_pairs.get("PRIMARY-LOOP")
-            for fluid_loop in rmd.fluid_loops:
-                if fluid_loop["id"] == primary_loop:
-                    fluid_loop["child_loops"].append(self.data_structure)
+            for swh_distribution_sys in rmd.service_water_heating_distribution_systems:
+                if swh_distribution_sys["id"] == primary_loop:
+                    swh_distribution_sys["service_water_piping"].append(self.data_structure)
 
     def determine_circ_loop_type(self):
+
         if (
             self.keyword_value_pairs["TYPE"] == "DHW"
             and self.keyword_value_pairs["SUBTYPE"] == "SECONDARY"
         ):
             return "ServiceWaterPiping"
+
         elif self.keyword_value_pairs["TYPE"] == "DHW":
             return "ServiceWaterHeatingDistributionSystem"
+
         elif self.keyword_value_pairs.get("PRIMARY-LOOP") is None:
             return "FluidLoop"
+
         else:
             return "SecondaryFluidLoop"
 
@@ -381,3 +392,9 @@ class CirculationLoop(BaseNode):
         self.loop_supply_temperature_at_low_load[1] = self.try_float(
             self.keyword_value_pairs.get("MIN-RESET-T")
         )
+
+    def populate_service_water_heating_distribution_system(self):
+        pass
+
+    def populate_service_water_piping(self):
+        pass
