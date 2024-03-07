@@ -114,21 +114,16 @@ class DomesticWaterHeater(BaseNode):
 
     def get_output_requests(self):
         """Get the output requests for the domestic water heater object."""
+        #      2321001,  83,  1,  2,  5,  2,  1,  8,  0,  1,    0,  0,  0,  0, 2065   ; DW Heaters - Design Parameters - Domestic Water Loop
+        #      2321002,  83,  1,  2,  1,  2,  1,  4,  0,  1,    0,  0,  0,  0, 2065   ; DW Heaters - Design Parameters - Type
+        #      2321003,  83,  1,  2, 13,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2065   ; DW Heaters - Design Parameters - Capacity
+        #      2321004,  83,  1,  2, 14,  1,  1,  1,  0, 52,    0,  0,  0,  0, 2065   ; DW Heaters - Design Parameters - Flow
+        #      2321005,  83,  1,  2, 15,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2065   ; DW Heaters - Design Parameters - Electric Input Ratio
+        #      2321006,  83,  1,  2, 16,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2065   ; DW Heaters - Design Parameters - Fuel Input Ratio
+        #      2321007,  83,  1,  2, 17,  1,  1,  1,  0, 28,    0,  0,  0,  0, 2065   ; DW Heaters - Design Parameters - Auxiliary Power
+        #      2321008,  83,  1,  2, 18,  1,  1,  1,  0, 51,    0,  0,  0,  0, 2065   ; DW Heaters - Design Parameters - Tank Volume
+        #      2321009,  83,  1,  2, 19,  1,  1,  1,  0, 14,    0,  0,  0,  0, 2065   ; DW Heaters - Design Parameters - Tank Loss Coefficient
         pass
-        # DW Heaters - Design Parameters - Capacity
-        # 2321003
-        # DW Heaters - Design Parameters - Flow
-        # 2321004
-        # DW Heaters - Design Parameters - Electric Input Ratio
-        # 2321005
-        # DW Heaters - Design Parameters - Fuel Input Ratio
-        # 2321006
-        # DW Heaters - Design Parameters - Auxiliary Power
-        # 2321007
-        # DW Heaters - Design Parameters - Tank Volume
-        # 2321008
-        # DW Heaters - Design Parameters - Tank Loss Coefficient
-        # 2321009
 
     def populate_data_group(self):
         """Populate schema structure for domestic water heater object."""
@@ -182,6 +177,7 @@ class DomesticWaterHeater(BaseNode):
             "has_electrical_ignition",
             "heater_type",
             "status_type",
+            "hot_water_loop",
         ]
 
         # Iterate over the no_children_attributes list and populate if the value is not None
