@@ -77,6 +77,10 @@ class DomesticWaterHeater(BaseNode):
 
     def populate_data_elements(self):
         """Populate data elements for domestic water heater object."""
+        requests = self.get_output_requests()
+        output_data = self.get_output_data(
+            self.rmd.dll_path, self.rmd.doe2_data_path, self.rmd.file_path, requests
+        )
 
         fuel_meter_ref = self.keyword_value_pairs.get("FUEL-METER")
         fuel_meter = self.rmd.bdl_obj_instances.get(fuel_meter_ref)
@@ -123,19 +127,28 @@ class DomesticWaterHeater(BaseNode):
         #      2321007,  83,  1,  2, 17,  1,  1,  1,  0, 28,    0,  0,  0,  0, 2065   ; DW Heaters - Design Parameters - Auxiliary Power
         #      2321008,  83,  1,  2, 18,  1,  1,  1,  0, 51,    0,  0,  0,  0, 2065   ; DW Heaters - Design Parameters - Tank Volume
         #      2321009,  83,  1,  2, 19,  1,  1,  1,  0, 14,    0,  0,  0,  0, 2065   ; DW Heaters - Design Parameters - Tank Loss Coefficient
-        pass
+        requests = {
+            "DW Heaters - Design Parameters - Capacity": (2321003, self.u_name, ""),
+            "DW Heaters - Design Parameters - Flow": (2321004, self.u_name, ""),
+            "DW Heaters - Design Parameters - Electric Input Ratio": (2321005, self.u_name, ""),
+            "DW Heaters - Design Parameters - Fuel Input Ratio": (2321006, self.u_name, ""),
+            "DW Heaters - Design Parameters - Auxiliary Power": (2321007, self.u_name, ""),
+        }
+        return requests
 
     def populate_data_group(self):
         """Populate schema structure for domestic water heater object."""
 
-        self.swh_equipment_data_structure = {
-            "id": self.u_name,
-            "output_validation_points": self.output_validation_points,
-            "tank": self.tank,
-            "solar_thermal_systems": self.solar_thermal_systems,
-            "compressor_capacity_validation_points": self.compressor_capacity_validation_points,
-            "compressor_power_validation_points": self.compressor_power_validation_points,
-        }
+        self.data_structure.update(
+            {
+                "id": self.u_name,
+                "output_validation_points": self.output_validation_points,
+                "tank": self.tank,
+                "solar_thermal_systems": self.solar_thermal_systems,
+                "compressor_capacity_validation_points": self.compressor_capacity_validation_points,
+                "compressor_power_validation_points": self.compressor_power_validation_points,
+            }
+        )
 
         if self.storage_capacity is not None and self.storage_capacity > 0:
             self.tank["id"] = self.u_name + " Tank"
