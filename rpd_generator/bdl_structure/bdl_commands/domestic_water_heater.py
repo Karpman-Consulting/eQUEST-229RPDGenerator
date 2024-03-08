@@ -31,7 +31,7 @@ class DomesticWaterHeater(BaseNode):
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
 
-        self.swh_equipment_data_structure = {}
+        self.data_structure = {}
 
         # data elements with children
         self.output_validation_points = []
@@ -197,8 +197,8 @@ class DomesticWaterHeater(BaseNode):
         for attr in no_children_attributes:
             value = getattr(self, attr, None)
             if value is not None:
-                self.swh_equipment_data_structure[attr] = value
+                self.data_structure[attr] = value
 
     def insert_to_rpd(self, rmd):
         """Insert window object into the rpd data structure."""
-        rmd.service_water_heating_equipment.append(self.swh_equipment_data_structure)
+        rmd.service_water_heating_equipment.append(self.data_structure)
