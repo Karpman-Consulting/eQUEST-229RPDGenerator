@@ -94,6 +94,8 @@ class DomesticWaterHeater(BaseNode):
 
         self.distribution_system = self.keyword_value_pairs.get("DHW-LOOP")
 
+        self.rated_capacity = self.try_float(output_data.get("DW Heaters - Design Parameters - Capacity"))
+
         loop = self.rmd.bdl_obj_instances.get(self.distribution_system)
         loop_stpt = None
         if loop is not None:
