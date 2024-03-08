@@ -94,7 +94,9 @@ class DomesticWaterHeater(BaseNode):
 
         self.distribution_system = self.keyword_value_pairs.get("DHW-LOOP")
 
-        self.rated_capacity = self.try_float(output_data.get("DW Heaters - Design Parameters - Capacity"))
+        self.rated_capacity = self.try_float(
+            output_data.get("DW Heaters - Design Parameters - Capacity")
+        )
 
         loop = self.rmd.bdl_obj_instances.get(self.distribution_system)
         loop_stpt = None
@@ -132,9 +134,21 @@ class DomesticWaterHeater(BaseNode):
         requests = {
             "DW Heaters - Design Parameters - Capacity": (2321003, self.u_name, ""),
             "DW Heaters - Design Parameters - Flow": (2321004, self.u_name, ""),
-            "DW Heaters - Design Parameters - Electric Input Ratio": (2321005, self.u_name, ""),
-            "DW Heaters - Design Parameters - Fuel Input Ratio": (2321006, self.u_name, ""),
-            "DW Heaters - Design Parameters - Auxiliary Power": (2321007, self.u_name, ""),
+            "DW Heaters - Design Parameters - Electric Input Ratio": (
+                2321005,
+                self.u_name,
+                "",
+            ),
+            "DW Heaters - Design Parameters - Fuel Input Ratio": (
+                2321006,
+                self.u_name,
+                "",
+            ),
+            "DW Heaters - Design Parameters - Auxiliary Power": (
+                2321007,
+                self.u_name,
+                "",
+            ),
         }
         return requests
 
