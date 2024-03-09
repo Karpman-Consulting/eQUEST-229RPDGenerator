@@ -5,7 +5,7 @@ This repository provides the application and source code for a compliance wizard
 
 ## About ASHRAE 229P
 
-ASHRAE Standard 229P is a proposed standard entitled "Protocols for Evaluating Ruleset Implementation in Building Performance Modeling Software". To learn more about the title/scope/purpose and status of the proposed standard development visit the standards project committee site at [ASHRAE SPC 229](http://spc229.ashraepcs.org/).
+ASHRAE Standard 229P is a proposed standard entitled "Protocols for Evaluating Ruleset Implementation in Building Performance Modeling Software". To learn more about the title/scope/purpose and status of the proposed standard development visit the standards project committee site at [ASHRAE SPC 229]([http://spc229.ashraepcs.org/](https://tpc.ashrae.org/?cmtKey=9ffa4db6-eebe-4418-a8c4-d0c220603735)).
 
 ## ASHRAE Standard 229 RPD Schema
 The RPD schema development continues at: [https://github.com/open229/ruleset-model-description-schema](https://github.com/open229/ruleset-model-description-schema)
