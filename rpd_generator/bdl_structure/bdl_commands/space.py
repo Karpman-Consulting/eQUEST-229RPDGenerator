@@ -140,17 +140,23 @@ class Space(ChildNode, ParentNode):
     def populate_interior_lighting(self, n, schedule):
         """Populate interior lighting data elements for an instance of InteriorLighting"""
         int_ltg_id = f"{self.u_name} IntLtg{n}"
-        int_ltg_power_per_area = self.try_access_index(self.keyword_value_pairs.get("LIGHTING-W/AREA"), n)
+        int_ltg_power_per_area = self.try_access_index(
+            self.keyword_value_pairs.get("LIGHTING-W/AREA"), n
+        )
         int_ltg_lighting_multiplier_schedule = schedule
 
         if n == 0:
             self.int_ltg_id = [int_ltg_id]
             self.int_ltg_power_per_area = [int_ltg_power_per_area]
-            self.int_ltg_lighting_multiplier_schedule = [int_ltg_lighting_multiplier_schedule]
+            self.int_ltg_lighting_multiplier_schedule = [
+                int_ltg_lighting_multiplier_schedule
+            ]
         else:
             self.int_ltg_id.append(int_ltg_id)
             self.int_ltg_power_per_area.append(int_ltg_power_per_area)
-            self.int_ltg_lighting_multiplier_schedule.append(int_ltg_lighting_multiplier_schedule)
+            self.int_ltg_lighting_multiplier_schedule.append(
+                int_ltg_lighting_multiplier_schedule
+            )
 
             # Lists must be the same length, even when elements are not populated
             self.int_ltg_reporting_name.append(None)
@@ -159,4 +165,6 @@ class Space(ChildNode, ParentNode):
             self.int_ltg_occupancy_control_type.append(None)
             self.int_ltg_daylighting_control_type.append(None)
             self.int_ltg_are_schedules_used_for_modeling_occupancy_control.append(None)
-            self.int_ltg_are_schedules_used_for_modeling_daylighting_control.append(None)
+            self.int_ltg_are_schedules_used_for_modeling_daylighting_control.append(
+                None
+            )
