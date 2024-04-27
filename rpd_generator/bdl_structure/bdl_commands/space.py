@@ -31,11 +31,30 @@ class Space(ChildNode, ParentNode):
         self.ventilation_space_type = None
         self.service_water_heating_space_type = None
 
+        # InteriorLighting data elements
+        self.int_ltg_id = [None]
+        self.int_ltg_reporting_name = [None]
+        self.int_ltg_notes = [None]
+        self.int_ltg_purpose_type = [None]
+        self.int_ltg_power_per_area = [None]
+        self.int_ltg_lighting_multiplier_schedule = [None]
+        self.int_ltg_occupancy_control_type = [None]
+        self.int_ltg_daylighting_control_type = [None]
+        self.int_ltg_are_schedules_used_for_modeling_occupancy_control = [None]
+        self.int_ltg_are_schedules_used_for_modeling_daylighting_control = [None]
+
     def __repr__(self):
         return f"Space(u_name='{self.u_name}', parent={self.parent})"
 
     def populate_data_elements(self):
-        """Populate data elements for space object."""
+        """Populate data elements that originate from eQUEST's SPACE command"""
+        # Populate interior lighting data elements
+        space_ltg_scheds = self.keyword_value_pairs.get("LIGHTING-SCHEDUL")
+        if not isinstance(space_ltg_scheds, list):
+            space_ltg_scheds = [space_ltg_scheds]
+        for i, sched in enumerate(space_ltg_scheds):
+            self.populate_interior_lighting(i, sched)
+
         self.floor_area = self.try_float(self.keyword_value_pairs.get("AREA"))
 
         volume = self.keyword_value_pairs.get("VOLUME")
@@ -66,6 +85,23 @@ class Space(ChildNode, ParentNode):
 
     def populate_data_group(self):
         """Populate schema structure for space object."""
+
+        attributes = [attr for attr in dir(self) if attr.startswith("int_ltg_")]
+        keys = [
+            attr.replace("int_ltg_", "") for attr in attributes
+        ]  # Move outside the loop
+
+        # Extract values for each attribute from the object only once
+        int_ltg_value_lists = [getattr(self, attr) for attr in attributes]
+
+        # Iterate over the values, creating dictionaries directly from zipped keys and values
+        for values in zip(*int_ltg_value_lists):
+            int_ltg_dict = {
+                key: value for key, value in zip(keys, values) if value is not None
+            }
+            if int_ltg_dict:  # Only append if the dictionary is not empty
+                self.interior_lighting.append(int_ltg_dict)
+
         self.space_data_structure = {
             "id": self.u_name,
             "interior_lighting": self.interior_lighting,
@@ -100,3 +136,19 @@ class Space(ChildNode, ParentNode):
         # find the zone that has the "SPACE" attribute value equal to the space object's u_name
         zone = rmd.space_map.get(self.u_name)
         zone.spaces.append(self.space_data_structure)
+
+    def populate_interior_lighting(self, n, schedule):
+        """Populate interior lighting data elements for an instance of InteriorLighting"""
+        int_ltg_id = f"{self.u_name} IntLtg{n}"
+        int_ltg_power_per_area = self.try_access_index(self.keyword_value_pairs.get("LIGHTING-W/AREA"), n)
+        int_ltg_lighting_multiplier_schedule = schedule
+
+        if n == 0:
+            self.int_ltg_id = [int_ltg_id]
+            self.int_ltg_power_per_area = [int_ltg_power_per_area]
+            self.int_ltg_lighting_multiplier_schedule = [int_ltg_lighting_multiplier_schedule]
+        else:
+            self.int_ltg_id.append(int_ltg_id)
+            self.int_ltg_power_per_area.append(int_ltg_power_per_area)
+            self.int_ltg_lighting_multiplier_schedule.append(int_ltg_lighting_multiplier_schedule)
+
