@@ -86,6 +86,20 @@ class BaseNode:
             # TODO log error for future GUI error window
             return None
 
+    @staticmethod
+    def try_access_index(lst, index):
+        """Attempt to access an index in a list, returning None if it fails."""
+        if not isinstance(lst, list):
+            try:
+                lst = [lst]
+            except TypeError:
+                return None
+        try:
+            return lst[index]
+        except (IndexError, TypeError):
+            # TODO log error for future GUI error window
+            return None
+
 
 def _chunked_dict(d, n):
     """Yield successive n-sized chunks from dictionary d."""
