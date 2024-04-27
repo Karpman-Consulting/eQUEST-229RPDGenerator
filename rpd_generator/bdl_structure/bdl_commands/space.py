@@ -152,3 +152,11 @@ class Space(ChildNode, ParentNode):
             self.int_ltg_power_per_area.append(int_ltg_power_per_area)
             self.int_ltg_lighting_multiplier_schedule.append(int_ltg_lighting_multiplier_schedule)
 
+            # Lists must be the same length, even when elements are not populated
+            self.int_ltg_reporting_name.append(None)
+            self.int_ltg_notes.append(None)
+            self.int_ltg_purpose_type.append(None)
+            self.int_ltg_occupancy_control_type.append(None)
+            self.int_ltg_daylighting_control_type.append(None)
+            self.int_ltg_are_schedules_used_for_modeling_occupancy_control.append(None)
+            self.int_ltg_are_schedules_used_for_modeling_daylighting_control.append(None)
