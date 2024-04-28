@@ -43,6 +43,20 @@ class Space(ChildNode, ParentNode):
         self.int_ltg_are_schedules_used_for_modeling_occupancy_control = [None]
         self.int_ltg_are_schedules_used_for_modeling_daylighting_control = [None]
 
+        # MiscellaneousEquipment data elements
+        self.misc_eq_id = [None]
+        self.misc_eq_reporting_name = [None]
+        self.misc_eq_notes = [None]
+        self.misc_eq_energy_type = [None]
+        self.misc_eq_power = [None]
+        self.misc_eq_multiplier_schedule = [None]
+        self.misc_eq_sensible_fraction = [None]
+        self.misc_eq_latent_fraction = [None]
+        self.misc_eq_remaining_fraction_to_loop = [None]
+        self.misc_eq_energy_from_loop = [None]
+        self.misc_eq_type = [None]
+        self.misc_eq_has_automatic_control = [None]
+
     def __repr__(self):
         return f"Space(u_name='{self.u_name}', parent={self.parent})"
 
@@ -55,6 +69,14 @@ class Space(ChildNode, ParentNode):
         for i, sched in enumerate(space_ltg_scheds):
             self.populate_interior_lighting(i, sched)
 
+        # Populate miscellaneous equipment data elements
+        space_misc_eq_scheds = self.keyword_value_pairs.get("EQUIP-SCHEDULE")
+        if not isinstance(space_misc_eq_scheds, list):
+            space_misc_eq_scheds = [space_misc_eq_scheds]
+        for i, sched in enumerate(space_misc_eq_scheds):
+            self.populate_miscellaneous_equipment(i, sched)
+
+        # Populate space data elements
         self.floor_area = self.try_float(self.keyword_value_pairs.get("AREA"))
 
         volume = self.keyword_value_pairs.get("VOLUME")
@@ -101,6 +123,22 @@ class Space(ChildNode, ParentNode):
             }
             if int_ltg_dict:  # Only append if the dictionary is not empty
                 self.interior_lighting.append(int_ltg_dict)
+
+        attributes = [attr for attr in dir(self) if attr.startswith("misc_eq_")]
+        keys = [
+            attr.replace("misc_eq_", "") for attr in attributes
+        ]  # Move outside the loop
+
+        # Extract values for each attribute from the object only once
+        misc_eq_value_lists = [getattr(self, attr) for attr in attributes]
+
+        # Iterate over the values, creating dictionaries directly from zipped keys and values
+        for values in zip(*misc_eq_value_lists):
+            misc_eq_dict = {
+                key: value for key, value in zip(keys, values) if value is not None
+            }
+            if misc_eq_dict:  # Only append if the dictionary is not empty
+                self.miscellaneous_equipment.append(misc_eq_dict)
 
         self.space_data_structure = {
             "id": self.u_name,
@@ -168,3 +206,31 @@ class Space(ChildNode, ParentNode):
             self.int_ltg_are_schedules_used_for_modeling_daylighting_control.append(
                 None
             )
+
+    def populate_miscellaneous_equipment(self, n, schedule):
+        """Populate miscellaneous equipment data elements for an instance of MiscellaneousEquipment"""
+        misc_eq_id = f"{self.u_name} MiscEqp{n}"
+        misc_eq_power = self.try_float(
+            self.try_access_index(self.keyword_value_pairs.get("EQUIPMENT-W/AREA"), n)
+        ) * self.try_float(self.keyword_value_pairs.get("AREA"))
+        misc_eq_multiplier_schedule = schedule
+
+        if n == 0:
+            self.misc_eq_id = [misc_eq_id]
+            self.misc_eq_power = [misc_eq_power]
+            self.misc_eq_multiplier_schedule = [misc_eq_multiplier_schedule]
+        else:
+            self.misc_eq_id.append(misc_eq_id)
+            self.misc_eq_power.append(misc_eq_power)
+            self.misc_eq_multiplier_schedule.append(misc_eq_multiplier_schedule)
+
+            # Lists must be the same length, even when elements are not populated
+            self.misc_eq_reporting_name.append(None)
+            self.misc_eq_notes.append(None)
+            self.misc_eq_energy_type.append(None)
+            self.misc_eq_sensible_fraction.append(None)
+            self.misc_eq_latent_fraction.append(None)
+            self.misc_eq_remaining_fraction_to_loop.append(None)
+            self.misc_eq_energy_from_loop.append(None)
+            self.misc_eq_type.append(None)
+            self.misc_eq_has_automatic_control.append(None)
