@@ -33,9 +33,7 @@ class Pump(BaseNode):
         """Populate the schema data elements for the pump object."""
         self.qty = int(self.try_float(self.keyword_value_pairs.get("NUMBER")))
         requests = self.get_output_requests()
-        output_data = self.get_output_data(
-            self.rmd.dll_path, self.rmd.doe2_data_path, self.rmd.file_path, requests
-        )
+        output_data = self.get_output_data(requests)
         self.loop_or_piping = [None] * self.qty
         self.speed_control = [None] * self.qty
         self.is_flow_sized_based_on_design_day = [None] * self.qty

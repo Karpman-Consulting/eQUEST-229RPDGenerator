@@ -1,18 +1,26 @@
 import ctypes
+from pathlib import Path
 
 
-def process_input_file(bdlcio_dll, doe2_dir, work_dir, file_name, lib_file_name=None):
+def process_input_file(
+    bdlcio_dll: str,
+    doe2_data_dir: str,
+    work_dir: str,
+    file_name: str,
+    lib_file_name=None,
+):
     """
     Process the input file using the BDLCIO32.dll file from the eQUEST installation directory.
     :param bdlcio_dll: location of the dll file as a string
-    :param doe2_dir: location of the DOE-2 data directory as a binary string
-    :param work_dir: parent directory location of the input file as a binary string
-    :param file_name: file name of the input file as a binary string
-    :param lib_file_name: optional location of the USRLIB.DAT file as a binary string
+    :param doe2_data_dir: location of the DOE-2 data directory as a string
+    :param work_dir: parent directory location of the input file as a string
+    :param file_name: file name of the input file as a string
+    :param lib_file_name: optional location of the USRLIB.DAT file as a string
     :return:
     """
+
     if lib_file_name is None:
-        lib_file_name = doe2_dir + b"USRLIB.DAT"
+        lib_file_name = str(Path(doe2_data_dir) / "USRLIB.DAT")
 
     bdlcio32 = ctypes.WinDLL(bdlcio_dll)
 
@@ -42,10 +50,10 @@ def process_input_file(bdlcio_dll, doe2_dir, work_dir, file_name, lib_file_name=
     # Use a try/except block to bypass the error, then verify that the BDL output file was created
     try:
         bdlcio32.BDLCIO32_ReadInput(
-            work_dir,
-            doe2_dir,
-            file_name,
-            lib_file_name,
+            work_dir.encode("utf-8"),
+            doe2_data_dir.encode("utf-8"),
+            file_name.encode("utf-8"),
+            lib_file_name.encode("utf-8"),
             no_scrn_msg,
             write_nhk_file,
             callback_func_pointer,

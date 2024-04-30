@@ -1,4 +1,5 @@
 import ctypes
+from pathlib import Path
 
 
 class MRTArray(ctypes.Structure):
@@ -35,11 +36,13 @@ pMRTs: Pointer to an array of MultResultsType structures:
 """
 
 
-def get_multiple_results(d2_result_dll, doe2_data_dir, project_fname, request_array):
+def get_multiple_results(
+    d2_result_dll: str, doe2_data_dir: str, project_fname: str, request_array: list
+) -> list:
     """
     Get Multiple Results from the simulation output files
     :param d2_result_dll: (string) path to user's eQUEST D2Result.dll file included with installation files
-    :param doe2_data_dir: (string) path to DOE-2 data directory with NHRList.txt
+    :param doe2_data_dir: (string) path to the data directory of the appropriate version of DOE-2 (e.g. DOE-2.2 or DOE-2.3)
     :param project_fname: (string) path to project with project name NOT INCLUDING FILE EXTENSION
     :param request_array: (list) list of entry_id: (int) from NHRList.txt corresponding to the value to retrieve,
     report_key: (string) to use when RI > 0 and when value to retrieve refers to a particular BDL component,
@@ -48,7 +51,7 @@ def get_multiple_results(d2_result_dll, doe2_data_dir, project_fname, request_ar
     """
     d2_result_dll = ctypes.CDLL(d2_result_dll)
     multiple_result_dll = d2_result_dll.D2R_GetMultipleResult
-    nhr_list_path = (doe2_data_dir + "NHRList.txt").encode("utf-8")
+    nhr_list_path = str(Path(doe2_data_dir) / "DOE23" / "NHRList.txt").encode("utf-8")
     project_fname = project_fname.encode("utf-8")
 
     num_mrts = len(request_array)
@@ -88,39 +91,3 @@ def get_multiple_results(d2_result_dll, doe2_data_dir, project_fname, request_ar
     )
 
     return [data for data in pf_data]
-
-
-# DW Heaters - Design Parameters - Capacity
-# 2321003
-# DW Heaters - Design Parameters - Flow
-# 2321004
-# DW Heaters - Design Parameters - Electric Input Ratio
-# 2321005
-# DW Heaters - Design Parameters - Fuel Input Ratio
-# 2321006
-# DW Heaters - Design Parameters - Auxiliary Power
-# 2321007
-# DW Heaters - Design Parameters - Tank Volume
-# 2321008
-# DW Heaters - Design Parameters - Tank Loss Coefficient
-# 2321009
-# Circulation Loop - Heating Capacity (Btu/hr)
-# 2401031
-# Circulation Loop - Cooling Capacity (Btu/hr)
-# 2401032
-# Circulation Loop - Flow (gal/min)
-# 2401033
-# Circulation Loop - Total Head (ft)
-# 2401034
-# Circulation Loop - Supply UA Product (Btu/hr-°F)
-# 2401035
-# Circulation Loop - Supply Loss DT (°F)
-# 2401036
-# Circulation Loop - Return UA Product (Btu/hr-°F)
-# 2401037
-# Circulation Loop - Return Loss DT (°F)
-# 2401038
-# Circulation Loop - Loop Volume (gal)
-# 2401039
-# Circulation Loop - Fluid Heat Capacity (Btu/lb-°F)
-# 2401040

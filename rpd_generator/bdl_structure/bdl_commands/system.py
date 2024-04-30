@@ -128,9 +128,9 @@ class System(ParentNode):
         self.fan_sys_temperature_control = None
         self.fan_sys_operation_during_occ = None
         self.fan_sys_operation_during_unocc = None
-        self.fan_sys_has_unocc_central_heat_lockout = None
+        self.fan_sys_has_lockout_central_heat_during_unoccupied = None
         self.fan_sys_fan_control = None
-        self.fan_sys_reset_diff_temp = None
+        self.fan_sys_reset_differential_temperature = None
         self.fan_sys_supply_air_temperature_reset_load_fraction = None
         self.fan_sys_supply_air_temperature_reset_schedule = None
         self.fan_sys_fan_volume_reset_type = None
@@ -280,9 +280,7 @@ class System(ParentNode):
 
         else:
             requests = self.get_output_requests()
-            output_data = self.get_output_data(
-                self.rmd.dll_path, self.rmd.doe2_data_path, self.rmd.file_path, requests
-            )
+            output_data = self.get_output_data(requests)
             self.populate_fan_system()
             self.populate_fans(output_data)
             self.populate_heating_system()
@@ -508,7 +506,7 @@ class System(ParentNode):
         air system is used a second Zone Terminal should be specified with a separate
         HeatingVentilatingAirConditioningSystem.
         """
-        if self.omit is True:
+        if self.omit:
             return
 
         else:
@@ -530,7 +528,7 @@ class System(ParentNode):
                 elif attr.startswith("preheat_sys_"):
                     self.preheat_system[attr.split("preheat_sys_")[1]] = value
 
-                elif attr.startswith("fan_") and not attr[4:7] == "sys":
+                elif attr.startswith("fan_") and attr[4:7] != "sys":
                     key = attr.split("fan_")[1]  # Get the key by removing 'fan_' prefix
                     for i, fan_dict_name in enumerate(
                         [
@@ -575,11 +573,15 @@ class System(ParentNode):
                 elif fan_dict_name == "relief_fan":
                     self.fan_sys_relief_fans.append(fan_dict)
 
-            self.system_data_structure["id"] = self.u_name
-            self.system_data_structure["fan_system"] = self.fan_system
-            self.system_data_structure["heating_system"] = self.heating_system
-            self.system_data_structure["cooling_system"] = self.cooling_system
-            self.system_data_structure["preheat_system"] = self.preheat_system
+            self.system_data_structure.update(
+                {
+                    "id": self.u_name,
+                    "fan_system": self.fan_system,
+                    "heating_system": self.heating_system,
+                    "cooling_system": self.cooling_system,
+                    "preheat_system": self.preheat_system,
+                }
+            )
 
     def insert_to_rpd(self, rmd):
         """Insert system data structure into the rpd data structure."""
@@ -650,8 +652,8 @@ class System(ParentNode):
 
         # There is always a supply fan for a fan system in eQUEST, so it is always populated
         self.fan_id[0] = self.u_name + " SupplyFan"
-        self.fan_design_airflow[0] = output_data.get("Supply Fan - Airflow", None)
-        self.fan_design_electric_power[0] = output_data.get("Supply Fan - Power", None)
+        self.fan_design_airflow[0] = output_data.get("Supply Fan - Airflow")
+        self.fan_design_electric_power[0] = output_data.get("Supply Fan - Power")
         # noinspection PyTypeChecker
         self.fan_specification_method[0] = (
             "DETAILED"

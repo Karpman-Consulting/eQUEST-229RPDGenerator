@@ -1,11 +1,14 @@
+import json
+from pathlib import Path
 from rpd_generator.ruleset_project_description import RulesetProjectDescription
 from rpd_generator.ruleset_model_description import RulesetModelDescription
 from rpd_generator.building_segment import BuildingSegment
 from rpd_generator.building import Building
 from rpd_generator.doe2_file_readers import model_input_reader
 from rpd_generator.bdl_structure import *
-import json
-from pathlib import Path
+from rpd_generator.config import Config
+from rpd_generator.utilities import validate_configuration
+
 
 """Once development is complete, this can be replaced with a list of all bdl_command attribute values from classes that 
 inherit from BaseNode or BaseDefinition. Each class will also need a priority attribute in this case.
@@ -22,6 +25,8 @@ COMMAND_PROCESSING_ORDER = [
     "GLASS-TYPE",
     "MATERIAL",
     "CONSTRUCTION",
+    "DAY-SCHEDULE-PD",
+    "WEEK-SCHEDULE-PD",
     "SCHEDULE-PD",
     "PUMP",  # Pumps must populate before Boiler, Chiller, Heat-Rejection, and Circulation-Loop
     "CIRCULATION-LOOP",  # Circulation loops must populate before Boiler, Chiller, DWHeater, Heat-Rejection
@@ -41,24 +46,20 @@ COMMAND_PROCESSING_ORDER = [
 ]
 
 
-def generate_rpd_json(selected_models, dll_path, doe2_data_path):
+def generate_rpd_json(selected_models: list):
     """
     Generate the RMDs, use Default Building and Building Segment, and write to JSON without GUI inputs
     """
-    rmds, json_file_path = generate_rmd_obj_instances(
-        selected_models, dll_path, doe2_data_path
-    )
+    rmds, json_file_path = generate_rmds(selected_models)
     rpd, json_file_path = generate_rpd(rmds, json_file_path)
     write_rpd_json(rpd, json_file_path)
 
 
-def generate_rmd_obj_instances(selected_models, dll_path, doe2_data_path):
+def generate_rmds(selected_models: list):
     """
     Generate the RMD data structures (RulesetModelDescription, Building, BuildingSegment, and all BDL object instances
     from the ModelInputReader) for each selected model.
     :param selected_models: List of selected models
-    :param dll_path: (str) Path to the D2Result.dll file
-    :param doe2_data_path: (bytes) Path to the DOE-2 data directory
 
     """
     # Convert the first selected model path from str to Path and set the output directory to the directory of that model
@@ -75,8 +76,6 @@ def generate_rmd_obj_instances(selected_models, dll_path, doe2_data_path):
     for model_path_str in selected_models:
         model_path = Path(model_path_str)
         rmd = RulesetModelDescription(model_path.stem)
-        rmd.dll_path = str(dll_path)  # Convert Path objects to strings if necessary
-        rmd.doe2_data_path = doe2_data_path
         rmd.file_path = str(
             model_path.with_suffix("")
         )  # Convert to string and remove extension
@@ -91,9 +90,16 @@ def generate_rmd_obj_instances(selected_models, dll_path, doe2_data_path):
 
         # get all BDL commands from the BDL input file
         bdl_input_reader = model_input_reader.ModelInputReader()
-        file_bdl_commands = bdl_input_reader.read_input_bdl_file(
+        model_input_data = bdl_input_reader.read_input_bdl_file(
             str(model_path)
         )  # Convert Path to string
+        rmd.doe2_version = model_input_data["doe2_version"]
+        if rmd.doe2_version is not None:
+            rmd.doe2_data_path = (
+                Config.DOE23_DATA_PATH
+                if rmd.doe2_version.split("-")[1] == "2.3"
+                else Config.DOE22_DATA_PATH
+            )
 
         # Process each data group in the order specified in COMMAND_PROCESSING_ORDER
         for command in COMMAND_PROCESSING_ORDER:
@@ -107,7 +113,7 @@ def generate_rmd_obj_instances(selected_models, dll_path, doe2_data_path):
             # Process the command group by creating object instances and populating the rmd object instance dictionary
             _process_command_group(
                 command,
-                file_bdl_commands,
+                model_input_data["file_commands"],
                 rmd,
                 special_handling,
             )
@@ -118,7 +124,6 @@ def generate_rmd_obj_instances(selected_models, dll_path, doe2_data_path):
 def generate_rpd(rmds, json_file_path):
     rpd = RulesetProjectDescription()
     for rmd in rmds:
-
         rmd.bdl_obj_instances["ASHRAE 229"] = rpd
 
         # Once all objects have been created, populate data elements
@@ -186,9 +191,9 @@ def _create_obj_instance(command, command_dict, rmd):
 
 
 def _process_command_group(
-    data_group,
-    file_bdl_commands,
-    rmd,
+    data_group: str,
+    file_bdl_commands: dict,
+    rmd: RulesetModelDescription,
     special_handling=None,
 ):
     """
@@ -207,10 +212,11 @@ def _process_command_group(
         rmd.bdl_obj_instances[cmd_dict["unique_name"]] = obj
 
 
-generate_rpd_json(
-    [
-        r"C:\Users\JacksonJarboe\Documents\Development\DOE2-229RPDGenerator\test\example\INP.BDL"
-    ],
-    r"C:\Program Files (x86)\eQUEST 3-65-7175\D2Result.dll",
-    r"C:\\Users\\JacksonJarboe\\Documents\\eQUEST 3-65-7175 Data\\DOE23\\",
-)
+# Run functions directly from BDL file, bypass GUI and processing of inp
+# validate_configuration.find_equest_installation()
+#
+# generate_rpd_json(
+#     [
+#         r"C:\Users\JacksonJarboe\Desktop\Active Work Container\229 Test Case 1 PSZHP_temp.BDL"
+#     ]
+# )
