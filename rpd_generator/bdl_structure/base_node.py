@@ -88,18 +88,37 @@ class BaseNode:
             return None
 
     @staticmethod
-    def try_access_index(lst, index):
+    def try_access_index(lst: list, index: int):
         """Attempt to access an index in a list, returning None if it fails."""
-        if not isinstance(lst, list):
+        if isinstance(lst, list):
             try:
-                lst = [lst]
-            except TypeError:
+                return lst[index]
+            except (IndexError, TypeError):
+                # TODO log error for future GUI error window
                 return None
-        try:
-            return lst[index]
-        except (IndexError, TypeError):
-            # TODO log error for future GUI error window
+        else:
             return None
+
+    @staticmethod
+    def standardize_dict_values(data: dict, keys: list, n: int):
+        """
+        Standardizes the values of specified keys in a dictionary to lists of length n.
+
+        Parameters:
+        data (dict): The dictionary to standardize.
+        keys (list): List of keys to standardize in the dictionary.
+        n (int): The desired length of the list for each key.
+
+        Returns:
+        dict: The dictionary with standardized values.
+        """
+        for key in keys:
+            value = data.get(key, [])
+            new_value = value if isinstance(value, list) else [value]
+            new_value = (new_value + ["0"] * n)[:n]
+            data[key] = new_value
+
+        return data
 
 
 def _chunked_dict(d, n):
