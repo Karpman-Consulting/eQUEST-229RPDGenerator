@@ -52,7 +52,7 @@ class Zone(ChildNode):
         self.air_distribution_effectiveness = None
         self.aggregation_factor = None
 
-        # terminal data elements as a list of MainTerminal, Baseboard Terminal, DOAS Terminal
+        # terminal data elements as a list of [Main Terminal, Baseboard Terminal, DOAS Terminal]
         self.terminals_id = [None, None, None]
         self.terminals_reporting_name = [None, None, None]
         self.terminals_notes = [None, None, None]
@@ -137,14 +137,12 @@ class Zone(ChildNode):
             "EXHAUST-FAN-SCH"
         )
 
-        # if the zone is served by a SUM system don't populate the MainTerminal data elements
+        # if the zone is served by a SUM system don't populate the data elements
         if self.parent.keyword_value_pairs.get("TYPE") == "SUM":
             return
 
         requests = self.get_output_requests()
-        output_data = self.get_output_data(
-            self.rmd.dll_path, self.rmd.doe2_data_path, self.rmd.file_path, requests
-        )
+        output_data = self.get_output_data(requests)
         supply_airflow = self.try_float(
             output_data.get(
                 "HVAC Systems - Design Parameters - Zone Design Data - General - Supply Airflow"
@@ -153,21 +151,6 @@ class Zone(ChildNode):
         minimum_airflow_ratio = self.try_float(
             output_data.get(
                 "HVAC Systems - Design Parameters - Zone Design Data - General - Minimum Airflow Ratio"
-            )
-        )
-        minimum_outdoor_airflow = self.try_float(
-            output_data.get(
-                "HVAC Systems - Design Parameters - Zone Design Data - General - Outside Airflow"
-            )
-        )
-        heating_capacity = self.try_float(
-            output_data.get(
-                "HVAC Systems - Design Parameters - Zone Design Data - General - Heating Capacity"
-            )
-        )
-        cooling_capacity = self.try_float(
-            output_data.get(
-                "HVAC Systems - Design Parameters - Zone Design Data - General - Cooling Capacity"
             )
         )
 
@@ -183,9 +166,21 @@ class Zone(ChildNode):
         self.terminals_primary_airflow[0] = supply_airflow
         if supply_airflow is not None and minimum_airflow_ratio is not None:
             self.terminals_minimum_airflow[0] = supply_airflow * minimum_airflow_ratio
-        self.terminals_minimum_outdoor_airflow[0] = minimum_outdoor_airflow
-        self.terminals_heating_capacity[0] = heating_capacity
-        self.terminals_cooling_capacity[0] = cooling_capacity
+        self.terminals_minimum_outdoor_airflow[0] = self.try_float(
+            output_data.get(
+                "HVAC Systems - Design Parameters - Zone Design Data - General - Outside Airflow"
+            )
+        )
+        self.terminals_heating_capacity[0] = self.try_float(
+            output_data.get(
+                "HVAC Systems - Design Parameters - Zone Design Data - General - Heating Capacity"
+            )
+        )
+        self.terminals_cooling_capacity[0] = self.try_float(
+            output_data.get(
+                "HVAC Systems - Design Parameters - Zone Design Data - General - Cooling Capacity"
+            )
+        )
         exhaust_airflow = self.try_float(self.keyword_value_pairs.get("EXHAUST-FLOW"))
 
         # Populate Baseboard Terminal data elements if applicable
@@ -202,17 +197,9 @@ class Zone(ChildNode):
             self.terminals_heating_from_loop[1] = self.parent.keyword_value_pairs.get(
                 "BBRD-LOOP"
             )
-            # noinspection PyTypeChecker
-            self.terminals_primary_airflow[1] = 0.0
-            # noinspection PyTypeChecker
-            self.terminals_minimum_airflow[1] = 0.0
-            # noinspection PyTypeChecker
-            self.terminals_minimum_outdoor_airflow[1] = 0.0
             self.terminals_heating_capacity[1] = self.keyword_value_pairs.get(
                 "BASEBOARD-RATING"
             )
-            # noinspection PyTypeChecker
-            self.terminals_cooling_capacity[1] = 0.0
 
         # Populate DOAS Terminal data elements if applicable
         if self.keyword_value_pairs.get("DOA-SYSTEM") is not None:

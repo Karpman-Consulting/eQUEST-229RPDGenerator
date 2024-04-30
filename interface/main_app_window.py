@@ -1,10 +1,12 @@
 import customtkinter as ctk
+from PIL import Image
 from tkinter import Menu, filedialog
 from interface.disclaimer_window import DisclaimerWindow
 from interface.error_window import ErrorWindow
 from interface.ctk_xyframe import CTkXYFrame
-from PIL import Image
 from interface.main_app_data import MainAppData
+from rpd_generator.utilities import validate_configuration
+from rpd_generator.config import Config
 
 
 ctk.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
@@ -56,8 +58,8 @@ class MainApplicationWindow(ctk.CTk):
         # Initialize the configuration window to select and test the eQUEST installation path
         self.create_configuration_window()
         # Attempt to automatically find the eQUEST installation path and set the data paths from the config files
-        self.app_data.find_equest_installation()
-
+        validate_configuration.find_equest_installation()
+        self.app_data.installation_path.set(Config.EQUEST_INSTALL_PATH)
         # Define scrollable frame
         # self.create_scrollable_frame()
 
@@ -247,8 +249,9 @@ class MainApplicationWindow(ctk.CTk):
         self.error_window.after(100, self.error_window.lift)
 
     def verify_files(self):
-        error = self.app_data.verify_equest_installation()
-        if error is None:
+        error = validate_configuration.verify_equest_installation()
+        if error == "":
+            self.app_data.files_verified = True
             self.toggle_continue_button()
         else:
             self.raise_error_window(error)
@@ -278,7 +281,7 @@ class MainApplicationWindow(ctk.CTk):
         )
 
         continue_button = ctk.CTkButton(
-            self, text="Create JSON", command=self.create_test_json
+            self, text="Create JSON", command=self.app_data.process_inp_to_rpd_json
         )
         continue_button.grid(row=3, column=4, sticky="ew", padx=5, pady=(150, 5))
 
@@ -294,6 +297,3 @@ class MainApplicationWindow(ctk.CTk):
         if filepath:
             # Display the selected file path in the text entry box
             self.app_data.test_inp_path.set(filepath)
-
-    def create_test_json(self):
-        self.app_data.process_inp_to_rpd_json()

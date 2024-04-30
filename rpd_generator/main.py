@@ -113,7 +113,7 @@ def generate_rmds(selected_models: list):
             # Process the command group by creating object instances and populating the rmd object instance dictionary
             _process_command_group(
                 command,
-                file_bdl_commands,
+                model_input_data["file_commands"],
                 rmd,
                 special_handling,
             )
@@ -124,7 +124,6 @@ def generate_rmds(selected_models: list):
 def generate_rpd(rmds, json_file_path):
     rpd = RulesetProjectDescription()
     for rmd in rmds:
-
         rmd.bdl_obj_instances["ASHRAE 229"] = rpd
 
         # Once all objects have been created, populate data elements
@@ -192,9 +191,9 @@ def _create_obj_instance(command, command_dict, rmd):
 
 
 def _process_command_group(
-    data_group,
-    file_bdl_commands,
-    rmd,
+    data_group: str,
+    file_bdl_commands: dict,
+    rmd: RulesetModelDescription,
     special_handling=None,
 ):
     """
@@ -213,10 +212,11 @@ def _process_command_group(
         rmd.bdl_obj_instances[cmd_dict["unique_name"]] = obj
 
 
-generate_rpd_json(
-    [
-        r"C:\Users\JacksonJarboe\Documents\Development\DOE2-229RPDGenerator\test\example\INP.BDL"
-    ],
-    r"C:\Program Files (x86)\eQUEST 3-65-7175\D2Result.dll",
-    r"C:\\Users\\JacksonJarboe\\Documents\\eQUEST 3-65-7175 Data\\DOE23\\",
-)
+# Run functions directly from BDL file, bypass GUI and processing of inp
+# validate_configuration.find_equest_installation()
+#
+# generate_rpd_json(
+#     [
+#         r"C:\Users\JacksonJarboe\Desktop\Active Work Container\229 Test Case 1 PSZHP_temp.BDL"
+#     ]
+# )
