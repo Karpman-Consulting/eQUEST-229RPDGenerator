@@ -250,8 +250,12 @@ class Space(ChildNode, ParentNode):
         )
         misc_eq_multiplier_schedule = schedule
 
-        misc_eq_sensible_fraction = self.try_float(self.try_access_index(self.keyword_value_pairs.get("EQUIP-SENSIBLE"), n))
-        misc_eq_latent_fraction = self.try_float(self.try_access_index(self.keyword_value_pairs.get("EQUIP-LATENT"), n))
+        misc_eq_sensible_fraction = self.try_float(
+            self.try_access_index(self.keyword_value_pairs.get("EQUIP-SENSIBLE"), n)
+        )
+        misc_eq_latent_fraction = self.try_float(
+            self.try_access_index(self.keyword_value_pairs.get("EQUIP-LATENT"), n)
+        )
 
         if n == 0:
             self.misc_eq_id = [misc_eq_id]
