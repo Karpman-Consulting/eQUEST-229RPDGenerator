@@ -652,8 +652,8 @@ class System(ParentNode):
 
         # There is always a supply fan for a fan system in eQUEST, so it is always populated
         self.fan_id[0] = self.u_name + " SupplyFan"
-        self.fan_design_airflow[0] = output_data.get("Supply Fan - Airflow", None)
-        self.fan_design_electric_power[0] = output_data.get("Supply Fan - Power", None)
+        self.fan_design_airflow[0] = output_data.get("Supply Fan - Airflow")
+        self.fan_design_electric_power[0] = output_data.get("Supply Fan - Power")
         # noinspection PyTypeChecker
         self.fan_specification_method[0] = (
             "DETAILED"

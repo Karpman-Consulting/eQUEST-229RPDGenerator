@@ -62,8 +62,17 @@ class Space(ChildNode, ParentNode):
 
     def populate_data_elements(self):
         """Populate data elements that originate from eQUEST's SPACE command"""
+        # Populate floor area first to use in other data elements calculations
+        self.floor_area = self.try_float(self.keyword_value_pairs.get("AREA"))
+
         # Populate interior lighting data elements
         space_ltg_scheds = self.keyword_value_pairs.get("LIGHTING-SCHEDUL")
+        self.standardize_dict_values(
+            self.keyword_value_pairs,
+            ["LIGHTING-W/AREA", "LIGHTING-KW"],
+            len(space_ltg_scheds),
+        )
+
         if not isinstance(space_ltg_scheds, list):
             space_ltg_scheds = [space_ltg_scheds]
         for i, sched in enumerate(space_ltg_scheds):
@@ -71,20 +80,25 @@ class Space(ChildNode, ParentNode):
 
         # Populate miscellaneous equipment data elements
         space_misc_eq_scheds = self.keyword_value_pairs.get("EQUIP-SCHEDULE")
+        self.standardize_dict_values(
+            self.keyword_value_pairs,
+            ["EQUIPMENT-W/AREA", "EQUIPMENT-KW"],
+            len(space_misc_eq_scheds),
+        )
+
         if not isinstance(space_misc_eq_scheds, list):
             space_misc_eq_scheds = [space_misc_eq_scheds]
         for i, sched in enumerate(space_misc_eq_scheds):
             self.populate_miscellaneous_equipment(i, sched)
 
-        # Populate space data elements
-        self.floor_area = self.try_float(self.keyword_value_pairs.get("AREA"))
-
+        # Populate the corresponding zone volume from the DOE-2 SPACE command
         volume = self.keyword_value_pairs.get("VOLUME")
         if volume is not None:
             volume = self.try_float(volume)
             zone = self.rmd.space_map.get(self.u_name)
             zone.__setattr__("volume", volume)
 
+        # Populate space data elements
         self.number_of_occupants = self.try_float(
             self.keyword_value_pairs.get("NUMBER-OF-PEOPLE")
         )
@@ -178,20 +192,30 @@ class Space(ChildNode, ParentNode):
     def populate_interior_lighting(self, n, schedule):
         """Populate interior lighting data elements for an instance of InteriorLighting"""
         int_ltg_id = f"{self.u_name} IntLtg{n}"
-        int_ltg_power_per_area = self.try_access_index(
-            self.keyword_value_pairs.get("LIGHTING-W/AREA"), n
+        int_ltg_lpd = self.try_float(
+            self.try_access_index(self.keyword_value_pairs.get("LIGHTING-W/AREA"), n)
+        )
+        int_ltg_power = self.try_float(
+            self.try_access_index(self.keyword_value_pairs.get("LIGHTING-KW"), n)
+        )
+        total_lpd = (
+            int_ltg_lpd + int_ltg_power * 1000 / self.floor_area
+            if int_ltg_lpd is not None
+            and int_ltg_power is not None
+            and self.floor_area is not None
+            else int_ltg_lpd
         )
         int_ltg_lighting_multiplier_schedule = schedule
 
         if n == 0:
             self.int_ltg_id = [int_ltg_id]
-            self.int_ltg_power_per_area = [int_ltg_power_per_area]
+            self.int_ltg_power_per_area = [total_lpd]
             self.int_ltg_lighting_multiplier_schedule = [
                 int_ltg_lighting_multiplier_schedule
             ]
         else:
             self.int_ltg_id.append(int_ltg_id)
-            self.int_ltg_power_per_area.append(int_ltg_power_per_area)
+            self.int_ltg_power_per_area.append(total_lpd)
             self.int_ltg_lighting_multiplier_schedule.append(
                 int_ltg_lighting_multiplier_schedule
             )
@@ -210,18 +234,29 @@ class Space(ChildNode, ParentNode):
     def populate_miscellaneous_equipment(self, n, schedule):
         """Populate miscellaneous equipment data elements for an instance of MiscellaneousEquipment"""
         misc_eq_id = f"{self.u_name} MiscEqp{n}"
-        misc_eq_power = self.try_float(
+
+        misc_epd = self.try_float(
             self.try_access_index(self.keyword_value_pairs.get("EQUIPMENT-W/AREA"), n)
-        ) * self.try_float(self.keyword_value_pairs.get("AREA"))
+        )
+        misc_eq_power = self.try_float(
+            self.try_access_index(self.keyword_value_pairs.get("EQUIPMENT-KW"), n)
+        )
+        total_eq_power = (
+            misc_eq_power + misc_epd * self.floor_area / 1000
+            if misc_eq_power is not None
+            and misc_epd is not None
+            and self.floor_area is not None
+            else misc_eq_power
+        )
         misc_eq_multiplier_schedule = schedule
 
         if n == 0:
             self.misc_eq_id = [misc_eq_id]
-            self.misc_eq_power = [misc_eq_power]
+            self.misc_eq_power = [total_eq_power]
             self.misc_eq_multiplier_schedule = [misc_eq_multiplier_schedule]
         else:
             self.misc_eq_id.append(misc_eq_id)
-            self.misc_eq_power.append(misc_eq_power)
+            self.misc_eq_power.append(total_eq_power)
             self.misc_eq_multiplier_schedule.append(misc_eq_multiplier_schedule)
 
             # Lists must be the same length, even when elements are not populated
