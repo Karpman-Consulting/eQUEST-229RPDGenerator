@@ -78,9 +78,7 @@ class DomesticWaterHeater(BaseNode):
     def populate_data_elements(self):
         """Populate data elements for domestic water heater object."""
         requests = self.get_output_requests()
-        output_data = self.get_output_data(
-            self.rmd.dll_path, self.rmd.doe2_data_path, self.rmd.file_path, requests
-        )
+        output_data = self.get_output_data(requests)
 
         fuel_meter_ref = self.keyword_value_pairs.get("FUEL-METER")
         fuel_meter = self.rmd.bdl_obj_instances.get(fuel_meter_ref)

@@ -85,9 +85,7 @@ class Boiler(BaseNode):
 
         self.draft_type = self.draft_type_map.get(self.keyword_value_pairs.get("TYPE"))
         requests = self.get_output_requests()
-        output_data = self.get_output_data(
-            self.rmd.dll_path, self.rmd.doe2_data_path, self.rmd.file_path, requests
-        )
+        output_data = self.get_output_data(requests)
         self.auxiliary_power = output_data.get("Boilers - Sizing Info/Boiler - Aux kW")
 
         # Assign pump data elements populated from the boiler keyword value pairs

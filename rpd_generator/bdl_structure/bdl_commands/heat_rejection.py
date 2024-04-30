@@ -49,9 +49,7 @@ class HeatRejection(BaseNode):
     def populate_data_elements(self):
         """Populate data elements for heat rejection object."""
         requests = self.get_output_requests()
-        output_data = self.get_output_data(
-            self.rmd.dll_path, self.rmd.doe2_data_path, self.rmd.file_path, requests
-        )
+        output_data = self.get_output_data(requests)
 
         self.loop = self.keyword_value_pairs.get("CW-LOOP")
 

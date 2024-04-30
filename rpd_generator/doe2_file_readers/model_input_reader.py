@@ -36,7 +36,7 @@ class ModelInputReader:
         self.current_parent_space = None
         self.current_parent = None
 
-    def read_input_bdl_file(self, bdl_file_path):
+    def read_input_bdl_file(self, bdl_file_path: str):
         """
         Read BDL input file and return a dictionary of object instances.
 
@@ -45,12 +45,17 @@ class ModelInputReader:
         """
 
         with open(bdl_file_path, "r") as bdl_file:
+            doe2_version = None
             file_commands = {}
 
             active_command_dict = None
             record_data_for = False
 
             for line in bdl_file:
+                if "JJHirsch DOE-2 Version:" in line:
+                    doe2_version = line.split(":")[1].split()[0].strip()
+                    continue
+
                 if record_data_for and line[0] != "-":
                     record_data_for = False
 
@@ -109,10 +114,10 @@ class ModelInputReader:
                     else:
                         active_command_dict[keyword] = value
 
-            return file_commands
+            return {"doe2_version": doe2_version, "file_commands": file_commands}
 
     @staticmethod
-    def copy_inp_with_diagnostic_comments(model_path):
+    def prepare_inp(model_path):
         model_dir = os.path.dirname(model_path)
         model_name = os.path.basename(model_path)
         base_name, extension = os.path.splitext(model_name)
@@ -135,6 +140,12 @@ class ModelInputReader:
                     lines_after_target -= (
                         1  # Decrement counter if we're in the 3-line window
                     )
+
+                elif line.lstrip().startswith("LIGHTING-KW"):
+                    line = line.replace("&D", "0")
+
+                elif line.lstrip().startswith("EQUIPMENT-KW"):
+                    line = line.replace("&D", "0")
 
                 out_file.write(line)
 

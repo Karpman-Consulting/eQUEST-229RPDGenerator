@@ -74,9 +74,7 @@ class Chiller(BaseNode):
             absorp_or_engine = True
 
         requests = self.get_output_requests(absorp_or_engine)
-        output_data = self.get_output_data(
-            self.rmd.dll_path, self.rmd.doe2_data_path, self.rmd.file_path, requests
-        )
+        output_data = self.get_output_data(requests)
 
         self.cooling_loop = self.keyword_value_pairs.get("CHW-LOOP")
 

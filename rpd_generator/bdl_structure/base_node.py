@@ -1,5 +1,7 @@
 from itertools import islice
 from rpd_generator.doe2_file_readers.model_output_reader import get_multiple_results
+from rpd_generator.config import Config
+from pathlib import Path
 
 
 class BaseNode:
@@ -46,13 +48,9 @@ class BaseNode:
         """
         return self.rmd.bdl_obj_instances.get(u_name, None)
 
-    @staticmethod
-    def get_output_data(dll_path, doe2_data_path, project_path_name, requests):
+    def get_output_data(self, requests):
         """
         Get data from the simulation output.
-        :param dll_path: (string) path to user's eQUEST D2Result.dll file included with installation files
-        :param doe2_data_path: (binary string) path to DOE-2 data directory with NHRList.txt
-        :param project_path_name: (binary string) path to project with project name NOT INCLUDING FILE EXTENSION
         :param requests: (dict) dictionary of description (str): (tuple) of entry_id: (int), report_key: (binary string), and row_key: (binary string)
         :return: dictionary of system data elements
         """
@@ -67,7 +65,10 @@ class BaseNode:
 
             # Call the function with the current chunk of values
             chunk_results = get_multiple_results(
-                dll_path, doe2_data_path, project_path_name, values_list
+                str(Path(Config.EQUEST_INSTALL_PATH) / "D2Result.dll"),
+                self.rmd.doe2_data_path,
+                str(Path(self.rmd.file_path).with_suffix("")),
+                values_list,
             )
 
             # Reassociate returned values with their corresponding keys

@@ -4,9 +4,9 @@ class RulesetModelDescription:
     """
 
     def __init__(self, obj_id):
-        self.dll_path = None
-        self.doe2_data_path = None
         self.file_path = None
+        self.doe2_version = None
+        self.doe2_data_path = None
 
         # store BDL objects for the model associated with the RMD
         self.bdl_obj_instances = {}
