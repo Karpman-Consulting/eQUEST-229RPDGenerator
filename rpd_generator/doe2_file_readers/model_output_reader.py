@@ -12,6 +12,27 @@ class MRTArray(ctypes.Structure):
     ]
 
 
+NHR_DICT = None
+
+
+def read_nhr_list(file_path):
+    nhr_dict = {}
+    with open(file_path, 'r') as file:
+        for line in file:
+            parts = line.strip().split(',')
+            if len(parts) == 7:
+                entry_id, _, _, _, _, _, max_values = parts
+                nhr_dict[int(entry_id)] = int(max_values)
+    return nhr_dict
+
+
+def get_nhr_dict(nhr_list_path):
+    global NHR_DICT
+    if NHR_DICT is None:
+        NHR_DICT = read_nhr_list(nhr_list_path)
+    return NHR_DICT
+
+
 """
 
 Get Multiple Result
@@ -51,8 +72,9 @@ def get_multiple_results(
     """
     d2_result_dll = ctypes.CDLL(d2_result_dll)
     multiple_result_dll = d2_result_dll.D2R_GetMultipleResult
-    nhr_list_path = str(Path(doe2_data_dir) / "DOE23" / "NHRList.txt").encode("utf-8")
-    project_fname = project_fname.encode("utf-8")
+    nhr_list_path = str(Path(doe2_data_dir) / "DOE23" / "NHRList.txt")
+    nhr_dict = get_nhr_dict(nhr_list_path)
+    doe2_data_dir = str(Path(doe2_data_dir) / "DOE23") + "\\"
 
     num_mrts = len(request_array)
     mrt_array = (MRTArray * num_mrts)()
@@ -69,20 +91,15 @@ def get_multiple_results(
         mrt_array[i].psz_report_key = report_key.encode("utf-8")
         mrt_array[i].psz_row_key = row_key.encode("utf-8")
 
-        with open(nhr_list_path, "rb") as nhr_list:
-            for line in nhr_list:
-                parts = [part.strip(b" ;") for part in line.split(b",")]
-                if parts[0] == str(entry_id).encode("utf-8"):
-                    # Figure out the max_values for the value request (NI in NHRList.txt) and add to the total
-                    max_values += int(parts[6])
-                    break
+        if entry_id in nhr_dict:
+            max_values += nhr_dict[entry_id]
 
     # noinspection PyTypeChecker, PyCallingNonCallable
     pf_data = (ctypes.c_float * max_values)()
 
     multiple_result_dll(
         ctypes.c_char_p(doe2_data_dir.encode("utf-8")),
-        ctypes.c_char_p(project_fname),
+        ctypes.c_char_p(project_fname.encode("utf-8")),
         ctypes.c_int(file_type),
         pf_data,
         ctypes.c_int(max_values),

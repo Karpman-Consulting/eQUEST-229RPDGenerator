@@ -52,7 +52,7 @@ class BaseNode:
         """
         Get data from the simulation output.
         :param requests: (dict) dictionary of description (str): (tuple) of entry_id: (int), report_key: (binary string), and row_key: (binary string)
-        :return: dictionary of system data elements
+        :return: (dict) dictionary of description (str): value (float)
         """
 
         chunk_size = 12  # Max number of requests to process at a time
@@ -74,6 +74,8 @@ class BaseNode:
             # Reassociate returned values with their corresponding keys
             if len(chunk_results) == len(chunk):
                 results.update(zip(chunk.keys(), chunk_results))
+
+        results = {key: value for key, value in results.items() if value != -99999}
         return results
 
     @staticmethod
