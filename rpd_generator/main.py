@@ -215,10 +215,10 @@ def _process_command_group(
 
 
 # Run functions directly from BDL file, bypass GUI and processing of inp
-validate_configuration.find_equest_installation()
-
-generate_rpd_json(
-    [
-        r"C:\Users\JacksonJarboe\Documents\Development\DOE2-229RPDGenerator\test\example\229 Test Case 1 PSZHP.BDL"
-    ]
-)
+# validate_configuration.find_equest_installation()
+#
+# generate_rpd_json(
+#     [
+#         r"C:\Users\JacksonJarboe\Documents\Development\DOE2-229RPDGenerator\test\example\229 Test Case 1 PSZHP.BDL"
+#     ]
+# )
