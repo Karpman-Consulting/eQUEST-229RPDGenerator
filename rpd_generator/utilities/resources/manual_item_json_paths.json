@@ -1,0 +1,171 @@
+{
+    "Timestamp": [
+        "data_timestamp"
+    ],
+    "RulesetModelDescription": [
+        "$.ruleset_model_descriptions"
+    ],
+    "Calendar": [
+        "$.calendar"
+    ],
+    "Weather": [
+        "$.weather"
+    ],
+    "Transformer": [
+        "$.ruleset_model_descriptions[*].transformers"
+    ],
+    "Building": [
+        "$.ruleset_model_descriptions[*].buildings"
+    ],
+    "Schedule": [
+        "$.ruleset_model_descriptions[*].schedules"
+    ],
+    "FluidLoop": [
+        "$.ruleset_model_descriptions[*].fluid_loops",
+        "$.ruleset_model_descriptions[*].fluid_loops[*].child_loops"
+    ],
+    "ServiceWaterHeatingDistributionSystem": [
+        "$.ruleset_model_descriptions[*].service_water_heating_distribution_systems"
+    ],
+    "ServiceWaterHeatingEquipment": [
+        "$.ruleset_model_descriptions[*].service_water_heating_equipment"
+    ],
+    "Pump": [
+        "$.ruleset_model_descriptions[*].pumps"
+    ],
+    "Boiler": [
+        "$.ruleset_model_descriptions[*].boilers"
+    ],
+    "Chiller": [
+        "$.ruleset_model_descriptions[*].chillers"
+    ],
+    "HeatRejection": [
+        "$.ruleset_model_descriptions[*].heat_rejections"
+    ],
+    "ExternalFluidSource": [
+        "$.ruleset_model_descriptions[*].external_fluid_sources"
+    ],
+    "BuildingSegment": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments"
+    ],
+    "Elevator": [
+        "$.ruleset_model_descriptions[*].buildings[*].elevators"
+    ],
+    "ExteriorLighting": [
+        "$.ruleset_model_descriptions[*].buildings[*].exterior_lighting"
+    ],
+    "RefrigeratedCase": [
+        "$.ruleset_model_descriptions[*].buildings[*].refrigerated_cases"
+    ],
+    "Zone": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones"
+    ],
+    "HeatingVentilatingAirConditioningSystem": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems"
+    ],
+    "Space": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].spaces"
+    ],
+    "Surface": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].surfaces"
+    ],
+    "Infiltration": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].infiltration"
+    ],
+    "Terminal": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].terminals"
+    ],
+    "Fan": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].zonal_exhaust_fan",
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.supply_fans",
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.return_fans",
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.exhaust_fans",
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.relief_fans",
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].terminals[*].fan"
+    ],
+    "InteriorLighting": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].spaces[*].interior_lighting"
+    ],
+    "MiscellaneousEquipment": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].spaces[*].miscellaneous_equipment"
+    ],
+    "ServiceWaterHeatingUse": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].spaces[*].service_water_heating_uses"
+    ],
+    "Subsurface": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].surfaces[*].subsurfaces"
+    ],
+    "Construction": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].surfaces[*].construction"
+    ],
+    "SurfaceOpticalProperties": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].surfaces[*].optical_properties"
+    ],
+    "Material": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].surfaces[*].construction.primary_layers",
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].surfaces[*].construction.framing_layers"
+    ],
+    "FanSystem": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system"
+    ],
+    "HeatingSystem": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].heating_system",
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].preheat_system"
+    ],
+    "CoolingSystem": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].cooling_system"
+    ],
+    "AirEconomizer": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.air_economizer"
+    ],
+    "AirEnergyRecovery": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.air_energy_recovery"
+    ],
+    "FanOutputValidationPoint": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].zonal_exhaust_fan.output_validation_points",
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.supply_fans[*].output_validation_points",
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.return_fans[*].output_validation_points",
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.exhaust_fans[*].output_validation_points",
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.relief_fans[*].output_validation_points"
+    ],
+    "FluidLoopDesignAndControl": [
+        "$.ruleset_model_descriptions[*].fluid_loops[*].cooling_or_condensing_design_and_control",
+        "$.ruleset_model_descriptions[*].fluid_loops[*].heating_design_and_control"
+    ],
+    "PumpOutputValidationPoint": [
+        "$.ruleset_model_descriptions[*].pumps[*].output_validation_points"
+    ],
+    "BoilerOutputValidationPoint": [
+        "$.ruleset_model_descriptions[*].boilers[*].output_validation_points"
+    ],
+    "ChillerCapacityValidationPoint": [
+        "$.ruleset_model_descriptions[*].chillers[*].capacity_validation_points"
+    ],
+    "ChillerPowerValidationPoint": [
+        "$.ruleset_model_descriptions[*].chillers[*].power_validation_points"
+    ],
+    "Tank": [
+        "$.ruleset_model_descriptions[*].service_water_heating_distribution_systems[*].tanks",
+        "$.ruleset_model_descriptions[*].service_water_heating_equipment[*].tank",
+        "$.ruleset_model_descriptions[*].service_water_heating_equipment[*].solar_thermal_systems[*].tank"
+    ],
+    "ServiceWaterPiping": [
+        "$.ruleset_model_descriptions[*].service_water_heating_distribution_systems[*].service_water_piping",
+        "$.ruleset_model_descriptions[*].service_water_heating_distribution_systems[*].service_water_piping[*].child"
+    ],
+    "ServiceWaterHeaterValidationPoint": [
+        "$.ruleset_model_descriptions[*].service_water_heating_equipment[*].output_validation_points"
+    ],
+    "HeatPumpWaterHeaterCapacityValidationPoint": [
+        "$.ruleset_model_descriptions[*].service_water_heating_equipment[*].compressor_capacity_validation_points"
+    ],
+    "HeatPumpWaterHeaterPowerValidationPoint": [
+        "$.ruleset_model_descriptions[*].service_water_heating_equipment[*].compressor_power_validation_points"
+    ],
+    "SolarThermal": [
+        "$.ruleset_model_descriptions[*].service_water_heating_equipment[*].solar_thermal_systems"
+    ],
+    "RulesetProjectDescription": [
+        null
+    ]
+}
