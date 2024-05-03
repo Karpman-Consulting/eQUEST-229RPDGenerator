@@ -17,9 +17,9 @@ NHR_DICT = None
 
 def read_nhr_list(file_path):
     nhr_dict = {}
-    with open(file_path, 'r') as file:
+    with open(file_path, "r") as file:
         for line in file:
-            parts = line.strip().split(',')
+            parts = line.strip().split(",")
             if len(parts) == 7:
                 entry_id, _, _, _, _, _, max_values = parts
                 nhr_dict[int(entry_id)] = int(max_values)
