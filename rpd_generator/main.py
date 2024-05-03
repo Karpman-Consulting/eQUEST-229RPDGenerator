@@ -53,7 +53,7 @@ def generate_rpd_json(selected_models: list):
     """
     rmds, json_file_path = generate_rmds(selected_models)
     rpd, json_file_path = generate_rpd(rmds, json_file_path)
-    unit_converter.replace_json_with_standard_units(rpd.rpd_data_structure)
+    unit_converter.convert_to_schema_units(rpd.rpd_data_structure)
     write_rpd_json(rpd, json_file_path)
 
 

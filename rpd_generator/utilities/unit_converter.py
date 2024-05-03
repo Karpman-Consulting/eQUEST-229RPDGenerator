@@ -21,7 +21,7 @@ path_to_json_paths = os.path.join(
 )
 
 
-def replace_json_with_standard_units(rpd_json):
+def convert_to_schema_units(rpd_json):
     """Converts the units of the json data to the standard units defined in the schema"""
     with open(path_to_equest_units) as f:
         equest_units = json.load(f)
