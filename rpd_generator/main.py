@@ -8,6 +8,7 @@ from rpd_generator.doe2_file_readers import model_input_reader
 from rpd_generator.bdl_structure import *
 from rpd_generator.config import Config
 from rpd_generator.utilities import validate_configuration
+from rpd_generator.utilities import unit_converter
 
 
 """Once development is complete, this can be replaced with a list of all bdl_command attribute values from classes that 
@@ -52,6 +53,7 @@ def generate_rpd_json(selected_models: list):
     """
     rmds, json_file_path = generate_rmds(selected_models)
     rpd, json_file_path = generate_rpd(rmds, json_file_path)
+    unit_converter.replace_json_with_standard_units(rpd.rpd_data_structure)
     write_rpd_json(rpd, json_file_path)
 
 
@@ -213,10 +215,10 @@ def _process_command_group(
 
 
 # Run functions directly from BDL file, bypass GUI and processing of inp
-# validate_configuration.find_equest_installation()
-#
-# generate_rpd_json(
-#     [
-#         r"C:\Users\JacksonJarboe\Desktop\Active Work Container\229 Test Case 1 PSZHP_temp.BDL"
-#     ]
-# )
+validate_configuration.find_equest_installation()
+
+generate_rpd_json(
+    [
+        r"C:\Users\JacksonJarboe\Documents\Development\DOE2-229RPDGenerator\test\example\229 Test Case 1 PSZHP.BDL"
+    ]
+)
