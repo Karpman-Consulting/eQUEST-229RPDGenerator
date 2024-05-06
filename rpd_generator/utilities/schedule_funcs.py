@@ -47,7 +47,15 @@ def generate_year_calendar(year: int, first_day: str) -> dict:
     :param first_day:
     :return: dictionary of days in a year with day types
     """
-    first_day = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"].index(first_day) + 1
+    first_day = [
+        "MONDAY",
+        "TUESDAY",
+        "WEDNESDAY",
+        "THURSDAY",
+        "FRIDAY",
+        "SATURDAY",
+        "SUNDAY",
+    ].index(first_day) + 1
     calendar = {}
     day_types = [7, 1, 2, 3, 4, 5, 6]
     day_type = None
