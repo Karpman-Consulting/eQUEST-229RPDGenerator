@@ -82,7 +82,7 @@ class Space(ChildNode, ParentNode):
         space_misc_eq_scheds = self.keyword_value_pairs.get("EQUIP-SCHEDULE")
         self.standardize_dict_values(
             self.keyword_value_pairs,
-            ["EQUIPMENT-W/AREA", "EQUIPMENT-KW"],
+            ["EQUIPMENT-W/AREA", "EQUIPMENT-KW", "EQUIP-SENSIBLE", "EQUIP-LATENT"],
             len(space_misc_eq_scheds),
         )
 
@@ -250,14 +250,25 @@ class Space(ChildNode, ParentNode):
         )
         misc_eq_multiplier_schedule = schedule
 
+        misc_eq_sensible_fraction = self.try_float(
+            self.try_access_index(self.keyword_value_pairs.get("EQUIP-SENSIBLE"), n)
+        )
+        misc_eq_latent_fraction = self.try_float(
+            self.try_access_index(self.keyword_value_pairs.get("EQUIP-LATENT"), n)
+        )
+
         if n == 0:
             self.misc_eq_id = [misc_eq_id]
             self.misc_eq_power = [total_eq_power]
             self.misc_eq_multiplier_schedule = [misc_eq_multiplier_schedule]
+            self.misc_eq_sensible_fraction = [misc_eq_sensible_fraction]
+            self.misc_eq_latent_fraction = [misc_eq_latent_fraction]
         else:
             self.misc_eq_id.append(misc_eq_id)
             self.misc_eq_power.append(total_eq_power)
             self.misc_eq_multiplier_schedule.append(misc_eq_multiplier_schedule)
+            self.misc_eq_sensible_fraction.append(misc_eq_sensible_fraction)
+            self.misc_eq_latent_fraction.append(misc_eq_latent_fraction)
 
             # Lists must be the same length, even when elements are not populated
             self.misc_eq_reporting_name.append(None)
