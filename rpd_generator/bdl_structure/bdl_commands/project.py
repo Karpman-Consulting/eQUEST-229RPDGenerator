@@ -1,6 +1,7 @@
 from rpd_generator.bdl_structure.base_definition import BaseDefinition
 from rpd_generator.utilities import schedule_funcs
 
+
 class SiteParameters(BaseDefinition):
     bdl_command = "SITE-PARAMETERS"
 
@@ -33,7 +34,9 @@ class RunPeriod(BaseDefinition):
         rpd = self.rmd.bdl_obj_instances["ASHRAE 229"]
         rpd.calendar.setdefault(
             "day_of_week_for_january_1",
-            schedule_funcs.get_day_of_week_jan_1(int(float(self.keyword_value_pairs.get("END-YEAR")))),
+            schedule_funcs.get_day_of_week_jan_1(
+                int(float(self.keyword_value_pairs.get("END-YEAR")))
+            ),
         )
 
 

@@ -1,5 +1,3 @@
-
-
 def get_day_of_week_jan_1(year):
     # Adjustments for January
     q = 1  # Day of the month
@@ -37,7 +35,20 @@ def generate_year_calendar(year, first_day):
     day_types = [7, 1, 2, 3, 4, 5, 6]
     day_type = None
 
-    month_days = [31, 28 if not is_leap_year(year) else 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    month_days = [
+        31,
+        28 if not is_leap_year(year) else 29,
+        31,
+        30,
+        31,
+        30,
+        31,
+        31,
+        30,
+        31,
+        30,
+        31,
+    ]
     m = 0
     d = 1
 
