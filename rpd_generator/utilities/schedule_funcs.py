@@ -72,7 +72,7 @@ def generate_year_calendar(year, first_day):
             if m < 12:
                 days_left_in_month = month_days[m]
 
-    _determine_holidays(calendar)
+    calendar = _determine_holidays(calendar)
 
     return calendar
 
