@@ -1,4 +1,9 @@
-def get_day_of_week_jan_1(year):
+def get_day_of_week_jan_1(year: int) -> str:
+    """
+    Get the day of the week for January 1st of a given year using Zeller's Congruence method.
+    :param year: (int) The year to get the day of the week for
+    :return: day_of_week (str): "MONDAY", "TUESDAY", etc.
+    """
     # Adjustments for January
     q = 1  # Day of the month
     m = 13  # Month (January is treated as the 13th month of the previous year)
@@ -26,11 +31,23 @@ def get_day_of_week_jan_1(year):
     return days[day_of_week]
 
 
-def is_leap_year(year):
+def is_leap_year(year: int) -> bool:
+    """
+    Determine if a year is a leap year.
+    :param year:
+    :return: True/False boolean
+    """
     return (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
 
 
-def generate_year_calendar(year, first_day):
+def generate_year_calendar(year: int, first_day: str) -> dict:
+    """
+    Generate a dictionary of days in a year with day types.
+    :param year:
+    :param first_day:
+    :return: dictionary of days in a year with day types
+    """
+    first_day = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"].index(first_day) + 1
     calendar = {}
     day_types = [7, 1, 2, 3, 4, 5, 6]
     day_type = None
@@ -72,12 +89,15 @@ def generate_year_calendar(year, first_day):
             if m < 12:
                 days_left_in_month = month_days[m]
 
-    calendar = _determine_holidays(calendar)
-
     return calendar
 
 
-def _determine_holidays(calendar):
+def get_official_us_holidays(calendar: dict) -> dict:
+    """
+    Set official US holidays to type 8 in the calendar dictionary returned by `generate_year_calendar()`.
+    :param calendar:
+    :return: calendar with official US holidays set to type 8
+    """
     # New Year's Day
     if calendar["12/31"] == 5:
         calendar["12/31"] = 8
