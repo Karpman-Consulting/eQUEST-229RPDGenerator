@@ -65,19 +65,18 @@ class Schedule(BaseNode):
         if ann_sch_type != "RESET-TEMP" and ann_sch_type != "RESET-RATIO":
             proj_calendar = Schedule.calender
 
-            ann_months = self.keyword_value_pairs.get("MONTH") if isinstance(self.keyword_value_pairs.get("MONTH"), list) else list(self.keyword_value_pairs.get("MONTH"))
-            ann_days = self.keyword_value_pairs.get("DAY") if isinstance(self.keyword_value_pairs.get("DAY"), list) else list(self.keyword_value_pairs.get("DAY"))
-            print(isinstance(ann_months, list))
-            print(isinstance(ann_days, list))
-            print(ann_months)
+            ann_months = self.keyword_value_pairs.get("MONTH") if isinstance(self.keyword_value_pairs.get("MONTH"), list) else [self.keyword_value_pairs.get("MONTH")]
+            ann_days = self.keyword_value_pairs.get("DAY") if isinstance(self.keyword_value_pairs.get("DAY"), list) else [self.keyword_value_pairs.get("DAY")]
+            ann_months = [int(float(val)) for val in ann_months]
+            ann_days = [int(float(val2)) for val2 in ann_days]
+
             ann_wk_sch = self.keyword_value_pairs.get("WEEK-SCHEDULES")
             list_of_dates = list(proj_calendar.keys())
-            print(len(ann_months))
+            # print(len(ann_months))
             for i in range(0, len(ann_months)):
-                date = ann_months[i] + "/" + ann_days[i]
-                print(date)
+                date = str(ann_months[i]) + "/" + str(ann_days[i])
                 index_numbers_where_change_list = list_of_dates.index(date)
-            # print(index_numbers_where_change_list)
+            print(index_numbers_where_change_list)
 
 
 
