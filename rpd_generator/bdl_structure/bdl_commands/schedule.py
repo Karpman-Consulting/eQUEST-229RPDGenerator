@@ -61,6 +61,27 @@ class Schedule(BaseNode):
             "prescribed_type",
             "is_modified_for_workaround",
         ]
+        ann_sch_type = self.keyword_value_pairs.get("TYPE")
+        if ann_sch_type != "RESET-TEMP" and ann_sch_type != "RESET-RATIO":
+            proj_calendar = Schedule.calender
+
+            ann_months = self.keyword_value_pairs.get("MONTH") if isinstance(self.keyword_value_pairs.get("MONTH"), list) else list(self.keyword_value_pairs.get("MONTH"))
+            ann_days = self.keyword_value_pairs.get("DAY") if isinstance(self.keyword_value_pairs.get("DAY"), list) else list(self.keyword_value_pairs.get("DAY"))
+            print(isinstance(ann_months, list))
+            print(isinstance(ann_days, list))
+            print(ann_months)
+            ann_wk_sch = self.keyword_value_pairs.get("WEEK-SCHEDULES")
+            list_of_dates = list(proj_calendar.keys())
+            print(len(ann_months))
+            for i in range(0, len(ann_months)):
+                date = ann_months[i] + "/" + ann_days[i]
+                print(date)
+                index_numbers_where_change_list = list_of_dates.index(date)
+            # print(index_numbers_where_change_list)
+
+
+
+
 
 
         # Iterate over the no_children_attributes list and populate if the value is not None
