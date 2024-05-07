@@ -1,10 +1,17 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
+from rpd_generator.utilities import schedule_funcs
 
 
 class Schedule(BaseNode):
     """Schedule object in the tree."""
 
     bdl_command = "SCHEDULE-PD"
+    year = None
+    day_of_week_for_january_1 = None
+    holiday_type = None
+    holiday_months = None
+    holiday_days = None
+    calender = {}
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
@@ -55,6 +62,7 @@ class Schedule(BaseNode):
             "is_modified_for_workaround",
         ]
 
+
         # Iterate over the no_children_attributes list and populate if the value is not None
         for attr in no_children_attributes:
             value = getattr(self, attr, None)
@@ -64,3 +72,6 @@ class Schedule(BaseNode):
     def insert_to_rpd(self, rmd):
         """Insert window object into the rpd data structure."""
         rmd.schedules.append(self.schedule_data_structure)
+
+
+

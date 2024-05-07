@@ -1,4 +1,5 @@
 from rpd_generator.bdl_structure.base_definition import BaseDefinition
+from rpd_generator.bdl_structure.bdl_commands.schedule import Schedule
 from rpd_generator.utilities import schedule_funcs
 
 
@@ -42,10 +43,9 @@ class RunPeriod(BaseDefinition):
                 year
             ),
         )
-        self.year = year
-        self.day_of_week_for_january_1 = schedule_funcs.get_day_of_week_jan_1(
+        Schedule.year = year
+        Schedule.day_of_week_for_january_1 = schedule_funcs.get_day_of_week_jan_1(
                 year)
-
 
 class FixedShade(BaseDefinition):
     bdl_command = "FIXED-SHADE"
@@ -65,16 +65,18 @@ class Holidays(BaseDefinition):
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
 
-        self.holiday_type = None
-        self.holiday_days = None
-        self.holiday_months = None
-
     def populate_data_elements(self):
-        self.holiday_type = self.keyword_value_pairs.get("TYPE")
+        Schedule.holiday_type = self.keyword_value_pairs.get("TYPE")
+        if Schedule.holiday_type == "NONE":
+            calender = schedule_funcs.generate_year_calendar(Schedule.year, Schedule.day_of_week_for_january_1)
+        elif Schedule.holiday_type == "OFFICIAL-US":
+            calender = schedule_funcs.generate_year_calendar(Schedule.year, Schedule.day_of_week_for_january_1)
+            calender = schedule_funcs.get_official_us_holidays(calender)
+        elif Schedule.holiday_type == "ALTERNATE":
+            Schedule.holiday_months = self.keyword_value_pairs.get("MONTHS")
+            Schedule.holiday_days = self.keyword_value_pairs.get("DAYS")
+            calender = schedule_funcs.generate_year_calendar(Schedule.year, Schedule.day_of_week_for_january_1)
+            calender = schedule_funcs.alternate_holidays(calender, Schedule.holiday_months, Schedule.holiday_days)
 
-        if self.holiday_type == "ALTERNATE":
-            self.holiday_months = self.keyword_value_pairs.get("MONTHS")
-            self.holiday_days = self.keyword_value_pairs.get("DAYS")
-
-
+        Schedule.calender = calender
 
