@@ -75,6 +75,6 @@ class Holidays(BaseDefinition):
         if self.holiday_type == "ALTERNATE":
             self.holiday_months = self.keyword_value_pairs.get("MONTHS")
             self.holiday_days = self.keyword_value_pairs.get("DAYS")
-            calendar = generate_year_calendar()
+
 
 
