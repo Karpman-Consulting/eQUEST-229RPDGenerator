@@ -107,6 +107,16 @@ class Zone(ChildNode):
         self.zonal_exhaust_fan_total_efficiency = None
         self.zonal_exhaust_fan_output_validation_points = []
 
+        # infiltration data elements
+        self.infil_id = None
+        self.infil_reporting_name = None
+        self.infil_notes = None
+        self.infil_modeling_method = None
+        self.infil_algorithm_name = None
+        self.infil_measured_air_leakage_rate = None
+        self.infil_flow_rate = None
+        self.infil_multiplier_schedule = None
+
     def __repr__(self):
         return f"Zone(u_name='{self.u_name}', parent='{self.parent}')"
 
@@ -309,6 +319,9 @@ class Zone(ChildNode):
             value = getattr(self, attr, None)
             if value is not None:
                 self.zonal_exhaust_fan[attr.split("zonal_exhaust_fan_")[1]] = value
+        # Populate the infiltration data structure
+        infiltration_data = self.populate_data_group_with_prefix("infil_")
+        self.infiltration = infiltration_data[0] if infiltration_data else {}
 
         self.zone_data_structure = {
             "id": self.u_name,
