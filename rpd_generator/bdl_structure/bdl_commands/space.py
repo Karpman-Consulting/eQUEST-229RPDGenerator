@@ -132,38 +132,8 @@ class Space(ChildNode, ParentNode):
 
     def populate_data_group(self):
         """Populate schema structure for space object."""
-
-        attributes = [attr for attr in dir(self) if attr.startswith("int_ltg_")]
-        keys = [
-            attr.replace("int_ltg_", "") for attr in attributes
-        ]  # Move outside the loop
-
-        # Extract values for each attribute from the object only once
-        int_ltg_value_lists = [getattr(self, attr) for attr in attributes]
-
-        # Iterate over the values, creating dictionaries directly from zipped keys and values
-        for values in zip(*int_ltg_value_lists):
-            int_ltg_dict = {
-                key: value for key, value in zip(keys, values) if value is not None
-            }
-            if int_ltg_dict:  # Only append if the dictionary is not empty
-                self.interior_lighting.append(int_ltg_dict)
-
-        attributes = [attr for attr in dir(self) if attr.startswith("misc_eq_")]
-        keys = [
-            attr.replace("misc_eq_", "") for attr in attributes
-        ]  # Move outside the loop
-
-        # Extract values for each attribute from the object only once
-        misc_eq_value_lists = [getattr(self, attr) for attr in attributes]
-
-        # Iterate over the values, creating dictionaries directly from zipped keys and values
-        for values in zip(*misc_eq_value_lists):
-            misc_eq_dict = {
-                key: value for key, value in zip(keys, values) if value is not None
-            }
-            if misc_eq_dict:  # Only append if the dictionary is not empty
-                self.miscellaneous_equipment.append(misc_eq_dict)
+        self.interior_lighting = self.populate_data_group_with_prefix("int_ltg_")
+        self.miscellaneous_equipment = self.populate_data_group_with_prefix("misc_eq_")
 
         self.space_data_structure = {
             "id": self.u_name,
