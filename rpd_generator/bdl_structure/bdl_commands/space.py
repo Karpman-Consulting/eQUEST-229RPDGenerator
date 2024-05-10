@@ -294,14 +294,30 @@ class Space(ChildNode, ParentNode):
     def populate_zone_infiltration(self):
         """Populate infiltration data elements for the zone object."""
         self.zone.infil_id = self.u_name + " Infil"
-        self.zone.infil_multiplier_schedule = self.keyword_value_pairs.get("INF-SCHEDULE")
+        self.zone.infil_multiplier_schedule = self.keyword_value_pairs.get(
+            "INF-SCHEDULE"
+        )
         infiltration_method = self.keyword_value_pairs.get("INF-METHOD")
-        self.zone.infil_algorithm_name = self.infiltration_algorithm_map.get(infiltration_method)
+        self.zone.infil_algorithm_name = self.infiltration_algorithm_map.get(
+            infiltration_method
+        )
         if infiltration_method == "AIR-CHANGE":
-            flow_per_area = self.try_float(self.keyword_value_pairs.get("INF-FLOW/AREA"))
-            air_changes_per_hour = self.try_float(self.keyword_value_pairs.get("AIR-CHANGES/HR"))
-            if flow_per_area and air_changes_per_hour and self.zone.volume and self.floor_area:
-                self.zone.infil_flow_rate = flow_per_area * self.floor_area + air_changes_per_hour * self.zone.volume / 60
+            flow_per_area = self.try_float(
+                self.keyword_value_pairs.get("INF-FLOW/AREA")
+            )
+            air_changes_per_hour = self.try_float(
+                self.keyword_value_pairs.get("AIR-CHANGES/HR")
+            )
+            if (
+                flow_per_area
+                and air_changes_per_hour
+                and self.zone.volume
+                and self.floor_area
+            ):
+                self.zone.infil_flow_rate = (
+                    flow_per_area * self.floor_area
+                    + air_changes_per_hour * self.zone.volume / 60
+                )
                 self.zone.infil_modeling_method = "WEATHER_DRIVEN"
             elif flow_per_area and self.floor_area:
                 self.zone.infil_flow_rate = flow_per_area * self.floor_area
@@ -315,4 +331,3 @@ class Space(ChildNode, ParentNode):
         else:
             # infil_flow_rate will not populate if the infiltration method is not AIR-CHANGE
             self.zone.infil_modeling_method = "WEATHER_DRIVEN"
-

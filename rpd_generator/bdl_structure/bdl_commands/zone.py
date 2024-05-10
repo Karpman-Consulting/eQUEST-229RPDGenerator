@@ -319,6 +319,9 @@ class Zone(ChildNode):
             value = getattr(self, attr, None)
             if value is not None:
                 self.zonal_exhaust_fan[attr.split("zonal_exhaust_fan_")[1]] = value
+        # Populate the infiltration data structure
+        infiltration_data = self.populate_data_group_with_prefix("infil_")
+        self.infiltration = infiltration_data[0] if infiltration_data else {}
 
         self.zone_data_structure = {
             "id": self.u_name,
