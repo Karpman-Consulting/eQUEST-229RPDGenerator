@@ -73,6 +73,10 @@ class InteriorWall(
 
     def populate_data_group(self):
         """Populate schema structure for interior wall object."""
+        self.construction = self.rmd.bdl_obj_instances.get(
+            self.keyword_value_pairs.get("CONSTRUCTION")
+        ).construction_data_structure
+
         self.interior_wall_data_structure = {
             "id": self.u_name,
             "subsurfaces": self.subsurfaces,

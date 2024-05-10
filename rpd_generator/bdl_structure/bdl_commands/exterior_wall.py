@@ -52,6 +52,10 @@ class ExteriorWall(ChildNode, ParentNode):
 
     def populate_data_group(self):
         """Populate schema structure for exterior wall object."""
+        self.construction = self.rmd.bdl_obj_instances.get(
+            self.keyword_value_pairs.get("CONSTRUCTION")
+        ).construction_data_structure
+
         self.exterior_wall_data_structure = {
             "id": self.u_name,
             "subsurfaces": self.subsurfaces,

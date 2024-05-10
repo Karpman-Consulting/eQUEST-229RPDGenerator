@@ -42,6 +42,11 @@ class Construction(BaseNode):
             self.material_references if self.material_references else []
         )
 
+        for material_reference in self.material_references:
+            material = self.rmd.bdl_obj_instances.get(material_reference)
+            if material:
+                self.primary_layers.append(material.material_data_structure)
+
     def populate_data_group(self):
         """Populate schema structure for construction object."""
         self.construction_data_structure = {
@@ -70,11 +75,3 @@ class Construction(BaseNode):
             value = getattr(self, attr, None)
             if value is not None:
                 self.construction_data_structure[attr] = value
-
-    def insert_to_rpd(self, rmd):
-        """Insert construction object into the rpd data structure."""
-        for material_reference in self.material_references:
-            material = self.rmd.bdl_obj_instances.get(material_reference)
-            if material:
-                self.primary_layers.append(material.material_data_structure)
-        rmd.constructions.append(self.construction_data_structure)
