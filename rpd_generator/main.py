@@ -23,8 +23,9 @@ COMMAND_PROCESSING_ORDER = [
     "CHW-METER",  # Meters must populate before Systems, Boilers, DW-Heaters, Chillers
     "FIXED-SHADE",
     "GLASS-TYPE",
-    "MATERIAL",
-    "CONSTRUCTION",
+    "MATERIAL",  # Materials must populate before Layers
+    "LAYERS",  # Layers must populate before Constructions
+    "CONSTRUCTION",  # Constructions must populate before Exterior-Walls, Interior-Walls, Underground-Walls, and Doors
     "DAY-SCHEDULE-PD",
     "WEEK-SCHEDULE-PD",
     "SCHEDULE-PD",
