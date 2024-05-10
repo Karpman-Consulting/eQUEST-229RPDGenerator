@@ -1,4 +1,5 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
+from rpd_generator.bdl_structure.base_definition import BaseDefinition
 
 
 class Material(BaseNode):
@@ -39,9 +40,7 @@ class Material(BaseNode):
 
     def populate_data_group(self):
         """Populate schema structure for material object."""
-        self.material_data_structure = {
-            "id": self.u_name,
-        }
+        self.material_data_structure["id"] = self.u_name
 
         no_children_attributes = [
             "reporting_name",
@@ -59,5 +58,23 @@ class Material(BaseNode):
             if value is not None:
                 self.material_data_structure[attr] = value
 
-    def insert_to_rpd(self, rmd):
-        """Insert window object into the rpd data structure."""
+
+class Layers(BaseDefinition):
+    """Layers object in the tree."""
+
+    bdl_command = "LAYERS"
+
+    def __init__(self, u_name, rmd):
+        super().__init__(u_name, rmd)
+
+        self.material_references = None
+
+    def __repr__(self):
+        return f"Layers(u_name='{self.u_name}')"
+
+    def populate_data_elements(self):
+        """Populate data elements for layers object."""
+        material_references = self.keyword_value_pairs.get("MATERIAL")
+        self.material_references = (
+            material_references if isinstance(material_references, list) else []
+        )
