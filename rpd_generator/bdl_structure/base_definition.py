@@ -1,3 +1,9 @@
+from itertools import islice
+from pathlib import Path
+from rpd_generator.doe2_file_readers.model_output_reader import get_string_result
+from rpd_generator.config import Config
+
+
 class BaseDefinition:
     """
     Base class for BDL commands that are not nodes in the tree, but used to populate 229 schema data elements.
@@ -24,6 +30,22 @@ class BaseDefinition:
         """This method will be overridden by each child class"""
         return None
 
+    def get_single_string_output(self, entry_id):
+        """
+        Get single result from the simulation output files expected to be a string
+        ------------------
+        Arguments
+        ---------
+        :param entry_id: (int) id from NHRList.txt corresponding to the value to retrieve
+        :return: value from binary simulation output files
+        """
+        return get_string_result(
+            str(Path(Config.EQUEST_INSTALL_PATH) / "D2Result.dll"),
+            self.rmd.doe2_data_path,
+            str(Path(self.rmd.file_path).with_suffix("")),
+            entry_id,
+        )
+
     @staticmethod
     def try_float(value):
         """Attempt to convert a value to a float, returning None if it fails."""
@@ -34,3 +56,10 @@ class BaseDefinition:
         except (ValueError, TypeError):
             # TODO log error for future GUI error window
             return None
+
+
+def _chunked_dict(d, n):
+    """Yield successive n-sized chunks from dictionary d."""
+    it = iter(d)
+    for i in range(0, len(d), n):
+        yield {k: d[k] for k in islice(it, n)}

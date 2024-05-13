@@ -19,6 +19,7 @@ class SiteParameters(BaseDefinition):
             "has_daylight_saving_time",
             self.boolean_map.get(self.keyword_value_pairs.get("DAYLIGHT-SAVINGS")),
         )
+        rpd.weather.setdefault("file_name", self.get_single_string_output(1101006))
 
 
 class RunPeriod(BaseDefinition):

@@ -82,10 +82,7 @@ def generate_year_calendar(year: int, first_day: str) -> dict:
     for i in range(366 if is_leap_year(year) else 365):
         days_left_in_month -= 1
 
-        if (i + first_day) % 7 == 0:
-            day_type = 7
-        else:
-            day_type = day_types[(i + first_day) % 7]
+        day_type = day_types[(i + first_day) % 7]
 
         calendar[f"{m+1}/{d}"] = day_type
 
@@ -182,6 +179,6 @@ def alternate_holidays(
     :param holiday_days: list of days
     """
     for i in range(len(holiday_months)):
-        calendar[f"{holiday_months[i]}/{holiday_days[i]}"] = 8
+        calendar[f"{int(float(holiday_months[i]))}/{int(float(holiday_days[i]))}"] = 8
 
     return calendar
