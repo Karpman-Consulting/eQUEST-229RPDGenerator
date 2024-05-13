@@ -187,6 +187,3 @@ def alternate_holidays(
     return calendar
 
 
-def supported_schedules() -> list:
-    supported_hourly_schedules = ["ON/OFF", "FRACTION", "MULTIPLIER", "TEMPERATURE"]
-    return supported_hourly_schedules

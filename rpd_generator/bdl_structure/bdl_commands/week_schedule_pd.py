@@ -1,5 +1,5 @@
 from rpd_generator.bdl_structure.base_definition import BaseDefinition
-from rpd_generator.utilities import schedule_funcs
+from rpd_generator.bdl_structure.bdl_commands.schedule import Schedule
 
 
 class WeekSchedulePD(BaseDefinition):
@@ -20,7 +20,7 @@ class WeekSchedulePD(BaseDefinition):
         """Populate data elements that originate from eQUEST's WEEK-SCHEDULE-PD command"""
         """Create a list of 12 lists including Mon-Sun, Holidays and then 4 design day schedules"""
         wk_sch_type = self.keyword_value_pairs.get("TYPE")
-        if wk_sch_type in schedule_funcs.supported_schedules():
+        if wk_sch_type in Schedule.supported_hourly_schedules:
             day_schedule_names = self.keyword_value_pairs.get("DAY-SCHEDULES")
             self.day_type_hourly_values = [
                 self.rmd.bdl_obj_instances[day_sch].hourly_values
