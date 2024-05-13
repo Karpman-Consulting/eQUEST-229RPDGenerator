@@ -26,6 +26,7 @@ COMMAND_PROCESSING_ORDER = [
     "MATERIAL",  # Materials must populate before Layers
     "LAYERS",  # Layers must populate before Constructions
     "CONSTRUCTION",  # Constructions must populate before Exterior-Walls, Interior-Walls, Underground-Walls, and Doors
+    "HOLIDAYS",
     "DAY-SCHEDULE-PD",
     "WEEK-SCHEDULE-PD",
     "SCHEDULE-PD",
