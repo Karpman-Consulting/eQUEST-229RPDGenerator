@@ -27,9 +27,6 @@ class RunPeriod(BaseDefinition):
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
 
-        self.year = None
-        self.day_of_week_for_january_1 = None
-
     def __repr__(self):
         return f"SitePameters(u_name='{self.u_name}')"
 
@@ -65,23 +62,17 @@ class Holidays(BaseDefinition):
 
     def populate_data_elements(self):
         Schedule.holiday_type = self.keyword_value_pairs.get("TYPE")
-        if Schedule.holiday_type == "NONE":
-            calender = schedule_funcs.generate_year_calendar(
-                Schedule.year, Schedule.day_of_week_for_january_1
-            )
-        elif Schedule.holiday_type == "OFFICIAL-US":
-            calender = schedule_funcs.generate_year_calendar(
-                Schedule.year, Schedule.day_of_week_for_january_1
-            )
-            calender = schedule_funcs.get_official_us_holidays(calender)
+        calendar = schedule_funcs.generate_year_calendar(
+            Schedule.year, Schedule.day_of_week_for_january_1
+        )
+
+        if Schedule.holiday_type == "OFFICIAL-US":
+            calendar = schedule_funcs.get_official_us_holidays(calendar)
         elif Schedule.holiday_type == "ALTERNATE":
             Schedule.holiday_months = self.keyword_value_pairs.get("MONTHS")
             Schedule.holiday_days = self.keyword_value_pairs.get("DAYS")
-            calender = schedule_funcs.generate_year_calendar(
-                Schedule.year, Schedule.day_of_week_for_january_1
-            )
-            calender = schedule_funcs.alternate_holidays(
-                calender, Schedule.holiday_months, Schedule.holiday_days
+            calendar = schedule_funcs.alternate_holidays(
+                calendar, Schedule.holiday_months, Schedule.holiday_days
             )
 
-        Schedule.annual_calender = calender
+        Schedule.annual_calendar = calendar

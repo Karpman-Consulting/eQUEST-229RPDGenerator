@@ -11,7 +11,7 @@ class Schedule(BaseNode):
     holiday_type = None
     holiday_months = None
     holiday_days = None
-    annual_calender = {}
+    annual_calendar = {}
     LAST_DAY = 364
     supported_hourly_schedules = ["ON/OFF", "FRACTION", "MULTIPLIER", "TEMPERATURE"]
 
@@ -47,7 +47,7 @@ class Schedule(BaseNode):
 
         # There are no hourly values for temperature and ratio reset schedules so ignore those types
         if ann_sch_type in Schedule.supported_hourly_schedules:
-            proj_calendar = Schedule.annual_calender
+            proj_calendar = Schedule.annual_calendar
             # Get the month/day pair change points where a different week schedule begins
             ann_months = (
                 self.keyword_value_pairs.get("MONTH")
@@ -75,12 +75,11 @@ class Schedule(BaseNode):
             # for each day so that the result is a list with the hourly schedule value for the whole year.
             wk_sch_index = 0
             hourly_values = []
-            list_of_day_types = list(proj_calendar.values())
             for day_index, day_type in enumerate(proj_calendar.values()):
-                # Check if the indices is a change point. If so then the y counter will pull the next weekly schedule.
+                # Check if the index is a change point. If so, continue to the next weekly schedule index
                 if day_index in schedule_change_dates and day_index != self.LAST_DAY:
                     wk_sch_index += 1
-                day_type = list_of_day_types[day_index]
+
                 wk_schedule_pd = self.rmd.bdl_obj_instances[
                     week_schedules[wk_sch_index]
                 ]
