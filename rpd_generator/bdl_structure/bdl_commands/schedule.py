@@ -14,7 +14,6 @@ class Schedule(BaseNode):
     annual_calender = {}
     LAST_DAY = 364
 
-
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
 
@@ -66,8 +65,10 @@ class Schedule(BaseNode):
             # Create a list of "Mo/Day" from the calendar
             list_of_dates = list(proj_calendar.keys())
             # Create a list to hold the index where there is a change in week schedule based on mo/day in ann sch
-            schedule_change_dates = [list_of_dates.index(f"{ann_months[i]}/{ann_days[i]}") + 1 for i in
-                                     range(len(ann_months))]
+            schedule_change_dates = [
+                list_of_dates.index(f"{ann_months[i]}/{ann_days[i]}") + 1
+                for i in range(len(ann_months))
+            ]
 
             # Loop through each day of the year in the calendar. Depending on the day type extend the hourly schedule list object
             # for each day so that the result is a list with the hourly schedule value for the whole year.
@@ -79,10 +80,13 @@ class Schedule(BaseNode):
                 if day_index in schedule_change_dates and day_index != self.LAST_DAY:
                     wk_sch_index += 1
                 day_type = list_of_day_types[day_index]
-                wk_schedule_pd = self.rmd.bdl_obj_instances[week_schedules[wk_sch_index]]
-                hourly_values.extend(wk_schedule_pd.day_type_hourly_values[day_type - 1])
+                wk_schedule_pd = self.rmd.bdl_obj_instances[
+                    week_schedules[wk_sch_index]
+                ]
+                hourly_values.extend(
+                    wk_schedule_pd.day_type_hourly_values[day_type - 1]
+                )
             self.hourly_values = hourly_values
-
 
     def populate_data_group(self):
         """Populate schema structure for schedule object."""

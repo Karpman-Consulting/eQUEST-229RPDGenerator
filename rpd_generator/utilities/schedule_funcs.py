@@ -171,7 +171,9 @@ def get_official_us_holidays(calendar: dict) -> dict:
     return calendar
 
 
-def alternate_holidays(calendar: dict, holiday_months: list, holiday_days: list) -> dict:
+def alternate_holidays(
+    calendar: dict, holiday_months: list, holiday_days: list
+) -> dict:
     """
     Set custom to type 8 in the calendar dictionary returned by `generate_year_calendar()`.
     :param calendar:
