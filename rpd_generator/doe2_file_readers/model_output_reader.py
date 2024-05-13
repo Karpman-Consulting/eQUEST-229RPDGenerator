@@ -13,6 +13,8 @@ class MRTArray(ctypes.Structure):
 
 
 NHR_DICT = None
+BUFFER_SIZE = 100
+pfData = ctypes.create_string_buffer(BUFFER_SIZE)
 
 
 def read_nhr_list(file_path):
@@ -108,3 +110,49 @@ def get_multiple_results(
     )
 
     return [data for data in pf_data]
+
+
+def get_string_result(
+    d2_result_dll: str, doe2_dir: str, project_fname: str, entry_id: int
+) -> str:
+    """
+    Get single result from the simulation output files expected to be a string
+    ------------------
+    Arguments
+    ---------
+    :param d2_result_dll: (string) path to user's eQUEST D2Result.dll file included with installation files
+    :param doe2_dir: (binary string) path to DOE-2 directory
+    :param project_fname: (binary string) path to project with project name NOT INCLUDING FILE EXTENSION
+    :param entry_id: (int) id from NHRList.txt corresponding to the value to retrieve
+
+    :return: value from binary simulation output files
+    """
+    # Load DLL
+    d2_result_dll = ctypes.CDLL(d2_result_dll)
+    doe2_dir = str(Path(doe2_dir) / "DOE23") + "\\"
+
+    single_result_dll = d2_result_dll.D2R_GetSingleResult
+    single_result_dll.argtypes = [
+        ctypes.c_char_p,  # pszDOE2Dir
+        ctypes.c_char_p,  # pszFileName
+        ctypes.c_int,  # iEntryID
+        ctypes.POINTER(ctypes.c_char),  # pfData
+        ctypes.c_int,  # iMaxValues
+        ctypes.c_char_p,  # pszReportKey
+        ctypes.c_char_p,  # pszRowKey
+    ]
+    single_result_dll.restype = ctypes.c_long
+
+    # Call the function
+    single_result_dll(
+        doe2_dir.encode("utf-8"),
+        project_fname.encode("utf-8"),
+        entry_id,
+        pfData,
+        1,
+        None,
+        None,
+    )
+
+    # Return the string from the buffer
+    return pfData.value.decode("utf-8")
