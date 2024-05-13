@@ -39,13 +39,11 @@ class RunPeriod(BaseDefinition):
         year = int(float(self.keyword_value_pairs.get("END-YEAR")))
         rpd.calendar.setdefault(
             "day_of_week_for_january_1",
-            schedule_funcs.get_day_of_week_jan_1(
-                year
-            ),
+            schedule_funcs.get_day_of_week_jan_1(year),
         )
         Schedule.year = year
-        Schedule.day_of_week_for_january_1 = schedule_funcs.get_day_of_week_jan_1(
-                year)
+        Schedule.day_of_week_for_january_1 = schedule_funcs.get_day_of_week_jan_1(year)
+
 
 class FixedShade(BaseDefinition):
     bdl_command = "FIXED-SHADE"
@@ -68,15 +66,22 @@ class Holidays(BaseDefinition):
     def populate_data_elements(self):
         Schedule.holiday_type = self.keyword_value_pairs.get("TYPE")
         if Schedule.holiday_type == "NONE":
-            calender = schedule_funcs.generate_year_calendar(Schedule.year, Schedule.day_of_week_for_january_1)
+            calender = schedule_funcs.generate_year_calendar(
+                Schedule.year, Schedule.day_of_week_for_january_1
+            )
         elif Schedule.holiday_type == "OFFICIAL-US":
-            calender = schedule_funcs.generate_year_calendar(Schedule.year, Schedule.day_of_week_for_january_1)
+            calender = schedule_funcs.generate_year_calendar(
+                Schedule.year, Schedule.day_of_week_for_january_1
+            )
             calender = schedule_funcs.get_official_us_holidays(calender)
         elif Schedule.holiday_type == "ALTERNATE":
             Schedule.holiday_months = self.keyword_value_pairs.get("MONTHS")
             Schedule.holiday_days = self.keyword_value_pairs.get("DAYS")
-            calender = schedule_funcs.generate_year_calendar(Schedule.year, Schedule.day_of_week_for_january_1)
-            calender = schedule_funcs.alternate_holidays(calender, Schedule.holiday_months, Schedule.holiday_days)
+            calender = schedule_funcs.generate_year_calendar(
+                Schedule.year, Schedule.day_of_week_for_january_1
+            )
+            calender = schedule_funcs.alternate_holidays(
+                calender, Schedule.holiday_months, Schedule.holiday_days
+            )
 
         Schedule.calender = calender
-

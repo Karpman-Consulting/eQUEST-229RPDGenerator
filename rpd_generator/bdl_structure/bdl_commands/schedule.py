@@ -47,8 +47,16 @@ class Schedule(BaseNode):
         if ann_sch_type != "RESET-TEMP" and ann_sch_type != "RESET-RATIO":
             proj_calendar = Schedule.calender
             # Get the month/day pair change points where a different week schedule begins
-            ann_months = self.keyword_value_pairs.get("MONTH") if isinstance(self.keyword_value_pairs.get("MONTH"), list) else [self.keyword_value_pairs.get("MONTH")]
-            ann_days = self.keyword_value_pairs.get("DAY") if isinstance(self.keyword_value_pairs.get("DAY"), list) else [self.keyword_value_pairs.get("DAY")]
+            ann_months = (
+                self.keyword_value_pairs.get("MONTH")
+                if isinstance(self.keyword_value_pairs.get("MONTH"), list)
+                else [self.keyword_value_pairs.get("MONTH")]
+            )
+            ann_days = (
+                self.keyword_value_pairs.get("DAY")
+                if isinstance(self.keyword_value_pairs.get("DAY"), list)
+                else [self.keyword_value_pairs.get("DAY")]
+            )
             ann_months = [int(float(val)) for val in ann_months]
             ann_days = [int(float(val2)) for val2 in ann_days]
             # Get the week schedule associated with each month/day pair
@@ -75,10 +83,13 @@ class Schedule(BaseNode):
                 if x in change_index_list and x != 365:
                     y = y + 1
                 day_type = list_of_day_types[x]
-                hourly_wk_sch_list.extend(self.rmd.bdl_obj_instances[ann_wk_sch[y]].day_hourly_values[day_type-1])
+                hourly_wk_sch_list.extend(
+                    self.rmd.bdl_obj_instances[ann_wk_sch[y]].day_hourly_values[
+                        day_type - 1
+                    ]
+                )
 
             self.hourly_values = hourly_wk_sch_list
-
 
     def populate_data_group(self):
         """Populate schema structure for schedule object."""
@@ -114,6 +125,3 @@ class Schedule(BaseNode):
     def insert_to_rpd(self, rmd):
         """Insert window object into the rpd data structure."""
         rmd.schedules.append(self.schedule_data_structure)
-
-
-

@@ -21,5 +21,7 @@ class WeekSchedulePD(BaseDefinition):
         wk_sch_type = self.keyword_value_pairs.get("TYPE")
         if wk_sch_type != "RESET-TEMP" and wk_sch_type != "RESET-RATIO":
             wk_sch_day_sch_list = self.keyword_value_pairs.get("DAY-SCHEDULES")
-            self.day_hourly_values = [self.rmd.bdl_obj_instances[val].hourly_values for val in wk_sch_day_sch_list]
-
+            self.day_hourly_values = [
+                self.rmd.bdl_obj_instances[val].hourly_values
+                for val in wk_sch_day_sch_list
+            ]
