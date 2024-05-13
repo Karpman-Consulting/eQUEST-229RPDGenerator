@@ -23,9 +23,9 @@ COMMAND_PROCESSING_ORDER = [
     "CHW-METER",  # Meters must populate before Systems, Boilers, DW-Heaters, Chillers
     "FIXED-SHADE",
     "GLASS-TYPE",
-    "MATERIAL",
-    "CONSTRUCTION",
-    "HOLIDAYS",
+    "MATERIAL",  # Materials must populate before Layers
+    "LAYERS",  # Layers must populate before Constructions
+    "CONSTRUCTION",  # Constructions must populate before Exterior-Walls, Interior-Walls, Underground-Walls, and Doors
     "DAY-SCHEDULE-PD",
     "WEEK-SCHEDULE-PD",
     "SCHEDULE-PD",
@@ -215,9 +215,9 @@ def _process_command_group(
 
 # Run functions directly from BDL file, bypass GUI and processing of inp
 # validate_configuration.find_equest_installation()
-
+#
 # generate_rpd_json(
 #     [
-#         r"C:\Users\chris\Karpman Consulting Dropbox\Christina LaPerle\DOE Infrastructure Bill\Tasks\Task 2.0 - RPD Gen\2.1 eQUEST\02 Testing\229P Test Models\229P Test Case 1 PSZHP\APP TEST FILES\229 Test Case 1 PSZHP_temp.BDL"
-#    ]
+#         r"C:\Users\JacksonJarboe\Desktop\Active Work Container\229 Test Case 1 PSZHP_temp.BDL"
+#     ]
 # )

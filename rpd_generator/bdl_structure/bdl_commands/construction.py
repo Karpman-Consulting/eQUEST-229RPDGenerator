@@ -10,19 +10,18 @@ class Construction(BaseNode):
         super().__init__(u_name, rmd)
 
         self.construction_data_structure = {}
+        self.material_references = None
 
         # data elements with children
         self.primary_layers = []
         self.framing_layers = []
         self.insulation_locations = []
-        self.insulation_r_values = []
+        self.r_values = []
 
         # data elements with no children
         self.classification = None
         self.surface_construction_input_option = None
         self.fraction_framing = None
-        self.primary_layers = None
-        self.framing_layers = None
         self.u_factor = None
         self.c_factor = None
         self.f_factor = None
@@ -32,6 +31,22 @@ class Construction(BaseNode):
     def __repr__(self):
         return f"Construction(u_name='{self.u_name}')"
 
+    def populate_data_elements(self):
+        """Populate data elements for construction object."""
+        layer_reference = self.keyword_value_pairs.get("LAYERS")
+        layer = (
+            self.rmd.bdl_obj_instances.get(layer_reference) if layer_reference else None
+        )
+        self.material_references = layer.material_references if layer else None
+        self.material_references = (
+            self.material_references if self.material_references else []
+        )
+
+        for material_reference in self.material_references:
+            material = self.rmd.bdl_obj_instances.get(material_reference)
+            if material:
+                self.primary_layers.append(material.material_data_structure)
+
     def populate_data_group(self):
         """Populate schema structure for construction object."""
         self.construction_data_structure = {
@@ -39,7 +54,7 @@ class Construction(BaseNode):
             "primary_layers": self.primary_layers,
             "framing_layers": self.framing_layers,
             "insulation_locations": self.insulation_locations,
-            "insulation_r_values": self.insulation_r_values,
+            "r_values": self.r_values,
         }
 
         no_children_attributes = [
@@ -60,7 +75,3 @@ class Construction(BaseNode):
             value = getattr(self, attr, None)
             if value is not None:
                 self.construction_data_structure[attr] = value
-
-    def insert_to_rpd(self, rmd):
-        """Insert construction object into the rpd data structure."""
-        rmd.construction_storage.append(self.construction_data_structure)

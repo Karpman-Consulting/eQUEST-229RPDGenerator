@@ -51,6 +51,10 @@ class BelowGradeWall(ChildNode):
 
     def populate_data_group(self):
         """Populate schema structure for below grade wall object."""
+        self.construction = self.rmd.bdl_obj_instances.get(
+            self.keyword_value_pairs.get("CONSTRUCTION")
+        ).construction_data_structure
+
         self.underground_wall_data_structure = {
             "id": self.u_name,
             "construction": self.construction,

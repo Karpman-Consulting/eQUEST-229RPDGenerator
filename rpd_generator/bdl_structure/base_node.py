@@ -33,6 +33,28 @@ class BaseNode:
         """This method will be overridden by each child class"""
         return None
 
+    def populate_data_group_with_prefix(self, prefix):
+        attributes = [attr for attr in dir(self) if attr.startswith(prefix)]
+        keys = [attr.replace(prefix, "") for attr in attributes]
+
+        value_lists = []
+        for attr in attributes:
+            value = getattr(self, attr)
+            if isinstance(value, list):
+                value_lists.append(value)
+            else:
+                value_lists.append([value])
+
+        result = []
+        for values in zip(*value_lists):
+            attr_dict = {
+                key: value for key, value in zip(keys, values) if value is not None
+            }
+            if attr_dict:
+                result.append(attr_dict)
+
+        return result
+
     def populate_data_elements(self):
         """This method will be overridden by each child class"""
         return None

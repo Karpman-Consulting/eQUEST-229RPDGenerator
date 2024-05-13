@@ -7,11 +7,21 @@ class Space(ChildNode, ParentNode):
 
     bdl_command = "SPACE"
 
+    infiltration_algorithm_map = {
+        "NONE": "None",
+        "AIR-CHANGE": "Air Change Method",
+        "RESIDENTIAL": "Residential Infiltration Coefficient",
+        "S-G": "Sherman-Grimsrud Infiltration Method",
+        "CRACK": "Crack Method",
+        "ASHRAE-ENHANCED": "2005 ASHRAE Handbook Fundamentals - Enhanced Infiltration Method",
+    }
+
     def __init__(self, u_name, parent, rmd):
         super().__init__(u_name, parent, rmd)
         ParentNode.__init__(self, u_name, rmd)
 
         self.space_data_structure = {}
+        self.zone = None
 
         # data elements with children
         self.interior_lighting = []
@@ -62,7 +72,12 @@ class Space(ChildNode, ParentNode):
 
     def populate_data_elements(self):
         """Populate data elements that originate from eQUEST's SPACE command"""
-        # Populate floor area first to use in other data elements calculations
+        # Establish zone and populate the zone volume and space floor area first to use in other data elements
+        self.zone = self.rmd.space_map.get(self.u_name)
+        volume = self.keyword_value_pairs.get("VOLUME")
+        if volume is not None:
+            volume = self.try_float(volume)
+            self.zone.volume = volume
         self.floor_area = self.try_float(self.keyword_value_pairs.get("AREA"))
 
         # Populate interior lighting data elements
@@ -91,12 +106,8 @@ class Space(ChildNode, ParentNode):
         for i, sched in enumerate(space_misc_eq_scheds):
             self.populate_miscellaneous_equipment(i, sched)
 
-        # Populate the corresponding zone volume from the DOE-2 SPACE command
-        volume = self.keyword_value_pairs.get("VOLUME")
-        if volume is not None:
-            volume = self.try_float(volume)
-            zone = self.rmd.space_map.get(self.u_name)
-            zone.__setattr__("volume", volume)
+        # Populate the corresponding zone volume and infiltration from the DOE-2 SPACE command
+        self.populate_zone_infiltration()
 
         # Populate space data elements
         self.number_of_occupants = self.try_float(
@@ -121,38 +132,8 @@ class Space(ChildNode, ParentNode):
 
     def populate_data_group(self):
         """Populate schema structure for space object."""
-
-        attributes = [attr for attr in dir(self) if attr.startswith("int_ltg_")]
-        keys = [
-            attr.replace("int_ltg_", "") for attr in attributes
-        ]  # Move outside the loop
-
-        # Extract values for each attribute from the object only once
-        int_ltg_value_lists = [getattr(self, attr) for attr in attributes]
-
-        # Iterate over the values, creating dictionaries directly from zipped keys and values
-        for values in zip(*int_ltg_value_lists):
-            int_ltg_dict = {
-                key: value for key, value in zip(keys, values) if value is not None
-            }
-            if int_ltg_dict:  # Only append if the dictionary is not empty
-                self.interior_lighting.append(int_ltg_dict)
-
-        attributes = [attr for attr in dir(self) if attr.startswith("misc_eq_")]
-        keys = [
-            attr.replace("misc_eq_", "") for attr in attributes
-        ]  # Move outside the loop
-
-        # Extract values for each attribute from the object only once
-        misc_eq_value_lists = [getattr(self, attr) for attr in attributes]
-
-        # Iterate over the values, creating dictionaries directly from zipped keys and values
-        for values in zip(*misc_eq_value_lists):
-            misc_eq_dict = {
-                key: value for key, value in zip(keys, values) if value is not None
-            }
-            if misc_eq_dict:  # Only append if the dictionary is not empty
-                self.miscellaneous_equipment.append(misc_eq_dict)
+        self.interior_lighting = self.populate_data_group_with_prefix("int_ltg_")
+        self.miscellaneous_equipment = self.populate_data_group_with_prefix("misc_eq_")
 
         self.space_data_structure = {
             "id": self.u_name,
@@ -186,8 +167,7 @@ class Space(ChildNode, ParentNode):
     def insert_to_rpd(self, rmd):
         """Insert space object into the rpd data structure."""
         # find the zone that has the "SPACE" attribute value equal to the space object's u_name
-        zone = rmd.space_map.get(self.u_name)
-        zone.spaces.append(self.space_data_structure)
+        self.zone.spaces.append(self.space_data_structure)
 
     def populate_interior_lighting(self, n, schedule):
         """Populate interior lighting data elements for an instance of InteriorLighting"""
@@ -280,3 +260,44 @@ class Space(ChildNode, ParentNode):
             self.misc_eq_energy_from_loop.append(None)
             self.misc_eq_type.append(None)
             self.misc_eq_has_automatic_control.append(None)
+
+    def populate_zone_infiltration(self):
+        """Populate infiltration data elements for the zone object."""
+        self.zone.infil_id = self.u_name + " Infil"
+        self.zone.infil_multiplier_schedule = self.keyword_value_pairs.get(
+            "INF-SCHEDULE"
+        )
+        infiltration_method = self.keyword_value_pairs.get("INF-METHOD")
+        self.zone.infil_algorithm_name = self.infiltration_algorithm_map.get(
+            infiltration_method
+        )
+        if infiltration_method == "AIR-CHANGE":
+            flow_per_area = self.try_float(
+                self.keyword_value_pairs.get("INF-FLOW/AREA")
+            )
+            air_changes_per_hour = self.try_float(
+                self.keyword_value_pairs.get("AIR-CHANGES/HR")
+            )
+            if (
+                flow_per_area
+                and air_changes_per_hour
+                and self.zone.volume
+                and self.floor_area
+            ):
+                self.zone.infil_flow_rate = (
+                    flow_per_area * self.floor_area
+                    + air_changes_per_hour * self.zone.volume / 60
+                )
+                self.zone.infil_modeling_method = "WEATHER_DRIVEN"
+            elif flow_per_area and self.floor_area:
+                self.zone.infil_flow_rate = flow_per_area * self.floor_area
+                if self.zone.infil_multiplier_schedule:
+                    self.zone.infil_modeling_method = "CONSTANT_SCHEDULED"
+                else:
+                    self.zone.infil_modeling_method = "CONSTANT"
+            elif air_changes_per_hour and self.zone.volume:
+                self.zone.infil_flow_rate = air_changes_per_hour * self.zone.volume / 60
+                self.zone.infil_modeling_method = "WEATHER_DRIVEN"
+        else:
+            # infil_flow_rate will not populate if the infiltration method is not AIR-CHANGE
+            self.zone.infil_modeling_method = "WEATHER_DRIVEN"
