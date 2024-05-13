@@ -84,4 +84,4 @@ class Holidays(BaseDefinition):
                 calender, Schedule.holiday_months, Schedule.holiday_days
             )
 
-        Schedule.calender = calender
+        Schedule.annual_calender = calender

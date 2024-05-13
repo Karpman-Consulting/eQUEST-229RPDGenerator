@@ -171,15 +171,20 @@ def get_official_us_holidays(calendar: dict) -> dict:
     return calendar
 
 
-def alternate_holidays(calendar: dict, months: list, days: list) -> dict:
+def alternate_holidays(calendar: dict, holiday_months: list, holiday_days: list) -> dict:
     """
     Set custom to type 8 in the calendar dictionary returned by `generate_year_calendar()`.
     :param calendar:
     :return: calendar with custom holidays set to type 8
-    :param months: list of months
-    :param days: list of days
+    :param holiday_months: list of months
+    :param holiday_days: list of days
     """
-    for i in range(0, len(months)):
-        calendar[f"{months[i]}/{days[i]}"] = 8
+    for i in range(len(holiday_months)):
+        calendar[f"{holiday_months[i]}/{holiday_days[i]}"] = 8
 
     return calendar
+
+
+def supported_schedules() -> list:
+    supported_hourly_schedules = ["ON/OFF", "FRACTION", "MULTIPLIER", "TEMPERATURE"]
+    return supported_hourly_schedules
