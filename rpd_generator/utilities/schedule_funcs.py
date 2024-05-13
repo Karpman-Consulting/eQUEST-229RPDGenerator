@@ -185,5 +185,3 @@ def alternate_holidays(
         calendar[f"{holiday_months[i]}/{holiday_days[i]}"] = 8
 
     return calendar
-
-
