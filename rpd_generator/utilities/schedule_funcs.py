@@ -169,3 +169,19 @@ def get_official_us_holidays(calendar: dict) -> dict:
         calendar["12/26"] = 8
 
     return calendar
+
+
+def alternate_holidays(
+    calendar: dict, holiday_months: list, holiday_days: list
+) -> dict:
+    """
+    Set custom to type 8 in the calendar dictionary returned by `generate_year_calendar()`.
+    :param calendar:
+    :return: calendar with custom holidays set to type 8
+    :param holiday_months: list of months
+    :param holiday_days: list of days
+    """
+    for i in range(len(holiday_months)):
+        calendar[f"{holiday_months[i]}/{holiday_days[i]}"] = 8
+
+    return calendar
