@@ -10,7 +10,7 @@ class Pump(BaseNode):
         super().__init__(u_name, rmd)
         self.qty = None
         self.pump_data_structures = []
-
+        self.output_data = None
         # data elements with children
         self.output_validation_points = []
 
@@ -34,6 +34,7 @@ class Pump(BaseNode):
         self.qty = int(self.try_float(self.keyword_value_pairs.get("NUMBER")))
         requests = self.get_output_requests()
         output_data = self.get_output_data(requests)
+        self.output_data = self.get_output_data(requests)
         self.loop_or_piping = [None] * self.qty
         self.speed_control = [None] * self.qty
         self.is_flow_sized_based_on_design_day = [None] * self.qty

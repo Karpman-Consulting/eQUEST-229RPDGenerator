@@ -1,6 +1,5 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
 
-
 # noinspection PyUnresolvedReferences
 class CirculationLoop(BaseNode):
     """CirculationLoop object in the tree."""
@@ -142,6 +141,13 @@ class CirculationLoop(BaseNode):
         if self.circulation_loop_type == "ServiceWaterPiping":
             # None of the data elements for ServiceWaterPiping can be populated from model inputs or outputs
             pass
+
+        # Populate pump_power_per_flow_rate (produces W/GPM, may need to convert to W/L*S for schema)
+        if pump_name is not None:
+            pump_pd = self.rmd.bdl_obj_instances.get(pump_name)
+            output_data = pump_pd.output_data
+            self.pump_power_per_flow_rate = output_data["Pump - Power (kW)"] / output_data[
+                "Pump - Flow (gal/min)"] * 1000
 
     def populate_data_group(self):
         """Populate schema structure for circulation loop object."""
@@ -414,3 +420,4 @@ class CirculationLoop(BaseNode):
 
     def populate_service_water_piping(self):
         pass
+
