@@ -62,6 +62,7 @@ class Door(ChildNode):
 
         self.classification = "DOOR"
 
+
     def populate_data_group(self):
         """Populate schema structure for door object."""
         self.door_data_structure = {
