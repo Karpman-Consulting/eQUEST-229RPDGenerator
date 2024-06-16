@@ -16,19 +16,19 @@ class Door(ChildNode):
         self.subclassification = None
         self.is_operable = None
         self.has_open_sensor = None
-        self.framing_type = None
-        self.glazed_area = None
-        self.opaque_area = None
+        self.framing_type = Wood
+        self.glazed_area = 5
+        self.opaque_area = 20
         self.u_factor = None
         self.dynamic_glazing_type = None
         self.solar_heat_gain_coefficient = None
-        self.maximum_solar_heat_gain_coefficient = None
+        self.maximum_solar_heat_gain_coefficient = 0.39
         self.visible_transmittance = None
         self.minimum_visible_transmittance = None
         self.depth_of_overhang = None
         self.has_shading_overhang = None
-        self.has_shading_sidefins = None
-        self.has_manual_interior_shades = None
+        self.has_shading_sidefins = True
+        self.has_manual_interior_shades = True
         self.solar_transmittance_multiplier_summer = None
         self.solar_transmittance_multiplier_winter = None
         self.has_automatic_shades = None
@@ -39,6 +39,27 @@ class Door(ChildNode):
 
     def populate_data_elements(self):
         """Populate data elements for door object."""
+        height = self.try_float(self.keyword_value_pairs.get("HEIGHT"))
+        width = self.try_float(self.keyword_value_pairs.get("WIDTH"))
+        if height is not None and width is not None:
+            self.opaque_area = height * width
+
+        if not self.parent.keyword_value_pairs.get("GLAZED_AREA") != 0:
+            self.classification = "GLASS DOOR"
+        else:
+            self.classification = "OPAQUE DOOR"
+
+        glass_type_name = self.keyword_value_pairs.get("GLASS-TYPE")
+        glass_type = self.rmd.bdl_obj_instances.get(glass_type_name)
+
+        if glass_type is not None:
+            self.u_factor = glass_type.u_factor
+            self.solar_heat_gain_coefficient = glass_type.shading_coefficient / 1.15
+            self.visible_transmittance = glass_type.visible_transmittance
+
+        if glass_type is None:
+            self.opaque_area = height * width
+
         self.classification = "DOOR"
 
     def populate_data_group(self):
