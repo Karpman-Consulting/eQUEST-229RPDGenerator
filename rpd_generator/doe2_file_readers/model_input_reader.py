@@ -52,6 +52,7 @@ class ModelInputReader:
             record_data_for = False
 
             for line in bdl_file:
+
                 if "JJHirsch DOE-2 Version:" in line:
                     doe2_version = line.split(":")[1].split()[0].strip()
                     continue
@@ -61,15 +62,14 @@ class ModelInputReader:
 
                 if '" = ' in line:
                     unique_name, command = self._parse_command_line(line)
+                if '" = ' in line or "$LIBRARY-ENTRY" in line:
+                    unique_name, command = (
+                        self._parse_command_line(line) if '" = ' in line else self._parse_library_entry(line))
                     if command in self.bdl_command_dict:
-                        # start a command_dict with unique_name
                         command_dict = {"unique_name": unique_name}
                         self._track_current_parents(command, command_dict)
-                        # add parent to the command_dict if applicable
                         command_dict = self._set_parent(command, command_dict)
-                        if command not in file_commands:
-                            file_commands[command] = [command_dict]
-                        else:
+                        if command_dict not in file_commands.setdefault(command, []):
                             file_commands[command].append(command_dict)
                         active_command_dict = command_dict
                     continue
@@ -97,7 +97,6 @@ class ModelInputReader:
                     and " = " in line
                     and active_command_dict is not None
                 ):
-                    # TODO add pint units to the values
                     keyword, value, units = self._parse_definition_line(line)
 
                     if keyword in active_command_dict and isinstance(
@@ -160,6 +159,18 @@ class ModelInputReader:
         parts = line.split('" = ')
         unique_name = parts[0].strip().split('"')[1]
         command = parts[1].strip()
+        return unique_name, command
+
+    @staticmethod
+    def _parse_library_entry(line):
+        """
+        Parse the line to extract unique name and command.
+
+        :param line: Line to be parsed.
+        :return: tuple: Unique name and command extracted from the line.
+        """
+        unique_name = line[28:60].strip()
+        command = line[60:76].strip()
         return unique_name, command
 
     @staticmethod
