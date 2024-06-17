@@ -41,8 +41,6 @@ class Door(ChildNode):
         """Populate data elements for door object."""
         height = self.try_float(self.keyword_value_pairs.get("HEIGHT"))
         width = self.try_float(self.keyword_value_pairs.get("WIDTH"))
-        if height is not None and width is not None:
-            self.opaque_area = height * width
 
         if not self.parent.keyword_value_pairs.get("GLAZED_AREA") != 0:
             self.classification = "GLASS DOOR"
@@ -58,7 +56,9 @@ class Door(ChildNode):
             self.visible_transmittance = glass_type.visible_transmittance
 
         if glass_type is None:
-            self.opaque_area = height * width
+            if height is not None and width is not None:
+                self.opaque_area = height * width
+
 
         self.classification = "DOOR"
 
@@ -101,3 +101,5 @@ class Door(ChildNode):
         """Insert window object into the rpd data structure."""
         surface = rmd.bdl_obj_instances.get(self.parent.u_name)
         surface.subsurfaces.append(self.door_data_structure)
+
+
