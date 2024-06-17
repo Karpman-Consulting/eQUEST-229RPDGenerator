@@ -94,6 +94,7 @@ class Door(ChildNode):
 
 
 
+
         # Iterate over the no_children_attributes list and populate if the value is not None
         for attr in no_children_attributes:
             value = getattr(self, attr, None)
