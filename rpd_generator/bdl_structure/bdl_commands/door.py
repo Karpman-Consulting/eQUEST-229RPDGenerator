@@ -69,6 +69,7 @@ class Door(ChildNode):
             "id": self.u_name,
         }
 
+
         no_children_attributes = [
             "reporting_name",
             "notes",
