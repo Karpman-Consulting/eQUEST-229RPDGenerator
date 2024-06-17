@@ -62,7 +62,10 @@ class ModelInputReader:
 
                 if '" = ' in line or "$LIBRARY-ENTRY" in line:
                     unique_name, command = (
-                        self._parse_command_line(line) if '" = ' in line else self._parse_library_entry(line))
+                        self._parse_command_line(line)
+                        if '" = ' in line
+                        else self._parse_library_entry(line)
+                    )
                     if command in self.bdl_command_dict:
                         command_dict = {"unique_name": unique_name}
                         self._track_current_parents(command, command_dict)
