@@ -60,8 +60,6 @@ class ModelInputReader:
                 if record_data_for and line[0] != "-":
                     record_data_for = False
 
-                if '" = ' in line:
-                    unique_name, command = self._parse_command_line(line)
                 if '" = ' in line or "$LIBRARY-ENTRY" in line:
                     unique_name, command = (
                         self._parse_command_line(line) if '" = ' in line else self._parse_library_entry(line))
