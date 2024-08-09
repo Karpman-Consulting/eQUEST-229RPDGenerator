@@ -8,7 +8,8 @@ class InteriorWall(
     """InteriorWall object in the tree."""
 
     bdl_command = "INTERIOR-WALL"
-    used_constructions = []
+    CEILING_TILT_THRESHOLD = 60
+    FLOOR_TILT_THRESHOLD = 120
 
     int_wall_type_map = {
         "STANDARD": "INTERIOR",
@@ -58,6 +59,12 @@ class InteriorWall(
                 self.area = height * width
 
         self.tilt = self.try_float(self.keyword_value_pairs.get("TILT"))
+        if self.tilt is not None and self.tilt < self.CEILING_TILT_THRESHOLD:
+            self.classification = "CEILING"
+        elif self.tilt is not None and self.tilt >= self.FLOOR_TILT_THRESHOLD:
+            self.classification = "FLOOR"
+        else:
+            self.classification = "WALL"
 
         self.azimuth = self.try_float(self.keyword_value_pairs.get("AZIMUTH"))
 
