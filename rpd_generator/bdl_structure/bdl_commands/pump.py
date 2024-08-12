@@ -31,7 +31,7 @@ class Pump(BaseNode):
 
     def populate_data_elements(self):
         """Populate the schema data elements for the pump object."""
-        self.qty = int(self.try_float(self.keyword_value_pairs.get("NUMBER")))
+        self.qty = self.try_int(self.try_float(self.keyword_value_pairs.get("NUMBER")))
         requests = self.get_output_requests()
         output_data = self.get_output_data(requests)
         self.loop_or_piping = [None] * self.qty
