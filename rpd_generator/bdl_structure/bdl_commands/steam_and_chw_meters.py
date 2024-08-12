@@ -7,6 +7,7 @@ OTHER = "OTHER"
 
 class SteamMeter(BaseNode):
     """Steam Meter object in the tree."""
+
     bdl_command = "STEAM-METER"
 
     def __init__(self, u_name, rmd):
@@ -54,6 +55,7 @@ class SteamMeter(BaseNode):
 
 class CHWMeter(BaseNode):
     """Chiled Water Meter object in the tree."""
+
     bdl_command = "CHW-METER"
 
     def __init__(self, u_name, rmd):

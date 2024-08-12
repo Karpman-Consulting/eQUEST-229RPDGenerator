@@ -32,4 +32,3 @@ class ElecMeter(BaseDefinition):
 
     def __repr__(self):
         return f"ElecMeter(u_name='{self.u_name}')"
-
