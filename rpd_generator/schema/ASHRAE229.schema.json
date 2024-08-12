@@ -95,7 +95,7 @@
                 },
                 "type": {
                     "description": "Describes the current ruleset model description for rulesets with multiple simulation models",
-                    "oneOf": [
+                    "anyOf": [
                         {
                             "$ref": "Enumerations2019ASHRAE901.schema.json#/definitions/RulesetModelOptions2019ASHRAE901"
                         },
@@ -1919,7 +1919,12 @@
                     "description": "Elevator lighting multiplier schedule name",
                     "type": "string",
                     "notes": "If the schedule is not present, the multiplier is always one. Constraint to use when implemented :Schedule:"
-                }
+                },
+				"number_of_floors_served": {
+					"description": "Number of floors served by the elevator",
+                    "type": "number",
+					"notes": "ADDED MANUALLY TO MEET SCHEMA REQUIREMENT FOR TESTING"
+				}
             },
             "required": [
                 "id"
@@ -3304,12 +3309,14 @@
         "TemperatureResetOptions": {
             "type": "string",
             "enum": [
+                "CONSTANT",
                 "NO_RESET",
                 "OUTSIDE_AIR_RESET",
                 "LOAD_RESET",
                 "OTHER"
             ],
             "descriptions": [
+				"Constant",
                 "No Reset",
                 "Outside air reset",
                 "Load Reset",

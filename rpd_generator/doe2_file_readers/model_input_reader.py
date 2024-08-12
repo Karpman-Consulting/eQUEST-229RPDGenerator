@@ -29,9 +29,10 @@ def _get_bdl_commands_for_rpd() -> dict:
 class ModelInputReader:
     """Model input reader class."""
 
-    bdl_command_dict = _get_bdl_commands_for_rpd()
+    bdl_command_dict = None
 
     def __init__(self):
+        ModelInputReader.bdl_command_dict = _get_bdl_commands_for_rpd()
         self.current_parent_floor = None
         self.current_parent_space = None
         self.current_parent = None
@@ -195,6 +196,7 @@ class ModelInputReader:
         :param command_dict:
         :return: None
         """
+        # plain parents are parents that cannot have grandchildren
         plain_parent_commands = ["SYSTEM", "EXTERIOR-WALL", "INTERIOR-WALL"]
         if command == "FLOOR":
             self.current_parent_floor = command_dict["unique_name"]

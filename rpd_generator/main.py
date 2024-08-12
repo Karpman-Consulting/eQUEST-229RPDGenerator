@@ -4,10 +4,11 @@ from rpd_generator.ruleset_project_description import RulesetProjectDescription
 from rpd_generator.ruleset_model_description import RulesetModelDescription
 from rpd_generator.building_segment import BuildingSegment
 from rpd_generator.building import Building
-from rpd_generator.doe2_file_readers import model_input_reader
+from rpd_generator.doe2_file_readers.model_input_reader import ModelInputReader
 from rpd_generator.bdl_structure import *
 from rpd_generator.config import Config
 from rpd_generator.utilities import validate_configuration
+from rpd_generator.schema.schema_enums import SchemaEnums
 
 
 """Once development is complete, this can be replaced with a list of all bdl_command attribute values from classes that 
@@ -23,14 +24,14 @@ COMMAND_PROCESSING_ORDER = [
     "CHW-METER",  # Meters must populate before Systems, Boilers, DW-Heaters, Chillers
     "FIXED-SHADE",
     "GLASS-TYPE",
-    "MATERIAL",  # Materials must populate before Layers
+    "MATERIAL",  # Materials must populate before Layers, Constructions
     "LAYERS",  # Layers must populate before Constructions
-    "CONSTRUCTION",  # Constructions must populate before Exterior-Walls, Interior-Walls, Underground-Walls, and Doors
+    "CONSTRUCTION",  # Constructions must populate before Exterior-Walls, Interior-Walls, Underground-Walls, Doors
     "HOLIDAYS",
     "DAY-SCHEDULE-PD",
     "WEEK-SCHEDULE-PD",
     "SCHEDULE-PD",
-    "PUMP",  # Pumps must populate before Boiler, Chiller, Heat-Rejection, and Circulation-Loop
+    "PUMP",  # Pumps must populate before Boiler, Chiller, Heat-Rejection, Circulation-Loop
     "CIRCULATION-LOOP",  # Circulation loops must populate before Boiler, Chiller, DWHeater, Heat-Rejection
     "BOILER",
     "CHILLER",
@@ -40,8 +41,8 @@ COMMAND_PROCESSING_ORDER = [
     "SYSTEM",  # Systems must populate before Zones
     "ZONE",  # Zones must populate before Spaces
     "SPACE",  # Spaces must populate before Surfaces
-    "EXTERIOR-WALL",  # Exterior walls must populate before Windows and Doors
-    "INTERIOR-WALL",  # Interior walls must populate before Windows and Doors
+    "EXTERIOR-WALL",  # Exterior walls must populate before Windows, Doors
+    "INTERIOR-WALL",  # Interior walls must populate before Windows, Doors
     "UNDERGROUND-WALL",
     "WINDOW",
     "DOOR",
@@ -52,15 +53,15 @@ def generate_rpd_json(selected_models: list):
     """
     Generate the RMDs, use Default Building and Building Segment, and write to JSON without GUI inputs
     """
-    rmds, json_file_path = generate_rmds(selected_models)
-    rpd, json_file_path = generate_rpd(rmds, json_file_path)
+    rpd, json_file_path = generate_rpd(selected_models)
     write_rpd_json(rpd, json_file_path)
 
 
-def generate_rmds(selected_models: list):
+def generate_rmds(bdl_input_reader: ModelInputReader, selected_models: list):
     """
     Generate the RMD data structures (RulesetModelDescription, Building, BuildingSegment, and all BDL object instances
     from the ModelInputReader) for each selected model.
+    :param bdl_input_reader: ModelInputReader instance
     :param selected_models: List of selected models
 
     """
@@ -91,7 +92,6 @@ def generate_rmds(selected_models: list):
         rmd.bdl_obj_instances["Default Building Segment"] = default_building_segment
 
         # get all BDL commands from the BDL input file
-        bdl_input_reader = model_input_reader.ModelInputReader()
         model_input_data = bdl_input_reader.read_input_bdl_file(
             str(model_path)
         )  # Convert Path to string
@@ -123,9 +123,13 @@ def generate_rmds(selected_models: list):
     return rmds, str(json_file_path)
 
 
-def generate_rpd(rmds, json_file_path):
+def generate_rpd(selected_models: list):
+    bdl_input_reader = ModelInputReader()
+    RulesetProjectDescription.bdl_command_dict = bdl_input_reader.bdl_command_dict
     rpd = RulesetProjectDescription()
+    rmds, json_file_path = generate_rmds(bdl_input_reader, selected_models)
     for rmd in rmds:
+        # Give each rmd access to the rpd object through bdl_obj_instances
         rmd.bdl_obj_instances["ASHRAE 229"] = rpd
 
         # Once all objects have been created, populate data elements
@@ -216,9 +220,10 @@ def _process_command_group(
 
 # Run functions directly from BDL file, bypass GUI and processing of inp
 # validate_configuration.find_equest_installation()
-#
+# Config.set_active_ruleset("ASHRAE 90.1-2019")
+# SchemaEnums.update_schema_enum(Config.ACTIVE_RULESET)
 # generate_rpd_json(
 #     [
-#         r"C:\Users\chris\Karpman Consulting Dropbox\Christina LaPerle\DOE Infrastructure Bill\Tasks\Task 2.0 - RPD Gen\2.1 eQUEST\02 Testing\229P Test Models\229P Test Case 1 PSZHP\APP TEST FILES\229 Test Case 1 PSZHP_temp.BDL"
+#         r"C:\Users\JacksonJarboe\Documents\Development\DOE2-229RPDGenerator\test\example\FC Test Case.BDL"
 #     ]
 # )
