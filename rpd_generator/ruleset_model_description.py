@@ -1,6 +1,6 @@
 class RulesetModelDescription:
     """
-    This class is used to describe an RMD
+    This class is used to represent the RulesetModelDescription object in the 229 schema.
     """
 
     def __init__(self, obj_id):
@@ -19,8 +19,6 @@ class RulesetModelDescription:
         self.transformers = []
         self.buildings = []
         self.schedules = []
-        self.constructions = []
-        self.materials = []
         self.fluid_loops = []
         self.service_water_heating_distribution_systems = []
         self.service_water_heating_equipment = []
@@ -38,11 +36,39 @@ class RulesetModelDescription:
         self.type = None
         self.is_measured_infiltration_based_on_test = None
 
-        # store all schedules for various assignments. Only assigned schedules will be used
-        self.schedule_storage = []
+        # output data elements
+        self.output_id = None
+        self.output_reporting_name = None
+        self.output_notes = None
+        self.output_instance = {}
+        self.output_performance_cost_index = None
+        self.output_baseline_building_unregulated_energy_cost = None
+        self.output_baseline_building_regulated_energy_cost = None
+        self.output_baseline_building_performance_energy_cost = None
+        self.output_total_area_weighted_building_performance_factor = None
+        self.output_performance_cost_index_target = None
+        self.output_total_proposed_building_energy_cost_including_renewable_energy = (
+            None
+        )
+        self.output_total_proposed_building_energy_cost_excluding_renewable_energy = (
+            None
+        )
+        self.output_percent_renewable_energy_savings = None
 
-        # store all constructions for various assignments. Only assigned constructions will be used
-        self.construction_storage = []
+        # output instance data elements
+        self.output_instance_id = None
+        self.output_instance_reporting_name = None
+        self.output_instance_notes = None
+        self.output_instance_ruleset_model_type = None
+        self.output_instance_rotation_angle = None
+        self.output_instance_unmet_load_hours = None
+        self.output_instance_unmet_load_hours_heating = None
+        self.output_instance_unmet_occupied_load_hours_heating = None
+        self.output_instance_unmet_load_hours_cooling = None
+        self.output_instance_unmet_occupied_load_hours_cooling = None
+        self.output_instance_annual_source_results = None
+        self.output_instance_building_peak_cooling_load = None
+        self.output_instance_annual_end_use_results = None
 
     def populate_data_group(self):
         """Populate the RMD data structure."""
@@ -50,8 +76,6 @@ class RulesetModelDescription:
             "id": self.obj_id,
             "buildings": self.buildings,
             "schedules": self.schedules,
-            "constructions": self.constructions,
-            "materials": self.materials,
             "fluid_loops": self.fluid_loops,
             "service_water_heating_distribution_systems": self.service_water_heating_distribution_systems,
             "service_water_heating_equipment": self.service_water_heating_equipment,
@@ -64,5 +88,5 @@ class RulesetModelDescription:
         }
 
     def insert_to_rpd(self, rpd):
-        """Insert RMD object into the rpd data structure."""
+        """Insert RMD object into the RPD data structure."""
         rpd.ruleset_model_descriptions.append(self.rmd_data_structure)

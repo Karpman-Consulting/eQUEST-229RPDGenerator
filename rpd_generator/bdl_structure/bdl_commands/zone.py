@@ -153,15 +153,11 @@ class Zone(ChildNode):
 
         requests = self.get_output_requests()
         output_data = self.get_output_data(requests)
-        supply_airflow = self.try_float(
-            output_data.get(
-                "HVAC Systems - Design Parameters - Zone Design Data - General - Supply Airflow"
-            )
+        supply_airflow = output_data.get(
+            "HVAC Systems - Design Parameters - Zone Design Data - General - Supply Airflow"
         )
-        minimum_airflow_ratio = self.try_float(
-            output_data.get(
-                "HVAC Systems - Design Parameters - Zone Design Data - General - Minimum Airflow Ratio"
-            )
+        minimum_airflow_ratio = output_data.get(
+            "HVAC Systems - Design Parameters - Zone Design Data - General - Minimum Airflow Ratio"
         )
 
         # Populate MainTerminal data elements
@@ -176,20 +172,14 @@ class Zone(ChildNode):
         self.terminals_primary_airflow[0] = supply_airflow
         if supply_airflow is not None and minimum_airflow_ratio is not None:
             self.terminals_minimum_airflow[0] = supply_airflow * minimum_airflow_ratio
-        self.terminals_minimum_outdoor_airflow[0] = self.try_float(
-            output_data.get(
-                "HVAC Systems - Design Parameters - Zone Design Data - General - Outside Airflow"
-            )
+        self.terminals_minimum_outdoor_airflow[0] = output_data.get(
+            "HVAC Systems - Design Parameters - Zone Design Data - General - Outside Airflow"
         )
-        self.terminals_heating_capacity[0] = self.try_float(
-            output_data.get(
-                "HVAC Systems - Design Parameters - Zone Design Data - General - Heating Capacity"
-            )
+        self.terminals_heating_capacity[0] = output_data.get(
+            "HVAC Systems - Design Parameters - Zone Design Data - General - Heating Capacity"
         )
-        self.terminals_cooling_capacity[0] = self.try_float(
-            output_data.get(
-                "HVAC Systems - Design Parameters - Zone Design Data - General - Cooling Capacity"
-            )
+        self.terminals_cooling_capacity[0] = output_data.get(
+            "HVAC Systems - Design Parameters - Zone Design Data - General - Cooling Capacity"
         )
         exhaust_airflow = self.try_float(self.keyword_value_pairs.get("EXHAUST-FLOW"))
 
@@ -214,10 +204,11 @@ class Zone(ChildNode):
         # Populate DOAS Terminal data elements if applicable
         if self.keyword_value_pairs.get("DOA-SYSTEM") is not None:
             self.terminals_id[2] = self.u_name + " DOAS Terminal"
-            # noinspection PyTypeChecker
-            self.terminals_heating_capacity[2] = 0.0
-            # noinspection PyTypeChecker
-            self.terminals_cooling_capacity[2] = 0.0
+            if self.parent.fan_sys_fan_control == "CONSTANT":
+                self.terminals_type = "CONSTANT_AIR_VOLUME"
+            elif self.keyword_value_pairs.get("MIN-FLOW-RATIO") == 1:
+                self.terminals_type = "CONSTANT_AIR_VOLUME"
+            # elif self.keyword_value_pairs.get("MIN-FLOW-SCH") is None and self.keyword_value_pairs.get("MIN-FLOW/AREA")
 
         # Only populate MainTerminal Fan data elements here if the zone TERMINAL-TYPE is SERIES-PIU or PARALLEL-PIU
         if is_piu:
@@ -232,10 +223,8 @@ class Zone(ChildNode):
 
             self.terminal_fan_specification_method = "SIMPLE"
 
-            self.terminal_fan_design_electric_power = self.try_float(
-                output_data.get(
-                    "HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Fan kW"
-                )
+            self.terminal_fan_design_electric_power = output_data.get(
+                "HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Fan kW"
             )
 
         # Only populate MainTerminal Fan data elements here if the parent system type is FC with HW or no heat
@@ -243,16 +232,12 @@ class Zone(ChildNode):
 
             self.terminal_fan_id = self.u_name + " MainTerminal Fan"
 
-            self.terminal_fan_design_airflow = self.try_float(
-                output_data.get(
-                    "HVAC Systems - Design Parameters - Zone Design Data - General - Supply Airflow"
-                )
+            self.terminal_fan_design_airflow = output_data.get(
+                "HVAC Systems - Design Parameters - Zone Design Data - General - Supply Airflow"
             )
 
-            self.terminal_fan_design_electric_power = self.try_float(
-                output_data.get(
-                    "HVAC Systems - Design Parameters - Zone Design Data - General - Zone Fan Power"
-                )
+            self.terminal_fan_design_electric_power = output_data.get(
+                "HVAC Systems - Design Parameters - Zone Design Data - General - Zone Fan Power"
             )
 
             self.terminal_fan_specification_method = "SIMPLE"

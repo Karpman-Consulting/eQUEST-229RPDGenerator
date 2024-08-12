@@ -72,7 +72,7 @@ class Holidays(BaseDefinition):
         elif Schedule.holiday_type == "ALTERNATE":
             Schedule.holiday_months = self.keyword_value_pairs.get("MONTHS")
             Schedule.holiday_days = self.keyword_value_pairs.get("DAYS")
-            calendar = schedule_funcs.alternate_holidays(
+            calendar = schedule_funcs.get_alternate_holidays(
                 calendar, Schedule.holiday_months, Schedule.holiday_days
             )
 

@@ -1,5 +1,4 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
-from rpd_generator.utilities import schedule_funcs
 
 
 class Schedule(BaseNode):
@@ -41,43 +40,44 @@ class Schedule(BaseNode):
 
     def populate_data_elements(self):
 
-        # POPULATE HOURLY_VALUES
         # Get the type of schedule
         ann_sch_type = self.keyword_value_pairs.get("TYPE")
 
         # There are no hourly values for temperature and ratio reset schedules so ignore those types
-        if ann_sch_type in Schedule.supported_hourly_schedules:
-            proj_calendar = Schedule.annual_calendar
-            # Get the month/day pair change points where a different week schedule begins
+        if ann_sch_type in self.supported_hourly_schedules:
+            proj_calendar = self.annual_calendar
+
+            # Get the month value where a new week-schedule begins
             ann_months = (
                 self.keyword_value_pairs.get("MONTH")
                 if isinstance(self.keyword_value_pairs.get("MONTH"), list)
                 else [self.keyword_value_pairs.get("MONTH")]
             )
+            ann_months = [int(float(val)) for val in ann_months]
+
+            # Get the day value where a new week-schedule begins
             ann_days = (
                 self.keyword_value_pairs.get("DAY")
                 if isinstance(self.keyword_value_pairs.get("DAY"), list)
                 else [self.keyword_value_pairs.get("DAY")]
             )
-            ann_months = [int(float(val)) for val in ann_months]
             ann_days = [int(float(val)) for val in ann_days]
-            # Get the week schedule associated with each month/day pair
+
             week_schedules = [self.keyword_value_pairs.get("WEEK-SCHEDULES")]
-            # Create a list of "Mo/Day" from the calendar
-            list_of_dates = list(proj_calendar.keys())
+
             # Create a list to hold the index where there is a change in week schedule based on mo/day in ann sch
-            schedule_change_dates = [
-                list_of_dates.index(f"{ann_months[i]}/{ann_days[i]}") + 1
+            schedule_change_indices = [
+                list(proj_calendar.keys()).index(f"{ann_months[i]}/{ann_days[i]}") + 1
                 for i in range(len(ann_months))
             ]
 
-            # Loop through each day of the year in the calendar. Depending on the day type extend the hourly schedule list object
-            # for each day so that the result is a list with the hourly schedule value for the whole year.
+            # Loop through each day of the year in the calendar. Extend the hourly schedule values based on the day type
+            # result is an 8760 list with the hourly schedule value for the whole year.
             wk_sch_index = 0
             hourly_values = []
             for day_index, day_type in enumerate(proj_calendar.values()):
                 # Check if the index is a change point. If so, continue to the next weekly schedule index
-                if day_index in schedule_change_dates and day_index != self.LAST_DAY:
+                if day_index in schedule_change_indices and day_index != self.LAST_DAY:
                     wk_sch_index += 1
 
                 wk_schedule_pd = self.rmd.bdl_obj_instances[

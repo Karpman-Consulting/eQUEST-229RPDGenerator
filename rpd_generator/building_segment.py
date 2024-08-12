@@ -1,6 +1,6 @@
 class BuildingSegment:
     """
-    This class is used to describe a building segment
+    This class is used to represent the BuildingSegment object in the 229 schema.
     """
 
     def __init__(self, obj_id, parent_building):
