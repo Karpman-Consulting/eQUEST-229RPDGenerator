@@ -168,7 +168,7 @@ def get_official_us_holidays(calendar: dict) -> dict:
     return calendar
 
 
-def alternate_holidays(
+def get_alternate_holidays(
     calendar: dict, holiday_months: list, holiday_days: list
 ) -> dict:
     """
