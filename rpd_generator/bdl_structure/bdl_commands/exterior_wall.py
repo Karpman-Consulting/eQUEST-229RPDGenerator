@@ -6,7 +6,8 @@ class ExteriorWall(ChildNode, ParentNode):
     """ExteriorWall object in the tree."""
 
     bdl_command = "EXTERIOR-WALL"
-    used_constructions = []
+    CEILING_TILT_THRESHOLD = 60
+    FLOOR_TILT_THRESHOLD = 120
 
     def __init__(self, u_name, parent, rmd):
         super().__init__(u_name, parent, rmd)
@@ -33,7 +34,6 @@ class ExteriorWall(ChildNode, ParentNode):
 
     def populate_data_elements(self):
         """Populate data elements for exterior wall object."""
-
         self.area = self.try_float(self.keyword_value_pairs.get("AREA"))
         if self.area is None:
             height = self.try_float(self.keyword_value_pairs.get("HEIGHT"))
@@ -42,6 +42,12 @@ class ExteriorWall(ChildNode, ParentNode):
                 self.area = height * width
 
         self.tilt = self.try_float(self.keyword_value_pairs.get("TILT"))
+        if self.tilt is not None and self.tilt < self.CEILING_TILT_THRESHOLD:
+            self.classification = "CEILING"
+        elif self.tilt is not None and self.tilt >= self.FLOOR_TILT_THRESHOLD:
+            self.classification = "FLOOR"
+        else:
+            self.classification = "WALL"
 
         self.azimuth = self.try_float(self.keyword_value_pairs.get("AZIMUTH"))
 
