@@ -6,6 +6,7 @@ class ExteriorWall(ChildNode, ParentNode):
     """ExteriorWall object in the tree."""
 
     bdl_command = "EXTERIOR-WALL"
+
     CEILING_TILT_THRESHOLD = 60
     FLOOR_TILT_THRESHOLD = 120
 
@@ -40,7 +41,6 @@ class ExteriorWall(ChildNode, ParentNode):
             width = self.try_float(self.keyword_value_pairs.get("WIDTH"))
             if height is not None and width is not None:
                 self.area = height * width
-
         if self.area is None and self.keyword_value_pairs.get("LOCATION") == "TOP":
             requests = self.get_output_requests()
             output_data = self.get_output_data(requests)

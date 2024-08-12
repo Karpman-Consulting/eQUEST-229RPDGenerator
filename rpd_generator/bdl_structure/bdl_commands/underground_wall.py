@@ -5,6 +5,7 @@ class BelowGradeWall(ChildNode):
     """BelowGradeWall object in the tree."""
 
     bdl_command = "UNDERGROUND-WALL"
+
     CEILING_TILT_THRESHOLD = 60
     FLOOR_TILT_THRESHOLD = 120
 
@@ -39,6 +40,10 @@ class BelowGradeWall(ChildNode):
             width = self.try_float(self.keyword_value_pairs.get("WIDTH"))
             if height is not None and width is not None:
                 self.area = height * width
+        if self.area is None and self.keyword_value_pairs.get("LOCATION") == "TOP":
+            requests = self.get_output_requests()
+            output_data = self.get_output_data(requests)
+            self.area = output_data.get("Roof Area")
 
         self.tilt = self.try_float(self.keyword_value_pairs.get("TILT"))
         if self.tilt is not None and self.tilt < self.CEILING_TILT_THRESHOLD:
@@ -55,6 +60,12 @@ class BelowGradeWall(ChildNode):
         self.does_cast_shade = self.boolean_map.get(
             self.keyword_value_pairs.get("SHADING-SURFACE")
         )
+
+    def get_output_requests(self):
+        requests = {}
+        if self.area is None and self.keyword_value_pairs.get("LOCATION") == "TOP":
+            requests["Roof Area"] = (1105003, "", self.u_name)
+        return requests
 
     def populate_data_group(self):
         """Populate schema structure for below grade wall object."""
