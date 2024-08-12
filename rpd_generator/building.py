@@ -4,7 +4,8 @@ from rpd_generator.bdl_structure.bdl_commands.project import FixedShade
 
 class Building(BaseDefinition):
     """
-    This class is used to describe a building
+    This class is used to describe a building. The building objectis created once per project by default , but more
+    can be created through the user interface.
     """
 
     def __init__(self, u_name, rmd):
