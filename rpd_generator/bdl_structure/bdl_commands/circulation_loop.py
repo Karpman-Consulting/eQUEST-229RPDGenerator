@@ -41,8 +41,8 @@ class CirculationLoop(BaseNode):
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
 
-        # keep track of the type of circulation loop (different from self.type which is the FluidLoop type)
-        self.circulation_loop_type = None
+        # keep track of the type of circulation loop (different from self.type which is the schema data element: FluidLoop.type)
+        self.circulation_loop_type = None  # "ServiceWaterPiping", "ServiceWaterHeatingDistributionSystem", "FluidLoop", or "SecondaryFluidLoop"
 
         # Initialize the data structure for the different types of circulation loops
         self.data_structure = {}
@@ -51,6 +51,7 @@ class CirculationLoop(BaseNode):
         self.cooling_or_condensing_design_and_control = {}
         self.heating_design_and_control = {}
         self.child_loops = []
+
         # FluidLoop data elements with no children
         self.type = None
         self.pump_power_per_flow_rate = None
@@ -129,15 +130,7 @@ class CirculationLoop(BaseNode):
                     self.populate_heat_cool_fluid_loop_design_and_control()
 
         if self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":
-            self.swh_design_supply_temperature = self.try_float(
-                self.keyword_value_pairs.get("DESIGN-HEAT-T")
-            )
-            inlet_t = self.keyword_value_pairs.get("DHW-INLET-T")
-            inlet_t_sch = self.keyword_value_pairs.get("DHW-INLET-T-SCH")
-            if inlet_t is not None or inlet_t_sch is not None:
-                self.is_ground_temperature_used_for_entering_water = False
-            else:
-                self.is_ground_temperature_used_for_entering_water = True
+            self.populate_service_water_heating_distribution_system()
 
         if self.circulation_loop_type == "ServiceWaterPiping":
             # None of the data elements for ServiceWaterPiping can be populated from model inputs or outputs
@@ -145,7 +138,6 @@ class CirculationLoop(BaseNode):
 
     def populate_data_group(self):
         """Populate schema structure for circulation loop object."""
-        self.circulation_loop_type = self.determine_circ_loop_type()
 
         design_and_control_elements = [
             "design_supply_temperature",
@@ -410,7 +402,15 @@ class CirculationLoop(BaseNode):
         )
 
     def populate_service_water_heating_distribution_system(self):
-        pass
+        self.swh_design_supply_temperature = self.try_float(
+            self.keyword_value_pairs.get("DESIGN-HEAT-T")
+        )
+        inlet_t = self.keyword_value_pairs.get("DHW-INLET-T")
+        inlet_t_sch = self.keyword_value_pairs.get("DHW-INLET-T-SCH")
+        if inlet_t is not None or inlet_t_sch is not None:
+            self.is_ground_temperature_used_for_entering_water = False
+        else:
+            self.is_ground_temperature_used_for_entering_water = True
 
     def populate_service_water_piping(self):
         pass
