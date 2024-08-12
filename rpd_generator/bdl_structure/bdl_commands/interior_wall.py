@@ -8,14 +8,15 @@ class InteriorWall(
     """InteriorWall object in the tree."""
 
     bdl_command = "INTERIOR-WALL"
+
     CEILING_TILT_THRESHOLD = 60
     FLOOR_TILT_THRESHOLD = 120
 
     int_wall_type_map = {
         "STANDARD": "INTERIOR",
-        "AIR": "OMIT",  # Ignore air walls and omit the associated RCT Surface if INT-WALL-TYPE = AIR
+        "AIR": "OMIT",  # Omit the associated 229 Surface if INT-WALL-TYPE = AIR
         "ADIABATIC": "IDENTICAL",
-        "INTERNAL": "OMIT",  # Ignore internal walls and omit the associated RCT Surface if INT-WALL-TYPE = INTERNAL
+        "INTERNAL": "OMIT",  # Omit the associated 229 Surface if INT-WALL-TYPE = INTERNAL
     }
 
     def __init__(self, u_name, parent, rmd):
@@ -57,6 +58,10 @@ class InteriorWall(
             width = self.try_float(self.keyword_value_pairs.get("WIDTH"))
             if height is not None and width is not None:
                 self.area = height * width
+        if self.area is None and self.keyword_value_pairs.get("LOCATION") == "TOP":
+            requests = self.get_output_requests()
+            output_data = self.get_output_data(requests)
+            self.area = output_data.get("Roof Area")
 
         self.tilt = self.try_float(self.keyword_value_pairs.get("TILT"))
         if self.tilt is not None and self.tilt < self.CEILING_TILT_THRESHOLD:
@@ -77,6 +82,12 @@ class InteriorWall(
         self.does_cast_shade = self.boolean_map.get(
             self.keyword_value_pairs.get("SHADING-SURFACE")
         )
+
+    def get_output_requests(self):
+        requests = {}
+        if self.area is None and self.keyword_value_pairs.get("LOCATION") == "TOP":
+            requests["Roof Area"] = (1106006, "", self.u_name)
+        return requests
 
     def populate_data_group(self):
         """Populate schema structure for interior wall object."""
