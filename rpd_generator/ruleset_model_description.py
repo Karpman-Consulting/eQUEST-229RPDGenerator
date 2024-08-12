@@ -1,6 +1,6 @@
 class RulesetModelDescription:
     """
-    This class is used to describe an RMD
+    This class is used to represent the RulesetModelDescription object in the 229 schema.
     """
 
     def __init__(self, obj_id):
@@ -64,5 +64,5 @@ class RulesetModelDescription:
         }
 
     def insert_to_rpd(self, rpd):
-        """Insert RMD object into the rpd data structure."""
+        """Insert RMD object into the RPD data structure."""
         rpd.ruleset_model_descriptions.append(self.rmd_data_structure)
