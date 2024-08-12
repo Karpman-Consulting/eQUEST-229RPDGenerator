@@ -42,13 +42,22 @@ class Construction(BaseNode):
             self.material_references if self.material_references else []
         )
 
+        any_detailed_materials = False
         for material_reference in self.material_references:
             material = self.rmd.bdl_obj_instances.get(material_reference)
             if material:
                 self.primary_layers.append(material.material_data_structure)
 
+                if material.material_type == "PROPERTIES":
+                    any_detailed_materials = True
+
+        self.surface_construction_input_option = (
+            "LAYERS" if any_detailed_materials else "SIMPLIFIED"
+        )
+
     def populate_data_group(self):
         """Populate schema structure for construction object."""
+
         self.construction_data_structure = {
             "id": self.u_name,
             "primary_layers": self.primary_layers,
