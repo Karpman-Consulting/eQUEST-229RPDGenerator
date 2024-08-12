@@ -11,6 +11,7 @@ class Material(BaseNode):
         super().__init__(u_name, rmd)
 
         self.material_data_structure = {}
+        self.material_type = None
 
         # data elements with no children
         self.thickness = None
@@ -24,19 +25,23 @@ class Material(BaseNode):
 
     def populate_data_elements(self):
         """Populate data elements for material object."""
-        self.thickness = self.try_float(self.keyword_value_pairs.get("THICKNESS"))
+        self.material_type = self.keyword_value_pairs.get("TYPE")
 
-        self.thermal_conductivity = self.try_float(
-            self.keyword_value_pairs.get("CONDUCTIVITY")
-        )
+        if self.material_type == "PROPERTIES":
+            self.thickness = self.try_float(self.keyword_value_pairs.get("THICKNESS"))
 
-        self.density = self.try_float(self.keyword_value_pairs.get("DENSITY"))
+            self.thermal_conductivity = self.try_float(
+                self.keyword_value_pairs.get("CONDUCTIVITY")
+            )
 
-        self.specific_heat = self.try_float(
-            self.keyword_value_pairs.get("SPECIFIC-HEAT")
-        )
+            self.density = self.try_float(self.keyword_value_pairs.get("DENSITY"))
 
-        self.r_value = self.try_float(self.keyword_value_pairs.get("RESISTANCE"))
+            self.specific_heat = self.try_float(
+                self.keyword_value_pairs.get("SPECIFIC-HEAT")
+            )
+
+        elif self.material_type == "RESISTANCE":
+            self.r_value = self.try_float(self.keyword_value_pairs.get("RESISTANCE"))
 
     def populate_data_group(self):
         """Populate schema structure for material object."""
