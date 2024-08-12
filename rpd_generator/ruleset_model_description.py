@@ -36,7 +36,39 @@ class RulesetModelDescription:
         self.type = None
         self.is_measured_infiltration_based_on_test = None
 
+        # output data elements
+        self.output_id = None
+        self.output_reporting_name = None
+        self.output_notes = None
+        self.output_instance = {}
+        self.output_performance_cost_index = None
+        self.output_baseline_building_unregulated_energy_cost = None
+        self.output_baseline_building_regulated_energy_cost = None
+        self.output_baseline_building_performance_energy_cost = None
+        self.output_total_area_weighted_building_performance_factor = None
+        self.output_performance_cost_index_target = None
+        self.output_total_proposed_building_energy_cost_including_renewable_energy = (
+            None
+        )
+        self.output_total_proposed_building_energy_cost_excluding_renewable_energy = (
+            None
+        )
+        self.output_percent_renewable_energy_savings = None
 
+        # output instance data elements
+        self.output_instance_id = None
+        self.output_instance_reporting_name = None
+        self.output_instance_notes = None
+        self.output_instance_ruleset_model_type = None
+        self.output_instance_rotation_angle = None
+        self.output_instance_unmet_load_hours = None
+        self.output_instance_unmet_load_hours_heating = None
+        self.output_instance_unmet_occupied_load_hours_heating = None
+        self.output_instance_unmet_load_hours_cooling = None
+        self.output_instance_unmet_occupied_load_hours_cooling = None
+        self.output_instance_annual_source_results = None
+        self.output_instance_building_peak_cooling_load = None
+        self.output_instance_annual_end_use_results = None
 
     def populate_data_group(self):
         """Populate the RMD data structure."""
