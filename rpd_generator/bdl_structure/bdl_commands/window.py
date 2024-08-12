@@ -48,9 +48,7 @@ class Window(ChildNode):
                 self.opaque_area = 0
             else:
                 self.opaque_area = 2 * (
-                    frame_width * height
-                    + frame_width * width
-                    + 2 * frame_width**2
+                    frame_width * height + frame_width * width + 2 * frame_width**2
                 )
 
         if self.parent.keyword_value_pairs.get("LOCATION") == "TOP":
