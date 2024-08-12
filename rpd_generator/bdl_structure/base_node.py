@@ -1,7 +1,8 @@
 from itertools import islice
+from pathlib import Path
+
 from rpd_generator.doe2_file_readers.model_output_reader import get_multiple_results
 from rpd_generator.config import Config
-from pathlib import Path
 
 
 class BaseNode:
@@ -112,6 +113,17 @@ class BaseNode:
             return None
 
     @staticmethod
+    def try_int(value):
+        """Attempt to convert a value to an int, returning None if it fails."""
+        if value is None:
+            return None
+        try:
+            return int(value)
+        except (ValueError, TypeError):
+            # TODO log error for future GUI error window
+            return None
+
+    @staticmethod
     def try_access_index(lst: list, index: int):
         """Attempt to access an index in a list, returning None if it fails."""
         if isinstance(lst, list):
@@ -122,6 +134,14 @@ class BaseNode:
                 return None
         else:
             return None
+
+    @staticmethod
+    def try_length(lst: list):
+        """Attempt to get the length of a list, returning 0 if it fails."""
+        if isinstance(lst, list):
+            return len(lst)
+        else:
+            return 0
 
     @staticmethod
     def standardize_dict_values(data: dict, keys: list, n: int):
@@ -137,10 +157,12 @@ class BaseNode:
         dict: The dictionary with standardized values.
         """
         for key in keys:
-            value = data.get(key, [])
-            new_value = value if isinstance(value, list) else [value]
-            new_value = (new_value + ["0"] * n)[:n]
-            data[key] = new_value
+            list_of_values = data.get(key, [])
+            new_list_of_values = (
+                list_of_values if isinstance(list_of_values, list) else [list_of_values]
+            )
+            new_list_of_values = (new_list_of_values + ["0"] * n)[:n]
+            data[key] = new_list_of_values
 
         return data
 
