@@ -41,6 +41,11 @@ class Door(ChildNode):
         """Populate data elements for door object."""
         self.classification = "DOOR"
 
+        height = self.try_float(self.keyword_value_pairs.get("HEIGHT"))
+        width = self.try_float(self.keyword_value_pairs.get("WIDTH"))
+        if height is not None and width is not None:
+            self.opaque_area = height * width
+
     def populate_data_group(self):
         """Populate schema structure for door object."""
         self.door_data_structure = {

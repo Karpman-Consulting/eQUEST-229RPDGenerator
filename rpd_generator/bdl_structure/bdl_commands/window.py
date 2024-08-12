@@ -43,6 +43,15 @@ class Window(ChildNode):
         width = self.try_float(self.keyword_value_pairs.get("WIDTH"))
         if height is not None and width is not None:
             self.glazed_area = height * width
+            frame_width = self.try_float(self.keyword_value_pairs.get("FRAME-WIDTH"))
+            if frame_width is None or frame_width == 0.0:
+                self.opaque_area = 0
+            else:
+                self.opaque_area = 2 * (
+                    frame_width * height
+                    + frame_width * width
+                    + 2 * frame_width**2
+                )
 
         if self.parent.keyword_value_pairs.get("LOCATION") == "TOP":
             self.classification = "SKYLIGHT"
