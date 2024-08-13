@@ -8,6 +8,7 @@ from rpd_generator import main as rpd_generator
 from rpd_generator.doe2_file_readers.bdlcio32 import process_input_file
 from rpd_generator.doe2_file_readers.model_input_reader import ModelInputReader
 from rpd_generator.config import Config
+from rpd_generator.schema.schema_enums import SchemaEnums
 
 
 class MainAppData:
@@ -19,6 +20,8 @@ class MainAppData:
         self.test_inp_path = ctk.StringVar()
 
     def process_inp_to_rpd_json(self):
+        Config.set_active_ruleset("ASHRAE 90.1-2019")
+        SchemaEnums.update_schema_enum(Config.ACTIVE_RULESET)
         reader = ModelInputReader()
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_file_path = reader.prepare_inp(str(self.test_inp_path.get()), temp_dir)
