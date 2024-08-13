@@ -661,6 +661,22 @@ class System(ParentNode):
             "CW-LOOP"
         )
 
+        self.heat_sys_rated_capacity = self.try_float(
+            self.keyword_value_pairs.get("HEATING-CAPACITY")
+        )
+
+        self.heat_sys_is_sized_based_on_design_day = not bool(
+            self.heat_sys_design_capacity
+        )
+
+        self.heat_sys_humidification_type = self.humidification_map.get(
+            self.keyword_value_pairs.get("HUMIDIFIER-TYPE")
+        )
+
+        self.heat_sys_heating_coil_setpoint = self.try_float(
+            self.keyword_value_pairs.get("HEAT-T")
+        )
+
     def populate_cooling_system(self):
         self.cool_sys_id = self.u_name + " CoolSys"
 
@@ -679,11 +695,31 @@ class System(ParentNode):
 
         self.cool_sys_condenser_water_loop = self.keyword_value_pairs.get("CW-LOOP")
 
+        self.cool_sys_rated_total_capacity = self.try_float(
+            self.keyword_value_pairs.get("COOLING-CAPACITY")
+        )
+
+        self.cool_sys_is_sized_based_on_design_day = not bool(
+            self.cool_sys_rated_total_capacity
+        )
+
     def populate_preheat_system(self):
         self.preheat_sys_id = self.u_name + " PreheatSys"
 
         self.preheat_sys_type = self.heat_type_map.get(
             self.keyword_value_pairs.get("PREHEAT-SOURCE")
+        )
+
+        self.preheat_sys_rated_capacity = self.try_float(
+            self.keyword_value_pairs.get("PREHEAT-CAPACITY")
+        )
+
+        self.preheat_sys_is_sized_based_on_design_day = not bool(
+            self.preheat_sys_rated_capacity
+        )
+
+        self.preheat_sys_heating_coil_setpoint = self.try_float(
+            self.keyword_value_pairs.get("PREHEAT-T")
         )
 
     def populate_fans(self, output_data):
@@ -697,6 +733,9 @@ class System(ParentNode):
             FanSpecificationMethodOptions.DETAILED
             if self.keyword_value_pairs.get("SUPPLY-STATIC") is not None
             else FanSpecificationMethodOptions.SIMPLE
+        )
+        self.fan_design_pressure_rise[0] = self.try_float(
+            self.keyword_value_pairs.get("SUPPLY-STATIC")
         )
 
         # Determine if there is a return or relief fan
@@ -721,6 +760,9 @@ class System(ParentNode):
                 if self.keyword_value_pairs.get("RETURN-STATIC") is not None
                 else FanSpecificationMethodOptions.SIMPLE
             )
+            self.fan_design_pressure_rise[2] = self.try_float(
+                self.keyword_value_pairs.get("RETURN-STATIC")
+            )
 
         # If the return or relief fan location is not set to RELIEF, it is categorized as a return fan
         elif return_or_relief:
@@ -734,6 +776,9 @@ class System(ParentNode):
                 FanSpecificationMethodOptions.DETAILED
                 if self.keyword_value_pairs.get("RETURN-STATIC") is not None
                 else FanSpecificationMethodOptions.SIMPLE
+            )
+            self.fan_design_pressure_rise[1] = self.try_float(
+                self.keyword_value_pairs.get("RETURN-STATIC")
             )
 
         if self.keyword_value_pairs.get("DDS-TYPE") == "DUAL-FAN":
@@ -749,6 +794,9 @@ class System(ParentNode):
                 FanSpecificationMethodOptions.DETAILED
                 if self.keyword_value_pairs.get("HSUPPLY-STATIC") is not None
                 else FanSpecificationMethodOptions.SIMPLE
+            )
+            self.fan_design_pressure_rise[3] = self.try_float(
+                self.keyword_value_pairs.get("HSUPPLY-STATIC")
             )
 
     def populate_air_economizer(self):
