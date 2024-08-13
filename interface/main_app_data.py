@@ -27,7 +27,7 @@ class MainAppData:
             temp_file_path = reader.prepare_inp(str(self.test_inp_path.get()), temp_dir)
             self.copy_files_to_temp_dir(temp_dir)
             inp_path = Path(temp_file_path)
-            json_path = inp_path.with_suffix('.json')
+            json_path = inp_path.with_suffix(".json")
             base_name = inp_path.stem
             dir_name = inp_path.parent
 
@@ -65,7 +65,8 @@ class MainAppData:
                 shutil.copy2(os.path.join(model_dir, model_file), temp_dir)
             elif os.path.exists(os.path.join(model_dir, alternate_search_file)):
                 destination_file = os.path.join(temp_dir, model_file)
-                shutil.copy2(os.path.join(model_dir, alternate_search_file), destination_file)
+                shutil.copy2(
+                    os.path.join(model_dir, alternate_search_file), destination_file
+                )
             else:
                 print(f"File {model_file} not found in {model_dir}")
-
