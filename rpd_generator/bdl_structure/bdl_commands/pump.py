@@ -2,7 +2,9 @@ from rpd_generator.bdl_structure.base_node import BaseNode
 from rpd_generator.schema.schema_enums import SchemaEnums
 
 
-PumpSpecificationMethodOptions = SchemaEnums.schema_enums["PumpSpecificationMethodOptions"]
+PumpSpecificationMethodOptions = SchemaEnums.schema_enums[
+    "PumpSpecificationMethodOptions"
+]
 
 
 class Pump(BaseNode):

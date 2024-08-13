@@ -4,8 +4,12 @@ from rpd_generator.schema.schema_enums import SchemaEnums
 
 HeatingSourceOptions = SchemaEnums.schema_enums["HeatingSourceOptions"]
 TerminalOptions = SchemaEnums.schema_enums["TerminalOptions"]
-FanSystemSupplyFanControlOptions = SchemaEnums.schema_enums["FanSystemSupplyFanControlOptions"]
-FanSpecificationMethodOptions = SchemaEnums.schema_enums["FanSpecificationMethodOptions"]
+FanSystemSupplyFanControlOptions = SchemaEnums.schema_enums[
+    "FanSystemSupplyFanControlOptions"
+]
+FanSpecificationMethodOptions = SchemaEnums.schema_enums[
+    "FanSpecificationMethodOptions"
+]
 
 
 class Zone(ChildNode):
@@ -211,7 +215,10 @@ class Zone(ChildNode):
         # Populate DOAS Terminal data elements if applicable
         if self.keyword_value_pairs.get("DOA-SYSTEM") is not None:
             self.terminals_id[2] = self.u_name + " DOAS Terminal"
-            if self.parent.fan_sys_fan_control == FanSystemSupplyFanControlOptions.CONSTANT:
+            if (
+                self.parent.fan_sys_fan_control
+                == FanSystemSupplyFanControlOptions.CONSTANT
+            ):
                 self.terminals_type = TerminalOptions.CONSTANT_AIR_VOLUME
             elif self.keyword_value_pairs.get("MIN-FLOW-RATIO") == 1:
                 self.terminals_type = TerminalOptions.CONSTANT_AIR_VOLUME
@@ -229,7 +236,9 @@ class Zone(ChildNode):
                 )
             )
 
-            self.terminal_fan_specification_method = FanSpecificationMethodOptions.SIMPLE
+            self.terminal_fan_specification_method = (
+                FanSpecificationMethodOptions.SIMPLE
+            )
 
             self.terminal_fan_design_electric_power = output_data.get(
                 "HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Fan kW"
@@ -248,13 +257,17 @@ class Zone(ChildNode):
                 "HVAC Systems - Design Parameters - Zone Design Data - General - Zone Fan Power"
             )
 
-            self.terminal_fan_specification_method = FanSpecificationMethodOptions.SIMPLE
+            self.terminal_fan_specification_method = (
+                FanSpecificationMethodOptions.SIMPLE
+            )
 
         if exhaust_airflow is not None and exhaust_airflow > 0.0:
             self.zone_exhaust_fan_id = self.u_name + " EF"
             self.zone_exhaust_fan_design_airflow = exhaust_airflow
             if self.keyword_value_pairs.get("EXHAUST-STATIC") is not None:
-                self.zone_exhaust_fan_specification_method = FanSpecificationMethodOptions.DETAILED
+                self.zone_exhaust_fan_specification_method = (
+                    FanSpecificationMethodOptions.DETAILED
+                )
                 self.zone_exhaust_fan_design_pressure_rise = self.try_float(
                     self.keyword_value_pairs.get("EXHAUST-STATIC")
                 )
@@ -274,7 +287,9 @@ class Zone(ChildNode):
                     )
                 )
             else:
-                self.zone_exhaust_fan_specification_method = FanSpecificationMethodOptions.SIMPLE
+                self.zone_exhaust_fan_specification_method = (
+                    FanSpecificationMethodOptions.SIMPLE
+                )
                 zone_ef_power_per_flow = self.try_float(
                     self.keyword_value_pairs.get("EXHAUST-KW/FLOW")
                 )

@@ -2,7 +2,9 @@ from rpd_generator.bdl_structure.base_node import BaseNode
 from rpd_generator.schema.schema_enums import SchemaEnums
 
 
-SurfaceConstructionInputOptions = SchemaEnums.schema_enums["SurfaceConstructionInputOptions"]
+SurfaceConstructionInputOptions = SchemaEnums.schema_enums[
+    "SurfaceConstructionInputOptions"
+]
 
 
 class Construction(BaseNode):
@@ -56,7 +58,9 @@ class Construction(BaseNode):
                     any_detailed_materials = True
 
         self.surface_construction_input_option = (
-            SurfaceConstructionInputOptions.LAYERS if any_detailed_materials else SurfaceConstructionInputOptions.SIMPLIFIED
+            SurfaceConstructionInputOptions.LAYERS
+            if any_detailed_materials
+            else SurfaceConstructionInputOptions.SIMPLIFIED
         )
 
         # self.u_factor = self.try_float(self.keyword_value_pairs.get("U-VALUE"))

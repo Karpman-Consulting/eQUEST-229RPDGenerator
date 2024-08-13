@@ -5,7 +5,9 @@ from rpd_generator.schema.schema_enums import SchemaEnums
 HeatRejectionOptions = SchemaEnums.schema_enums["HeatRejectionOptions"]
 HeatRejectionFanOptions = SchemaEnums.schema_enums["HeatRejectionFanOptions"]
 HeatRejectionFluidOptions = SchemaEnums.schema_enums["HeatRejectionFluidOptions"]
-HeatRejectionFanSpeedControlOptions = SchemaEnums.schema_enums["HeatRejectionFanSpeedControlOptions"]
+HeatRejectionFanSpeedControlOptions = SchemaEnums.schema_enums[
+    "HeatRejectionFanSpeedControlOptions"
+]
 
 
 class HeatRejection(BaseNode):

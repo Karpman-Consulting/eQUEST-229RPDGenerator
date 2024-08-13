@@ -4,7 +4,9 @@ from rpd_generator.schema.schema_enums import SchemaEnums
 
 BoilerCombustionOptions = SchemaEnums.schema_enums["BoilerCombustionOptions"]
 EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
-BoilerEfficiencyMetricOptions = SchemaEnums.schema_enums["BoilerEfficiencyMetricOptions"]
+BoilerEfficiencyMetricOptions = SchemaEnums.schema_enums[
+    "BoilerEfficiencyMetricOptions"
+]
 
 
 class Boiler(BaseNode):

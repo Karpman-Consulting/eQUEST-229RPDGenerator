@@ -1,10 +1,18 @@
 from rpd_generator.bdl_structure.child_node import ChildNode
 from rpd_generator.schema.schema_enums import SchemaEnums
 
-SubsurfaceClassificationOptions = SchemaEnums.schema_enums["SubsurfaceClassificationOptions"]
-SubsurfaceSubclassificationOptions2019ASHRAE901 = SchemaEnums.schema_enums["SubsurfaceSubclassificationOptions2019ASHRAE901"]
-SubsurfaceFrameOptions2019ASHRAE901 = SchemaEnums.schema_enums["SubsurfaceFrameOptions2019ASHRAE901"]
-SubsurfaceDynamicGlazingOptions = SchemaEnums.schema_enums["SubsurfaceDynamicGlazingOptions"]
+SubsurfaceClassificationOptions = SchemaEnums.schema_enums[
+    "SubsurfaceClassificationOptions"
+]
+SubsurfaceSubclassificationOptions2019ASHRAE901 = SchemaEnums.schema_enums[
+    "SubsurfaceSubclassificationOptions2019ASHRAE901"
+]
+SubsurfaceFrameOptions2019ASHRAE901 = SchemaEnums.schema_enums[
+    "SubsurfaceFrameOptions2019ASHRAE901"
+]
+SubsurfaceDynamicGlazingOptions = SchemaEnums.schema_enums[
+    "SubsurfaceDynamicGlazingOptions"
+]
 StatusOptions = SchemaEnums.schema_enums["StatusOptions"]
 
 
