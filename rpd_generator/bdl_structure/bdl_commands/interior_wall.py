@@ -4,7 +4,7 @@ from rpd_generator.schema.schema_enums import SchemaEnums
 
 
 SurfaceClassificationOptions = SchemaEnums.schema_enums[
-    "SubsurfaceClassificationOptions"
+    "SurfaceClassificationOptions"
 ]
 SurfaceAdjacencyOptions = SchemaEnums.schema_enums["SurfaceAdjacencyOptions"]
 AdditionalSurfaceAdjacencyOptions2019ASHRAE901 = SchemaEnums.schema_enums[
