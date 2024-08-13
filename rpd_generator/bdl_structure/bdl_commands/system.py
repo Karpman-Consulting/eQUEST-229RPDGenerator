@@ -4,14 +4,24 @@ from rpd_generator.schema.schema_enums import SchemaEnums
 
 HeatingSystemOptions = SchemaEnums.schema_enums["HeatingSystemOptions"]
 CoolingSystemOptions = SchemaEnums.schema_enums["CoolingSystemOptions"]
-FanSystemSupplyFanControlOptions = SchemaEnums.schema_enums["FanSystemSupplyFanControlOptions"]
+FanSystemSupplyFanControlOptions = SchemaEnums.schema_enums[
+    "FanSystemSupplyFanControlOptions"
+]
 FanSystemOperationOptions = SchemaEnums.schema_enums["FanSystemOperationOptions"]
-FanSpecificationMethodOptions = SchemaEnums.schema_enums["FanSpecificationMethodOptions"]
+FanSpecificationMethodOptions = SchemaEnums.schema_enums[
+    "FanSpecificationMethodOptions"
+]
 AirEconomizerOptions = SchemaEnums.schema_enums["AirEconomizerOptions"]
 EnergyRecoveryOptions = SchemaEnums.schema_enums["EnergyRecoveryOptions"]
-EnergyRecoveryOperationOptions = SchemaEnums.schema_enums["EnergyRecoveryOperationOptions"]
-EnergyRecoverySupplyAirTemperatureControlOptions = SchemaEnums.schema_enums["EnergyRecoverySupplyAirTemperatureControlOptions"]
-DemandControlVentilationControlOptions = SchemaEnums.schema_enums["DemandControlVentilationControlOptions"]
+EnergyRecoveryOperationOptions = SchemaEnums.schema_enums[
+    "EnergyRecoveryOperationOptions"
+]
+EnergyRecoverySupplyAirTemperatureControlOptions = SchemaEnums.schema_enums[
+    "EnergyRecoverySupplyAirTemperatureControlOptions"
+]
+DemandControlVentilationControlOptions = SchemaEnums.schema_enums[
+    "DemandControlVentilationControlOptions"
+]
 HumidificationOptions = SchemaEnums.schema_enums["HumidificationOptions"]
 
 
@@ -294,7 +304,10 @@ class System(ParentNode):
         # if the system type is FC with HW or no heat, this system is represented as terminal fan, heating, cooling
         terminal_system_conditions = self.keyword_value_pairs.get(
             "TYPE"
-        ) == "FC" and heat_type in [HeatingSystemOptions.FLUID_LOOP, HeatingSystemOptions.NONE]
+        ) == "FC" and heat_type in [
+            HeatingSystemOptions.FLUID_LOOP,
+            HeatingSystemOptions.NONE,
+        ]
 
         if terminal_system_conditions:
             self.is_terminal = True
@@ -587,7 +600,10 @@ class System(ParentNode):
             ]:
                 fan_dict = getattr(self, fan_dict_name)
                 # append to FanSystem
-                if fan_dict and fan_dict_name in ["cooling_supply_fan", "heating_supply_fan"]:
+                if fan_dict and fan_dict_name in [
+                    "cooling_supply_fan",
+                    "heating_supply_fan",
+                ]:
                     self.fan_sys_supply_fans.append(fan_dict)
                 elif fan_dict and fan_dict_name == "return_fan":
                     self.fan_sys_return_fans.append(fan_dict)
