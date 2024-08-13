@@ -58,7 +58,16 @@ def process_input_file(
             write_nhk_file,
             callback_func_pointer,
         )
+        print("Input file processed to BDL")
     except OSError:
         print("Bypassing OSError from eQUEST installation DLL file")
 
     return
+
+
+# process_input_file(
+#     r"C:\Users\JacksonJarboe\Documents\Development\DOE2-229RPDGenerator\test\BDLCIO32.dll",
+#     r"C:\Users\JacksonJarboe\Documents\eQUEST 3-65-7175 Data\DOE23\\",
+#     r"C:\Users\JacksonJarboe\Documents\Development\DOE2-229RPDGenerator\test\example\\",
+#     "229 Test Case 1 PSZHP.inp",
+# )
