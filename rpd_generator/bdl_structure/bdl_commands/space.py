@@ -103,7 +103,6 @@ class Space(ChildNode, ParentNode):
         self.standardize_dict_values(
             self.keyword_value_pairs,
             ["EQUIPMENT-W/AREA", "EQUIPMENT-KW", "EQUIP-SENSIBLE", "EQUIP-LATENT"],
-            len(space_misc_eq_scheds),
             self.try_length(space_misc_eq_scheds),
         )
 
