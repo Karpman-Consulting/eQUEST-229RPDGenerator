@@ -1,4 +1,28 @@
 from rpd_generator.bdl_structure.parent_node import ParentNode
+from rpd_generator.schema.schema_enums import SchemaEnums
+
+
+HeatingSystemOptions = SchemaEnums.schema_enums["HeatingSystemOptions"]
+CoolingSystemOptions = SchemaEnums.schema_enums["CoolingSystemOptions"]
+FanSystemSupplyFanControlOptions = SchemaEnums.schema_enums[
+    "FanSystemSupplyFanControlOptions"
+]
+FanSystemOperationOptions = SchemaEnums.schema_enums["FanSystemOperationOptions"]
+FanSpecificationMethodOptions = SchemaEnums.schema_enums[
+    "FanSpecificationMethodOptions"
+]
+AirEconomizerOptions = SchemaEnums.schema_enums["AirEconomizerOptions"]
+EnergyRecoveryOptions = SchemaEnums.schema_enums["EnergyRecoveryOptions"]
+EnergyRecoveryOperationOptions = SchemaEnums.schema_enums[
+    "EnergyRecoveryOperationOptions"
+]
+EnergyRecoverySupplyAirTemperatureControlOptions = SchemaEnums.schema_enums[
+    "EnergyRecoverySupplyAirTemperatureControlOptions"
+]
+DemandControlVentilationControlOptions = SchemaEnums.schema_enums[
+    "DemandControlVentilationControlOptions"
+]
+HumidificationOptions = SchemaEnums.schema_enums["HumidificationOptions"]
 
 
 class System(ParentNode):
@@ -7,92 +31,101 @@ class System(ParentNode):
     bdl_command = "SYSTEM"
 
     heat_type_map = {
-        "HEAT-PUMP": "HEAT_PUMP",
-        "FURNACE": "FURNACE",
-        "ELECTRIC": "ELECTRIC_RESISTANCE",
-        "HOT-WATER": "FLUID_LOOP",
-        "NONE": "NONE",
-        "STEAM": "OTHER",
-        "DHW-LOOP": "OTHER",
+        "HEAT-PUMP": HeatingSystemOptions.HEAT_PUMP,
+        "FURNACE": HeatingSystemOptions.FURNACE,
+        "ELECTRIC": HeatingSystemOptions.ELECTRIC_RESISTANCE,
+        "HOT-WATER": HeatingSystemOptions.FLUID_LOOP,
+        "NONE": HeatingSystemOptions.NONE,
+        "STEAM": HeatingSystemOptions.OTHER,
+        "DHW-LOOP": HeatingSystemOptions.OTHER,
     }
     cool_type_map = {
-        "ELEC-DX": "DIRECT_EXPANSION",
-        "CHILLED-WATER": "FLUID_LOOP",
-        "NONE": "NONE",
+        "ELEC-DX": CoolingSystemOptions.DIRECT_EXPANSION,
+        "CHILLED-WATER": CoolingSystemOptions.FLUID_LOOP,
+        "NONE": CoolingSystemOptions.NONE,
     }
     supply_fan_map = {
-        "CONSTANT-VOLUME": "CONSTANT",
-        "SPEED": "VARIABLE_SPEED_DRIVE",
-        #  "": "MULTISPEED",  no eQUEST options map to MULTISPEED in DOE2.3
-        "INLET": "INLET_VANE",
-        "DISCHARGE": "DISCHARGE_DAMPER",
-        "FAN-EIR-FPLR": "VARIABLE_SPEED_DRIVE",
+        "CONSTANT-VOLUME": FanSystemSupplyFanControlOptions.CONSTANT,
+        "SPEED": FanSystemSupplyFanControlOptions.VARIABLE_SPEED_DRIVE,
+        #  "": FanSystemSupplyFanControlOptions.MULTISPEED",  no eQUEST options map to MULTISPEED in DOE2.3
+        "INLET": FanSystemSupplyFanControlOptions.INLET_VANE,
+        "DISCHARGE": FanSystemSupplyFanControlOptions.DISCHARGE_DAMPER,
+        "FAN-EIR-FPLR": FanSystemSupplyFanControlOptions.VARIABLE_SPEED_DRIVE,
     }
     unocc_fan_operation_map = {
-        "CYCLE-ON-ANY": "CYCLING",
-        "CYCLE-ON-FIRST": "CYCLING",
-        "STAY-OFF": "KEEP_OFF",
-        "ZONE-FANS-ONLY": "OTHER",
+        "CYCLE-ON-ANY": FanSystemOperationOptions.CYCLING,
+        "CYCLE-ON-FIRST": FanSystemOperationOptions.CYCLING,
+        "STAY-OFF": FanSystemOperationOptions.KEEP_OFF,
+        "ZONE-FANS-ONLY": FanSystemOperationOptions.OTHER,
     }
     system_cooling_type_map = {
-        "PSZ": "DIRECT_EXPANSION",
-        "PMZS": "DIRECT_EXPANSION",
-        "PVAVS": "DIRECT_EXPANSION",
-        "PVVT": "DIRECT_EXPANSION",
-        "HP": "DIRECT_EXPANSION",  # IS WATER LOOP HEAT PUMP CONSIDERED DIRECT_EXPANSION???
-        "SZRH": "FLUID_LOOP",
-        "VAVS": "FLUID_LOOP",
-        "RHFS": "FLUID_LOOP",
-        "DDS": "FLUID_LOOP",
-        "MZS": "FLUID_LOOP",
+        "PSZ": CoolingSystemOptions.DIRECT_EXPANSION,
+        "PMZS": CoolingSystemOptions.DIRECT_EXPANSION,
+        "PVAVS": CoolingSystemOptions.DIRECT_EXPANSION,
+        "PVVT": CoolingSystemOptions.DIRECT_EXPANSION,
+        "HP": CoolingSystemOptions.DIRECT_EXPANSION,  # IS WATER LOOP HEAT PUMP CONSIDERED DIRECT_EXPANSION???
+        "SZRH": CoolingSystemOptions.FLUID_LOOP,
+        "VAVS": CoolingSystemOptions.FLUID_LOOP,
+        "RHFS": CoolingSystemOptions.FLUID_LOOP,
+        "DDS": CoolingSystemOptions.FLUID_LOOP,
+        "MZS": CoolingSystemOptions.FLUID_LOOP,
         "PIU": None,  # Mapping updated in populate_cooling_system method
-        "FC": "FLUID_LOOP",
-        "IU": "FLUID_LOOP",
-        "UVT": "NONE",
-        "UHT": "NONE",
-        "RESYS2": "DIRECT_EXPANSION",
-        "CBVAV": "FLUID_LOOP",
-        "SUM": "NONE",
+        "FC": CoolingSystemOptions.FLUID_LOOP,
+        "IU": CoolingSystemOptions.FLUID_LOOP,
+        "UVT": CoolingSystemOptions.NONE,
+        "UHT": CoolingSystemOptions.NONE,
+        "RESYS2": CoolingSystemOptions.DIRECT_EXPANSION,
+        "CBVAV": CoolingSystemOptions.FLUID_LOOP,
+        "SUM": CoolingSystemOptions.NONE,
         "DOAS": None,  # Mapping updated in populate_cooling_system method
     }
     economizer_map = {
-        "FIXED": "FIXED_FRACTION",
-        "OA-TEMP": "FIXED_DRY_BULB",
-        "OA-ENTHALPY": "FIXED_ENTHALPY",
-        "DUAL-TEMP": "DIFFERENTIAL_TEMPERATURE",
-        "DUAL-ENTHALPY": "DIFFERENTIAL_ENTHALPY",
+        "FIXED": AirEconomizerOptions.FIXED_FRACTION,
+        "OA-TEMP": AirEconomizerOptions.TEMPERATURE,
+        "OA-ENTHALPY": AirEconomizerOptions.ENTHALPY,
+        "DUAL-TEMP": AirEconomizerOptions.DIFFERENTIAL_TEMPERATURE,
+        "DUAL-ENTHALPY": AirEconomizerOptions.DIFFERENTIAL_ENTHALPY,
     }
     recovery_type_map = {
-        "SENSIBLE-HX": "SENSIBLE_HEAT_EXCHANGE",
-        "ENTHALPY-HX": "ENTHALPY_HEAT_EXCHANGE",
-        "SENSIBLE-WHEEL": "SENSIBLE_HEAT_WHEEL",
-        "ENTHALPY-WHEEL": "ENTHALPY_HEAT_WHEEL",
-        "HEAT-PIPE": "HEAT_PIPE",
+        "SENSIBLE-HX": EnergyRecoveryOptions.SENSIBLE_HEAT_EXCHANGE,
+        "ENTHALPY-HX": EnergyRecoveryOptions.ENTHALPY_HEAT_EXCHANGE,
+        "SENSIBLE-WHEEL": EnergyRecoveryOptions.SENSIBLE_HEAT_WHEEL,
+        "ENTHALPY-WHEEL": EnergyRecoveryOptions.ENTHALPY_HEAT_WHEEL,
+        "HEAT-PIPE": EnergyRecoveryOptions.HEAT_PIPE,
     }
     has_recovery_map = {
-        "NO": "NONE",
+        "NO": EnergyRecoveryOperationOptions.NONE,
         "RELIEF-ONLY": None,  # Mapping updated in populate_air_energy_recovery method
         "EXHAUST-ONLY": None,  # Mapping updated in populate_air_energy_recovery method
         "RELIEF+EXHAUST": None,  # Mapping updated in populate_air_energy_recovery method
         "YES": None,  # Mapping updated in populate_air_energy_recovery method
     }
     er_operation_map = {
-        "WHEN-FANS-ON": "WHEN_FANS_ON",
-        "WHEN-MIN-OA": "WHEN_MINIMUM_OUTSIDE_AIR",
-        "ERV-SCHEDULE": "SCHEDULED",
-        "OA-EXHAUST-DT": "OTHER",
-        "OA-EXHAUST-DH": "OTHER",
+        "WHEN-FANS-ON": EnergyRecoveryOperationOptions.WHEN_FANS_ON,
+        "WHEN-MIN-OA": EnergyRecoveryOperationOptions.WHEN_MINIMUM_OUTSIDE_AIR,
+        "ERV-SCHEDULE": EnergyRecoveryOperationOptions.SCHEDULED,
+        "OA-EXHAUST-DT": EnergyRecoveryOperationOptions.OTHER,
+        "OA-EXHAUST-DH": EnergyRecoveryOperationOptions.OTHER,
     }
     er_sat_control_map = {
-        "FLOAT": "OTHER",
-        "FIXED-SETPT": "FIXED_SETPOINT",
-        "MIXED-AIR-RESET": "MIXED_AIR_RESET",
+        "FLOAT": EnergyRecoverySupplyAirTemperatureControlOptions.OTHER,
+        "FIXED-SETPT": EnergyRecoverySupplyAirTemperatureControlOptions.FIXED_SETPOINT,
+        "MIXED-AIR-RESET": EnergyRecoverySupplyAirTemperatureControlOptions.MIXED_AIR_RESET,
     }
     dcv_map = {
-        "FRAC-OF-DESIGN-FLOW": "NONE",
-        "FRAC-OF-HOURLY-FLOW": "NONE",
-        "DCV-RETURN-SENSOR": "CO2_RETURN_AIR",
-        "DCV-ZONE-SENSORS": "CO2_ZONE",
+        "FRAC-OF-DESIGN-FLOW": DemandControlVentilationControlOptions.NONE,
+        "FRAC-OF-HOURLY-FLOW": DemandControlVentilationControlOptions.NONE,
+        "DCV-RETURN-SENSOR": DemandControlVentilationControlOptions.CO2_RETURN_AIR,
+        "DCV-ZONE-SENSORS": DemandControlVentilationControlOptions.CO2_ZONE,
+    }
+    humidification_map = {
+        "NONE": HumidificationOptions.NONE,
+        "ELECTRIC": HumidificationOptions.OTHER,
+        "HOT-WATER": HumidificationOptions.OTHER,
+        "STEAM": HumidificationOptions.OTHER,
+        "FURNACE": HumidificationOptions.OTHER,
+        "HEAT-PUMP": HumidificationOptions.OTHER,
+        "DHW-LOOP": HumidificationOptions.OTHER,
     }
 
     def __init__(self, u_name, rmd):
@@ -201,15 +234,13 @@ class System(ParentNode):
         self.preheat_sys_heatpump_low_shutoff_temperature = None
         self.preheat_sys_humidification_type = None
 
-        # define the Fan data group instances from SYSTEM that are possible to model in DOE2
+        # Define the Fan data group instances from SYSTEM that are possible to model in DOE2
+        # Return fan or Relief fan can be defined for a system, but not both
         self.cooling_supply_fan = {}
-        self.return_fan = (
-            {}
-        )  # Return fan or Relief fan can be defined for a system, but not both
-        self.relief_fan = (
-            {}
-        )  # Return fan or Relief fan can be defined for a system, but not both
+        self.return_fan = {}
+        self.relief_fan = {}
         self.heating_supply_fan = {}
+
         # [cooling supply, return, relief, heating supply] fan data elements
         self.fan_id = [None, None, None, None]
         self.fan_reporting_name = [None, None, None, None]
@@ -273,7 +304,10 @@ class System(ParentNode):
         # if the system type is FC with HW or no heat, this system is represented as terminal fan, heating, cooling
         terminal_system_conditions = self.keyword_value_pairs.get(
             "TYPE"
-        ) == "FC" and heat_type in ["FLUID_LOOP", "NONE"]
+        ) == "FC" and heat_type in [
+            HeatingSystemOptions.FLUID_LOOP,
+            HeatingSystemOptions.NONE,
+        ]
 
         if terminal_system_conditions:
             self.is_terminal = True
@@ -566,11 +600,14 @@ class System(ParentNode):
             ]:
                 fan_dict = getattr(self, fan_dict_name)
                 # append to FanSystem
-                if fan_dict_name in ["cooling_supply_fan", "heating_supply_fan"]:
+                if fan_dict and fan_dict_name in [
+                    "cooling_supply_fan",
+                    "heating_supply_fan",
+                ]:
                     self.fan_sys_supply_fans.append(fan_dict)
-                elif fan_dict_name == "return_fan":
+                elif fan_dict and fan_dict_name == "return_fan":
                     self.fan_sys_return_fans.append(fan_dict)
-                elif fan_dict_name == "relief_fan":
+                elif fan_dict and fan_dict_name == "relief_fan":
                     self.fan_sys_relief_fans.append(fan_dict)
 
             self.system_data_structure.update(
@@ -644,6 +681,7 @@ class System(ParentNode):
 
     def populate_preheat_system(self):
         self.preheat_sys_id = self.u_name + " PreheatSys"
+
         self.preheat_sys_type = self.heat_type_map.get(
             self.keyword_value_pairs.get("PREHEAT-SOURCE")
         )
@@ -656,9 +694,9 @@ class System(ParentNode):
         self.fan_design_electric_power[0] = output_data.get("Supply Fan - Power")
         # noinspection PyTypeChecker
         self.fan_specification_method[0] = (
-            "DETAILED"
+            FanSpecificationMethodOptions.DETAILED
             if self.keyword_value_pairs.get("SUPPLY-STATIC") is not None
-            else "SIMPLE"
+            else FanSpecificationMethodOptions.SIMPLE
         )
 
         # Determine if there is a return or relief fan
@@ -679,9 +717,9 @@ class System(ParentNode):
             )
             # noinspection PyTypeChecker
             self.fan_specification_method[2] = (
-                "DETAILED"
+                FanSpecificationMethodOptions.DETAILED
                 if self.keyword_value_pairs.get("RETURN-STATIC") is not None
-                else "SIMPLE"
+                else FanSpecificationMethodOptions.SIMPLE
             )
 
         # If the return or relief fan location is not set to RELIEF, it is categorized as a return fan
@@ -693,9 +731,9 @@ class System(ParentNode):
             )
             # noinspection PyTypeChecker
             self.fan_specification_method[1] = (
-                "DETAILED"
+                FanSpecificationMethodOptions.DETAILED
                 if self.keyword_value_pairs.get("RETURN-STATIC") is not None
-                else "SIMPLE"
+                else FanSpecificationMethodOptions.SIMPLE
             )
 
         if self.keyword_value_pairs.get("DDS-TYPE") == "DUAL-FAN":
@@ -708,9 +746,9 @@ class System(ParentNode):
             )
             # noinspection PyTypeChecker
             self.fan_specification_method[3] = (
-                "DETAILED"
+                FanSpecificationMethodOptions.DETAILED
                 if self.keyword_value_pairs.get("HSUPPLY-STATIC") is not None
-                else "SIMPLE"
+                else FanSpecificationMethodOptions.SIMPLE
             )
 
     def populate_air_economizer(self):
@@ -722,7 +760,11 @@ class System(ParentNode):
             self.keyword_value_pairs.get("ECONO-LIMIT-T")
         )
 
-        self.air_econ_is_integrated = self.keyword_value_pairs.get("ECONO-LOCKOUT")
+        self.air_econ_is_integrated = (
+            True
+            if self.cool_sys_type == "FLUID_LOOP"
+            else not self.boolean_map.get(self.keyword_value_pairs.get("ECONO-LOCKOUT"))
+        )
 
     def populate_air_energy_recovery(self):
         self.air_energy_recovery_id = self.u_name + " AirEnergyRecovery"

@@ -1,4 +1,12 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
+from rpd_generator.schema.schema_enums import SchemaEnums
+
+
+BoilerCombustionOptions = SchemaEnums.schema_enums["BoilerCombustionOptions"]
+EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
+BoilerEfficiencyMetricOptions = SchemaEnums.schema_enums[
+    "BoilerEfficiencyMetricOptions"
+]
 
 
 class Boiler(BaseNode):
@@ -7,31 +15,31 @@ class Boiler(BaseNode):
     bdl_command = "BOILER"
 
     draft_type_map = {
-        "HW-BOILER": "NATURAL",
-        "HW-BOILER-W/DRAFT": "FORCED",
-        "ELEC-HW-BOILER": "NATURAL",
-        "STM-BOILER": "NATURAL",
-        "STM-BOILER-W/DRAFT": "FORCED",
-        "ELEC-STM-BOILER": "NATURAL",
-        "HW-CONDENSING": "FORCED",
+        "HW-BOILER": BoilerCombustionOptions.NATURAL,
+        "HW-BOILER-W/DRAFT": BoilerCombustionOptions.FORCED,
+        "ELEC-HW-BOILER": BoilerCombustionOptions.NATURAL,
+        "STM-BOILER": BoilerCombustionOptions.NATURAL,
+        "STM-BOILER-W/DRAFT": BoilerCombustionOptions.FORCED,
+        "ELEC-STM-BOILER": BoilerCombustionOptions.NATURAL,
+        "HW-CONDENSING": BoilerCombustionOptions.FORCED,
     }
     energy_source_map = {
         "HW-BOILER": None,
         "HW-BOILER-W/DRAFT": None,
-        "ELEC-HW-BOILER": "ELECTRICITY",
+        "ELEC-HW-BOILER": EnergySourceOptions.ELECTRICITY,
         "STM-BOILER": None,
         "STM-BOILER-W/DRAFT": None,
-        "ELEC-STM-BOILER": "ELECTRICITY",
+        "ELEC-STM-BOILER": EnergySourceOptions.ELECTRICITY,
         "HW-CONDENSING": None,
     }
     fuel_type_map = {
-        "NATURAL-GAS": "NATURAL_GAS",
-        "LPG": "PROPANE",
-        "FUEL-OIL": "FUEL_OIL",
-        "DIESEL-OIL": "OTHER",
-        "COAL": "OTHER",
-        "METHANOL": "OTHER",
-        "OTHER-FUEL": "OTHER",
+        "NATURAL-GAS": EnergySourceOptions.NATURAL_GAS,
+        "LPG": EnergySourceOptions.PROPANE,
+        "FUEL-OIL": EnergySourceOptions.FUEL_OIL,
+        "DIESEL-OIL": EnergySourceOptions.OTHER,
+        "COAL": EnergySourceOptions.OTHER,
+        "METHANOL": EnergySourceOptions.OTHER,
+        "OTHER-FUEL": EnergySourceOptions.OTHER,
     }
 
     def __init__(self, u_name, rmd):

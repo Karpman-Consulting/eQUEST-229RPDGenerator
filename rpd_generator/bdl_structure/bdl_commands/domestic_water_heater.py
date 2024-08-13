@@ -1,4 +1,11 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
+from rpd_generator.schema.schema_enums import SchemaEnums
+
+
+EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
+ComponentLocationOptions = SchemaEnums.schema_enums["ComponentLocationOptions"]
+ServiceWaterHeaterOptions = SchemaEnums.schema_enums["ServiceWaterHeaterOptions"]
+StatusOptions = SchemaEnums.schema_enums["StatusOptions"]
 
 
 class DomesticWaterHeater(BaseNode):
@@ -7,25 +14,25 @@ class DomesticWaterHeater(BaseNode):
     bdl_command = "DW-HEATER"
 
     fuel_type_map = {
-        "ELECTRICITY": "ELECTRICITY",
-        "NATURAL-GAS": "NATURAL_GAS",
-        "LPG": "PROPANE",
-        "FUEL-OIL": "FUEL_OIL",
-        "DIESEL-OIL": "OTHER",
-        "COAL": "OTHER",
-        "METHANOL": "OTHER",
-        "OTHER-FUEL": "OTHER",
+        "ELECTRICITY": EnergySourceOptions.ELECTRICITY,
+        "NATURAL-GAS": EnergySourceOptions.NATURAL_GAS,
+        "LPG": EnergySourceOptions.PROPANE,
+        "FUEL-OIL": EnergySourceOptions.FUEL_OIL,
+        "DIESEL-OIL": EnergySourceOptions.OTHER,
+        "COAL": EnergySourceOptions.OTHER,
+        "METHANOL": EnergySourceOptions.OTHER,
+        "OTHER-FUEL": EnergySourceOptions.OTHER,
     }
 
     heater_type_map = {
-        "GAS": "CONVENTIONAL",
-        "ELEC": "CONVENTIONAL",
-        "HEAT-PUMP": "HEAT_PUMP_PACKAGED",
+        "GAS": ServiceWaterHeaterOptions.CONVENTIONAL,
+        "ELEC": ServiceWaterHeaterOptions.CONVENTIONAL,
+        "HEAT-PUMP": ServiceWaterHeaterOptions.HEAT_PUMP_PACKAGED,
     }
 
     location_map = {
-        "OUTDOOR": "OUTSIDE",
-        "ZONE": "IN_ZONE",
+        "OUTDOOR": ComponentLocationOptions.OUTSIDE,
+        "ZONE": ComponentLocationOptions.IN_ZONE,
     }
 
     def __init__(self, u_name, rmd):

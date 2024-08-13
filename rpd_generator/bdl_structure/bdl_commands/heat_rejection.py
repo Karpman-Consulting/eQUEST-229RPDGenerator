@@ -1,4 +1,13 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
+from rpd_generator.schema.schema_enums import SchemaEnums
+
+
+HeatRejectionOptions = SchemaEnums.schema_enums["HeatRejectionOptions"]
+HeatRejectionFanOptions = SchemaEnums.schema_enums["HeatRejectionFanOptions"]
+HeatRejectionFluidOptions = SchemaEnums.schema_enums["HeatRejectionFluidOptions"]
+HeatRejectionFanSpeedControlOptions = SchemaEnums.schema_enums[
+    "HeatRejectionFanSpeedControlOptions"
+]
 
 
 class HeatRejection(BaseNode):
@@ -7,19 +16,19 @@ class HeatRejection(BaseNode):
     bdl_command = "HEAT-REJECTION"
 
     heat_rejection_type_map = {
-        "OPEN-TWR": "OPEN_CIRCUIT_COOLING_TOWER",
-        "OPEN-TWR&HX": "OPEN_CIRCUIT_COOLING_TOWER",  # Should this be OTHER?
-        "FLUID-COOLER": "CLOSED_CIRCUIT_COOLING_TOWER",
-        "DRYCOOLER": "DRY_COOLER",
-        # "": "EVAPORATIVE_CONDENSER",  # Selecting Evap Condenser in eQUEST crashes the program. Not shown in Helptext.
+        "OPEN-TWR": HeatRejectionOptions.OPEN_CIRCUIT_COOLING_TOWER,
+        "OPEN-TWR&HX": HeatRejectionOptions.OPEN_CIRCUIT_COOLING_TOWER,  # Should this be OTHER?
+        "FLUID-COOLER": HeatRejectionOptions.CLOSED_CIRCUIT_COOLING_TOWER,
+        "DRYCOOLER": HeatRejectionOptions.DRY_COOLER,
+        # "": HeatRejectionOptions.EVAPORATIVE_CONDENSER,  # eQUEST chrashes when selecting Evap Condenser. Not shown in Helptext.
     }
 
     fan_spd_ctrl_map = {
-        "ONE-SPEED-FAN": "CONSTANT",
-        "FLUID-BYPASS": "CONSTANT",
-        "TWO-SPEED-FAN": "TWO_SPEED",
-        "VARIABLE-SPEED-FAN": "VARIABLE_SPEED",
-        "DISCHARGE-DAMPER": "OTHER",
+        "ONE-SPEED-FAN": HeatRejectionFanSpeedControlOptions.CONSTANT,
+        "FLUID-BYPASS": HeatRejectionFanSpeedControlOptions.CONSTANT,
+        "TWO-SPEED-FAN": HeatRejectionFanSpeedControlOptions.TWO_SPEED,
+        "VARIABLE-SPEED-FAN": HeatRejectionFanSpeedControlOptions.VARIABLE_SPEED,
+        "DISCHARGE-DAMPER": HeatRejectionFanSpeedControlOptions.OTHER,
     }
 
     def __init__(self, u_name, rmd):

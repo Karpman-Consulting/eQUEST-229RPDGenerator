@@ -1,4 +1,10 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
+from rpd_generator.schema.schema_enums import SchemaEnums
+
+
+PumpSpecificationMethodOptions = SchemaEnums.schema_enums[
+    "PumpSpecificationMethodOptions"
+]
 
 
 class Pump(BaseNode):
@@ -39,15 +45,15 @@ class Pump(BaseNode):
         self.is_flow_sized_based_on_design_day = [None] * self.qty
 
         spec_method = (
-            "SIMPLE"
+            PumpSpecificationMethodOptions.SIMPLE
             if self.keyword_value_pairs.get("PUMP-KW") is not None
-            else "DETAILED"
+            else PumpSpecificationMethodOptions.DETAILED
         )
         design_head = self.try_float(self.keyword_value_pairs.get("HEAD"))
 
         self.specification_method = [spec_method] * self.qty
 
-        if spec_method == "SIMPLE":
+        if spec_method == PumpSpecificationMethodOptions.SIMPLE:
             self.design_electric_power = [
                 self.try_float(self.keyword_value_pairs.get("PUMP-KW"))
             ] * self.qty

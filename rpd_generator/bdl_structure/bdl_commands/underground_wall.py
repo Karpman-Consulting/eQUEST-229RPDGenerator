@@ -1,4 +1,13 @@
 from rpd_generator.bdl_structure.child_node import ChildNode
+from rpd_generator.schema.schema_enums import SchemaEnums
+
+
+SurfaceClassificationOptions = SchemaEnums.schema_enums["SurfaceClassificationOptions"]
+SurfaceAdjacencyOptions = SchemaEnums.schema_enums["SurfaceAdjacencyOptions"]
+AdditionalSurfaceAdjacencyOptions2019ASHRAE901 = SchemaEnums.schema_enums[
+    "AdditionalSurfaceAdjacencyOptions2019ASHRAE901"
+]
+StatusOptions = SchemaEnums.schema_enums["StatusOptions"]
 
 
 class BelowGradeWall(ChildNode):
@@ -47,15 +56,15 @@ class BelowGradeWall(ChildNode):
 
         self.tilt = self.try_float(self.keyword_value_pairs.get("TILT"))
         if self.tilt is not None and self.tilt < self.CEILING_TILT_THRESHOLD:
-            self.classification = "CEILING"
+            self.classification = SurfaceClassificationOptions.CEILING
         elif self.tilt is not None and self.tilt >= self.FLOOR_TILT_THRESHOLD:
-            self.classification = "FLOOR"
+            self.classification = SurfaceClassificationOptions.FLOOR
         else:
-            self.classification = "WALL"
+            self.classification = SurfaceClassificationOptions.WALL
 
         self.azimuth = self.try_float(self.keyword_value_pairs.get("AZIMUTH"))
 
-        self.adjacent_to = "GROUND"
+        self.adjacent_to = SurfaceAdjacencyOptions.GROUND
 
         self.does_cast_shade = self.boolean_map.get(
             self.keyword_value_pairs.get("SHADING-SURFACE")
