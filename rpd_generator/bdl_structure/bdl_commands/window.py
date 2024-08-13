@@ -1,4 +1,11 @@
 from rpd_generator.bdl_structure.child_node import ChildNode
+from rpd_generator.schema.schema_enums import SchemaEnums
+
+SubsurfaceClassificationOptions = SchemaEnums.schema_enums["SubsurfaceClassificationOptions"]
+SubsurfaceSubclassificationOptions2019ASHRAE901 = SchemaEnums.schema_enums["SubsurfaceSubclassificationOptions2019ASHRAE901"]
+SubsurfaceFrameOptions2019ASHRAE901 = SchemaEnums.schema_enums["SubsurfaceFrameOptions2019ASHRAE901"]
+SubsurfaceDynamicGlazingOptions = SchemaEnums.schema_enums["SubsurfaceDynamicGlazingOptions"]
+StatusOptions = SchemaEnums.schema_enums["StatusOptions"]
 
 
 class Window(ChildNode):
@@ -52,9 +59,9 @@ class Window(ChildNode):
                 )
 
         if self.parent.keyword_value_pairs.get("LOCATION") == "TOP":
-            self.classification = "SKYLIGHT"
+            self.classification = SubsurfaceClassificationOptions.SKYLIGHT
         else:
-            self.classification = "WINDOW"
+            self.classification = SubsurfaceClassificationOptions.WINDOW
 
         glass_type_name = self.keyword_value_pairs.get("GLASS-TYPE")
         glass_type = self.rmd.bdl_obj_instances.get(glass_type_name)

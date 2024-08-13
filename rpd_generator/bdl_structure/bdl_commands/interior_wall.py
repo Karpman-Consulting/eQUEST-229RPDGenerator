@@ -1,5 +1,13 @@
 from rpd_generator.bdl_structure.parent_node import ParentNode
 from rpd_generator.bdl_structure.child_node import ChildNode
+from rpd_generator.schema.schema_enums import SchemaEnums
+
+
+SurfaceClassificationOptions = SchemaEnums.schema_enums["SubsurfaceClassificationOptions"]
+SurfaceAdjacencyOptions = SchemaEnums.schema_enums["SurfaceAdjacencyOptions"]
+AdditionalSurfaceAdjacencyOptions2019ASHRAE901 = SchemaEnums.schema_enums["AdditionalSurfaceAdjacencyOptions2019ASHRAE901"]
+StatusOptions = SchemaEnums.schema_enums["StatusOptions"]
+OMIT = "OMIT"
 
 
 class InteriorWall(
@@ -13,10 +21,10 @@ class InteriorWall(
     FLOOR_TILT_THRESHOLD = 120
 
     int_wall_type_map = {
-        "STANDARD": "INTERIOR",
-        "AIR": "OMIT",  # Omit the associated 229 Surface if INT-WALL-TYPE = AIR
-        "ADIABATIC": "IDENTICAL",
-        "INTERNAL": "OMIT",  # Omit the associated 229 Surface if INT-WALL-TYPE = INTERNAL
+        "STANDARD": SurfaceAdjacencyOptions.INTERIOR,
+        "AIR": OMIT,  # Omit the associated 229 Surface if INT-WALL-TYPE = AIR
+        "ADIABATIC": SurfaceAdjacencyOptions.IDENTICAL,
+        "INTERNAL": OMIT,  # Omit the associated 229 Surface if INT-WALL-TYPE = INTERNAL
     }
 
     def __init__(self, u_name, parent, rmd):
@@ -48,7 +56,7 @@ class InteriorWall(
         int_wall_type = self.int_wall_type_map.get(
             self.keyword_value_pairs.get("INT-WALL-TYPE")
         )
-        if int_wall_type == "OMIT":
+        if int_wall_type == OMIT:
             self.omit = True
             return
 
@@ -65,11 +73,11 @@ class InteriorWall(
 
         self.tilt = self.try_float(self.keyword_value_pairs.get("TILT"))
         if self.tilt is not None and self.tilt < self.CEILING_TILT_THRESHOLD:
-            self.classification = "CEILING"
+            self.classification = SurfaceClassificationOptions.CEILING
         elif self.tilt is not None and self.tilt >= self.FLOOR_TILT_THRESHOLD:
-            self.classification = "FLOOR"
+            self.classification = SurfaceClassificationOptions.FLOOR
         else:
-            self.classification = "WALL"
+            self.classification = SurfaceClassificationOptions.WALL
 
         self.azimuth = self.try_float(self.keyword_value_pairs.get("AZIMUTH"))
 

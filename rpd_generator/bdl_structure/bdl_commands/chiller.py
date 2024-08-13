@@ -1,4 +1,10 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
+from rpd_generator.schema.schema_enums import SchemaEnums
+
+
+EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
+ChillerCompressorOptions = SchemaEnums.schema_enums["ChillerCompressorOptions"]
+OMIT = "OMIT"
 
 
 class Chiller(BaseNode):
@@ -7,20 +13,20 @@ class Chiller(BaseNode):
     bdl_command = "CHILLER"
 
     compressor_type_map = {
-        "ELEC-OPEN-CENT": "CENTRIFUGAL",
-        "ELEC-OPEN-REC": "RECIPROCATING",
-        "ELEC-HERM-CENT": "CENTRIFUGAL",
-        "ELEC-HERM-REC": "RECIPROCATING",
-        "ELEC-SCREW": "SCREW",
-        "ELEC-HTREC": "OTHER",
-        "ABSOR-1": "SINGLE_EFFECT_DIRECT_FIRED_ABSORPTION",
-        "ABSOR-2": "DOUBLE_EFFECT_DIRECT_FIRED_ABSORPTION",
-        "GAS-ABSOR": "OTHER",
-        "ENGINE": "OTHER",
-        "HEAT-PUMP": "OMIT",  # Omit because it is not a chiller
-        "LOOP-TO-LOOP-HP": "OMIT",  # Omit because it is not a chiller
-        "WATER-ECONOMIZER": "OMIT",  # Omit because it is not a chiller
-        "STRAINER-CYCLE": "OMIT",  # Omit because it is not a chiller
+        "ELEC-OPEN-CENT": ChillerCompressorOptions.CENTRIFUGAL,
+        "ELEC-OPEN-REC": ChillerCompressorOptions.RECIPROCATING,
+        "ELEC-HERM-CENT": ChillerCompressorOptions.CENTRIFUGAL,
+        "ELEC-HERM-REC": ChillerCompressorOptions.RECIPROCATING,
+        "ELEC-SCREW": ChillerCompressorOptions.SCREW,
+        "ELEC-HTREC": ChillerCompressorOptions.OTHER,
+        "ABSOR-1": ChillerCompressorOptions.SINGLE_EFFECT_DIRECT_FIRED_ABSORPTION,
+        "ABSOR-2": ChillerCompressorOptions.DOUBLE_EFFECT_DIRECT_FIRED_ABSORPTION,
+        "GAS-ABSOR": ChillerCompressorOptions.OTHER,
+        "ENGINE": ChillerCompressorOptions.OTHER,
+        "HEAT-PUMP": OMIT,
+        "LOOP-TO-LOOP-HP": OMIT,
+        "WATER-ECONOMIZER": OMIT,
+        "STRAINER-CYCLE": OMIT,
     }
 
     def __init__(self, u_name, rmd):
@@ -61,7 +67,7 @@ class Chiller(BaseNode):
     def populate_data_elements(self):
         """Populate data elements for chiller object."""
         absorp_or_engine = False
-        if self.compressor_type_map.get(self.keyword_value_pairs.get("TYPE")) == "OMIT":
+        if self.compressor_type_map.get(self.keyword_value_pairs.get("TYPE")) == OMIT:
             self.omit = True
             return
 

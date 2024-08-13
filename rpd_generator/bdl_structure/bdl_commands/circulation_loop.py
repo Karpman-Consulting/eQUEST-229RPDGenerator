@@ -1,4 +1,11 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
+from rpd_generator.schema.schema_enums import SchemaEnums
+
+
+FluidLoopOptions = SchemaEnums.schema_enums["FluidLoopOptions"]
+FluidLoopOperationOptions = SchemaEnums.schema_enums["FluidLoopOperationOptions"]
+FluidLoopFlowControlOptions = SchemaEnums.schema_enums["FluidLoopFlowControlOptions"]
+TemperatureResetOptions = SchemaEnums.schema_enums["TemperatureResetOptions"]
 
 
 # noinspection PyUnresolvedReferences
@@ -8,11 +15,11 @@ class CirculationLoop(BaseNode):
     bdl_command = "CIRCULATION-LOOP"
 
     loop_type_map = {
-        "CHW": "COOLING",
-        "HW": "HEATING",
-        "CW": "CONDENSER",
-        "PIPE2": "HEATING_AND_COOLING",
-        "WLHP": "OTHER",
+        "CHW": FluidLoopOptions.COOLING,
+        "HW": FluidLoopOptions.HEATING,
+        "CW": FluidLoopOptions.CONDENSER,
+        "PIPE2": FluidLoopOptions.HEATING_AND_COOLING,
+        "WLHP": FluidLoopOptions.OTHER,
     }
 
     sizing_option_map = {
@@ -23,19 +30,19 @@ class CirculationLoop(BaseNode):
     }
 
     loop_operation_map = {
-        "STANDBY": "INTERMITTENT",
-        "DEMAND-ONLY": "INTERMITTENT",
-        "SNAP": "INTERMITTENT",
-        "SCHEDULED": "SCHEDULED",
-        "SUBHOUR-DEMAND": "INTERMITTENT",
+        "STANDBY": FluidLoopOperationOptions.INTERMITTENT,
+        "DEMAND-ONLY": FluidLoopOperationOptions.INTERMITTENT,
+        "SNAP": FluidLoopOperationOptions.INTERMITTENT,
+        "SCHEDULED": FluidLoopOperationOptions.SCHEDULED,
+        "SUBHOUR-DEMAND": FluidLoopOperationOptions.INTERMITTENT,
     }
 
     temp_reset_map = {
-        "FIXED": "NO_RESET",
-        "OA-RESET": "OUTSIDE_AIR_RESET",
-        "SCHEDULED": "OTHER",
-        "LOAD-RESET": "LOAD_RESET",
-        "WETBULB-RESET": "OTHER",
+        "FIXED": TemperatureResetOptions.NO_RESET,
+        "OA-RESET": TemperatureResetOptions.OUTSIDE_AIR_RESET,
+        "SCHEDULED": TemperatureResetOptions.OTHER,
+        "LOAD-RESET": TemperatureResetOptions.LOAD_RESET,
+        "WETBULB-RESET": TemperatureResetOptions.OTHER,
     }
 
     def __init__(self, u_name, rmd):
@@ -116,17 +123,17 @@ class CirculationLoop(BaseNode):
         self.circulation_loop_type = self.determine_circ_loop_type()
         if self.circulation_loop_type in ["FluidLoop", "SecondaryFluidLoop"]:
             loop_type = self.keyword_value_pairs.get("TYPE")
-            self.type = self.loop_type_map.get(loop_type, "OTHER")
+            self.type = self.loop_type_map.get(loop_type, FluidLoopOptions.OTHER)
 
             # Populate the data elements for FluidLoopDesignAndControl
             if self.circulation_loop_type in ["FluidLoop", "SecondaryFluidLoop"]:
-                if self.type == "COOLING":
+                if self.type == FluidLoopOptions.COOLING:
                     self.populate_cool_fluid_loop_design_and_control()
-                elif self.type == "CONDENSER":
+                elif self.type == FluidLoopOptions.CONDENSER:
                     self.populate_cond_fluid_loop_design_and_control()
-                elif self.type == "HEATING":
+                elif self.type == FluidLoopOptions.HEATING:
                     self.populate_heat_fluid_loop_design_and_control()
-                elif self.type == "HEATING_AND_COOLING":
+                elif self.type == FluidLoopOptions.HEATING_AND_COOLING:
                     self.populate_heat_cool_fluid_loop_design_and_control()
 
         if self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":

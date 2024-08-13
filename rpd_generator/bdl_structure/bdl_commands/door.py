@@ -1,4 +1,12 @@
 from rpd_generator.bdl_structure.child_node import ChildNode
+from rpd_generator.schema.schema_enums import SchemaEnums
+
+
+SubsurfaceClassificationOptions = SchemaEnums.schema_enums["SubsurfaceClassificationOptions"]
+SubsurfaceDynamicGlazingOptions = SchemaEnums.schema_enums["SubsurfaceDynamicGlazingOptions"]
+StatusOptions = SchemaEnums.schema_enums["StatusOptions"]
+SubsurfaceSubclassificationOptions2019ASHRAE901 = SchemaEnums.schema_enums["SubsurfaceSubclassificationOptions2019ASHRAE901"]
+SubsurfaceFrameOptions2019ASHRAE901 = SchemaEnums.schema_enums["SubsurfaceFrameOptions2019ASHRAE901"]
 
 
 class Door(ChildNode):
@@ -39,7 +47,7 @@ class Door(ChildNode):
 
     def populate_data_elements(self):
         """Populate data elements for door object."""
-        self.classification = "DOOR"
+        self.classification = SubsurfaceClassificationOptions.DOOR
 
         height = self.try_float(self.keyword_value_pairs.get("HEIGHT"))
         width = self.try_float(self.keyword_value_pairs.get("WIDTH"))
