@@ -118,11 +118,15 @@ class ModelInputReader:
             return {"doe2_version": doe2_version, "file_commands": file_commands}
 
     @staticmethod
-    def prepare_inp(model_path):
+    def prepare_inp(model_path, output_dir=None):
         model_dir = os.path.dirname(model_path)
         model_name = os.path.basename(model_path)
         base_name, extension = os.path.splitext(model_name)
-        temp_file_path = os.path.join(model_dir, base_name + "_temp" + extension)
+
+        if output_dir:
+            temp_file_path = os.path.join(output_dir, model_name)
+        else:
+            temp_file_path = os.path.join(model_dir, base_name + "_temp" + extension)
 
         with open(model_path, "r") as inp_file, open(temp_file_path, "w") as out_file:
             lines_after_target = 0
@@ -149,6 +153,7 @@ class ModelInputReader:
                     line = line.replace("&D", "0")
 
                 out_file.write(line)
+        return temp_file_path
 
     @staticmethod
     def _parse_command_line(line):
