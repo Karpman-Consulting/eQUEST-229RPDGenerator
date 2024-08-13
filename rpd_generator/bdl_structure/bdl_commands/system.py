@@ -680,7 +680,6 @@ class System(ParentNode):
         self.fan_specification_method[0] = (
             FanSpecificationMethodOptions.DETAILED
             if self.keyword_value_pairs.get("SUPPLY-STATIC") is not None
-            else "SIMPLE"
             else FanSpecificationMethodOptions.SIMPLE
         )
 
@@ -704,7 +703,6 @@ class System(ParentNode):
             self.fan_specification_method[2] = (
                 FanSpecificationMethodOptions.DETAILED
                 if self.keyword_value_pairs.get("RETURN-STATIC") is not None
-                else "SIMPLE"
                 else FanSpecificationMethodOptions.SIMPLE
             )
 
@@ -719,7 +717,6 @@ class System(ParentNode):
             self.fan_specification_method[1] = (
                 FanSpecificationMethodOptions.DETAILED
                 if self.keyword_value_pairs.get("RETURN-STATIC") is not None
-                else "SIMPLE"
                 else FanSpecificationMethodOptions.SIMPLE
             )
 
@@ -735,7 +732,6 @@ class System(ParentNode):
             self.fan_specification_method[3] = (
                 FanSpecificationMethodOptions.DETAILED
                 if self.keyword_value_pairs.get("HSUPPLY-STATIC") is not None
-                else "SIMPLE"
                 else FanSpecificationMethodOptions.SIMPLE
             )
 
@@ -748,7 +744,11 @@ class System(ParentNode):
             self.keyword_value_pairs.get("ECONO-LIMIT-T")
         )
 
-        self.air_econ_is_integrated = self.keyword_value_pairs.get("ECONO-LOCKOUT")
+        self.air_econ_is_integrated = (
+            True
+            if self.cool_sys_type == "FLUID_LOOP"
+            else not self.boolean_map.get(self.keyword_value_pairs.get("ECONO-LOCKOUT"))
+        )
 
     def populate_air_energy_recovery(self):
         self.air_energy_recovery_id = self.u_name + " AirEnergyRecovery"

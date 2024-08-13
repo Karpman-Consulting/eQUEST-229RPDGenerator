@@ -1,5 +1,10 @@
 from rpd_generator.bdl_structure.parent_node import ParentNode
 from rpd_generator.bdl_structure.child_node import ChildNode
+from rpd_generator.schema.schema_enums import SchemaEnums
+
+
+EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
+InfiltrationMethodOptions = SchemaEnums.schema_enums["InfiltrationMethodOptions"]
 
 
 class Space(ChildNode, ParentNode):
@@ -85,7 +90,7 @@ class Space(ChildNode, ParentNode):
         self.standardize_dict_values(
             self.keyword_value_pairs,
             ["LIGHTING-W/AREA", "LIGHTING-KW"],
-            len(space_ltg_scheds),
+            self.try_length(space_ltg_scheds),
         )
 
         if not isinstance(space_ltg_scheds, list):
@@ -99,6 +104,7 @@ class Space(ChildNode, ParentNode):
             self.keyword_value_pairs,
             ["EQUIPMENT-W/AREA", "EQUIPMENT-KW", "EQUIP-SENSIBLE", "EQUIP-LATENT"],
             len(space_misc_eq_scheds),
+            self.try_length(space_misc_eq_scheds),
         )
 
         if not isinstance(space_misc_eq_scheds, list):
@@ -288,16 +294,22 @@ class Space(ChildNode, ParentNode):
                     flow_per_area * self.floor_area
                     + air_changes_per_hour * self.zone.volume / 60
                 )
-                self.zone.infil_modeling_method = "WEATHER_DRIVEN"
+                self.zone.infil_modeling_method = (
+                    InfiltrationMethodOptions.WEATHER_DRIVEN
+                )
             elif flow_per_area and self.floor_area:
                 self.zone.infil_flow_rate = flow_per_area * self.floor_area
                 if self.zone.infil_multiplier_schedule:
-                    self.zone.infil_modeling_method = "CONSTANT_SCHEDULED"
+                    self.zone.infil_modeling_method = (
+                        InfiltrationMethodOptions.CONSTANT_SCHEDULED
+                    )
                 else:
-                    self.zone.infil_modeling_method = "CONSTANT"
+                    self.zone.infil_modeling_method = InfiltrationMethodOptions.CONSTANT
             elif air_changes_per_hour and self.zone.volume:
                 self.zone.infil_flow_rate = air_changes_per_hour * self.zone.volume / 60
-                self.zone.infil_modeling_method = "WEATHER_DRIVEN"
+                self.zone.infil_modeling_method = (
+                    InfiltrationMethodOptions.WEATHER_DRIVEN
+                )
         else:
             # infil_flow_rate will not populate if the infiltration method is not AIR-CHANGE
-            self.zone.infil_modeling_method = "WEATHER_DRIVEN"
+            self.zone.infil_modeling_method = InfiltrationMethodOptions.WEATHER_DRIVEN
