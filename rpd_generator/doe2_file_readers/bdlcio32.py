@@ -58,6 +58,7 @@ def process_input_file(
             write_nhk_file,
             callback_func_pointer,
         )
+        print("Input file processed to BDL")
     except OSError:
         print("Bypassing OSError from eQUEST installation DLL file")
 
