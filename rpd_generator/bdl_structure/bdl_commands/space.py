@@ -106,10 +106,36 @@ class Space(ChildNode, ParentNode):
             self.try_length(space_misc_eq_scheds),
         )
 
+        space_int_energy_source_scheds = self.keyword_value_pairs.get("SOURCE-SCHEDULE")
+        self.standardize_dict_values(
+            self.keyword_value_pairs,
+            [
+                "SOURCE-TYPE",
+                "SOURCE-POWER",
+                "SOURCE-KW",
+                "SOURCE-SENSIBLE",
+                "SOURCE-LATENT",
+            ],
+            self.try_length(space_int_energy_source_scheds),
+        )
+
         if not isinstance(space_misc_eq_scheds, list):
             space_misc_eq_scheds = [space_misc_eq_scheds]
-        for i, sched in enumerate(space_misc_eq_scheds):
-            self.populate_miscellaneous_equipment(i, sched)
+
+        if not isinstance(space_int_energy_source_scheds, list):
+            space_int_energy_source_scheds = [space_int_energy_source_scheds]
+
+        # Populate one instance of miscellaneous equipment for each schedule associated with equipment or internal energy sources
+        misc_eq_counter = 0
+        for sched in space_misc_eq_scheds:
+            misc_eq_counter += 1
+            self.populate_miscellaneous_equipment(misc_eq_counter, sched, "EQUIPMENT")
+
+        for sched in space_int_energy_source_scheds:
+            misc_eq_counter += 1
+            self.populate_miscellaneous_equipment(
+                misc_eq_counter, sched, "INTERNAL_ENERGY_SOURCE"
+            )
 
         # Populate the corresponding zone volume and infiltration from the DOE-2 SPACE command
         self.populate_zone_infiltration()
@@ -216,55 +242,86 @@ class Space(ChildNode, ParentNode):
                 None
             )
 
-    def populate_miscellaneous_equipment(self, n, schedule):
+    def populate_miscellaneous_equipment(self, n, schedule, equip_type):
         """Populate miscellaneous equipment data elements for an instance of MiscellaneousEquipment"""
         misc_eq_id = f"{self.u_name} MiscEqp{n}"
 
-        misc_epd = self.try_float(
-            self.try_access_index(self.keyword_value_pairs.get("EQUIPMENT-W/AREA"), n)
-        )
-        misc_eq_power = self.try_float(
-            self.try_access_index(self.keyword_value_pairs.get("EQUIPMENT-KW"), n)
-        )
-        total_eq_power = (
-            misc_eq_power + misc_epd * self.floor_area / 1000
-            if misc_eq_power is not None
-            and misc_epd is not None
-            and self.floor_area is not None
-            else misc_eq_power
-        )
-        misc_eq_multiplier_schedule = schedule
+        if equip_type == "EQUIPMENT":
+            misc_epd = self.try_float(
+                self.try_access_index(
+                    self.keyword_value_pairs.get("EQUIPMENT-W/AREA"), n
+                )
+            )
+            misc_eq_power = self.try_float(
+                self.try_access_index(self.keyword_value_pairs.get("EQUIPMENT-KW"), n)
+            )
+            total_eq_power = (
+                misc_eq_power + misc_epd * self.floor_area / 1000
+                if misc_eq_power is not None
+                and misc_epd is not None
+                and self.floor_area is not None
+                else misc_eq_power
+            )
+            misc_eq_multiplier_schedule = schedule
 
-        misc_eq_sensible_fraction = self.try_float(
-            self.try_access_index(self.keyword_value_pairs.get("EQUIP-SENSIBLE"), n)
-        )
-        misc_eq_latent_fraction = self.try_float(
-            self.try_access_index(self.keyword_value_pairs.get("EQUIP-LATENT"), n)
-        )
+            misc_eq_sensible_fraction = self.try_float(
+                self.try_access_index(self.keyword_value_pairs.get("EQUIP-SENSIBLE"), n)
+            )
+            misc_eq_latent_fraction = self.try_float(
+                self.try_access_index(self.keyword_value_pairs.get("EQUIP-LATENT"), n)
+            )
 
-        if n == 0:
-            self.misc_eq_id = [misc_eq_id]
-            self.misc_eq_power = [total_eq_power]
-            self.misc_eq_multiplier_schedule = [misc_eq_multiplier_schedule]
-            self.misc_eq_sensible_fraction = [misc_eq_sensible_fraction]
-            self.misc_eq_latent_fraction = [misc_eq_latent_fraction]
-        else:
-            self.misc_eq_id.append(misc_eq_id)
-            self.misc_eq_power.append(total_eq_power)
-            self.misc_eq_multiplier_schedule.append(misc_eq_multiplier_schedule)
-            self.misc_eq_sensible_fraction.append(misc_eq_sensible_fraction)
-            self.misc_eq_latent_fraction.append(misc_eq_latent_fraction)
+            if n == 0:
+                self.misc_eq_id = [misc_eq_id]
+                self.misc_eq_energy_type = [EnergySourceOptions.ELECTRICITY]
+                self.misc_eq_power = [total_eq_power]
+                self.misc_eq_multiplier_schedule = [misc_eq_multiplier_schedule]
+                self.misc_eq_sensible_fraction = [misc_eq_sensible_fraction]
+                self.misc_eq_latent_fraction = [misc_eq_latent_fraction]
+            else:
+                self.misc_eq_id.append(misc_eq_id)
+                self.misc_eq_energy_type.append(EnergySourceOptions.ELECTRICITY)
+                self.misc_eq_power.append(total_eq_power)
+                self.misc_eq_multiplier_schedule.append(misc_eq_multiplier_schedule)
+                self.misc_eq_sensible_fraction.append(misc_eq_sensible_fraction)
+                self.misc_eq_latent_fraction.append(misc_eq_latent_fraction)
 
-            # Lists must be the same length, even when elements are not populated
-            self.misc_eq_reporting_name.append(None)
-            self.misc_eq_notes.append(None)
-            self.misc_eq_energy_type.append(None)
-            self.misc_eq_sensible_fraction.append(None)
-            self.misc_eq_latent_fraction.append(None)
-            self.misc_eq_remaining_fraction_to_loop.append(None)
-            self.misc_eq_energy_from_loop.append(None)
-            self.misc_eq_type.append(None)
-            self.misc_eq_has_automatic_control.append(None)
+                # Lists must be the same length, even when elements are not populated
+                self.misc_eq_reporting_name.append(None)
+                self.misc_eq_notes.append(None)
+                self.misc_eq_remaining_fraction_to_loop.append(None)
+                self.misc_eq_energy_from_loop.append(None)
+                self.misc_eq_type.append(None)
+                self.misc_eq_has_automatic_control.append(None)
+
+        elif equip_type == "INTERNAL_ENERGY_SOURCE":
+            source = self.keyword_value_pairs.get("SOURCE-TYPE")
+            energy_type = None
+            if source == "GAS":
+                energy_type = EnergySourceOptions.NATURAL_GAS
+            elif source == "ELECTRIC":
+                energy_type = EnergySourceOptions.ELECTRICITY
+            elif source in ["HOT-WATER", "PROCESS"]:
+                # When HOT-WATER is selected as the source, we are noticing the behavior is identical to PROCESS. Energy consumption does not seem to behave as described in the DOE-2 help text.
+                # We are treating it the same as a PROCESS source
+                energy_type = EnergySourceOptions.NONE
+
+            if n == 0:
+                self.misc_eq_energy_type = [energy_type]
+            else:
+                self.misc_eq_energy_type.append(energy_type)
+
+                # Lists must be the same length, even when elements are not populated
+                self.misc_eq_reporting_name.append(None)
+                self.misc_eq_notes.append(None)
+                self.misc_eq_power.append(None)
+                self.misc_eq_multiplier_schedule.append(None)
+                self.misc_eq_sensible_fraction.append(None)
+                self.misc_eq_latent_fraction.append(None)
+                self.misc_eq_remaining_fraction_to_loop.append(None)
+                self.misc_eq_energy_from_loop.append(None)
+                self.misc_eq_type.append(None)
+                self.misc_eq_has_automatic_control.append(None)
 
     def populate_zone_infiltration(self):
         """Populate infiltration data elements for the zone object."""
