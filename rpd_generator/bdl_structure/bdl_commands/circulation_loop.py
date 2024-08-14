@@ -143,6 +143,16 @@ class CirculationLoop(BaseNode):
             # None of the data elements for ServiceWaterPiping can be populated from model inputs or outputs
             pass
 
+        # Populate pump_power_per_flow_rate
+        if pump_name is not None:
+            loop_pump = self.rmd.bdl_obj_instances.get(pump_name)
+            output_data = loop_pump.output_data
+            self.pump_power_per_flow_rate = (
+                output_data.get("Pump - Power (kW)")
+                / output_data.get("Pump - Flow (gal/min)")
+                * 1000
+            )
+
     def populate_data_group(self):
         """Populate schema structure for circulation loop object."""
 
