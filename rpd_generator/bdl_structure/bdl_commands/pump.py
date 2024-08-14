@@ -62,7 +62,9 @@ class Pump(BaseNode):
             self.output_data.get("Pump - Mechanical Eff (frac)")
         ] * self.qty
 
-        self.motor_efficiency = [self.output_data.get("Pump - Motor Eff (frac)")] * self.qty
+        self.motor_efficiency = [
+            self.output_data.get("Pump - Motor Eff (frac)")
+        ] * self.qty
 
         self.design_flow = [self.output_data.get("Pump - Flow (gal/min)")] * self.qty
 
