@@ -33,7 +33,6 @@ class Pump(BaseNode):
         """Populate the schema data elements for the pump object."""
         self.qty = int(self.try_float(self.keyword_value_pairs.get("NUMBER")))
         requests = self.get_output_requests()
-        output_data = self.get_output_data(requests)
         self.output_data = self.get_output_data(requests)
         self.loop_or_piping = [None] * self.qty
         self.speed_control = [None] * self.qty
@@ -54,18 +53,18 @@ class Pump(BaseNode):
             ] * self.qty
         else:
             self.design_electric_power = [
-                output_data.get("Pump - Power (kW)")
+                self.output_data.get("Pump - Power (kW)")
             ] * self.qty
 
         self.design_head = [design_head] * self.qty
 
         self.impeller_efficiency = [
-            output_data.get("Pump - Mechanical Eff (frac)")
+            self.output_data.get("Pump - Mechanical Eff (frac)")
         ] * self.qty
 
-        self.motor_efficiency = [output_data.get("Pump - Motor Eff (frac)")] * self.qty
+        self.motor_efficiency = [self.output_data.get("Pump - Motor Eff (frac)")] * self.qty
 
-        self.design_flow = [output_data.get("Pump - Flow (gal/min)")] * self.qty
+        self.design_flow = [self.output_data.get("Pump - Flow (gal/min)")] * self.qty
 
     def get_output_requests(self):
         """Get the output requests for the pump object."""
