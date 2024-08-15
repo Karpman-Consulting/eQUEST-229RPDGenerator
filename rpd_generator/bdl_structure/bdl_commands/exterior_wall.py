@@ -27,7 +27,7 @@ class ExteriorWall(ChildNode, ParentNode):
         # data elements with children
         self.subsurfaces = []
         self.construction = {}
-        self.surface_optical_properties = {}
+        self.surface_optical_properties = {"id": self.u_name + " OpticalProps"}
 
         # data elements with no children
         self.classification = None
@@ -38,6 +38,14 @@ class ExteriorWall(ChildNode, ParentNode):
         self.adjacent_zone = None
         self.does_cast_shade = None
         self.status_type = None
+
+        # data elements for surface optical properties
+        self.absorptance_thermal_exterior = None
+        self.absorptance_solar_exterior = None
+        self.absorptance_visible_exterior = None
+        self.absorptance_thermal_interior = None
+        self.absorptance_solar_interior = None
+        self.absorptance_visible_interior = None
 
     def __repr__(self):
         return f"ExteriorWall(u_name='{self.u_name}', parent={self.parent})"
@@ -70,6 +78,28 @@ class ExteriorWall(ChildNode, ParentNode):
             self.keyword_value_pairs.get("SHADING-SURFACE")
         )
 
+        self.absorptance_thermal_exterior = self.try_float(
+            self.keyword_value_pairs.get("OUTSIDE-EMISS")
+        )
+
+        self.absorptance_solar_interior = self.try_float(
+            self.keyword_value_pairs.get("INSIDE-SOL-ABS")
+        )
+
+        reflectance_visible_interior = self.try_float(
+            self.keyword_value_pairs.get("INSIDE-VIS-REFL")
+        )
+        if reflectance_visible_interior is not None:
+            self.absorptance_visible_interior = 1 - reflectance_visible_interior
+
+        construction = self.rmd.bdl_obj_instances.get(
+            self.keyword_value_pairs.get("CONSTRUCTION")
+        )
+        if construction is not None:
+            self.absorptance_solar_exterior = self.try_float(
+                construction.keyword_value_pairs.get("ABSORPTANCE")
+            )
+
     def get_output_requests(self):
         requests = {}
         if self.area is None and self.keyword_value_pairs.get("LOCATION") == "TOP":
@@ -78,9 +108,24 @@ class ExteriorWall(ChildNode, ParentNode):
 
     def populate_data_group(self):
         """Populate schema structure for exterior wall object."""
-        self.construction = self.rmd.bdl_obj_instances.get(
+        construction = self.rmd.bdl_obj_instances.get(
             self.keyword_value_pairs.get("CONSTRUCTION")
-        ).construction_data_structure
+        )
+        self.construction = construction.construction_data_structure
+
+        surface_optical_property_attributes = [
+            "absorptance_thermal_exterior",
+            "absorptance_solar_exterior",
+            "absorptance_visible_exterior",
+            "absorptance_thermal_interior",
+            "absorptance_solar_interior",
+            "absorptance_visible_interior",
+        ]
+
+        for attr in surface_optical_property_attributes:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.surface_optical_properties[attr] = value
 
         self.exterior_wall_data_structure = {
             "id": self.u_name,
@@ -102,7 +147,6 @@ class ExteriorWall(ChildNode, ParentNode):
             "status_type",
         ]
 
-        # Iterate over the no_children_attributes list and populate if the value is not None
         for attr in no_children_attributes:
             value = getattr(self, attr, None)
             if value is not None:
