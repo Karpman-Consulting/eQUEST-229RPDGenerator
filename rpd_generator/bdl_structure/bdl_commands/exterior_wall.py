@@ -27,9 +27,7 @@ class ExteriorWall(ChildNode, ParentNode):
         # data elements with children
         self.subsurfaces = []
         self.construction = {}
-        self.surface_optical_properties = {
-            "id": self.u_name + " OpticalProps"
-        }
+        self.surface_optical_properties = {"id": self.u_name + " OpticalProps"}
 
         # data elements with no children
         self.classification = None
