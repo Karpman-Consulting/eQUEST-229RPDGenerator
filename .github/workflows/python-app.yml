@@ -7,7 +7,7 @@ on: pull_request
 jobs:
   setup:
     name: Setup Environment
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout code
@@ -32,7 +32,7 @@ jobs:
 
   build:
     name: Dependencies and Build
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: setup
 
     steps:
@@ -54,7 +54,7 @@ jobs:
 
   black-formatting-check:
     name: Black Formatting Check
-    runs-on: 'ubuntu-latest'
+    runs-on: windows-latest
     needs: setup
 
     steps:
@@ -89,10 +89,6 @@ jobs:
         with:
           name: temp-files
           path: ./temp_directory/
-      - name: List installed packages
-        run: pip list
-      - name: Print environment variables
-        run: printenv
       - name: Generate test RPDs
         run: |
               pipenv run python test/generate_test_rpds_from_bdls.py --output_dir ./temp_directory --testing True
