@@ -128,9 +128,7 @@ def generate_rmds(bdl_input_reader: ModelInputReader, selected_models: list):
     for model_path_str in selected_models:
         model_path = Path(model_path_str)
         rmd = RulesetModelDescription(model_path.stem)
-        rmd.file_path = str(
-            model_path.with_suffix("")
-        )
+        rmd.file_path = str(model_path.with_suffix(""))
 
         default_building = Building("Default Building", rmd)
         default_building_segment = BuildingSegment(
@@ -139,9 +137,7 @@ def generate_rmds(bdl_input_reader: ModelInputReader, selected_models: list):
         rmd.bdl_obj_instances["Default Building"] = default_building
         rmd.bdl_obj_instances["Default Building Segment"] = default_building_segment
 
-        model_input_data = bdl_input_reader.read_input_bdl_file(
-            str(model_path)
-        )
+        model_input_data = bdl_input_reader.read_input_bdl_file(str(model_path))
         rmd.doe2_version = model_input_data["doe2_version"]
         if rmd.doe2_version is not None:
             rmd.doe2_data_path = (
@@ -265,8 +261,11 @@ def _process_command_group(
 if __name__ == "__main__":
     validate_configuration.find_equest_installation()
     write_rpd_json_from_bdl(
-        [
-            Path(__file__).parents[1] / "test" / "E-1" / "229 Test Case E-1 (PSZHP).BDL"
-        ],
-        str(Path(__file__).parents[1] / "test" / "E-1" / "229 Test Case E-1 (PSZHP).json"),
+        [Path(__file__).parents[1] / "test" / "E-1" / "229 Test Case E-1 (PSZHP).BDL"],
+        str(
+            Path(__file__).parents[1]
+            / "test"
+            / "E-1"
+            / "229 Test Case E-1 (PSZHP).json"
+        ),
     )
