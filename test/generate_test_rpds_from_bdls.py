@@ -5,9 +5,6 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from rpd_generator import main as rpd_generator
-from rpd_generator.config import Config
-
 
 def generate_test_rpds_from_bdls(output_dir=None, testing=False):
     # During testing, point the program to the temporary directory as the install-path where D2Result.dll is located
@@ -32,6 +29,9 @@ def generate_test_rpds_from_bdls(output_dir=None, testing=False):
 
 
 if __name__ == "__main__":
+    from rpd_generator import main as rpd_generator
+    from rpd_generator.config import Config
+
     parser = argparse.ArgumentParser(description="Generate test RPDs from BDL files.")
     parser.add_argument(
         "--output_dir",

@@ -21,7 +21,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pipenv
           export PIPENV_VENV_IN_PROJECT=true
-          pipenv install --dev --site-packages
+          pipenv install --site-packages
       - name: Cache pipenv virtual environment
         uses: actions/cache@v3
         with:
