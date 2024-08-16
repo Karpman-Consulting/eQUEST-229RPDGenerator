@@ -87,7 +87,6 @@ jobs:
           path: ./temp_directory/
       - name: Generate test RPDs
         run: |
-              export PIPENV_VENV_IN_PROJECT=true
               pipenv run python test/generate_test_rpds_from_bdls.py --output_dir ./temp_directory --testing True
 
         # Step 3: Run the RPD validation script using pipenv
