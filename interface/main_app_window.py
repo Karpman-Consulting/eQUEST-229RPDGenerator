@@ -1,6 +1,8 @@
 import customtkinter as ctk
 from PIL import Image
 from tkinter import Menu, filedialog
+
+from rpd_generator import main as rpd_generator
 from interface.disclaimer_window import DisclaimerWindow
 from interface.error_window import ErrorWindow
 from interface.ctk_xyframe import CTkXYFrame
@@ -281,7 +283,7 @@ class MainApplicationWindow(ctk.CTk):
         )
 
         continue_button = ctk.CTkButton(
-            self, text="Create JSON", command=self.app_data.process_inp_to_rpd_json
+            self, text="Create JSON", command=self.call_write_rpd_json_from_inp
         )
         continue_button.grid(row=3, column=4, sticky="ew", padx=5, pady=(150, 5))
 
@@ -297,3 +299,6 @@ class MainApplicationWindow(ctk.CTk):
         if filepath:
             # Display the selected file path in the text entry box
             self.app_data.test_inp_path.set(filepath)
+
+    def call_write_rpd_json_from_inp(self):
+        rpd_generator.write_rpd_json_from_inp(str(self.app_data.test_inp_path.get()))

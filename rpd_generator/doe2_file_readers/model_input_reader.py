@@ -2,7 +2,6 @@ import inspect
 import pkgutil
 import importlib
 import re
-import os
 from rpd_generator.bdl_structure import *
 
 
@@ -116,44 +115,6 @@ class ModelInputReader:
                         active_command_dict[keyword] = value
 
             return {"doe2_version": doe2_version, "file_commands": file_commands}
-
-    @staticmethod
-    def prepare_inp(model_path, output_dir=None):
-        model_dir = os.path.dirname(model_path)
-        model_name = os.path.basename(model_path)
-        base_name, extension = os.path.splitext(model_name)
-
-        if output_dir:
-            temp_file_path = os.path.join(output_dir, model_name)
-        else:
-            temp_file_path = os.path.join(model_dir, base_name + "_temp" + extension)
-
-        with open(model_path, "r") as inp_file, open(temp_file_path, "w") as out_file:
-            lines_after_target = 0
-
-            for line in inp_file:
-
-                # Check if the current line contains the target text
-                if "$              Abort, Diagnostics" in line:
-                    lines_after_target = 3  # Set counter to insert after 3 lines
-
-                # If counter is 1, it means 3 lines have passed since the target, so insert the new line
-                elif lines_after_target == 1:
-                    out_file.write("DIAGNOSTIC COMMENTS ..")
-                    lines_after_target = 0  # Reset counter
-                elif lines_after_target > 0:
-                    lines_after_target -= (
-                        1  # Decrement counter if we're in the 3-line window
-                    )
-
-                elif line.lstrip().startswith("LIGHTING-KW"):
-                    line = line.replace("&D", "0")
-
-                elif line.lstrip().startswith("EQUIPMENT-KW"):
-                    line = line.replace("&D", "0")
-
-                out_file.write(line)
-        return temp_file_path
 
     @staticmethod
     def _parse_command_line(line):

@@ -74,7 +74,7 @@ class BaseNode:
     def get_output_data(self, requests):
         """
         Get data from the simulation output.
-        :param requests: (dict) dictionary of description (str): (tuple) of entry_id: (int), report_key: (binary string), and row_key: (binary string)
+        :param requests: (dict) dictionary of description (str): (tuple) of entry_id: (int), report_key: (str), and row_key: (str)
         :return: (dict) dictionary of description (str): value (float)
         """
 

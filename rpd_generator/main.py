@@ -1,9 +1,14 @@
 import json
+import os
+import shutil
+import tempfile
 from pathlib import Path
+
 from rpd_generator.ruleset_project_description import RulesetProjectDescription
 from rpd_generator.ruleset_model_description import RulesetModelDescription
 from rpd_generator.building_segment import BuildingSegment
 from rpd_generator.building import Building
+from rpd_generator.doe2_file_readers.bdlcio32 import process_input_file
 from rpd_generator.doe2_file_readers.model_input_reader import ModelInputReader
 from rpd_generator.bdl_structure import *
 from rpd_generator.config import Config
@@ -40,7 +45,7 @@ COMMAND_PROCESSING_ORDER = [
     "FLOOR",  # Floors must populate before Spaces
     "SYSTEM",  # Systems must populate before Zones
     "ZONE",  # Zones must populate before Spaces
-    "SPACE",  # Spaces must populate before Surfaces
+    "SPACE",  # Spaces must populate before Exterior-Walls, Interior-Walls, Underground-Walls
     "EXTERIOR-WALL",  # Exterior walls must populate before Windows, Doors
     "INTERIOR-WALL",  # Interior walls must populate before Windows, Doors
     "UNDERGROUND-WALL",
@@ -49,12 +54,80 @@ COMMAND_PROCESSING_ORDER = [
 ]
 
 
-def generate_rpd_json(selected_models: list):
-    """
-    Generate the RMDs, use Default Building and Building Segment, and write to JSON without GUI inputs
-    """
-    rpd, json_file_path = generate_rpd(selected_models)
-    write_rpd_json(rpd, json_file_path)
+def write_rpd_json_from_inp(inp_path_str):
+    # Create a temporary directory to store the files for processing
+    with tempfile.TemporaryDirectory() as temp_dir:
+
+        # Prepare the inp file for processing and save the revised copy to the temporary directory
+        temp_file_path = prepare_inp(inp_path_str, temp_dir)
+
+        # Copy the model output files to the temporary directory (.erp, .lrp, .srp, .nhk)
+        copy_files_to_temp_dir(inp_path_str, temp_dir)
+
+        # Set the paths for the inp file, json file, and the directories
+        temp_inp_path = Path(temp_file_path)
+        bdl_path = temp_inp_path.with_suffix(".BDL")
+        json_path = temp_inp_path.with_suffix(".json")
+        doe23_path = Path(Config.DOE23_DATA_PATH) / "DOE23"
+        test_bdlcio32_path = Path(__file__).parents[1] / "test" / "BDLCIO32.dll"
+
+        # Process the inp file to create the BDL file with Diagnostic Comments (defaults and evaluated values) in the temporary directory
+        process_input_file(
+            # str(Path(Config.EQUEST_INSTALL_PATH) / "Bdlcio32.dll"),
+            str(test_bdlcio32_path),  # Substituting the path to the BDLCIO32.dll file with the path to the test file until bug resolved
+            str(doe23_path) + "\\",
+            str(temp_inp_path.parent) + "\\",
+            temp_inp_path.name,
+        )
+
+        # Generate the RPD json file in the temporary directory
+        write_rpd_json_from_bdl([str(bdl_path)], str(json_path))
+
+        # Copy the json file from the temporary directory back to the project directory
+        shutil.copy(str(json_path), os.path.dirname(inp_path_str))
+
+
+def write_rpd_json_from_bdl(selected_models: list, json_file_path: str):
+    # Set the active ruleset and update the schema enumerations so that they can be accessed by the RPD Generator
+    Config.set_active_ruleset("ASHRAE 90.1-2019")  # For now this is always ASHRAE 90.1-2019
+    SchemaEnums.update_schema_enum(Config.ACTIVE_RULESET)
+
+    bdl_input_reader = ModelInputReader()
+    RulesetProjectDescription.bdl_command_dict = bdl_input_reader.bdl_command_dict
+    rpd = RulesetProjectDescription()
+    rmds = generate_rmds(bdl_input_reader, selected_models)
+    for rmd in rmds:
+        # Give each rmd access to the rpd object through bdl_obj_instances
+        rmd.bdl_obj_instances["ASHRAE 229"] = rpd
+
+        # Once all objects have been created, populate data elements
+        for obj_instance in rmd.bdl_obj_instances.values():
+            if isinstance(obj_instance, BaseNode) or isinstance(
+                obj_instance, BaseDefinition
+            ):
+                obj_instance.populate_data_elements()
+
+        # Once all data elements are populated, populate the data group and insert the object into the rpd
+        for obj_instance in rmd.bdl_obj_instances.values():
+            if isinstance(obj_instance, BaseNode):
+                obj_instance.populate_data_group()
+                obj_instance.insert_to_rpd(rmd)
+
+        # Final integration steps
+        rmd.bdl_obj_instances["Default Building Segment"].populate_data_group()
+        rmd.bdl_obj_instances["Default Building Segment"].insert_to_rpd()
+        rmd.bdl_obj_instances["Default Building"].populate_data_group()
+        rmd.bdl_obj_instances["Default Building"].insert_to_rpd(rmd)
+        rmd.populate_data_group()
+        rmd.insert_to_rpd(rpd)
+
+    rpd.populate_data_group()
+
+    # Save the JSON data to the file
+    with open(json_file_path, "w") as json_file:
+        json.dump(rpd.rpd_data_structure, json_file, indent=4)
+
+    print(f"RPD JSON file created.")
 
 
 def generate_rmds(bdl_input_reader: ModelInputReader, selected_models: list):
@@ -65,14 +138,6 @@ def generate_rmds(bdl_input_reader: ModelInputReader, selected_models: list):
     :param selected_models: List of selected models
 
     """
-    # Convert the first selected model path from str to Path and set the output directory to the directory of that model
-    output_dir = Path(selected_models[0]).parent
-
-    # Get the base file name from the first selected model and replace its extension with .json
-    json_file_name = Path(selected_models[0]).with_suffix(".json").name
-
-    # Construct the full path to the new JSON file in the same directory as model_path
-    json_file_path = output_dir / json_file_name
 
     rmds = []
     # Iterate through each selected model, creating a RulesetModelDescription for each
@@ -120,47 +185,78 @@ def generate_rmds(bdl_input_reader: ModelInputReader, selected_models: list):
                 special_handling,
             )
         rmds.append(rmd)
-    return rmds, str(json_file_path)
+    return rmds
 
 
-def generate_rpd(selected_models: list):
-    bdl_input_reader = ModelInputReader()
-    RulesetProjectDescription.bdl_command_dict = bdl_input_reader.bdl_command_dict
-    rpd = RulesetProjectDescription()
-    rmds, json_file_path = generate_rmds(bdl_input_reader, selected_models)
-    for rmd in rmds:
-        # Give each rmd access to the rpd object through bdl_obj_instances
-        rmd.bdl_obj_instances["ASHRAE 229"] = rpd
+def prepare_inp(model_path, output_dir=None) -> str:
+    model_dir = os.path.dirname(model_path)
+    model_name = os.path.basename(model_path)
+    base_name, extension = os.path.splitext(model_name)
 
-        # Once all objects have been created, populate data elements
-        for obj_instance in rmd.bdl_obj_instances.values():
-            if isinstance(obj_instance, BaseNode) or isinstance(
-                obj_instance, BaseDefinition
-            ):
-                obj_instance.populate_data_elements()
+    if output_dir:
+        temp_file_path = str(os.path.join(output_dir, model_name))
+    else:
+        temp_file_path = str(os.path.join(model_dir, base_name + "_temp" + extension))
 
-        # Once all data elements are populated, populate the data group and insert the object into the rpd
-        for obj_instance in rmd.bdl_obj_instances.values():
-            if isinstance(obj_instance, BaseNode):
-                obj_instance.populate_data_group()
-                obj_instance.insert_to_rpd(rmd)
+    with open(model_path, "r") as inp_file, open(temp_file_path, "w") as out_file:
+        lines_after_target = 0
 
-        # Final integration steps
-        rmd.bdl_obj_instances["Default Building Segment"].populate_data_group()
-        rmd.bdl_obj_instances["Default Building Segment"].insert_to_rpd()
-        rmd.bdl_obj_instances["Default Building"].populate_data_group()
-        rmd.bdl_obj_instances["Default Building"].insert_to_rpd(rmd)
-        rmd.populate_data_group()
-        rmd.insert_to_rpd(rpd)
+        for line in inp_file:
 
-    rpd.populate_data_group()
-    return rpd, json_file_path
+            # Check if the current line contains the target text
+            if "$              Abort, Diagnostics" in line:
+                lines_after_target = 3  # Set counter to insert after 3 lines
+
+            # If counter is 1, it means 3 lines have passed since the target, so insert the new line
+            elif lines_after_target == 1:
+                out_file.write("DIAGNOSTIC COMMENTS ..")
+                lines_after_target = 0  # Reset counter
+            elif lines_after_target > 0:
+                lines_after_target -= (
+                    1  # Decrement counter if we're in the 3-line window
+                )
+
+            elif line.lstrip().startswith("LIGHTING-KW"):
+                line = line.replace("&D", "0")
+
+            elif line.lstrip().startswith("EQUIPMENT-KW"):
+                line = line.replace("&D", "0")
+
+            out_file.write(line)
+    return temp_file_path
 
 
-def write_rpd_json(rpd, json_file_path):
-    # Save the JSON data to the file
-    with open(json_file_path, "w") as json_file:
-        json.dump(rpd.rpd_data_structure, json_file, indent=4)
+def copy_files_to_temp_dir(inp_path, temp_dir):
+    """
+    Copy model files into the temporary directory for processing.
+    ------------------
+    Arguments
+    ---------
+    :param inp_path: (string) path to the input file
+    :param temp_dir: (string) path to the temporary directory
+
+    :return: None
+    """
+    file_extensions = [".erp", ".lrp", ".srp", ".nhk"]
+    model_dir = os.path.dirname(inp_path)
+    model_name = os.path.basename(inp_path).split(".")[0]
+
+    for ext in file_extensions:
+
+        model_file = f"{model_name}{ext}"
+        alternate_search_file = f"{model_name} - Baseline Design{ext}"
+
+        if os.path.exists(os.path.join(model_dir, model_file)):
+            shutil.copy2(os.path.join(model_dir, model_file), temp_dir)
+
+        elif os.path.exists(os.path.join(model_dir, alternate_search_file)):
+            destination_file = os.path.join(temp_dir, model_file)
+            shutil.copy2(
+                os.path.join(model_dir, alternate_search_file), destination_file
+            )
+
+        else:
+            print(f"File {model_file} not found in {model_dir}")
 
 
 def _create_obj_instance(command, command_dict, rmd):
@@ -218,12 +314,12 @@ def _process_command_group(
         rmd.bdl_obj_instances[cmd_dict["unique_name"]] = obj
 
 
-# Run functions directly from BDL file, bypass GUI and processing of inp
-# validate_configuration.find_equest_installation()
-# Config.set_active_ruleset("ASHRAE 90.1-2019")
-# SchemaEnums.update_schema_enum(Config.ACTIVE_RULESET)
-# generate_rpd_json(
-#     [
-#         r"C:\Users\JacksonJarboe\Documents\Development\DOE2-229RPDGenerator\test\example\FC Test Case.BDL"
-#     ]
-# )
+if __name__ == "__main__":
+    # Generate an RPD file directly from a Diagnostic-Commented BDL file, bypass GUI and processing of inp
+    validate_configuration.find_equest_installation()
+    write_rpd_json_from_bdl(
+        [
+            Path(__file__).parents[1] / "test" / "E-1" / "229 Test Case E-1 (PSZHP).BDL"
+        ],
+        str(Path(__file__).parents[1] / "test" / "E-1" / "229 Test Case E-1 (PSZHP).json"),
+    )
