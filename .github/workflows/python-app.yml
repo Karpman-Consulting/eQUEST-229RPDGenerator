@@ -65,6 +65,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Install pipenv
+        run: |
+            python -m pip install --upgrade pip
+            pip install pipenv
+            pipenv install --dev
       - name: Download build artifact
         uses: actions/download-artifact@v3
         with:
