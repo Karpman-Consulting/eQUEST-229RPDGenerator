@@ -38,10 +38,8 @@ jobs:
     steps:
       - name: Create temporary directory
         run: mkdir -p temp_directory
-      - name: Install 7zip
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y p7zip-full
+      - name: Install 7-Zip
+        run: choco install 7zip --no-progress
       - name: Download D23s50e.zip
         run: curl -L -o D23s50e.zip https://doe2.com/Download/DOE-23/D23s50e.zip
       - name: Extract D2Result.dll from D23s50e.zip
