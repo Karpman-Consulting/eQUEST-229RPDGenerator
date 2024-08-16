@@ -61,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: temp-files
-          path: temp_directory/
+          path: ./temp_directory/
 
   black-formatting-check:
     name: Black Formatting Check
@@ -75,7 +75,7 @@ jobs:
       - name: Restore pipenv cache
         uses: actions/cache@v3
         with:
-          path: .venv
+          path: ./.venv
           key: ${{ runner.os }}-pipenv-v5-${{ hashFiles('Pipfile.lock') }}
 
       - name: Run Black
@@ -93,14 +93,16 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.11.1'
+          architecture: 'x64'
+          cache: 'pipenv'
 
       - name: Restore pipenv cache
         uses: actions/cache@v3
         with:
-          path: .venv
+          path: ./.venv
           key: ${{ runner.os }}-pipenv-v4-${{ hashFiles('Pipfile.lock') }}
 
       - name: Install pipenv
