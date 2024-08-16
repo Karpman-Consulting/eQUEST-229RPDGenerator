@@ -3,11 +3,10 @@ import argparse
 import sys
 import os
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from rpd_generator import main as rpd_generator
 from rpd_generator.config import Config
-
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def generate_test_rpds_from_bdls(output_dir=None, testing=False):
