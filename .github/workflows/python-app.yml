@@ -77,7 +77,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .venv
-          key: ${{ runner.os }}-pipenv-${{ hashFiles('Pipfile.lock') }}
+          key: ${{ runner.os }}-pipenv-${{ hashFiles('Pipfile.lock') }}-1
       - name: Install pipenv
         run: python -m pip install pipenv
       - name: Download build artifact
