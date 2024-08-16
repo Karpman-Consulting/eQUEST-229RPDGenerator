@@ -1,5 +1,4 @@
 import tempfile
-import os
 import shutil
 from pathlib import Path
 
@@ -12,16 +11,15 @@ from rpd_generator.utilities import validate_configuration
 def process_test_input_files():
     validate_configuration.find_equest_installation()
     test_directory = Path(__file__).parents[1] / "test"
-    test_inp_files = [os.path.join(dirpath, filename)
-                      for dirpath, _, filenames in os.walk(test_directory)
-                      for filename in filenames if filename.endswith('.inp')]
+    test_inp_files = list(test_directory.rglob("*.inp"))
 
     with tempfile.TemporaryDirectory() as temp_dir:
 
         for test_inp_file in test_inp_files:
-            print(f"Processing INP File for Test Case {str(Path(test_inp_file).parent.name)}...")
+            print(f"Processing INP File for Test Case {test_inp_file.parent.name}...")
+
             # Prepare the inp file for processing and save the revised copy to the temporary directory
-            temp_file_path = rpd_generator.prepare_inp(test_inp_file, temp_dir)
+            temp_file_path = rpd_generator.prepare_inp(str(test_inp_file), temp_dir)
 
             # Set the paths for the inp file, json file, and the directories
             temp_inp_path = Path(temp_file_path)
@@ -31,16 +29,14 @@ def process_test_input_files():
 
             # Process the inp file to create the BDL file with Diagnostic Comments (defaults and evaluated values) in the temporary directory
             process_input_file(
-                # str(Path(Config.EQUEST_INSTALL_PATH) / "Bdlcio32.dll"),
                 str(test_bdlcio32_path),
-                # Substituting the path to the BDLCIO32.dll file with the path to the test file until bug resolved
                 str(doe23_path) + "\\",
                 str(temp_inp_path.parent) + "\\",
                 temp_inp_path.name,
             )
 
             # Copy the BDL file from the temporary directory back to the project directory
-            shutil.copy(str(bdl_path), os.path.dirname(test_inp_file))
+            shutil.copy(str(bdl_path), str(test_inp_file.parent))
 
             print(f"Diagnostic-Commented BDL file created.")
             print("----------------------------------------")

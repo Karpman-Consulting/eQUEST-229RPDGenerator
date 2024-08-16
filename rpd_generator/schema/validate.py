@@ -1,31 +1,21 @@
 import json
-import os
+from pathlib import Path
 import jsonschema
 
 from rpd_generator.config import Config
 from rpd_generator.utilities.jsonpath_utils import find_all, find_all_by_jsonpaths
 
-file_dir = os.path.dirname(__file__)
+file_dir = Path(__file__).parent
 
 SCHEMA_FILENAME = Config.ACTIVE_RULESET.SCHEMA_FILENAME
 SCHEMA_ENUM_FILENAME = Config.ACTIVE_RULESET.enum_schema_filename
 SCHEMA_OUTPUT_FILENAME = Config.ACTIVE_RULESET.output_schema_filename
-SCHEMA_PATH = os.path.join(file_dir, SCHEMA_FILENAME)
-SCHEMA_ENUM_PATH = os.path.join(file_dir, SCHEMA_ENUM_FILENAME)
-SCHEMA_OUTPUT_PATH = os.path.join(file_dir, SCHEMA_OUTPUT_FILENAME)
+SCHEMA_PATH = file_dir / SCHEMA_FILENAME
+SCHEMA_ENUM_PATH = file_dir / SCHEMA_ENUM_FILENAME
+SCHEMA_OUTPUT_PATH = file_dir / SCHEMA_OUTPUT_FILENAME
 
 
 def check_fluid_loop_association(rpd: dict) -> list:
-    """
-    Check the association between fluid loops and the various objects which reference them.
-    Parameters
-    ----------
-    rpd
-
-    Returns list of mismatched fluid loop ids
-    -------
-
-    """
     mismatch_list = []
 
     fluid_loop_id_jsonpaths = [
@@ -67,16 +57,6 @@ def check_fluid_loop_association(rpd: dict) -> list:
 
 
 def check_zone_association(rpd: dict) -> list:
-    """
-    Check the association between zones and the various objects which reference them.
-    Parameters
-    ----------
-    rpd
-
-    Returns list of mismatched zone ids
-    -------
-
-    """
     mismatch_list = []
     zone_reference_jsonpaths = [
         "$.ruleset_model_descriptions[*].buildings[*].elevators[*].motor_location_zone",
@@ -110,16 +90,6 @@ def check_zone_association(rpd: dict) -> list:
 
 
 def check_schedule_association(rpd: dict) -> list:
-    """
-    Check the association between schedules and the various objects which reference them.
-    Parameters
-    ----------
-    rpd
-
-    Returns list of mismatched schedule ids
-    -------
-
-    """
     mismatch_list = []
 
     schedule_id_list = find_all("$.ruleset_model_descriptions[*].schedules[*].id", rpd)
@@ -160,16 +130,6 @@ def check_schedule_association(rpd: dict) -> list:
 
 
 def check_fluid_loop_or_piping_association(rpd: dict) -> list:
-    """
-    Check the association between fluid loops or piping and pumps that reference them.
-    Parameters
-    ----------
-    rpd
-
-    Returns list of mismatched fluid loop or piping ids
-    -------
-
-    """
     mismatch_list = []
     fluid_loop_or_piping_id_jsonpaths = [
         "$.ruleset_model_descriptions[*].fluid_loops[*].id",
@@ -192,16 +152,6 @@ def check_fluid_loop_or_piping_association(rpd: dict) -> list:
 
 
 def check_service_water_heating_association(rpd: dict) -> list:
-    """
-    Check the association between service water heating distribution systems and the various objects that reference them.
-    Parameters
-    ----------
-    rpd
-
-    Returns list of mismatched service water heating distribution system ids
-    -------
-
-    """
     mismatch_list = []
     service_water_heating_id_list = find_all(
         "$.ruleset_model_descriptions[*].service_water_heating_distribution_systems[*].id",
@@ -224,20 +174,7 @@ def check_service_water_heating_association(rpd: dict) -> list:
     return mismatch_list
 
 
-# search schedule with keywords: Constraint to use when implemented :
-
-
 def check_hvac_association(rpd: dict) -> list:
-    """
-    Check the association between hvac systems and the terminals served by HVAC systems.
-    Parameters
-    ----------
-    rpd
-
-    Returns list of mismatched hvac ids
-    -------
-
-    """
     mismatch_list = []
     hvac_id_list = find_all(
         "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].id",
@@ -254,39 +191,15 @@ def check_hvac_association(rpd: dict) -> list:
 
 
 def check_unique_ids_in_ruleset_model_descriptions(rmd: dict) -> str:
-    """Checks that the ids within each group inside a
-    RuleSetModelInstance are unique
-
-    The strategy is to first find all unique json paths to all lists inside the
-    RuleSetModelInstance, with all list indexes set to [*]. For example,
-    the general jsonpath to the building_segments is "buildings[*].building_segments".
-    Then, for each of these unique list_paths, we use find_all using the jsonpath
-    list_path[*].id to find all the ids for this path and check that they are unique.
-
-    Parameters
-    ----------
-    rmd : dict
-        A dictionary representing an RMD
-
-    Returns
-    -------
-    str
-        An error message listing any paths that do not have unique ids. The empty string
-        indicates that all appropriate ids are unique.
-    """
-    # The schema does not require the ruleset_model_descriptions field, default to []
     ruleset_model_descriptions = rmd.get("ruleset_model_descriptions", [])
 
     bad_paths = []
     for rmd_index, rmd in enumerate(ruleset_model_descriptions):
-        # Collect all jsonpaths to lists
         paths = json_paths_to_lists(rmd)
 
         for list_path in paths:
             ids = find_all(list_path + "[*].id", rmd)
             if len(ids) != len(set(ids)):
-                # The ids are not unique
-                # list_path starts with "$" that must be removed
                 bad_path = f"ruleset_model_descriptions[{rmd_index}]{list_path[1:]}"
                 bad_paths.append(bad_path)
 
@@ -295,28 +208,7 @@ def check_unique_ids_in_ruleset_model_descriptions(rmd: dict) -> str:
     return error_msg
 
 
-# json_paths_to_lists, json_paths_to_lists_from_dict, and json_paths_to_lists_from_list
-# work together
-
-
 def json_paths_to_lists(val: dict | list, path="$") -> set:
-    """Determines all the generic json paths to lists inside an object
-
-    If a json path has a list index, that index is replaced with [*] to make it
-    generic.
-
-    Parameters
-    ----------
-    val : any
-        Only dict and list objects are processed, all others are ignored
-    path : str
-        A json path representing a generic path to val in a larger structure
-
-    Returns
-    -------
-    set
-        A set of unique generic json paths to lists inside val
-    """
     paths = set()
     if isinstance(val, dict):
         paths = json_paths_to_lists_from_dict(val, path)
@@ -327,23 +219,6 @@ def json_paths_to_lists(val: dict | list, path="$") -> set:
 
 
 def json_paths_to_lists_from_dict(rmd: dict, path: str) -> set:
-    """Determines all the generic json paths to lists inside an dictionary
-
-    If a json path has a list index, that index is replaced with [*] to make it
-    generic.
-
-    Parameters
-    ----------
-    rmd : dict
-
-    path : str
-        A json path representing a generic path to rmd_dict in a larger structure
-
-    Returns
-    -------
-    set
-        A set of unique generic json paths to lists inside rmd_dict
-    """
     paths = set()
     for key, val in rmd.items():
         new_path = f"{path}.{key}"
@@ -354,23 +229,6 @@ def json_paths_to_lists_from_dict(rmd: dict, path: str) -> set:
 
 
 def json_paths_to_lists_from_list(rmd_list: list, path: str) -> list:
-    """Determines all the generic json paths to lists inside a list
-
-    If a json path has a list index, that index is replaced with [*] to make it
-    generic.
-
-    Parameters
-    ----------
-    rmd_list : dict
-
-    path : str
-        A json path representing a generic path to rmd_list in a larger structure
-
-    Returns
-    -------
-    set
-        A set of unique generic json paths to lists inside rmd_list
-    """
     paths = {path}
     for rmd in rmd_list:
         new_path = f"{path}[*]"
@@ -381,7 +239,6 @@ def json_paths_to_lists_from_list(rmd_list: list, path: str) -> list:
 
 
 def non_schema_validate_rmd(rmd_obj):
-    """Provides non-schema validation for an RMD"""
     error = []
     unique_id_error = check_unique_ids_in_ruleset_model_descriptions(rmd_obj)
     passed = not unique_id_error
@@ -420,7 +277,7 @@ def non_schema_validate_rmd(rmd_obj):
     passed = passed and not mismatch_fluid_loop_piping_errors
     if mismatch_fluid_loop_piping_errors:
         error.append(
-            f"Cannot find piping {mismatch_schedule_errors} in the FluidLoop or ServiceWaterHeatingDistributionSystems data group."
+            f"Cannot find piping {mismatch_fluid_loop_piping_errors} in the FluidLoop or ServiceWaterHeatingDistributionSystems data group."
         )
 
     mismatch_service_water_heating_errors = check_service_water_heating_association(
@@ -436,13 +293,6 @@ def non_schema_validate_rmd(rmd_obj):
 
 
 def schema_validate_rmd(rmd_obj):
-    """Validates an RMD against the schema
-
-    This code follows the outline given in
-    https://stackoverflow.com/questions/53968770/how-to-set-up-local-file-references-in-python-jsonschema-document
-    """
-
-    # Load the schema files
     with open(SCHEMA_PATH) as json_file:
         schema = json.load(json_file)
     with open(SCHEMA_ENUM_PATH) as json_file:
@@ -450,7 +300,6 @@ def schema_validate_rmd(rmd_obj):
     with open(SCHEMA_OUTPUT_PATH) as json_file:
         schema_output = json.load(json_file)
 
-    # Create a resolver which maps schema references to schema objects
     schema_map = {
         SCHEMA_FILENAME: schema,
         SCHEMA_ENUM_FILENAME: schema_enum,
@@ -458,12 +307,10 @@ def schema_validate_rmd(rmd_obj):
     }
     resolver = jsonschema.RefResolver.from_schema(schema, store=schema_map)
 
-    # Create a validator
     validator = jsonschema.validators.validator_for(schema)
     validator = validator(schema, resolver=resolver)
 
     try:
-        # Throws ValidationError on failure
         validator.validate(rmd_obj)
         return {"passed": True, "error": None}
     except jsonschema.exceptions.ValidationError as err:
@@ -471,13 +318,9 @@ def schema_validate_rmd(rmd_obj):
 
 
 def validate_rmd(rmd_obj, test=False):
-    """Validate an RMD against the schema and other high-level checks"""
-    # Validate against the schema
     result = schema_validate_rmd(rmd_obj)
 
     if result["passed"] and not test:
-        # Only check if it is not software test workflow.
-        # Provide non-schema validation
         result = non_schema_validate_rmd(rmd_obj)
 
     return result
