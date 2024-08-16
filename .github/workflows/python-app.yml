@@ -43,7 +43,7 @@ jobs:
       - name: Download D23s50e.zip
         run: curl -L -o D23s50e.zip https://doe2.com/Download/DOE-23/D23s50e.zip
       - name: Extract D2Result.dll from D23s50e.zip
-        run: 7z e D23s50e.zip doe23/DLL50e/D2Result.dll -p${{ secrets.DOE23_PASSWORD }} -o./temp_directory
+        run: 7z e D23s50e.zip doe23/DLL50e/D2Result.dll -p${{ secrets.DOE23_PASSWORD }} -o. /temp_directory
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
