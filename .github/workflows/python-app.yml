@@ -29,7 +29,7 @@ jobs:
         uses: actions/cache@v3
         id: cache-dependencies
         with:
-          path: ./.venv
+          path: .venv
           key: ${{ runner.os }}-pipenv-v6-${{ hashFiles('Pipfile.lock') }}
 
       - name: Install Dependencies
