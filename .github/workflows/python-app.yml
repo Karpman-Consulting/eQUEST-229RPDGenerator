@@ -13,8 +13,6 @@ jobs:
         uses: actions/checkout@v3
       - name: Setup Python
         uses: actions/setup-python@v4
-        # This will halt the action if formatting fails
-        # Note: This will also fail if there are syntax errors
       - uses: psf/black@stable
         with:
           version: "24.2.0"
@@ -36,3 +34,29 @@ jobs:
 #      - name: Run pytests
 #        # This will halt the action if any of the tests fail
 #        run: pipenv run pytest -v
+  rpd-validation-test:
+    name: Run RPD validation tests
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+     - name: Checkout code
+       uses: actions/checkout@v2
+
+      # Step 2: Set up Python environment
+     - name: Set up Python
+       uses: actions/setup-python@v2
+       with:
+         python-version: '3.8'
+
+      # Step 3: Install pipenv and project dependencies
+     - name: Install dependencies
+       run: |
+         python -m pip install --upgrade pip
+         pip install pipenv
+         pipenv install --dev
+
+      # Step 4: Run the JSON comparison script using pipenv
+#     - name: Run JSON comparison
+#       run: |
+#         pipenv run python compare_json.py path/to/reference.json path/to/generated.json path/to/tolerance.json
