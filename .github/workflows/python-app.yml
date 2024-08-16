@@ -12,16 +12,30 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Cache Python
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~\AppData\Local\pip\Cache
+            ~\AppData\Local\Programs\Python\Python311
+            ~\AppData\Roaming\Python\Python311
+          key: ${{ runner.os }}-python-${{ hashFiles('**/Pipfile.lock') }}-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-python-
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.11.1'
+
       - name: Install package dependencies
         run: |
           python -m pip install --upgrade pip
           pip install pipenv
           set PIPENV_VENV_IN_PROJECT=true
           pipenv install --dev
+
       - name: Cache pipenv virtual environment
         uses: actions/cache@v3
         with:
@@ -38,12 +52,16 @@ jobs:
     steps:
       - name: Create temporary directory
         run: mkdir -p temp_directory
+
       - name: Install 7-Zip
         run: choco install 7zip --no-progress
+
       - name: Download D23s50e.zip
         run: curl -L -o D23s50e.zip https://doe2.com/Download/DOE-23/D23s50e.zip
+
       - name: Extract D2Result.dll from D23s50e.zip
         run: 7z e D23s50e.zip doe23/DLL50e/D2Result.dll -p${{ secrets.DOE23_PASSWORD }} -o. /temp_directory
+
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
@@ -58,6 +76,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Restore pipenv cache
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: ${{ runner.os }}-pipenv-v4-${{ hashFiles('Pipfile.lock') }}
+
       - name: Run Black
         uses: psf/black@stable
         with:
@@ -71,22 +96,27 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.11.1'
+
       - name: Restore pipenv cache
         uses: actions/cache@v3
         with:
           path: .venv
           key: ${{ runner.os }}-pipenv-v4-${{ hashFiles('Pipfile.lock') }}
+
       - name: Install pipenv
         run: python -m pip install pipenv
+
       - name: Download build artifact
         uses: actions/download-artifact@v3
         with:
           name: temp-files
           path: ./temp_directory/
+
       - name: Generate test RPDs
         run: |
               pipenv run python test/generate_test_rpds_from_bdls.py --output_dir ./temp_directory --testing True
