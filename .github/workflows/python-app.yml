@@ -74,11 +74,11 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: temp-files
-          path: temp_directory/
+          path: ./temp_directory/
 
       - name: Generate test RPDs
         run: |
-          pipenv run python test/generate_test_rpds_from_bdls.py temp_directory
+          pipenv run python test/generate_test_rpds_from_bdls.py --output_dir ./temp_directory --testing True
 
         # Step 3: Run the RPD validation script using pipenv
         #     - name: Validate the generated RPDs
