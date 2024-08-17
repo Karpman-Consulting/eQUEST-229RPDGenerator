@@ -129,6 +129,7 @@ def get_string_result(
     """
 
     contents = list(Path(d2_result_dll).parent.iterdir())
+    print("Contents of DLL directory: " + str(Path(d2_result_dll).parent))
     for item in contents:
         print(item)
 
