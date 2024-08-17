@@ -72,7 +72,7 @@ jobs:
         run: curl -L -o D23s50e.zip https://doe2.com/Download/DOE-23/D23s50e.zip
 
       - name: Extract D2Result.dll from D23s50e.zip
-        run: 7z e D23s50e.zip doe23/DLL50e/D2Result.dll -o"temp_directory"
+        run: 7z e D23s50e.zip doe23/DLL50e/D2Result.dll -p"${{ secrets.DOE23_PASSWORD }}" -o"temp_directory"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -136,7 +136,30 @@ jobs:
         run: |
           echo "$(pwd)/temp_directory" >> $GITHUB_PATH
           echo $PATH
+      - name: Print Current Directory
+        run: echo "%cd%"
 
+      - name: List Files in Directory
+        run: dir
+
+      - name: Print PATH Variable
+        run: echo %PATH%
+
+      - name: Load DLL
+        run: |
+          python -c "
+          import os
+          import ctypes
+          print('Attempting to load DLL...')
+          dll_path = 'D:\\a\\eQUEST-229RPDGenerator\\eQUEST-229RPDGenerator\\temp_directory'
+          print(f'Loading DLL from: { dll_path }')
+          print(f'Current PATH: { os.environ[ "PATH" ] }')
+          try:
+              ctypes.CDLL(dll_path)
+              print('DLL loaded successfully!')
+          except OSError as e:
+            print(f'Error loading DLL: { e }')
+          "
       - name: Generate Test RPDs
         run: |
               $output_dir = "D:\a\eQUEST-229RPDGenerator\eQUEST-229RPDGenerator\temp_directory"
