@@ -19,6 +19,9 @@ jobs:
           python-version: '3.11'
           architecture: 'x86'
 
+      - name: Set environment variables
+        run: echo "PIPENV_VENV_IN_PROJECT=true" >> $env:GITHUB_ENV
+
       - name: Install pipenv
         run: |
           python -m pip install --upgrade pip
