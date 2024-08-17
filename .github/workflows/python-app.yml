@@ -35,6 +35,8 @@ jobs:
       - name: Install Dependencies
         if: steps.cache-dependencies.outputs.cache-hit != 'true'
         run: pipenv install --dev --verbose
+        env:
+          PIPENV_PYTHON: C:\hostedtoolcache\windows\Python\3.11.7\x86\python.exe
 
   build:
     name: Build Artifact
