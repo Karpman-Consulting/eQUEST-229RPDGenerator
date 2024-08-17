@@ -123,8 +123,9 @@ jobs:
 
       - name: Generate Test RPDs
         run: |
-              dir D:\a\eQUEST-229RPDGenerator\eQUEST-229RPDGenerator\temp_directory
-              pipenv run python test/generate_test_rpds_from_bdls.py --output_dir $(pwd)/temp_directory --testing True
+              $output_dir = "D:\a\eQUEST-229RPDGenerator\eQUEST-229RPDGenerator\temp_directory"
+              pipenv run python test/generate_test_rpds_from_bdls.py --output_dir $output_dir --testing True
+
 
         # Step 3: Run the RPD validation script using pipenv
         #     - name: Validate the generated RPDs
