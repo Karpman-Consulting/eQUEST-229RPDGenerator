@@ -129,12 +129,11 @@ def get_string_result(
     :return: value from binary simulation output files
     """
 
-    dll_path = "D:\\a\\eQUEST-229RPDGenerator\\eQUEST-229RPDGenerator\\temp_directory\\D2Result.dll"
-    if not os.path.exists(dll_path):
-        raise FileNotFoundError(f"D2Result.dll not found at {dll_path}")
+    if not os.path.exists(d2_result_dll):
+        raise FileNotFoundError(f"D2Result.dll not found at {d2_result_dll}")
 
     # Load DLL
-    d2_result_dll = ctypes.CDLL(dll_path)
+    d2_result_dll = ctypes.CDLL(d2_result_dll)
     doe2_dir = str(Path(doe2_dir) / "DOE23") + "\\"
 
     single_result_dll = d2_result_dll.D2R_GetSingleResult
