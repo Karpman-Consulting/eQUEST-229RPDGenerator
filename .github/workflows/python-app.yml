@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11.7'
+          python-version: '3.11'
           architecture: 'x86'
 
       - name: Install pipenv
@@ -27,7 +27,7 @@ jobs:
 
       - name: Create and check virtual environment
         run: |
-          pipenv --python 3.11.7
+          pipenv --python 3.11
           if not exist .venv echo "Virtual environment not created!" & exit 1
         shell: cmd
 
@@ -42,7 +42,7 @@ jobs:
         if: steps.cache-dependencies.outputs.cache-hit != 'true'
         run: pipenv install --dev --verbose
         env:
-          PIPENV_PYTHON: C:\hostedtoolcache\windows\Python\3.11.7\x86\python.exe
+          PIPENV_PYTHON: C:\hostedtoolcache\windows\Python\3.11\x86\python.exe
 
   build:
     name: Build Artifact
@@ -101,7 +101,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11.7'
+          python-version: '3.11'
           architecture: 'x86'
 
       - name: Restore pipenv cache
