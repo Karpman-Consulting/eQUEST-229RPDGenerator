@@ -127,6 +127,11 @@ def get_string_result(
 
     :return: value from binary simulation output files
     """
+
+    contents = list(Path(d2_result_dll).parent.iterdir())
+    for item in contents:
+        print(item)
+
     # Load DLL
     d2_result_dll = ctypes.CDLL(d2_result_dll)
     doe2_dir = str(Path(doe2_dir) / "DOE23") + "\\"
