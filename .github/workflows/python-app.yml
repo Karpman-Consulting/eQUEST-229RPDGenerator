@@ -22,22 +22,6 @@ jobs:
       - name: Set Environment Variables
         run: echo "PIPENV_VENV_IN_PROJECT=true" >> $env:GITHUB_ENV
 
-      - name: Check for Required DLLs
-        id: check-dlls
-        shell: pwsh
-        run: |
-            $systemDir = "${env:WINDIR}\System32"
-            $MFC42Exists = Test-Path "$systemDir\MFC42.DLL"
-            $MSVCRTExists = Test-Path "$systemDir\MSVCRT.DLL"
-            
-            if (-not $MFC42Exists) {
-                Throw "MFC42.DLL not found in $systemDir. Failing the job."
-            }
-        
-            if (-not $MSVCRTExists) {
-                Throw "MSVCRT.DLL not found in $systemDir. Failing the job."
-            }
-
       - name: Install pipenv
         run: |
           python -m pip install --upgrade pip
@@ -55,30 +39,6 @@ jobs:
         run: pipenv install --dev --verbose
         env:
           PIPENV_PYTHON: C:\hostedtoolcache\windows\Python\3.11\x86\python.exe
-
-  build:
-    name: Build Artifact
-    runs-on: windows-latest
-    needs: setup
-
-    steps:
-      - name: Create Temporary Directory
-        run: mkdir -p temp_directory
-
-      - name: Install 7-Zip
-        run: choco install 7zip --no-progress
-
-      - name: Download D23s50e.zip
-        run: curl -L -o D23s50e.zip https://doe2.com/Download/DOE-23/D23s50e.zip
-
-      - name: Extract D2Result.dll from D23s50e.zip
-        run: 7z e D23s50e.zip doe23/DLL50e/D2Result.dll -p"${{ secrets.DOE23_PASSWORD }}" -o"temp_directory"
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: D2Result.dll
-          path: ./temp_directory/
 
   black-formatting-check:
     name: Black Formatting Check
@@ -125,54 +85,6 @@ jobs:
 
       - name: Install pipenv
         run: python -m pip install pipenv
-
-      - name: Download Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: D2Result.dll
-          path: ./temp_directory/
-
-      - name: Add temp_directory to PATH
-        run: |
-          echo "$(pwd)\temp_directory" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-
-      - name: Print Current Directory
-        shell: powershell
-        run: |
-          Write-Host "Current Directory: $($PWD.Path)"
-
-      - name: List Files in Directory
-        shell: powershell
-        run: Get-ChildItem -Path "."
-
-      - name: Print PATH Variable
-        shell: powershell
-        run: |
-          Write-Host "PATH: $Env:Path"
-
-      - name: Load DLL
-        shell: powershell
-        run: |
-          Write-Host "Attempting to load DLL..."
-          $dll_path = "D:\a\eQUEST-229RPDGenerator\eQUEST-229RPDGenerator\temp_directory\D2Result.dll"
-          Write-Host "Loading DLL from: $dll_path"
-          Write-Host "Current PATH: $Env:Path"
-          python -c @"
-          import os
-          import ctypes
-          print('Attempting to load DLL...')
-          dll_path = r'$dll_path'
-          print(f'Loading DLL from: { dll_path }')
-          try:
-            ctypes.CDLL(dll_path)
-            print('DLL loaded successfully!')
-          except OSError as e:
-            print(f'Error loading DLL: { e }')
-          "@
-      - name: Generate Test RPDs
-        run: |
-              $output_dir = "D:\a\eQUEST-229RPDGenerator\eQUEST-229RPDGenerator\temp_directory"
-              pipenv run python test/generate_test_rpds_from_bdls.py --output_dir $output_dir --testing True
 
 
         # Step 3: Run the RPD validation script using pipenv
