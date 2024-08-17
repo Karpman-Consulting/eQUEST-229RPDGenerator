@@ -163,7 +163,6 @@ jobs:
           print('Attempting to load DLL...')
           dll_path = r'$dll_path'
           print(f'Loading DLL from: { dll_path }')
-          print(f'Current PATH: { os.environ[ "PATH" ] }')
           try:
             ctypes.CDLL(dll_path)
             print('DLL loaded successfully!')
