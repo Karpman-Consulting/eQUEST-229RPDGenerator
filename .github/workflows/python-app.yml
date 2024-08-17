@@ -116,6 +116,9 @@ jobs:
           name: D2Result.dll
           path: ./temp_directory/
 
+      - name: List contents of temp_directory
+        run: dir D:\a\eQUEST-229RPDGenerator\eQUEST-229RPDGenerator\temp_directory
+
       - name: Generate Test RPDs
         run: |
               pipenv run python test/generate_test_rpds_from_bdls.py --output_dir ./temp_directory --testing True
