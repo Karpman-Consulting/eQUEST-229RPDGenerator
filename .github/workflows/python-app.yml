@@ -25,11 +25,11 @@ jobs:
           set PIPENV_VENV_IN_PROJECT=true
           pip install pipenv
 
-          - name: Create and check virtual environment
-            run: |
-              pipenv --python 3.11.7
-              if not exist .venv echo "Virtual environment not created!" & exit 1
-            shell: cmd
+      - name: Create and check virtual environment
+        run: |
+          pipenv --python 3.11.7
+          if not exist .venv echo "Virtual environment not created!" & exit 1
+        shell: cmd
 
       - name: Cache Dependencies
         uses: actions/cache@v3
