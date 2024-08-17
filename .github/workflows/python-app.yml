@@ -30,22 +30,12 @@ jobs:
             $MFC42Exists = Test-Path "$systemDir\MFC42.DLL"
             $MSVCRTExists = Test-Path "$systemDir\MSVCRT.DLL"
             
-            # Set environment variables for use in the next steps
-            Write-Output "MFC42=$MFC42Exists" | Out-File -FilePath $env:GITHUB_ENV -Append
-            Write-Output "MSVCRT=$MSVCRTExists" | Out-File -FilePath $env:GITHUB_ENV -Append
-
-      - name: Copy DLLs to System32
-        if: env.MFC42 == 'False' || env.MSVCRT == 'False'
-        shell: pwsh
-        run: |
-            $systemDir = "${env:WINDIR}\System32"
-            $dllSourceDir = "${{ github.workspace }}\test"
-            
-            if ($env:MFC42 -eq 'False') {
-              Copy-Item -Path "$dllSourceDir\MFC42.DLL" -Destination "$systemDir" -Force
+            if (-not $MFC42Exists) {
+                Throw "MFC42.DLL not found in $systemDir. Failing the job."
             }
-            if ($env:MSVCRT -eq 'False') {
-              Copy-Item -Path "$dllSourceDir\MSVCRT.DLL" -Destination "$systemDir" -Force
+        
+            if (-not $MSVCRTExists) {
+                Throw "MSVCRT.DLL not found in $systemDir. Failing the job."
             }
 
       - name: Install pipenv

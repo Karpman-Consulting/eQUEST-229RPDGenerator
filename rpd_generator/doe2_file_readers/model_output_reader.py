@@ -1,4 +1,5 @@
 import ctypes
+import os
 from pathlib import Path
 
 
@@ -127,11 +128,10 @@ def get_string_result(
 
     :return: value from binary simulation output files
     """
-    print("D2Result.dll Path: " + d2_result_dll)
-    contents = list(Path(d2_result_dll).parent.iterdir())
-    print("Contents of DLL directory: " + str(Path(d2_result_dll).parent))
-    for item in contents:
-        print(item)
+
+    dll_path = "D:\\a\\eQUEST-229RPDGenerator\\eQUEST-229RPDGenerator\\temp_directory\\D2Result.dll"
+    if not os.path.exists(dll_path):
+        raise FileNotFoundError(f"D2Result.dll not found at {dll_path}")
 
     # Load DLL
     d2_result_dll = ctypes.CDLL(d2_result_dll)
