@@ -117,7 +117,7 @@ jobs:
           path: ./temp_directory/
 
       - name: Add temp_directory to PATH
-        run: echo "::add-path::$(pwd)/temp_directory"
+        run: echo "$(pwd)/temp_directory" >> $GITHUB_PATH
 
       - name: Generate Test RPDs
         run: |
