@@ -134,7 +134,7 @@ def get_string_result(
         raise FileNotFoundError(f"D2Result.dll not found at {dll_path}")
 
     # Load DLL
-    d2_result_dll = ctypes.CDLL(d2_result_dll)
+    d2_result_dll = ctypes.CDLL(dll_path)
     doe2_dir = str(Path(doe2_dir) / "DOE23") + "\\"
 
     single_result_dll = d2_result_dll.D2R_GetSingleResult
