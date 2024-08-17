@@ -136,30 +136,41 @@ jobs:
         run: |
           echo "$(pwd)/temp_directory" >> $GITHUB_PATH
           echo $PATH
+
       - name: Print Current Directory
-        run: echo "%cd%"
+        shell: powershell
+        run: |
+          Write-Host "Current Directory: $($PWD.Path)"
 
       - name: List Files in Directory
-        run: dir
+        shell: powershell
+        run: Get-ChildItem -Path "."
 
       - name: Print PATH Variable
-        run: echo %PATH%
+        shell: powershell
+        run: |
+          Write-Host "PATH: $Env:Path"
 
       - name: Load DLL
+        shell: powershell
         run: |
-          python -c "
-          import os
-          import ctypes
-          print('Attempting to load DLL...')
-          dll_path = 'D:\\a\\eQUEST-229RPDGenerator\\eQUEST-229RPDGenerator\\temp_directory'
-          print(f'Loading DLL from: { dll_path }')
-          print(f'Current PATH: { os.environ[ "PATH" ] }')
-          try:
-              ctypes.CDLL(dll_path)
-              print('DLL loaded successfully!')
-          except OSError as e:
-            print(f'Error loading DLL: { e }')
-          "
+          Write-Host "Attempting to load DLL..."
+          $dll_path = "D:\a\eQUEST-229RPDGenerator\eQUEST-229RPDGenerator\temp_directory\D2Result.dll"
+          Write-Host "Loading DLL from: $dll_path"
+          Write-Host "Current PATH: $Env:Path"
+          python -c @"
+              import os
+              import ctypes
+              print('Attempting to load DLL...')
+              dll_path = r'$dll_path'
+              print(f'Loading DLL from: { dll_path }')
+              print(f'Current PATH: { os.environ[ "PATH" ] }')
+              try:
+                  ctypes.CDLL(dll_path)
+                  print('DLL loaded successfully!')
+              except OSError as e:
+                print(f'Error loading DLL: { e }')
+          "@
       - name: Generate Test RPDs
         run: |
               $output_dir = "D:\a\eQUEST-229RPDGenerator\eQUEST-229RPDGenerator\temp_directory"
