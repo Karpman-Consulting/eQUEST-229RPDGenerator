@@ -127,7 +127,7 @@ def get_string_result(
 
     :return: value from binary simulation output files
     """
-
+    print("D2Result.dll Path: " + d2_result_dll)
     contents = list(Path(d2_result_dll).parent.iterdir())
     print("Contents of DLL directory: " + str(Path(d2_result_dll).parent))
     for item in contents:
