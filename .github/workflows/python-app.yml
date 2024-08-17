@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.11.7'
           architecture: 'x86'
 
       - name: Install pipenv
@@ -93,7 +93,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.11.7'
           architecture: 'x86'
 
       - name: Restore pipenv cache
@@ -141,7 +141,7 @@ jobs:
         #      - name: Setup Python
         #        uses: actions/setup-python@v4
         #        with:
-        #          python-version: '3.11'
+        #          python-version: '3.11.7'
         #          cache: 'pipenv'
         #      - name: Install pipenv
         #        run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
