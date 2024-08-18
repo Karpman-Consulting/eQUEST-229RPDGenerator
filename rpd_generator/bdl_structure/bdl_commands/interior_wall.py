@@ -50,6 +50,14 @@ class InteriorWall(
         self.does_cast_shade = None
         self.status_type = None
 
+        # data elements for surface optical properties
+        self.absorptance_thermal_exterior = None
+        self.absorptance_solar_exterior = None
+        self.absorptance_visible_exterior = None
+        self.absorptance_thermal_interior = None
+        self.absorptance_solar_interior = None
+        self.absorptance_visible_interior = None
+
     def __repr__(self):
         return f"InteriorWall(u_name='{self.u_name}', parent='{self.parent}')"
 
@@ -93,6 +101,16 @@ class InteriorWall(
             self.keyword_value_pairs.get("SHADING-SURFACE")
         )
 
+        self.absorptance_solar_interior = self.try_float(
+            self.keyword_value_pairs.get("INSIDE-SOL-ABS")
+        )
+
+        reflectance_visible_interior = self.try_float(
+            self.keyword_value_pairs.get("INSIDE-VIS-REFL")
+        )
+        if reflectance_visible_interior is not None:
+            self.absorptance_visible_interior = 1 - reflectance_visible_interior
+
     def get_output_requests(self):
         requests = {}
         if self.area is None and self.keyword_value_pairs.get("LOCATION") == "TOP":
@@ -104,6 +122,20 @@ class InteriorWall(
         self.construction = self.rmd.bdl_obj_instances.get(
             self.keyword_value_pairs.get("CONSTRUCTION")
         ).construction_data_structure
+
+        surface_optical_property_attributes = [
+            "absorptance_thermal_exterior",
+            "absorptance_solar_exterior",
+            "absorptance_visible_exterior",
+            "absorptance_thermal_interior",
+            "absorptance_solar_interior",
+            "absorptance_visible_interior",
+        ]
+
+        for attr in surface_optical_property_attributes:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.surface_optical_properties[attr] = value
 
         self.interior_wall_data_structure = {
             "id": self.u_name,
