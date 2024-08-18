@@ -5,7 +5,7 @@ $ ---------------------------------------------------------
 $              Abort, Diagnostics
 $ ---------------------------------------------------------
 
-DIAGNOSTIC COMMENTS ..
+
 
 
 $ ---------------------------------------------------------
@@ -18,9 +18,6 @@ $ ---------------------------------------------------------
 $              Title, Run Periods, Design Days, Holidays
 $ ---------------------------------------------------------
 
-TITLE           
-   LINE-1           = *229 Test Case 1 updated*
-   ..
 
 "Entire Year" = RUN-PERIOD-PD
    BEGIN-MONTH      = 1
@@ -46,8 +43,8 @@ TITLE
    GROUND-T         = 50
    ..
 
-"Observed Holidays" = HOLIDAYS        
-   TYPE             = NONE
+"Standard US Holidays" = HOLIDAYS        
+   LIBRARY-ENTRY "US"
    ..
 
 
@@ -67,7 +64,7 @@ $ ---------------------------------------------------------
    ..
 
 "Building Data" = BUILD-PARAMETERS
-   HOLIDAYS         = "Observed Holidays"
+   HOLIDAYS         = "Standard US Holidays"
    ..
 
 
@@ -250,11 +247,11 @@ SET-DEFAULT FOR LAYERS
          "Carpet & No Pad" )
    ..
 
-"Roof Construction 1" = CONSTRUCTION    
+"Roof Type 1" = CONSTRUCTION    
    TYPE             = LAYERS
    LAYERS           = "Roof Construction Lyr"
    ..
-"Exterior Wall Construction 1" = CONSTRUCTION    
+"Exterior Wall Type 1" = CONSTRUCTION    
    TYPE             = LAYERS
    LAYERS           = "Exterior Wall Construct-1 Lyr"
    ..
@@ -276,9 +273,9 @@ SET-DEFAULT FOR LAYERS
    ..
 "BL1 IWall Construction" = CONSTRUCTION    
    TYPE             = U-VALUE
-   U-VALUE          = 2.857
+   U-VALUE          = 0.3
    ..
-"Floor type 1" = CONSTRUCTION    
+"Slab-on-grade Type 1" = CONSTRUCTION    
    TYPE             = LAYERS
    LAYERS           = "BL1 IFlr Cons Layers Type 1"
    ..
@@ -302,7 +299,7 @@ SET-DEFAULT FOR LAYERS
    TYPE             = U-VALUE
    U-VALUE          = 0.09
    ..
-"Floor Type 2" = CONSTRUCTION    
+"Slab-on-grade Type 2" = CONSTRUCTION    
    TYPE             = LAYERS
    LAYERS           = "BL1 IFlr Layer Type 2"
    ..
@@ -344,54 +341,6 @@ $ ---------------------------------------------------------
 $              Day Schedules
 $ ---------------------------------------------------------
 
-"BL1 Bldg Occup WD" = DAY-SCHEDULE-PD
-   TYPE             = FRACTION
-   VALUES           = ( 0, &D, &D, &D, &D, &D, 0.099, 0.702, 0.9, &D, &D, 
-         0.504, &D, 0.9, &D, &D, 0.702, 0.297, 0.099, &D, &D, &D, 0 )
-   ..
-"BL1 Bldg Occup WEH" = DAY-SCHEDULE-PD
-   TYPE             = FRACTION
-   VALUES           = ( 0 )
-   ..
-"BL1 Bldg InsLt WD" = DAY-SCHEDULE-PD
-   TYPE             = FRACTION
-   VALUES           = ( 0.05, &D, &D, &D, &D, &D, 0.2965, 0.798, 0.9, &D, &D, 
-         &D, &D, &D, &D, &D, 0.798, 0.5005, 0.2965, &D, 0.101, &D, 0.05 )
-   ..
-"BL1 Bldg InsLt WEH" = DAY-SCHEDULE-PD
-   TYPE             = FRACTION
-   VALUES           = ( 0.015 )
-   ..
-"BL1 Bldg InsLt HDD" = DAY-SCHEDULE-PD
-   TYPE             = FRACTION
-   VALUES           = ( 0 )
-   ..
-"BL1 Bldg OffEq WD" = DAY-SCHEDULE-PD
-   TYPE             = FRACTION
-   VALUES           = ( 0.12, &D, &D, &D, &D, &D, 0.2214, 0.7596, 0.9, &D, &D, 
-         0.7362, &D, 0.9, &D, &D, 0.822, 0.4164, 0.2214, &D, 0.159, &D, 0.12 )
-   ..
-"BL1 Bldg OffEq WEH" = DAY-SCHEDULE-PD
-   TYPE             = FRACTION
-   VALUES           = ( 0.036 )
-   ..
-"BL1 Bldg OffEq HDD" = DAY-SCHEDULE-PD
-   TYPE             = FRACTION
-   VALUES           = ( 0 )
-   ..
-"BL1 Bldg Misc WD" = DAY-SCHEDULE-PD
-   TYPE             = FRACTION
-   VALUES           = ( 0.2, &D, &D, &D, &D, &D, 0.298, 0.802, 0.9, &D, &D, 
-         &D, &D, &D, &D, &D, &D, 0.501, 0.298, &D, 0.2 )
-   ..
-"BL1 Bldg Misc WEH" = DAY-SCHEDULE-PD
-   TYPE             = FRACTION
-   VALUES           = ( 0.06 )
-   ..
-"BL1 Bldg Misc HDD" = DAY-SCHEDULE-PD
-   TYPE             = FRACTION
-   VALUES           = ( 0 )
-   ..
 "DHW Eqp NRes WD" = DAY-SCHEDULE-PD
    TYPE             = FRACTION
    VALUES           = ( 0.05, &D, &D, &D, &D, &D, 0.101, 0.5005, &D, 0.9, &D, 
@@ -419,15 +368,6 @@ $ ---------------------------------------------------------
    VALUES           = ( 1, &D, &D, &D, &D, &D, &D, 0.5, &D, &D, &D, &D, &D, 
          &D, &D, &D, &D, &D, 1 )
    ..
-"ZG0-S1 (PSZ) C-Inf WD" = DAY-SCHEDULE-PD
-   TYPE             = FRACTION
-   VALUES           = ( 1, &D, &D, &D, &D, &D, &D, 0.5, &D, &D, &D, &D, &D, 
-         &D, &D, &D, &D, &D, 1 )
-   ..
-"ZG0-S1 (PSZ) C-Inf WEH" = DAY-SCHEDULE-PD
-   TYPE             = FRACTION
-   VALUES           = ( 1 )
-   ..
 "S1 Sys1 (PSZ) Fan WD" = DAY-SCHEDULE-PD
    TYPE             = ON/OFF/FLAG
    VALUES           = ( 0, &D, &D, &D, &D, &D, &D, 1, &D, &D, &D, &D, &D, &D, 
@@ -446,32 +386,6 @@ $ ---------------------------------------------------------
    TYPE             = FRAC/DESIGN
    VALUES           = ( 0 )
    ..
-"S1 Sys1 (PSZ) Cool WD" = DAY-SCHEDULE-PD
-   TYPE             = TEMPERATURE
-   VALUES           = ( 80, &D, &D, &D, &D, &D, &D, 78, &D, &D, &D, &D, &D, 
-         &D, &D, &D, &D, &D, 80 )
-   ..
-"S1 Sys1 (PSZ) Cool WEH" = DAY-SCHEDULE-PD
-   TYPE             = TEMPERATURE
-   VALUES           = ( 80 )
-   ..
-"S1 Sys1 (PSZ) Heat WD" = DAY-SCHEDULE-PD
-   TYPE             = TEMPERATURE
-   VALUES           = ( 68, &D, &D, &D, &D, &D, &D, 70, &D, &D, &D, &D, &D, 
-         &D, &D, &D, &D, &D, 68 )
-   ..
-"S1 Sys1 (PSZ) Heat WEH" = DAY-SCHEDULE-PD
-   TYPE             = TEMPERATURE
-   VALUES           = ( 68 )
-   ..
-"Cust 1 Elec Seas1 Day" = DAY-SCHEDULE-PD
-   TYPE             = FLAG
-   VALUES           = ( 1 )
-   ..
-"Custom Gas Seas1 Day" = DAY-SCHEDULE-PD
-   TYPE             = FLAG
-   VALUES           = ( 1 )
-   ..
 "Occupancy Weekday" = DAY-SCHEDULE-PD
    TYPE             = FRACTION
    VALUES           = ( 0, &D, &D, &D, &D, &D, 0.1, 0.2, 0.95, &D, &D, &D, 
@@ -479,8 +393,8 @@ $ ---------------------------------------------------------
    ..
 "Occupancy Saturday" = DAY-SCHEDULE-PD
    TYPE             = FRACTION
-   VALUES           = ( 0, &D, &D, &D, &D, &D, 0.1, 0.2, 0.95, &D, &D, &D, 
-         0.5, 0.95, &D, &D, &D, 0.3, 0.1, 0.1, &D, &D, 0.05, 0.05 )
+   VALUES           = ( 0, &D, &D, &D, &D, &D, 0.1, 0.1, 0.3, &D, &D, &D, 0.1, 
+         0.1, &D, &D, &D, 0.05, 0.05, 0, &D, &D, 0, 0 )
    ..
 "Occupancy Sunday" = DAY-SCHEDULE-PD
    TYPE             = FRACTION
@@ -533,17 +447,17 @@ $ ---------------------------------------------------------
    ..
 "Heating setpoint weekday" = DAY-SCHEDULE-PD
    TYPE             = TEMPERATURE
-   VALUES           = ( 60.08, &D, &D, &D, &D, 69.8, &D, &D, &D, &D, &D, &D, 
-         &D, &D, &D, &D, &D, &D, &D, &D, &D, &D, 60.08 )
+   VALUES           = ( 59, &D, &D, &D, &D, 68.18, &D, &D, &D, &D, &D, &D, &D, 
+         &D, &D, &D, &D, &D, &D, &D, &D, &D, 59 )
    ..
 "Heating setpoint Saturday" = DAY-SCHEDULE-PD
    TYPE             = TEMPERATURE
-   VALUES           = ( 60.08, &D, &D, &D, &D, 69.8, &D, &D, &D, &D, &D, &D, 
-         &D, &D, &D, &D, &D, 60.08 )
+   VALUES           = ( 59, &D, &D, &D, &D, 68.18, &D, &D, &D, &D, &D, &D, &D, 
+         &D, &D, &D, &D, 59 )
    ..
 "Heating setpoint Sunday" = DAY-SCHEDULE-PD
    TYPE             = TEMPERATURE
-   VALUES           = ( 60.08 )
+   VALUES           = ( 59 )
    ..
 "Cooling setpoint weekday" = DAY-SCHEDULE-PD
    TYPE             = TEMPERATURE
@@ -564,26 +478,6 @@ $ ---------------------------------------------------------
 $              Week Schedules
 $ ---------------------------------------------------------
 
-"BL1 Bldg Occup Wk" = WEEK-SCHEDULE-PD
-   TYPE             = FRACTION
-   DAY-SCHEDULES    = ( "BL1 Bldg Occup WD", &D, &D, &D, &D, 
-         "BL1 Bldg Occup WEH", &D, &D, "BL1 Bldg Occup WEH" )
-   ..
-"BL1 Bldg InsLt Wk" = WEEK-SCHEDULE-PD
-   TYPE             = FRACTION
-   DAY-SCHEDULES    = ( "BL1 Bldg InsLt WD", &D, &D, &D, &D, 
-         "BL1 Bldg InsLt WEH", &D, &D, "BL1 Bldg InsLt HDD" )
-   ..
-"BL1 Bldg OffEq Wk" = WEEK-SCHEDULE-PD
-   TYPE             = FRACTION
-   DAY-SCHEDULES    = ( "BL1 Bldg OffEq WD", &D, &D, &D, &D, 
-         "BL1 Bldg OffEq WEH", &D, &D, "BL1 Bldg OffEq HDD" )
-   ..
-"BL1 Bldg Misc Wk" = WEEK-SCHEDULE-PD
-   TYPE             = FRACTION
-   DAY-SCHEDULES    = ( "BL1 Bldg Misc WD", &D, &D, &D, &D, 
-         "BL1 Bldg Misc WEH", &D, &D, "BL1 Bldg Misc HDD" )
-   ..
 "DHW Eqp NRes Wk" = WEEK-SCHEDULE-PD
    TYPE             = FRACTION
    DAY-SCHEDULES    = ( "DHW Eqp NRes WD", &D, &D, &D, &D, "DHW Eqp NRes WEH", 
@@ -594,11 +488,6 @@ $ ---------------------------------------------------------
    DAY-SCHEDULES    = ( "ZG0-S1 (PSZ) P-Inf WD", &D, &D, &D, &D, 
          "ZG0-S1 (PSZ) P-Inf WEH", &D, &D, "ZG0-S1 (PSZ) P-Inf HDD" )
    ..
-"ZG0-S1 (PSZ) C-Inf Wk" = WEEK-SCHEDULE-PD
-   TYPE             = FRACTION
-   DAY-SCHEDULES    = ( "ZG0-S1 (PSZ) C-Inf WD", &D, &D, &D, &D, 
-         "ZG0-S1 (PSZ) C-Inf WEH" )
-   ..
 "S1 Sys1 (PSZ) Fan Wk" = WEEK-SCHEDULE-PD
    TYPE             = ON/OFF/FLAG
    DAY-SCHEDULES    = ( "S1 Sys1 (PSZ) Fan WD", &D, &D, &D, &D, 
@@ -608,24 +497,6 @@ $ ---------------------------------------------------------
    TYPE             = FRAC/DESIGN
    DAY-SCHEDULES    = ( "S1 Sys1 (PSZ) MinOA WD", &D, &D, &D, &D, 
          "S1 Sys1 (PSZ) MinOA WEH" )
-   ..
-"S1 Sys1 (PSZ) Cool Wk" = WEEK-SCHEDULE-PD
-   TYPE             = TEMPERATURE
-   DAY-SCHEDULES    = ( "S1 Sys1 (PSZ) Cool WD", &D, &D, &D, &D, 
-         "S1 Sys1 (PSZ) Cool WEH" )
-   ..
-"S1 Sys1 (PSZ) Heat Wk" = WEEK-SCHEDULE-PD
-   TYPE             = TEMPERATURE
-   DAY-SCHEDULES    = ( "S1 Sys1 (PSZ) Heat WD", &D, &D, &D, &D, 
-         "S1 Sys1 (PSZ) Heat WEH" )
-   ..
-"Cust 1 Elec Seas1 Week" = WEEK-SCHEDULE-PD
-   TYPE             = FLAG
-   DAY-SCHEDULES    = ( "Cust 1 Elec Seas1 Day" )
-   ..
-"Custom Gas Seas1 Week" = WEEK-SCHEDULE-PD
-   TYPE             = FLAG
-   DAY-SCHEDULES    = ( "Custom Gas Seas1 Day" )
    ..
 "Occupancy Week" = WEEK-SCHEDULE-PD
    TYPE             = FRACTION
@@ -670,30 +541,6 @@ $ ---------------------------------------------------------
 $              Annual Schedules
 $ ---------------------------------------------------------
 
-"BL1 Bldg Occup Sch" = SCHEDULE-PD
-   TYPE             = FRACTION
-   MONTH            = ( 12 )
-   DAY              = ( 31 )
-   WEEK-SCHEDULES   = ( "BL1 Bldg Occup Wk" )
-   ..
-"BL1 Bldg InsLt Sch" = SCHEDULE-PD
-   TYPE             = FRACTION
-   MONTH            = ( 12 )
-   DAY              = ( 31 )
-   WEEK-SCHEDULES   = ( "BL1 Bldg InsLt Wk" )
-   ..
-"BL1 Bldg OffEq Sch" = SCHEDULE-PD
-   TYPE             = FRACTION
-   MONTH            = ( 12 )
-   DAY              = ( 31 )
-   WEEK-SCHEDULES   = ( "BL1 Bldg OffEq Wk" )
-   ..
-"BL1 Bldg Misc Sch" = SCHEDULE-PD
-   TYPE             = FRACTION
-   MONTH            = ( 12 )
-   DAY              = ( 31 )
-   WEEK-SCHEDULES   = ( "BL1 Bldg Misc Wk" )
-   ..
 "DHW Eqp NRes Sch" = SCHEDULE-PD
    TYPE             = FRACTION
    MONTH            = ( 12 )
@@ -706,12 +553,6 @@ $ ---------------------------------------------------------
    DAY              = ( 31 )
    WEEK-SCHEDULES   = ( "ZG0-S1 (PSZ) P-Inf Wk" )
    ..
-"ZG0-S1 (PSZ) C-Inf Sch" = SCHEDULE-PD
-   TYPE             = FRACTION
-   MONTH            = ( 12 )
-   DAY              = ( 31 )
-   WEEK-SCHEDULES   = ( "ZG0-S1 (PSZ) C-Inf Wk" )
-   ..
 "S1 Sys1 (PSZ) Fan Sch" = SCHEDULE-PD
    TYPE             = ON/OFF/FLAG
    MONTH            = ( 12 )
@@ -723,30 +564,6 @@ $ ---------------------------------------------------------
    MONTH            = ( 12 )
    DAY              = ( 31 )
    WEEK-SCHEDULES   = ( "S1 Sys1 (PSZ) MinOA Wk" )
-   ..
-"S1 Sys1 (PSZ) Cool Sch" = SCHEDULE-PD
-   TYPE             = TEMPERATURE
-   MONTH            = ( 12 )
-   DAY              = ( 31 )
-   WEEK-SCHEDULES   = ( "S1 Sys1 (PSZ) Cool Wk" )
-   ..
-"S1 Sys1 (PSZ) Heat Sch" = SCHEDULE-PD
-   TYPE             = TEMPERATURE
-   MONTH            = ( 12 )
-   DAY              = ( 31 )
-   WEEK-SCHEDULES   = ( "S1 Sys1 (PSZ) Heat Wk" )
-   ..
-"Cust 1 Elec Season Sched" = SCHEDULE-PD
-   TYPE             = FLAG
-   MONTH            = ( 12 )
-   DAY              = ( 31 )
-   WEEK-SCHEDULES   = ( "Cust 1 Elec Seas1 Week" )
-   ..
-"Custom Gas Season Sched" = SCHEDULE-PD
-   TYPE             = FLAG
-   MONTH            = ( 12 )
-   DAY              = ( 31 )
-   WEEK-SCHEDULES   = ( "Custom Gas Seas1 Week" )
    ..
 "Occupancy Annual" = SCHEDULE-PD
    TYPE             = FRACTION
@@ -886,15 +703,16 @@ SET-DEFAULT FOR SPACE
    EQUIPMENT-W/AREA = ( &D, 3.68 )
    ..
 
-"BL1 Ground Flr" = FLOOR           
+"Floor 1" = FLOOR           
    AZIMUTH          = 360
    POLYGON          = "BL1 Floor Polygon"
    SHAPE            = POLYGON
    FLOOR-HEIGHT     = 13
+   AREA             = 17867
    SPACE-HEIGHT     = 13
    C-DIAGRAM-DATA   = *Bldg Envelope & Loads 1 Diag Data*
    ..
-"BL1 South Perim Spc (G.S1)" = SPACE           
+"Perimeter Space 1 (South)" = SPACE           
    SHAPE            = POLYGON
    ZONE-TYPE        = CONDITIONED
    INF-METHOD       = AIR-CHANGE
@@ -917,14 +735,14 @@ SET-DEFAULT FOR SPACE
    C-SUB-SRC-KW     = ( 0, 0, 0 )
    C-ACTIVITY-DESC  = *Office (Executive/Private)*
    ..
-"BL1 South Wall (G.S1.E1)" = EXTERIOR-WALL   
-   CONSTRUCTION     = "Exterior Wall Construction 1"
+"Perimeter Space 1 Ext Wall" = EXTERIOR-WALL   
+   CONSTRUCTION     = "Exterior Wall Type 1"
    INSIDE-SOL-ABS   = 0.7
    INSIDE-VIS-REFL  = 0.3
    LOCATION         = SPACE-V1
    INSIDE-EMISS     = 0.9
    ..
-"BL1 South Win (G.S1.E1.W1)" = WINDOW          
+"South Window 1" = WINDOW          
    GLASS-TYPE       = "BL1 Window Type #1 GT"
    FRAME-WIDTH      = 0
    X                = 0
@@ -933,7 +751,7 @@ SET-DEFAULT FOR SPACE
    WIDTH            = 51.9
    FRAME-CONDUCT    = 2.781
    ..
-"BL1 South Win (G.S1.E1.W2)" = WINDOW          
+"South Window 2" = WINDOW          
    GLASS-TYPE       = "BL1 Window Type #1 GT"
    FRAME-WIDTH      = 0
    X                = 55.81
@@ -942,7 +760,7 @@ SET-DEFAULT FOR SPACE
    WIDTH            = 51.9
    FRAME-CONDUCT    = 2.781
    ..
-"BL1 South Win (G.S1.E1.W3)" = WINDOW          
+"South Window 3" = WINDOW          
    GLASS-TYPE       = "BL1 Window Type #1 GT"
    FRAME-WIDTH      = 0
    X                = 111.71
@@ -951,53 +769,53 @@ SET-DEFAULT FOR SPACE
    WIDTH            = 51.9
    FRAME-CONDUCT    = 2.781
    ..
-"BL1 South Door (G.S1.E1.D1)" = DOOR            
+"South Door 1" = DOOR            
    CONSTRUCTION     = "Sgl Lyr Unins Mtl Door"
    X                = 52.4
    HEIGHT           = 7
    WIDTH            = 3
    ..
-"BL1 South Door (G.S1.E1.D2)" = DOOR            
+"South Door 2" = DOOR            
    CONSTRUCTION     = "Sgl Lyr Unins Mtl Door"
    X                = 108.3
    HEIGHT           = 7
    WIDTH            = 3
    ..
-"BL1 Roof (G.S1.E2)" = EXTERIOR-WALL   
-   CONSTRUCTION     = "Roof Construction 1"
+"Perimeter Space 1 Roof" = EXTERIOR-WALL   
+   CONSTRUCTION     = "Roof Type 1"
    INSIDE-SOL-ABS   = 0.7
    INSIDE-VIS-REFL  = 0.3
    LOCATION         = TOP
    INSIDE-EMISS     = 0.9
    INSIDE-RCONV     = 1.41
    ..
-"BL1 NE Wall (G.S1.I1)" = INTERIOR-WALL   
-   NEXT-TO          = "BL1 East Perim Spc (G.E2)"
+"Perimeter Space 1 NE Wall" = INTERIOR-WALL   
+   NEXT-TO          = "Perimeter Space 2 (East)"
    CONSTRUCTION     = "BL1 IWall Construction"
    INSIDE-SOL-ABS   = ( 0.7 )
    LOCATION         = SPACE-V2
    INSIDE-VIS-REFL  = ( 0.3 )
    ..
-"BL1 North Wall (G.S1.I2)" = INTERIOR-WALL   
-   NEXT-TO          = "BL1 Core Spc (G.C5)"
+"Perimeter Space 1 North Wall" = INTERIOR-WALL   
+   NEXT-TO          = "Core Space 1 (Core)"
    CONSTRUCTION     = "BL1 IWall Construction"
    INSIDE-SOL-ABS   = ( 0.7 )
    LOCATION         = SPACE-V3
    INSIDE-VIS-REFL  = ( 0.3 )
    ..
-"BL1 NW Wall (G.S1.I3)" = INTERIOR-WALL   
-   NEXT-TO          = "BL1 West Perim Spc (G.W4)"
+"Perimeter Space 1 NW Wall" = INTERIOR-WALL   
+   NEXT-TO          = "Perimeter Space 4 (West)"
    CONSTRUCTION     = "BL1 IWall Construction"
    INSIDE-SOL-ABS   = ( 0.7 )
    LOCATION         = SPACE-V4
    INSIDE-VIS-REFL  = ( 0.3 )
    ..
-"BL1 Flr (G.S1.U1)" = UNDERGROUND-WALL
-   CONSTRUCTION     = "Floor type 1"
+"Perimeter Space 1 Slab on Grade" = UNDERGROUND-WALL
+   CONSTRUCTION     = "Slab-on-grade Type 1"
    INSIDE-SOL-ABS   = 0.7
    LOCATION         = BOTTOM
    ..
-"BL1 East Perim Spc (G.E2)" = SPACE           
+"Perimeter Space 2 (East)" = SPACE           
    SHAPE            = POLYGON
    ZONE-TYPE        = CONDITIONED
    INF-METHOD       = AIR-CHANGE
@@ -1019,7 +837,7 @@ SET-DEFAULT FOR SPACE
    C-SUB-SRC-KW     = ( 0, 0, 0 )
    C-ACTIVITY-DESC  = *Office (Executive/Private)*
    ..
-"BL1 East Wall (G.E2.E3)" = EXTERIOR-WALL   
+"Perimeter Space 2 Ext Wall" = EXTERIOR-WALL   
    CONSTRUCTION     = "Exterior Wall Type 2"
    INSIDE-SOL-ABS   = 0.7
    INSIDE-VIS-REFL  = 0.3
@@ -1027,7 +845,7 @@ SET-DEFAULT FOR SPACE
    SHADING-SURFACE  = YES
    INSIDE-EMISS     = 0.9
    ..
-"BL1 East Win (G.E2.E3.W1)" = WINDOW          
+"East Window 1" = WINDOW          
    GLASS-TYPE       = "BL1 Window Type #1 GT"
    FRAME-WIDTH      = 0
    X                = 0
@@ -1036,7 +854,7 @@ SET-DEFAULT FOR SPACE
    WIDTH            = 101.2
    FRAME-CONDUCT    = 2.781
    ..
-"BL1 East Win (G.E2.E3.W2)" = WINDOW          
+"East Window 2" = WINDOW          
    GLASS-TYPE       = "BL1 Window Type #1 GT"
    FRAME-WIDTH      = 0
    X                = 105.2
@@ -1045,40 +863,40 @@ SET-DEFAULT FOR SPACE
    WIDTH            = 4
    FRAME-CONDUCT    = 2.781
    ..
-"BL1 East Door (G.E2.E3.D1)" = DOOR            
+"East Door 1" = DOOR            
    CONSTRUCTION     = "Sgl Lyr Unins Mtl Door"
    X                = 101.7
    HEIGHT           = 7
    WIDTH            = 3
    ..
-"BL1 Roof (G.E2.E4)" = EXTERIOR-WALL   
-   CONSTRUCTION     = "Roof Construction 1"
+"Perimeter Space 2 Roof" = EXTERIOR-WALL   
+   CONSTRUCTION     = "Roof Type 1"
    INSIDE-SOL-ABS   = 0.7
    INSIDE-VIS-REFL  = 0.3
    LOCATION         = TOP
    INSIDE-EMISS     = 0.9
    INSIDE-RCONV     = 1.41
    ..
-"BL1 NW Wall (G.E2.I4)" = INTERIOR-WALL   
-   NEXT-TO          = "BL1 North Perim Spc (G.N3)"
+"Perimeter Space 2 NW Wall" = INTERIOR-WALL   
+   NEXT-TO          = "Perimeter Space 3 (North)"
    CONSTRUCTION     = "BL1 IWall Construction"
    INSIDE-SOL-ABS   = ( 0.7 )
    LOCATION         = SPACE-V2
    INSIDE-VIS-REFL  = ( 0.3 )
    ..
-"BL1 West Wall (G.E2.I5)" = INTERIOR-WALL   
-   NEXT-TO          = "BL1 Core Spc (G.C5)"
+"Perimeter Space 2 West Wall" = INTERIOR-WALL   
+   NEXT-TO          = "Core Space 1 (Core)"
    CONSTRUCTION     = "BL1 IWall Construction"
    INSIDE-SOL-ABS   = ( 0.7 )
    LOCATION         = SPACE-V3
    INSIDE-VIS-REFL  = ( 0.3 )
    ..
-"BL1 Flr (G.E2.U2)" = UNDERGROUND-WALL
-   CONSTRUCTION     = "Floor type 1"
+"Perimeter Space 2 Slab on Grade" = UNDERGROUND-WALL
+   CONSTRUCTION     = "Slab-on-grade Type 1"
    INSIDE-SOL-ABS   = 0.7
    LOCATION         = BOTTOM
    ..
-"BL1 North Perim Spc (G.N3)" = SPACE           
+"Perimeter Space 3 (North)" = SPACE           
    SHAPE            = POLYGON
    ZONE-TYPE        = CONDITIONED
    INF-SCHEDULE     = "ZG0-S1 (PSZ) P-Inf Sch"
@@ -1101,7 +919,7 @@ SET-DEFAULT FOR SPACE
    C-SUB-SRC-KW     = ( 0, 0, 0 )
    C-ACTIVITY-DESC  = *Office (Executive/Private)*
    ..
-"BL1 North Wall (G.N3.E5)" = EXTERIOR-WALL   
+"Perimeter Space 3 Ext Wall" = EXTERIOR-WALL   
    CONSTRUCTION     = "Exterior Wall Type 3"
    INSIDE-SOL-ABS   = 0.7
    INSIDE-VIS-REFL  = 0.3
@@ -1109,7 +927,7 @@ SET-DEFAULT FOR SPACE
    SHADING-SURFACE  = YES
    INSIDE-EMISS     = 0.9
    ..
-"BL1 North Win (G.N3.E5.W1)" = WINDOW          
+"North Window 1" = WINDOW          
    GLASS-TYPE       = "BL1 Window Type #1 GT"
    FRAME-WIDTH      = 0
    X                = 0
@@ -1118,7 +936,7 @@ SET-DEFAULT FOR SPACE
    WIDTH            = 51.9
    FRAME-CONDUCT    = 2.781
    ..
-"BL1 North Win (G.N3.E5.W2)" = WINDOW          
+"North Window 2" = WINDOW          
    GLASS-TYPE       = "BL1 Window Type #1 GT"
    FRAME-WIDTH      = 0
    X                = 55.9
@@ -1127,7 +945,7 @@ SET-DEFAULT FOR SPACE
    WIDTH            = 51.9
    FRAME-CONDUCT    = 2.781
    ..
-"BL1 North Win (G.N3.E5.W3)" = WINDOW          
+"North Window 3" = WINDOW          
    GLASS-TYPE       = "BL1 Window Type #1 GT"
    FRAME-WIDTH      = 0
    X                = 111.71
@@ -1136,19 +954,19 @@ SET-DEFAULT FOR SPACE
    WIDTH            = 51.9
    FRAME-CONDUCT    = 2.781
    ..
-"BL1 North Door (G.N3.E5.D1)" = DOOR            
+"North Door 1" = DOOR            
    CONSTRUCTION     = "Sgl Lyr Unins Mtl Door"
    X                = 52.4
    HEIGHT           = 7
    WIDTH            = 3
    ..
-"BL1 North Door (G.N3.E5.D2)" = DOOR            
+"North Door 2" = DOOR            
    CONSTRUCTION     = "Sgl Lyr Unins Mtl Door"
    X                = 108.3
    HEIGHT           = 7
    WIDTH            = 3
    ..
-"BL1 Roof (G.N3.E6)" = EXTERIOR-WALL   
+"Perimeter Space 3 Roof" = EXTERIOR-WALL   
    CONSTRUCTION     = "Roof Type 2"
    INSIDE-SOL-ABS   = 0.7
    INSIDE-VIS-REFL  = 0.3
@@ -1156,22 +974,22 @@ SET-DEFAULT FOR SPACE
    INSIDE-EMISS     = 0.9
    INSIDE-RCONV     = 1.41
    ..
-"BL1 SW Wall (G.N3.I6)" = INTERIOR-WALL   
-   NEXT-TO          = "BL1 West Perim Spc (G.W4)"
+"Perimeter Space 3 SW Wall" = INTERIOR-WALL   
+   NEXT-TO          = "Perimeter Space 4 (West)"
    CONSTRUCTION     = "BL1 IWall Construction"
    LOCATION         = SPACE-V2
    ..
-"BL1 South Wall (G.N3.I7)" = INTERIOR-WALL   
-   NEXT-TO          = "BL1 Core Spc (G.C5)"
+"Perimeter Space 3 South Wall" = INTERIOR-WALL   
+   NEXT-TO          = "Core Space 1 (Core)"
    CONSTRUCTION     = "BL1 IWall Construction"
    LOCATION         = SPACE-V3
    ..
-"BL1 Flr (G.N3.U3)" = UNDERGROUND-WALL
-   CONSTRUCTION     = "Floor Type 2"
+"Perimeter Space 3 Slab on Grade" = UNDERGROUND-WALL
+   CONSTRUCTION     = "Slab-on-grade Type 2"
    INSIDE-SOL-ABS   = 0.7
    LOCATION         = BOTTOM
    ..
-"BL1 West Perim Spc (G.W4)" = SPACE           
+"Perimeter Space 4 (West)" = SPACE           
    SHAPE            = POLYGON
    ZONE-TYPE        = CONDITIONED
    INF-SCHEDULE     = "ZG0-S1 (PSZ) P-Inf Sch"
@@ -1194,7 +1012,7 @@ SET-DEFAULT FOR SPACE
    C-SUB-SRC-KW     = ( 0, 0, 0 )
    C-ACTIVITY-DESC  = *Office (Executive/Private)*
    ..
-"BL1 West Wall (G.W4.E7)" = EXTERIOR-WALL   
+"Perimeter Space 4 Ext Wall" = EXTERIOR-WALL   
    CONSTRUCTION     = "Exterior Wall Type 3"
    INSIDE-SOL-ABS   = 0.7
    INSIDE-VIS-REFL  = 0.3
@@ -1202,7 +1020,7 @@ SET-DEFAULT FOR SPACE
    SHADING-SURFACE  = YES
    INSIDE-EMISS     = 0.9
    ..
-"BL1 West Win (G.W4.E7.W1)" = WINDOW          
+"West Window 1" = WINDOW          
    GLASS-TYPE       = "BL1 Window Type #1 GT"
    FRAME-WIDTH      = 0
    X                = 0
@@ -1211,7 +1029,7 @@ SET-DEFAULT FOR SPACE
    WIDTH            = 101.2
    FRAME-CONDUCT    = 2.781
    ..
-"BL1 West Win (G.W4.E7.W2)" = WINDOW          
+"West Window 2" = WINDOW          
    GLASS-TYPE       = "BL1 Window Type #1 GT"
    FRAME-WIDTH      = 0
    X                = 105.2
@@ -1220,13 +1038,13 @@ SET-DEFAULT FOR SPACE
    WIDTH            = 4
    FRAME-CONDUCT    = 2.781
    ..
-"BL1 West Door (G.W4.E7.D1)" = DOOR            
+"West Door 1" = DOOR            
    CONSTRUCTION     = "Sgl Lyr Unins Mtl Door"
    X                = 101.7
    HEIGHT           = 7
    WIDTH            = 3
    ..
-"BL1 Roof (G.W4.E8)" = EXTERIOR-WALL   
+"Perimeter Space 4 Roof" = EXTERIOR-WALL   
    CONSTRUCTION     = "Roof Type 3"
    INSIDE-SOL-ABS   = 0.7
    INSIDE-VIS-REFL  = 0.3
@@ -1234,17 +1052,17 @@ SET-DEFAULT FOR SPACE
    INSIDE-EMISS     = 0.9
    INSIDE-RCONV     = 1.41
    ..
-"BL1 East Wall (G.W4.I8)" = INTERIOR-WALL   
-   NEXT-TO          = "BL1 Core Spc (G.C5)"
+"Perimeter Space 4 East Wall" = INTERIOR-WALL   
+   NEXT-TO          = "Core Space 1 (Core)"
    CONSTRUCTION     = "BL1 IWall Construction"
    LOCATION         = SPACE-V3
    ..
-"BL1 Flr (G.W4.U4)" = UNDERGROUND-WALL
-   CONSTRUCTION     = "Floor Type 2"
+"Perimeter Space 4 Slab on Grade" = UNDERGROUND-WALL
+   CONSTRUCTION     = "Slab-on-grade Type 2"
    INSIDE-SOL-ABS   = 0.7
    LOCATION         = BOTTOM
    ..
-"BL1 Core Spc (G.C5)" = SPACE           
+"Core Space 1 (Core)" = SPACE           
    X                = 15
    Y                = 15
    SHAPE            = POLYGON
@@ -1266,16 +1084,16 @@ SET-DEFAULT FOR SPACE
    C-SUB-SRC-KW     = ( 0, 0, 0 )
    C-ACTIVITY-DESC  = *Office (Executive/Private)*
    ..
-"BL1 Roof (G.C5.E9)" = EXTERIOR-WALL   
-   CONSTRUCTION     = "Roof Construction 1"
+"Core Space 1 Roof" = EXTERIOR-WALL   
+   CONSTRUCTION     = "Roof Type 1"
    INSIDE-SOL-ABS   = 0.7
    INSIDE-VIS-REFL  = 0.3
    LOCATION         = TOP
    INSIDE-EMISS     = 0.9
    INSIDE-RCONV     = 1.41
    ..
-"BL1 Flr (G.C5.U5)" = UNDERGROUND-WALL
-   CONSTRUCTION     = "Floor type 1"
+"Core Space 1 Slab on Grade" = UNDERGROUND-WALL
+   CONSTRUCTION     = "Slab-on-grade Type 1"
    INSIDE-SOL-ABS   = 0.7
    LOCATION         = BOTTOM
    ..
@@ -1331,7 +1149,7 @@ $ ---------------------------------------------------------
 $              Circulation Loops
 $ ---------------------------------------------------------
 
-"DHW Plant 1 Loop (1)" = CIRCULATION-LOOP
+"DHW Plant 1 Loop" = CIRCULATION-LOOP
    TYPE             = DHW
    DESIGN-HEAT-T    = 135
    PROCESS-FLOW     = ( 0.164632 )
@@ -1356,15 +1174,11 @@ $ ---------------------------------------------------------
 $              Domestic Water Heaters
 $ ---------------------------------------------------------
 
-"DHW Plant 1 Wtr Htr (1)" = DW-HEATER       
+"DHW Plant 1 Wtr Htr" = DW-HEATER       
    TYPE             = GAS
-   TANK-VOLUME      = 44.7174
    CAPACITY         = 0.0595993
    HIR-FPLR         = "DW-Gas-Pilotless-HIR-fPLR"
-   TANK-UA          = 1.86322
-   LOCATION         = ZONE
-   ZONE-NAME        = "BL1 Cor Zone (fG.z5)"
-   DHW-LOOP         = "DHW Plant 1 Loop (1)"
+   DHW-LOOP         = "DHW Plant 1 Loop"
    C-ENERGY-FACTOR  = 0.535037
    C-TANK-EXT-RVAL  = 12
    ..
@@ -1449,7 +1263,7 @@ SET-DEFAULT FOR ZONE
    OA-FLOW/AREA     = ( 0.12 )
    ..
 
-"BL1 Sys1 (PSZ) (G.S1)" = SYSTEM          
+"Baseline System 4 (South)" = SYSTEM          
    TYPE             = PSZ
    HEAT-SOURCE      = HEAT-PUMP
    BASEBOARD-SOURCE = NONE
@@ -1462,24 +1276,20 @@ SET-DEFAULT FOR ZONE
    COOL-SET-T       = 55
    MAX-HUMIDITY     = 100
    MIN-HUMIDITY     = 0
-   ECONO-LIMIT-T    = 65
-   ENTHALPY-LIMIT   = 30
    ECONO-LOCKOUT    = NO
-   ECONO-LOW-LIMIT  = 45
-   MIN-AIR-SCH      = "S1 Sys1 (PSZ) MinOA Sch"
    OA-CONTROL       = DUAL-TEMP
    RECOVER-EXHAUST  = RELIEF-ONLY
    FAN-SCHEDULE     = "S1 Sys1 (PSZ) Fan Sch"
    SUPPLY-KW/FLOW   = 0.0003
-   RETURN-KW/FLOW   = 0.0003
-   NIGHT-CYCLE-CTRL = CYCLE-ON-FIRST
+   NIGHT-CYCLE-CTRL = CYCLE-ON-ANY
    COOLING-EIR      = {1/3.1}
    CRANKCASE-HEAT   = 0
-   HEATING-EIR      = 0.32
+   HEATING-EIR      = {1/3.1}
+   MIN-HP-T         = -10
    HUMIDIFIER-LOC   = IN-AIR-HANDLER
-   CONTROL-ZONE     = "BL1 S Zone (fG.z1)"
-   ERV-OA-FLOW      = {2232*0.12}
+   CONTROL-ZONE     = "Perimeter Zone 1 (South)"
    ERV-SENSIBLE-EFF = 0.5
+   ERV-SEN-FILM-EXP = 1
    ERV-LATENT-EFF   = 0.5
    ERV-LAT-FILM-RES = 0.0001
    ERV-LAT-FILM-EXP = 0.0001
@@ -1488,16 +1298,16 @@ SET-DEFAULT FOR ZONE
    ERV-CAP-CTRL     = BYPASS-OA
    SUPPLY-MTR-CLASS = HI-EFF
    ..
-"BL1 S Zone (fG.z1)" = ZONE            
+"Perimeter Zone 1 (South)" = ZONE            
    TYPE             = CONDITIONED
    FLOW/AREA        = 0.5
    DESIGN-HEAT-T    = 70
    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
    DESIGN-COOL-T    = 75
    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
-   SPACE            = "BL1 South Perim Spc (G.S1)"
+   SPACE            = "Perimeter Space 1 (South)"
    ..
-"BL1 Sys1 (PSZ) (G.E2)" = SYSTEM          
+"Baseline System 4 (East)" = SYSTEM          
    TYPE             = PSZ
    HEAT-SOURCE      = HEAT-PUMP
    ZONE-HEAT-SOURCE = NONE
@@ -1511,24 +1321,20 @@ SET-DEFAULT FOR ZONE
    COOL-SET-T       = 55
    MAX-HUMIDITY     = 100
    MIN-HUMIDITY     = 0
-   ECONO-LIMIT-T    = 65
-   ENTHALPY-LIMIT   = 30
    ECONO-LOCKOUT    = NO
-   ECONO-LOW-LIMIT  = 45
-   MIN-AIR-SCH      = "S1 Sys1 (PSZ) MinOA Sch"
    OA-CONTROL       = DUAL-TEMP
    RECOVER-EXHAUST  = RELIEF-ONLY
    FAN-SCHEDULE     = "S1 Sys1 (PSZ) Fan Sch"
    SUPPLY-KW/FLOW   = 0.0003
-   RETURN-KW/FLOW   = 0.0003
-   NIGHT-CYCLE-CTRL = CYCLE-ON-FIRST
+   NIGHT-CYCLE-CTRL = CYCLE-ON-ANY
    COOLING-EIR      = {1/3.1}
    CRANKCASE-HEAT   = 0
-   HEATING-EIR      = 0.32
+   HEATING-EIR      = {1/3.1}
+   MIN-HP-T         = -10
    HUMIDIFIER-LOC   = IN-AIR-HANDLER
-   CONTROL-ZONE     = "BL1 E Zone (fG.z2)"
-   ERV-OA-FLOW      = {1413*0.12}
+   CONTROL-ZONE     = "Perimeter Zone 2 (East)"
    ERV-SENSIBLE-EFF = 0.5
+   ERV-SEN-FILM-EXP = 1
    ERV-LATENT-EFF   = 0.5
    ERV-LAT-FILM-RES = 0.0001
    ERV-LAT-FILM-EXP = 0.0001
@@ -1537,16 +1343,16 @@ SET-DEFAULT FOR ZONE
    ERV-CAP-CTRL     = BYPASS-OA
    SUPPLY-MTR-CLASS = HI-EFF
    ..
-"BL1 E Zone (fG.z2)" = ZONE            
+"Perimeter Zone 2 (East)" = ZONE            
    TYPE             = CONDITIONED
    FLOW/AREA        = 0.5
    DESIGN-HEAT-T    = 70
    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
    DESIGN-COOL-T    = 75
    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
-   SPACE            = "BL1 East Perim Spc (G.E2)"
+   SPACE            = "Perimeter Space 2 (East)"
    ..
-"BL1 Sys1 (PSZ) (G.N3)" = SYSTEM          
+"Baseline System 4 (North)" = SYSTEM          
    TYPE             = PSZ
    HEAT-SOURCE      = HEAT-PUMP
    ZONE-HEAT-SOURCE = NONE
@@ -1560,24 +1366,20 @@ SET-DEFAULT FOR ZONE
    COOL-SET-T       = 55
    MAX-HUMIDITY     = 100
    MIN-HUMIDITY     = 0
-   ECONO-LIMIT-T    = 65
-   ENTHALPY-LIMIT   = 30
    ECONO-LOCKOUT    = NO
-   ECONO-LOW-LIMIT  = 45
-   MIN-AIR-SCH      = "S1 Sys1 (PSZ) MinOA Sch"
    OA-CONTROL       = DUAL-TEMP
    RECOVER-EXHAUST  = RELIEF-ONLY
    FAN-SCHEDULE     = "S1 Sys1 (PSZ) Fan Sch"
    SUPPLY-KW/FLOW   = 0.0003
-   RETURN-KW/FLOW   = 0.0003
-   NIGHT-CYCLE-CTRL = CYCLE-ON-FIRST
+   NIGHT-CYCLE-CTRL = CYCLE-ON-ANY
    COOLING-EIR      = {1/3.1}
    CRANKCASE-HEAT   = 0
-   HEATING-EIR      = 0.32
+   HEATING-EIR      = {1/3.1}
+   MIN-HP-T         = -10
    HUMIDIFIER-LOC   = IN-AIR-HANDLER
-   CONTROL-ZONE     = "BL1 N Zone (fG.z3)"
-   ERV-OA-FLOW      = {2232*0.12}
+   CONTROL-ZONE     = "Perimeter Zone 3 (North)"
    ERV-SENSIBLE-EFF = 0.5
+   ERV-SEN-FILM-EXP = 1
    ERV-LATENT-EFF   = 0.5
    ERV-LAT-FILM-RES = 0.0001
    ERV-LAT-FILM-EXP = 0.0001
@@ -1586,16 +1388,16 @@ SET-DEFAULT FOR ZONE
    ERV-CAP-CTRL     = BYPASS-OA
    SUPPLY-MTR-CLASS = HI-EFF
    ..
-"BL1 N Zone (fG.z3)" = ZONE            
+"Perimeter Zone 3 (North)" = ZONE            
    TYPE             = CONDITIONED
    FLOW/AREA        = 0.5
    DESIGN-HEAT-T    = 70
    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
    DESIGN-COOL-T    = 75
    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
-   SPACE            = "BL1 North Perim Spc (G.N3)"
+   SPACE            = "Perimeter Space 3 (North)"
    ..
-"BL1 Sys1 (PSZ) (G.W4)" = SYSTEM          
+"Baseline System 4 (West)" = SYSTEM          
    TYPE             = PSZ
    HEAT-SOURCE      = HEAT-PUMP
    ZONE-HEAT-SOURCE = NONE
@@ -1609,24 +1411,20 @@ SET-DEFAULT FOR ZONE
    COOL-SET-T       = 55
    MAX-HUMIDITY     = 100
    MIN-HUMIDITY     = 0
-   ECONO-LIMIT-T    = 65
-   ENTHALPY-LIMIT   = 30
    ECONO-LOCKOUT    = NO
-   ECONO-LOW-LIMIT  = 45
-   MIN-AIR-SCH      = "S1 Sys1 (PSZ) MinOA Sch"
    OA-CONTROL       = DUAL-TEMP
    RECOVER-EXHAUST  = RELIEF-ONLY
    FAN-SCHEDULE     = "S1 Sys1 (PSZ) Fan Sch"
    SUPPLY-KW/FLOW   = 0.0003
-   RETURN-KW/FLOW   = 0.0003
-   NIGHT-CYCLE-CTRL = CYCLE-ON-FIRST
+   NIGHT-CYCLE-CTRL = CYCLE-ON-ANY
    COOLING-EIR      = {1/3.1}
    CRANKCASE-HEAT   = 0
-   HEATING-EIR      = 0.32
+   HEATING-EIR      = {1/3.1}
+   MIN-HP-T         = -10
    HUMIDIFIER-LOC   = IN-AIR-HANDLER
-   CONTROL-ZONE     = "BL1 W Zone (fG.z4)"
-   ERV-OA-FLOW      = {1413*0.12}
+   CONTROL-ZONE     = "Perimeter Zone 4 (West)"
    ERV-SENSIBLE-EFF = 0.5
+   ERV-SEN-FILM-EXP = 1
    ERV-LATENT-EFF   = 0.5
    ERV-LAT-FILM-RES = 0.0001
    ERV-LAT-FILM-EXP = 0.0001
@@ -1635,16 +1433,16 @@ SET-DEFAULT FOR ZONE
    ERV-CAP-CTRL     = BYPASS-OA
    SUPPLY-MTR-CLASS = HI-EFF
    ..
-"BL1 W Zone (fG.z4)" = ZONE            
+"Perimeter Zone 4 (West)" = ZONE            
    TYPE             = CONDITIONED
    FLOW/AREA        = 0.5
    DESIGN-HEAT-T    = 70
    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
    DESIGN-COOL-T    = 75
    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
-   SPACE            = "BL1 West Perim Spc (G.W4)"
+   SPACE            = "Perimeter Space 4 (West)"
    ..
-"BL1 Sys1 (PSZ) (G.C5)" = SYSTEM          
+"Baseline System 4 (Core)" = SYSTEM          
    TYPE             = PSZ
    HEAT-SOURCE      = HEAT-PUMP
    ZONE-HEAT-SOURCE = NONE
@@ -1658,24 +1456,20 @@ SET-DEFAULT FOR ZONE
    COOL-SET-T       = 55
    MAX-HUMIDITY     = 100
    MIN-HUMIDITY     = 0
-   ECONO-LIMIT-T    = 65
-   ENTHALPY-LIMIT   = 30
    ECONO-LOCKOUT    = NO
-   ECONO-LOW-LIMIT  = 45
-   MIN-AIR-SCH      = "S1 Sys1 (PSZ) MinOA Sch"
    OA-CONTROL       = DUAL-TEMP
    RECOVER-EXHAUST  = RELIEF-ONLY
    FAN-SCHEDULE     = "S1 Sys1 (PSZ) Fan Sch"
    SUPPLY-KW/FLOW   = 0.0003
-   RETURN-KW/FLOW   = 0.0003
-   NIGHT-CYCLE-CTRL = CYCLE-ON-FIRST
+   NIGHT-CYCLE-CTRL = CYCLE-ON-ANY
    COOLING-EIR      = {1/3.1}
    CRANKCASE-HEAT   = 0
-   HEATING-EIR      = 0.32
+   HEATING-EIR      = {1/3.1}
+   MIN-HP-T         = -10
    HUMIDIFIER-LOC   = IN-AIR-HANDLER
-   CONTROL-ZONE     = "BL1 Cor Zone (fG.z5)"
-   ERV-OA-FLOW      = {10597*0.12}
+   CONTROL-ZONE     = "Core Zone 1 (Core)"
    ERV-SENSIBLE-EFF = 0.5
+   ERV-SEN-FILM-EXP = 1
    ERV-LATENT-EFF   = 0.5
    ERV-LAT-FILM-RES = 0.0001
    ERV-LAT-FILM-EXP = 0.0001
@@ -1684,14 +1478,14 @@ SET-DEFAULT FOR ZONE
    ERV-CAP-CTRL     = BYPASS-OA
    SUPPLY-MTR-CLASS = HI-EFF
    ..
-"BL1 Cor Zone (fG.z5)" = ZONE            
+"Core Zone 1 (Core)" = ZONE            
    TYPE             = CONDITIONED
    FLOW/AREA        = 0.5
    DESIGN-HEAT-T    = 70
    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
    DESIGN-COOL-T    = 75
    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
-   SPACE            = "BL1 Core Spc (G.C5)"
+   SPACE            = "Core Space 1 (Core)"
    ..
 
 

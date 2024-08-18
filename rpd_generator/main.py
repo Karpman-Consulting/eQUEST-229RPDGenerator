@@ -164,18 +164,18 @@ def generate_rmds(bdl_input_reader: ModelInputReader, selected_models: list):
     return rmds
 
 
-def prepare_inp(model_path, output_dir=None) -> str:
-    model_dir = model_path.parent
-    model_name = model_path.name
-    base_name = model_path.stem
-    extension = model_path.suffix
+def prepare_inp(model_path: str, output_dir: str = None) -> str:
+    model_dir = Path(model_path).parent
+    model_name = Path(model_path).name
+    base_name = Path(model_path).stem
+    extension = Path(model_path).suffix
 
     if output_dir:
-        temp_file_path = output_dir / model_name
+        temp_file_path = Path(output_dir) / model_name
     else:
         temp_file_path = model_dir / f"{base_name}_temp{extension}"
 
-    with model_path.open("r") as inp_file, temp_file_path.open("w") as out_file:
+    with Path(model_path).open("r") as inp_file, temp_file_path.open("w") as out_file:
         lines_after_target = 0
 
         for line in inp_file:
