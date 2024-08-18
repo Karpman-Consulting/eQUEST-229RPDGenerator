@@ -75,8 +75,9 @@ class Window(ChildNode):
         glass_type = self.rmd.bdl_obj_instances.get(glass_type_name)
         if glass_type is not None:
             self.u_factor = glass_type.u_factor
-            self.solar_heat_gain_coefficient = glass_type.shading_coefficient / 1.15
             self.visible_transmittance = glass_type.visible_transmittance
+            if glass_type.shading_coefficient is not None:
+                self.solar_heat_gain_coefficient = glass_type.shading_coefficient / 1.15
 
         left_fin_depth = self.try_float(self.keyword_value_pairs.get("LEFT-FIN-D"))
         right_fin_depth = self.try_float(self.keyword_value_pairs.get("RIGHT-FIN-D"))
