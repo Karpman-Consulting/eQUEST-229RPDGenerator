@@ -135,7 +135,7 @@
     "Pump": {
         "design_electric_power": "W",
         "motor_nameplate_power": "W",
-        "design_head": "m",
+        "design_head": "Pa",
         "design_flow": "L/s"
     },
     "PumpOutputValidationPoint": {
