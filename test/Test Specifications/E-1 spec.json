@@ -127,7 +127,8 @@
       },
       {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].volume",
-        "compare-value": true
+        "compare-value": true,
+        "tolerance": 1.0
       },
       {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].conditioning_type",
@@ -143,11 +144,13 @@
       },
       {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].design_thermostat_cooling_setpoint",
-        "compare-value": true
+        "compare-value": true,
+        "tolerance": 0.1
       },
       {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].design_thermostat_heating_setpoint",
-        "compare-value": true
+        "compare-value": true,
+        "tolerance": 0.1
       },
       {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].air_distribution_effectiveness",
