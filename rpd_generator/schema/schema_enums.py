@@ -35,13 +35,13 @@ class SchemaEnums:
     def update_schema_enum(ruleset: Ruleset):
         # Load the enumeration schema file
         _enum_schema_path = (
-            Path(__file__).parent / ".." / "schema" / ruleset.enum_schema_filename
+            Path(__file__).parent / ruleset.enum_schema_filename
         )
         with open(_enum_schema_path) as json_file:
             _enum_schema_obj = json.load(json_file)
 
         # Load the schema file
-        _schema_path = Path(__file__).parent / ".." / "schema" / "ASHRAE229.schema.json"
+        _schema_path = Path(__file__).parent / "ASHRAE229.schema.json"
         with open(_schema_path) as json_file:
             _schema_obj = json.load(json_file)
 
