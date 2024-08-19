@@ -1,0 +1,157 @@
+{
+    "name": "Test Case E-1 Specifications",
+    "json-test-key-paths": [
+      {
+        "json-key-path": "$.ruleset_model_descriptions",
+        "compare-value": false
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings",
+        "compare-value": false
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments",
+        "compare-value": false
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems",
+        "compare-value": false
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].cooling_system.type",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].cooling_system.design_sensible_cool_capacity",
+        "compare-value": false
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].cooling_system.rated_total_cool_capacity",
+        "compare-value": false
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].cooling_system.is_sized_based_on_design_day",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].cooling_system.oversizing_factor",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].heating_system.type",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].heating_system.heatpump_auxilliary_heat_type",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].heating_system.design_capacity",
+        "compare-value": false
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].heating_system.rated_capacity",
+        "compare-value": false
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].heating_system.is_sized_based_on_design_day",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].heating_system.oversizing_factor",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].heating_system.heatpump_auxilliary_heat_high_shutoff_temperature",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].heating_system.heatpump_low_shutoff_temperature",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].fan_system.fan_control",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].fan_system.operation_during_occupied",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].fan_system.operation_during_unoccupied",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].fan_system.supply_fans",
+        "compare-value": false
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].fan_system.supply_fans[0].design_airflow",
+        "compare-value": false
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].fan_system.supply_fans[0].is_airflow_sized_based_on_design_day",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].fan_system.supply_fans[0].specification_method",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].fan_system.air_economizer.type",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].fan_system.air_economizer.is_integrated",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].fan_system.air_energy_recovery.type",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].fan_system.air_energy_recovery.energy_recovery_operation",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].fan_system.air_energy_recovery.energy_recovery_supply_air_temperature_control",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].fan_system.air_energy_recovery.design_sensible_effectiveness",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].fan_system.air_energy_recovery.design_latent_effectiveness",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].volume",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].conditioning_type",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].thermostat_cooling_setpoint_schedule",
+        "compare-value": false
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].thermostat_heating_setpoint_schedule",
+        "compare-value": false
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].design_thermostat_cooling_setpoint",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].design_thermostat_heating_setpoint",
+        "compare-value": true
+      },
+      {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].air_distribution_effectiveness",
+        "compare-value": true
+      }
+    ]
+}
