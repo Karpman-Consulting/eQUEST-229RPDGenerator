@@ -27,7 +27,7 @@
                                                     "id": "BL1 South Perim Spc (G.S1) MiscEqp1",
                                                     "latent_fraction": 0.0,
                                                     "multiplier_schedule": "Plug Load Annual",
-                                                    "power": 8.21376,
+                                                    "power": 8213.76,
                                                     "sensible_fraction": 1.0
                                                 },
                                                 {
@@ -37,11 +37,11 @@
                                                 }
                                             ],
                                             "service_water_heating_uses": [],
-                                            "floor_area": 2232.0,
+                                            "floor_area": 207.35958527999998,
                                             "number_of_occupants": 11.16,
                                             "occupant_multiplier_schedule": "Occupancy Annual",
-                                            "occupant_sensible_heat_gain": 225.2014,
-                                            "occupant_latent_heat_gain": 184.2556
+                                            "occupant_sensible_heat_gain": 66.00002452177777,
+                                            "occupant_latent_heat_gain": 53.99999342044444
                                         }
                                     ],
                                     "surfaces": [
@@ -51,39 +51,39 @@
                                                 {
                                                     "id": "BL1 South Win (G.S1.E1.W1)",
                                                     "classification": "WINDOW",
-                                                    "glazed_area": 230.955,
-                                                    "opaque_area": 0,
-                                                    "u_factor": 0.579,
+                                                    "glazed_area": 21.4564216032,
+                                                    "opaque_area": 0.0,
+                                                    "u_factor": 0.0071368114567113144,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417
                                                 },
                                                 {
                                                     "id": "BL1 South Win (G.S1.E1.W2)",
                                                     "classification": "WINDOW",
-                                                    "glazed_area": 230.955,
-                                                    "opaque_area": 0,
-                                                    "u_factor": 0.579,
+                                                    "glazed_area": 21.4564216032,
+                                                    "opaque_area": 0.0,
+                                                    "u_factor": 0.0071368114567113144,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417
                                                 },
                                                 {
                                                     "id": "BL1 South Win (G.S1.E1.W3)",
                                                     "classification": "WINDOW",
-                                                    "glazed_area": 230.955,
-                                                    "opaque_area": 0,
-                                                    "u_factor": 0.579,
+                                                    "glazed_area": 21.4564216032,
+                                                    "opaque_area": 0.0,
+                                                    "u_factor": 0.0071368114567113144,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417
                                                 },
                                                 {
                                                     "id": "BL1 South Door (G.S1.E1.D1)",
                                                     "classification": "DOOR",
-                                                    "opaque_area": 21.0
+                                                    "opaque_area": 1.9509638399999998
                                                 },
                                                 {
                                                     "id": "BL1 South Door (G.S1.E1.D2)",
                                                     "classification": "DOOR",
-                                                    "opaque_area": 21.0
+                                                    "opaque_area": 1.9509638399999998
                                                 }
                                             ],
                                             "construction": {
@@ -91,31 +91,31 @@
                                                 "primary_layers": [
                                                     {
                                                         "id": "Stucco",
-                                                        "thickness": 0.083,
-                                                        "thermal_conductivity": 0.416,
-                                                        "density": 116.0,
-                                                        "specific_heat": 0.201
+                                                        "thickness": 0.007710952319999999,
+                                                        "thermal_conductivity": 5.871844900684299e-06,
+                                                        "density": 29764.575588096704,
+                                                        "specific_heat": 16.602777512069753
                                                     },
                                                     {
                                                         "id": "Gypsum Board",
-                                                        "thickness": 0.052,
-                                                        "thermal_conductivity": 0.092,
-                                                        "density": 50.0,
-                                                        "specific_heat": 0.26
+                                                        "thickness": 0.004830958079999999,
+                                                        "thermal_conductivity": 1.298581083805182e-06,
+                                                        "density": 12829.558443145132,
+                                                        "specific_heat": 21.476229617602666
                                                     },
                                                     {
                                                         "id": "Insulation",
-                                                        "thickness": 0.204,
-                                                        "thermal_conductivity": 0.021,
-                                                        "density": 0.6,
-                                                        "specific_heat": 0.2
+                                                        "thickness": 0.018952220159999995,
+                                                        "thermal_conductivity": 2.964152473903132e-07,
+                                                        "density": 153.95470131774155,
+                                                        "specific_heat": 16.520176628925128
                                                     },
                                                     {
                                                         "id": "Gypsum Board",
-                                                        "thickness": 0.052,
-                                                        "thermal_conductivity": 0.092,
-                                                        "density": 50.0,
-                                                        "specific_heat": 0.26
+                                                        "thickness": 0.004830958079999999,
+                                                        "thermal_conductivity": 1.298581083805182e-06,
+                                                        "density": 12829.558443145132,
+                                                        "specific_heat": 21.476229617602666
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -131,7 +131,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "WALL",
-                                            "area": 2129.4,
+                                            "area": 197.827733376,
                                             "tilt": 90.0,
                                             "azimuth": -180.0,
                                             "adjacent_to": "EXTERIOR",
@@ -145,24 +145,24 @@
                                                 "primary_layers": [
                                                     {
                                                         "id": "Metal Deck",
-                                                        "thickness": 0.003,
-                                                        "thermal_conductivity": 26.162,
-                                                        "density": 489.0,
-                                                        "specific_heat": 0.119
+                                                        "thickness": 2.5892924523724787e-05,
+                                                        "thermal_conductivity": 5.212348332973739e-09,
+                                                        "density": 32195284.66189257,
+                                                        "specific_heat": 811.92580165638
                                                     },
                                                     {
                                                         "id": "Continuous Insulation",
-                                                        "thickness": 0.173,
-                                                        "thermal_conductivity": 0.012,
-                                                        "density": 2.0,
-                                                        "specific_heat": 0.22
+                                                        "thickness": 0.001493158647534796,
+                                                        "thermal_conductivity": 2.390802690760832e-12,
+                                                        "density": 131678.0558768612,
+                                                        "specific_heat": 1501.0392971798617
                                                     },
                                                     {
                                                         "id": "Built-up roofing",
-                                                        "thickness": 0.031,
-                                                        "thermal_conductivity": 0.092,
-                                                        "density": 70.0,
-                                                        "specific_heat": 0.349
+                                                        "thickness": 0.0008778222443519997,
+                                                        "thermal_conductivity": 4.878762699518823e-09,
+                                                        "density": 287713.736835842,
+                                                        "specific_heat": 262.0007068505409
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -178,7 +178,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "CEILING",
-                                            "area": 2232.0,
+                                            "area": 207.35958527999998,
                                             "tilt": 0.0,
                                             "azimuth": 180.0,
                                             "adjacent_to": "EXTERIOR",
@@ -191,10 +191,10 @@
                                                 "primary_layers": [
                                                     {
                                                         "id": "Concrete",
-                                                        "thickness": 0.333,
-                                                        "thermal_conductivity": 1.335,
-                                                        "density": 145.125,
-                                                        "specific_heat": 0.199
+                                                        "thickness": 0.000876030136826276,
+                                                        "thermal_conductivity": 9.992735176688574e-13,
+                                                        "density": 153054638.36049008,
+                                                        "specific_heat": 12339.989869065326
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -204,7 +204,7 @@
                                             },
                                             "surface_optical_properties": {},
                                             "classification": "FLOOR",
-                                            "area": 2232.0,
+                                            "area": 207.35958527999998,
                                             "tilt": 180.0,
                                             "azimuth": 90.0,
                                             "adjacent_to": "GROUND"
@@ -215,9 +215,9 @@
                                             "cooling_capacity": 0.0,
                                             "heating_capacity": 0.0,
                                             "id": "BL1 S Zone (fG.z1) MainTerminal",
-                                            "minimum_airflow": 1642.9388427734375,
-                                            "minimum_outdoor_airflow": 200.00668334960938,
-                                            "primary_airflow": 1642.9388427734375,
+                                            "minimum_airflow": 775.3807861808904,
+                                            "minimum_outdoor_airflow": 94.39264282976012,
+                                            "primary_airflow": 775.3807861808904,
                                             "served_by_heating_ventilating_air_conditioning_system": "CW VAV"
                                         },
                                         {
@@ -230,15 +230,15 @@
                                     "zonal_exhaust_fan": {},
                                     "infiltration": {
                                         "algorithm_name": "Air Change Method",
-                                        "flow_rate": 241.8,
+                                        "flow_rate": 0.11411689176575998,
                                         "id": "BL1 South Perim Spc (G.S1) Infil",
                                         "modeling_method": "WEATHER_DRIVEN"
                                     },
-                                    "volume": 29016.0,
-                                    "design_thermostat_cooling_setpoint": 75.0,
+                                    "volume": 821.6416207134719,
+                                    "design_thermostat_cooling_setpoint": 23.888888888888914,
                                     "thermostat_cooling_setpoint_schedule": "Cooling Setpoint Annual",
-                                    "design_thermostat_heating_setpoint": 70.0,
-                                    "thermostat_heating_setpoint_schedulue": "Heating Setpoint Annual"
+                                    "design_thermostat_heating_setpoint": 21.111111111111143,
+                                    "thermostat_heating_setpoint_schedule": "Heating Setpoint Annual"
                                 },
                                 {
                                     "id": "BL1 E Zone (fG.z2)",
@@ -257,7 +257,7 @@
                                                     "id": "BL1 East Perim Spc (G.E2) MiscEqp1",
                                                     "latent_fraction": 0.0,
                                                     "multiplier_schedule": "Plug Load Annual",
-                                                    "power": 5.19984,
+                                                    "power": 5199.84,
                                                     "sensible_fraction": 1.0
                                                 },
                                                 {
@@ -267,11 +267,11 @@
                                                 }
                                             ],
                                             "service_water_heating_uses": [],
-                                            "floor_area": 1413.0,
+                                            "floor_area": 131.27199552,
                                             "number_of_occupants": 7.065,
                                             "occupant_multiplier_schedule": "Occupancy Annual",
-                                            "occupant_sensible_heat_gain": 225.2014,
-                                            "occupant_latent_heat_gain": 184.2556
+                                            "occupant_sensible_heat_gain": 66.00002452177777,
+                                            "occupant_latent_heat_gain": 53.99999342044444
                                         }
                                     ],
                                     "surfaces": [
@@ -281,25 +281,25 @@
                                                 {
                                                     "id": "BL1 East Win (G.E2.E3.W1)",
                                                     "classification": "WINDOW",
-                                                    "glazed_area": 450.34000000000003,
-                                                    "opaque_area": 0,
-                                                    "u_factor": 0.579,
+                                                    "glazed_area": 41.8379550336,
+                                                    "opaque_area": 0.0,
+                                                    "u_factor": 0.0071368114567113144,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417
                                                 },
                                                 {
                                                     "id": "BL1 East Win (G.E2.E3.W2)",
                                                     "classification": "WINDOW",
-                                                    "glazed_area": 17.8,
-                                                    "opaque_area": 0,
-                                                    "u_factor": 0.579,
+                                                    "glazed_area": 1.653674112,
+                                                    "opaque_area": 0.0,
+                                                    "u_factor": 0.0071368114567113144,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417
                                                 },
                                                 {
                                                     "id": "BL1 East Door (G.E2.E3.D1)",
                                                     "classification": "DOOR",
-                                                    "opaque_area": 21.0
+                                                    "opaque_area": 1.9509638399999998
                                                 }
                                             ],
                                             "construction": {
@@ -307,25 +307,25 @@
                                                 "primary_layers": [
                                                     {
                                                         "id": "Stucco",
-                                                        "thickness": 0.083,
-                                                        "thermal_conductivity": 0.416,
-                                                        "density": 116.0,
-                                                        "specific_heat": 0.201
+                                                        "thickness": 0.007710952319999999,
+                                                        "thermal_conductivity": 5.871844900684299e-06,
+                                                        "density": 29764.575588096704,
+                                                        "specific_heat": 16.602777512069753
                                                     },
                                                     {
                                                         "id": "Gypsum board resistance",
-                                                        "r_value": 0.565
+                                                        "r_value": 3718.7512427406364
                                                     },
                                                     {
                                                         "id": "Insulation",
-                                                        "thickness": 0.204,
-                                                        "thermal_conductivity": 0.021,
-                                                        "density": 0.6,
-                                                        "specific_heat": 0.2
+                                                        "thickness": 0.018952220159999995,
+                                                        "thermal_conductivity": 2.964152473903132e-07,
+                                                        "density": 153.95470131774155,
+                                                        "specific_heat": 16.520176628925128
                                                     },
                                                     {
                                                         "id": "Gypsum board resistance",
-                                                        "r_value": 0.565
+                                                        "r_value": 3718.7512427406364
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -341,7 +341,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "WALL",
-                                            "area": 1419.6000000000001,
+                                            "area": 131.885155584,
                                             "tilt": 90.0,
                                             "azimuth": -180.0,
                                             "adjacent_to": "EXTERIOR",
@@ -355,24 +355,24 @@
                                                 "primary_layers": [
                                                     {
                                                         "id": "Metal Deck",
-                                                        "thickness": 0.003,
-                                                        "thermal_conductivity": 26.162,
-                                                        "density": 489.0,
-                                                        "specific_heat": 0.119
+                                                        "thickness": 2.5892924523724787e-05,
+                                                        "thermal_conductivity": 5.212348332973739e-09,
+                                                        "density": 32195284.66189257,
+                                                        "specific_heat": 811.92580165638
                                                     },
                                                     {
                                                         "id": "Continuous Insulation",
-                                                        "thickness": 0.173,
-                                                        "thermal_conductivity": 0.012,
-                                                        "density": 2.0,
-                                                        "specific_heat": 0.22
+                                                        "thickness": 0.001493158647534796,
+                                                        "thermal_conductivity": 2.390802690760832e-12,
+                                                        "density": 131678.0558768612,
+                                                        "specific_heat": 1501.0392971798617
                                                     },
                                                     {
                                                         "id": "Built-up roofing",
-                                                        "thickness": 0.031,
-                                                        "thermal_conductivity": 0.092,
-                                                        "density": 70.0,
-                                                        "specific_heat": 0.349
+                                                        "thickness": 0.0008778222443519997,
+                                                        "thermal_conductivity": 4.878762699518823e-09,
+                                                        "density": 287713.736835842,
+                                                        "specific_heat": 262.0007068505409
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -388,7 +388,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "CEILING",
-                                            "area": 1413.0,
+                                            "area": 131.27199552,
                                             "tilt": 0.0,
                                             "azimuth": 180.0,
                                             "adjacent_to": "EXTERIOR",
@@ -401,10 +401,10 @@
                                                 "primary_layers": [
                                                     {
                                                         "id": "Concrete",
-                                                        "thickness": 0.333,
-                                                        "thermal_conductivity": 1.335,
-                                                        "density": 145.125,
-                                                        "specific_heat": 0.199
+                                                        "thickness": 0.000876030136826276,
+                                                        "thermal_conductivity": 9.992735176688574e-13,
+                                                        "density": 153054638.36049008,
+                                                        "specific_heat": 12339.989869065326
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -414,7 +414,7 @@
                                             },
                                             "surface_optical_properties": {},
                                             "classification": "FLOOR",
-                                            "area": 1413.0,
+                                            "area": 131.27199552,
                                             "tilt": 180.0,
                                             "azimuth": 90.0,
                                             "adjacent_to": "GROUND"
@@ -425,9 +425,9 @@
                                             "cooling_capacity": 0.0,
                                             "heating_capacity": 0.0,
                                             "id": "BL1 E Zone (fG.z2) MainTerminal",
-                                            "minimum_airflow": 1083.7083740234375,
-                                            "minimum_outdoor_airflow": 200.00668334960938,
-                                            "primary_airflow": 1083.7083740234375,
+                                            "minimum_airflow": 511.4533962947904,
+                                            "minimum_outdoor_airflow": 94.39264282976012,
+                                            "primary_airflow": 511.4533962947904,
                                             "served_by_heating_ventilating_air_conditioning_system": "CW VAV"
                                         },
                                         {
@@ -440,15 +440,15 @@
                                     "zonal_exhaust_fan": {},
                                     "infiltration": {
                                         "algorithm_name": "Air Change Method",
-                                        "flow_rate": 118.8333,
+                                        "flow_rate": 0.056083072102018544,
                                         "id": "BL1 East Perim Spc (G.E2) Infil",
                                         "modeling_method": "CONSTANT"
                                     },
-                                    "volume": 18369.0,
-                                    "design_thermostat_cooling_setpoint": 75.0,
+                                    "volume": 520.1521550484479,
+                                    "design_thermostat_cooling_setpoint": 23.888888888888914,
                                     "thermostat_cooling_setpoint_schedule": "Cooling Setpoint Annual",
-                                    "design_thermostat_heating_setpoint": 70.0,
-                                    "thermostat_heating_setpoint_schedulue": "Heating Setpoint Annual"
+                                    "design_thermostat_heating_setpoint": 21.111111111111143,
+                                    "thermostat_heating_setpoint_schedule": "Heating Setpoint Annual"
                                 },
                                 {
                                     "id": "BL1 N Zone (fG.z3)",
@@ -467,7 +467,7 @@
                                                     "id": "BL1 North Perim Spc (G.N3) MiscEqp1",
                                                     "latent_fraction": 0.0,
                                                     "multiplier_schedule": "Plug Load Annual",
-                                                    "power": 8.21376,
+                                                    "power": 8213.76,
                                                     "sensible_fraction": 1.0
                                                 },
                                                 {
@@ -477,11 +477,11 @@
                                                 }
                                             ],
                                             "service_water_heating_uses": [],
-                                            "floor_area": 2232.0,
+                                            "floor_area": 207.35958527999998,
                                             "number_of_occupants": 11.16,
                                             "occupant_multiplier_schedule": "Occupancy Annual",
-                                            "occupant_sensible_heat_gain": 225.2014,
-                                            "occupant_latent_heat_gain": 184.2556
+                                            "occupant_sensible_heat_gain": 66.00002452177777,
+                                            "occupant_latent_heat_gain": 53.99999342044444
                                         }
                                     ],
                                     "surfaces": [
@@ -491,39 +491,39 @@
                                                 {
                                                     "id": "BL1 North Win (G.N3.E5.W1)",
                                                     "classification": "WINDOW",
-                                                    "glazed_area": 230.955,
-                                                    "opaque_area": 0,
-                                                    "u_factor": 0.579,
+                                                    "glazed_area": 21.4564216032,
+                                                    "opaque_area": 0.0,
+                                                    "u_factor": 0.0071368114567113144,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417
                                                 },
                                                 {
                                                     "id": "BL1 North Win (G.N3.E5.W2)",
                                                     "classification": "WINDOW",
-                                                    "glazed_area": 230.955,
-                                                    "opaque_area": 0,
-                                                    "u_factor": 0.579,
+                                                    "glazed_area": 21.4564216032,
+                                                    "opaque_area": 0.0,
+                                                    "u_factor": 0.0071368114567113144,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417
                                                 },
                                                 {
                                                     "id": "BL1 North Win (G.N3.E5.W3)",
                                                     "classification": "WINDOW",
-                                                    "glazed_area": 230.955,
-                                                    "opaque_area": 0,
-                                                    "u_factor": 0.579,
+                                                    "glazed_area": 21.4564216032,
+                                                    "opaque_area": 0.0,
+                                                    "u_factor": 0.0071368114567113144,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417
                                                 },
                                                 {
                                                     "id": "BL1 North Door (G.N3.E5.D1)",
                                                     "classification": "DOOR",
-                                                    "opaque_area": 21.0
+                                                    "opaque_area": 1.9509638399999998
                                                 },
                                                 {
                                                     "id": "BL1 North Door (G.N3.E5.D2)",
                                                     "classification": "DOOR",
-                                                    "opaque_area": 21.0
+                                                    "opaque_area": 1.9509638399999998
                                                 }
                                             ],
                                             "construction": {
@@ -542,7 +542,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "WALL",
-                                            "area": 2129.4,
+                                            "area": 197.827733376,
                                             "tilt": 90.0,
                                             "azimuth": -180.0,
                                             "adjacent_to": "EXTERIOR",
@@ -556,21 +556,21 @@
                                                 "primary_layers": [
                                                     {
                                                         "id": "Metal Deck",
-                                                        "thickness": 0.003,
-                                                        "thermal_conductivity": 26.162,
-                                                        "density": 489.0,
-                                                        "specific_heat": 0.119
+                                                        "thickness": 2.5892924523724787e-05,
+                                                        "thermal_conductivity": 5.212348332973739e-09,
+                                                        "density": 32195284.66189257,
+                                                        "specific_heat": 811.92580165638
                                                     },
                                                     {
                                                         "id": "Continuous Insulation",
-                                                        "thickness": 0.173,
-                                                        "thermal_conductivity": 0.012,
-                                                        "density": 2.0,
-                                                        "specific_heat": 0.22
+                                                        "thickness": 0.001493158647534796,
+                                                        "thermal_conductivity": 2.390802690760832e-12,
+                                                        "density": 131678.0558768612,
+                                                        "specific_heat": 1501.0392971798617
                                                     },
                                                     {
                                                         "id": "Builtup roof resistance",
-                                                        "r_value": 0.337
+                                                        "r_value": 27.340360773649174
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -586,7 +586,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "CEILING",
-                                            "area": 2232.0,
+                                            "area": 207.35958527999998,
                                             "tilt": 0.0,
                                             "azimuth": 180.0,
                                             "adjacent_to": "EXTERIOR",
@@ -599,17 +599,17 @@
                                                 "primary_layers": [
                                                     {
                                                         "id": "Concrete",
-                                                        "thickness": 0.333,
-                                                        "thermal_conductivity": 1.335,
-                                                        "density": 145.125,
-                                                        "specific_heat": 0.199
+                                                        "thickness": 0.000876030136826276,
+                                                        "thermal_conductivity": 9.992735176688574e-13,
+                                                        "density": 153054638.36049008,
+                                                        "specific_heat": 12339.989869065326
                                                     },
                                                     {
                                                         "id": "Insulation (Slab on grade)",
-                                                        "thickness": 0.375,
-                                                        "thermal_conductivity": 0.025,
-                                                        "density": 5.7,
-                                                        "specific_heat": 0.2
+                                                        "thickness": 0.03483863999999999,
+                                                        "thermal_conductivity": 3.528752945122777e-07,
+                                                        "density": 1462.569662518545,
+                                                        "specific_heat": 16.520176628925128
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -619,7 +619,7 @@
                                             },
                                             "surface_optical_properties": {},
                                             "classification": "FLOOR",
-                                            "area": 2232.0,
+                                            "area": 207.35958527999998,
                                             "tilt": 180.0,
                                             "azimuth": 90.0,
                                             "adjacent_to": "GROUND"
@@ -630,9 +630,9 @@
                                             "cooling_capacity": 0.0,
                                             "heating_capacity": 0.0,
                                             "id": "BL1 N Zone (fG.z3) MainTerminal",
-                                            "minimum_airflow": 1563.6541748046875,
-                                            "minimum_outdoor_airflow": 200.00668334960938,
-                                            "primary_airflow": 1563.6541748046875,
+                                            "minimum_airflow": 737.9625898480779,
+                                            "minimum_outdoor_airflow": 94.39264282976012,
+                                            "primary_airflow": 737.9625898480779,
                                             "served_by_heating_ventilating_air_conditioning_system": "CW VAV"
                                         },
                                         {
@@ -645,16 +645,16 @@
                                     "zonal_exhaust_fan": {},
                                     "infiltration": {
                                         "algorithm_name": "Air Change Method",
-                                        "flow_rate": 170.748,
+                                        "flow_rate": 0.08058408203151357,
                                         "id": "BL1 North Perim Spc (G.N3) Infil",
                                         "modeling_method": "CONSTANT_SCHEDULED",
                                         "multiplier_schedule": "ZG0-S1 (PSZ) P-Inf Sch"
                                     },
-                                    "volume": 29016.0,
-                                    "design_thermostat_cooling_setpoint": 75.0,
+                                    "volume": 821.6416207134719,
+                                    "design_thermostat_cooling_setpoint": 23.888888888888914,
                                     "thermostat_cooling_setpoint_schedule": "Cooling Setpoint Annual",
-                                    "design_thermostat_heating_setpoint": 70.0,
-                                    "thermostat_heating_setpoint_schedulue": "Heating Setpoint Annual"
+                                    "design_thermostat_heating_setpoint": 21.111111111111143,
+                                    "thermostat_heating_setpoint_schedule": "Heating Setpoint Annual"
                                 },
                                 {
                                     "id": "BL1 W Zone (fG.z4)",
@@ -673,7 +673,7 @@
                                                     "id": "BL1 West Perim Spc (G.W4) MiscEqp1",
                                                     "latent_fraction": 0.0,
                                                     "multiplier_schedule": "Plug Load Annual",
-                                                    "power": 5.19984,
+                                                    "power": 5199.84,
                                                     "sensible_fraction": 1.0
                                                 },
                                                 {
@@ -683,11 +683,11 @@
                                                 }
                                             ],
                                             "service_water_heating_uses": [],
-                                            "floor_area": 1413.0,
+                                            "floor_area": 131.27199552,
                                             "number_of_occupants": 7.065,
                                             "occupant_multiplier_schedule": "Occupancy Annual",
-                                            "occupant_sensible_heat_gain": 225.2014,
-                                            "occupant_latent_heat_gain": 184.2556
+                                            "occupant_sensible_heat_gain": 66.00002452177777,
+                                            "occupant_latent_heat_gain": 53.99999342044444
                                         }
                                     ],
                                     "surfaces": [
@@ -697,25 +697,25 @@
                                                 {
                                                     "id": "BL1 West Win (G.W4.E7.W1)",
                                                     "classification": "WINDOW",
-                                                    "glazed_area": 450.34000000000003,
-                                                    "opaque_area": 0,
-                                                    "u_factor": 0.579,
+                                                    "glazed_area": 41.8379550336,
+                                                    "opaque_area": 0.0,
+                                                    "u_factor": 0.0071368114567113144,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417
                                                 },
                                                 {
                                                     "id": "BL1 West Win (G.W4.E7.W2)",
                                                     "classification": "WINDOW",
-                                                    "glazed_area": 17.8,
-                                                    "opaque_area": 0,
-                                                    "u_factor": 0.579,
+                                                    "glazed_area": 1.653674112,
+                                                    "opaque_area": 0.0,
+                                                    "u_factor": 0.0071368114567113144,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417
                                                 },
                                                 {
                                                     "id": "BL1 West Door (G.W4.E7.D1)",
                                                     "classification": "DOOR",
-                                                    "opaque_area": 21.0
+                                                    "opaque_area": 1.9509638399999998
                                                 }
                                             ],
                                             "construction": {
@@ -734,7 +734,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "WALL",
-                                            "area": 1419.6000000000001,
+                                            "area": 131.885155584,
                                             "tilt": 90.0,
                                             "azimuth": -180.0,
                                             "adjacent_to": "EXTERIOR",
@@ -759,7 +759,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "CEILING",
-                                            "area": 1413.0,
+                                            "area": 131.27199552,
                                             "tilt": 0.0,
                                             "azimuth": 180.0,
                                             "adjacent_to": "EXTERIOR",
@@ -772,17 +772,17 @@
                                                 "primary_layers": [
                                                     {
                                                         "id": "Concrete",
-                                                        "thickness": 0.333,
-                                                        "thermal_conductivity": 1.335,
-                                                        "density": 145.125,
-                                                        "specific_heat": 0.199
+                                                        "thickness": 0.000876030136826276,
+                                                        "thermal_conductivity": 9.992735176688574e-13,
+                                                        "density": 153054638.36049008,
+                                                        "specific_heat": 12339.989869065326
                                                     },
                                                     {
                                                         "id": "Insulation (Slab on grade)",
-                                                        "thickness": 0.375,
-                                                        "thermal_conductivity": 0.025,
-                                                        "density": 5.7,
-                                                        "specific_heat": 0.2
+                                                        "thickness": 0.03483863999999999,
+                                                        "thermal_conductivity": 3.528752945122777e-07,
+                                                        "density": 1462.569662518545,
+                                                        "specific_heat": 16.520176628925128
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -792,7 +792,7 @@
                                             },
                                             "surface_optical_properties": {},
                                             "classification": "FLOOR",
-                                            "area": 1413.0,
+                                            "area": 131.27199552,
                                             "tilt": 180.0,
                                             "azimuth": 90.0,
                                             "adjacent_to": "GROUND"
@@ -803,9 +803,9 @@
                                             "cooling_capacity": 0.0,
                                             "heating_capacity": 0.0,
                                             "id": "BL1 W Zone (fG.z4) MainTerminal",
-                                            "minimum_airflow": 1686.6929931640625,
-                                            "minimum_outdoor_airflow": 200.00668334960938,
-                                            "primary_airflow": 1686.6929931640625,
+                                            "minimum_airflow": 796.0304455871341,
+                                            "minimum_outdoor_airflow": 94.39264282976012,
+                                            "primary_airflow": 796.0304455871341,
                                             "served_by_heating_ventilating_air_conditioning_system": "CW VAV"
                                         },
                                         {
@@ -818,16 +818,16 @@
                                     "zonal_exhaust_fan": {},
                                     "infiltration": {
                                         "algorithm_name": "Air Change Method",
-                                        "flow_rate": 113.7465,
+                                        "flow_rate": 0.05368236984794879,
                                         "id": "BL1 West Perim Spc (G.W4) Infil",
                                         "modeling_method": "CONSTANT_SCHEDULED",
                                         "multiplier_schedule": "ZG0-S1 (PSZ) P-Inf Sch"
                                     },
-                                    "volume": 18369.0,
-                                    "design_thermostat_cooling_setpoint": 75.0,
+                                    "volume": 520.1521550484479,
+                                    "design_thermostat_cooling_setpoint": 23.888888888888914,
                                     "thermostat_cooling_setpoint_schedule": "Cooling Setpoint Annual",
-                                    "design_thermostat_heating_setpoint": 70.0,
-                                    "thermostat_heating_setpoint_schedulue": "Heating Setpoint Annual"
+                                    "design_thermostat_heating_setpoint": 21.111111111111143,
+                                    "thermostat_heating_setpoint_schedule": "Heating Setpoint Annual"
                                 },
                                 {
                                     "id": "BL1 Cor Zone (fG.z5)",
@@ -846,7 +846,7 @@
                                                     "id": "BL1 Core Spc (G.C5) MiscEqp1",
                                                     "latent_fraction": 0.0,
                                                     "multiplier_schedule": "Plug Load Annual",
-                                                    "power": 38.9968128,
+                                                    "power": 38996.8128,
                                                     "sensible_fraction": 1.0
                                                 },
                                                 {
@@ -856,11 +856,11 @@
                                                 }
                                             ],
                                             "service_water_heating_uses": [],
-                                            "floor_area": 10596.96,
+                                            "floor_area": 984.4897987583998,
                                             "number_of_occupants": 52.9848,
                                             "occupant_multiplier_schedule": "Occupancy Annual",
-                                            "occupant_sensible_heat_gain": 225.2014,
-                                            "occupant_latent_heat_gain": 184.2556
+                                            "occupant_sensible_heat_gain": 66.00002452177777,
+                                            "occupant_latent_heat_gain": 53.99999342044444
                                         }
                                     ],
                                     "surfaces": [
@@ -872,24 +872,24 @@
                                                 "primary_layers": [
                                                     {
                                                         "id": "Metal Deck",
-                                                        "thickness": 0.003,
-                                                        "thermal_conductivity": 26.162,
-                                                        "density": 489.0,
-                                                        "specific_heat": 0.119
+                                                        "thickness": 2.5892924523724787e-05,
+                                                        "thermal_conductivity": 5.212348332973739e-09,
+                                                        "density": 32195284.66189257,
+                                                        "specific_heat": 811.92580165638
                                                     },
                                                     {
                                                         "id": "Continuous Insulation",
-                                                        "thickness": 0.173,
-                                                        "thermal_conductivity": 0.012,
-                                                        "density": 2.0,
-                                                        "specific_heat": 0.22
+                                                        "thickness": 0.001493158647534796,
+                                                        "thermal_conductivity": 2.390802690760832e-12,
+                                                        "density": 131678.0558768612,
+                                                        "specific_heat": 1501.0392971798617
                                                     },
                                                     {
                                                         "id": "Built-up roofing",
-                                                        "thickness": 0.031,
-                                                        "thermal_conductivity": 0.092,
-                                                        "density": 70.0,
-                                                        "specific_heat": 0.349
+                                                        "thickness": 0.0008778222443519997,
+                                                        "thermal_conductivity": 4.878762699518823e-09,
+                                                        "density": 287713.736835842,
+                                                        "specific_heat": 262.0007068505409
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -905,7 +905,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "CEILING",
-                                            "area": 10596.9599609375,
+                                            "area": 984.4897951293749,
                                             "tilt": 0.0,
                                             "azimuth": 180.0,
                                             "adjacent_to": "EXTERIOR",
@@ -918,10 +918,10 @@
                                                 "primary_layers": [
                                                     {
                                                         "id": "Concrete",
-                                                        "thickness": 0.333,
-                                                        "thermal_conductivity": 1.335,
-                                                        "density": 145.125,
-                                                        "specific_heat": 0.199
+                                                        "thickness": 0.000876030136826276,
+                                                        "thermal_conductivity": 9.992735176688574e-13,
+                                                        "density": 153054638.36049008,
+                                                        "specific_heat": 12339.989869065326
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -931,7 +931,7 @@
                                             },
                                             "surface_optical_properties": {},
                                             "classification": "FLOOR",
-                                            "area": 10596.96,
+                                            "area": 984.4897987583998,
                                             "tilt": 180.0,
                                             "azimuth": 90.0,
                                             "adjacent_to": "GROUND"
@@ -942,9 +942,9 @@
                                             "cooling_capacity": 0.0,
                                             "heating_capacity": 0.0,
                                             "id": "BL1 Cor Zone (fG.z5) MainTerminal",
-                                            "minimum_airflow": 200.00668715343272,
-                                            "minimum_outdoor_airflow": 200.00668334960938,
-                                            "primary_airflow": 4023.3388671875,
+                                            "minimum_airflow": 94.39264462496482,
+                                            "minimum_outdoor_airflow": 94.39264282976012,
+                                            "primary_airflow": 1898.8044914963243,
                                             "served_by_heating_ventilating_air_conditioning_system": "CW VAV"
                                         },
                                         {
@@ -959,11 +959,11 @@
                                         "algorithm_name": "Air Change Method",
                                         "id": "BL1 Core Spc (G.C5) Infil"
                                     },
-                                    "volume": 137760.4844,
-                                    "design_thermostat_cooling_setpoint": 75.0,
+                                    "volume": 3900.942503194408,
+                                    "design_thermostat_cooling_setpoint": 23.888888888888914,
                                     "thermostat_cooling_setpoint_schedule": "Cooling Setpoint Annual",
-                                    "design_thermostat_heating_setpoint": 70.0,
-                                    "thermostat_heating_setpoint_schedulue": "Heating Setpoint Annual"
+                                    "design_thermostat_heating_setpoint": 21.111111111111143,
+                                    "thermostat_heating_setpoint_schedule": "Heating Setpoint Annual"
                                 }
                             ],
                             "heating_ventilating_air_conditioning_systems": [
@@ -971,7 +971,7 @@
                                     "id": "CW VAV",
                                     "fan_system": {
                                         "air_economizer": {
-                                            "high_limit_shutoff_temperature": 70.0,
+                                            "high_limit_shutoff_temperature": 21.111111111111143,
                                             "id": "CW VAV AirEconomizer",
                                             "is_integrated": true,
                                             "type": "TEMPERATURE"
@@ -991,9 +991,9 @@
                                         "relief_fans": [],
                                         "return_fans": [
                                             {
-                                                "design_airflow": 9000.30078125,
-                                                "design_electric_power": 4.2253522872924805,
-                                                "design_pressure_rise": 3.5,
+                                                "design_airflow": 4247.668941741898,
+                                                "design_electric_power": 4225.3522872924805,
+                                                "design_pressure_rise": 870.94,
                                                 "id": "CW VAV ReturnFan",
                                                 "output_validation_points": [],
                                                 "specification_method": "DETAILED"
@@ -1001,9 +1001,9 @@
                                         ],
                                         "supply_fans": [
                                             {
-                                                "design_airflow": 10000.333984375,
-                                                "design_electric_power": 5.346895694732666,
-                                                "design_pressure_rise": 4.1,
+                                                "design_airflow": 4719.632055071848,
+                                                "design_electric_power": 5346.895694732666,
+                                                "design_pressure_rise": 1020.2439999999999,
                                                 "id": "CW VAV SupplyFan",
                                                 "output_validation_points": [],
                                                 "specification_method": "DETAILED"
@@ -1026,10 +1026,10 @@
                                         "type": "DIRECT_EXPANSION"
                                     },
                                     "preheat_system": {
-                                        "heating_coil_setpoint": 50.0,
+                                        "heating_coil_setpoint": 10.000000000000057,
                                         "id": "CW VAV PreheatSys",
                                         "is_sized_based_on_design_day": false,
-                                        "rated_capacity": -150000.0,
+                                        "rated_capacity": -43960.666666666664,
                                         "type": "FLUID_LOOP"
                                     }
                                 }
@@ -97474,15 +97474,15 @@
                     "cooling_or_condensing_design_and_control": {},
                     "heating_design_and_control": {
                         "id": "Hot Water Loop HeatingDesign/Control",
-                        "design_supply_temperature": 180.0,
-                        "design_return_temperature": 130.0,
+                        "design_supply_temperature": 82.22222222222229,
+                        "design_return_temperature": 54.44444444444446,
                         "is_sized_using_coincident_loads": true,
                         "minimum_flow_fraction": 0.05,
                         "temperature_reset_type": "NO_RESET"
                     },
                     "child_loops": [],
                     "type": "HEATING",
-                    "pump_power_per_flow_rate": 19.00000125169754
+                    "pump_power_per_flow_rate": 301.1889234086796
                 }
             ],
             "service_water_heating_distribution_systems": [
@@ -97490,7 +97490,7 @@
                     "id": "DHW Plant 1 Loop (1)",
                     "tanks": {},
                     "service_water_piping": {},
-                    "design_supply_temperature": 135.0,
+                    "design_supply_temperature": 57.222222222222285,
                     "is_ground_temperature_used_for_entering_water": true
                 }
             ],
@@ -97500,7 +97500,7 @@
                     "output_validation_points": [],
                     "tank": {
                         "id": "DHW Plant 1 Wtr Htr (1) Tank",
-                        "storage_capacity": 44.7174,
+                        "storage_capacity": 169.25535900000003,
                         "location": "IN_ZONE",
                         "location_zone": "BL1 Cor Zone (fG.z5)"
                     },
@@ -97509,7 +97509,7 @@
                     "compressor_power_validation_points": [],
                     "heater_fuel_type": "NATURAL_GAS",
                     "distribution_system": "DHW Plant 1 Loop (1)",
-                    "rated_capacity": -59599.3046875,
+                    "rated_capacity": -17466834446.21528,
                     "heater_type": "CONVENTIONAL"
                 }
             ],
@@ -97519,11 +97519,11 @@
                     "output_validation_points": [],
                     "loop_or_piping": "Hot Water Loop",
                     "specification_method": "SIMPLE",
-                    "design_electric_power": 0.38,
-                    "design_head": 31.0,
+                    "design_electric_power": 380.0,
+                    "design_head": 92661.077,
                     "impeller_efficiency": 0.43909013271331787,
                     "motor_efficiency": 0.699999988079071,
-                    "design_flow": 20.0
+                    "design_flow": 1.2616666666666672
                 }
             ],
             "boilers": [

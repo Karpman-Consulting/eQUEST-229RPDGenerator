@@ -289,7 +289,7 @@
                                     "design_thermostat_cooling_setpoint": 23.888888888888914,
                                     "thermostat_cooling_setpoint_schedule": "Cooling Setpoint Annual",
                                     "design_thermostat_heating_setpoint": 21.111111111111143,
-                                    "thermostat_heating_setpoint_schedulue": "Heating Setpoint Annual"
+                                    "thermostat_heating_setpoint_schedule": "Heating Setpoint Annual"
                                 },
                                 {
                                     "id": "Perimeter Zone 2 (East)",
@@ -531,7 +531,7 @@
                                     "design_thermostat_cooling_setpoint": 23.888888888888914,
                                     "thermostat_cooling_setpoint_schedule": "Cooling Setpoint Annual",
                                     "design_thermostat_heating_setpoint": 21.111111111111143,
-                                    "thermostat_heating_setpoint_schedulue": "Heating Setpoint Annual"
+                                    "thermostat_heating_setpoint_schedule": "Heating Setpoint Annual"
                                 },
                                 {
                                     "id": "Perimeter Zone 3 (North)",
@@ -769,7 +769,7 @@
                                     "design_thermostat_cooling_setpoint": 23.888888888888914,
                                     "thermostat_cooling_setpoint_schedule": "Cooling Setpoint Annual",
                                     "design_thermostat_heating_setpoint": 21.111111111111143,
-                                    "thermostat_heating_setpoint_schedulue": "Heating Setpoint Annual"
+                                    "thermostat_heating_setpoint_schedule": "Heating Setpoint Annual"
                                 },
                                 {
                                     "id": "Perimeter Zone 4 (West)",
@@ -955,7 +955,7 @@
                                     "design_thermostat_cooling_setpoint": 23.888888888888914,
                                     "thermostat_cooling_setpoint_schedule": "Cooling Setpoint Annual",
                                     "design_thermostat_heating_setpoint": 21.111111111111143,
-                                    "thermostat_heating_setpoint_schedulue": "Heating Setpoint Annual"
+                                    "thermostat_heating_setpoint_schedule": "Heating Setpoint Annual"
                                 },
                                 {
                                     "id": "Core Zone 1 (Core)",
@@ -1085,7 +1085,7 @@
                                     "design_thermostat_cooling_setpoint": 23.888888888888914,
                                     "thermostat_cooling_setpoint_schedule": "Cooling Setpoint Annual",
                                     "design_thermostat_heating_setpoint": 21.111111111111143,
-                                    "thermostat_heating_setpoint_schedulue": "Heating Setpoint Annual"
+                                    "thermostat_heating_setpoint_schedule": "Heating Setpoint Annual"
                                 }
                             ],
                             "heating_ventilating_air_conditioning_systems": [
@@ -1125,7 +1125,7 @@
                                         "humidification_type": "NONE",
                                         "id": "Baseline System 4 (South) HeatSys",
                                         "is_sized_based_on_design_day": true,
-                                        "oversizing_factor": 1.25,
+                                        "oversizing_factor": 0.25,
                                         "type": "HEAT_PUMP"
                                     },
                                     "cooling_system": {
@@ -1133,7 +1133,7 @@
                                         "efficiency_metric_values": [],
                                         "id": "Baseline System 4 (South) CoolSys",
                                         "is_sized_based_on_design_day": true,
-                                        "oversizing_factor": 1.15,
+                                        "oversizing_factor": 0.1499999999999999,
                                         "type": "DIRECT_EXPANSION"
                                     },
                                     "preheat_system": {
@@ -1178,7 +1178,7 @@
                                         "humidification_type": "NONE",
                                         "id": "Baseline System 4 (East) HeatSys",
                                         "is_sized_based_on_design_day": true,
-                                        "oversizing_factor": 1.25,
+                                        "oversizing_factor": 0.25,
                                         "type": "HEAT_PUMP"
                                     },
                                     "cooling_system": {
@@ -1186,7 +1186,7 @@
                                         "efficiency_metric_values": [],
                                         "id": "Baseline System 4 (East) CoolSys",
                                         "is_sized_based_on_design_day": true,
-                                        "oversizing_factor": 1.15,
+                                        "oversizing_factor": 0.1499999999999999,
                                         "type": "DIRECT_EXPANSION"
                                     },
                                     "preheat_system": {
@@ -1231,7 +1231,7 @@
                                         "humidification_type": "NONE",
                                         "id": "Baseline System 4 (North) HeatSys",
                                         "is_sized_based_on_design_day": true,
-                                        "oversizing_factor": 1.25,
+                                        "oversizing_factor": 0.25,
                                         "type": "HEAT_PUMP"
                                     },
                                     "cooling_system": {
@@ -1239,7 +1239,7 @@
                                         "efficiency_metric_values": [],
                                         "id": "Baseline System 4 (North) CoolSys",
                                         "is_sized_based_on_design_day": true,
-                                        "oversizing_factor": 1.15,
+                                        "oversizing_factor": 0.1499999999999999,
                                         "type": "DIRECT_EXPANSION"
                                     },
                                     "preheat_system": {
@@ -1284,7 +1284,7 @@
                                         "humidification_type": "NONE",
                                         "id": "Baseline System 4 (West) HeatSys",
                                         "is_sized_based_on_design_day": true,
-                                        "oversizing_factor": 1.25,
+                                        "oversizing_factor": 0.25,
                                         "type": "HEAT_PUMP"
                                     },
                                     "cooling_system": {
@@ -1292,7 +1292,7 @@
                                         "efficiency_metric_values": [],
                                         "id": "Baseline System 4 (West) CoolSys",
                                         "is_sized_based_on_design_day": true,
-                                        "oversizing_factor": 1.15,
+                                        "oversizing_factor": 0.1499999999999999,
                                         "type": "DIRECT_EXPANSION"
                                     },
                                     "preheat_system": {
@@ -1337,7 +1337,7 @@
                                         "humidification_type": "NONE",
                                         "id": "Baseline System 4 (Core) HeatSys",
                                         "is_sized_based_on_design_day": true,
-                                        "oversizing_factor": 1.25,
+                                        "oversizing_factor": 0.25,
                                         "type": "HEAT_PUMP"
                                     },
                                     "cooling_system": {
@@ -1345,7 +1345,7 @@
                                         "efficiency_metric_values": [],
                                         "id": "Baseline System 4 (Core) CoolSys",
                                         "is_sized_based_on_design_day": true,
-                                        "oversizing_factor": 1.15,
+                                        "oversizing_factor": 0.1499999999999999,
                                         "type": "DIRECT_EXPANSION"
                                     },
                                     "preheat_system": {
