@@ -128,6 +128,7 @@ square_degree = (π / 180) ** 2 * sr = sq_deg = sqdeg
 # Length
 
 # Mass
+pound = 0.45359237 * kilogram = lb = lbs = pound_mass
 
 # Time
 minute = 60 * second = min
