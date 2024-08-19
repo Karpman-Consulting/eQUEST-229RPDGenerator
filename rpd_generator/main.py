@@ -13,6 +13,7 @@ from rpd_generator.bdl_structure import *
 from rpd_generator.config import Config
 from rpd_generator.utilities import validate_configuration
 from rpd_generator.schema.schema_enums import SchemaEnums
+from rpd_generator.utilities import unit_converter
 
 
 """Once development is complete, this can be replaced with a list of all bdl_command attribute values from classes that 

@@ -1,0 +1,248 @@
+{
+    "RulesetModelDescription": {
+        "measured_infiltration_pressure_difference": "Pa"
+    },
+    "Zone": {
+        "volume": "m3",
+        "design_thermostat_cooling_setpoint": "C",
+        "design_thermostat_heating_setpoint": "C",
+        "transfer_airflow_rate": "L/s",
+        "makeup_airflow_rate": "L/s",
+        "non_mechanical_cooling_fan_power": "W",
+        "non_mechanical_cooling_fan_airflow": "L/s"
+    },
+    "Space": {
+        "floor_area": "m2",
+        "occupant_sensible_heat_gain": "W",
+        "occupant_latent_heat_gain": "W"
+    },
+    "Infiltration": {
+        "measured_air_leakage_rate": "m3/s",
+        "flow_rate": "m3/s"
+    },
+    "Surface": {
+        "area": "m2",
+        "tilt": "degrees",
+        "azimuth": "degrees"
+    },
+    "Construction": {
+        "u_factor": "W/m2/K",
+        "c_factor": "W/m2/K",
+        "f_factor": "W/m/K",
+        "r_values": "K*m2/W"
+    },
+    "Material": {
+        "thickness": "m",
+        "thermal_conductivity": "W/m/K",
+        "density": "kg/m3",
+        "specific_heat": "J/kg/K",
+        "r_value": "K*m2/W"
+    },
+    "Subsurface": {
+        "glazed_area": "m2",
+        "opaque_area": "m2",
+        "u_factor": "W/m2/K",
+        "depth_of_overhang": "m"
+    },
+    "InteriorLighting": {
+        "power_per_area": "W/m2"
+    },
+    "MiscellaneousEquipment": {
+        "power": "W"
+    },
+    "Transformer": {
+        "capacity": "V*A",
+        "peak_load": "W"
+    },
+    "Schedule": {
+        "event_times": "s",
+        "event_times_heating_design_day": "s",
+        "event_times_cooling_design_day": "s"
+    },
+    "Elevator": {
+        "motor_power": "W",
+        "cab_counterweight": "kg",
+        "cab_weight": "kg",
+        "design_load": "kg",
+        "speed": "m/s",
+        "cab_area": "m2",
+        "cab_lighting_power": "W",
+        "cab_ventilation_fan_power": "W",
+        "cab_ventilation_fan_flow": "L/s"
+    },
+    "HeatingSystem": {
+        "design_capacity": "W",
+        "rated_capacity": "W",
+        "heating_coil_setpoint": "C",
+        "efficiency_metric_values": "W/W",
+        "heatpump_auxilliary_heat_high_shutoff_temperature": "C",
+        "heatpump_low_shutoff_temperature": "C"
+    },
+    "CoolingSystem": {
+        "design_total_cool_capacity": "W",
+        "design_sensible_cool_capacity": "W",
+        "rated_total_cool_capacity": "W",
+        "rated_sensible_cool_capacity": "W",
+        "efficiency_metric_values": "W/W"
+    },
+    "FanSystem": {
+        "reset_differential_temperature": "K",
+        "minimum_airflow": "L/s",
+        "minimum_outdoor_airflow": "L/s",
+        "maximum_outdoor_airflow": "L/s"
+    },
+    "AirEconomizer": {
+        "high_limit_shutoff_temperature": "C"
+    },
+    "AirEnergyRecovery": {
+        "outdoor_airflow": "L/s",
+        "exhaust_airflow": "L/s"
+    },
+    "Fan": {
+        "design_airflow": "L/s",
+        "design_electric_power": "W",
+        "design_pressure_rise": "Pa",
+        "motor_nameplate_power": "W",
+        "shaft_power": "W"
+    },
+    "FanOutputValidationPoint": {
+        "airflow": "L/s",
+        "result": "W"
+    },
+    "Terminal": {
+        "primary_airflow": "L/s",
+        "secondary_airflow": "L/s",
+        "max_heating_airflow": "L/s",
+        "supply_design_heating_setpoint_temperature": "C",
+        "supply_design_cooling_setpoint_temperature": "C",
+        "minimum_airflow": "L/s",
+        "minimum_outdoor_airflow": "L/s",
+        "heating_capacity": "W",
+        "cooling_capacity": "W"
+    },
+    "FluidLoop": {
+        "pump_power_per_flow_rate": "W*s/L"
+    },
+    "FluidLoopDesignAndControl": {
+        "design_supply_temperature": "C",
+        "design_return_temperature": "C",
+        "outdoor_high_for_loop_supply_reset_temperature": "C",
+        "outdoor_low_for_loop_supply_reset_temperature": "C",
+        "loop_supply_temperature_at_outdoor_high": "C",
+        "loop_supply_temperature_at_outdoor_low": "C",
+        "loop_supply_temperature_at_low_load": "C"
+    },
+    "Pump": {
+        "design_electric_power": "W",
+        "motor_nameplate_power": "W",
+        "design_head": "m",
+        "design_flow": "L/s"
+    },
+    "PumpOutputValidationPoint": {
+        "flow": "L/s",
+        "result": "W"
+    },
+    "Boiler": {
+        "design_capacity": "W",
+        "rated_capacity": "W",
+        "auxiliary_power": "W",
+        "operation_lower_limit": "W",
+        "operation_upper_limit": "W"
+    },
+    "BoilerOutputValidationPoint": {
+        "load": "W",
+        "entering_water_temperature": "C",
+        "result": "W"
+    },
+    "Chiller": {
+        "design_capacity": "W",
+        "rated_capacity": "W",
+        "rated_entering_condenser_temperature": "C",
+        "rated_leaving_evaporator_temperature": "C",
+        "design_flow_evaporator": "L/s",
+        "design_flow_condenser": "L/s",
+        "design_entering_condenser_temperature": "C",
+        "design_leaving_evaporator_temperature": "C",
+        "full_load_efficiency": "W/W",
+        "part_load_efficiency": "W/W"
+    },
+    "ChillerCapacityValidationPoint": {
+        "chilled_water_supply_temperature": "C",
+        "condenser_temperature": "C",
+        "result": "W"
+    },
+    "ChillerPowerValidationPoint": {
+        "chilled_water_supply_temperature": "C",
+        "condenser_temperature": "C",
+        "load": "W",
+        "is_at_full_capacity": "W",
+        "result": "W"
+    },
+    "HeatRejection": {
+        "range": "K",
+        "approach": "K",
+        "fan_shaft_power": "W",
+        "fan_motor_efficiency": "W",
+        "fan_motor_nameplate_power": "W",
+        "design_wetbulb_temperature": "C",
+        "design_water_flowrate": "L/s",
+        "rated_water_flowrate": "L/s",
+        "leaving_water_setpoint_temperature": "C"
+    },
+    "ServiceWaterHeatingDistributionSystem": {
+        "design_supply_temperature": "C",
+        "design_supply_temperature_difference": "C"
+    },
+    "ServiceWaterPiping": {
+        "insulation_thickness": "m",
+        "length": "m",
+        "diameter": "m"
+    },
+    "ServiceWaterHeatingEquipment": {
+        "first_hour_rating": "L",
+        "input_power": "W",
+        "rated_capacity": "W",
+        "minimum_capacity": "W",
+        "setpoint_temperature": "C",
+        "draft_fan_power": "W"
+    },
+    "ServiceWaterHeaterValidationPoint": {
+        "load": "W",
+        "result": "W"
+    },
+    "HeatPumpWaterHeaterCapacityValidationPoint": {
+        "evaporator_air_temperature": "C",
+        "condenser_water_temperature": "C",
+        "evaporator_air_flow": "L/s",
+        "condenser_water_flow": "L/s",
+        "result": "W"
+    },
+    "HeatPumpWaterHeaterPowerValidationPoint": {
+        "evaporator_air_temperature": "C",
+        "condenser_water_temperature": "C",
+        "evaporator_air_flow": "L/s",
+        "condenser_water_flow": "L/s",
+        "load": "W",
+        "result": "W"
+    },
+    "Tank": {
+        "storage_capacity": "L",
+        "height": "m",
+        "interior_insulation": "K*m2/W",
+        "exterior_insulation": "K*m2/W"
+    },
+    "ServiceWaterHeatingUse": {
+        "temperature_at_fixture": "C"
+    },
+    "ExteriorLighting": {
+        "area": "m2",
+        "length": "m",
+        "power": "W",
+        "fixture_height": "m"
+    },
+    "RefrigeratedCase": {
+        "power": "W",
+        "volume": "m3",
+        "total_display_area": "m2"
+    }
+}

@@ -173,13 +173,17 @@ joule = newton * meter = J
 erg = dyne * centimeter
 watt_hour = watt * hour = Wh = watthour
 calorie = 4.184 * joule = cal = thermochemical_calorie = cal_th
-british_thermal_unit = 1055.056 * joule = Btu = BTU = Btu_iso
+british_thermal_unit = 1055.056 * joule = Btu = btu = BTU = Btu_iso
+kBtu = 1e3 * Btu = kBTU
+MMBtu = 1e6 * Btu = MMbtu = MMBTU
 therm = 1e5 * Btu = thm = EC_therm
 
 # Power
 [power] = [energy] / [time]
 watt = joule / second = W
 british_thermal_unit_per_hour = Btu / hour = Btu_h = btu_h
+kBtu_per_hour = kBtu / hour = kBtu_h = kbtu_h = kBTU_H
+MMBtu_per_hour = MMBtu / hour = MMBtu_h = MMbtu_h = MMBTU_H
 volt_ampere = volt * ampere = VA
 ton = 3517 * W
 hp = 745.7 * W
@@ -198,6 +202,7 @@ technical_atmosphere = kilogram * g_0 / centimeter ** 2 = at
 torr = atm / 760
 pound_force_per_square_inch = force_pound / inch ** 2 = psi
 ft_WC = 2989.067 * Pa
+in_WC = 248.84 * Pa
 millimeter_Hg = millimeter * Hg * g_0 = mmHg = mm_Hg = millimeter_Hg_0C
 centimeter_Hg = centimeter * Hg * g_0 = cmHg = cm_Hg = centimeter_Hg_0C
 inch_Hg = inch * Hg * g_0 = inHg = in_Hg = inch_Hg_32F
