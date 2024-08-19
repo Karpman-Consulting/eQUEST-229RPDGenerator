@@ -29,11 +29,12 @@ def find_all_with_field_value(jpath, field, value, obj):
 
 def find_all_with_filters(jpath, filters, obj):
     # Construct the filter expression
-    filter_expr = " and ".join([f'@.{field}="{value}"' for field, value in filters.items()])
+    filter_expr = " and ".join(
+        [f'@.{field}="{value}"' for field, value in filters.items()]
+    )
 
     return [
-        m.current_value
-        for m in match(ensure_root(f'{jpath}[?({filter_expr})]'), obj)
+        m.current_value for m in match(ensure_root(f"{jpath}[?({filter_expr})]"), obj)
     ]
 
 
