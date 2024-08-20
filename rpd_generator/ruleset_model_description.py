@@ -7,6 +7,7 @@ class RulesetModelDescription:
         self.file_path = None
         self.doe2_version = None
         self.doe2_data_path = None
+        self.building_azimuth = None
 
         # store BDL objects for the model associated with the RMD
         self.bdl_obj_instances = {}

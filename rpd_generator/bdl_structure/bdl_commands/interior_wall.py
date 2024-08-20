@@ -81,7 +81,10 @@ class InteriorWall(
         else:
             self.classification = SurfaceClassificationOptions.WALL
 
-        self.azimuth = self.try_float(self.keyword_value_pairs.get("AZIMUTH"))
+        parent_floor_azimuth = self.parent.parent.try_float(self.parent.parent.keyword_value_pairs.get("AZIMUTH"))
+        parent_space_azimuth = self.parent.try_float(self.parent.keyword_value_pairs.get("AZIMUTH"))
+        surface_azimuth = self.try_float(self.keyword_value_pairs.get("AZIMUTH"))
+        self.azimuth = (self.rmd.building_azimuth + parent_floor_azimuth + parent_space_azimuth + surface_azimuth) % 360
 
         self.adjacent_to = int_wall_type
         if int_wall_type == "INTERIOR":

@@ -77,3 +77,17 @@ class Holidays(BaseDefinition):
             )
 
         Schedule.annual_calendar = calendar
+
+
+class BuildingParameters(BaseDefinition):
+    bdl_command = "BUILD-PARAMETERS"
+
+    def __init__(self, u_name, rmd):
+        super().__init__(u_name, rmd)
+
+    def __repr__(self):
+        return f"BuildingPameters(u_name='{self.u_name}')"
+
+    def populate_data_elements(self):
+        """Populate schema structure for building parameters object."""
+        self.rmd.building_azimuth = self.try_float(self.keyword_value_pairs.get("AZIMUTH"))

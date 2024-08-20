@@ -22,6 +22,7 @@ For now, this is a list of BDL commands that are ready to be processed, in the o
 COMMAND_PROCESSING_ORDER = [
     "RUN-PERIOD-PD",
     "SITE-PARAMETERS",
+    "BUILD-PARAMETERS",  # Building Parameters must populate before Exterior-Walls, Interior-Walls, Underground-Walls, Windows, Doors
     "MASTER-METERS",  # Master meters must populate bofore other meters and before Systems, Boilers, DW-Heaters, Chillers
     "FUEL-METER",  # Meters must populate before Systems, Boilers, DW-Heaters, Chillers
     "ELEC-METER",  # Meters must populate before Systems, Boilers, DW-Heaters, Chillers

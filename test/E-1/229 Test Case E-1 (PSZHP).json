@@ -237,7 +237,7 @@
                                             "classification": "WALL",
                                             "area": 25.620019985663994,
                                             "tilt": 90.0,
-                                            "azimuth": -45.0,
+                                            "azimuth": 315.0,
                                             "adjacent_to": "INTERIOR",
                                             "adjacent_zone": "Perimeter Zone 4 (West)"
                                         },
@@ -460,7 +460,7 @@
                                             "classification": "WALL",
                                             "area": 25.620019985663994,
                                             "tilt": 90.0,
-                                            "azimuth": 45.0,
+                                            "azimuth": 315.0,
                                             "adjacent_to": "INTERIOR",
                                             "adjacent_zone": "Perimeter Zone 3 (North)"
                                         },
@@ -479,7 +479,7 @@
                                             "classification": "WALL",
                                             "area": 95.65296998399998,
                                             "tilt": 90.0,
-                                            "azimuth": 0.0,
+                                            "azimuth": 270.0,
                                             "adjacent_to": "INTERIOR",
                                             "adjacent_zone": "Core Zone 1 (Core)"
                                         },
@@ -690,7 +690,7 @@
                                             "classification": "WALL",
                                             "area": 25.620019985663994,
                                             "tilt": 90.0,
-                                            "azimuth": 45.0,
+                                            "azimuth": 225.0,
                                             "adjacent_to": "INTERIOR",
                                             "adjacent_zone": "Perimeter Zone 4 (West)"
                                         },
@@ -709,7 +709,7 @@
                                             "classification": "WALL",
                                             "area": 161.595547776,
                                             "tilt": 90.0,
-                                            "azimuth": 0.0,
+                                            "azimuth": 180.0,
                                             "adjacent_to": "INTERIOR",
                                             "adjacent_zone": "Core Zone 1 (Core)"
                                         },
@@ -895,7 +895,7 @@
                                             "classification": "WALL",
                                             "area": 95.65296998399998,
                                             "tilt": 90.0,
-                                            "azimuth": 0.0,
+                                            "azimuth": 90.0,
                                             "adjacent_to": "INTERIOR",
                                             "adjacent_zone": "Core Zone 1 (Core)"
                                         },
