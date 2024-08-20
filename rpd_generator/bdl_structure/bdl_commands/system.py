@@ -630,7 +630,7 @@ class System(ParentNode):
         self.fan_sys_id = self.u_name + " FanSys"
 
         self.fan_sys_fan_control = self.supply_fan_map.get(
-            self.keyword_value_pairs.get("TYPE")
+            self.keyword_value_pairs.get("FAN-CONTROL")
         )
 
         self.fan_sys_operation_during_unocc = self.unocc_fan_operation_map.get(
