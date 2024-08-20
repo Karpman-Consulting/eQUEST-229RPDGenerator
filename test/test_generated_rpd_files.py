@@ -12,7 +12,7 @@ from rpd_generator.utilities.jsonpath_utils import (
 )
 
 
-def compare_json_values(spec, generated_values, reference_values):
+def compare_json_values(spec, generated_values, reference_values, generated_ids):
     """Compares a list of generated and reference JSON values based on the spec."""
     compare_value = spec.get("compare-value", True)
     tolerance = spec.get("tolerance", 0)
@@ -30,7 +30,7 @@ def compare_json_values(spec, generated_values, reference_values):
 
             if len(generated_value) != len(reference_value):
                 errors.append(
-                    f"List length mismatch at index {i}: Expected {len(reference_value)}, got {len(generated_value)}"
+                    f"List length mismatch at {generated_ids[i]}: Expected {len(reference_value)}, got {len(generated_value)}"
                 )
                 continue
 
@@ -40,7 +40,7 @@ def compare_json_values(spec, generated_values, reference_values):
                 ):
                     if gen_item != ref_item:
                         errors.append(
-                            f"List element mismatch at index [{i}][{j}]: Expected {ref_item}, got {gen_item}"
+                            f"List element mismatch for {generated_ids[i]} at index [{j}]: Expected {ref_item}, got {gen_item}"
                         )
                 continue
 
@@ -51,7 +51,7 @@ def compare_json_values(spec, generated_values, reference_values):
         does_match = compare_values(generated_value, reference_value, tolerance)
         if not does_match:
             errors.append(
-                f"Value mismatch at index {i}: Expected '{reference_value}', got '{generated_value}'"
+                f"Value mismatch at {generated_ids[i]}: Expected '{reference_value}', got '{generated_value}'"
             )
 
     return errors
@@ -375,12 +375,55 @@ def compare_json_files(
                     continue
 
                 general_comparison_errors = compare_json_values(
-                    path_spec, aligned_generated_values, aligned_reference_values
+                    path_spec, aligned_generated_values, aligned_reference_values, generated_zone_ids
                 )
                 errors.extend(general_comparison_errors)
 
             elif "surfaces[*]" in json_key_path:
-                pass
+                # Handle comparison of data derived from surfaces which may not be in the same order as the reference surfaces
+                aligned_generated_values = []
+                aligned_reference_values = []
+
+                # Populate data for each surface individually and ensure correct alignment via object mapping
+                generated_surfaces = find_all(
+                    "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*]",
+                    generated_json,
+                )
+                generated_surface_ids = [surface.get("id") for surface in generated_surfaces]
+
+                for generated_surface in generated_surfaces:
+                    generated_surface_id = generated_surface.get("id")
+                    reference_surface_id = object_id_map.get(generated_surface_id)
+
+                    # Extract values from aligned surfaces using the specified key path
+                    aligned_generated_value = find_one(
+                        json_key_path.replace(
+                            "surfaces[*]", f'surfaces[*][?(@.id="{generated_surface_id}")]'
+                        ),
+                        generated_json,
+                    )
+                    if aligned_generated_value:
+                        aligned_generated_values.append(aligned_generated_value)
+
+                    aligned_reference_value = find_one(
+                        json_key_path.replace(
+                            "surfaces[*]", f'surfaces[*][?(@.id="{reference_surface_id}")]'
+                        ),
+                        reference_json,
+                    )
+                    if aligned_reference_value:
+                        aligned_reference_values.append(aligned_reference_value)
+
+                if not aligned_generated_values:
+                    warnings.append(
+                        f"Missing key {json_key_path.split('.')[-1]} in generated JSON for {test_case_name}."
+                    )
+                    continue
+
+                general_comparison_errors = compare_json_values(
+                    path_spec, aligned_generated_values, aligned_reference_values, generated_surface_ids
+                )
+                errors.extend(general_comparison_errors)
 
             elif "terminals[*]" in json_key_path:
                 pass
@@ -389,7 +432,8 @@ def compare_json_files(
                 pass
 
             else:
-
+                generated_value_parents = find_all(".".join(json_key_path.split(".")[:-1]), generated_json)
+                generated_value_parent_ids = [value.get("id") for value in generated_value_parents]
                 generated_values = find_all(json_key_path, generated_json)
                 reference_values = find_all(json_key_path, reference_json)
 
@@ -401,7 +445,7 @@ def compare_json_files(
 
                 #
                 general_comparison_errors = compare_json_values(
-                    path_spec, generated_values, reference_values
+                    path_spec, generated_values, reference_values, generated_value_parent_ids
                 )
                 if general_comparison_errors:
                     errors.extend(
