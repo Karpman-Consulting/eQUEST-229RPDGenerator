@@ -9,7 +9,6 @@ AdditionalSurfaceAdjacencyOptions2019ASHRAE901 = SchemaEnums.schema_enums[
     "AdditionalSurfaceAdjacencyOptions2019ASHRAE901"
 ]
 StatusOptions = SchemaEnums.schema_enums["StatusOptions"]
-OMIT = "OMIT"
 
 
 class InteriorWall(
@@ -22,11 +21,11 @@ class InteriorWall(
     CEILING_TILT_THRESHOLD = 60
     FLOOR_TILT_THRESHOLD = 120
 
-    int_wall_type_map = {
+    adjacency_map = {
         "STANDARD": SurfaceAdjacencyOptions.INTERIOR,
-        "AIR": OMIT,  # Omit the associated 229 Surface if INT-WALL-TYPE = AIR
+        "AIR": None,  # Omit the associated 229 Surface if INT-WALL-TYPE = AIR
         "ADIABATIC": SurfaceAdjacencyOptions.IDENTICAL,
-        "INTERNAL": OMIT,  # Omit the associated 229 Surface if INT-WALL-TYPE = INTERNAL
+        "INTERNAL": None,  # Omit the associated 229 Surface if INT-WALL-TYPE = INTERNAL
     }
 
     def __init__(self, u_name, parent, rmd):
@@ -63,10 +62,10 @@ class InteriorWall(
 
     def populate_data_elements(self):
         """Populate data elements for interior wall object."""
-        int_wall_type = self.int_wall_type_map.get(
+        self.adjacent_to = self.adjacency_map.get(
             self.keyword_value_pairs.get("INT-WALL-TYPE")
         )
-        if int_wall_type == OMIT:
+        if self.adjacent_to is None:
             self.omit = True
             return
 
@@ -91,8 +90,7 @@ class InteriorWall(
 
         self.azimuth = self.try_float(self.keyword_value_pairs.get("AZIMUTH"))
 
-        self.adjacent_to = int_wall_type
-        if int_wall_type == "INTERIOR":
+        if self.adjacent_to == SurfaceAdjacencyOptions.INTERIOR:
             self.adjacent_zone = self.rmd.space_map[
                 self.keyword_value_pairs.get("NEXT-TO")
             ].u_name
