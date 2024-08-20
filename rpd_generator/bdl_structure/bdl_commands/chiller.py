@@ -8,8 +8,6 @@ ChillerCompressorOptions = SchemaEnums.schema_enums["ChillerCompressorOptions"]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_ChillerKeywords = BDLEnums.bdl_enums["ChillerKeywords"]
 BDL_ChillerTypes = BDLEnums.bdl_enums["ChillerTypes"]
-BDL_FuelTypes = BDLEnums.bdl_enums["FuelTypes"]
-BDL_MasterMeterKeywords = BDLEnums.bdl_enums["MasterMeterKeywords"]
 OMIT = "OMIT"
 
 
