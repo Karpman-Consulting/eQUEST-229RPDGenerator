@@ -1,5 +1,6 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
 from rpd_generator.schema.schema_enums import SchemaEnums
+from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 
 BoilerCombustionOptions = SchemaEnums.schema_enums["BoilerCombustionOptions"]
@@ -7,39 +8,44 @@ EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
 BoilerEfficiencyMetricOptions = SchemaEnums.schema_enums[
     "BoilerEfficiencyMetricOptions"
 ]
+BDL_Commands = BDLEnums.bdl_enums["Commands"]
+BDL_BoilerKeywords = BDLEnums.bdl_enums["BoilerKeywords"]
+BDL_BoilerTypeOptions = BDLEnums.bdl_enums["BoilerTypeOptions"]
+BDL_FuelTypes = BDLEnums.bdl_enums["FuelTypes"]
+BDL_MasterMeterKeywords = BDLEnums.bdl_enums["MasterMeterKeywords"]
 
 
 class Boiler(BaseNode):
     """Boiler object in the tree."""
 
-    bdl_command = "BOILER"
+    bdl_command = BDL_Commands.BOILER
 
     draft_type_map = {
-        "HW-BOILER": BoilerCombustionOptions.NATURAL,
-        "HW-BOILER-W/DRAFT": BoilerCombustionOptions.FORCED,
-        "ELEC-HW-BOILER": BoilerCombustionOptions.NATURAL,
-        "STM-BOILER": BoilerCombustionOptions.NATURAL,
-        "STM-BOILER-W/DRAFT": BoilerCombustionOptions.FORCED,
-        "ELEC-STM-BOILER": BoilerCombustionOptions.NATURAL,
-        "HW-CONDENSING": BoilerCombustionOptions.FORCED,
+        BDL_BoilerTypeOptions.HW_BOILER: BoilerCombustionOptions.NATURAL,
+        BDL_BoilerTypeOptions.HW_BOILER_W_DRAFT: BoilerCombustionOptions.FORCED,
+        BDL_BoilerTypeOptions.ELEC_HW_BOILER: BoilerCombustionOptions.NATURAL,
+        BDL_BoilerTypeOptions.STM_BOILER: BoilerCombustionOptions.NATURAL,
+        BDL_BoilerTypeOptions.STM_BOILER_W_DRAFT: BoilerCombustionOptions.FORCED,
+        BDL_BoilerTypeOptions.ELEC_STM_BOILER: BoilerCombustionOptions.NATURAL,
+        BDL_BoilerTypeOptions.HW_CONDENSING: BoilerCombustionOptions.FORCED,
     }
     energy_source_map = {
-        "HW-BOILER": None,
-        "HW-BOILER-W/DRAFT": None,
-        "ELEC-HW-BOILER": EnergySourceOptions.ELECTRICITY,
-        "STM-BOILER": None,
-        "STM-BOILER-W/DRAFT": None,
-        "ELEC-STM-BOILER": EnergySourceOptions.ELECTRICITY,
-        "HW-CONDENSING": None,
+        BDL_BoilerTypeOptions.HW_BOILER: None,
+        BDL_BoilerTypeOptions.HW_BOILER_W_DRAFT: None,
+        BDL_BoilerTypeOptions.ELEC_HW_BOILER: EnergySourceOptions.ELECTRICITY,
+        BDL_BoilerTypeOptions.STM_BOILER: None,
+        BDL_BoilerTypeOptions.STM_BOILER_W_DRAFT: None,
+        BDL_BoilerTypeOptions.ELEC_STM_BOILER: EnergySourceOptions.ELECTRICITY,
+        BDL_BoilerTypeOptions.HW_CONDENSING: None,
     }
     fuel_type_map = {
-        "NATURAL-GAS": EnergySourceOptions.NATURAL_GAS,
-        "LPG": EnergySourceOptions.PROPANE,
-        "FUEL-OIL": EnergySourceOptions.FUEL_OIL,
-        "DIESEL-OIL": EnergySourceOptions.OTHER,
-        "COAL": EnergySourceOptions.OTHER,
-        "METHANOL": EnergySourceOptions.OTHER,
-        "OTHER-FUEL": EnergySourceOptions.OTHER,
+        BDL_FuelTypes.NATURAL_GAS: EnergySourceOptions.NATURAL_GAS,
+        BDL_FuelTypes.LPG: EnergySourceOptions.PROPANE,
+        BDL_FuelTypes.FUEL_OIL: EnergySourceOptions.FUEL_OIL,
+        BDL_FuelTypes.DIESEL_OIL: EnergySourceOptions.OTHER,
+        BDL_FuelTypes.COAL: EnergySourceOptions.OTHER,
+        BDL_FuelTypes.METHANOL: EnergySourceOptions.OTHER,
+        BDL_FuelTypes.OTHER_FUEL: EnergySourceOptions.OTHER,
     }
 
     def __init__(self, u_name, rmd):
@@ -66,38 +72,38 @@ class Boiler(BaseNode):
 
     def populate_data_elements(self):
         """Populate data elements for boiler object."""
-        fuel_meter_ref = self.keyword_value_pairs.get("FUEL-METER")
+        fuel_meter_ref = self.keyword_value_pairs.get(BDL_BoilerKeywords.FUEL_METER)
         fuel_meter = self.rmd.bdl_obj_instances.get(fuel_meter_ref)
         # If the fuel meter is not found, then it must be a MasterMeter.
         if fuel_meter is None:
             # This assumes the Master Fuel Meter is Natural Gas
-            fuel_type = "NATURAL_GAS"
+            fuel_type = BDL_FuelTypes.NATURAL_GAS
         else:
-            fuel_meter_type = fuel_meter.keyword_value_pairs.get("TYPE")
+            fuel_meter_type = fuel_meter.keyword_value_pairs.get(BDL_MasterMeterKeywords.TYPE)
             fuel_type = self.fuel_type_map.get(fuel_meter_type)
         self.energy_source_map.update(
             {
-                "HW-BOILER": fuel_type,
-                "HW-BOILER-W/DRAFT": fuel_type,
-                "STM-BOILER": fuel_type,
-                "STM-BOILER-W/DRAFT": fuel_type,
-                "HW-CONDENSING": fuel_type,
+                BDL_BoilerTypeOptions.HW_BOILER: fuel_type,
+                BDL_BoilerTypeOptions.HW_BOILER_W_DRAFT: fuel_type,
+                BDL_BoilerTypeOptions.STM_BOILER: fuel_type,
+                BDL_BoilerTypeOptions.STM_BOILER_W_DRAFT: fuel_type,
+                BDL_BoilerTypeOptions.HW_CONDENSING: fuel_type,
             }
         )
 
-        self.loop = self.keyword_value_pairs.get("HW-LOOP")
+        self.loop = self.keyword_value_pairs.get(BDL_BoilerKeywords.HW_LOOP)
 
         self.energy_source_type = self.energy_source_map.get(
-            self.keyword_value_pairs.get("TYPE")
+            self.keyword_value_pairs.get(BDL_BoilerKeywords.TYPE)
         )
 
-        self.draft_type = self.draft_type_map.get(self.keyword_value_pairs.get("TYPE"))
+        self.draft_type = self.draft_type_map.get(self.keyword_value_pairs.get(BDL_BoilerKeywords.TYPE))
         requests = self.get_output_requests()
         output_data = self.get_output_data(requests)
         self.auxiliary_power = output_data.get("Boilers - Sizing Info/Boiler - Aux kW")
 
         # Assign pump data elements populated from the boiler keyword value pairs
-        pump_name = self.keyword_value_pairs.get("HW-PUMP")
+        pump_name = self.keyword_value_pairs.get(BDL_BoilerKeywords.HW_PUMP)
         if pump_name is not None:
             pump = self.rmd.bdl_obj_instances.get(pump_name)
             if pump is not None:
