@@ -10,7 +10,7 @@ BoilerEfficiencyMetricOptions = SchemaEnums.schema_enums[
 ]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_BoilerKeywords = BDLEnums.bdl_enums["BoilerKeywords"]
-BDL_BoilerTypeOptions = BDLEnums.bdl_enums["BoilerTypeOptions"]
+BDL_BoilerTypes = BDLEnums.bdl_enums["BoilerTypes"]
 BDL_FuelTypes = BDLEnums.bdl_enums["FuelTypes"]
 BDL_MasterMeterKeywords = BDLEnums.bdl_enums["MasterMeterKeywords"]
 
@@ -21,22 +21,22 @@ class Boiler(BaseNode):
     bdl_command = BDL_Commands.BOILER
 
     draft_type_map = {
-        BDL_BoilerTypeOptions.HW_BOILER: BoilerCombustionOptions.NATURAL,
-        BDL_BoilerTypeOptions.HW_BOILER_W_DRAFT: BoilerCombustionOptions.FORCED,
-        BDL_BoilerTypeOptions.ELEC_HW_BOILER: BoilerCombustionOptions.NATURAL,
-        BDL_BoilerTypeOptions.STM_BOILER: BoilerCombustionOptions.NATURAL,
-        BDL_BoilerTypeOptions.STM_BOILER_W_DRAFT: BoilerCombustionOptions.FORCED,
-        BDL_BoilerTypeOptions.ELEC_STM_BOILER: BoilerCombustionOptions.NATURAL,
-        BDL_BoilerTypeOptions.HW_CONDENSING: BoilerCombustionOptions.FORCED,
+        BDL_BoilerTypes.HW_BOILER: BoilerCombustionOptions.NATURAL,
+        BDL_BoilerTypes.HW_BOILER_W_DRAFT: BoilerCombustionOptions.FORCED,
+        BDL_BoilerTypes.ELEC_HW_BOILER: BoilerCombustionOptions.NATURAL,
+        BDL_BoilerTypes.STM_BOILER: BoilerCombustionOptions.NATURAL,
+        BDL_BoilerTypes.STM_BOILER_W_DRAFT: BoilerCombustionOptions.FORCED,
+        BDL_BoilerTypes.ELEC_STM_BOILER: BoilerCombustionOptions.NATURAL,
+        BDL_BoilerTypes.HW_CONDENSING: BoilerCombustionOptions.FORCED,
     }
     energy_source_map = {
-        BDL_BoilerTypeOptions.HW_BOILER: None,
-        BDL_BoilerTypeOptions.HW_BOILER_W_DRAFT: None,
-        BDL_BoilerTypeOptions.ELEC_HW_BOILER: EnergySourceOptions.ELECTRICITY,
-        BDL_BoilerTypeOptions.STM_BOILER: None,
-        BDL_BoilerTypeOptions.STM_BOILER_W_DRAFT: None,
-        BDL_BoilerTypeOptions.ELEC_STM_BOILER: EnergySourceOptions.ELECTRICITY,
-        BDL_BoilerTypeOptions.HW_CONDENSING: None,
+        BDL_BoilerTypes.HW_BOILER: None,
+        BDL_BoilerTypes.HW_BOILER_W_DRAFT: None,
+        BDL_BoilerTypes.ELEC_HW_BOILER: EnergySourceOptions.ELECTRICITY,
+        BDL_BoilerTypes.STM_BOILER: None,
+        BDL_BoilerTypes.STM_BOILER_W_DRAFT: None,
+        BDL_BoilerTypes.ELEC_STM_BOILER: EnergySourceOptions.ELECTRICITY,
+        BDL_BoilerTypes.HW_CONDENSING: None,
     }
     fuel_type_map = {
         BDL_FuelTypes.NATURAL_GAS: EnergySourceOptions.NATURAL_GAS,
@@ -83,11 +83,11 @@ class Boiler(BaseNode):
             fuel_type = self.fuel_type_map.get(fuel_meter_type)
         self.energy_source_map.update(
             {
-                BDL_BoilerTypeOptions.HW_BOILER: fuel_type,
-                BDL_BoilerTypeOptions.HW_BOILER_W_DRAFT: fuel_type,
-                BDL_BoilerTypeOptions.STM_BOILER: fuel_type,
-                BDL_BoilerTypeOptions.STM_BOILER_W_DRAFT: fuel_type,
-                BDL_BoilerTypeOptions.HW_CONDENSING: fuel_type,
+                BDL_BoilerTypes.HW_BOILER: fuel_type,
+                BDL_BoilerTypes.HW_BOILER_W_DRAFT: fuel_type,
+                BDL_BoilerTypes.STM_BOILER: fuel_type,
+                BDL_BoilerTypes.STM_BOILER_W_DRAFT: fuel_type,
+                BDL_BoilerTypes.HW_CONDENSING: fuel_type,
             }
         )
 
