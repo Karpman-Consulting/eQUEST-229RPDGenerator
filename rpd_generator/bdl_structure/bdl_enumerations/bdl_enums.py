@@ -136,8 +136,15 @@ class BDLEnums:
                 "CHW",
                 "HW",
                 "CW",
+                "DHW",
                 "PIPE2",
                 "WLHP",
+            ]
+        ),
+        "CirculationLoopSubtypes": _ListEnum(
+            [
+                "PRIMARY",
+                "SECONDARY",
             ]
         ),
         "CirculationLoopSizingOptions": _ListEnum(
@@ -170,6 +177,7 @@ class BDLEnums:
             [
                 "LOOP-PUMP",
                 "TYPE",
+                "SUBTYPE",
                 "PRIMARY-LOOP",
                 "DESIGN-HEAT-T",
                 "DESIGN-COOL-T",
