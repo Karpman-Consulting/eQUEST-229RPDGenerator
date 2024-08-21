@@ -1,10 +1,14 @@
 from rpd_generator.bdl_structure.parent_definition import ParentDefinition
+from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
+
+
+BDL_Commands = BDLEnums.bdl_enums["Commands"]
 
 
 class Floor(ParentDefinition):
     """Floor object in the tree."""
 
-    bdl_command = "FLOOR"
+    bdl_command = BDL_Commands.FLOOR
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)

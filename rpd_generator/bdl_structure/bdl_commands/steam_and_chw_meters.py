@@ -1,5 +1,9 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
+from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
+
+BDL_Commands = BDLEnums.bdl_enums["Commands"]
+BDL_SteamAndCHWaterMeterKeywords = BDLEnums.bdl_enums["SteamAndChilledWaterMeterKeywords"]
 CHILLED_WATER = "CHILLED_WATER"
 STEAM = "STEAM"
 OTHER = "OTHER"
@@ -8,7 +12,7 @@ OTHER = "OTHER"
 class SteamMeter(BaseNode):
     """Steam Meter object in the tree."""
 
-    bdl_command = "STEAM-METER"
+    bdl_command = BDL_Commands.STEAM_METER
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
@@ -25,7 +29,7 @@ class SteamMeter(BaseNode):
 
     def populate_data_elements(self):
         """Populate data elements for ExternalFluidSource object."""
-        self.loop = self.keyword_value_pairs.get("CIRCULATION-LOOP")
+        self.loop = self.keyword_value_pairs.get(BDL_SteamAndCHWaterMeterKeywords.CIRCULATION_LOOP)
         self.type = STEAM
         self.energy_source_type = OTHER
 
@@ -56,7 +60,7 @@ class SteamMeter(BaseNode):
 class CHWMeter(BaseNode):
     """Chiled Water Meter object in the tree."""
 
-    bdl_command = "CHW-METER"
+    bdl_command = BDL_Commands.CHW_METER
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
@@ -73,7 +77,7 @@ class CHWMeter(BaseNode):
 
     def populate_data_elements(self):
         """Populate data elements for ExternalFluidSource object."""
-        self.loop = self.keyword_value_pairs.get("CIRCULATION-LOOP")
+        self.loop = self.keyword_value_pairs.get(BDL_SteamAndCHWaterMeterKeywords.CIRCULATION_LOOP)
         self.type = CHILLED_WATER
         self.energy_source_type = OTHER
 
