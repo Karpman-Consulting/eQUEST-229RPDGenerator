@@ -1,5 +1,7 @@
 from rpd_generator.bdl_structure.child_node import ChildNode
 from rpd_generator.schema.schema_enums import SchemaEnums
+from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
+
 
 SubsurfaceClassificationOptions = SchemaEnums.schema_enums[
     "SubsurfaceClassificationOptions"
@@ -14,12 +16,16 @@ SubsurfaceDynamicGlazingOptions = SchemaEnums.schema_enums[
     "SubsurfaceDynamicGlazingOptions"
 ]
 StatusOptions = SchemaEnums.schema_enums["StatusOptions"]
+BDL_Commands = BDLEnums.bdl_enums["Commands"]
+BDL_WindowKeywords = BDLEnums.bdl_enums["WindowKeywords"]
+BDL_ExteriorWallKeywords = BDLEnums.bdl_enums["ExteriorWallKeywords"]
+BDL_WallLocationOptions = BDLEnums.bdl_enums["WallLocationOptions"]
 
 
 class Window(ChildNode):
     """Window object in the tree."""
 
-    bdl_command = "WINDOW"
+    bdl_command = BDL_Commands.WINDOW
 
     def __init__(self, u_name, parent, rmd):
         super().__init__(u_name, parent, rmd)
@@ -54,11 +60,11 @@ class Window(ChildNode):
 
     def populate_data_elements(self):
         """Populate data elements for window object."""
-        height = self.try_float(self.keyword_value_pairs.get("HEIGHT"))
-        width = self.try_float(self.keyword_value_pairs.get("WIDTH"))
+        height = self.try_float(self.keyword_value_pairs.get(BDL_WindowKeywords.HEIGHT))
+        width = self.try_float(self.keyword_value_pairs.get(BDL_WindowKeywords.WIDTH))
         if height is not None and width is not None:
             self.glazed_area = height * width
-            frame_width = self.try_float(self.keyword_value_pairs.get("FRAME-WIDTH"))
+            frame_width = self.try_float(self.keyword_value_pairs.get(BDL_WindowKeywords.FRAME_WIDTH))
             if frame_width is None or frame_width == 0.0:
                 self.opaque_area = 0
             else:
@@ -66,12 +72,12 @@ class Window(ChildNode):
                     frame_width * height + frame_width * width + 2 * frame_width**2
                 )
 
-        if self.parent.keyword_value_pairs.get("LOCATION") == "TOP":
+        if self.parent.keyword_value_pairs.get(BDL_ExteriorWallKeywords.LOCATION) == BDL_WallLocationOptions.TOP:
             self.classification = SubsurfaceClassificationOptions.SKYLIGHT
         else:
             self.classification = SubsurfaceClassificationOptions.WINDOW
 
-        glass_type_name = self.keyword_value_pairs.get("GLASS-TYPE")
+        glass_type_name = self.keyword_value_pairs.get(BDL_WindowKeywords.GLASS_TYPE)
         glass_type = self.rmd.bdl_obj_instances.get(glass_type_name)
         if glass_type is not None:
             self.u_factor = glass_type.u_factor
@@ -79,17 +85,17 @@ class Window(ChildNode):
             if glass_type.shading_coefficient is not None:
                 self.solar_heat_gain_coefficient = glass_type.shading_coefficient / 1.15
 
-        left_fin_depth = self.try_float(self.keyword_value_pairs.get("LEFT-FIN-D"))
-        right_fin_depth = self.try_float(self.keyword_value_pairs.get("RIGHT-FIN-D"))
+        left_fin_depth = self.try_float(self.keyword_value_pairs.get(BDL_WindowKeywords.LEFT_FIN_D))
+        right_fin_depth = self.try_float(self.keyword_value_pairs.get(BDL_WindowKeywords.RIGHT_FIN_D))
         if left_fin_depth not in [None, 0.0] or right_fin_depth not in [None, 0.0]:
             self.has_shading_sidefins = True
-        overhang_depth = self.keyword_value_pairs.get("OVERHANG-D")
+        overhang_depth = self.keyword_value_pairs.get(BDL_WindowKeywords.OVERHANG_D)
         if overhang_depth not in [None, 0.0]:
             self.depth_of_overhang = overhang_depth
             self.has_shading_overhang = True
 
-        shade_schedule = self.keyword_value_pairs.get("SHADING-SCHEDULE")
-        shade_type = self.keyword_value_pairs.get("WIN-SHADE-TYPE")
+        shade_schedule = self.keyword_value_pairs.get(BDL_WindowKeywords.SHADING_SCHEDULE)
+        shade_type = self.keyword_value_pairs.get(BDL_WindowKeywords.WIN_SHADE_TYPE)
         if shade_type is not None:
             adjustable_shade = shade_type.startswith("MOVABLE-")
             if shade_schedule is not None and adjustable_shade:
