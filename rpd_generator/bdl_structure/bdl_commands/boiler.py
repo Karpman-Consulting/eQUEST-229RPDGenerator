@@ -79,7 +79,9 @@ class Boiler(BaseNode):
             # This assumes the Master Fuel Meter is Natural Gas
             fuel_type = BDL_FuelTypes.NATURAL_GAS
         else:
-            fuel_meter_type = fuel_meter.keyword_value_pairs.get(BDL_MasterMeterKeywords.TYPE)
+            fuel_meter_type = fuel_meter.keyword_value_pairs.get(
+                BDL_MasterMeterKeywords.TYPE
+            )
             fuel_type = self.fuel_type_map.get(fuel_meter_type)
         self.energy_source_map.update(
             {
@@ -97,7 +99,9 @@ class Boiler(BaseNode):
             self.keyword_value_pairs.get(BDL_BoilerKeywords.TYPE)
         )
 
-        self.draft_type = self.draft_type_map.get(self.keyword_value_pairs.get(BDL_BoilerKeywords.TYPE))
+        self.draft_type = self.draft_type_map.get(
+            self.keyword_value_pairs.get(BDL_BoilerKeywords.TYPE)
+        )
         requests = self.get_output_requests()
         output_data = self.get_output_data(requests)
         self.auxiliary_power = output_data.get("Boilers - Sizing Info/Boiler - Aux kW")

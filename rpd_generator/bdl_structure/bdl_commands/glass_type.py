@@ -24,7 +24,9 @@ class GlassType(BaseDefinition):
 
     def populate_data_elements(self):
         """Populate schema structure for glass type object."""
-        self.u_factor = self.try_float(self.keyword_value_pairs.get(BDL_GlassTypeKeywords.GLASS_CONDUCT))
+        self.u_factor = self.try_float(
+            self.keyword_value_pairs.get(BDL_GlassTypeKeywords.GLASS_CONDUCT)
+        )
 
         self.shading_coefficient = self.try_float(
             self.keyword_value_pairs.get(BDL_GlassTypeKeywords.SHADING_COEF)

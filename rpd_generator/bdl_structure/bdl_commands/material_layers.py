@@ -35,20 +35,26 @@ class Material(BaseNode):
         self.material_type = self.keyword_value_pairs.get(BDL_MaterialKeywords.TYPE)
 
         if self.material_type == BDL_MaterialTypes.PROPERTIES:
-            self.thickness = self.try_float(self.keyword_value_pairs.get(BDL_MaterialKeywords.THICKNESS))
+            self.thickness = self.try_float(
+                self.keyword_value_pairs.get(BDL_MaterialKeywords.THICKNESS)
+            )
 
             self.thermal_conductivity = self.try_float(
                 self.keyword_value_pairs.get(BDL_MaterialKeywords.CONDUCTIVITY)
             )
 
-            self.density = self.try_float(self.keyword_value_pairs.get(BDL_MaterialKeywords.DENSITY))
+            self.density = self.try_float(
+                self.keyword_value_pairs.get(BDL_MaterialKeywords.DENSITY)
+            )
 
             self.specific_heat = self.try_float(
                 self.keyword_value_pairs.get(BDL_MaterialKeywords.SPECIFIC_HEAT)
             )
 
         elif self.material_type == BDL_MaterialTypes.RESISTANCE:
-            self.r_value = self.try_float(self.keyword_value_pairs.get(BDL_MaterialKeywords.RESISTANCE))
+            self.r_value = self.try_float(
+                self.keyword_value_pairs.get(BDL_MaterialKeywords.RESISTANCE)
+            )
 
     def populate_data_group(self):
         """Populate schema structure for material object."""

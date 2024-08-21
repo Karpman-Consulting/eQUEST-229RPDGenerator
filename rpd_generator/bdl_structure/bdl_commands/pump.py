@@ -40,7 +40,9 @@ class Pump(BaseNode):
 
     def populate_data_elements(self):
         """Populate the schema data elements for the pump object."""
-        self.qty = self.try_int(self.try_float(self.keyword_value_pairs.get(BDL_PumpKeywords.NUMBER)))
+        self.qty = self.try_int(
+            self.try_float(self.keyword_value_pairs.get(BDL_PumpKeywords.NUMBER))
+        )
         requests = self.get_output_requests()
         self.output_data = self.get_output_data(requests)
         self.loop_or_piping = [None] * self.qty
@@ -52,7 +54,9 @@ class Pump(BaseNode):
             if self.keyword_value_pairs.get(BDL_PumpKeywords.PUMP_KW) is not None
             else PumpSpecificationMethodOptions.DETAILED
         )
-        design_head = self.try_float(self.keyword_value_pairs.get(BDL_PumpKeywords.HEAD))
+        design_head = self.try_float(
+            self.keyword_value_pairs.get(BDL_PumpKeywords.HEAD)
+        )
 
         self.specification_method = [spec_method] * self.qty
 

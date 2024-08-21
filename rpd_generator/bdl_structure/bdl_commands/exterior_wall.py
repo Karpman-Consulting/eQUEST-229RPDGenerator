@@ -57,18 +57,30 @@ class ExteriorWall(ChildNode, ParentNode):
 
     def populate_data_elements(self):
         """Populate data elements for exterior wall object."""
-        self.area = self.try_float(self.keyword_value_pairs.get(BDL_ExteriorWallKeywords.AREA))
+        self.area = self.try_float(
+            self.keyword_value_pairs.get(BDL_ExteriorWallKeywords.AREA)
+        )
         if self.area is None:
-            height = self.try_float(self.keyword_value_pairs.get(BDL_ExteriorWallKeywords.HEIGHT))
-            width = self.try_float(self.keyword_value_pairs.get(BDL_ExteriorWallKeywords.WIDTH))
+            height = self.try_float(
+                self.keyword_value_pairs.get(BDL_ExteriorWallKeywords.HEIGHT)
+            )
+            width = self.try_float(
+                self.keyword_value_pairs.get(BDL_ExteriorWallKeywords.WIDTH)
+            )
             if height is not None and width is not None:
                 self.area = height * width
-        if self.area is None and self.keyword_value_pairs.get(BDL_ExteriorWallKeywords.LOCATION) == BDL_WallLocationOptions.TOP:
+        if (
+            self.area is None
+            and self.keyword_value_pairs.get(BDL_ExteriorWallKeywords.LOCATION)
+            == BDL_WallLocationOptions.TOP
+        ):
             requests = self.get_output_requests()
             output_data = self.get_output_data(requests)
             self.area = output_data.get("Roof Area")
 
-        self.tilt = self.try_float(self.keyword_value_pairs.get(BDL_ExteriorWallKeywords.TILT))
+        self.tilt = self.try_float(
+            self.keyword_value_pairs.get(BDL_ExteriorWallKeywords.TILT)
+        )
         if self.tilt is not None and self.tilt < self.CEILING_TILT_THRESHOLD:
             self.classification = SurfaceClassificationOptions.CEILING
         elif self.tilt is not None and self.tilt >= self.FLOOR_TILT_THRESHOLD:
@@ -76,7 +88,9 @@ class ExteriorWall(ChildNode, ParentNode):
         else:
             self.classification = SurfaceClassificationOptions.WALL
 
-        self.azimuth = self.try_float(self.keyword_value_pairs.get(BDL_ExteriorWallKeywords.AZIMUTH))
+        self.azimuth = self.try_float(
+            self.keyword_value_pairs.get(BDL_ExteriorWallKeywords.AZIMUTH)
+        )
 
         self.adjacent_to = SurfaceAdjacencyOptions.EXTERIOR
         self.does_cast_shade = self.boolean_map.get(
@@ -107,7 +121,11 @@ class ExteriorWall(ChildNode, ParentNode):
 
     def get_output_requests(self):
         requests = {}
-        if self.area is None and self.keyword_value_pairs.get(BDL_ExteriorWallKeywords.LOCATION) == BDL_WallLocationOptions.TOP:
+        if (
+            self.area is None
+            and self.keyword_value_pairs.get(BDL_ExteriorWallKeywords.LOCATION)
+            == BDL_WallLocationOptions.TOP
+        ):
             requests["Roof Area"] = (1104008, "", self.u_name)
         return requests
 

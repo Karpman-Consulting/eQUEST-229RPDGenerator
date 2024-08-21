@@ -12,8 +12,12 @@ BDL_CirculationLoopKeywords = BDLEnums.bdl_enums["CirculationLoopKeywords"]
 BDL_CirculationLoopTypes = BDLEnums.bdl_enums["CirculationLoopTypes"]
 BDL_CirculationLoopSubtypes = BDLEnums.bdl_enums["CirculationLoopSubtypes"]
 BDL_CirculationLoopSizingOptions = BDLEnums.bdl_enums["CirculationLoopSizingOptions"]
-BDL_CirculationLoopOperationOptions = BDLEnums.bdl_enums["CirculationLoopOperationOptions"]
-BDL_CirculationLoopTemperatureResetOptions = BDLEnums.bdl_enums["CirculationLoopTemperatureResetOptions"]
+BDL_CirculationLoopOperationOptions = BDLEnums.bdl_enums[
+    "CirculationLoopOperationOptions"
+]
+BDL_CirculationLoopTemperatureResetOptions = BDLEnums.bdl_enums[
+    "CirculationLoopTemperatureResetOptions"
+]
 
 
 # noinspection PyUnresolvedReferences
@@ -265,7 +269,9 @@ class CirculationLoop(BaseNode):
             rmd.fluid_loops.append(self.data_structure)
 
         elif self.circulation_loop_type == "SecondaryFluidLoop":
-            primary_loop = self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.PRIMARY_LOOP)
+            primary_loop = self.keyword_value_pairs.get(
+                BDL_CirculationLoopKeywords.PRIMARY_LOOP
+            )
             for fluid_loop in rmd.fluid_loops:
                 if fluid_loop["id"] == primary_loop:
                     fluid_loop["child_loops"].append(self.data_structure)
@@ -274,7 +280,9 @@ class CirculationLoop(BaseNode):
             rmd.service_water_heating_distribution_systems.append(self.data_structure)
 
         elif self.circulation_loop_type == "ServiceWaterPiping":
-            primary_loop = self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.PRIMARY_LOOP)
+            primary_loop = self.keyword_value_pairs.get(
+                BDL_CirculationLoopKeywords.PRIMARY_LOOP
+            )
             for swh_distribution_sys in rmd.service_water_heating_distribution_systems:
                 if swh_distribution_sys["id"] == primary_loop:
                     swh_distribution_sys["service_water_piping"].append(
@@ -284,15 +292,23 @@ class CirculationLoop(BaseNode):
     def determine_circ_loop_type(self):
 
         if (
-            self.keyword_value_pairs[BDL_CirculationLoopKeywords.TYPE] == BDL_CirculationLoopTypes.DHW
-            and self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.SUBTYPE) == BDL_CirculationLoopSubtypes.SECONDARY
+            self.keyword_value_pairs[BDL_CirculationLoopKeywords.TYPE]
+            == BDL_CirculationLoopTypes.DHW
+            and self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.SUBTYPE)
+            == BDL_CirculationLoopSubtypes.SECONDARY
         ):
             return "ServiceWaterPiping"
 
-        elif self.keyword_value_pairs[BDL_CirculationLoopKeywords.TYPE] == BDL_CirculationLoopTypes.DHW:
+        elif (
+            self.keyword_value_pairs[BDL_CirculationLoopKeywords.TYPE]
+            == BDL_CirculationLoopTypes.DHW
+        ):
             return "ServiceWaterHeatingDistributionSystem"
 
-        elif self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.PRIMARY_LOOP) is None:
+        elif (
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.PRIMARY_LOOP)
+            is None
+        ):
             return "FluidLoop"
 
         else:
@@ -303,7 +319,9 @@ class CirculationLoop(BaseNode):
         self.design_supply_temperature[1] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.DESIGN_HEAT_T)
         )
-        loop_design_dt = self.try_float(self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_DESIGN_DT))
+        loop_design_dt = self.try_float(
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_DESIGN_DT)
+        )
         if loop_design_dt is None:
             pass
         else:
@@ -330,7 +348,9 @@ class CirculationLoop(BaseNode):
         self.design_supply_temperature[0] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.DESIGN_COOL_T)
         )
-        loop_design_dt = self.try_float(self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_DESIGN_DT))
+        loop_design_dt = self.try_float(
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_DESIGN_DT)
+        )
         if loop_design_dt is None:
             pass
         else:
@@ -357,7 +377,9 @@ class CirculationLoop(BaseNode):
         self.design_supply_temperature[0] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.DESIGN_COOL_T)
         )
-        loop_design_dt = self.try_float(self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_DESIGN_DT))
+        loop_design_dt = self.try_float(
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_DESIGN_DT)
+        )
         if loop_design_dt is None:
             pass
         else:
@@ -384,7 +406,9 @@ class CirculationLoop(BaseNode):
         self.design_supply_temperature[0] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.DESIGN_COOL_T)
         )
-        loop_design_dt = self.try_float(self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_DESIGN_DT))
+        loop_design_dt = self.try_float(
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_DESIGN_DT)
+        )
         if loop_design_dt is None:
             pass
         else:
@@ -431,7 +455,9 @@ class CirculationLoop(BaseNode):
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.DESIGN_HEAT_T)
         )
         inlet_t = self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.DHW_INLET_T)
-        inlet_t_sch = self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.DHW_INLET_T_SCH)
+        inlet_t_sch = self.keyword_value_pairs.get(
+            BDL_CirculationLoopKeywords.DHW_INLET_T_SCH
+        )
         if inlet_t is not None or inlet_t_sch is not None:
             self.is_ground_temperature_used_for_entering_water = False
         else:

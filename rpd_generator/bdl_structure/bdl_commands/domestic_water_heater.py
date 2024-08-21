@@ -100,10 +100,14 @@ class DomesticWaterHeater(BaseNode):
             # This assumes the Master Fuel Meter is Natural Gas
             self.heater_fuel_type = BDL_FuelTypes.NATURAL_GAS
         else:
-            fuel_meter_type = fuel_meter.keyword_value_pairs.get(BDL_DWHeaterKeywords.TYPE)
+            fuel_meter_type = fuel_meter.keyword_value_pairs.get(
+                BDL_DWHeaterKeywords.TYPE
+            )
             self.heater_fuel_type = self.fuel_type_map.get(fuel_meter_type)
 
-        self.distribution_system = self.keyword_value_pairs.get(BDL_DWHeaterKeywords.DHW_LOOP)
+        self.distribution_system = self.keyword_value_pairs.get(
+            BDL_DWHeaterKeywords.DHW_LOOP
+        )
 
         self.rated_capacity = self.try_float(
             output_data.get("DW Heaters - Design Parameters - Capacity")
@@ -127,9 +131,13 @@ class DomesticWaterHeater(BaseNode):
             self.keyword_value_pairs.get(BDL_DWHeaterKeywords.TANK_VOLUME)
         )
 
-        self.location = self.location_map.get(self.keyword_value_pairs.get(BDL_DWHeaterKeywords.LOCATION))
+        self.location = self.location_map.get(
+            self.keyword_value_pairs.get(BDL_DWHeaterKeywords.LOCATION)
+        )
 
-        self.location_zone = self.keyword_value_pairs.get(BDL_DWHeaterKeywords.ZONE_NAME)
+        self.location_zone = self.keyword_value_pairs.get(
+            BDL_DWHeaterKeywords.ZONE_NAME
+        )
 
     def get_output_requests(self):
         """Get the output requests for the domestic water heater object."""

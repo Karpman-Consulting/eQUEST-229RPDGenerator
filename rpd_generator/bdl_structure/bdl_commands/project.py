@@ -25,7 +25,9 @@ class SiteParameters(BaseDefinition):
         rpd = self.rmd.bdl_obj_instances["ASHRAE 229"]
         rpd.calendar.setdefault(
             "has_daylight_saving_time",
-            self.boolean_map.get(self.keyword_value_pairs.get(BDL_SiteParameterKeywords.DAYLIGHT_SAVINGS)),
+            self.boolean_map.get(
+                self.keyword_value_pairs.get(BDL_SiteParameterKeywords.DAYLIGHT_SAVINGS)
+            ),
         )
         rpd.weather.setdefault("file_name", self.get_single_string_output(1101006))
 
@@ -78,8 +80,12 @@ class Holidays(BaseDefinition):
         if Schedule.holiday_type == BDL_HolidayTypes.OFFICIAL_US:
             calendar = schedule_funcs.get_official_us_holidays(calendar)
         elif Schedule.holiday_type == BDL_HolidayTypes.ALTERNATE:
-            Schedule.holiday_months = self.keyword_value_pairs.get(BDL_HolidayKeywords.MONTHS)
-            Schedule.holiday_days = self.keyword_value_pairs.get(BDL_HolidayKeywords.DAYS)
+            Schedule.holiday_months = self.keyword_value_pairs.get(
+                BDL_HolidayKeywords.MONTHS
+            )
+            Schedule.holiday_days = self.keyword_value_pairs.get(
+                BDL_HolidayKeywords.DAYS
+            )
             calendar = schedule_funcs.get_alternate_holidays(
                 calendar, Schedule.holiday_months, Schedule.holiday_days
             )

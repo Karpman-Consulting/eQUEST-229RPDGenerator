@@ -64,7 +64,9 @@ class Window(ChildNode):
         width = self.try_float(self.keyword_value_pairs.get(BDL_WindowKeywords.WIDTH))
         if height is not None and width is not None:
             self.glazed_area = height * width
-            frame_width = self.try_float(self.keyword_value_pairs.get(BDL_WindowKeywords.FRAME_WIDTH))
+            frame_width = self.try_float(
+                self.keyword_value_pairs.get(BDL_WindowKeywords.FRAME_WIDTH)
+            )
             if frame_width is None or frame_width == 0.0:
                 self.opaque_area = 0
             else:
@@ -72,7 +74,10 @@ class Window(ChildNode):
                     frame_width * height + frame_width * width + 2 * frame_width**2
                 )
 
-        if self.parent.keyword_value_pairs.get(BDL_ExteriorWallKeywords.LOCATION) == BDL_WallLocationOptions.TOP:
+        if (
+            self.parent.keyword_value_pairs.get(BDL_ExteriorWallKeywords.LOCATION)
+            == BDL_WallLocationOptions.TOP
+        ):
             self.classification = SubsurfaceClassificationOptions.SKYLIGHT
         else:
             self.classification = SubsurfaceClassificationOptions.WINDOW
@@ -85,8 +90,12 @@ class Window(ChildNode):
             if glass_type.shading_coefficient is not None:
                 self.solar_heat_gain_coefficient = glass_type.shading_coefficient / 1.15
 
-        left_fin_depth = self.try_float(self.keyword_value_pairs.get(BDL_WindowKeywords.LEFT_FIN_D))
-        right_fin_depth = self.try_float(self.keyword_value_pairs.get(BDL_WindowKeywords.RIGHT_FIN_D))
+        left_fin_depth = self.try_float(
+            self.keyword_value_pairs.get(BDL_WindowKeywords.LEFT_FIN_D)
+        )
+        right_fin_depth = self.try_float(
+            self.keyword_value_pairs.get(BDL_WindowKeywords.RIGHT_FIN_D)
+        )
         if left_fin_depth not in [None, 0.0] or right_fin_depth not in [None, 0.0]:
             self.has_shading_sidefins = True
         overhang_depth = self.keyword_value_pairs.get(BDL_WindowKeywords.OVERHANG_D)
@@ -94,7 +103,9 @@ class Window(ChildNode):
             self.depth_of_overhang = overhang_depth
             self.has_shading_overhang = True
 
-        shade_schedule = self.keyword_value_pairs.get(BDL_WindowKeywords.SHADING_SCHEDULE)
+        shade_schedule = self.keyword_value_pairs.get(
+            BDL_WindowKeywords.SHADING_SCHEDULE
+        )
         shade_type = self.keyword_value_pairs.get(BDL_WindowKeywords.WIN_SHADE_TYPE)
         if shade_type is not None:
             adjustable_shade = shade_type.startswith("MOVABLE-")

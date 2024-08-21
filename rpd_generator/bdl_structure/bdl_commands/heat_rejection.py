@@ -12,7 +12,9 @@ HeatRejectionFanSpeedControlOptions = SchemaEnums.schema_enums[
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_HeatRejectionKeywords = BDLEnums.bdl_enums["HeatRejectionKeywords"]
 BDL_HeatRejectionTypes = BDLEnums.bdl_enums["HeatRejectionTypes"]
-BDL_HeatRejectionFanSpeedControlOptions = BDLEnums.bdl_enums["HeatRejectionFanSpeedControlOptions"]
+BDL_HeatRejectionFanSpeedControlOptions = BDLEnums.bdl_enums[
+    "HeatRejectionFanSpeedControlOptions"
+]
 
 
 class HeatRejection(BaseNode):
@@ -75,9 +77,13 @@ class HeatRejection(BaseNode):
             self.keyword_value_pairs.get(BDL_HeatRejectionKeywords.CAPACITY_CTRL)
         )
 
-        self.range = self.try_float(self.keyword_value_pairs.get(BDL_HeatRejectionKeywords.RATED_RANGE))
+        self.range = self.try_float(
+            self.keyword_value_pairs.get(BDL_HeatRejectionKeywords.RATED_RANGE)
+        )
 
-        self.approach = self.try_float(self.keyword_value_pairs.get(BDL_HeatRejectionKeywords.RATED_APPROACH))
+        self.approach = self.try_float(
+            self.keyword_value_pairs.get(BDL_HeatRejectionKeywords.RATED_APPROACH)
+        )
 
         self.design_wetbulb_temperature = self.try_float(
             self.keyword_value_pairs.get(BDL_HeatRejectionKeywords.DESIGN_WETBULB)

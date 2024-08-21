@@ -26,7 +26,9 @@ class WeekSchedulePD(BaseDefinition):
         """Create a list of 12 lists including Mon-Sun, Holidays and then 4 design day schedules"""
         wk_sch_type = self.keyword_value_pairs.get(BDL_WeekScheduleKeywords.TYPE)
         if wk_sch_type in Schedule.supported_hourly_schedules:
-            day_schedule_names = self.keyword_value_pairs.get(BDL_WeekScheduleKeywords.DAY_SCHEDULES)
+            day_schedule_names = self.keyword_value_pairs.get(
+                BDL_WeekScheduleKeywords.DAY_SCHEDULES
+            )
             self.day_type_hourly_values = [
                 self.rmd.bdl_obj_instances[day_sch].hourly_values
                 for day_sch in day_schedule_names

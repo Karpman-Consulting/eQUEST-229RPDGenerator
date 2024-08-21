@@ -19,7 +19,12 @@ class Schedule(BaseNode):
     holiday_days = None
     annual_calendar = {}
     LAST_DAY = 364
-    supported_hourly_schedules = [BDL_ScheduleTypes.ON_OFF, BDL_ScheduleTypes.FRACTION, BDL_ScheduleTypes.MULTIPLIER, BDL_ScheduleTypes.TEMPERATURE]
+    supported_hourly_schedules = [
+        BDL_ScheduleTypes.ON_OFF,
+        BDL_ScheduleTypes.FRACTION,
+        BDL_ScheduleTypes.MULTIPLIER,
+        BDL_ScheduleTypes.TEMPERATURE,
+    ]
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
@@ -57,7 +62,9 @@ class Schedule(BaseNode):
             # Get the month value where a new week-schedule begins
             ann_months = (
                 self.keyword_value_pairs.get(BDL_ScheduleKeywords.MONTH)
-                if isinstance(self.keyword_value_pairs.get(BDL_ScheduleKeywords.MONTH), list)
+                if isinstance(
+                    self.keyword_value_pairs.get(BDL_ScheduleKeywords.MONTH), list
+                )
                 else [self.keyword_value_pairs.get(BDL_ScheduleKeywords.MONTH)]
             )
             ann_months = [int(float(val)) for val in ann_months]
@@ -65,12 +72,16 @@ class Schedule(BaseNode):
             # Get the day value where a new week-schedule begins
             ann_days = (
                 self.keyword_value_pairs.get(BDL_ScheduleKeywords.DAY)
-                if isinstance(self.keyword_value_pairs.get(BDL_ScheduleKeywords.DAY), list)
+                if isinstance(
+                    self.keyword_value_pairs.get(BDL_ScheduleKeywords.DAY), list
+                )
                 else [self.keyword_value_pairs.get(BDL_ScheduleKeywords.DAY)]
             )
             ann_days = [int(float(val)) for val in ann_days]
 
-            week_schedules = [self.keyword_value_pairs.get(BDL_ScheduleKeywords.WEEK_SCHEDULES)]
+            week_schedules = [
+                self.keyword_value_pairs.get(BDL_ScheduleKeywords.WEEK_SCHEDULES)
+            ]
 
             # Create a list to hold the index where there is a change in week schedule based on mo/day in ann sch
             schedule_change_indices = [

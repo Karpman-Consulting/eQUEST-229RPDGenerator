@@ -25,6 +25,8 @@ class DaySchedulePD(BaseDefinition):
         """Populate data elements that originate from eQUEST's DAY-SCHEDULE-PD command"""
         day_sch_type = self.keyword_value_pairs.get(BDL_DayScheduleKeywords.TYPE)
         if day_sch_type in Schedule.supported_hourly_schedules:
-            day_sch_values_list = self.keyword_value_pairs.get(BDL_DayScheduleKeywords.VALUES)
+            day_sch_values_list = self.keyword_value_pairs.get(
+                BDL_DayScheduleKeywords.VALUES
+            )
             day_sch_values_list = [self.try_float(val) for val in day_sch_values_list]
             self.hourly_values = day_sch_values_list

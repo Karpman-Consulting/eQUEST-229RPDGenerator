@@ -55,18 +55,30 @@ class BelowGradeWall(ChildNode):
     def populate_data_elements(self):
         """Populate data elements for below grade wall object."""
 
-        self.area = self.try_float(self.keyword_value_pairs.get(BDL_UndergroundWallKeywords.AREA))
+        self.area = self.try_float(
+            self.keyword_value_pairs.get(BDL_UndergroundWallKeywords.AREA)
+        )
         if self.area is None:
-            height = self.try_float(self.keyword_value_pairs.get(BDL_UndergroundWallKeywords.HEIGHT))
-            width = self.try_float(self.keyword_value_pairs.get(BDL_UndergroundWallKeywords.WIDTH))
+            height = self.try_float(
+                self.keyword_value_pairs.get(BDL_UndergroundWallKeywords.HEIGHT)
+            )
+            width = self.try_float(
+                self.keyword_value_pairs.get(BDL_UndergroundWallKeywords.WIDTH)
+            )
             if height is not None and width is not None:
                 self.area = height * width
-        if self.area is None and self.keyword_value_pairs.get(BDL_UndergroundWallKeywords.LOCATION) == BDL_WallLocationOptions.TOP:
+        if (
+            self.area is None
+            and self.keyword_value_pairs.get(BDL_UndergroundWallKeywords.LOCATION)
+            == BDL_WallLocationOptions.TOP
+        ):
             requests = self.get_output_requests()
             output_data = self.get_output_data(requests)
             self.area = output_data.get("Roof Area")
 
-        self.tilt = self.try_float(self.keyword_value_pairs.get(BDL_UndergroundWallKeywords.TILT))
+        self.tilt = self.try_float(
+            self.keyword_value_pairs.get(BDL_UndergroundWallKeywords.TILT)
+        )
         if self.tilt is not None and self.tilt < self.CEILING_TILT_THRESHOLD:
             self.classification = SurfaceClassificationOptions.CEILING
         elif self.tilt is not None and self.tilt >= self.FLOOR_TILT_THRESHOLD:
@@ -74,7 +86,9 @@ class BelowGradeWall(ChildNode):
         else:
             self.classification = SurfaceClassificationOptions.WALL
 
-        self.azimuth = self.try_float(self.keyword_value_pairs.get(BDL_UndergroundWallKeywords.AZIMUTH))
+        self.azimuth = self.try_float(
+            self.keyword_value_pairs.get(BDL_UndergroundWallKeywords.AZIMUTH)
+        )
 
         self.adjacent_to = SurfaceAdjacencyOptions.GROUND
 
@@ -94,7 +108,11 @@ class BelowGradeWall(ChildNode):
 
     def get_output_requests(self):
         requests = {}
-        if self.area is None and self.keyword_value_pairs.get(BDL_UndergroundWallKeywords.LOCATION) == BDL_WallLocationOptions.TOP:
+        if (
+            self.area is None
+            and self.keyword_value_pairs.get(BDL_UndergroundWallKeywords.LOCATION)
+            == BDL_WallLocationOptions.TOP
+        ):
             requests["Roof Area"] = (1105003, "", self.u_name)
         return requests
 

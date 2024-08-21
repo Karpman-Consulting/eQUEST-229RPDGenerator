@@ -167,7 +167,10 @@ class Zone(ChildNode):
         )
 
         # if the zone is served by a SUM system don't populate the data elements
-        if self.parent.keyword_value_pairs.get(BDL_SystemKeywords.TYPE) == BDL_SystemTypes.SUM:
+        if (
+            self.parent.keyword_value_pairs.get(BDL_SystemKeywords.TYPE)
+            == BDL_SystemTypes.SUM
+        ):
             return
 
         requests = self.get_output_requests()
@@ -187,7 +190,9 @@ class Zone(ChildNode):
         self.terminals_heating_source[0] = self.heat_source_map.get(
             self.parent.keyword_value_pairs.get(BDL_SystemKeywords.ZONE_HEAT_SOURCE)
         )
-        self.terminals_heating_from_loop[0] = self.keyword_value_pairs.get(BDL_ZoneKeywords.HW_LOOP)
+        self.terminals_heating_from_loop[0] = self.keyword_value_pairs.get(
+            BDL_ZoneKeywords.HW_LOOP
+        )
         self.terminals_primary_airflow[0] = supply_airflow
         if supply_airflow is not None and minimum_airflow_ratio is not None:
             self.terminals_minimum_airflow[0] = supply_airflow * minimum_airflow_ratio
@@ -200,10 +205,14 @@ class Zone(ChildNode):
         self.terminals_cooling_capacity[0] = output_data.get(
             "HVAC Systems - Design Parameters - Zone Design Data - General - Cooling Capacity"
         )
-        exhaust_airflow = self.try_float(self.keyword_value_pairs.get(BDL_ZoneKeywords.EXHAUST_FLOW))
+        exhaust_airflow = self.try_float(
+            self.keyword_value_pairs.get(BDL_ZoneKeywords.EXHAUST_FLOW)
+        )
 
         # Populate Baseboard Terminal data elements if applicable
-        baseboard_control = self.keyword_value_pairs.get(BDL_ZoneKeywords.BASEBOARD_CTRL)
+        baseboard_control = self.keyword_value_pairs.get(
+            BDL_ZoneKeywords.BASEBOARD_CTRL
+        )
         if baseboard_control not in [None, BDL_BaseboardControlOptions.NONE]:
             self.terminals_id[1] = self.u_name + " Baseboard Terminal"
             # noinspection PyTypeChecker
@@ -272,7 +281,10 @@ class Zone(ChildNode):
         if exhaust_airflow is not None and exhaust_airflow > 0.0:
             self.zone_exhaust_fan_id = self.u_name + " EF"
             self.zone_exhaust_fan_design_airflow = exhaust_airflow
-            if self.keyword_value_pairs.get(BDL_ZoneKeywords.EXHAUST_STATIC) is not None:
+            if (
+                self.keyword_value_pairs.get(BDL_ZoneKeywords.EXHAUST_STATIC)
+                is not None
+            ):
                 self.zone_exhaust_fan_specification_method = (
                     FanSpecificationMethodOptions.DETAILED
                 )

@@ -88,10 +88,14 @@ class Space(ChildNode, ParentNode):
         if volume is not None:
             volume = self.try_float(volume)
             self.zone.volume = volume
-        self.floor_area = self.try_float(self.keyword_value_pairs.get(BDL_SpaceKeywords.AREA))
+        self.floor_area = self.try_float(
+            self.keyword_value_pairs.get(BDL_SpaceKeywords.AREA)
+        )
 
         # Populate interior lighting data elements
-        space_ltg_scheds = self.keyword_value_pairs.get(BDL_SpaceKeywords.LIGHTING_SCHEDUL)
+        space_ltg_scheds = self.keyword_value_pairs.get(
+            BDL_SpaceKeywords.LIGHTING_SCHEDUL
+        )
         self.standardize_dict_values(
             self.keyword_value_pairs,
             [BDL_SpaceKeywords.LIGHTING_W_AREA, BDL_SpaceKeywords.LIGHTING_KW],
@@ -104,14 +108,23 @@ class Space(ChildNode, ParentNode):
             self.populate_interior_lighting(i, sched)
 
         # Populate miscellaneous equipment data elements
-        space_misc_eq_scheds = self.keyword_value_pairs.get(BDL_SpaceKeywords.EQUIP_SCHEDULE)
+        space_misc_eq_scheds = self.keyword_value_pairs.get(
+            BDL_SpaceKeywords.EQUIP_SCHEDULE
+        )
         self.standardize_dict_values(
             self.keyword_value_pairs,
-            [BDL_SpaceKeywords.EQUIPMENT_W_AREA, BDL_SpaceKeywords.EQUIPMENT_KW, BDL_SpaceKeywords.EQUIP_SENSIBLE, BDL_SpaceKeywords.EQUIP_LATENT],
+            [
+                BDL_SpaceKeywords.EQUIPMENT_W_AREA,
+                BDL_SpaceKeywords.EQUIPMENT_KW,
+                BDL_SpaceKeywords.EQUIP_SENSIBLE,
+                BDL_SpaceKeywords.EQUIP_LATENT,
+            ],
             self.try_length(space_misc_eq_scheds),
         )
 
-        space_int_energy_source_scheds = self.keyword_value_pairs.get(BDL_SpaceKeywords.SOURCE_SCHEDULE)
+        space_int_energy_source_scheds = self.keyword_value_pairs.get(
+            BDL_SpaceKeywords.SOURCE_SCHEDULE
+        )
         self.standardize_dict_values(
             self.keyword_value_pairs,
             [
@@ -162,7 +175,9 @@ class Space(ChildNode, ParentNode):
             self.occupant_sensible_heat_gain
         )
 
-        self.occupant_latent_heat_gain = self.keyword_value_pairs.get(BDL_SpaceKeywords.PEOPLE_HG_LAT)
+        self.occupant_latent_heat_gain = self.keyword_value_pairs.get(
+            BDL_SpaceKeywords.PEOPLE_HG_LAT
+        )
 
         self.occupant_latent_heat_gain = self.try_float(self.occupant_latent_heat_gain)
 
@@ -209,10 +224,14 @@ class Space(ChildNode, ParentNode):
         """Populate interior lighting data elements for an instance of InteriorLighting"""
         int_ltg_id = f"{self.u_name} IntLtg{n}"
         int_ltg_lpd = self.try_float(
-            self.try_access_index(self.keyword_value_pairs.get(BDL_SpaceKeywords.LIGHTING_W_AREA), n)
+            self.try_access_index(
+                self.keyword_value_pairs.get(BDL_SpaceKeywords.LIGHTING_W_AREA), n
+            )
         )
         int_ltg_power = self.try_float(
-            self.try_access_index(self.keyword_value_pairs.get(BDL_SpaceKeywords.LIGHTING_KW), n)
+            self.try_access_index(
+                self.keyword_value_pairs.get(BDL_SpaceKeywords.LIGHTING_KW), n
+            )
         )
         total_lpd = (
             int_ltg_lpd + int_ltg_power * 1000 / self.floor_area
@@ -258,7 +277,9 @@ class Space(ChildNode, ParentNode):
                 )
             )
             misc_eq_power = self.try_float(
-                self.try_access_index(self.keyword_value_pairs.get(BDL_SpaceKeywords.EQUIPMENT_KW), n)
+                self.try_access_index(
+                    self.keyword_value_pairs.get(BDL_SpaceKeywords.EQUIPMENT_KW), n
+                )
             )
             total_eq_power = (
                 misc_eq_power + misc_epd * self.floor_area / 1000
@@ -270,10 +291,14 @@ class Space(ChildNode, ParentNode):
             misc_eq_multiplier_schedule = schedule
 
             misc_eq_sensible_fraction = self.try_float(
-                self.try_access_index(self.keyword_value_pairs.get(BDL_SpaceKeywords.EQUIP_SENSIBLE), n)
+                self.try_access_index(
+                    self.keyword_value_pairs.get(BDL_SpaceKeywords.EQUIP_SENSIBLE), n
+                )
             )
             misc_eq_latent_fraction = self.try_float(
-                self.try_access_index(self.keyword_value_pairs.get(BDL_SpaceKeywords.EQUIP_LATENT), n)
+                self.try_access_index(
+                    self.keyword_value_pairs.get(BDL_SpaceKeywords.EQUIP_LATENT), n
+                )
             )
 
             if n == 0:
@@ -306,7 +331,10 @@ class Space(ChildNode, ParentNode):
                 energy_type = EnergySourceOptions.NATURAL_GAS
             elif source == BDL_InternalEnergySourceOptions.ELECTRIC:
                 energy_type = EnergySourceOptions.ELECTRICITY
-            elif source in [BDL_InternalEnergySourceOptions.HOT_WATER, BDL_InternalEnergySourceOptions.PROCESS]:
+            elif source in [
+                BDL_InternalEnergySourceOptions.HOT_WATER,
+                BDL_InternalEnergySourceOptions.PROCESS,
+            ]:
                 # When HOT-WATER is selected as the source, we are noticing the behavior is identical to PROCESS. Energy consumption does not seem to behave as described in the DOE-2 help text.
                 # We are treating it the same as a PROCESS source
                 energy_type = EnergySourceOptions.NONE

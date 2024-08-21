@@ -71,7 +71,12 @@ class Chiller(BaseNode):
     def populate_data_elements(self):
         """Populate data elements for chiller object."""
         absorp_or_engine = False
-        if self.compressor_type_map.get(self.keyword_value_pairs.get(BDL_ChillerKeywords.TYPE)) == OMIT:
+        if (
+            self.compressor_type_map.get(
+                self.keyword_value_pairs.get(BDL_ChillerKeywords.TYPE)
+            )
+            == OMIT
+        ):
             self.omit = True
             return
 
@@ -90,7 +95,9 @@ class Chiller(BaseNode):
 
         self.condensing_loop = self.keyword_value_pairs.get(BDL_ChillerKeywords.CW_LOOP)
 
-        self.heat_recovery_loop = self.keyword_value_pairs.get(BDL_ChillerKeywords.HTREC_LOOP)
+        self.heat_recovery_loop = self.keyword_value_pairs.get(
+            BDL_ChillerKeywords.HTREC_LOOP
+        )
 
         self.compressor_type = self.compressor_type_map.get(
             self.keyword_value_pairs.get(BDL_ChillerKeywords.TYPE)

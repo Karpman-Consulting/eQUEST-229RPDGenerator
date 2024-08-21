@@ -15,7 +15,12 @@ class _ListEnum:
 
     def __init__(self, _list):
         for str_item in _list:
-            item_key = str_item.replace("-", "_").replace("/", "_").replace("&", "_").replace("+", "_")
+            item_key = (
+                str_item.replace("-", "_")
+                .replace("/", "_")
+                .replace("&", "_")
+                .replace("+", "_")
+            )
             setattr(self, item_key, str_item)
 
     def get_list(self):

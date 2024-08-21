@@ -325,7 +325,9 @@ class System(ParentNode):
             }
         )
 
-        heat_type = self.heat_type_map.get(self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_SOURCE))
+        heat_type = self.heat_type_map.get(
+            self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_SOURCE)
+        )
         # if the system type is FC with HW or no heat, this system is represented as terminal fan, heating, cooling
         terminal_system_conditions = self.keyword_value_pairs.get(
             BDL_SystemKeywords.TYPE
@@ -496,7 +498,8 @@ class System(ParentNode):
 
         return_or_relief = (
             self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_STATIC) is not None
-            or self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_KW_FLOW) is not None
+            or self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_KW_FLOW)
+            is not None
         )
 
         if return_or_relief:
@@ -511,7 +514,10 @@ class System(ParentNode):
                 "",
             )
 
-        if self.keyword_value_pairs.get(BDL_SystemKeywords.DDS_TYPE) == BDL_DualDuctFanOptions.DUAL_FAN:
+        if (
+            self.keyword_value_pairs.get(BDL_SystemKeywords.DDS_TYPE)
+            == BDL_DualDuctFanOptions.DUAL_FAN
+        ):
             requests["Heating Supply Fan - Airflow"] = (
                 2201034,
                 self.u_name,
@@ -673,14 +679,18 @@ class System(ParentNode):
             self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_SOURCE)
         )
 
-        sizing_ratio = self.try_float(self.keyword_value_pairs.get(BDL_SystemKeywords.SIZING_RATIO))
+        sizing_ratio = self.try_float(
+            self.keyword_value_pairs.get(BDL_SystemKeywords.SIZING_RATIO)
+        )
         heat_sizing_ratio = self.try_float(
             self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_SIZING_RATI)
         )
         if sizing_ratio is not None and heat_sizing_ratio is not None:
             self.heat_sys_oversizing_factor = sizing_ratio * heat_sizing_ratio
 
-        self.heat_sys_hot_water_loop = self.keyword_value_pairs.get(BDL_SystemKeywords.HW_LOOP)
+        self.heat_sys_hot_water_loop = self.keyword_value_pairs.get(
+            BDL_SystemKeywords.HW_LOOP
+        )
 
         self.heat_sys_water_source_heat_pump_loop = self.keyword_value_pairs.get(
             BDL_SystemKeywords.CW_LOOP
@@ -709,16 +719,22 @@ class System(ParentNode):
             self.keyword_value_pairs.get(BDL_SystemKeywords.TYPE)
         )
 
-        sizing_ratio = self.try_float(self.keyword_value_pairs.get(BDL_SystemKeywords.SIZING_RATIO))
+        sizing_ratio = self.try_float(
+            self.keyword_value_pairs.get(BDL_SystemKeywords.SIZING_RATIO)
+        )
         cool_sizing_ratio = self.try_float(
             self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_SIZING_RATI)
         )
         if sizing_ratio is not None and cool_sizing_ratio is not None:
             self.cool_sys_oversizing_factor = sizing_ratio * cool_sizing_ratio
 
-        self.cool_sys_chilled_water_loop = self.keyword_value_pairs.get(BDL_SystemKeywords.CHW_LOOP)
+        self.cool_sys_chilled_water_loop = self.keyword_value_pairs.get(
+            BDL_SystemKeywords.CHW_LOOP
+        )
 
-        self.cool_sys_condenser_water_loop = self.keyword_value_pairs.get(BDL_SystemKeywords.CW_LOOP)
+        self.cool_sys_condenser_water_loop = self.keyword_value_pairs.get(
+            BDL_SystemKeywords.CW_LOOP
+        )
 
         self.cool_sys_rated_total_capacity = self.try_float(
             self.keyword_value_pairs.get(BDL_SystemKeywords.COOLING_CAPACITY)
@@ -756,7 +772,8 @@ class System(ParentNode):
         # noinspection PyTypeChecker
         self.fan_specification_method[0] = (
             FanSpecificationMethodOptions.DETAILED
-            if self.keyword_value_pairs.get(BDL_SystemKeywords.SUPPLY_STATIC) is not None
+            if self.keyword_value_pairs.get(BDL_SystemKeywords.SUPPLY_STATIC)
+            is not None
             else FanSpecificationMethodOptions.SIMPLE
         )
         self.fan_design_pressure_rise[0] = self.try_float(
@@ -766,13 +783,15 @@ class System(ParentNode):
         # Determine if there is a return or relief fan
         return_or_relief = (
             self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_STATIC) is not None
-            or self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_KW_FLOW) is not None
+            or self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_KW_FLOW)
+            is not None
         )
 
         # If there is a return or relief fan and its location is set to RELIEF
         if (
             return_or_relief
-            and self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_FAN_LOC) == BDL_ReturnFanOptions.RELIEF
+            and self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_FAN_LOC)
+            == BDL_ReturnFanOptions.RELIEF
         ):
             self.fan_id[2] = self.u_name + " ReliefFan"
             self.fan_design_airflow[2] = output_data.get("Return Fan - Airflow", None)
@@ -782,7 +801,8 @@ class System(ParentNode):
             # noinspection PyTypeChecker
             self.fan_specification_method[2] = (
                 FanSpecificationMethodOptions.DETAILED
-                if self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_STATIC) is not None
+                if self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_STATIC)
+                is not None
                 else FanSpecificationMethodOptions.SIMPLE
             )
             self.fan_design_pressure_rise[2] = self.try_float(
@@ -799,14 +819,18 @@ class System(ParentNode):
             # noinspection PyTypeChecker
             self.fan_specification_method[1] = (
                 FanSpecificationMethodOptions.DETAILED
-                if self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_STATIC) is not None
+                if self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_STATIC)
+                is not None
                 else FanSpecificationMethodOptions.SIMPLE
             )
             self.fan_design_pressure_rise[1] = self.try_float(
                 self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_STATIC)
             )
 
-        if self.keyword_value_pairs.get(BDL_SystemKeywords.DDS_TYPE) == BDL_DualDuctFanOptions.DUAL_FAN:
+        if (
+            self.keyword_value_pairs.get(BDL_SystemKeywords.DDS_TYPE)
+            == BDL_DualDuctFanOptions.DUAL_FAN
+        ):
             self.fan_id[3] = self.u_name + " HeatingSupplyFan"
             self.fan_design_airflow[3] = output_data.get(
                 "Heating Supply Fan - Airflow", None
@@ -817,7 +841,8 @@ class System(ParentNode):
             # noinspection PyTypeChecker
             self.fan_specification_method[3] = (
                 FanSpecificationMethodOptions.DETAILED
-                if self.keyword_value_pairs.get(BDL_SystemKeywords.HSUPPLY_STATIC) is not None
+                if self.keyword_value_pairs.get(BDL_SystemKeywords.HSUPPLY_STATIC)
+                is not None
                 else FanSpecificationMethodOptions.SIMPLE
             )
             self.fan_design_pressure_rise[3] = self.try_float(
@@ -836,13 +861,17 @@ class System(ParentNode):
         self.air_econ_is_integrated = (
             True
             if self.cool_sys_type == CoolingSystemOptions.FLUID_LOOP
-            else not self.boolean_map.get(self.keyword_value_pairs.get(BDL_SystemKeywords.ECONO_LOCKOUT))
+            else not self.boolean_map.get(
+                self.keyword_value_pairs.get(BDL_SystemKeywords.ECONO_LOCKOUT)
+            )
         )
 
     def populate_air_energy_recovery(self):
         self.air_energy_recovery_id = self.u_name + " AirEnergyRecovery"
 
-        recover_exhaust = self.keyword_value_pairs.get(BDL_SystemKeywords.RECOVER_EXHAUST)
+        recover_exhaust = self.keyword_value_pairs.get(
+            BDL_SystemKeywords.RECOVER_EXHAUST
+        )
         recovery_type = self.recovery_type_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.ERV_RECOVER_TYPE)
         )
@@ -861,7 +890,9 @@ class System(ParentNode):
         )
 
         self.air_energy_recovery_supply_air_temperature_control = (
-            self.er_sat_control_map.get(self.keyword_value_pairs.get(BDL_SystemKeywords.ERV_TEMP_CTRL))
+            self.er_sat_control_map.get(
+                self.keyword_value_pairs.get(BDL_SystemKeywords.ERV_TEMP_CTRL)
+            )
         )
 
         self.air_energy_recovery_design_sensible_effectiveness = self.try_float(

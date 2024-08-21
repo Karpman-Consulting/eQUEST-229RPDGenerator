@@ -74,18 +74,30 @@ class InteriorWall(
             self.omit = True
             return
 
-        self.area = self.try_float(self.keyword_value_pairs.get(BDL_InteriorWallKeywords.AREA))
+        self.area = self.try_float(
+            self.keyword_value_pairs.get(BDL_InteriorWallKeywords.AREA)
+        )
         if self.area is None:
-            height = self.try_float(self.keyword_value_pairs.get(BDL_InteriorWallKeywords.HEIGHT))
-            width = self.try_float(self.keyword_value_pairs.get(BDL_InteriorWallKeywords.WIDTH))
+            height = self.try_float(
+                self.keyword_value_pairs.get(BDL_InteriorWallKeywords.HEIGHT)
+            )
+            width = self.try_float(
+                self.keyword_value_pairs.get(BDL_InteriorWallKeywords.WIDTH)
+            )
             if height is not None and width is not None:
                 self.area = height * width
-        if self.area is None and self.keyword_value_pairs.get(BDL_InteriorWallKeywords.LOCATION) == BDL_WallLocationOptions.TOP:
+        if (
+            self.area is None
+            and self.keyword_value_pairs.get(BDL_InteriorWallKeywords.LOCATION)
+            == BDL_WallLocationOptions.TOP
+        ):
             requests = self.get_output_requests()
             output_data = self.get_output_data(requests)
             self.area = output_data.get("Roof Area")
 
-        self.tilt = self.try_float(self.keyword_value_pairs.get(BDL_InteriorWallKeywords.TILT))
+        self.tilt = self.try_float(
+            self.keyword_value_pairs.get(BDL_InteriorWallKeywords.TILT)
+        )
         if self.tilt is not None and self.tilt < self.CEILING_TILT_THRESHOLD:
             self.classification = SurfaceClassificationOptions.CEILING
         elif self.tilt is not None and self.tilt >= self.FLOOR_TILT_THRESHOLD:
@@ -93,7 +105,9 @@ class InteriorWall(
         else:
             self.classification = SurfaceClassificationOptions.WALL
 
-        self.azimuth = self.try_float(self.keyword_value_pairs.get(BDL_InteriorWallKeywords.AZIMUTH))
+        self.azimuth = self.try_float(
+            self.keyword_value_pairs.get(BDL_InteriorWallKeywords.AZIMUTH)
+        )
 
         if self.adjacent_to == SurfaceAdjacencyOptions.INTERIOR:
             self.adjacent_zone = self.rmd.space_map[
@@ -116,7 +130,11 @@ class InteriorWall(
 
     def get_output_requests(self):
         requests = {}
-        if self.area is None and self.keyword_value_pairs.get(BDL_InteriorWallKeywords.LOCATION) == BDL_WallLocationOptions.TOP:
+        if (
+            self.area is None
+            and self.keyword_value_pairs.get(BDL_InteriorWallKeywords.LOCATION)
+            == BDL_WallLocationOptions.TOP
+        ):
             requests["Roof Area"] = (1106006, "", self.u_name)
         return requests
 
