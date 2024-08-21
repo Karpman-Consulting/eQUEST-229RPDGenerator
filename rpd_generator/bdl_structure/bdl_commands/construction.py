@@ -1,16 +1,20 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
 from rpd_generator.schema.schema_enums import SchemaEnums
+from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 
 SurfaceConstructionInputOptions = SchemaEnums.schema_enums[
     "SurfaceConstructionInputOptions"
 ]
+BDL_Commands = BDLEnums.bdl_enums["Commands"]
+BDL_ConstructionKeywords = BDLEnums.bdl_enums["ConstructionKeywords"]
+BDL_MaterialTypes = BDLEnums.bdl_enums["MaterialTypes"]
 
 
 class Construction(BaseNode):
     """Construction object in the tree."""
 
-    bdl_command = "CONSTRUCTION"
+    bdl_command = BDL_Commands.CONSTRUCTION
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
@@ -39,7 +43,7 @@ class Construction(BaseNode):
 
     def populate_data_elements(self):
         """Populate data elements for construction object."""
-        layer_reference = self.keyword_value_pairs.get("LAYERS")
+        layer_reference = self.keyword_value_pairs.get(BDL_ConstructionKeywords.LAYERS)
         layer = (
             self.rmd.bdl_obj_instances.get(layer_reference) if layer_reference else None
         )
@@ -54,7 +58,7 @@ class Construction(BaseNode):
             if material:
                 self.primary_layers.append(material.material_data_structure)
 
-                if material.material_type == "PROPERTIES":
+                if material.material_type == BDL_MaterialTypes.PROPERTIES:
                     any_detailed_materials = True
 
         self.surface_construction_input_option = (

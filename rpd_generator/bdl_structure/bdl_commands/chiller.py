@@ -1,32 +1,36 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
 from rpd_generator.schema.schema_enums import SchemaEnums
+from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 
 EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
 ChillerCompressorOptions = SchemaEnums.schema_enums["ChillerCompressorOptions"]
+BDL_Commands = BDLEnums.bdl_enums["Commands"]
+BDL_ChillerKeywords = BDLEnums.bdl_enums["ChillerKeywords"]
+BDL_ChillerTypes = BDLEnums.bdl_enums["ChillerTypes"]
 OMIT = "OMIT"
 
 
 class Chiller(BaseNode):
     """Chiller object in the tree."""
 
-    bdl_command = "CHILLER"
+    bdl_command = BDL_Commands.CHILLER
 
     compressor_type_map = {
-        "ELEC-OPEN-CENT": ChillerCompressorOptions.CENTRIFUGAL,
-        "ELEC-OPEN-REC": ChillerCompressorOptions.RECIPROCATING,
-        "ELEC-HERM-CENT": ChillerCompressorOptions.CENTRIFUGAL,
-        "ELEC-HERM-REC": ChillerCompressorOptions.RECIPROCATING,
-        "ELEC-SCREW": ChillerCompressorOptions.SCREW,
-        "ELEC-HTREC": ChillerCompressorOptions.OTHER,
-        "ABSOR-1": ChillerCompressorOptions.SINGLE_EFFECT_DIRECT_FIRED_ABSORPTION,
-        "ABSOR-2": ChillerCompressorOptions.DOUBLE_EFFECT_DIRECT_FIRED_ABSORPTION,
-        "GAS-ABSOR": ChillerCompressorOptions.OTHER,
-        "ENGINE": ChillerCompressorOptions.OTHER,
-        "HEAT-PUMP": OMIT,
-        "LOOP-TO-LOOP-HP": OMIT,
-        "WATER-ECONOMIZER": OMIT,
-        "STRAINER-CYCLE": OMIT,
+        BDL_ChillerTypes.ELEC_OPEN_CENT: ChillerCompressorOptions.CENTRIFUGAL,
+        BDL_ChillerTypes.ELEC_OPEN_REC: ChillerCompressorOptions.RECIPROCATING,
+        BDL_ChillerTypes.ELEC_HERM_CENT: ChillerCompressorOptions.CENTRIFUGAL,
+        BDL_ChillerTypes.ELEC_HERM_REC: ChillerCompressorOptions.RECIPROCATING,
+        BDL_ChillerTypes.ELEC_SCREW: ChillerCompressorOptions.SCREW,
+        BDL_ChillerTypes.ELEC_HTREC: ChillerCompressorOptions.OTHER,
+        BDL_ChillerTypes.ABSOR_1: ChillerCompressorOptions.SINGLE_EFFECT_DIRECT_FIRED_ABSORPTION,
+        BDL_ChillerTypes.ABSOR_2: ChillerCompressorOptions.DOUBLE_EFFECT_DIRECT_FIRED_ABSORPTION,
+        BDL_ChillerTypes.GAS_ABSOR: ChillerCompressorOptions.OTHER,
+        BDL_ChillerTypes.ENGINE: ChillerCompressorOptions.OTHER,
+        BDL_ChillerTypes.HEAT_PUMP: OMIT,
+        BDL_ChillerTypes.LOOP_TO_LOOP_HP: OMIT,
+        BDL_ChillerTypes.WATER_ECONOMIZER: OMIT,
+        BDL_ChillerTypes.STRAINER_CYCLE: OMIT,
     }
 
     def __init__(self, u_name, rmd):
@@ -67,29 +71,36 @@ class Chiller(BaseNode):
     def populate_data_elements(self):
         """Populate data elements for chiller object."""
         absorp_or_engine = False
-        if self.compressor_type_map.get(self.keyword_value_pairs.get("TYPE")) == OMIT:
+        if (
+            self.compressor_type_map.get(
+                self.keyword_value_pairs.get(BDL_ChillerKeywords.TYPE)
+            )
+            == OMIT
+        ):
             self.omit = True
             return
 
-        elif self.keyword_value_pairs.get("TYPE") in [
-            "ABSOR-1",
-            "ABSOR-2",
-            "GAS-ABSOR",
-            "ENGINE",
+        elif self.keyword_value_pairs.get(BDL_ChillerKeywords.TYPE) in [
+            BDL_ChillerTypes.ABSOR_1,
+            BDL_ChillerTypes.ABSOR_2,
+            BDL_ChillerTypes.GAS_ABSOR,
+            BDL_ChillerTypes.ENGINE,
         ]:
             absorp_or_engine = True
 
         requests = self.get_output_requests(absorp_or_engine)
         output_data = self.get_output_data(requests)
 
-        self.cooling_loop = self.keyword_value_pairs.get("CHW-LOOP")
+        self.cooling_loop = self.keyword_value_pairs.get(BDL_ChillerKeywords.CHW_LOOP)
 
-        self.condensing_loop = self.keyword_value_pairs.get("CW-LOOP")
+        self.condensing_loop = self.keyword_value_pairs.get(BDL_ChillerKeywords.CW_LOOP)
 
-        self.heat_recovery_loop = self.keyword_value_pairs.get("HTREC-LOOP")
+        self.heat_recovery_loop = self.keyword_value_pairs.get(
+            BDL_ChillerKeywords.HTREC_LOOP
+        )
 
         self.compressor_type = self.compressor_type_map.get(
-            self.keyword_value_pairs.get("TYPE")
+            self.keyword_value_pairs.get(BDL_ChillerKeywords.TYPE)
         )
 
         if not absorp_or_engine:
@@ -135,30 +146,30 @@ class Chiller(BaseNode):
             )
 
         self.rated_leaving_evaporator_temperature = self.try_float(
-            self.keyword_value_pairs.get("RATED-CHW-T")
+            self.keyword_value_pairs.get(BDL_ChillerKeywords.RATED_CHW_T)
         )
 
         self.rated_entering_condenser_temperature = self.try_float(
-            self.keyword_value_pairs.get("RATED-COND-T")
+            self.keyword_value_pairs.get(BDL_ChillerKeywords.RATED_COND_T)
         )
 
         self.design_leaving_evaporator_temperature = self.try_float(
-            self.keyword_value_pairs.get("DESIGN-CHW-T")
+            self.keyword_value_pairs.get(BDL_ChillerKeywords.DESIGN_CHW_T)
         )
 
         self.design_entering_condenser_temperature = self.try_float(
-            self.keyword_value_pairs.get("DESIGN-COND-T")
+            self.keyword_value_pairs.get(BDL_ChillerKeywords.DESIGN_COND_T)
         )
 
         # Assign pump data elements populated from the boiler keyword value pairs
-        chw_pump_name = self.keyword_value_pairs.get("CHW-PUMP")
+        chw_pump_name = self.keyword_value_pairs.get(BDL_ChillerKeywords.CHW_PUMP)
         if chw_pump_name is not None:
             pump = self.rmd.bdl_obj_instances.get(chw_pump_name)
             if pump is not None:
                 pump.loop_or_piping = [self.cooling_loop] * pump.qty
 
         # Assign pump data elements populated from the chiller keyword value pairs
-        cw_pump_name = self.keyword_value_pairs.get("CW-PUMP")
+        cw_pump_name = self.keyword_value_pairs.get(BDL_ChillerKeywords.CW_PUMP)
         if cw_pump_name is not None:
             pump = self.rmd.bdl_obj_instances.get(cw_pump_name)
             if pump is not None:

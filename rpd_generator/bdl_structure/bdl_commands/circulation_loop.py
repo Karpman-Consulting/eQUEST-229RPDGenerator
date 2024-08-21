@@ -1,48 +1,60 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
 from rpd_generator.schema.schema_enums import SchemaEnums
+from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 
 FluidLoopOptions = SchemaEnums.schema_enums["FluidLoopOptions"]
 FluidLoopOperationOptions = SchemaEnums.schema_enums["FluidLoopOperationOptions"]
 FluidLoopFlowControlOptions = SchemaEnums.schema_enums["FluidLoopFlowControlOptions"]
 TemperatureResetOptions = SchemaEnums.schema_enums["TemperatureResetOptions"]
+BDL_Commands = BDLEnums.bdl_enums["Commands"]
+BDL_CirculationLoopKeywords = BDLEnums.bdl_enums["CirculationLoopKeywords"]
+BDL_CirculationLoopTypes = BDLEnums.bdl_enums["CirculationLoopTypes"]
+BDL_CirculationLoopSubtypes = BDLEnums.bdl_enums["CirculationLoopSubtypes"]
+BDL_CirculationLoopSizingOptions = BDLEnums.bdl_enums["CirculationLoopSizingOptions"]
+BDL_CirculationLoopOperationOptions = BDLEnums.bdl_enums[
+    "CirculationLoopOperationOptions"
+]
+BDL_CirculationLoopTemperatureResetOptions = BDLEnums.bdl_enums[
+    "CirculationLoopTemperatureResetOptions"
+]
 
 
 # noinspection PyUnresolvedReferences
 class CirculationLoop(BaseNode):
     """CirculationLoop object in the tree."""
 
-    bdl_command = "CIRCULATION-LOOP"
+    bdl_command = BDL_Commands.CIRCULATION_LOOP
 
     loop_type_map = {
-        "CHW": FluidLoopOptions.COOLING,
-        "HW": FluidLoopOptions.HEATING,
-        "CW": FluidLoopOptions.CONDENSER,
-        "PIPE2": FluidLoopOptions.HEATING_AND_COOLING,
-        "WLHP": FluidLoopOptions.OTHER,
+        BDL_CirculationLoopTypes.CHW: FluidLoopOptions.COOLING,
+        BDL_CirculationLoopTypes.HW: FluidLoopOptions.HEATING,
+        BDL_CirculationLoopTypes.CW: FluidLoopOptions.CONDENSER,
+        BDL_CirculationLoopTypes.PIPE2: FluidLoopOptions.HEATING_AND_COOLING,
+        BDL_CirculationLoopTypes.WLHP: FluidLoopOptions.OTHER,
     }
 
     sizing_option_map = {
-        "COINCIDENT": True,
-        "NON-COINCIDENT": False,
-        "PRIMARY": False,
-        "SECONDARY": True,
+        BDL_CirculationLoopSizingOptions.COINCIDENT: True,
+        BDL_CirculationLoopSizingOptions.NON_COINCIDENT: False,
+        BDL_CirculationLoopSizingOptions.PRIMARY: False,
+        BDL_CirculationLoopSizingOptions.SECONDARY: True,
     }
 
     loop_operation_map = {
-        "STANDBY": FluidLoopOperationOptions.INTERMITTENT,
-        "DEMAND-ONLY": FluidLoopOperationOptions.INTERMITTENT,
-        "SNAP": FluidLoopOperationOptions.INTERMITTENT,
-        "SCHEDULED": FluidLoopOperationOptions.SCHEDULED,
-        "SUBHOUR-DEMAND": FluidLoopOperationOptions.INTERMITTENT,
+        BDL_CirculationLoopOperationOptions.STANDBY: FluidLoopOperationOptions.INTERMITTENT,
+        BDL_CirculationLoopOperationOptions.DEMAND_ONLY: FluidLoopOperationOptions.INTERMITTENT,
+        BDL_CirculationLoopOperationOptions.SNAP: FluidLoopOperationOptions.INTERMITTENT,
+        BDL_CirculationLoopOperationOptions.SCHEDULED: FluidLoopOperationOptions.SCHEDULED,
+        BDL_CirculationLoopOperationOptions.SUBHOUR_DEMAND: FluidLoopOperationOptions.INTERMITTENT,
     }
 
     temp_reset_map = {
-        "FIXED": TemperatureResetOptions.NO_RESET,
-        "OA-RESET": TemperatureResetOptions.OUTSIDE_AIR_RESET,
-        "SCHEDULED": TemperatureResetOptions.OTHER,
-        "LOAD-RESET": TemperatureResetOptions.LOAD_RESET,
-        "WETBULB-RESET": TemperatureResetOptions.OTHER,
+        BDL_CirculationLoopTemperatureResetOptions.FIXED: TemperatureResetOptions.NO_RESET,
+        BDL_CirculationLoopTemperatureResetOptions.OA_RESET: TemperatureResetOptions.OUTSIDE_AIR_RESET,
+        BDL_CirculationLoopTemperatureResetOptions.SCHEDULED: TemperatureResetOptions.OTHER,
+        BDL_CirculationLoopTemperatureResetOptions.LOAD_RESET: TemperatureResetOptions.LOAD_RESET,
+        BDL_CirculationLoopTemperatureResetOptions.WETBULB_RESET: TemperatureResetOptions.OTHER,
     }
 
     def __init__(self, u_name, rmd):
@@ -114,7 +126,7 @@ class CirculationLoop(BaseNode):
         """Populate data elements from the keyword_value pairs returned from model_input_reader"""
 
         # Assign pump data elements populated from the circulation loop keyword value pairs
-        pump_name = self.keyword_value_pairs.get("LOOP-PUMP")
+        pump_name = self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_PUMP)
         if pump_name is not None:
             pump = self.rmd.bdl_obj_instances.get(pump_name)
             if pump is not None:
@@ -122,7 +134,7 @@ class CirculationLoop(BaseNode):
 
         self.circulation_loop_type = self.determine_circ_loop_type()
         if self.circulation_loop_type in ["FluidLoop", "SecondaryFluidLoop"]:
-            loop_type = self.keyword_value_pairs.get("TYPE")
+            loop_type = self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.TYPE)
             self.type = self.loop_type_map.get(loop_type, FluidLoopOptions.OTHER)
 
             # Populate the data elements for FluidLoopDesignAndControl
@@ -257,7 +269,9 @@ class CirculationLoop(BaseNode):
             rmd.fluid_loops.append(self.data_structure)
 
         elif self.circulation_loop_type == "SecondaryFluidLoop":
-            primary_loop = self.keyword_value_pairs.get("PRIMARY-LOOP")
+            primary_loop = self.keyword_value_pairs.get(
+                BDL_CirculationLoopKeywords.PRIMARY_LOOP
+            )
             for fluid_loop in rmd.fluid_loops:
                 if fluid_loop["id"] == primary_loop:
                     fluid_loop["child_loops"].append(self.data_structure)
@@ -266,7 +280,9 @@ class CirculationLoop(BaseNode):
             rmd.service_water_heating_distribution_systems.append(self.data_structure)
 
         elif self.circulation_loop_type == "ServiceWaterPiping":
-            primary_loop = self.keyword_value_pairs.get("PRIMARY-LOOP")
+            primary_loop = self.keyword_value_pairs.get(
+                BDL_CirculationLoopKeywords.PRIMARY_LOOP
+            )
             for swh_distribution_sys in rmd.service_water_heating_distribution_systems:
                 if swh_distribution_sys["id"] == primary_loop:
                     swh_distribution_sys["service_water_piping"].append(
@@ -276,15 +292,23 @@ class CirculationLoop(BaseNode):
     def determine_circ_loop_type(self):
 
         if (
-            self.keyword_value_pairs["TYPE"] == "DHW"
-            and self.keyword_value_pairs["SUBTYPE"] == "SECONDARY"
+            self.keyword_value_pairs[BDL_CirculationLoopKeywords.TYPE]
+            == BDL_CirculationLoopTypes.DHW
+            and self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.SUBTYPE)
+            == BDL_CirculationLoopSubtypes.SECONDARY
         ):
             return "ServiceWaterPiping"
 
-        elif self.keyword_value_pairs["TYPE"] == "DHW":
+        elif (
+            self.keyword_value_pairs[BDL_CirculationLoopKeywords.TYPE]
+            == BDL_CirculationLoopTypes.DHW
+        ):
             return "ServiceWaterHeatingDistributionSystem"
 
-        elif self.keyword_value_pairs.get("PRIMARY-LOOP") is None:
+        elif (
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.PRIMARY_LOOP)
+            is None
+        ):
             return "FluidLoop"
 
         else:
@@ -293,9 +317,11 @@ class CirculationLoop(BaseNode):
     def populate_heat_fluid_loop_design_and_control(self):
         self.heating_design_and_control["id"] = self.u_name + " HeatingDesign/Control"
         self.design_supply_temperature[1] = self.try_float(
-            self.keyword_value_pairs.get("DESIGN-HEAT-T")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.DESIGN_HEAT_T)
         )
-        loop_design_dt = self.try_float(self.keyword_value_pairs.get("LOOP-DESIGN-DT"))
+        loop_design_dt = self.try_float(
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_DESIGN_DT)
+        )
         if loop_design_dt is None:
             pass
         else:
@@ -303,16 +329,16 @@ class CirculationLoop(BaseNode):
                 self.design_supply_temperature[1] - loop_design_dt
             )
         self.is_sized_using_coincident_loads[1] = self.sizing_option_map.get(
-            self.keyword_value_pairs.get("SIZING-OPTION")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.SIZING_OPTION)
         )
         self.minimum_flow_fraction[1] = self.try_float(
-            self.keyword_value_pairs.get("LOOP-MIN-FLOW")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_MIN_FLOW)
         )
         self.temperature_reset_type[1] = self.temp_reset_map.get(
-            self.keyword_value_pairs.get("HEAT-SETPT-CTRL")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.HEAT_SETPT_CTRL)
         )
         self.loop_supply_temperature_at_low_load[1] = self.try_float(
-            self.keyword_value_pairs.get("MIN-RESET-T")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MIN_RESET_T)
         )
 
     def populate_cool_fluid_loop_design_and_control(self):
@@ -320,9 +346,11 @@ class CirculationLoop(BaseNode):
             self.u_name + " CoolingDesign/Control"
         )
         self.design_supply_temperature[0] = self.try_float(
-            self.keyword_value_pairs.get("DESIGN-COOL-T")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.DESIGN_COOL_T)
         )
-        loop_design_dt = self.try_float(self.keyword_value_pairs.get("LOOP-DESIGN-DT"))
+        loop_design_dt = self.try_float(
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_DESIGN_DT)
+        )
         if loop_design_dt is None:
             pass
         else:
@@ -330,16 +358,16 @@ class CirculationLoop(BaseNode):
                 self.design_supply_temperature[0] + loop_design_dt
             )
         self.is_sized_using_coincident_loads[0] = self.sizing_option_map.get(
-            self.keyword_value_pairs.get("SIZING-OPTION")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.SIZING_OPTION)
         )
         self.minimum_flow_fraction[0] = self.try_float(
-            self.keyword_value_pairs.get("LOOP-MIN-FLOW")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_MIN_FLOW)
         )
         self.temperature_reset_type[0] = self.temp_reset_map.get(
-            self.keyword_value_pairs.get("COOL-SETPT-CTRL")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.COOL_SETPT_CTRL)
         )
         self.loop_supply_temperature_at_low_load[0] = self.try_float(
-            self.keyword_value_pairs.get("MAX-RESET-T")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MAX_RESET_T)
         )
 
     def populate_cond_fluid_loop_design_and_control(self):
@@ -347,9 +375,11 @@ class CirculationLoop(BaseNode):
             self.u_name + " CondensingDesign/Control"
         )
         self.design_supply_temperature[0] = self.try_float(
-            self.keyword_value_pairs.get("DESIGN-COOL-T")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.DESIGN_COOL_T)
         )
-        loop_design_dt = self.try_float(self.keyword_value_pairs.get("LOOP-DESIGN-DT"))
+        loop_design_dt = self.try_float(
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_DESIGN_DT)
+        )
         if loop_design_dt is None:
             pass
         else:
@@ -357,16 +387,16 @@ class CirculationLoop(BaseNode):
                 self.design_supply_temperature[0] + loop_design_dt
             )
         self.is_sized_using_coincident_loads[0] = self.sizing_option_map.get(
-            self.keyword_value_pairs.get("SIZING-OPTION")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.SIZING_OPTION)
         )
         self.minimum_flow_fraction[0] = self.try_float(
-            self.keyword_value_pairs.get("LOOP-MIN-FLOW")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_MIN_FLOW)
         )
         self.temperature_reset_type[0] = self.temp_reset_map.get(
-            self.keyword_value_pairs.get("COOL-SETPT-CTRL")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.COOL_SETPT_CTRL)
         )
         self.loop_supply_temperature_at_low_load[0] = self.try_float(
-            self.keyword_value_pairs.get("MAX-RESET-T")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MAX_RESET_T)
         )
 
     def populate_heat_cool_fluid_loop_design_and_control(self):
@@ -374,9 +404,11 @@ class CirculationLoop(BaseNode):
             self.u_name + " CoolingDesign/Control"
         )
         self.design_supply_temperature[0] = self.try_float(
-            self.keyword_value_pairs.get("DESIGN-COOL-T")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.DESIGN_COOL_T)
         )
-        loop_design_dt = self.try_float(self.keyword_value_pairs.get("LOOP-DESIGN-DT"))
+        loop_design_dt = self.try_float(
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_DESIGN_DT)
+        )
         if loop_design_dt is None:
             pass
         else:
@@ -384,20 +416,20 @@ class CirculationLoop(BaseNode):
                 self.design_supply_temperature[0] + loop_design_dt
             )
         self.is_sized_using_coincident_loads[0] = self.sizing_option_map.get(
-            self.keyword_value_pairs.get("SIZING-OPTION")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.SIZING_OPTION)
         )
         self.minimum_flow_fraction[0] = self.try_float(
-            self.keyword_value_pairs.get("LOOP-MIN-FLOW")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_MIN_FLOW)
         )
         self.temperature_reset_type[0] = self.temp_reset_map.get(
-            self.keyword_value_pairs.get("COOL-SETPT-CTRL")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.COOL_SETPT_CTRL)
         )
         self.loop_supply_temperature_at_low_load[0] = self.try_float(
-            self.keyword_value_pairs.get("MAX-RESET-T")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MAX_RESET_T)
         )
         self.heating_design_and_control["id"] = self.u_name + " HeatingDesign/Control"
         self.design_supply_temperature[1] = self.try_float(
-            self.keyword_value_pairs.get("DESIGN-HEAT-T")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.DESIGN_HEAT_T)
         )
         if loop_design_dt is None:
             pass
@@ -406,24 +438,26 @@ class CirculationLoop(BaseNode):
                 self.design_supply_temperature[1] - loop_design_dt
             )
         self.is_sized_using_coincident_loads[1] = self.sizing_option_map.get(
-            self.keyword_value_pairs.get("SIZING-OPTION")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.SIZING_OPTION)
         )
         self.minimum_flow_fraction[1] = self.try_float(
-            self.keyword_value_pairs.get("LOOP-MIN-FLOW")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_MIN_FLOW)
         )
         self.temperature_reset_type[1] = self.temp_reset_map.get(
-            self.keyword_value_pairs.get("HEAT-SETPT-CTRL")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.HEAT_SETPT_CTRL)
         )
         self.loop_supply_temperature_at_low_load[1] = self.try_float(
-            self.keyword_value_pairs.get("MIN-RESET-T")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MIN_RESET_T)
         )
 
     def populate_service_water_heating_distribution_system(self):
         self.swh_design_supply_temperature = self.try_float(
-            self.keyword_value_pairs.get("DESIGN-HEAT-T")
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.DESIGN_HEAT_T)
         )
-        inlet_t = self.keyword_value_pairs.get("DHW-INLET-T")
-        inlet_t_sch = self.keyword_value_pairs.get("DHW-INLET-T-SCH")
+        inlet_t = self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.DHW_INLET_T)
+        inlet_t_sch = self.keyword_value_pairs.get(
+            BDL_CirculationLoopKeywords.DHW_INLET_T_SCH
+        )
         if inlet_t is not None or inlet_t_sch is not None:
             self.is_ground_temperature_used_for_entering_water = False
         else:

@@ -1,5 +1,6 @@
 from rpd_generator.bdl_structure.parent_node import ParentNode
 from rpd_generator.schema.schema_enums import SchemaEnums
+from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 
 HeatingSystemOptions = SchemaEnums.schema_enums["HeatingSystemOptions"]
@@ -23,109 +24,133 @@ DemandControlVentilationControlOptions = SchemaEnums.schema_enums[
     "DemandControlVentilationControlOptions"
 ]
 HumidificationOptions = SchemaEnums.schema_enums["HumidificationOptions"]
+BDL_Commands = BDLEnums.bdl_enums["Commands"]
+BDL_SystemKeywords = BDLEnums.bdl_enums["SystemKeywords"]
+BDL_SystemTypes = BDLEnums.bdl_enums["SystemTypes"]
+BDL_SysemHeatingTypes = BDLEnums.bdl_enums["SystemHeatingTypes"]
+BDL_SystemCoolingTypes = BDLEnums.bdl_enums["SystemCoolingTypes"]
+BDL_SupplyFanTypes = BDLEnums.bdl_enums["SystemSupplyFanTypes"]
+BDL_UnoccupiedFanOperationOptions = BDLEnums.bdl_enums[
+    "SystemUnoccupiedFanOperationOptions"
+]
+BDL_EconomizerOptions = BDLEnums.bdl_enums["SystemEconomizerOptions"]
+BDL_EnergyRecoveryTypes = BDLEnums.bdl_enums["SystemEnergyRecoveryTypes"]
+BDL_EnergyRecoveryOptions = BDLEnums.bdl_enums["SystemEnergyRecoveryOptions"]
+BDL_EnergyRecoveryOperationOptions = BDLEnums.bdl_enums[
+    "SystemEnergyRecoveryOperationOptions"
+]
+BDL_EnergyRecoveryTemperatureControlOptions = BDLEnums.bdl_enums[
+    "SystemEnergyRecoveryTemperatureControlOptions"
+]
+BDL_SystemMinimumOutdoorAirControlOptions = BDLEnums.bdl_enums[
+    "SystemMinimumOutdoorAirControlOptions"
+]
+BDL_HumidificationOptions = BDLEnums.bdl_enums["SystemHumidificationOptions"]
+BDL_DualDuctFanOptions = BDLEnums.bdl_enums["SystemDualDuctFanOptions"]
+BDL_ReturnFanOptions = BDLEnums.bdl_enums["SystemReturnFanLocationOptions"]
 
 
 class System(ParentNode):
     """System object in the tree."""
 
-    bdl_command = "SYSTEM"
+    bdl_command = BDL_Commands.SYSTEM
 
     heat_type_map = {
-        "HEAT-PUMP": HeatingSystemOptions.HEAT_PUMP,
-        "FURNACE": HeatingSystemOptions.FURNACE,
-        "ELECTRIC": HeatingSystemOptions.ELECTRIC_RESISTANCE,
-        "HOT-WATER": HeatingSystemOptions.FLUID_LOOP,
-        "NONE": HeatingSystemOptions.NONE,
-        "STEAM": HeatingSystemOptions.OTHER,
-        "DHW-LOOP": HeatingSystemOptions.OTHER,
+        BDL_SysemHeatingTypes.HEAT_PUMP: HeatingSystemOptions.HEAT_PUMP,
+        BDL_SysemHeatingTypes.FURNACE: HeatingSystemOptions.FURNACE,
+        BDL_SysemHeatingTypes.ELECTRIC: HeatingSystemOptions.ELECTRIC_RESISTANCE,
+        BDL_SysemHeatingTypes.HOT_WATER: HeatingSystemOptions.FLUID_LOOP,
+        BDL_SysemHeatingTypes.NONE: HeatingSystemOptions.NONE,
+        BDL_SysemHeatingTypes.STEAM: HeatingSystemOptions.OTHER,
+        BDL_SysemHeatingTypes.DHW_LOOP: HeatingSystemOptions.OTHER,
     }
     cool_type_map = {
-        "ELEC-DX": CoolingSystemOptions.DIRECT_EXPANSION,
-        "CHILLED-WATER": CoolingSystemOptions.FLUID_LOOP,
-        "NONE": CoolingSystemOptions.NONE,
+        BDL_SystemCoolingTypes.ELEC_DX: CoolingSystemOptions.DIRECT_EXPANSION,
+        BDL_SystemCoolingTypes.CHILLED_WATER: CoolingSystemOptions.FLUID_LOOP,
+        BDL_SystemCoolingTypes.NONE: CoolingSystemOptions.NONE,
     }
     supply_fan_map = {
-        "CONSTANT-VOLUME": FanSystemSupplyFanControlOptions.CONSTANT,
-        "SPEED": FanSystemSupplyFanControlOptions.VARIABLE_SPEED_DRIVE,
+        BDL_SupplyFanTypes.CONSTANT_VOLUME: FanSystemSupplyFanControlOptions.CONSTANT,
+        BDL_SupplyFanTypes.SPEED: FanSystemSupplyFanControlOptions.VARIABLE_SPEED_DRIVE,
         #  "": FanSystemSupplyFanControlOptions.MULTISPEED",  no eQUEST options map to MULTISPEED in DOE2.3
-        "INLET": FanSystemSupplyFanControlOptions.INLET_VANE,
-        "DISCHARGE": FanSystemSupplyFanControlOptions.DISCHARGE_DAMPER,
-        "FAN-EIR-FPLR": FanSystemSupplyFanControlOptions.VARIABLE_SPEED_DRIVE,
+        BDL_SupplyFanTypes.INLET: FanSystemSupplyFanControlOptions.INLET_VANE,
+        BDL_SupplyFanTypes.DISCHARGE: FanSystemSupplyFanControlOptions.DISCHARGE_DAMPER,
+        BDL_SupplyFanTypes.FAN_EIR_FPLR: FanSystemSupplyFanControlOptions.VARIABLE_SPEED_DRIVE,
     }
     unocc_fan_operation_map = {
-        "CYCLE-ON-ANY": FanSystemOperationOptions.CYCLING,
-        "CYCLE-ON-FIRST": FanSystemOperationOptions.CYCLING,
-        "STAY-OFF": FanSystemOperationOptions.KEEP_OFF,
-        "ZONE-FANS-ONLY": FanSystemOperationOptions.OTHER,
+        BDL_UnoccupiedFanOperationOptions.CYCLE_ON_ANY: FanSystemOperationOptions.CYCLING,
+        BDL_UnoccupiedFanOperationOptions.CYCLE_ON_FIRST: FanSystemOperationOptions.CYCLING,
+        BDL_UnoccupiedFanOperationOptions.STAY_OFF: FanSystemOperationOptions.KEEP_OFF,
+        BDL_UnoccupiedFanOperationOptions.ZONE_FANS_ONLY: FanSystemOperationOptions.OTHER,
     }
     system_cooling_type_map = {
-        "PSZ": CoolingSystemOptions.DIRECT_EXPANSION,
-        "PMZS": CoolingSystemOptions.DIRECT_EXPANSION,
-        "PVAVS": CoolingSystemOptions.DIRECT_EXPANSION,
-        "PVVT": CoolingSystemOptions.DIRECT_EXPANSION,
-        "HP": CoolingSystemOptions.DIRECT_EXPANSION,  # IS WATER LOOP HEAT PUMP CONSIDERED DIRECT_EXPANSION???
-        "SZRH": CoolingSystemOptions.FLUID_LOOP,
-        "VAVS": CoolingSystemOptions.FLUID_LOOP,
-        "RHFS": CoolingSystemOptions.FLUID_LOOP,
-        "DDS": CoolingSystemOptions.FLUID_LOOP,
-        "MZS": CoolingSystemOptions.FLUID_LOOP,
-        "PIU": None,  # Mapping updated in populate_cooling_system method
-        "FC": CoolingSystemOptions.FLUID_LOOP,
-        "IU": CoolingSystemOptions.FLUID_LOOP,
-        "UVT": CoolingSystemOptions.NONE,
-        "UHT": CoolingSystemOptions.NONE,
-        "RESYS2": CoolingSystemOptions.DIRECT_EXPANSION,
-        "CBVAV": CoolingSystemOptions.FLUID_LOOP,
-        "SUM": CoolingSystemOptions.NONE,
-        "DOAS": None,  # Mapping updated in populate_cooling_system method
+        BDL_SystemTypes.PSZ: CoolingSystemOptions.DIRECT_EXPANSION,
+        BDL_SystemTypes.PMZS: CoolingSystemOptions.DIRECT_EXPANSION,
+        BDL_SystemTypes.PVAVS: CoolingSystemOptions.DIRECT_EXPANSION,
+        BDL_SystemTypes.PVVT: CoolingSystemOptions.DIRECT_EXPANSION,
+        BDL_SystemTypes.HP: CoolingSystemOptions.DIRECT_EXPANSION,  # IS WATER LOOP HEAT PUMP CONSIDERED DIRECT_EXPANSION???
+        BDL_SystemTypes.SZRH: CoolingSystemOptions.FLUID_LOOP,
+        BDL_SystemTypes.VAVS: CoolingSystemOptions.FLUID_LOOP,
+        BDL_SystemTypes.RHFS: CoolingSystemOptions.FLUID_LOOP,
+        BDL_SystemTypes.DDS: CoolingSystemOptions.FLUID_LOOP,
+        BDL_SystemTypes.MZS: CoolingSystemOptions.FLUID_LOOP,
+        BDL_SystemTypes.PIU: None,  # Mapping updated in populate_cooling_system method
+        BDL_SystemTypes.FC: CoolingSystemOptions.FLUID_LOOP,
+        BDL_SystemTypes.IU: CoolingSystemOptions.FLUID_LOOP,
+        BDL_SystemTypes.UVT: CoolingSystemOptions.NONE,
+        BDL_SystemTypes.UHT: CoolingSystemOptions.NONE,
+        BDL_SystemTypes.RESYS2: CoolingSystemOptions.DIRECT_EXPANSION,
+        BDL_SystemTypes.CBVAV: CoolingSystemOptions.FLUID_LOOP,
+        BDL_SystemTypes.SUM: CoolingSystemOptions.NONE,
+        BDL_SystemTypes.DOAS: None,  # Mapping updated in populate_cooling_system method
     }
     economizer_map = {
-        "FIXED": AirEconomizerOptions.FIXED_FRACTION,
-        "OA-TEMP": AirEconomizerOptions.TEMPERATURE,
-        "OA-ENTHALPY": AirEconomizerOptions.ENTHALPY,
-        "DUAL-TEMP": AirEconomizerOptions.DIFFERENTIAL_TEMPERATURE,
-        "DUAL-ENTHALPY": AirEconomizerOptions.DIFFERENTIAL_ENTHALPY,
+        BDL_EconomizerOptions.FIXED: AirEconomizerOptions.FIXED_FRACTION,
+        BDL_EconomizerOptions.OA_TEMP: AirEconomizerOptions.TEMPERATURE,
+        BDL_EconomizerOptions.OA_ENTHALPY: AirEconomizerOptions.ENTHALPY,
+        BDL_EconomizerOptions.DUAL_TEMP: AirEconomizerOptions.DIFFERENTIAL_TEMPERATURE,
+        BDL_EconomizerOptions.DUAL_ENTHALPY: AirEconomizerOptions.DIFFERENTIAL_ENTHALPY,
     }
     recovery_type_map = {
-        "SENSIBLE-HX": EnergyRecoveryOptions.SENSIBLE_HEAT_EXCHANGE,
-        "ENTHALPY-HX": EnergyRecoveryOptions.ENTHALPY_HEAT_EXCHANGE,
-        "SENSIBLE-WHEEL": EnergyRecoveryOptions.SENSIBLE_HEAT_WHEEL,
-        "ENTHALPY-WHEEL": EnergyRecoveryOptions.ENTHALPY_HEAT_WHEEL,
-        "HEAT-PIPE": EnergyRecoveryOptions.HEAT_PIPE,
+        BDL_EnergyRecoveryTypes.SENSIBLE_HX: EnergyRecoveryOptions.SENSIBLE_HEAT_EXCHANGE,
+        BDL_EnergyRecoveryTypes.ENTHALPY_HX: EnergyRecoveryOptions.ENTHALPY_HEAT_EXCHANGE,
+        BDL_EnergyRecoveryTypes.SENSIBLE_WHEEL: EnergyRecoveryOptions.SENSIBLE_HEAT_WHEEL,
+        BDL_EnergyRecoveryTypes.ENTHALPY_WHEEL: EnergyRecoveryOptions.ENTHALPY_HEAT_WHEEL,
+        BDL_EnergyRecoveryTypes.HEAT_PIPE: EnergyRecoveryOptions.HEAT_PIPE,
     }
     has_recovery_map = {
-        "NO": EnergyRecoveryOperationOptions.NONE,
-        "RELIEF-ONLY": None,  # Mapping updated in populate_air_energy_recovery method
-        "EXHAUST-ONLY": None,  # Mapping updated in populate_air_energy_recovery method
-        "RELIEF+EXHAUST": None,  # Mapping updated in populate_air_energy_recovery method
-        "YES": None,  # Mapping updated in populate_air_energy_recovery method
+        BDL_EnergyRecoveryOptions.NO: EnergyRecoveryOperationOptions.NONE,
+        BDL_EnergyRecoveryOptions.RELIEF_ONLY: None,  # Mapping updated in populate_air_energy_recovery method
+        BDL_EnergyRecoveryOptions.EXHAUST_ONLY: None,  # Mapping updated in populate_air_energy_recovery method
+        BDL_EnergyRecoveryOptions.RELIEF_EXHAUST: None,  # Mapping updated in populate_air_energy_recovery method
+        BDL_EnergyRecoveryOptions.YES: None,  # Mapping updated in populate_air_energy_recovery method
     }
     er_operation_map = {
-        "WHEN-FANS-ON": EnergyRecoveryOperationOptions.WHEN_FANS_ON,
-        "WHEN-MIN-OA": EnergyRecoveryOperationOptions.WHEN_MINIMUM_OUTSIDE_AIR,
-        "ERV-SCHEDULE": EnergyRecoveryOperationOptions.SCHEDULED,
-        "OA-EXHAUST-DT": EnergyRecoveryOperationOptions.OTHER,
-        "OA-EXHAUST-DH": EnergyRecoveryOperationOptions.OTHER,
+        BDL_EnergyRecoveryOperationOptions.WHEN_FANS_ON: EnergyRecoveryOperationOptions.WHEN_FANS_ON,
+        BDL_EnergyRecoveryOperationOptions.WHEN_MIN_OA: EnergyRecoveryOperationOptions.WHEN_MINIMUM_OUTSIDE_AIR,
+        BDL_EnergyRecoveryOperationOptions.ERV_SCHEDULE: EnergyRecoveryOperationOptions.SCHEDULED,
+        BDL_EnergyRecoveryOperationOptions.OA_EXHAUST_DT: EnergyRecoveryOperationOptions.OTHER,
+        BDL_EnergyRecoveryOperationOptions.OA_EXHAUST_DH: EnergyRecoveryOperationOptions.OTHER,
     }
     er_sat_control_map = {
-        "FLOAT": EnergyRecoverySupplyAirTemperatureControlOptions.OTHER,
-        "FIXED-SETPT": EnergyRecoverySupplyAirTemperatureControlOptions.FIXED_SETPOINT,
-        "MIXED-AIR-RESET": EnergyRecoverySupplyAirTemperatureControlOptions.MIXED_AIR_RESET,
+        BDL_EnergyRecoveryTemperatureControlOptions.FLOAT: EnergyRecoverySupplyAirTemperatureControlOptions.OTHER,
+        BDL_EnergyRecoveryTemperatureControlOptions.FIXED_SETPT: EnergyRecoverySupplyAirTemperatureControlOptions.FIXED_SETPOINT,
+        BDL_EnergyRecoveryTemperatureControlOptions.MIXED_AIR_RESET: EnergyRecoverySupplyAirTemperatureControlOptions.MIXED_AIR_RESET,
     }
     dcv_map = {
-        "FRAC-OF-DESIGN-FLOW": DemandControlVentilationControlOptions.NONE,
-        "FRAC-OF-HOURLY-FLOW": DemandControlVentilationControlOptions.NONE,
-        "DCV-RETURN-SENSOR": DemandControlVentilationControlOptions.CO2_RETURN_AIR,
-        "DCV-ZONE-SENSORS": DemandControlVentilationControlOptions.CO2_ZONE,
+        BDL_SystemMinimumOutdoorAirControlOptions.FRAC_OF_DESIGN_FLOW: DemandControlVentilationControlOptions.NONE,
+        BDL_SystemMinimumOutdoorAirControlOptions.FRAC_OF_HOURLY_FLOW: DemandControlVentilationControlOptions.NONE,
+        BDL_SystemMinimumOutdoorAirControlOptions.DCV_RETURN_SENSOR: DemandControlVentilationControlOptions.CO2_RETURN_AIR,
+        BDL_SystemMinimumOutdoorAirControlOptions.DCV_ZONE_SENSORS: DemandControlVentilationControlOptions.CO2_ZONE,
     }
     humidification_map = {
-        "NONE": HumidificationOptions.NONE,
-        "ELECTRIC": HumidificationOptions.OTHER,
-        "HOT-WATER": HumidificationOptions.OTHER,
-        "STEAM": HumidificationOptions.OTHER,
-        "FURNACE": HumidificationOptions.OTHER,
-        "HEAT-PUMP": HumidificationOptions.OTHER,
-        "DHW-LOOP": HumidificationOptions.OTHER,
+        BDL_HumidificationOptions.NONE: HumidificationOptions.NONE,
+        BDL_HumidificationOptions.ELECTRIC: HumidificationOptions.OTHER,
+        BDL_HumidificationOptions.HOT_WATER: HumidificationOptions.OTHER,
+        BDL_HumidificationOptions.STEAM: HumidificationOptions.OTHER,
+        BDL_HumidificationOptions.FURNACE: HumidificationOptions.OTHER,
+        BDL_HumidificationOptions.HEAT_PUMP: HumidificationOptions.OTHER,
+        BDL_HumidificationOptions.DHW_LOOP: HumidificationOptions.OTHER,
     }
 
     def __init__(self, u_name, rmd):
@@ -286,25 +311,27 @@ class System(ParentNode):
 
     def populate_data_elements(self):
         """Populate data elements from the keyword_value pairs returned from model_input_reader."""
-        if self.keyword_value_pairs.get("TYPE") == "SUM":
+        if self.keyword_value_pairs.get(BDL_SystemKeywords.TYPE) == BDL_SystemTypes.SUM:
             self.omit = True
             return
 
-        cool_source = self.keyword_value_pairs.get("COOL-SOURCE")
+        cool_source = self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_SOURCE)
         cool_type = self.cool_type_map.get(cool_source)
         # Update the cooling type map according to the COOL-SOURCE keyword (only used for PIU and DOAS)
         self.system_cooling_type_map.update(
             {
-                "PIU": cool_type,
-                "DOAS": cool_type,
+                BDL_SystemTypes.PIU: cool_type,
+                BDL_SystemTypes.DOAS: cool_type,
             }
         )
 
-        heat_type = self.heat_type_map.get(self.keyword_value_pairs.get("HEAT-SOURCE"))
+        heat_type = self.heat_type_map.get(
+            self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_SOURCE)
+        )
         # if the system type is FC with HW or no heat, this system is represented as terminal fan, heating, cooling
         terminal_system_conditions = self.keyword_value_pairs.get(
-            "TYPE"
-        ) == "FC" and heat_type in [
+            BDL_SystemKeywords.TYPE
+        ) == BDL_SystemTypes.FC and heat_type in [
             HeatingSystemOptions.FLUID_LOOP,
             HeatingSystemOptions.NONE,
         ]
@@ -470,8 +497,9 @@ class System(ParentNode):
         }
 
         return_or_relief = (
-            self.keyword_value_pairs.get("RETURN-STATIC") is not None
-            or self.keyword_value_pairs.get("RETURN-KW/FLOW") is not None
+            self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_STATIC) is not None
+            or self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_KW_FLOW)
+            is not None
         )
 
         if return_or_relief:
@@ -486,7 +514,10 @@ class System(ParentNode):
                 "",
             )
 
-        if self.keyword_value_pairs.get("DDS-TYPE") == "DUAL-FAN":
+        if (
+            self.keyword_value_pairs.get(BDL_SystemKeywords.DDS_TYPE)
+            == BDL_DualDuctFanOptions.DUAL_FAN
+        ):
             requests["Heating Supply Fan - Airflow"] = (
                 2201034,
                 self.u_name,
@@ -494,7 +525,7 @@ class System(ParentNode):
             )
             requests["Heating Supply Fan - Power"] = (2201036, self.u_name, "")
 
-        if self.cool_sys_type == "FLUID_LOOP":
+        if self.cool_sys_type == CoolingSystemOptions.FLUID_LOOP:
             requests[
                 "Design Day Cooling - chilled water - SYSTEM - capacity, btu/hr"
             ] = (2203006, self.u_name, "")
@@ -505,18 +536,18 @@ class System(ParentNode):
             )
 
         match self.preheat_sys_type:
-            case "FLUID_LOOP":
+            case HeatingSystemOptions.FLUID_LOOP:
                 pass
-            case "ELECTRIC_RESISTANCE":
+            case HeatingSystemOptions.ELECTRIC_RESISTANCE:
                 pass
-            case "FURNACE":
+            case HeatingSystemOptions.FURNACE:
                 requests["Design Preheat - furnace - SYSTEM - capacity, btu/hr"] = (
                     2203311,
                     self.u_name,
                     "",
                 )
 
-        if self.heat_sys_type == "FLUID_LOOP":
+        if self.heat_sys_type == HeatingSystemOptions.FLUID_LOOP:
             requests["Design Day Heating - hot water - SYSTEM - capacity, btu/hr"] = (
                 2203258,
                 self.u_name,
@@ -630,39 +661,43 @@ class System(ParentNode):
         self.fan_sys_id = self.u_name + " FanSys"
 
         self.fan_sys_fan_control = self.supply_fan_map.get(
-            self.keyword_value_pairs.get("TYPE")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.FAN_CONTROL)
         )
 
         self.fan_sys_operation_during_unocc = self.unocc_fan_operation_map.get(
-            self.keyword_value_pairs.get("NIGHT-CYCLE-CTRL")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.NIGHT_CYCLE_CTRL)
         )
 
         self.fan_sys_demand_control_ventilation_control = self.dcv_map.get(
-            self.keyword_value_pairs.get("MIN-OA-METHOD")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.MIN_OA_METHOD)
         )
 
     def populate_heating_system(self):
         self.heat_sys_id = self.u_name + " HeatSys"
 
         self.heat_sys_type = self.heat_type_map.get(
-            self.keyword_value_pairs.get("HEAT-SOURCE")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_SOURCE)
         )
 
-        sizing_ratio = self.try_float(self.keyword_value_pairs.get("SIZING-RATIO"))
+        sizing_ratio = self.try_float(
+            self.keyword_value_pairs.get(BDL_SystemKeywords.SIZING_RATIO)
+        )
         heat_sizing_ratio = self.try_float(
-            self.keyword_value_pairs.get("HEAT-SIZING-RATI")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_SIZING_RATI)
         )
         if sizing_ratio is not None and heat_sizing_ratio is not None:
             self.heat_sys_oversizing_factor = sizing_ratio * heat_sizing_ratio - 1
 
-        self.heat_sys_hot_water_loop = self.keyword_value_pairs.get("HW-LOOP")
+        self.heat_sys_hot_water_loop = self.keyword_value_pairs.get(
+            BDL_SystemKeywords.HW_LOOP
+        )
 
         self.heat_sys_water_source_heat_pump_loop = self.keyword_value_pairs.get(
-            "CW-LOOP"
+            BDL_SystemKeywords.CW_LOOP
         )
 
         self.heat_sys_rated_capacity = self.try_float(
-            self.keyword_value_pairs.get("HEATING-CAPACITY")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.HEATING_CAPACITY)
         )
 
         self.heat_sys_is_sized_based_on_design_day = not bool(
@@ -670,33 +705,39 @@ class System(ParentNode):
         )
 
         self.heat_sys_humidification_type = self.humidification_map.get(
-            self.keyword_value_pairs.get("HUMIDIFIER-TYPE")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.HUMIDIFIER_TYPE)
         )
 
         self.heat_sys_heating_coil_setpoint = self.try_float(
-            self.keyword_value_pairs.get("HEAT-T")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_T)
         )
 
     def populate_cooling_system(self):
         self.cool_sys_id = self.u_name + " CoolSys"
 
         self.cool_sys_type = self.system_cooling_type_map.get(
-            self.keyword_value_pairs.get("TYPE")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.TYPE)
         )
 
-        sizing_ratio = self.try_float(self.keyword_value_pairs.get("SIZING-RATIO"))
+        sizing_ratio = self.try_float(
+            self.keyword_value_pairs.get(BDL_SystemKeywords.SIZING_RATIO)
+        )
         cool_sizing_ratio = self.try_float(
-            self.keyword_value_pairs.get("COOL-SIZING-RATI")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_SIZING_RATI)
         )
         if sizing_ratio is not None and cool_sizing_ratio is not None:
             self.cool_sys_oversizing_factor = sizing_ratio * cool_sizing_ratio - 1
 
-        self.cool_sys_chilled_water_loop = self.keyword_value_pairs.get("CHW-LOOP")
+        self.cool_sys_chilled_water_loop = self.keyword_value_pairs.get(
+            BDL_SystemKeywords.CHW_LOOP
+        )
 
-        self.cool_sys_condenser_water_loop = self.keyword_value_pairs.get("CW-LOOP")
+        self.cool_sys_condenser_water_loop = self.keyword_value_pairs.get(
+            BDL_SystemKeywords.CW_LOOP
+        )
 
         self.cool_sys_rated_total_capacity = self.try_float(
-            self.keyword_value_pairs.get("COOLING-CAPACITY")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.COOLING_CAPACITY)
         )
 
         self.cool_sys_is_sized_based_on_design_day = not bool(
@@ -707,11 +748,11 @@ class System(ParentNode):
         self.preheat_sys_id = self.u_name + " PreheatSys"
 
         self.preheat_sys_type = self.heat_type_map.get(
-            self.keyword_value_pairs.get("PREHEAT-SOURCE")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.PREHEAT_SOURCE)
         )
 
         self.preheat_sys_rated_capacity = self.try_float(
-            self.keyword_value_pairs.get("PREHEAT-CAPACITY")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.PREHEAT_CAPACITY)
         )
 
         self.preheat_sys_is_sized_based_on_design_day = not bool(
@@ -719,7 +760,7 @@ class System(ParentNode):
         )
 
         self.preheat_sys_heating_coil_setpoint = self.try_float(
-            self.keyword_value_pairs.get("PREHEAT-T")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.PREHEAT_T)
         )
 
     def populate_fans(self, output_data):
@@ -731,23 +772,26 @@ class System(ParentNode):
         # noinspection PyTypeChecker
         self.fan_specification_method[0] = (
             FanSpecificationMethodOptions.DETAILED
-            if self.keyword_value_pairs.get("SUPPLY-STATIC") is not None
+            if self.keyword_value_pairs.get(BDL_SystemKeywords.SUPPLY_STATIC)
+            is not None
             else FanSpecificationMethodOptions.SIMPLE
         )
         self.fan_design_pressure_rise[0] = self.try_float(
-            self.keyword_value_pairs.get("SUPPLY-STATIC")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.SUPPLY_STATIC)
         )
 
         # Determine if there is a return or relief fan
         return_or_relief = (
-            self.keyword_value_pairs.get("RETURN-STATIC") is not None
-            or self.keyword_value_pairs.get("RETURN-KW/FLOW") is not None
+            self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_STATIC) is not None
+            or self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_KW_FLOW)
+            is not None
         )
 
         # If there is a return or relief fan and its location is set to RELIEF
         if (
             return_or_relief
-            and self.keyword_value_pairs.get("RETURN-FAN-LOC") == "RELIEF"
+            and self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_FAN_LOC)
+            == BDL_ReturnFanOptions.RELIEF
         ):
             self.fan_id[2] = self.u_name + " ReliefFan"
             self.fan_design_airflow[2] = output_data.get("Return Fan - Airflow", None)
@@ -757,11 +801,12 @@ class System(ParentNode):
             # noinspection PyTypeChecker
             self.fan_specification_method[2] = (
                 FanSpecificationMethodOptions.DETAILED
-                if self.keyword_value_pairs.get("RETURN-STATIC") is not None
+                if self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_STATIC)
+                is not None
                 else FanSpecificationMethodOptions.SIMPLE
             )
             self.fan_design_pressure_rise[2] = self.try_float(
-                self.keyword_value_pairs.get("RETURN-STATIC")
+                self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_STATIC)
             )
 
         # If the return or relief fan location is not set to RELIEF, it is categorized as a return fan
@@ -774,14 +819,18 @@ class System(ParentNode):
             # noinspection PyTypeChecker
             self.fan_specification_method[1] = (
                 FanSpecificationMethodOptions.DETAILED
-                if self.keyword_value_pairs.get("RETURN-STATIC") is not None
+                if self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_STATIC)
+                is not None
                 else FanSpecificationMethodOptions.SIMPLE
             )
             self.fan_design_pressure_rise[1] = self.try_float(
-                self.keyword_value_pairs.get("RETURN-STATIC")
+                self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_STATIC)
             )
 
-        if self.keyword_value_pairs.get("DDS-TYPE") == "DUAL-FAN":
+        if (
+            self.keyword_value_pairs.get(BDL_SystemKeywords.DDS_TYPE)
+            == BDL_DualDuctFanOptions.DUAL_FAN
+        ):
             self.fan_id[3] = self.u_name + " HeatingSupplyFan"
             self.fan_design_airflow[3] = output_data.get(
                 "Heating Supply Fan - Airflow", None
@@ -792,57 +841,64 @@ class System(ParentNode):
             # noinspection PyTypeChecker
             self.fan_specification_method[3] = (
                 FanSpecificationMethodOptions.DETAILED
-                if self.keyword_value_pairs.get("HSUPPLY-STATIC") is not None
+                if self.keyword_value_pairs.get(BDL_SystemKeywords.HSUPPLY_STATIC)
+                is not None
                 else FanSpecificationMethodOptions.SIMPLE
             )
             self.fan_design_pressure_rise[3] = self.try_float(
-                self.keyword_value_pairs.get("HSUPPLY-STATIC")
+                self.keyword_value_pairs.get(BDL_SystemKeywords.HSUPPLY_STATIC)
             )
 
     def populate_air_economizer(self):
         self.air_econ_id = self.u_name + " AirEconomizer"
         self.air_econ_type = self.economizer_map.get(
-            self.keyword_value_pairs.get("OA-CONTROL")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.OA_CONTROL)
         )
         self.air_econ_high_limit_shutoff_temperature = self.try_float(
-            self.keyword_value_pairs.get("ECONO-LIMIT-T")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.ECONO_LIMIT_T)
         )
 
         self.air_econ_is_integrated = (
             True
-            if self.cool_sys_type == "FLUID_LOOP"
-            else not self.boolean_map.get(self.keyword_value_pairs.get("ECONO-LOCKOUT"))
+            if self.cool_sys_type == CoolingSystemOptions.FLUID_LOOP
+            else not self.boolean_map.get(
+                self.keyword_value_pairs.get(BDL_SystemKeywords.ECONO_LOCKOUT)
+            )
         )
 
     def populate_air_energy_recovery(self):
         self.air_energy_recovery_id = self.u_name + " AirEnergyRecovery"
 
-        recover_exhaust = self.keyword_value_pairs.get("RECOVER-EXHAUST")
+        recover_exhaust = self.keyword_value_pairs.get(
+            BDL_SystemKeywords.RECOVER_EXHAUST
+        )
         recovery_type = self.recovery_type_map.get(
-            self.keyword_value_pairs.get("ERV-RECOVER-TYPE")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.ERV_RECOVER_TYPE)
         )
         self.has_recovery_map.update(
             {
-                "RELIEF-ONLY": recovery_type,
-                "EXHAUST-ONLY": recovery_type,
-                "RELIEF+EXHAUST": recovery_type,
-                "YES": recovery_type,
+                BDL_EnergyRecoveryOptions.RELIEF_ONLY: recovery_type,
+                BDL_EnergyRecoveryOptions.EXHAUST_ONLY: recovery_type,
+                BDL_EnergyRecoveryOptions.RELIEF_EXHAUST: recovery_type,
+                BDL_EnergyRecoveryOptions.YES: recovery_type,
             }
         )
         self.air_energy_recovery_type = self.has_recovery_map.get(recover_exhaust)
 
         self.air_energy_recovery_operation = self.er_operation_map.get(
-            self.keyword_value_pairs.get("ERV-RUN-CTRL")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.ERV_RUN_CTRL)
         )
 
         self.air_energy_recovery_supply_air_temperature_control = (
-            self.er_sat_control_map.get(self.keyword_value_pairs.get("ERV-TEMP-CTRL"))
+            self.er_sat_control_map.get(
+                self.keyword_value_pairs.get(BDL_SystemKeywords.ERV_TEMP_CTRL)
+            )
         )
 
         self.air_energy_recovery_design_sensible_effectiveness = self.try_float(
-            self.keyword_value_pairs.get("ERV-SENSIBLE-EFF")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.ERV_SENSIBLE_EFF)
         )
 
         self.air_energy_recovery_design_latent_effectiveness = self.try_float(
-            self.keyword_value_pairs.get("ERV-LATENT-EFF")
+            self.keyword_value_pairs.get(BDL_SystemKeywords.ERV_LATENT_EFF)
         )

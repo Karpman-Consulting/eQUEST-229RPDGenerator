@@ -1,10 +1,17 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
+from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
+
+
+BDL_Commands = BDLEnums.bdl_enums["Commands"]
+BDL_ScheduleKeywords = BDLEnums.bdl_enums["ScheduleKeywords"]
+BDL_ScheduleTypes = BDLEnums.bdl_enums["ScheduleTypes"]
 
 
 class Schedule(BaseNode):
     """Schedule object in the tree."""
 
-    bdl_command = "SCHEDULE-PD"
+    bdl_command = BDL_Commands.SCHEDULE_PD
+
     year = None
     day_of_week_for_january_1 = None
     holiday_type = None
@@ -12,7 +19,12 @@ class Schedule(BaseNode):
     holiday_days = None
     annual_calendar = {}
     LAST_DAY = 364
-    supported_hourly_schedules = ["ON/OFF", "FRACTION", "MULTIPLIER", "TEMPERATURE"]
+    supported_hourly_schedules = [
+        BDL_ScheduleTypes.ON_OFF,
+        BDL_ScheduleTypes.FRACTION,
+        BDL_ScheduleTypes.MULTIPLIER,
+        BDL_ScheduleTypes.TEMPERATURE,
+    ]
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
@@ -41,7 +53,7 @@ class Schedule(BaseNode):
     def populate_data_elements(self):
 
         # Get the type of schedule
-        ann_sch_type = self.keyword_value_pairs.get("TYPE")
+        ann_sch_type = self.keyword_value_pairs.get(BDL_ScheduleKeywords.TYPE)
 
         # There are no hourly values for temperature and ratio reset schedules so ignore those types
         if ann_sch_type in self.supported_hourly_schedules:
@@ -49,21 +61,27 @@ class Schedule(BaseNode):
 
             # Get the month value where a new week-schedule begins
             ann_months = (
-                self.keyword_value_pairs.get("MONTH")
-                if isinstance(self.keyword_value_pairs.get("MONTH"), list)
-                else [self.keyword_value_pairs.get("MONTH")]
+                self.keyword_value_pairs.get(BDL_ScheduleKeywords.MONTH)
+                if isinstance(
+                    self.keyword_value_pairs.get(BDL_ScheduleKeywords.MONTH), list
+                )
+                else [self.keyword_value_pairs.get(BDL_ScheduleKeywords.MONTH)]
             )
             ann_months = [int(float(val)) for val in ann_months]
 
             # Get the day value where a new week-schedule begins
             ann_days = (
-                self.keyword_value_pairs.get("DAY")
-                if isinstance(self.keyword_value_pairs.get("DAY"), list)
-                else [self.keyword_value_pairs.get("DAY")]
+                self.keyword_value_pairs.get(BDL_ScheduleKeywords.DAY)
+                if isinstance(
+                    self.keyword_value_pairs.get(BDL_ScheduleKeywords.DAY), list
+                )
+                else [self.keyword_value_pairs.get(BDL_ScheduleKeywords.DAY)]
             )
             ann_days = [int(float(val)) for val in ann_days]
 
-            week_schedules = [self.keyword_value_pairs.get("WEEK-SCHEDULES")]
+            week_schedules = [
+                self.keyword_value_pairs.get(BDL_ScheduleKeywords.WEEK_SCHEDULES)
+            ]
 
             # Create a list to hold the index where there is a change in week schedule based on mo/day in ann sch
             schedule_change_indices = [

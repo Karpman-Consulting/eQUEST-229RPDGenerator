@@ -1,5 +1,6 @@
 from rpd_generator.bdl_structure.child_node import ChildNode
 from rpd_generator.schema.schema_enums import SchemaEnums
+from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 
 SubsurfaceClassificationOptions = SchemaEnums.schema_enums[
@@ -15,12 +16,14 @@ SubsurfaceSubclassificationOptions2019ASHRAE901 = SchemaEnums.schema_enums[
 SubsurfaceFrameOptions2019ASHRAE901 = SchemaEnums.schema_enums[
     "SubsurfaceFrameOptions2019ASHRAE901"
 ]
+BDL_Commands = BDLEnums.bdl_enums["Commands"]
+BDL_DoorKeywords = BDLEnums.bdl_enums["DoorKeywords"]
 
 
 class Door(ChildNode):
     """Door object in the tree."""
 
-    bdl_command = "DOOR"
+    bdl_command = BDL_Commands.DOOR
 
     def __init__(self, u_name, parent, rmd):
         super().__init__(u_name, parent, rmd)
@@ -57,8 +60,8 @@ class Door(ChildNode):
         """Populate data elements for door object."""
         self.classification = SubsurfaceClassificationOptions.DOOR
 
-        height = self.try_float(self.keyword_value_pairs.get("HEIGHT"))
-        width = self.try_float(self.keyword_value_pairs.get("WIDTH"))
+        height = self.try_float(self.keyword_value_pairs.get(BDL_DoorKeywords.HEIGHT))
+        width = self.try_float(self.keyword_value_pairs.get(BDL_DoorKeywords.WIDTH))
         if height is not None and width is not None:
             self.opaque_area = height * width
 
