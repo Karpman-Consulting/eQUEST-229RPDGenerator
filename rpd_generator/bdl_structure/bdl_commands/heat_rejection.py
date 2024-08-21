@@ -1,5 +1,6 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
 from rpd_generator.schema.schema_enums import SchemaEnums
+from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 
 HeatRejectionOptions = SchemaEnums.schema_enums["HeatRejectionOptions"]
@@ -8,27 +9,31 @@ HeatRejectionFluidOptions = SchemaEnums.schema_enums["HeatRejectionFluidOptions"
 HeatRejectionFanSpeedControlOptions = SchemaEnums.schema_enums[
     "HeatRejectionFanSpeedControlOptions"
 ]
+BDL_Commands = BDLEnums.bdl_enums["Commands"]
+BDL_HeatRejectionKeywords = BDLEnums.bdl_enums["HeatRejectionKeywords"]
+BDL_HeatRejectionTypes = BDLEnums.bdl_enums["HeatRejectionTypes"]
+BDL_HeatRejectionFanSpeedControlOptions = BDLEnums.bdl_enums["HeatRejectionFanSpeedControlOptions"]
 
 
 class HeatRejection(BaseNode):
     """Heat Rejection object in the tree."""
 
-    bdl_command = "HEAT-REJECTION"
+    bdl_command = BDL_Commands.HEAT_REJECTION
 
     heat_rejection_type_map = {
-        "OPEN-TWR": HeatRejectionOptions.OPEN_CIRCUIT_COOLING_TOWER,
-        "OPEN-TWR&HX": HeatRejectionOptions.OPEN_CIRCUIT_COOLING_TOWER,  # Should this be OTHER?
-        "FLUID-COOLER": HeatRejectionOptions.CLOSED_CIRCUIT_COOLING_TOWER,
-        "DRYCOOLER": HeatRejectionOptions.DRY_COOLER,
+        BDL_HeatRejectionTypes.OPEN_TWR: HeatRejectionOptions.OPEN_CIRCUIT_COOLING_TOWER,
+        BDL_HeatRejectionTypes.OPEN_TWR_HX: HeatRejectionOptions.OPEN_CIRCUIT_COOLING_TOWER,  # Should this be OTHER?
+        BDL_HeatRejectionTypes.FLUID_COOLER: HeatRejectionOptions.CLOSED_CIRCUIT_COOLING_TOWER,
+        BDL_HeatRejectionTypes.DRYCOOLER: HeatRejectionOptions.DRY_COOLER,
         # "": HeatRejectionOptions.EVAPORATIVE_CONDENSER,  # eQUEST chrashes when selecting Evap Condenser. Not shown in Helptext.
     }
 
     fan_spd_ctrl_map = {
-        "ONE-SPEED-FAN": HeatRejectionFanSpeedControlOptions.CONSTANT,
-        "FLUID-BYPASS": HeatRejectionFanSpeedControlOptions.CONSTANT,
-        "TWO-SPEED-FAN": HeatRejectionFanSpeedControlOptions.TWO_SPEED,
-        "VARIABLE-SPEED-FAN": HeatRejectionFanSpeedControlOptions.VARIABLE_SPEED,
-        "DISCHARGE-DAMPER": HeatRejectionFanSpeedControlOptions.OTHER,
+        BDL_HeatRejectionFanSpeedControlOptions.ONE_SPEED_FAN: HeatRejectionFanSpeedControlOptions.CONSTANT,
+        BDL_HeatRejectionFanSpeedControlOptions.FLUID_BYPASS: HeatRejectionFanSpeedControlOptions.CONSTANT,
+        BDL_HeatRejectionFanSpeedControlOptions.TWO_SPEED_FAN: HeatRejectionFanSpeedControlOptions.TWO_SPEED,
+        BDL_HeatRejectionFanSpeedControlOptions.VARIABLE_SPEED_FAN: HeatRejectionFanSpeedControlOptions.VARIABLE_SPEED,
+        BDL_HeatRejectionFanSpeedControlOptions.DISCHARGE_DAMPER: HeatRejectionFanSpeedControlOptions.OTHER,
     }
 
     def __init__(self, u_name, rmd):
@@ -60,22 +65,22 @@ class HeatRejection(BaseNode):
         requests = self.get_output_requests()
         output_data = self.get_output_data(requests)
 
-        self.loop = self.keyword_value_pairs.get("CW-LOOP")
+        self.loop = self.keyword_value_pairs.get(BDL_HeatRejectionKeywords.CW_LOOP)
 
         self.type = self.heat_rejection_type_map.get(
-            self.keyword_value_pairs.get("TYPE")
+            self.keyword_value_pairs.get(BDL_HeatRejectionKeywords.TYPE)
         )
 
         self.fan_speed_control = self.fan_spd_ctrl_map.get(
-            self.keyword_value_pairs.get("CAPACITY-CTRL")
+            self.keyword_value_pairs.get(BDL_HeatRejectionKeywords.CAPACITY_CTRL)
         )
 
-        self.range = self.try_float(self.keyword_value_pairs.get("RATED-RANGE"))
+        self.range = self.try_float(self.keyword_value_pairs.get(BDL_HeatRejectionKeywords.RATED_RANGE))
 
-        self.approach = self.try_float(self.keyword_value_pairs.get("RATED-APPROACH"))
+        self.approach = self.try_float(self.keyword_value_pairs.get(BDL_HeatRejectionKeywords.RATED_APPROACH))
 
         self.design_wetbulb_temperature = self.try_float(
-            self.keyword_value_pairs.get("DESIGN-WETBULB")
+            self.keyword_value_pairs.get(BDL_HeatRejectionKeywords.DESIGN_WETBULB)
         )
 
         self.rated_water_flowrate = self.try_float(
@@ -89,7 +94,7 @@ class HeatRejection(BaseNode):
             )
 
         # Assign pump data elements populated from the heat rejection keyword value pairs
-        cw_pump_name = self.keyword_value_pairs.get("CW-PUMP")
+        cw_pump_name = self.keyword_value_pairs.get(BDL_HeatRejectionKeywords.CW_PUMP)
         if cw_pump_name is not None:
             pump = self.rmd.bdl_obj_instances.get(cw_pump_name)
             if pump is not None:
