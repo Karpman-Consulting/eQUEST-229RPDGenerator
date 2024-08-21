@@ -1,11 +1,18 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
 from rpd_generator.bdl_structure.base_definition import BaseDefinition
+from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
+
+
+BDL_Commands = BDLEnums.bdl_enums["Commands"]
+BDL_MaterialKeywords = BDLEnums.bdl_enums["MaterialKeywords"]
+BDL_LayerKeywords = BDLEnums.bdl_enums["LayerKeywords"]
+BDL_MaterialTypes = BDLEnums.bdl_enums["MaterialTypes"]
 
 
 class Material(BaseNode):
     """Material object in the tree."""
 
-    bdl_command = "MATERIAL"
+    bdl_command = BDL_Commands.MATERIAL
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
@@ -25,23 +32,23 @@ class Material(BaseNode):
 
     def populate_data_elements(self):
         """Populate data elements for material object."""
-        self.material_type = self.keyword_value_pairs.get("TYPE")
+        self.material_type = self.keyword_value_pairs.get(BDL_MaterialKeywords.TYPE)
 
-        if self.material_type == "PROPERTIES":
-            self.thickness = self.try_float(self.keyword_value_pairs.get("THICKNESS"))
+        if self.material_type == BDL_MaterialTypes.PROPERTIES:
+            self.thickness = self.try_float(self.keyword_value_pairs.get(BDL_MaterialKeywords.THICKNESS))
 
             self.thermal_conductivity = self.try_float(
-                self.keyword_value_pairs.get("CONDUCTIVITY")
+                self.keyword_value_pairs.get(BDL_MaterialKeywords.CONDUCTIVITY)
             )
 
-            self.density = self.try_float(self.keyword_value_pairs.get("DENSITY"))
+            self.density = self.try_float(self.keyword_value_pairs.get(BDL_MaterialKeywords.DENSITY))
 
             self.specific_heat = self.try_float(
-                self.keyword_value_pairs.get("SPECIFIC-HEAT")
+                self.keyword_value_pairs.get(BDL_MaterialKeywords.SPECIFIC_HEAT)
             )
 
-        elif self.material_type == "RESISTANCE":
-            self.r_value = self.try_float(self.keyword_value_pairs.get("RESISTANCE"))
+        elif self.material_type == BDL_MaterialTypes.RESISTANCE:
+            self.r_value = self.try_float(self.keyword_value_pairs.get(BDL_MaterialKeywords.RESISTANCE))
 
     def populate_data_group(self):
         """Populate schema structure for material object."""
@@ -67,7 +74,7 @@ class Material(BaseNode):
 class Layers(BaseDefinition):
     """Layers object in the tree."""
 
-    bdl_command = "LAYERS"
+    bdl_command = BDL_Commands.LAYERS
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
@@ -79,7 +86,7 @@ class Layers(BaseDefinition):
 
     def populate_data_elements(self):
         """Populate data elements for layers object."""
-        material_references = self.keyword_value_pairs.get("MATERIAL")
+        material_references = self.keyword_value_pairs.get(BDL_LayerKeywords.MATERIAL)
         self.material_references = (
             material_references if isinstance(material_references, list) else []
         )
