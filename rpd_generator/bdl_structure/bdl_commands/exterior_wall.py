@@ -116,7 +116,9 @@ class ExteriorWall(ChildNode, ParentNode):
         )
         if construction is not None:
             self.absorptance_solar_exterior = self.try_float(
-                construction.keyword_value_pairs.get(BDL_ConstructionKeywords.ABSORPTANCE)
+                construction.keyword_value_pairs.get(
+                    BDL_ConstructionKeywords.ABSORPTANCE
+                )
             )
 
     def get_output_requests(self):
