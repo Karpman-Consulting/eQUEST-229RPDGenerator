@@ -15,7 +15,7 @@ class _ListEnum:
 
     def __init__(self, _list):
         for str_item in _list:
-            item_key = str_item.replace("-", "_").replace("/", "_").replace("&", "_")
+            item_key = str_item.replace("-", "_").replace("/", "_").replace("&", "_").replace("+", "_")
             setattr(self, item_key, str_item)
 
     def get_list(self):
@@ -59,11 +59,13 @@ class BDLEnums:
                 "DOOR",
                 "LOAD-MANAGEMENT",
                 "EQUIP-CTRL",
-                "DESIGN-DAY"
+                "DESIGN-DAY",
+                "CONDENSING-UNIT",
             ]
         ),
         "FuelTypes": _ListEnum(
             [
+                "ELECTRICITY",
                 "NATURAL-GAS",
                 "LPG",
                 "FUEL-OIL",
@@ -444,7 +446,7 @@ class BDLEnums:
                 "CIRCULATION-LOOP",
             ]
         ),
-        "SysemHeatingTypes": _ListEnum(
+        "SystemHeatingTypes": _ListEnum(
             [
                 "HEAT-PUMP",
                 "FURNACE",
@@ -670,8 +672,9 @@ class BDLEnums:
         ),
         "BaseboardControlOptions": _ListEnum(
             [
-                "CONSTANT",
-                "VARIABLE",
+                "NONE",
+                "THERMOSTATIC",
+                "OUTDOOR-RESET",
             ]
         ),
         "ZoneKeywords": _ListEnum(

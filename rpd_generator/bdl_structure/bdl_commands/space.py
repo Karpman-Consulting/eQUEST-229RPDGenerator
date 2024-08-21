@@ -338,7 +338,7 @@ class Space(ChildNode, ParentNode):
         self.zone.infil_algorithm_name = self.infiltration_algorithm_map.get(
             infiltration_method
         )
-        if infiltration_method == InfiltrationMethodOptions.AIR_CHANGE:
+        if infiltration_method == BDL_InfiltrationAlgorithmOptions.AIR_CHANGE:
             flow_per_area = self.try_float(
                 self.keyword_value_pairs.get(BDL_SpaceKeywords.INF_FLOW_AREA)
             )

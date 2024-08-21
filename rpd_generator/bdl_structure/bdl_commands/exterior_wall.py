@@ -12,6 +12,7 @@ AdditionalSurfaceAdjacencyOptions2019ASHRAE901 = SchemaEnums.schema_enums[
 StatusOptions = SchemaEnums.schema_enums["StatusOptions"]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_ExteriorWallKeywords = BDLEnums.bdl_enums["ExteriorWallKeywords"]
+BDL_ConstructionKeywords = BDLEnums.bdl_enums["ConstructionKeywords"]
 BDL_WallLocationOptions = BDLEnums.bdl_enums["WallLocationOptions"]
 
 
@@ -101,7 +102,7 @@ class ExteriorWall(ChildNode, ParentNode):
         )
         if construction is not None:
             self.absorptance_solar_exterior = self.try_float(
-                construction.keyword_value_pairs.get(BDL_ExteriorWallKeywords.ABSORPTANCE)
+                construction.keyword_value_pairs.get(BDL_ConstructionKeywords.ABSORPTANCE)
             )
 
     def get_output_requests(self):

@@ -42,7 +42,7 @@ class CirculationLoop(BaseNode):
         BDL_CirculationLoopOperationOptions.DEMAND_ONLY: FluidLoopOperationOptions.INTERMITTENT,
         BDL_CirculationLoopOperationOptions.SNAP: FluidLoopOperationOptions.INTERMITTENT,
         BDL_CirculationLoopOperationOptions.SCHEDULED: FluidLoopOperationOptions.SCHEDULED,
-        BDL_CirculationLoopOperationOptions.SUBHOUR-DEMAND: FluidLoopOperationOptions.INTERMITTENT,
+        BDL_CirculationLoopOperationOptions.SUBHOUR_DEMAND: FluidLoopOperationOptions.INTERMITTENT,
     }
 
     temp_reset_map = {

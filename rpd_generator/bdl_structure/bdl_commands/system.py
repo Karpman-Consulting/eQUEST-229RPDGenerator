@@ -47,7 +47,7 @@ BDL_SystemMinimumOutdoorAirControlOptions = BDLEnums.bdl_enums[
 ]
 BDL_HumidificationOptions = BDLEnums.bdl_enums["SystemHumidificationOptions"]
 BDL_DualDuctFanOptions = BDLEnums.bdl_enums["SystemDualDuctFanOptions"]
-BDL_ReturnFanOptions = BDLEnums.bdl_enums["SystemReturnFanOptions"]
+BDL_ReturnFanOptions = BDLEnums.bdl_enums["SystemReturnFanLocationOptions"]
 
 
 class System(ParentNode):
