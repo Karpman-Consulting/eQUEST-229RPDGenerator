@@ -1,16 +1,19 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
 from rpd_generator.schema.schema_enums import SchemaEnums
+from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 
 PumpSpecificationMethodOptions = SchemaEnums.schema_enums[
     "PumpSpecificationMethodOptions"
 ]
+BDL_Commands = BDLEnums.bdl_enums["Commands"]
+BDL_PumpKeywords = BDLEnums.bdl_enums["PumpKeywords"]
 
 
 class Pump(BaseNode):
     """Pump object in the tree."""
 
-    bdl_command = "PUMP"
+    bdl_command = BDL_Commands.PUMP
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
@@ -37,7 +40,9 @@ class Pump(BaseNode):
 
     def populate_data_elements(self):
         """Populate the schema data elements for the pump object."""
-        self.qty = self.try_int(self.try_float(self.keyword_value_pairs.get("NUMBER")))
+        self.qty = self.try_int(
+            self.try_float(self.keyword_value_pairs.get(BDL_PumpKeywords.NUMBER))
+        )
         requests = self.get_output_requests()
         self.output_data = self.get_output_data(requests)
         self.loop_or_piping = [None] * self.qty
@@ -46,16 +51,18 @@ class Pump(BaseNode):
 
         spec_method = (
             PumpSpecificationMethodOptions.SIMPLE
-            if self.keyword_value_pairs.get("PUMP-KW") is not None
+            if self.keyword_value_pairs.get(BDL_PumpKeywords.PUMP_KW) is not None
             else PumpSpecificationMethodOptions.DETAILED
         )
-        design_head = self.try_float(self.keyword_value_pairs.get("HEAD"))
+        design_head = self.try_float(
+            self.keyword_value_pairs.get(BDL_PumpKeywords.HEAD)
+        )
 
         self.specification_method = [spec_method] * self.qty
 
         if spec_method == PumpSpecificationMethodOptions.SIMPLE:
             self.design_electric_power = [
-                self.try_float(self.keyword_value_pairs.get("PUMP-KW"))
+                self.try_float(self.keyword_value_pairs.get(BDL_PumpKeywords.PUMP_KW))
             ] * self.qty
         else:
             self.design_electric_power = [
