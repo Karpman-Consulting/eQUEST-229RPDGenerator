@@ -102,8 +102,7 @@
         "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].surfaces[*].optical_properties"
     ],
     "Material": [
-        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].surfaces[*].construction.primary_layers",
-        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].surfaces[*].construction.framing_layers"
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].surfaces[*].construction.primary_layers"
     ],
     "FanSystem": [
         "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system"

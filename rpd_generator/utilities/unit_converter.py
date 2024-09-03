@@ -32,8 +32,15 @@ def convert_to_schema_units(rpd_json):
     with open(path_to_json_paths) as f:
         item_paths = json.load(f)
 
+    processed_ids = set()
+
     def convert_units(dg, json_data, unit_dict):
         for element in json_data:
+            if id(element) in processed_ids:
+                continue  # Prevent processing the same object multiple times
+
+            processed_ids.add(id(element))  # Mark this object as processed
+
             if isinstance(element, list):
                 convert_units(dg, element, unit_dict)  # Recurse into lists
             elif isinstance(element, dict):
@@ -43,14 +50,12 @@ def convert_to_schema_units(rpd_json):
                         schema_unit = schema_units.get(dg).get(key)
                         element[key] = element[key].to(schema_unit)
                         element[key] = element[key].magnitude
-                    if isinstance(value, list) or isinstance(value, dict):
-                        convert_units(dg, [value], unit_dict)
 
     for data_group in equest_units:
-        # Get the data elements from the equest implementation that use units
         elements_w_units = equest_units[data_group]
         json_paths = item_paths.get(data_group)
 
         for json_path in json_paths:
             matches = [m.current_value for m in match(json_path, rpd_json)]
-            convert_units(data_group, matches, elements_w_units)
+            unique_matches = [obj for obj in matches if id(obj) not in processed_ids]
+            convert_units(data_group, unique_matches, elements_w_units)

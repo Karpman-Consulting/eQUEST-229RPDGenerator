@@ -104,4 +104,6 @@ class BuildingParameters(BaseDefinition):
 
     def populate_data_elements(self):
         """Populate schema structure for building parameters object."""
-        self.rmd.building_azimuth = self.try_float(self.keyword_value_pairs.get("AZIMUTH"))
+        self.rmd.building_azimuth = self.try_float(
+            self.keyword_value_pairs.get("AZIMUTH")
+        )

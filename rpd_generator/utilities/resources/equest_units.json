@@ -3,7 +3,7 @@
         "measured_infiltration_pressure_difference": ""
     },
     "Zone": {
-        "volume": "ft3",
+        "volume": "ft^3",
         "design_thermostat_cooling_setpoint": "F",
         "design_thermostat_heating_setpoint": "F",
         "transfer_airflow_rate": "cfm",
@@ -12,7 +12,7 @@
         "non_mechanical_cooling_fan_airflow": ""
     },
     "Space": {
-        "floor_area": "ft2",
+        "floor_area": "ft^2",
         "occupant_sensible_heat_gain": "btu/h",
         "occupant_latent_heat_gain": "btu/h"
     },
@@ -21,31 +21,31 @@
         "flow_rate": "cfm"
     },
     "Surface": {
-        "area": "ft2",
+        "area": "ft^2",
         "tilt": "degrees",
         "azimuth": "degrees"
     },
     "Construction": {
-        "u_factor": "btu_h / ft2 / F",
+        "u_factor": "btu_h / ft^2 / delta_F",
         "c_factor": "",
         "f_factor": "",
-        "r_values": "ft2 * F / btu_h"
+        "r_values": "ft^2 * delta_F / btu_h"
     },
     "Material": {
         "thickness": "ft",
-        "thermal_conductivity": "btu_h / ft / F",
-        "density": "lb / ft3",
-        "specific_heat": "btu / lb / F",
-        "r_value": "ft2 * F / btu_h"
+        "thermal_conductivity": "btu_h / ft / delta_F",
+        "density": "lb/ft^3",
+        "specific_heat": "btu / lb / delta_F",
+        "r_value": "ft^2 * delta_F / btu_h"
     },
     "Subsurface": {
-        "glazed_area": "ft2",
-        "opaque_area": "ft2",
-        "u_factor": "btu_h / ft2 / F",
+        "glazed_area": "ft^2",
+        "opaque_area": "ft^2",
+        "u_factor": "btu_h / ft^2 / delta_F",
         "depth_of_overhang": "ft"
     },
     "InteriorLighting": {
-        "power_per_area": "W / ft2"
+        "power_per_area": "W / ft^2"
     },
     "MiscellaneousEquipment": {
         "power": "kW"

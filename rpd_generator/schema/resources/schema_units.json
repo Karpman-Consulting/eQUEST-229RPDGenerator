@@ -3,7 +3,7 @@
         "measured_infiltration_pressure_difference": "Pa"
     },
     "Zone": {
-        "volume": "m3",
+        "volume": "m^3",
         "design_thermostat_cooling_setpoint": "C",
         "design_thermostat_heating_setpoint": "C",
         "transfer_airflow_rate": "L/s",
@@ -12,40 +12,40 @@
         "non_mechanical_cooling_fan_airflow": "L/s"
     },
     "Space": {
-        "floor_area": "m2",
+        "floor_area": "m^2",
         "occupant_sensible_heat_gain": "W",
         "occupant_latent_heat_gain": "W"
     },
     "Infiltration": {
-        "measured_air_leakage_rate": "m3/s",
-        "flow_rate": "m3/s"
+        "measured_air_leakage_rate": "m^3/s",
+        "flow_rate": "m^3/s"
     },
     "Surface": {
-        "area": "m2",
+        "area": "m^2",
         "tilt": "degrees",
         "azimuth": "degrees"
     },
     "Construction": {
-        "u_factor": "W/m2/K",
-        "c_factor": "W/m2/K",
+        "u_factor": "W/m^2/K",
+        "c_factor": "W/m^2/K",
         "f_factor": "W/m/K",
-        "r_values": "K*m2/W"
+        "r_values": "delta K*m^2/W"
     },
     "Material": {
         "thickness": "m",
         "thermal_conductivity": "W/m/K",
-        "density": "kg/m3",
+        "density": "kg/m^3",
         "specific_heat": "J/kg/K",
-        "r_value": "K*m2/W"
+        "r_value": "K*m^2/W"
     },
     "Subsurface": {
-        "glazed_area": "m2",
-        "opaque_area": "m2",
-        "u_factor": "W/m2/K",
+        "glazed_area": "m^2",
+        "opaque_area": "m^2",
+        "u_factor": "W/m^2/K",
         "depth_of_overhang": "m"
     },
     "InteriorLighting": {
-        "power_per_area": "W/m2"
+        "power_per_area": "W/m^2"
     },
     "MiscellaneousEquipment": {
         "power": "W"
@@ -65,7 +65,7 @@
         "cab_weight": "kg",
         "design_load": "kg",
         "speed": "m/s",
-        "cab_area": "m2",
+        "cab_area": "m^2",
         "cab_lighting_power": "W",
         "cab_ventilation_fan_power": "W",
         "cab_ventilation_fan_flow": "L/s"
@@ -228,21 +228,21 @@
     "Tank": {
         "storage_capacity": "L",
         "height": "m",
-        "interior_insulation": "K*m2/W",
-        "exterior_insulation": "K*m2/W"
+        "interior_insulation": "K*m^2/W",
+        "exterior_insulation": "K*m^2/W"
     },
     "ServiceWaterHeatingUse": {
         "temperature_at_fixture": "C"
     },
     "ExteriorLighting": {
-        "area": "m2",
+        "area": "m^2",
         "length": "m",
         "power": "W",
         "fixture_height": "m"
     },
     "RefrigeratedCase": {
         "power": "W",
-        "volume": "m3",
-        "total_display_area": "m2"
+        "volume": "m^3",
+        "total_display_area": "m^2"
     }
 }

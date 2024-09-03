@@ -61,6 +61,29 @@ jobs:
         with:
           version: "24.2.0"
 
+  run-rpd-tests:
+    name: Run RPD Tests
+    runs-on: windows-latest
+    needs: setup
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Restore Cached Dependencies
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: ${{ runner.os }}-pipenv-v6-${{ hashFiles('Pipfile.lock') }}
+          restore-keys: ${{ runner.os }}-pipenv-v6-
+
+      - name: Generate RPD Files
+        run: pipenv run python test/generate_test_rpds_from_bdls.py
+
+      - name: Run RPD Tests
+        run: pipenv run python test/test_generated_rpd_files.py
+
+
 #  rpd-validation-test:
 #    name: Run RPD Validation Tests
 #    runs-on: windows-latest

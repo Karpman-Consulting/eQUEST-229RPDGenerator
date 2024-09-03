@@ -11,9 +11,10 @@ from rpd_generator.doe2_file_readers.bdlcio32 import process_input_file
 from rpd_generator.doe2_file_readers.model_input_reader import ModelInputReader
 from rpd_generator.bdl_structure import *
 from rpd_generator.config import Config
-from rpd_generator.utilities import validate_configuration
 from rpd_generator.schema.schema_enums import SchemaEnums
+from rpd_generator.utilities import validate_configuration
 from rpd_generator.utilities import unit_converter
+from rpd_generator.utilities import ensure_valid_rpd
 
 
 """Once development is complete, this can be replaced with a list of all bdl_command attribute values from classes that 
@@ -118,6 +119,7 @@ def write_rpd_json_from_bdl(selected_models: list, json_file_path: str):
         rmd.insert_to_rpd(rpd)
 
     rpd.populate_data_group()
+    # ensure_valid_rpd.make_ids_unique(rpd.rpd_data_structure)
     unit_converter.convert_to_schema_units(rpd.rpd_data_structure)
     with open(json_file_path, "w") as json_file:
         json.dump(rpd.rpd_data_structure, json_file, indent=4)

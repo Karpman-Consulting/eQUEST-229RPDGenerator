@@ -143,6 +143,9 @@ degree_Celsius = kelvin; offset: 273.15 = C = celsius = degC = degreeC
 degree_Rankine = 5 / 9 * kelvin; offset: 0 = R = rankine = degR = degreeR = °R
 degree_Fahrenheit = 5 / 9 * kelvin; offset: 233.15 + 200 / 9 = F = fahrenheit = degF = degreeF
 
+# Delta Temperature
+delta_degree_Fahrenheit = 5 / 9 * kelvin = delta_F = delta_degF = delta_degreeF = delta_Fahrenheit
+
 # Area
 [area] = [length] ** 2
 m2 = meter ** 2

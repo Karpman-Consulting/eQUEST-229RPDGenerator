@@ -106,9 +106,9 @@ $ ---------------------------------------------------------
    ..
 "Metal Deck" = MATERIAL        
    TYPE             = PROPERTIES
-   THICKNESS        = 0.003
+   THICKNESS        = {.002625}
    CONDUCTIVITY     = 26.162
-   DENSITY          = 489
+   DENSITY          = 488.44
    SPECIFIC-HEAT    = 0.119
    ..
 "Continuous Insulation" = MATERIAL        
@@ -204,7 +204,8 @@ SET-DEFAULT FOR LAYERS
    INSIDE-FILM-RES  = 0.68
    MATERIAL         = ( "Stucco", "Gypsum Board", "Insulation", 
          "Gypsum Board" )
-   THICKNESS        = ( &D, 0.052, 0.204, 0.052 )
+   THICKNESS        = ( {.0254
+}, {.0159}, {.062}, {.0159} )
    ..
 "Roof Type 2 Lyr" = LAYERS          
    INSIDE-FILM-RES  = 0.61
@@ -223,8 +224,7 @@ SET-DEFAULT FOR LAYERS
    ..
 "BL1 IFlr Cons Layers Type 1" = LAYERS          
    INSIDE-FILM-RES  = 0.92
-   MATERIAL         = ( "Concrete", "Carpet & No Pad" )
-   THICKNESS        = ( 0.333 )
+   MATERIAL         = ( "Concrete" )
    ..
 "BL1 UFLyrs (G.S1.U2)" = LAYERS          
    INSIDE-FILM-RES  = 0.92
@@ -243,8 +243,7 @@ SET-DEFAULT FOR LAYERS
    ..
 "BL1 IFlr Layer Type 2" = LAYERS          
    INSIDE-FILM-RES  = 0.92
-   MATERIAL         = ( "Concrete", "Insulation (Slab on grade)", 
-         "Carpet & No Pad" )
+   MATERIAL         = ( "Insulation (Slab on grade)", "Concrete" )
    ..
 
 "Roof Type 1" = CONSTRUCTION    
@@ -699,10 +698,6 @@ $ **      Floors / Spaces / Walls / Windows / Doors      **
 $ **                                                     **
 $ *********************************************************
 
-SET-DEFAULT FOR SPACE           
-   EQUIPMENT-W/AREA = ( &D, 3.68 )
-   ..
-
 "Floor 1" = FLOOR           
    AZIMUTH          = 360
    POLYGON          = "BL1 Floor Polygon"
@@ -726,7 +721,7 @@ SET-DEFAULT FOR SPACE
    PEOPLE-HG-SENS   = ( {55%*409.457} )
    LIGHTING-SCHEDUL = ( "Lighting Schedule" )
    LIGHTING-W/AREA  = ( 1.025 )
-   EQUIP-SCHEDULE   = ( "Plug Load Annual", "Elevator Annual" )
+   EQUIP-SCHEDULE   = ( "Plug Load Annual" )
    EQUIPMENT-W/AREA = ( 0.75 )
    EQUIP-LATENT     = ( 0 )
    EQUIP-SENSIBLE   = ( 1 )
@@ -819,7 +814,7 @@ SET-DEFAULT FOR SPACE
    SHAPE            = POLYGON
    ZONE-TYPE        = CONDITIONED
    INF-METHOD       = AIR-CHANGE
-   INF-FLOW/AREA    = 0.0841
+   INF-FLOW/AREA    = 0.11594
    POLYGON          = "BL1 Space Polygon 2"
    PEOPLE-SCHEDULE  = ( "Occupancy Annual" )
    AREA/PERSON      = ( 200 )
@@ -828,7 +823,7 @@ SET-DEFAULT FOR SPACE
    PEOPLE-HG-SENS   = ( {55%*409.457} )
    LIGHTING-SCHEDUL = ( "Lighting Schedule" )
    LIGHTING-W/AREA  = ( 1.025 )
-   EQUIP-SCHEDULE   = ( "Plug Load Annual", "Elevator Annual" )
+   EQUIP-SCHEDULE   = ( "Plug Load Annual" )
    EQUIPMENT-W/AREA = ( 0.75 )
    EQUIP-LATENT     = ( 0 )
    EQUIP-SENSIBLE   = ( 1 )
@@ -910,7 +905,7 @@ SET-DEFAULT FOR SPACE
    PEOPLE-HG-SENS   = ( {55%*409.457} )
    LIGHTING-SCHEDUL = ( "Lighting Schedule" )
    LIGHTING-W/AREA  = ( 1.025 )
-   EQUIP-SCHEDULE   = ( "Plug Load Annual", "Elevator Annual" )
+   EQUIP-SCHEDULE   = ( "Plug Load Annual" )
    EQUIPMENT-W/AREA = ( 0.75 )
    EQUIP-LATENT     = ( 0 )
    EQUIP-SENSIBLE   = ( 1 )
@@ -1003,7 +998,7 @@ SET-DEFAULT FOR SPACE
    PEOPLE-HG-SENS   = ( {55%*409.457} )
    LIGHTING-SCHEDUL = ( "Lighting Schedule" )
    LIGHTING-W/AREA  = ( 1.025 )
-   EQUIP-SCHEDULE   = ( "Plug Load Annual", "Elevator Annual" )
+   EQUIP-SCHEDULE   = ( "Plug Load Annual" )
    EQUIPMENT-W/AREA = ( 0.75 )
    EQUIP-LATENT     = ( 0 )
    EQUIP-SENSIBLE   = ( 1 )
@@ -1076,7 +1071,7 @@ SET-DEFAULT FOR SPACE
    PEOPLE-HG-SENS   = ( {55%*409.457} )
    LIGHTING-SCHEDUL = ( "Lighting Schedule" )
    LIGHTING-W/AREA  = ( 1.025 )
-   EQUIP-SCHEDULE   = ( "Plug Load Annual", "Elevator Annual" )
+   EQUIP-SCHEDULE   = ( "Plug Load Annual" )
    EQUIPMENT-W/AREA = ( 0.75 )
    EQUIP-LATENT     = ( 0 )
    EQUIP-SENSIBLE   = ( 1 )
@@ -1300,7 +1295,7 @@ SET-DEFAULT FOR ZONE
    ..
 "Perimeter Zone 1 (South)" = ZONE            
    TYPE             = CONDITIONED
-   FLOW/AREA        = 0.5
+   ASSIGNED-FLOW    = 2000
    DESIGN-HEAT-T    = 70
    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
    DESIGN-COOL-T    = 75
@@ -1345,7 +1340,7 @@ SET-DEFAULT FOR ZONE
    ..
 "Perimeter Zone 2 (East)" = ZONE            
    TYPE             = CONDITIONED
-   FLOW/AREA        = 0.5
+   ASSIGNED-FLOW    = 2000
    DESIGN-HEAT-T    = 70
    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
    DESIGN-COOL-T    = 75
@@ -1390,7 +1385,7 @@ SET-DEFAULT FOR ZONE
    ..
 "Perimeter Zone 3 (North)" = ZONE            
    TYPE             = CONDITIONED
-   FLOW/AREA        = 0.5
+   ASSIGNED-FLOW    = 2000
    DESIGN-HEAT-T    = 70
    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
    DESIGN-COOL-T    = 75
@@ -1435,7 +1430,7 @@ SET-DEFAULT FOR ZONE
    ..
 "Perimeter Zone 4 (West)" = ZONE            
    TYPE             = CONDITIONED
-   FLOW/AREA        = 0.5
+   ASSIGNED-FLOW    = 2000
    DESIGN-HEAT-T    = 70
    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
    DESIGN-COOL-T    = 75
@@ -1480,7 +1475,7 @@ SET-DEFAULT FOR ZONE
    ..
 "Core Zone 1 (Core)" = ZONE            
    TYPE             = CONDITIONED
-   FLOW/AREA        = 0.5
+   ASSIGNED-FLOW    = 2000
    DESIGN-HEAT-T    = 70
    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
    DESIGN-COOL-T    = 75

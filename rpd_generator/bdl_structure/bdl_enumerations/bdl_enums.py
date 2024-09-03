@@ -106,6 +106,7 @@ class BDLEnums:
             [
                 "TYPE",
                 "HW-PUMP",
+                "HW-LOOP",
                 "FUEL-METER",
             ]
         ),
@@ -206,6 +207,7 @@ class BDLEnums:
             [
                 "LAYERS",
                 "ABSORPTANCE",
+                "U-VALUE"
             ]
         ),
         "DayScheduleKeywords": _ListEnum(
@@ -258,6 +260,11 @@ class BDLEnums:
                 "OUTSIDE-EMISS",
                 "INSIDE-SOL-ABS",
                 "INSIDE-VIS-REFL",
+            ]
+        ),
+        "FloorKeywords": _ListEnum(
+            [
+                "AZIMUTH",
             ]
         ),
         "GlassTypeKeywords": _ListEnum(
@@ -420,6 +427,7 @@ class BDLEnums:
         ),
         "SpaceKeywords": _ListEnum(
             [
+                "AZIMUTH",
                 "VOLUME",
                 "AREA",
                 "LIGHTING-SCHEDUL",
