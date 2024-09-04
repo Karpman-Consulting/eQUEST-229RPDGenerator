@@ -46,9 +46,6 @@ jobs:
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
       run: pipenv install --dev
 
-    - name: Generate RPD Files
-      run: pipenv run python test/generate_test_rpds_from_bdls.py
-
     - name: Run RPD Tests
       run: pipenv run python test/test_generated_rpd_files.py
 
