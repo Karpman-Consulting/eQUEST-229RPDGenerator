@@ -32,12 +32,7 @@ jobs:
     - name: Set Environment Variables
       run: echo "PIPENV_VENV_IN_PROJECT=true" >> $env:GITHUB_ENV
     - name: Install pipenv
-      run: |
-        python -m pip install --upgrade pip
-        pip install pipenv
-      shell: pwsh
-      env:
-        pythonLocation: C:\hostedtoolcache\windows\Python\3.11\x86
+      run: pip install pipenv
     - name: Cache Dependencies
       uses: actions/cache@v4
       id: cache-dependencies
@@ -48,9 +43,13 @@ jobs:
           ${{ runner.os }}-pipenv-v6-
     - name: Install Dependencies
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
-      run: pipenv install --dev --verbose --python C:\hostedtoolcache\windows\Python\3.11\x86\python.exe
-      env:
-        PIPENV_PYTHON: C:\hostedtoolcache\windows\Python\3.11\x86\python.exe
+      run: pipenv install --dev
+
+    - name: Generate RPD Files
+      run: pipenv run python test/generate_test_rpds_from_bdls.py
+
+    - name: Run RPD Tests
+      run: pipenv run python test/test_generated_rpd_files.py
 
 
 #  run-rpd-tests:
