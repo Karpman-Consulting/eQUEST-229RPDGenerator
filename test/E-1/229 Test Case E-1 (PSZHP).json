@@ -253,7 +253,7 @@
                                                         "id": "Concrete",
                                                         "thickness": 0.10149839999999999,
                                                         "thermal_conductivity": 2.310531102362205,
-                                                        "density": 2324.6794971459663,
+                                                        "density": 2344.6794971459663,
                                                         "specific_heat": 833.1733163853703
                                                     }
                                                 ],
@@ -367,7 +367,7 @@
                                                     },
                                                     {
                                                         "id": "Insulation",
-                                                        "thickness": 0.16217919999999999,
+                                                        "thickness": 0.06217919999999999,
                                                         "thermal_conductivity": 0.03634543307086615,
                                                         "density": 9.611078024376086,
                                                         "specific_heat": 837.3601169702214

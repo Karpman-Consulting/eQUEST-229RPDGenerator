@@ -76,7 +76,7 @@ def compare_json_values(spec, generated_values, reference_values, generated_ids)
         does_match = compare_values(generated_value, reference_value, tolerance)
         if not does_match and reference_value is None:
             warnings.append(
-                f"Value mismatch at '{generated_ids[i]}' for key '{json_key_path.split('.')[-1]}'. Expected: 'None'; got: '{generated_value}'"
+                f"Extra data provided at '{generated_ids[i]}' for key '{json_key_path.split('.')[-1]}'. Expected: 'None'; got: '{generated_value}'"
             )
         elif not does_match:
             errors.append(
