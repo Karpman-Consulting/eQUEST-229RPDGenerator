@@ -58,7 +58,7 @@ class Zone(ChildNode):
         self.design_thermostat_cooling_setpoint = None
         self.thermostat_cooling_setpoint_schedule = None
         self.design_thermostat_heating_setpoint = None
-        self.thermostat_heating_setpoint_schedulue = None
+        self.thermostat_heating_setpoint_schedule = None
         self.minimum_humidity_setpoint_schedule = None
         self.maximum_humidity_setpoint_schedule = None
         self.served_by_service_water_heating_system = None
@@ -158,7 +158,7 @@ class Zone(ChildNode):
             self.keyword_value_pairs.get(BDL_ZoneKeywords.DESIGN_HEAT_T)
         )
 
-        self.thermostat_heating_setpoint_schedulue = self.keyword_value_pairs.get(
+        self.thermostat_heating_setpoint_schedule = self.keyword_value_pairs.get(
             BDL_ZoneKeywords.HEAT_TEMP_SCH
         )
 
@@ -353,7 +353,7 @@ class Zone(ChildNode):
             "design_thermostat_cooling_setpoint",
             "thermostat_cooling_setpoint_schedule",
             "design_thermostat_heating_setpoint",
-            "thermostat_heating_setpoint_schedulue",
+            "thermostat_heating_setpoint_schedule",
             "minimum_humidity_setpoint_schedule",
             "maximum_humidity_setpoint_schedule",
             "served_by_service_water_heating_system",

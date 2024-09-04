@@ -1,4 +1,5 @@
 import ctypes
+import os
 from pathlib import Path
 
 
@@ -127,6 +128,10 @@ def get_string_result(
 
     :return: value from binary simulation output files
     """
+
+    if not os.path.exists(d2_result_dll):
+        raise FileNotFoundError(f"D2Result.dll not found at {d2_result_dll}")
+
     # Load DLL
     d2_result_dll = ctypes.CDLL(d2_result_dll)
     doe2_dir = str(Path(doe2_dir) / "DOE23") + "\\"

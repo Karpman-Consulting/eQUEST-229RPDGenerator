@@ -77,8 +77,8 @@ class Material(BaseNode):
                 self.material_data_structure[attr] = value
 
 
-class Layers(BaseDefinition):
-    """Layers object in the tree."""
+class Layer(BaseDefinition):
+    """Layer object in the tree."""
 
     bdl_command = BDL_Commands.LAYERS
 
@@ -88,11 +88,15 @@ class Layers(BaseDefinition):
         self.material_references = None
 
     def __repr__(self):
-        return f"Layers(u_name='{self.u_name}')"
+        return f"Layer(u_name='{self.u_name}')"
 
     def populate_data_elements(self):
         """Populate data elements for layers object."""
-        material_references = self.keyword_value_pairs.get(BDL_LayerKeywords.MATERIAL)
+        material_references = self.keyword_value_pairs.get(
+            BDL_LayerKeywords.MATERIAL, []
+        )
         self.material_references = (
-            material_references if isinstance(material_references, list) else []
+            material_references
+            if isinstance(material_references, list)
+            else [material_references]
         )

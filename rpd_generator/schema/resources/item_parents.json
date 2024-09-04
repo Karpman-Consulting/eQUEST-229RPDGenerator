@@ -1,0 +1,167 @@
+{
+    "Timestamp": [
+        "data_timestamp"
+    ],
+    "RulesetModelDescription": [
+        "ruleset_model_descriptions"
+    ],
+    "Calendar": [
+        "calendar"
+    ],
+    "Weather": [
+        "weather"
+    ],
+    "Transformer": [
+        "transformers"
+    ],
+    "Building": [
+        "buildings"
+    ],
+    "Schedule": [
+        "schedules"
+    ],
+    "FluidLoop": [
+        "fluid_loops",
+        "child_loops"
+    ],
+    "ServiceWaterHeatingDistributionSystem": [
+        "service_water_heating_distribution_systems"
+    ],
+    "ServiceWaterHeatingEquipment": [
+        "service_water_heating_equipment"
+    ],
+    "Pump": [
+        "pumps"
+    ],
+    "Boiler": [
+        "boilers"
+    ],
+    "Chiller": [
+        "chillers"
+    ],
+    "HeatRejection": [
+        "heat_rejections"
+    ],
+    "ExternalFluidSource": [
+        "external_fluid_sources"
+    ],
+    "BuildingSegment": [
+        "building_segments"
+    ],
+    "Elevator": [
+        "elevators"
+    ],
+    "ExteriorLighting": [
+        "exterior_lighting"
+    ],
+    "RefrigeratedCase": [
+        "refrigerated_cases"
+    ],
+    "Zone": [
+        "zones"
+    ],
+    "HeatingVentilatingAirConditioningSystem": [
+        "heating_ventilating_air_conditioning_systems"
+    ],
+    "Space": [
+        "spaces"
+    ],
+    "Surface": [
+        "surfaces"
+    ],
+    "Infiltration": [
+        "infiltration"
+    ],
+    "Terminal": [
+        "terminals"
+    ],
+    "Fan": [
+        "zonal_exhaust_fan",
+        "supply_fans",
+        "return_fans",
+        "exhaust_fans",
+        "relief_fans",
+        "fan"
+    ],
+    "InteriorLighting": [
+        "interior_lighting"
+    ],
+    "MiscellaneousEquipment": [
+        "miscellaneous_equipment"
+    ],
+    "ServiceWaterHeatingUse": [
+        "service_water_heating_uses"
+    ],
+    "Subsurface": [
+        "subsurfaces"
+    ],
+    "Construction": [
+        "construction"
+    ],
+    "SurfaceOpticalProperties": [
+        "optical_properties"
+    ],
+    "Material": [
+        "primary_layers",
+        "framing_layers"
+    ],
+    "FanSystem": [
+        "fan_system"
+    ],
+    "HeatingSystem": [
+        "heating_system",
+        "preheat_system"
+    ],
+    "CoolingSystem": [
+        "cooling_system"
+    ],
+    "AirEconomizer": [
+        "air_economizer"
+    ],
+    "AirEnergyRecovery": [
+        "air_energy_recovery"
+    ],
+    "FanOutputValidationPoint": [
+        "output_validation_points"
+    ],
+    "FluidLoopDesignAndControl": [
+        "cooling_or_condensing_design_and_control",
+        "heating_design_and_control"
+    ],
+    "PumpOutputValidationPoint": [
+        "output_validation_points"
+    ],
+    "BoilerOutputValidationPoint": [
+        "output_validation_points"
+    ],
+    "ChillerCapacityValidationPoint": [
+        "capacity_validation_points"
+    ],
+    "ChillerPowerValidationPoint": [
+        "power_validation_points"
+    ],
+    "Tank": [
+        "tanks",
+        "tank",
+        "tank"
+    ],
+    "ServiceWaterPiping": [
+        "service_water_piping",
+        "child"
+    ],
+    "ServiceWaterHeaterValidationPoint": [
+        "output_validation_points"
+    ],
+    "HeatPumpWaterHeaterCapacityValidationPoint": [
+        "compressor_capacity_validation_points"
+    ],
+    "HeatPumpWaterHeaterPowerValidationPoint": [
+        "compressor_power_validation_points"
+    ],
+    "SolarThermal": [
+        "solar_thermal_systems"
+    ],
+    "RulesetProjectDescription": [
+        null
+    ]
+}

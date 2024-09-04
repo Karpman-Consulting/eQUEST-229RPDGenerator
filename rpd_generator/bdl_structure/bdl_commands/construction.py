@@ -2,7 +2,6 @@ from rpd_generator.bdl_structure.base_node import BaseNode
 from rpd_generator.schema.schema_enums import SchemaEnums
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
-
 SurfaceConstructionInputOptions = SchemaEnums.schema_enums[
     "SurfaceConstructionInputOptions"
 ]
@@ -47,17 +46,12 @@ class Construction(BaseNode):
         layer = (
             self.rmd.bdl_obj_instances.get(layer_reference) if layer_reference else None
         )
-        self.material_references = layer.material_references if layer else None
-        self.material_references = (
-            self.material_references if self.material_references else []
-        )
+        self.material_references = layer.material_references if layer else []
 
         any_detailed_materials = False
         for material_reference in self.material_references:
             material = self.rmd.bdl_obj_instances.get(material_reference)
             if material:
-                self.primary_layers.append(material.material_data_structure)
-
                 if material.material_type == BDL_MaterialTypes.PROPERTIES:
                     any_detailed_materials = True
 
@@ -67,10 +61,27 @@ class Construction(BaseNode):
             else SurfaceConstructionInputOptions.SIMPLIFIED
         )
 
+        if (
+            self.surface_construction_input_option
+            == SurfaceConstructionInputOptions.SIMPLIFIED
+        ):
+            simplified_material = {"id": "Simplified Material"}
+            # u_value = self.try_float(self.keyword_value_pairs.get(BDL_ConstructionKeywords.U_VALUE))
+            # if u_value:
+            #     overall_r_value = 1 / u_value
+            #     r_excl_air_films = overall_r_value - 0.68 - 0.68
+            #     simplified_material["r_value"] = overall_r_value
+            self.primary_layers.append(simplified_material)
+
         # self.u_factor = self.try_float(self.keyword_value_pairs.get("U-VALUE"))
 
     def populate_data_group(self):
         """Populate schema structure for construction object."""
+
+        for material_reference in self.material_references:
+            material = self.rmd.bdl_obj_instances.get(material_reference)
+            if material:
+                self.primary_layers.append(material.material_data_structure)
 
         self.construction_data_structure = {
             "id": self.u_name,

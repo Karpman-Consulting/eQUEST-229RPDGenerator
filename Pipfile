@@ -7,12 +7,16 @@ name = "pypi"
 customtkinter = "*"
 pillow = "*"
 tksheet = "*"
+jsonpath2 = "*"
+pint = "*"
+pip = "==23.2"
+jsonschema = "*"
 
 [dev-packages]
 pytest = "*"
 black = "*"
 xlsxwriter = "*"
+jsonschema = "*"
 
 [requires]
 python_version = "3.11"
-python_full_version = "3.11.1"

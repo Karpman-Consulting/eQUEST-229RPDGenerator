@@ -14,6 +14,8 @@ BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_ExteriorWallKeywords = BDLEnums.bdl_enums["ExteriorWallKeywords"]
 BDL_ConstructionKeywords = BDLEnums.bdl_enums["ConstructionKeywords"]
 BDL_WallLocationOptions = BDLEnums.bdl_enums["WallLocationOptions"]
+BDL_SpaceKeywords = BDLEnums.bdl_enums["SpaceKeywords"]
+BDL_FloorKeywords = BDLEnums.bdl_enums["FloorKeywords"]
 
 
 class ExteriorWall(ChildNode, ParentNode):
@@ -32,7 +34,7 @@ class ExteriorWall(ChildNode, ParentNode):
         # data elements with children
         self.subsurfaces = []
         self.construction = {}
-        self.surface_optical_properties = {"id": self.u_name + " OpticalProps"}
+        self.optical_properties = {"id": self.u_name + " OpticalProps"}
 
         # data elements with no children
         self.classification = None
@@ -69,14 +71,6 @@ class ExteriorWall(ChildNode, ParentNode):
             )
             if height is not None and width is not None:
                 self.area = height * width
-        if (
-            self.area is None
-            and self.keyword_value_pairs.get(BDL_ExteriorWallKeywords.LOCATION)
-            == BDL_WallLocationOptions.TOP
-        ):
-            requests = self.get_output_requests()
-            output_data = self.get_output_data(requests)
-            self.area = output_data.get("Roof Area")
 
         self.tilt = self.try_float(
             self.keyword_value_pairs.get(BDL_ExteriorWallKeywords.TILT)
@@ -88,9 +82,23 @@ class ExteriorWall(ChildNode, ParentNode):
         else:
             self.classification = SurfaceClassificationOptions.WALL
 
-        self.azimuth = self.try_float(
+        parent_floor_azimuth = self.parent.parent.try_float(
+            self.parent.parent.keyword_value_pairs.get("AZIMUTH")
+        )
+        parent_space_azimuth = self.parent.try_float(
+            self.parent.keyword_value_pairs.get("AZIMUTH")
+        )
+        surface_azimuth = self.try_float(
             self.keyword_value_pairs.get(BDL_ExteriorWallKeywords.AZIMUTH)
         )
+        self.azimuth = (
+            self.rmd.building_azimuth
+            + parent_floor_azimuth
+            + parent_space_azimuth
+            + surface_azimuth
+        ) % 360
+        if self.azimuth < 0:
+            self.azimuth += 360
 
         self.adjacent_to = SurfaceAdjacencyOptions.EXTERIOR
         self.does_cast_shade = self.boolean_map.get(
@@ -121,15 +129,15 @@ class ExteriorWall(ChildNode, ParentNode):
                 )
             )
 
-    def get_output_requests(self):
-        requests = {}
-        if (
-            self.area is None
-            and self.keyword_value_pairs.get(BDL_ExteriorWallKeywords.LOCATION)
-            == BDL_WallLocationOptions.TOP
-        ):
-            requests["Roof Area"] = (1104008, "", self.u_name)
-        return requests
+    # def get_output_requests(self):
+    #     requests = {}
+    #     if (
+    #         self.area is None
+    #         and self.keyword_value_pairs.get(BDL_ExteriorWallKeywords.LOCATION)
+    #         == BDL_WallLocationOptions.TOP
+    #     ):
+    #         requests["Roof Area"] = (1104008, "", self.u_name)
+    #     return requests
 
     def populate_data_group(self):
         """Populate schema structure for exterior wall object."""
@@ -138,7 +146,7 @@ class ExteriorWall(ChildNode, ParentNode):
         )
         self.construction = construction.construction_data_structure
 
-        surface_optical_property_attributes = [
+        optical_property_attributes = [
             "absorptance_thermal_exterior",
             "absorptance_solar_exterior",
             "absorptance_visible_exterior",
@@ -147,16 +155,16 @@ class ExteriorWall(ChildNode, ParentNode):
             "absorptance_visible_interior",
         ]
 
-        for attr in surface_optical_property_attributes:
+        for attr in optical_property_attributes:
             value = getattr(self, attr, None)
             if value is not None:
-                self.surface_optical_properties[attr] = value
+                self.optical_properties[attr] = value
 
         self.exterior_wall_data_structure = {
             "id": self.u_name,
             "subsurfaces": self.subsurfaces,
             "construction": self.construction,
-            "surface_optical_properties": self.surface_optical_properties,
+            "optical_properties": self.optical_properties,
         }
 
         no_children_attributes = [

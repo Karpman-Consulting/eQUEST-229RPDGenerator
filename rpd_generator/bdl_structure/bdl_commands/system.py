@@ -686,7 +686,7 @@ class System(ParentNode):
             self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_SIZING_RATI)
         )
         if sizing_ratio is not None and heat_sizing_ratio is not None:
-            self.heat_sys_oversizing_factor = sizing_ratio * heat_sizing_ratio
+            self.heat_sys_oversizing_factor = sizing_ratio * heat_sizing_ratio - 1
 
         self.heat_sys_hot_water_loop = self.keyword_value_pairs.get(
             BDL_SystemKeywords.HW_LOOP
@@ -726,7 +726,7 @@ class System(ParentNode):
             self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_SIZING_RATI)
         )
         if sizing_ratio is not None and cool_sizing_ratio is not None:
-            self.cool_sys_oversizing_factor = sizing_ratio * cool_sizing_ratio
+            self.cool_sys_oversizing_factor = sizing_ratio * cool_sizing_ratio - 1
 
         self.cool_sys_chilled_water_loop = self.keyword_value_pairs.get(
             BDL_SystemKeywords.CHW_LOOP

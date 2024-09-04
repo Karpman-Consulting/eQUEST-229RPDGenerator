@@ -1,12 +1,13 @@
 from itertools import islice
 from pathlib import Path
+
 from rpd_generator.doe2_file_readers.model_output_reader import get_string_result
 from rpd_generator.config import Config
 
 
 class BaseDefinition:
     """
-    Base class for BDL commands that are not nodes in the tree, but used to populate 229 schema data elements.
+    Base class for BDL commands that are not nodes in the tree, but are used to populate 229 schema data elements.
     """
 
     boolean_map = {
