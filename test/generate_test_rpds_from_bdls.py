@@ -1,5 +1,4 @@
 from pathlib import Path
-
 from rpd_generator import main as rpd_generator
 from rpd_generator.utilities import validate_configuration
 

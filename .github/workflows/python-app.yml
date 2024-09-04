@@ -30,7 +30,9 @@ jobs:
         python-version: '3.11'
         architecture: 'x86'
     - name: Set Environment Variables
-      run: echo "PIPENV_VENV_IN_PROJECT=true" >> $env:GITHUB_ENV
+      run: |
+        echo "PIPENV_VENV_IN_PROJECT=true" >> $env:GITHUB_ENV
+        echo "PYTHONPATH=${GITHUB_WORKSPACE}" >> $env:GITHUB_ENV
     - name: Install pipenv
       run: pip install pipenv
     - name: Cache Dependencies
