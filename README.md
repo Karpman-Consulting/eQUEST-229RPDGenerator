@@ -1,3 +1,5 @@
+<img src="https://github.com/Karpman-Consulting/eQUEST-229RPDGenerator/actions/workflows/python-app.yml/badge.svg">
+
 # eQUEST-229RPDGenerator
 This repository provides the application and source code for a compliance wizard which allows users to select eQUEST/DOE2 files, enter additional compliance details, and create and pre-validate RPD json files for use with the ASHRAE Standard 229 Ruleset Checking Tool (RCT). 
 
