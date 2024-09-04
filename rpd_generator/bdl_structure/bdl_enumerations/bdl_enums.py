@@ -203,13 +203,7 @@ class BDLEnums:
                 "DHW-INLET-T-SCH",
             ]
         ),
-        "ConstructionKeywords": _ListEnum(
-            [
-                "LAYERS",
-                "ABSORPTANCE",
-                "U-VALUE"
-            ]
-        ),
+        "ConstructionKeywords": _ListEnum(["LAYERS", "ABSORPTANCE", "U-VALUE"]),
         "DayScheduleKeywords": _ListEnum(
             [
                 "TYPE",

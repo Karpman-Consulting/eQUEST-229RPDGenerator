@@ -92,7 +92,11 @@ class Layer(BaseDefinition):
 
     def populate_data_elements(self):
         """Populate data elements for layers object."""
-        material_references = self.keyword_value_pairs.get(BDL_LayerKeywords.MATERIAL, [])
+        material_references = self.keyword_value_pairs.get(
+            BDL_LayerKeywords.MATERIAL, []
+        )
         self.material_references = (
-            material_references if isinstance(material_references, list) else [material_references]
+            material_references
+            if isinstance(material_references, list)
+            else [material_references]
         )

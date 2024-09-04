@@ -61,7 +61,10 @@ class Construction(BaseNode):
             else SurfaceConstructionInputOptions.SIMPLIFIED
         )
 
-        if self.surface_construction_input_option == SurfaceConstructionInputOptions.SIMPLIFIED:
+        if (
+            self.surface_construction_input_option
+            == SurfaceConstructionInputOptions.SIMPLIFIED
+        ):
             simplified_material = {"id": "Simplified Material"}
             # u_value = self.try_float(self.keyword_value_pairs.get(BDL_ConstructionKeywords.U_VALUE))
             # if u_value:

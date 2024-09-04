@@ -9,7 +9,7 @@ from rpd_generator.utilities.jsonpath_utils import (
     find_all,
     find_all_with_field_value,
     find_all_with_filters,
-    get_dict_of_zones_and_terminals_served_by_hvac_sys
+    get_dict_of_zones_and_terminals_served_by_hvac_sys,
 )
 
 
@@ -99,19 +99,42 @@ def find_best_match(target, candidates):
     return best_match_found
 
 
-def get_mapping(match_type, generated_values, reference_values, generated_zone_id=None, reference_zone_id=None, object_id_map=None):
+def get_mapping(
+    match_type,
+    generated_values,
+    reference_values,
+    generated_zone_id=None,
+    reference_zone_id=None,
+    object_id_map=None,
+):
     """Find matches for a key in the generated and reference JSON based on the json path in the spec."""
     mapping = {}
     if match_type == "Surfaces":
-        mapping = match_by_attributes(generated_values, reference_values, generated_zone_id, reference_zone_id, ["area", "azimuth"])
+        mapping = match_by_attributes(
+            generated_values,
+            reference_values,
+            generated_zone_id,
+            reference_zone_id,
+            ["area", "azimuth"],
+        )
 
     if match_type == "HVAC Systems":
-        mapping = match_sys_by_zones_served(generated_values, reference_values, object_id_map)
+        mapping = match_sys_by_zones_served(
+            generated_values, reference_values, object_id_map
+        )
         if not mapping:
-            mapping = match_by_attributes(generated_values, reference_values, generated_zone_id, reference_zone_id, ["cooling_system.type", "heating_system.type"])
+            mapping = match_by_attributes(
+                generated_values,
+                reference_values,
+                generated_zone_id,
+                reference_zone_id,
+                ["cooling_system.type", "heating_system.type"],
+            )
 
     if match_type == "Terminals":
-        mapping = match_terminal_by_references(generated_values, reference_values, object_id_map)
+        mapping = match_terminal_by_references(
+            generated_values, reference_values, object_id_map
+        )
 
     if not mapping:
         mapping = match_by_id(generated_values, reference_values)
@@ -123,18 +146,28 @@ def match_by_id(generated_values, reference_values):
     """Matches generated and reference objects by ID."""
     mapping, used_ids = {}, set()
     for generated_object in generated_values:
-        best_match = find_best_match(generated_object.get("id"), [ref.get("id") for ref in reference_values])
+        best_match = find_best_match(
+            generated_object.get("id"), [ref.get("id") for ref in reference_values]
+        )
         if best_match and best_match not in used_ids:
             mapping[generated_object.get("id")] = best_match
             used_ids.add(best_match)
     return mapping
 
 
-def match_by_attributes(generated_values, reference_values, generated_zone_id, reference_zone_id, attrs):
+def match_by_attributes(
+    generated_values, reference_values, generated_zone_id, reference_zone_id, attrs
+):
     """Matches generated and reference objects based on specified attributes."""
     mapping = {}
     for generated_object in generated_values:
-        best_match = get_best_match_attrs(generated_object, reference_values, attrs, generated_zone_id, reference_zone_id)
+        best_match = get_best_match_attrs(
+            generated_object,
+            reference_values,
+            attrs,
+            generated_zone_id,
+            reference_zone_id,
+        )
         if best_match:
             mapping[generated_object.get("id")] = best_match.get("id")
     return mapping
@@ -152,12 +185,16 @@ def match_sys_by_zones_served(generated_values, reference_values, object_id_map)
     # Match generated HVAC systems by looking up the set of corresponding reference zones
     for generated_hvac_id, data in generated_values.items():
         generated_hvac_zones_served = data["zone_list"]
-        corresponding_reference_zones = [object_id_map.get(zone_id) for zone_id in generated_hvac_zones_served]
+        corresponding_reference_zones = [
+            object_id_map.get(zone_id) for zone_id in generated_hvac_zones_served
+        ]
 
         corresponding_reference_zones_set = frozenset(corresponding_reference_zones)
 
         if corresponding_reference_zones_set in reference_zones_map:
-            mapping[generated_hvac_id] = reference_zones_map[corresponding_reference_zones_set]
+            mapping[generated_hvac_id] = reference_zones_map[
+                corresponding_reference_zones_set
+            ]
 
     return mapping
 
@@ -166,7 +203,9 @@ def match_terminal_by_references(generated_values, reference_values, object_id_m
     """Matches generated and reference terminal objects based on references to the hvac systems that serve them."""
     mapping = {}
     for generated_object in generated_values:
-        generated_hvac_id = generated_object.get("served_by_heating_ventilating_air_conditioning_system")
+        generated_hvac_id = generated_object.get(
+            "served_by_heating_ventilating_air_conditioning_system"
+        )
         if generated_hvac_id:
             reference_hvac_id = object_id_map.get(generated_hvac_id)
             if reference_hvac_id:
@@ -180,11 +219,18 @@ def match_terminal_by_references(generated_values, reference_values, object_id_m
     return mapping
 
 
-def get_best_match_attrs(target, candidates, attrs, generated_zone_id, reference_zone_id):
+def get_best_match_attrs(
+    target, candidates, attrs, generated_zone_id, reference_zone_id
+):
     """Finds the best match for a target object based on specified attributes."""
     best_match_found, highest_qty_matched = None, 0
     for candidate in candidates:
-        qty_matched = sum(compare_attributes(target, candidate, attr, generated_zone_id, reference_zone_id) for attr in attrs)
+        qty_matched = sum(
+            compare_attributes(
+                target, candidate, attr, generated_zone_id, reference_zone_id
+            )
+            for attr in attrs
+        )
         if qty_matched > highest_qty_matched:
             highest_qty_matched, best_match_found = qty_matched, candidate
     return best_match_found
@@ -208,17 +254,38 @@ def compare_attributes(target, candidate, attr, generated_zone_id, reference_zon
     """Compares attributes between two objects with special rules for azimuth and area."""
     target_value, candidate_value = target.get(attr), candidate.get(attr)
     if attr == "azimuth":
-        return compare_azimuth(target, candidate, generated_zone_id, reference_zone_id, target_value, candidate_value)
+        return compare_azimuth(
+            target,
+            candidate,
+            generated_zone_id,
+            reference_zone_id,
+            target_value,
+            candidate_value,
+        )
     elif attr == "area":
         return compare_values(target_value, candidate_value, 0.1)
     else:
         return target_value == candidate_value
 
 
-def compare_azimuth(target, candidate, generated_zone_id, reference_zone_id, target_value, candidate_value):
+def compare_azimuth(
+    target,
+    candidate,
+    generated_zone_id,
+    reference_zone_id,
+    target_value,
+    candidate_value,
+):
     """Special comparison rule for azimuth attributes."""
-    mismatched_wall_origin_adjacent_zone = (target.get("adjacent_zone") == generated_zone_id) != (candidate.get("adjacent_zone") == reference_zone_id)
-    if (not mismatched_wall_origin_adjacent_zone and target_value == candidate_value) or (mismatched_wall_origin_adjacent_zone and abs(target_value - candidate_value) == 180):
+    mismatched_wall_origin_adjacent_zone = (
+        target.get("adjacent_zone") == generated_zone_id
+    ) != (candidate.get("adjacent_zone") == reference_zone_id)
+    if (
+        not mismatched_wall_origin_adjacent_zone and target_value == candidate_value
+    ) or (
+        mismatched_wall_origin_adjacent_zone
+        and abs(target_value - candidate_value) == 180
+    ):
         return 1
     return 0
 
@@ -230,7 +297,9 @@ def compare_fan_power(generated_fans, expected_w_per_cfm):
         design_airflow = fan.get("design_airflow")
         design_power = fan.get("design_electric_power")
         if not compare_values(design_power, expected_w_per_cfm * design_airflow, 1):
-            errors.append(f"Value mismatch at '{fan['id']}'. Expected: {expected_w_per_cfm * design_airflow}; got: {design_power}")
+            errors.append(
+                f"Value mismatch at '{fan['id']}'. Expected: {expected_w_per_cfm * design_airflow}; got: {design_power}"
+            )
     return errors
 
 
@@ -274,12 +343,12 @@ def define_surface_map(generated_zone, reference_zone, generated_json, reference
             )
 
         local_surface_map = define_local_surface_map(
-                generated_zone_id,
-                reference_zone_id,
-                surface_type,
-                generated_surfaces,
-                reference_surfaces,
-            )[0]
+            generated_zone_id,
+            reference_zone_id,
+            surface_type,
+            generated_surfaces,
+            reference_surfaces,
+        )[0]
 
         surface_map.update(local_surface_map)
 
@@ -379,9 +448,9 @@ def define_terminal_map(object_id_map, generated_zone, reference_zone):
             reference_terminals,
             generated_zone_id=generated_zone_id,
             reference_zone_id=reference_zone["id"],
-            object_id_map=object_id_map
+            object_id_map=object_id_map,
         )
-    print('bye')
+    print("bye")
     return terminal_map, errors
 
 
@@ -424,7 +493,9 @@ def map_objects(generated_json, reference_json):
 
         # Define maps for terminals
         terminal_map, terminal_map_errors = define_terminal_map(
-            object_id_map, generated_zone, reference_zone,
+            object_id_map,
+            generated_zone,
+            reference_zone,
         )
         object_id_map.update(terminal_map)
         errors.extend(terminal_map_errors)
@@ -458,7 +529,9 @@ def handle_special_cases(json_key_path, object_id_map, generated_json, reference
         generated_zones = get_zones_from_json(generated_json)
 
         generated_surfaces = find_all(
-            json_key_path[: json_key_path.index("].", json_key_path.index("surfaces")) + 1],
+            json_key_path[
+                : json_key_path.index("].", json_key_path.index("surfaces")) + 1
+            ],
             generated_json,
         )
 
@@ -468,9 +541,12 @@ def handle_special_cases(json_key_path, object_id_map, generated_json, reference
             reference_surface_id = object_id_map.get(generated_surface_id)
 
             aligned_reference_surface = find_one(
-                json_key_path[: json_key_path.index("].", json_key_path.index("surfaces")) + 1] + f'[?(@.id="{reference_surface_id}")]',
+                json_key_path[
+                    : json_key_path.index("].", json_key_path.index("surfaces")) + 1
+                ]
+                + f'[?(@.id="{reference_surface_id}")]',
                 reference_json,
-                None
+                None,
             )
 
             generated_parent_zone = next(
@@ -507,7 +583,10 @@ def handle_special_cases(json_key_path, object_id_map, generated_json, reference
                 )
             aligned_reference_values[generated_surface_id] = aligned_reference_value
 
-            mismatched_wall_origin_adjacent_zone = (aligned_reference_surface.get("adjacent_zone") == reference_parent_zone_id) != (generated_surface.get("adjacent_zone") == generated_parent_zone_id)
+            mismatched_wall_origin_adjacent_zone = (
+                aligned_reference_surface.get("adjacent_zone")
+                == reference_parent_zone_id
+            ) != (generated_surface.get("adjacent_zone") == generated_parent_zone_id)
             if not (
                 (
                     not mismatched_wall_origin_adjacent_zone
@@ -529,9 +608,7 @@ def handle_special_cases(json_key_path, object_id_map, generated_json, reference
                 )
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(
-                f"Missing key {json_key_path.split('.')[-1]}"
-            )
+            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
 
     return warnings, errors
 
@@ -546,9 +623,9 @@ def handle_ordered_comparisons(
 
     # Handle comparison of data derived from zones which may not be in the same order as the reference zones
     if (
-            "zones[" in json_key_path
-            and "surfaces[" not in json_key_path
-            and "terminals[" not in json_key_path
+        "zones[" in json_key_path
+        and "surfaces[" not in json_key_path
+        and "terminals[" not in json_key_path
     ):
         aligned_generated_values = {}
         aligned_reference_values = {}
@@ -561,8 +638,9 @@ def handle_ordered_comparisons(
             generated_zone_id = generated_zone["id"]
             reference_zone_id = object_id_map[generated_zone_id]
 
-            zone_data_path = json_key_path[(json_key_path.index("].", json_key_path.index(
-                "zones")) + 2):]
+            zone_data_path = json_key_path[
+                (json_key_path.index("].", json_key_path.index("zones")) + 2) :
+            ]
             generated_value = find_one(zone_data_path, generated_zone)
             aligned_generated_values[generated_zone_id] = generated_value
             # Extract values from aligned zones using the specified key path
@@ -574,14 +652,10 @@ def handle_ordered_comparisons(
                 None,
             )
 
-            aligned_reference_values[generated_zone_id] = (
-                aligned_reference_value
-            )
+            aligned_reference_values[generated_zone_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(
-                f"Missing key {json_key_path.split('.')[-1]}"
-            )
+            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -600,12 +674,12 @@ def handle_ordered_comparisons(
         # Populate data for each surface individually and ensure correct alignment via object mapping
         generated_surfaces = find_all(
             # Extract the key path for the surface (everything before surfaces[]. )
-            json_key_path[: json_key_path.index("].", json_key_path.index("surfaces")) + 1],
+            json_key_path[
+                : json_key_path.index("].", json_key_path.index("surfaces")) + 1
+            ],
             generated_json,
         )
-        generated_surface_ids = [
-            surface["id"] for surface in generated_surfaces
-        ]
+        generated_surface_ids = [surface["id"] for surface in generated_surfaces]
 
         for generated_surface in generated_surfaces:
             generated_surface_id = generated_surface["id"]
@@ -613,7 +687,9 @@ def handle_ordered_comparisons(
 
             generated_value = find_one(
                 # Extract the key path for the surface data (everything after surfaces[]. )
-                json_key_path[(json_key_path.index("].", json_key_path.index("surfaces"))) + 2:],
+                json_key_path[
+                    (json_key_path.index("].", json_key_path.index("surfaces"))) + 2 :
+                ],
                 generated_surface,
             )
             aligned_generated_values[generated_surface_id] = generated_value
@@ -638,14 +714,10 @@ def handle_ordered_comparisons(
                     None,
                 )
 
-            aligned_reference_values[generated_surface_id] = (
-                aligned_reference_value
-            )
+            aligned_reference_values[generated_surface_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(
-                f"Missing key {json_key_path.split('.')[-1]}"
-            )
+            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -665,12 +737,12 @@ def handle_ordered_comparisons(
         # Populate data for each surface individually and ensure correct alignment via object mapping
         generated_terminals = find_all(
             # Extract the key path for the surface (everything before surfaces[]. )
-            json_key_path[: json_key_path.index("].", json_key_path.index("terminals")) + 1],
+            json_key_path[
+                : json_key_path.index("].", json_key_path.index("terminals")) + 1
+            ],
             generated_json,
         )
-        generated_terminal_ids = [
-            terminal["id"] for terminal in generated_terminals
-        ]
+        generated_terminal_ids = [terminal["id"] for terminal in generated_terminals]
 
         for generated_terminal in generated_terminals:
             generated_terminal_id = generated_terminal["id"]
@@ -678,7 +750,9 @@ def handle_ordered_comparisons(
 
             generated_value = find_one(
                 # Extract the key path for the terminal data (everything after terminals[]. )
-                json_key_path[(json_key_path.index("].", json_key_path.index("terminals"))) + 2:],
+                json_key_path[
+                    (json_key_path.index("].", json_key_path.index("terminals"))) + 2 :
+                ],
                 generated_terminal,
             )
             aligned_generated_values[generated_terminal_id] = generated_value
@@ -703,14 +777,10 @@ def handle_ordered_comparisons(
                     None,
                 )
 
-            aligned_reference_values[generated_terminal_id] = (
-                aligned_reference_value
-            )
+            aligned_reference_values[generated_terminal_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(
-                f"Missing key {json_key_path.split('.')[-1]}"
-            )
+            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -727,38 +797,49 @@ def handle_ordered_comparisons(
         aligned_reference_values = {}
 
         generated_hvacs = find_all(
-            json_key_path[: json_key_path.index("].", json_key_path.index("heating_ventilating_air_conditioning_systems")) + 1],
+            json_key_path[
+                : json_key_path.index(
+                    "].",
+                    json_key_path.index("heating_ventilating_air_conditioning_systems"),
+                )
+                + 1
+            ],
             generated_json,
         )
-        generated_hvac_ids = [
-            hvac["id"] for hvac in generated_hvacs
-        ]
+        generated_hvac_ids = [hvac["id"] for hvac in generated_hvacs]
 
         # Populate data for each zone individually and ensure correct alignment via object mapping
         for generated_hvac in generated_hvacs:
             generated_hvac_id = generated_hvac["id"]
             reference_hvac_id = object_id_map[generated_hvac_id]
 
-            hvac_data_path = json_key_path[(json_key_path.index("].", json_key_path.index("heating_ventilating_air_conditioning_systems")) + 2):]
+            hvac_data_path = json_key_path[
+                (
+                    json_key_path.index(
+                        "].",
+                        json_key_path.index(
+                            "heating_ventilating_air_conditioning_systems"
+                        ),
+                    )
+                    + 2
+                ) :
+            ]
             generated_value = find_one(hvac_data_path, generated_hvac)
             aligned_generated_values[generated_hvac_id] = generated_value
             # Extract values from aligned zones using the specified key path
             aligned_reference_value = find_one(
                 json_key_path.replace(
-                    "heating_ventilating_air_conditioning_systems[*]", f'heating_ventilating_air_conditioning_systems[*][?(@.id="{reference_hvac_id}")]'
+                    "heating_ventilating_air_conditioning_systems[*]",
+                    f'heating_ventilating_air_conditioning_systems[*][?(@.id="{reference_hvac_id}")]',
                 ),
                 reference_json,
                 None,
             )
 
-            aligned_reference_values[generated_hvac_id] = (
-                aligned_reference_value
-            )
+            aligned_reference_values[generated_hvac_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(
-                f"Missing key {json_key_path.split('.')[-1]}"
-            )
+            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -772,9 +853,7 @@ def handle_ordered_comparisons(
     return warnings, errors
 
 
-def handle_unordered_comparisons(
-    path_spec, reference_json, generated_json
-):
+def handle_unordered_comparisons(path_spec, reference_json, generated_json):
 
     json_key_path = path_spec["json-key-path"]
 
@@ -786,21 +865,16 @@ def handle_unordered_comparisons(
     )
     generated_value_parent_ids = [
         # Important to use get() here to avoid key errors where objects have no ID such as weather
-        value.get("id") for value in generated_value_parents
+        value.get("id")
+        for value in generated_value_parents
     ]
     generated_values = find_all(json_key_path, generated_json)
-    generated_values = {
-        index: value for index, value in enumerate(generated_values)
-    }
+    generated_values = {index: value for index, value in enumerate(generated_values)}
     reference_values = find_all(json_key_path, reference_json)
-    reference_values = {
-        index: value for index, value in enumerate(reference_values)
-    }
+    reference_values = {index: value for index, value in enumerate(reference_values)}
 
     if all(value is None for value in generated_values):
-        warnings.append(
-            f"Missing key {json_key_path.split('.')[-1]}"
-        )
+        warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
         return warnings, errors
 
     general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -815,9 +889,7 @@ def handle_unordered_comparisons(
     return warnings, errors
 
 
-def run_file_comparison(
-    spec_file, generated_json_file, reference_json_file
-):
+def run_file_comparison(spec_file, generated_json_file, reference_json_file):
     """Compares generated and reference JSON files according to the spec."""
     spec = load_json_file(spec_file)
     json_test_key_paths = spec.get("json-test-key-paths", [])
@@ -828,7 +900,9 @@ def run_file_comparison(
     warnings = []
     errors = []
 
-    object_id_map, map_warnings, map_errors = map_objects(generated_json, reference_json)
+    object_id_map, map_warnings, map_errors = map_objects(
+        generated_json, reference_json
+    )
     warnings.extend(map_warnings)
     errors.extend(map_errors)
     if not object_id_map:
@@ -850,17 +924,29 @@ def run_file_comparison(
         else:
 
             # Handle comparison of data derived from objects which may not be in the same order as the reference objects
-            if any(group in json_key_path for group in ["zones[", "surfaces[", "terminals[", "heating_ventilating_air_conditioning_systems["]):
-                ordered_comparison_warnings, ordered_comparison_errors = handle_ordered_comparisons(
-                    path_spec, object_id_map, reference_json, generated_json
+            if any(
+                group in json_key_path
+                for group in [
+                    "zones[",
+                    "surfaces[",
+                    "terminals[",
+                    "heating_ventilating_air_conditioning_systems[",
+                ]
+            ):
+                ordered_comparison_warnings, ordered_comparison_errors = (
+                    handle_ordered_comparisons(
+                        path_spec, object_id_map, reference_json, generated_json
+                    )
                 )
                 warnings.extend(ordered_comparison_warnings)
                 errors.extend(ordered_comparison_errors)
 
             # Handle comparison of data that is not dependent on order
             else:
-                unordered_comparison_warnings, unordered_comparison_errors = handle_unordered_comparisons(
-                    path_spec, reference_json, generated_json
+                unordered_comparison_warnings, unordered_comparison_errors = (
+                    handle_unordered_comparisons(
+                        path_spec, reference_json, generated_json
+                    )
                 )
                 warnings.extend(unordered_comparison_warnings)
                 errors.extend(unordered_comparison_errors)
@@ -912,15 +998,19 @@ def run_comparison_for_all_tests(test_dir):
 def print_results(test, warnings, errors):
     """Prints the comparison results."""
     if warnings:
-        print(f"""----------------------------
+        print(
+            f"""----------------------------
     Warnings for {test}:
-----------------------------""")
+----------------------------"""
+        )
         for warning in warnings:
             print(f"{warning}")
     if errors:
-        print(f"""----------------------------
+        print(
+            f"""----------------------------
     Errors for {test}:
-----------------------------""")
+----------------------------"""
+        )
         for error in errors:
             print(f"{error}")
 

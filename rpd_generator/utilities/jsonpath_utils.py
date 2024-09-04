@@ -66,9 +66,14 @@ def get_dict_of_zones_and_terminals_served_by_hvac_sys(
     terminal_2.id, terminal_3.id]}, hvac_system_2.id: {"zone_list": [zone_4.id, zone_9.id, zone_30.id],
     "terminal_unit_list": [terminal_10.id, terminal_20.id, terminal_30.id]}}
     """
-    dict_of_zones_and_terminals_served_by_hvac_sys: dict[str, ZonesTerminalsServedByHVACSys] = {}
+    dict_of_zones_and_terminals_served_by_hvac_sys: dict[
+        str, ZonesTerminalsServedByHVACSys
+    ] = {}
 
-    for zone in find_all("$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*]", rpd):
+    for zone in find_all(
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*]",
+        rpd,
+    ):
         zone_id = zone["id"]
         for terminal in find_all("$.terminals[*]", zone):
             terminal_id = terminal["id"]
@@ -76,26 +81,21 @@ def get_dict_of_zones_and_terminals_served_by_hvac_sys(
                 "served_by_heating_ventilating_air_conditioning_system"
             )
             if hvac_sys_id and isinstance(hvac_sys_id, str):
-                if (
-                    hvac_sys_id
-                    not in dict_of_zones_and_terminals_served_by_hvac_sys
-                ):
+                if hvac_sys_id not in dict_of_zones_and_terminals_served_by_hvac_sys:
                     dict_of_zones_and_terminals_served_by_hvac_sys[hvac_sys_id] = {
                         "terminal_list": [],
                         "zone_list": [],
                     }
 
-                zone_list = dict_of_zones_and_terminals_served_by_hvac_sys[
-                    hvac_sys_id
-                ]["zone_list"]
+                zone_list = dict_of_zones_and_terminals_served_by_hvac_sys[hvac_sys_id][
+                    "zone_list"
+                ]
                 if zone_id not in zone_list:
                     zone_list.append(zone_id)
 
-                terminal_list = (
-                    dict_of_zones_and_terminals_served_by_hvac_sys[hvac_sys_id][
-                        "terminal_list"
-                    ]
-                )
+                terminal_list = dict_of_zones_and_terminals_served_by_hvac_sys[
+                    hvac_sys_id
+                ]["terminal_list"]
                 if terminal_id not in terminal_list:
                     terminal_list.append(terminal_id)
 

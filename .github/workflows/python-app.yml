@@ -5,61 +5,49 @@
 on: pull_request
 
 jobs:
-  setup:
-    name: Setup Environment
+  black-formatting-check:
+    name: Black Formatting Check
     runs-on: windows-latest
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+      - name: Run Black
+        uses: psf/black@stable
+        with:
+          version: "24.2.0"
 
-      - name: Set-Up Python
+  rpd-tests:
+    name: Run RPD Tests
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Set-Up Python v3.11 32-bit
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           architecture: 'x86'
-
       - name: Set Environment Variables
         run: echo "PIPENV_VENV_IN_PROJECT=true" >> $env:GITHUB_ENV
-
       - name: Install pipenv
         run: |
           python -m pip install --upgrade pip
           pip install pipenv
-
       - name: Cache Dependencies
         uses: actions/cache@v4
         id: cache-dependencies
         with:
           path: .venv
           key: ${{ runner.os }}-pipenv-v6-${{ hashFiles('Pipfile.lock') }}
-
-      - name: Install Dependencies If Not Cached
+      - name: Install Dependencies
         if: steps.cache-dependencies.outputs.cache-hit != 'true'
         run: pipenv install --dev --verbose
         env:
           PIPENV_PYTHON: C:\hostedtoolcache\windows\Python\3.11\x86\python.exe
 
-  black-formatting-check:
-    name: Black Formatting Check
-    runs-on: windows-latest
-    needs: setup
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Restore Cached Dependencies
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: ${{ runner.os }}-pipenv-v6-${{ hashFiles('Pipfile.lock') }}
-          restore-keys: ${{ runner.os }}-pipenv-v6-
-
-      - name: Run Black
-        uses: psf/black@stable
-        with:
-          version: "24.2.0"
 
 #  run-rpd-tests:
 #    name: Run RPD Tests
