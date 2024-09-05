@@ -3,11 +3,11 @@ import copy
 
 
 def make_ids_unique(
-    data: dict, seen_ids=None, id_counters=None, visited=None, parent=None, key=None
+    data: dict | list, seen_ids=None, id_counters=None, visited=None, parent=None, key=None
 ) -> None:
     """
     Ensure that the rpd data structure is valid by appending a number to the end of the id if it is not unique, and removing empty dictionaries.
-    :param data: rpd data structure
+    :param data: data structure
     :param seen_ids: dictionary of ids that have been seen
     :param id_counters: dictionary of ids that have been seen with a counter
     :param visited: set of visited objects
