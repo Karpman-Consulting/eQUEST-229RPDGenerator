@@ -83,10 +83,10 @@ class ExteriorWall(ChildNode, ParentNode):
             self.classification = SurfaceClassificationOptions.WALL
 
         parent_floor_azimuth = self.parent.parent.try_float(
-            self.parent.parent.keyword_value_pairs.get("AZIMUTH")
+            self.parent.parent.keyword_value_pairs.get(BDL_FloorKeywords.AZIMUTH)
         )
         parent_space_azimuth = self.parent.try_float(
-            self.parent.keyword_value_pairs.get("AZIMUTH")
+            self.parent.keyword_value_pairs.get(BDL_SpaceKeywords.AZIMUTH)
         )
         surface_azimuth = self.try_float(
             self.keyword_value_pairs.get(BDL_ExteriorWallKeywords.AZIMUTH)

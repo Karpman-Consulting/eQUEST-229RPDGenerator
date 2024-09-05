@@ -103,7 +103,7 @@
                                                         "specific_heat": 837.3601169702214
                                                     },
                                                     {
-                                                        "id": "Gypsum Board",
+                                                        "id": "Gypsum Board--1",
                                                         "thickness": 0.0158496,
                                                         "thermal_conductivity": 0.15922761154855644,
                                                         "density": 800.9231686980072,
@@ -190,7 +190,6 @@
                                                 "r_values": [],
                                                 "surface_construction_input_option": "SIMPLIFIED"
                                             },
-                                            "optical_properties": {},
                                             "classification": "WALL",
                                             "area": 25.620019985663994,
                                             "tilt": 90.0,
@@ -202,10 +201,10 @@
                                             "id": "Perimeter Space 1 North Wall",
                                             "subsurfaces": [],
                                             "construction": {
-                                                "id": "BL1 IWall Construction",
+                                                "id": "BL1 IWall Construction--1",
                                                 "primary_layers": [
                                                     {
-                                                        "id": "Simplified Material"
+                                                        "id": "Simplified Material--1"
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -213,7 +212,6 @@
                                                 "r_values": [],
                                                 "surface_construction_input_option": "SIMPLIFIED"
                                             },
-                                            "optical_properties": {},
                                             "classification": "WALL",
                                             "area": 161.595547776,
                                             "tilt": 90.0,
@@ -225,10 +223,10 @@
                                             "id": "Perimeter Space 1 NW Wall",
                                             "subsurfaces": [],
                                             "construction": {
-                                                "id": "BL1 IWall Construction",
+                                                "id": "BL1 IWall Construction--2",
                                                 "primary_layers": [
                                                     {
-                                                        "id": "Simplified Material"
+                                                        "id": "Simplified Material--2"
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -236,7 +234,6 @@
                                                 "r_values": [],
                                                 "surface_construction_input_option": "SIMPLIFIED"
                                             },
-                                            "optical_properties": {},
                                             "classification": "WALL",
                                             "area": 25.620019985663994,
                                             "tilt": 90.0,
@@ -284,7 +281,6 @@
                                             "served_by_heating_ventilating_air_conditioning_system": "Baseline System 4 (South)"
                                         }
                                     ],
-                                    "zonal_exhaust_fan": {},
                                     "infiltration": {
                                         "algorithm_name": "Air Change Method",
                                         "flow_rate": 0.11411689176575998,
@@ -355,7 +351,7 @@
                                                 "id": "Exterior Wall Type 2",
                                                 "primary_layers": [
                                                     {
-                                                        "id": "Stucco",
+                                                        "id": "Stucco--1",
                                                         "thickness": 0.0252984,
                                                         "thermal_conductivity": 0.7199857217847769,
                                                         "density": 1858.1417513793767,
@@ -366,14 +362,14 @@
                                                         "r_value": 0.09950223988110582
                                                     },
                                                     {
-                                                        "id": "Insulation",
+                                                        "id": "Insulation--1",
                                                         "thickness": 0.06217919999999999,
                                                         "thermal_conductivity": 0.03634543307086615,
                                                         "density": 9.611078024376086,
                                                         "specific_heat": 837.3601169702214
                                                     },
                                                     {
-                                                        "id": "Gypsum board resistance",
+                                                        "id": "Gypsum board resistance--1",
                                                         "r_value": 0.09950223988110582
                                                     }
                                                 ],
@@ -400,24 +396,24 @@
                                             "id": "Perimeter Space 2 Roof",
                                             "subsurfaces": [],
                                             "construction": {
-                                                "id": "Roof Type 1",
+                                                "id": "Roof Type 1--1",
                                                 "primary_layers": [
                                                     {
-                                                        "id": "Metal Deck",
+                                                        "id": "Metal Deck--1",
                                                         "thickness": 0.0007924799999999998,
                                                         "thermal_conductivity": 45.27948666666667,
                                                         "density": 7824.058250377093,
                                                         "specific_heat": 498.22926959728164
                                                     },
                                                     {
-                                                        "id": "Continuous Insulation",
+                                                        "id": "Continuous Insulation--1",
                                                         "thickness": 0.05273039999999999,
                                                         "thermal_conductivity": 0.0207688188976378,
                                                         "density": 32.03692674792029,
                                                         "specific_heat": 921.0961286672434
                                                     },
                                                     {
-                                                        "id": "Built-up roofing",
+                                                        "id": "Built-up roofing--1",
                                                         "thickness": 0.009448799999999999,
                                                         "thermal_conductivity": 0.15922761154855644,
                                                         "density": 1121.2924361772102,
@@ -446,10 +442,10 @@
                                             "id": "Perimeter Space 2 NW Wall",
                                             "subsurfaces": [],
                                             "construction": {
-                                                "id": "BL1 IWall Construction",
+                                                "id": "BL1 IWall Construction--3",
                                                 "primary_layers": [
                                                     {
-                                                        "id": "Simplified Material"
+                                                        "id": "Simplified Material--3"
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -457,7 +453,6 @@
                                                 "r_values": [],
                                                 "surface_construction_input_option": "SIMPLIFIED"
                                             },
-                                            "optical_properties": {},
                                             "classification": "WALL",
                                             "area": 25.620019985663994,
                                             "tilt": 90.0,
@@ -469,10 +464,10 @@
                                             "id": "Perimeter Space 2 West Wall",
                                             "subsurfaces": [],
                                             "construction": {
-                                                "id": "BL1 IWall Construction",
+                                                "id": "BL1 IWall Construction--4",
                                                 "primary_layers": [
                                                     {
-                                                        "id": "Simplified Material"
+                                                        "id": "Simplified Material--4"
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -480,7 +475,6 @@
                                                 "r_values": [],
                                                 "surface_construction_input_option": "SIMPLIFIED"
                                             },
-                                            "optical_properties": {},
                                             "classification": "WALL",
                                             "area": 95.65296998399998,
                                             "tilt": 90.0,
@@ -491,10 +485,10 @@
                                         {
                                             "id": "Perimeter Space 2 Slab on Grade",
                                             "construction": {
-                                                "id": "Slab-on-grade Type 1",
+                                                "id": "Slab-on-grade Type 1--1",
                                                 "primary_layers": [
                                                     {
-                                                        "id": "Concrete",
+                                                        "id": "Concrete--1",
                                                         "thickness": 0.10149839999999999,
                                                         "thermal_conductivity": 2.310531102362205,
                                                         "density": 2324.6794971459663,
@@ -528,7 +522,6 @@
                                             "served_by_heating_ventilating_air_conditioning_system": "Baseline System 4 (East)"
                                         }
                                     ],
-                                    "zonal_exhaust_fan": {},
                                     "infiltration": {
                                         "algorithm_name": "Air Change Method",
                                         "flow_rate": 0.07728927534630142,
@@ -613,7 +606,7 @@
                                                 "id": "Exterior Wall Type 3",
                                                 "primary_layers": [
                                                     {
-                                                        "id": "Simplified Material"
+                                                        "id": "Simplified Material--5"
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -642,14 +635,14 @@
                                                 "id": "Roof Type 2",
                                                 "primary_layers": [
                                                     {
-                                                        "id": "Metal Deck",
+                                                        "id": "Metal Deck--2",
                                                         "thickness": 0.0007924799999999998,
                                                         "thermal_conductivity": 45.27948666666667,
                                                         "density": 7824.058250377093,
                                                         "specific_heat": 498.22926959728164
                                                     },
                                                     {
-                                                        "id": "Continuous Insulation",
+                                                        "id": "Continuous Insulation--2",
                                                         "thickness": 0.05273039999999999,
                                                         "thermal_conductivity": 0.0207688188976378,
                                                         "density": 32.03692674792029,
@@ -682,10 +675,10 @@
                                             "id": "Perimeter Space 3 SW Wall",
                                             "subsurfaces": [],
                                             "construction": {
-                                                "id": "BL1 IWall Construction",
+                                                "id": "BL1 IWall Construction--5",
                                                 "primary_layers": [
                                                     {
-                                                        "id": "Simplified Material"
+                                                        "id": "Simplified Material--6"
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -693,7 +686,6 @@
                                                 "r_values": [],
                                                 "surface_construction_input_option": "SIMPLIFIED"
                                             },
-                                            "optical_properties": {},
                                             "classification": "WALL",
                                             "area": 25.620019985663994,
                                             "tilt": 90.0,
@@ -705,10 +697,10 @@
                                             "id": "Perimeter Space 3 South Wall",
                                             "subsurfaces": [],
                                             "construction": {
-                                                "id": "BL1 IWall Construction",
+                                                "id": "BL1 IWall Construction--6",
                                                 "primary_layers": [
                                                     {
-                                                        "id": "Simplified Material"
+                                                        "id": "Simplified Material--7"
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -716,7 +708,6 @@
                                                 "r_values": [],
                                                 "surface_construction_input_option": "SIMPLIFIED"
                                             },
-                                            "optical_properties": {},
                                             "classification": "WALL",
                                             "area": 161.595547776,
                                             "tilt": 90.0,
@@ -737,7 +728,7 @@
                                                         "specific_heat": 837.3601169702214
                                                     },
                                                     {
-                                                        "id": "Concrete",
+                                                        "id": "Concrete--2",
                                                         "thickness": 0.10149839999999999,
                                                         "thermal_conductivity": 2.310531102362205,
                                                         "density": 2324.6794971459663,
@@ -771,7 +762,6 @@
                                             "served_by_heating_ventilating_air_conditioning_system": "Baseline System 4 (North)"
                                         }
                                     ],
-                                    "zonal_exhaust_fan": {},
                                     "infiltration": {
                                         "algorithm_name": "Air Change Method",
                                         "flow_rate": 0.08058408203151357,
@@ -840,10 +830,10 @@
                                                 }
                                             ],
                                             "construction": {
-                                                "id": "Exterior Wall Type 3",
+                                                "id": "Exterior Wall Type 3--1",
                                                 "primary_layers": [
                                                     {
-                                                        "id": "Simplified Material"
+                                                        "id": "Simplified Material--8"
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -872,7 +862,7 @@
                                                 "id": "Roof Type 3",
                                                 "primary_layers": [
                                                     {
-                                                        "id": "Simplified Material"
+                                                        "id": "Simplified Material--9"
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -897,10 +887,10 @@
                                             "id": "Perimeter Space 4 East Wall",
                                             "subsurfaces": [],
                                             "construction": {
-                                                "id": "BL1 IWall Construction",
+                                                "id": "BL1 IWall Construction--7",
                                                 "primary_layers": [
                                                     {
-                                                        "id": "Simplified Material"
+                                                        "id": "Simplified Material--10"
                                                     }
                                                 ],
                                                 "framing_layers": [],
@@ -908,7 +898,6 @@
                                                 "r_values": [],
                                                 "surface_construction_input_option": "SIMPLIFIED"
                                             },
-                                            "optical_properties": {},
                                             "classification": "WALL",
                                             "area": 95.65296998399998,
                                             "tilt": 90.0,
@@ -919,17 +908,17 @@
                                         {
                                             "id": "Perimeter Space 4 Slab on Grade",
                                             "construction": {
-                                                "id": "Slab-on-grade Type 2",
+                                                "id": "Slab-on-grade Type 2--1",
                                                 "primary_layers": [
                                                     {
-                                                        "id": "Insulation (Slab on grade)",
+                                                        "id": "Insulation (Slab on grade)--1",
                                                         "thickness": 0.11429999999999998,
                                                         "thermal_conductivity": 0.04326837270341208,
                                                         "density": 91.30524123157284,
                                                         "specific_heat": 837.3601169702214
                                                     },
                                                     {
-                                                        "id": "Concrete",
+                                                        "id": "Concrete--3",
                                                         "thickness": 0.10149839999999999,
                                                         "thermal_conductivity": 2.310531102362205,
                                                         "density": 2324.6794971459663,
@@ -963,7 +952,6 @@
                                             "served_by_heating_ventilating_air_conditioning_system": "Baseline System 4 (West)"
                                         }
                                     ],
-                                    "zonal_exhaust_fan": {},
                                     "infiltration": {
                                         "algorithm_name": "Air Change Method",
                                         "flow_rate": 0.05368236984794879,
@@ -1008,24 +996,24 @@
                                             "id": "Core Space 1 Roof",
                                             "subsurfaces": [],
                                             "construction": {
-                                                "id": "Roof Type 1",
+                                                "id": "Roof Type 1--2",
                                                 "primary_layers": [
                                                     {
-                                                        "id": "Metal Deck",
+                                                        "id": "Metal Deck--3",
                                                         "thickness": 0.0007924799999999998,
                                                         "thermal_conductivity": 45.27948666666667,
                                                         "density": 7824.058250377093,
                                                         "specific_heat": 498.22926959728164
                                                     },
                                                     {
-                                                        "id": "Continuous Insulation",
+                                                        "id": "Continuous Insulation--3",
                                                         "thickness": 0.05273039999999999,
                                                         "thermal_conductivity": 0.0207688188976378,
                                                         "density": 32.03692674792029,
                                                         "specific_heat": 921.0961286672434
                                                     },
                                                     {
-                                                        "id": "Built-up roofing",
+                                                        "id": "Built-up roofing--2",
                                                         "thickness": 0.009448799999999999,
                                                         "thermal_conductivity": 0.15922761154855644,
                                                         "density": 1121.2924361772102,
@@ -1053,10 +1041,10 @@
                                         {
                                             "id": "Core Space 1 Slab on Grade",
                                             "construction": {
-                                                "id": "Slab-on-grade Type 1",
+                                                "id": "Slab-on-grade Type 1--2",
                                                 "primary_layers": [
                                                     {
-                                                        "id": "Concrete",
+                                                        "id": "Concrete--4",
                                                         "thickness": 0.10149839999999999,
                                                         "thermal_conductivity": 2.310531102362205,
                                                         "density": 2324.6794971459663,
@@ -1090,7 +1078,6 @@
                                             "served_by_heating_ventilating_air_conditioning_system": "Baseline System 4 (Core)"
                                         }
                                     ],
-                                    "zonal_exhaust_fan": {},
                                     "infiltration": {
                                         "algorithm_name": "Air Change Method",
                                         "id": "Core Space 1 (Core) Infil"
@@ -89044,8 +89031,6 @@
             "service_water_heating_distribution_systems": [
                 {
                     "id": "DHW Plant 1 Loop",
-                    "tanks": {},
-                    "service_water_piping": {},
                     "design_supply_temperature": 57.222222222222285,
                     "is_ground_temperature_used_for_entering_water": true
                 }
@@ -89054,7 +89039,6 @@
                 {
                     "id": "DHW Plant 1 Wtr Htr",
                     "output_validation_points": [],
-                    "tank": {},
                     "solar_thermal_systems": [],
                     "compressor_capacity_validation_points": [],
                     "compressor_power_validation_points": [],
@@ -89068,8 +89052,7 @@
             "boilers": [],
             "chillers": [],
             "heat_rejections": [],
-            "external_fluid_sources": [],
-            "output": {}
+            "external_fluid_sources": []
         }
     ],
     "calendar": {
