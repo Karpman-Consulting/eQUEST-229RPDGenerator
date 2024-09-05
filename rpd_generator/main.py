@@ -112,6 +112,7 @@ def generate_rmds(bdl_input_reader: ModelInputReader, selected_models: list):
                         cmd_dict["SPACE"], obj
                     )
                 )
+
             # Process the command group by creating object instances and populating the rmd object instance dictionary
             _process_command_group(
                 command,
@@ -119,6 +120,7 @@ def generate_rmds(bdl_input_reader: ModelInputReader, selected_models: list):
                 rmd,
                 special_handling,
             )
+
         rmds.append(rmd)
     return rmds, str(json_file_path)
 
