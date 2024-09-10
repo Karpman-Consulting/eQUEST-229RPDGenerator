@@ -45,5 +45,7 @@ jobs:
     - name: Install Dependencies
       if: steps.cache-dependencies.outputs.cache-hit != 'true'
       run: pipenv install --dev
+    - name: Install rpd_generator Package in Editable Mode
+      run: pipenv run pip install -e .
     - name: Run RPD Tests
       run: pipenv run python test/test_generated_rpd_files.py
