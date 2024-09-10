@@ -3,11 +3,10 @@ import os
 import json
 import math
 from difflib import SequenceMatcher
-from pathlib import Path
 
-project_root = Path(__file__).resolve().parents[1]
-if str(project_root) not in sys.path:
-    sys.path.insert(0, str(project_root))
+# project_root = Path(__file__).resolve().parents[1]
+# if str(project_root) not in sys.path:
+#     sys.path.insert(0, str(project_root))
 
 from rpd_generator.utilities.jsonpath_utils import (
     find_one,
