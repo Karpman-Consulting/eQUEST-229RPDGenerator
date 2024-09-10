@@ -22,30 +22,39 @@ jobs:
     name: Run RPD Tests
     runs-on: windows-latest
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
-    - name: Set-Up Python v3.11 32-bit
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-        architecture: 'x86'
-    - name: Set Environment Variables
-      run: |
-        echo "PIPENV_VENV_IN_PROJECT=true" >> $env:GITHUB_ENV
-    - name: Install pipenv
-      run: pip install pipenv
-    - name: Cache Dependencies
-      uses: actions/cache@v4
-      id: cache-dependencies
-      with:
-        path: .venv
-        key: ${{ runner.os }}-pipenv-v6-${{ hashFiles('Pipfile.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-pipenv-v6-
-    - name: Install Dependencies
-      if: steps.cache-dependencies.outputs.cache-hit != 'true'
-      run: pipenv install --dev
-    - name: Install rpd_generator Package in Editable Mode
-      run: pipenv run pip install -e .
-    - name: Run RPD Tests
-      run: pipenv run python test/test_generated_rpd_files.py
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set-Up Python v3.11 32-bit
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          architecture: 'x86'
+
+      - name: Set Environment Variables
+        run: |
+          echo "PIPENV_VENV_IN_PROJECT=true" >> $env:GITHUB_ENV
+
+      - name: Install pipenv
+        run: pip install pipenv
+
+      - name: Cache Dependencies
+        uses: actions/cache@v4
+        id: cache-dependencies
+        with:
+          path: .venv
+          key: ${{ runner.os }}-pipenv-v6-${{ hashFiles('Pipfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pipenv-v6-
+
+      - name: Install Dependencies
+        if: steps.cache-dependencies.outputs.cache-hit != 'true'
+        run: |
+          # Installing dependencies from Pipfile.lock
+          pipenv install --dev 
+          # Install your project package in editable mode
+          pipenv install -e .
+
+      - name: Run RPD Tests
+        run: pipenv run python test/test_generated_rpd_files.py
+
