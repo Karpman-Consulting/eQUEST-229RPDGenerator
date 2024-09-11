@@ -230,7 +230,7 @@ class Zone(ChildNode):
             )
 
         # Populate DOAS Terminal data elements if applicable
-        if self.keyword_value_pairs.get(BDL_ZoneKeywords.DOA_SYSTEM) is not None:
+        if self.parent.keyword_value_pairs.get(BDL_SystemKeywords.DOA_SYSTEM) is not None:
             self.terminals_id[2] = self.u_name + " DOAS Terminal"
             if (
                 self.parent.fan_sys_fan_control
