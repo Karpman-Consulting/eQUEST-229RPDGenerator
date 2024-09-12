@@ -612,6 +612,7 @@ class BDLEnums:
                 "RETURN-FAN-LOC",
                 "OA-CONTROL",
                 "DOA-SYSTEM",
+                "DOAS-ATTACHED-TO",
                 "ECONO-LIMIT-T",
                 "ECONO-LOCKOUT",
                 "RECOVER-EXHAUST",
@@ -623,6 +624,7 @@ class BDLEnums:
                 "ERV-OA-FLOW",
                 "ERV-EXH-FLOW",
                 "ZONE-HEAT-SOURCE",
+                "ZONE-OA-METHOD",
                 "BBRD-LOOP",
             ]
         ),
@@ -710,6 +712,7 @@ class BDLEnums:
                 "MIN-FLOW-SCH",
                 "MIN-FLOW-RATIO",
                 "MIN-FLOW/AREA",
+                "OA-FLOW/PER",
                 "EXHAUST-STATIC",
                 "EXHAUST-EFF",
                 "EXHAUST-KW/FLOW",

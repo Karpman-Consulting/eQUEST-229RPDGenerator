@@ -320,6 +320,52 @@ class Zone(ChildNode):
                     zone_ef_power_per_flow * exhaust_airflow
                 )
             return
+        # Populate Terminal for terminals_has_demand_control_ventilation
+        if self.keyword_value_pairs.get(BDL_ZoneKeywords.OA_FLOW_PER) is not None:
+            if (
+                self.parent.keyword_value_pairs.get(BDL_SystemKeywords.DOA_SYSTEM)
+                is not None
+            ):
+                doas = self.parent.keyword_value_pairs.get(
+                    BDL_SystemKeywords.DOA_SYSTEM
+                )
+                if (
+                    self.parent.keyword_value_pairs.get(
+                        BDL_SystemKeywords.MIN_OA_METHOD
+                    )
+                    == "DCV-ZONE-SENSORS"
+                ):
+                    self.terminals_has_demand_control_ventilation = [False, False, True]
+                else:
+                    if (
+                        self.parent.keyword_value_pairs.get(
+                            BDL_SystemKeywords.DOAS_ATTACHED_TO
+                        )
+                        == "AHU-MIXED-AIR"
+                        and self.parent.keyword_value_pairs.get(
+                            BDL_SystemKeywords.MIN_OA_METHOD
+                        )
+                        == "DCV-RETURN-SENSORS"
+                    ):
+                        self.terminals_has_demand_control_ventilation = [
+                            False,
+                            False,
+                            True,
+                        ]
+            else:
+                if (
+                    self.parent.keyword_value_pairs.get(
+                        BDL_SystemKeywords.MIN_OA_METHOD
+                    )
+                    == "DCV-ZONE-SENSORS"
+                    or self.parent.keyword_value_pairs.get(
+                        BDL_SystemKeywords.MIN_OA_METHOD
+                    )
+                    == "DCV-RETURN-SENSOR"
+                ):
+                    self.terminals_has_demand_control_ventilation = [True, False, False]
+        else:
+            self.terminals_has_demand_control_ventilation = [False, False, False]
 
     def populate_data_group(self):
         """Populate schema structure for zone object."""
