@@ -3,7 +3,9 @@ import shutil
 import tempfile
 from pathlib import Path
 
-from rpd_generator.artifacts.ruleset_project_description import RulesetProjectDescription
+from rpd_generator.artifacts.ruleset_project_description import (
+    RulesetProjectDescription,
+)
 from rpd_generator.artifacts.ruleset_model_description import RulesetModelDescription
 from rpd_generator.artifacts.building_segment import BuildingSegment
 from rpd_generator.artifacts.building import Building
