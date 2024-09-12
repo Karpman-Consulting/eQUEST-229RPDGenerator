@@ -350,6 +350,7 @@ class BDLEnums:
         "SiteParameterKeywords": _ListEnum(
             [
                 "DAYLIGHT-SAVINGS",
+                "GROUND-T",
             ]
         ),
         "RunPeriodKeywords": _ListEnum(
@@ -473,6 +474,7 @@ class BDLEnums:
         ),
         "SystemTypes": _ListEnum(
             [
+                "PTAC",
                 "PSZ",
                 "PMZS",
                 "PVAVS",
@@ -618,6 +620,8 @@ class BDLEnums:
                 "ERV-TEMP-CTRL",
                 "ERV-SENSIBLE-EFF",
                 "ERV-LATENT-EFF",
+                "ERV-OA-FLOW",
+                "ERV-EXH-FLOW",
                 "ZONE-HEAT-SOURCE",
                 "BBRD-LOOP",
             ]
@@ -690,6 +694,11 @@ class BDLEnums:
                 "TERMINAL-TYPE",
                 "DESIGN-HEAT-T",
                 "DESIGN-COOL-T",
+                "HEATING-CAPACITY",
+                "COOLING-CAPACITY",
+                "MAX-HEAT-RATE",
+                "MAX-COOL-RATE",
+                "REHEAT-DELTA-T",
                 "HEAT-TEMP-SCH",
                 "COOL-TEMP-SCH",
                 "EXHAUST-FAN-SCH",

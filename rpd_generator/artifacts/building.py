@@ -4,8 +4,8 @@ from rpd_generator.bdl_structure.bdl_commands.project import FixedShade
 
 class Building(BaseDefinition):
     """
-    This class is used to describe a building. The building objectis created once per project by default , but more
-    can be created through the user interface.
+    This class is used to describe a building. The building object is created once per project by default, but user can
+    add/delete Buildings and assign DOE-2 FLOORs (eQUEST Shells) to them through the eQUEST 229RPDGenerator App UI.
     """
 
     def __init__(self, u_name, rmd):

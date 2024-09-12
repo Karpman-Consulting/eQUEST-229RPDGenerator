@@ -3,7 +3,7 @@ OUTPUT_SCHEMA_ASHRAE901_2019 = "OUTPUT_SCHEMA_ASHRAE901_2019"
 
 class RulesetProjectDescription:
     """
-    This class is used to represent the RulesetProjectDescription object in the 229 schema. It may also store additional project-level data.
+    This class is used to represent the RulesetProjectDescription object in the 229 schema. It also stores additional project-level data.
     """
 
     # BDL Command Dictionary maps BDL commands to their corresponding class in the bdl_commands package
