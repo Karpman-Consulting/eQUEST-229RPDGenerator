@@ -14,9 +14,7 @@ FanSpecificationMethodOptions = SchemaEnums.schema_enums[
 SystemMinimumOutdoorAirControlOptions = SchemaEnums.schema_enums[
     "SystemMinimumOutdoorAirControlOptions"
 ]
-DOASAttachedToOptions = SchemaEnums.schema_enums[
-    "DOASAttachedToOptions"
-]
+DOASAttachedToOptions = SchemaEnums.schema_enums["DOASAttachedToOptions"]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_ZoneKeywords = BDLEnums.bdl_enums["ZoneKeywords"]
 BDL_SystemKeywords = BDLEnums.bdl_enums["SystemKeywords"]
@@ -340,7 +338,16 @@ class Zone(ChildNode):
                     == SystemMinimumOutdoorAirControlOptions.DCV_ZONE_SENSORS
                 ):
                     self.terminals_has_demand_control_ventilation[2] = True
-                elif self.parent.keyword_value_pairs.get(BDL_SystemKeywords.DOAS_ATTACHED_TO) == DOASAttachedToOptions.AHU_MIXED_AIR and self.parent.keyword_value_pairs.get(BDL_SystemKeywords.MIN_OA_METHOD) == SystemMinimumOutdoorAirControlOptions.DCV_RETURN_SENSORS:
+                elif (
+                    self.parent.keyword_value_pairs.get(
+                        BDL_SystemKeywords.DOAS_ATTACHED_TO
+                    )
+                    == DOASAttachedToOptions.AHU_MIXED_AIR
+                    and self.parent.keyword_value_pairs.get(
+                        BDL_SystemKeywords.MIN_OA_METHOD
+                    )
+                    == SystemMinimumOutdoorAirControlOptions.DCV_RETURN_SENSORS
+                ):
                     self.terminals_has_demand_control_ventilation[2] = True
                 else:
                     self.terminals_has_demand_control_ventilation[2] = False
