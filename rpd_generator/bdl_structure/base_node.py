@@ -136,10 +136,12 @@ class BaseNode:
             return None
 
     @staticmethod
-    def try_length(lst: list):
-        """Attempt to get the length of a list, returning 0 if it fails."""
-        if isinstance(lst, list):
-            return len(lst)
+    def try_length(data: any):
+        """Attempt to get the length of data, return 1 if it is a string, or number; otherwise return 0."""
+        if isinstance(data, (list, dict)):
+            return len(data)
+        elif isinstance(data, (str, float, int)):
+            return 1
         else:
             return 0
 

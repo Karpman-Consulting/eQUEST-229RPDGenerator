@@ -1,6 +1,6 @@
 class RulesetModelDescription:
     """
-    This class is used to represent the RulesetModelDescription object in the 229 schema.
+    This class is used to represent the RulesetModelDescription object in the 229 schema. It also stores additional model-level data.
     """
 
     def __init__(self, obj_id):

@@ -273,12 +273,13 @@ class Space(ChildNode, ParentNode):
         if equip_type == "EQUIPMENT":
             misc_epd = self.try_float(
                 self.try_access_index(
-                    self.keyword_value_pairs.get(BDL_SpaceKeywords.EQUIPMENT_W_AREA), n
+                    self.keyword_value_pairs.get(BDL_SpaceKeywords.EQUIPMENT_W_AREA),
+                    n - 1,
                 )
             )
             misc_eq_power = self.try_float(
                 self.try_access_index(
-                    self.keyword_value_pairs.get(BDL_SpaceKeywords.EQUIPMENT_KW), n
+                    self.keyword_value_pairs.get(BDL_SpaceKeywords.EQUIPMENT_KW), n - 1
                 )
             )
             total_eq_power = (
@@ -292,16 +293,17 @@ class Space(ChildNode, ParentNode):
 
             misc_eq_sensible_fraction = self.try_float(
                 self.try_access_index(
-                    self.keyword_value_pairs.get(BDL_SpaceKeywords.EQUIP_SENSIBLE), n
+                    self.keyword_value_pairs.get(BDL_SpaceKeywords.EQUIP_SENSIBLE),
+                    n - 1,
                 )
             )
             misc_eq_latent_fraction = self.try_float(
                 self.try_access_index(
-                    self.keyword_value_pairs.get(BDL_SpaceKeywords.EQUIP_LATENT), n
+                    self.keyword_value_pairs.get(BDL_SpaceKeywords.EQUIP_LATENT), n - 1
                 )
             )
 
-            if n == 0:
+            if n == 1:
                 self.misc_eq_id = [misc_eq_id]
                 self.misc_eq_energy_type = [EnergySourceOptions.ELECTRICITY]
                 self.misc_eq_power = [total_eq_power]

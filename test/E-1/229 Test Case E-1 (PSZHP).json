@@ -18,14 +18,18 @@
                                             "interior_lighting": [
                                                 {
                                                     "id": "Perimeter Space 1 (South) IntLtg0",
-                                                    "lighting_multiplier_schedule": "Lighting Schedule"
+                                                    "lighting_multiplier_schedule": "Lighting Schedule",
+                                                    "power_per_area": 11.033008177127465
                                                 }
                                             ],
                                             "miscellaneous_equipment": [
                                                 {
                                                     "energy_type": "ELECTRICITY",
                                                     "id": "Perimeter Space 1 (South) MiscEqp1",
-                                                    "multiplier_schedule": "Plug Load Annual"
+                                                    "latent_fraction": 0.0,
+                                                    "multiplier_schedule": "Plug Load Annual",
+                                                    "power": 1674.0,
+                                                    "sensible_fraction": 1.0
                                                 }
                                             ],
                                             "service_water_heating_uses": [],
@@ -153,7 +157,7 @@
                                                         "id": "Built-up roofing",
                                                         "thickness": 0.009448799999999999,
                                                         "thermal_conductivity": 0.15922761154855644,
-                                                        "density": 1121.2924361772102,
+                                                        "density": 1120.0109591072933,
                                                         "specific_heat": 1461.1934041130362
                                                     }
                                                 ],
@@ -190,6 +194,12 @@
                                                 "r_values": [],
                                                 "surface_construction_input_option": "SIMPLIFIED"
                                             },
+                                            "optical_properties": {
+                                                "absorptance_solar_exterior": 0.5,
+                                                "absorptance_visible_exterior": 0.5,
+                                                "absorptance_solar_interior": 0.7,
+                                                "absorptance_visible_interior": 0.7
+                                            },
                                             "classification": "WALL",
                                             "area": 25.620019985663994,
                                             "tilt": 90.0,
@@ -212,6 +222,12 @@
                                                 "r_values": [],
                                                 "surface_construction_input_option": "SIMPLIFIED"
                                             },
+                                            "optical_properties": {
+                                                "absorptance_solar_exterior": 0.5,
+                                                "absorptance_visible_exterior": 0.5,
+                                                "absorptance_solar_interior": 0.7,
+                                                "absorptance_visible_interior": 0.7
+                                            },
                                             "classification": "WALL",
                                             "area": 161.595547776,
                                             "tilt": 90.0,
@@ -233,6 +249,12 @@
                                                 "insulation_locations": [],
                                                 "r_values": [],
                                                 "surface_construction_input_option": "SIMPLIFIED"
+                                            },
+                                            "optical_properties": {
+                                                "absorptance_solar_exterior": 0.5,
+                                                "absorptance_visible_exterior": 0.5,
+                                                "absorptance_solar_interior": 0.7,
+                                                "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "WALL",
                                             "area": 25.620019985663994,
@@ -301,14 +323,18 @@
                                             "interior_lighting": [
                                                 {
                                                     "id": "Perimeter Space 2 (East) IntLtg0",
-                                                    "lighting_multiplier_schedule": "Lighting Schedule"
+                                                    "lighting_multiplier_schedule": "Lighting Schedule",
+                                                    "power_per_area": 11.033008177127465
                                                 }
                                             ],
                                             "miscellaneous_equipment": [
                                                 {
                                                     "energy_type": "ELECTRICITY",
                                                     "id": "Perimeter Space 2 (East) MiscEqp1",
-                                                    "multiplier_schedule": "Plug Load Annual"
+                                                    "latent_fraction": 0.0,
+                                                    "multiplier_schedule": "Plug Load Annual",
+                                                    "power": 1059.75,
+                                                    "sensible_fraction": 1.0
                                                 }
                                             ],
                                             "service_water_heating_uses": [],
@@ -416,7 +442,7 @@
                                                         "id": "Built-up roofing--1",
                                                         "thickness": 0.009448799999999999,
                                                         "thermal_conductivity": 0.15922761154855644,
-                                                        "density": 1121.2924361772102,
+                                                        "density": 1120.0109591072933,
                                                         "specific_heat": 1461.1934041130362
                                                     }
                                                 ],
@@ -453,6 +479,12 @@
                                                 "r_values": [],
                                                 "surface_construction_input_option": "SIMPLIFIED"
                                             },
+                                            "optical_properties": {
+                                                "absorptance_solar_exterior": 0.5,
+                                                "absorptance_visible_exterior": 0.5,
+                                                "absorptance_solar_interior": 0.7,
+                                                "absorptance_visible_interior": 0.7
+                                            },
                                             "classification": "WALL",
                                             "area": 25.620019985663994,
                                             "tilt": 90.0,
@@ -474,6 +506,12 @@
                                                 "insulation_locations": [],
                                                 "r_values": [],
                                                 "surface_construction_input_option": "SIMPLIFIED"
+                                            },
+                                            "optical_properties": {
+                                                "absorptance_solar_exterior": 0.5,
+                                                "absorptance_visible_exterior": 0.5,
+                                                "absorptance_solar_interior": 0.7,
+                                                "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "WALL",
                                             "area": 95.65296998399998,
@@ -542,14 +580,18 @@
                                             "interior_lighting": [
                                                 {
                                                     "id": "Perimeter Space 3 (North) IntLtg0",
-                                                    "lighting_multiplier_schedule": "Lighting Schedule"
+                                                    "lighting_multiplier_schedule": "Lighting Schedule",
+                                                    "power_per_area": 11.033008177127465
                                                 }
                                             ],
                                             "miscellaneous_equipment": [
                                                 {
                                                     "energy_type": "ELECTRICITY",
                                                     "id": "Perimeter Space 3 (North) MiscEqp1",
-                                                    "multiplier_schedule": "Plug Load Annual"
+                                                    "latent_fraction": 0.0,
+                                                    "multiplier_schedule": "Plug Load Annual",
+                                                    "power": 1674.0,
+                                                    "sensible_fraction": 1.0
                                                 }
                                             ],
                                             "service_water_heating_uses": [],
@@ -686,6 +728,12 @@
                                                 "r_values": [],
                                                 "surface_construction_input_option": "SIMPLIFIED"
                                             },
+                                            "optical_properties": {
+                                                "absorptance_solar_exterior": 0.5,
+                                                "absorptance_visible_exterior": 0.5,
+                                                "absorptance_solar_interior": 0.7,
+                                                "absorptance_visible_interior": 0.7
+                                            },
                                             "classification": "WALL",
                                             "area": 25.620019985663994,
                                             "tilt": 90.0,
@@ -707,6 +755,12 @@
                                                 "insulation_locations": [],
                                                 "r_values": [],
                                                 "surface_construction_input_option": "SIMPLIFIED"
+                                            },
+                                            "optical_properties": {
+                                                "absorptance_solar_exterior": 0.5,
+                                                "absorptance_visible_exterior": 0.5,
+                                                "absorptance_solar_interior": 0.7,
+                                                "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "WALL",
                                             "area": 161.595547776,
@@ -783,14 +837,18 @@
                                             "interior_lighting": [
                                                 {
                                                     "id": "Perimeter Space 4 (West) IntLtg0",
-                                                    "lighting_multiplier_schedule": "Lighting Schedule"
+                                                    "lighting_multiplier_schedule": "Lighting Schedule",
+                                                    "power_per_area": 11.033008177127465
                                                 }
                                             ],
                                             "miscellaneous_equipment": [
                                                 {
                                                     "energy_type": "ELECTRICITY",
                                                     "id": "Perimeter Space 4 (West) MiscEqp1",
-                                                    "multiplier_schedule": "Plug Load Annual"
+                                                    "latent_fraction": 0.0,
+                                                    "multiplier_schedule": "Plug Load Annual",
+                                                    "power": 1059.75,
+                                                    "sensible_fraction": 1.0
                                                 }
                                             ],
                                             "service_water_heating_uses": [],
@@ -898,6 +956,12 @@
                                                 "r_values": [],
                                                 "surface_construction_input_option": "SIMPLIFIED"
                                             },
+                                            "optical_properties": {
+                                                "absorptance_solar_exterior": 0.5,
+                                                "absorptance_visible_exterior": 0.5,
+                                                "absorptance_solar_interior": 0.7,
+                                                "absorptance_visible_interior": 0.7
+                                            },
                                             "classification": "WALL",
                                             "area": 95.65296998399998,
                                             "tilt": 90.0,
@@ -973,14 +1037,18 @@
                                             "interior_lighting": [
                                                 {
                                                     "id": "Core Space 1 (Core) IntLtg0",
-                                                    "lighting_multiplier_schedule": "Lighting Schedule"
+                                                    "lighting_multiplier_schedule": "Lighting Schedule",
+                                                    "power_per_area": 11.033008177127465
                                                 }
                                             ],
                                             "miscellaneous_equipment": [
                                                 {
                                                     "energy_type": "ELECTRICITY",
                                                     "id": "Core Space 1 (Core) MiscEqp1",
-                                                    "multiplier_schedule": "Plug Load Annual"
+                                                    "latent_fraction": 0.0,
+                                                    "multiplier_schedule": "Plug Load Annual",
+                                                    "power": 7947.719999999999,
+                                                    "sensible_fraction": 1.0
                                                 }
                                             ],
                                             "service_water_heating_uses": [],
@@ -1016,7 +1084,7 @@
                                                         "id": "Built-up roofing--2",
                                                         "thickness": 0.009448799999999999,
                                                         "thermal_conductivity": 0.15922761154855644,
-                                                        "density": 1121.2924361772102,
+                                                        "density": 1120.0109591072933,
                                                         "specific_heat": 1461.1934041130362
                                                     }
                                                 ],
@@ -1115,8 +1183,8 @@
                                         "return_fans": [],
                                         "supply_fans": [
                                             {
-                                                "design_airflow": 4865.562444662098,
-                                                "design_electric_power": 3092.759847640991,
+                                                "design_airflow": 4864.884020212498,
+                                                "design_electric_power": 3092.3285484313965,
                                                 "id": "Baseline System 4 (South) SupplyFan",
                                                 "output_validation_points": [],
                                                 "specification_method": "SIMPLE"
@@ -1169,8 +1237,8 @@
                                         "return_fans": [],
                                         "supply_fans": [
                                             {
-                                                "design_airflow": 3387.943623494361,
-                                                "design_electric_power": 2153.52201461792,
+                                                "design_airflow": 3531.5444639130737,
+                                                "design_electric_power": 2244.800806045532,
                                                 "id": "Baseline System 4 (East) SupplyFan",
                                                 "output_validation_points": [],
                                                 "specification_method": "SIMPLE"
@@ -1223,8 +1291,8 @@
                                         "return_fans": [],
                                         "supply_fans": [
                                             {
-                                                "design_airflow": 3943.5988268994734,
-                                                "design_electric_power": 2506.7203044891357,
+                                                "design_airflow": 4123.027806347249,
+                                                "design_electric_power": 2620.7730770111084,
                                                 "id": "Baseline System 4 (North) SupplyFan",
                                                 "output_validation_points": [],
                                                 "specification_method": "SIMPLE"
@@ -1277,8 +1345,8 @@
                                         "return_fans": [],
                                         "supply_fans": [
                                             {
-                                                "design_airflow": 3455.305825060011,
-                                                "design_electric_power": 2196.340322494507,
+                                                "design_airflow": 3575.7826234204485,
+                                                "design_electric_power": 2272.920608520508,
                                                 "id": "Baseline System 4 (West) SupplyFan",
                                                 "output_validation_points": [],
                                                 "specification_method": "SIMPLE"
@@ -1331,8 +1399,8 @@
                                         "return_fans": [],
                                         "supply_fans": [
                                             {
-                                                "design_airflow": 7376.399349591147,
-                                                "design_electric_power": 4688.755035400391,
+                                                "design_airflow": 7369.719265370697,
+                                                "design_electric_power": 4684.50927734375,
                                                 "id": "Baseline System 4 (Core) SupplyFan",
                                                 "output_validation_points": [],
                                                 "specification_method": "SIMPLE"
@@ -89061,6 +89129,7 @@
         "has_daylight_saving_time": false
     },
     "weather": {
+        "ground_temperature_schedule": "Ground Temperature Schedule",
         "file_name": "DENVER INTL AP    CO"
     }
 }

@@ -3,10 +3,10 @@ import shutil
 import tempfile
 from pathlib import Path
 
-from rpd_generator.ruleset_project_description import RulesetProjectDescription
-from rpd_generator.ruleset_model_description import RulesetModelDescription
-from rpd_generator.building_segment import BuildingSegment
-from rpd_generator.building import Building
+from rpd_generator.artifacts.ruleset_project_description import RulesetProjectDescription
+from rpd_generator.artifacts.ruleset_model_description import RulesetModelDescription
+from rpd_generator.artifacts.building_segment import BuildingSegment
+from rpd_generator.artifacts.building import Building
 from rpd_generator.doe2_file_readers.bdlcio32 import process_input_file
 from rpd_generator.doe2_file_readers.model_input_reader import ModelInputReader
 from rpd_generator.bdl_structure import *
@@ -101,9 +101,7 @@ def write_rpd_json_from_bdl(selected_models: list, json_file_path: str):
         rmd.bdl_obj_instances["ASHRAE 229"] = rpd
 
         for obj_instance in rmd.bdl_obj_instances.values():
-            if isinstance(obj_instance, BaseNode) or isinstance(
-                obj_instance, BaseDefinition
-            ):
+            if isinstance(obj_instance, (BaseNode, BaseDefinition)):
                 obj_instance.populate_data_elements()
 
         for obj_instance in rmd.bdl_obj_instances.values():

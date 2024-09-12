@@ -7,7 +7,7 @@
       },
       {
         "json-key-path": "$.weather.ground_temperature_schedule",
-        "compare-value": true
+        "compare-value": false
       },
       {
         "json-key-path": "$.weather.cooling_design_day_type",
