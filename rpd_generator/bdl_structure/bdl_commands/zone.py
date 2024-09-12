@@ -340,18 +340,10 @@ class Zone(ChildNode):
                     == SystemMinimumOutdoorAirControlOptions.DCV_ZONE_SENSORS
                 ):
                     self.terminals_has_demand_control_ventilation[2] = True
+                elif self.parent.keyword_value_pairs.get(BDL_SystemKeywords.DOAS_ATTACHED_TO) == DOASAttachedToOptions.AHU_MIXED_AIR and self.parent.keyword_value_pairs.get(BDL_SystemKeywords.MIN_OA_METHOD) == SystemMinimumOutdoorAirControlOptions.DCV_RETURN_SENSORS:
+                    self.terminals_has_demand_control_ventilation[2] = True
                 else:
-                    if (
-                        self.parent.keyword_value_pairs.get(
-                            BDL_SystemKeywords.DOAS_ATTACHED_TO
-                        )
-                        == DOASAttachedToOptions.AHU_MIXED_AIR
-                        and self.parent.keyword_value_pairs.get(
-                            BDL_SystemKeywords.MIN_OA_METHOD
-                        )
-                        == SystemMinimumOutdoorAirControlOptions.DCV_RETURN_SENSORS
-                    ):
-                        self.terminals_has_demand_control_ventilation[2] = True
+                    self.terminals_has_demand_control_ventilation[2] = False
             else:
                 if (
                     self.parent.keyword_value_pairs.get(
@@ -364,8 +356,12 @@ class Zone(ChildNode):
                     == SystemMinimumOutdoorAirControlOptions.DCV_RETURN_SENSORS
                 ):
                     self.terminals_has_demand_control_ventilation[0] = True
+                else:
+                    self.terminals_has_demand_control_ventilation[0] = False
+
         else:
             donothing = 1
+            # need to update this to check for terminals and set equal to false if the zone has these terminal types
 
     def populate_data_group(self):
         """Populate schema structure for zone object."""
