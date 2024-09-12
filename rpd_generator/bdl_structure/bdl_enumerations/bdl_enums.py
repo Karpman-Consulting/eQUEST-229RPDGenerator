@@ -210,6 +210,12 @@ class BDLEnums:
                 "VALUES",
             ]
         ),
+        "DOASAttachedToOptions": _ListEnum(
+            [
+                "AHU-MIXED-AIR",
+                "CONDITIONED-ZONES",
+            ]
+        ),
         "DomesticWaterHeaterTypes": _ListEnum(
             [
                 "GAS",

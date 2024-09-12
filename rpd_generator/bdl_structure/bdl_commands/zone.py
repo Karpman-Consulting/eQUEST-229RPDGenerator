@@ -11,6 +11,12 @@ FanSystemSupplyFanControlOptions = SchemaEnums.schema_enums[
 FanSpecificationMethodOptions = SchemaEnums.schema_enums[
     "FanSpecificationMethodOptions"
 ]
+SystemMinimumOutdoorAirControlOptions = SchemaEnums.schema_enums[
+    "SystemMinimumOutdoorAirControlOptions"
+]
+DOASAttachedToOptions = SchemaEnums.schema_enums[
+    "DOASAttachedToOptions"
+]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_ZoneKeywords = BDLEnums.bdl_enums["ZoneKeywords"]
 BDL_SystemKeywords = BDLEnums.bdl_enums["SystemKeywords"]
@@ -326,46 +332,40 @@ class Zone(ChildNode):
                 self.parent.keyword_value_pairs.get(BDL_SystemKeywords.DOA_SYSTEM)
                 is not None
             ):
-                doas = self.parent.keyword_value_pairs.get(
-                    BDL_SystemKeywords.DOA_SYSTEM
-                )
+
                 if (
                     self.parent.keyword_value_pairs.get(
                         BDL_SystemKeywords.MIN_OA_METHOD
                     )
-                    == "DCV-ZONE-SENSORS"
+                    == SystemMinimumOutdoorAirControlOptions.DCV_ZONE_SENSORS
                 ):
-                    self.terminals_has_demand_control_ventilation = [False, False, True]
+                    self.terminals_has_demand_control_ventilation[2] = True
                 else:
                     if (
                         self.parent.keyword_value_pairs.get(
                             BDL_SystemKeywords.DOAS_ATTACHED_TO
                         )
-                        == "AHU-MIXED-AIR"
+                        == DOASAttachedToOptions.AHU_MIXED_AIR
                         and self.parent.keyword_value_pairs.get(
                             BDL_SystemKeywords.MIN_OA_METHOD
                         )
-                        == "DCV-RETURN-SENSORS"
+                        == SystemMinimumOutdoorAirControlOptions.DCV_RETURN_SENSORS
                     ):
-                        self.terminals_has_demand_control_ventilation = [
-                            False,
-                            False,
-                            True,
-                        ]
+                        self.terminals_has_demand_control_ventilation[2] = True
             else:
                 if (
                     self.parent.keyword_value_pairs.get(
                         BDL_SystemKeywords.MIN_OA_METHOD
                     )
-                    == "DCV-ZONE-SENSORS"
+                    == SystemMinimumOutdoorAirControlOptions.DCV_ZONE_SENSORS
                     or self.parent.keyword_value_pairs.get(
                         BDL_SystemKeywords.MIN_OA_METHOD
                     )
-                    == "DCV-RETURN-SENSOR"
+                    == SystemMinimumOutdoorAirControlOptions.DCV_RETURN_SENSORS
                 ):
-                    self.terminals_has_demand_control_ventilation = [True, False, False]
+                    self.terminals_has_demand_control_ventilation[0] = True
         else:
-            self.terminals_has_demand_control_ventilation = [False, False, False]
+            donothing = 1
 
     def populate_data_group(self):
         """Populate schema structure for zone object."""
