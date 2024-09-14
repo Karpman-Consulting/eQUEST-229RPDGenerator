@@ -322,9 +322,7 @@ class CirculationLoop(BaseNode):
         loop_design_dt = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_DESIGN_DT)
         )
-        if loop_design_dt is None:
-            pass
-        else:
+        if loop_design_dt is not None:
             self.design_return_temperature[1] = (
                 self.design_supply_temperature[1] - loop_design_dt
             )

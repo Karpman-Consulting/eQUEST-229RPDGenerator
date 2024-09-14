@@ -27,8 +27,8 @@ class Chiller(BaseNode):
         BDL_ChillerTypes.ABSOR_2: ChillerCompressorOptions.DOUBLE_EFFECT_DIRECT_FIRED_ABSORPTION,
         BDL_ChillerTypes.GAS_ABSOR: ChillerCompressorOptions.OTHER,
         BDL_ChillerTypes.ENGINE: ChillerCompressorOptions.OTHER,
-        BDL_ChillerTypes.HEAT_PUMP: OMIT,
-        BDL_ChillerTypes.LOOP_TO_LOOP_HP: OMIT,
+        BDL_ChillerTypes.HEAT_PUMP: ChillerCompressorOptions.OTHER,
+        BDL_ChillerTypes.LOOP_TO_LOOP_HP: ChillerCompressorOptions.OTHER,
         BDL_ChillerTypes.WATER_ECONOMIZER: OMIT,
         BDL_ChillerTypes.STRAINER_CYCLE: OMIT,
     }
@@ -104,6 +104,8 @@ class Chiller(BaseNode):
         )
 
         if not absorp_or_engine:
+            self.energy_source_type = EnergySourceOptions.ELECTRICITY
+
             # This value comes out in tons of refrigeration
             self.design_capacity = self.try_float(
                 output_data.get("Elec Chillers - Sizing Info - Capacity")

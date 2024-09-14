@@ -63,6 +63,8 @@ class Boiler(BaseNode):
         self.minimum_load_ratio = None
         self.draft_type = None
         self.energy_source_type = None
+        self.efficiency_metric = None
+        self.efficiency = None
         self.auxiliary_power = None
         self.operation_lower_limit = None
         self.operation_upper_limit = None

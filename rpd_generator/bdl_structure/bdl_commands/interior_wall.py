@@ -127,14 +127,24 @@ class InteriorWall(
         )
 
         self.absorptance_solar_interior = self.try_float(
-            self.keyword_value_pairs.get(BDL_InteriorWallKeywords.INSIDE_SOL_ABS)
+            self.keyword_value_pairs.get(BDL_InteriorWallKeywords.INSIDE_SOL_ABS)[0]
+        )
+
+        self.absorptance_solar_exterior = self.try_float(
+            self.keyword_value_pairs.get(BDL_InteriorWallKeywords.INSIDE_SOL_ABS)[1]
         )
 
         reflectance_visible_interior = self.try_float(
-            self.keyword_value_pairs.get(BDL_InteriorWallKeywords.INSIDE_VIS_REFL)
+            self.keyword_value_pairs.get(BDL_InteriorWallKeywords.INSIDE_VIS_REFL)[0]
         )
         if reflectance_visible_interior is not None:
             self.absorptance_visible_interior = 1 - reflectance_visible_interior
+
+        reflectance_visible_exterior = self.try_float(
+            self.keyword_value_pairs.get(BDL_InteriorWallKeywords.INSIDE_VIS_REFL)[1]
+        )
+        if reflectance_visible_exterior is not None:
+            self.absorptance_visible_exterior = 1 - reflectance_visible_exterior
 
     # def get_output_requests(self):
     #     requests = {}
