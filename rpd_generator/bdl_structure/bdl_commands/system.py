@@ -274,10 +274,10 @@ class System(ParentNode):
         self.cool_sys_reporting_name = None
         self.cool_sys_notes = None
         self.cool_sys_type = None
-        self.cool_sys_design_total_capacity = None
-        self.cool_sys_design_sensible_capacity = None
-        self.cool_sys_rated_total_capacity = None
-        self.cool_sys_rated_sensible_capacity = None
+        self.cool_sys_design_total_cool_capacity = None
+        self.cool_sys_design_sensible_cool_capacity = None
+        self.cool_sys_rated_total_cool_capacity = None
+        self.cool_sys_rated_sensible_cool_capacity = None
         self.cool_sys_oversizing_factor = None
         self.cool_sys_is_sized_based_on_design_day = None
         self.cool_sys_chilled_water_loop = None
@@ -371,11 +371,18 @@ class System(ParentNode):
 
         cool_source = self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_SOURCE)
         cool_type = self.cool_type_map.get(cool_source)
+        self.output_cool_type = self.output_cool_type_map.get(cool_source)
         # Update the cooling type map according to the COOL-SOURCE keyword (only used for PIU and DOAS)
         self.system_cooling_type_map.update(
             {
                 BDL_SystemTypes.PIU: cool_type,
                 BDL_SystemTypes.DOAS: cool_type,
+            }
+        )
+        self.output_system_cooling_type_map.update(
+            {
+                BDL_SystemTypes.PIU: self.output_cool_type,
+                BDL_SystemTypes.DOAS: self.output_cool_type,
             }
         )
 
@@ -398,9 +405,9 @@ class System(ParentNode):
             output_data = self.get_output_data(requests)
             self.populate_fan_system()
             self.populate_fans(output_data)
-            self.populate_heating_system()
-            self.populate_cooling_system()
-            self.populate_preheat_system()
+            self.populate_heating_system(output_data)
+            self.populate_cooling_system(output_data)
+            self.populate_preheat_system(output_data)
             self.populate_air_economizer()
             self.populate_air_energy_recovery()
 
@@ -543,6 +550,7 @@ class System(ParentNode):
         requests = {
             "Outside Air Ratio": (2201005, self.u_name, ""),
             "Cooling Capacity": (2201006, self.u_name, ""),
+            "Sensible Heat Ratio": (2201007, self.u_name, ""),
             "Heating Capacity": (2201008, self.u_name, ""),
             "Cooling EIR": (2201009, self.u_name, ""),
             "Heating EIR": (2201010, self.u_name, ""),
@@ -588,6 +596,75 @@ class System(ParentNode):
                 self.u_name,
                 "",
             )
+        match self.output_cool_type:
+            case BDL_OutputCoolingTypes.CHILLED_WATER:
+                # Design data for Cooling - chilled water - SYSTEM - capacity, btu/hr
+                requests["Design Cooling capacity"] = (
+                    2203015, self.u_name, ""
+                )
+                # Design data for Cooling - chilled water - SYSTEM - SHR
+                requests["Design Cooling SHR"] = (
+                    2203016, self.u_name, ""
+                )
+                # Rated data for Cooling - chilled water - SYSTEM - capacity, btu/hr
+                requests["Rated Cooling capacity"] = (
+                    2203026, self.u_name, ""
+                )
+                # Rated data for Cooling - chilled water - SYSTEM - SHR
+                requests["Rated Cooling SHR"] = (
+                    2203027, self.u_name, ""
+                )
+            case BDL_OutputCoolingTypes.DX_AIR_COOLED:
+                # Design data for Cooling - DX air cooled - SYSTEM - capacity, btu/hr
+                requests["Design Cooling capacity"] = (
+                    2203083, self.u_name, ""
+                )
+                # Design data for Cooling - DX air cooled - SYSTEM - SHR
+                requests["Design Cooling SHR"] = (
+                    2203084, self.u_name, ""
+                )
+                # Rated data for Cooling - DX air cooled - SYSTEM - capacity, btu/hr
+                requests["Rated Cooling capacity"] = (
+                    2203092, self.u_name, ""
+                )
+                # Rated data for Cooling - DX air cooled - SYSTEM - SHR
+                requests["Rated Cooling SHR"] = (
+                    2203093, self.u_name, ""
+                )
+            case BDL_OutputCoolingTypes.DX_WATER_COOLED:
+                # Design data for Cooling - DX water cooled - SYSTEM - capacity, btu/hr
+                requests["Design Cooling capacity"] = (
+                    2203143, self.u_name, ""
+                )
+                # Design data for Cooling - DX water cooled - SYSTEM - SHR
+                requests["Design Cooling SHR"] = (
+                    2203144, self.u_name, ""
+                )
+                # Rated data for Cooling - DX water cooled - SYSTEM - capacity, btu/hr
+                requests["Rated Cooling capacity"] = (
+                    2203152, self.u_name, ""
+                )
+                # Rated data for Cooling - DX water cooled - SYSTEM - SHR
+                requests["Rated Cooling SHR"] = (
+                    2203153, self.u_name, ""
+                )
+            case BDL_OutputCoolingTypes.VRF:
+                # Design data for Cooling - VRF - SYSTEM - capacity, btu/hr
+                requests["Design Cooling capacity"] = (
+                    2203207, self.u_name, ""
+                )
+                # Design data for Cooling - VRF - SYSTEM - SHR
+                requests["Design Cooling SHR"] = (
+                    2203208, self.u_name, ""
+                )
+                # Rated data for Cooling - VRF - SYSTEM - capacity, btu/hr
+                requests["Rated Cooling capacity"] = (
+                    2203216, self.u_name, ""
+                )
+                # Rated data for Cooling - VRF - SYSTEM - SHR
+                requests["Rated Cooling SHR"] = (
+                    2203217, self.u_name, ""
+                )
 
         match self.preheat_sys_type:
             case HeatingSystemOptions.FLUID_LOOP:
@@ -821,9 +898,33 @@ class System(ParentNode):
                 )
             )
         else:
-            self.cool_sys_is_sized_based_on_design_day = (
-                not self.cool_sys_rated_total_capacity
-            )
+            self.cool_sys_rated_total_cool_capacity = self.try_abs(self.try_float(
+                self.keyword_value_pairs.get(BDL_SystemKeywords.COOLING_CAPACITY)
+            ))
+            if not self.cool_sys_rated_total_cool_capacity:
+                self.cool_sys_rated_total_cool_capacity = self.try_abs(output_data.get("Rated Cooling capacity"))
+            if not self.cool_sys_rated_total_cool_capacity:
+                self.cool_sys_rated_total_cool_capacity = self.try_abs(output_data.get("Cooling Capacity"))
+            self.cool_sys_rated_sensible_cool_capacity = self.try_abs(self.try_float(
+                self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_SH_CAP)
+            ))
+            if not self.cool_sys_rated_sensible_cool_capacity:
+                rated_shr = self.try_abs(output_data.get("Rated Cooling SHR"))
+                if rated_shr and self.cool_sys_rated_total_cool_capacity:
+                    self.cool_sys_rated_sensible_cool_capacity = rated_shr * self.cool_sys_rated_total_cool_capacity
+            if not self.cool_sys_rated_sensible_cool_capacity:
+                shr = self.try_abs(output_data.get("Sensible Heat Ratio"))
+                self.cool_sys_rated_sensible_cool_capacity = shr * self.cool_sys_rated_total_cool_capacity
+            self.cool_sys_design_total_cool_capacity = self.try_abs(output_data.get("Design Cooling capacity"))
+            if not self.cool_sys_design_total_cool_capacity:
+                self.cool_sys_design_total_cool_capacity = self.try_abs(output_data.get("Cooling Capacity"))
+            design_shr = self.try_abs(output_data.get("Design Cooling SHR"))
+            if design_shr and self.cool_sys_design_total_cool_capacity:
+                self.cool_sys_design_sensible_cool_capacity = design_shr * self.cool_sys_design_total_cool_capacity
+            if not self.cool_sys_design_sensible_cool_capacity:
+                shr = self.try_abs(output_data.get("Sensible Heat Ratio"))
+                self.cool_sys_design_sensible_cool_capacity = shr * self.cool_sys_design_total_cool_capacity
+            self.cool_sys_is_sized_based_on_design_day = not self.keyword_value_pairs.get(BDL_SystemKeywords.COOLING_CAPACITY)
 
     def populate_preheat_system(self):
         self.preheat_sys_id = self.u_name + " PreheatSys"
