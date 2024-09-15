@@ -931,9 +931,10 @@ class System(ParentNode):
                 )
         if not self.cool_sys_rated_sensible_cool_capacity:
             shr = self.try_abs(output_data.get("Sensible Heat Ratio"))
-            self.cool_sys_rated_sensible_cool_capacity = (
-                shr * self.cool_sys_rated_total_cool_capacity
-            )
+            if shr and self.cool_sys_rated_total_cool_capacity:
+                self.cool_sys_rated_sensible_cool_capacity = (
+                    shr * self.cool_sys_rated_total_cool_capacity
+                )
         self.cool_sys_design_total_cool_capacity = self.try_abs(
             output_data.get("Design Cooling capacity")
         )
@@ -948,9 +949,10 @@ class System(ParentNode):
             )
         if not self.cool_sys_design_sensible_cool_capacity:
             shr = self.try_abs(output_data.get("Sensible Heat Ratio"))
-            self.cool_sys_design_sensible_cool_capacity = (
-                shr * self.cool_sys_design_total_cool_capacity
-            )
+            if shr and self.cool_sys_design_total_cool_capacity:
+                self.cool_sys_design_sensible_cool_capacity = (
+                    shr * self.cool_sys_design_total_cool_capacity
+                )
 
         if self.is_zonal_system:
             self.cool_sys_is_sized_based_on_design_day = (
