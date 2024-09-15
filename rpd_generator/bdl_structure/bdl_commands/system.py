@@ -437,8 +437,6 @@ class System(ParentNode):
             "Cooling Capacity": (2201006, self.u_name, ""),
             "Sensible Heat Ratio": (2201007, self.u_name, ""),
             "Heating Capacity": (2201008, self.u_name, ""),
-            "Cooling EIR": (2201009, self.u_name, ""),
-            "Heating EIR": (2201010, self.u_name, ""),
             "Supply Fan - Airflow": (2201012, self.u_name, ""),
             "Supply Fan - Power": (2201014, self.u_name, ""),
         }
