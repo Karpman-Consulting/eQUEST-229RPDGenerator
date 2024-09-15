@@ -94,11 +94,11 @@ class System(ParentNode):
         BDL_SupplyFanTypes.DISCHARGE: FanSystemSupplyFanControlOptions.DISCHARGE_DAMPER,
         BDL_SupplyFanTypes.FAN_EIR_FPLR: FanSystemSupplyFanControlOptions.VARIABLE_SPEED_DRIVE,
     }
-    unocc_fan_operation_map = {
-        BDL_UnoccupiedFanOperationOptions.CYCLE_ON_ANY: FanSystemOperationOptions.CYCLING,
-        BDL_UnoccupiedFanOperationOptions.CYCLE_ON_FIRST: FanSystemOperationOptions.CYCLING,
-        BDL_UnoccupiedFanOperationOptions.STAY_OFF: FanSystemOperationOptions.KEEP_OFF,
-        BDL_UnoccupiedFanOperationOptions.ZONE_FANS_ONLY: FanSystemOperationOptions.OTHER,
+    unoccupied_fan_operation_map = {
+        BDL_NightCycleControlOptions.CYCLE_ON_ANY: FanSystemOperationOptions.CYCLING,
+        BDL_NightCycleControlOptions.CYCLE_ON_FIRST: FanSystemOperationOptions.CYCLING,
+        BDL_NightCycleControlOptions.STAY_OFF: FanSystemOperationOptions.KEEP_OFF,
+        BDL_NightCycleControlOptions.ZONE_FANS_ONLY: FanSystemOperationOptions.OTHER,
     }
     system_cooling_type_map = {
         BDL_SystemTypes.PTAC: CoolingSystemOptions.DIRECT_EXPANSION,  # Unavailable in DOE 2.3
@@ -227,8 +227,8 @@ class System(ParentNode):
         self.fan_sys_air_economizer = {}
         self.fan_sys_air_energy_recovery = {}
         self.fan_sys_temperature_control = None
-        self.fan_sys_operation_during_occ = None
-        self.fan_sys_operation_during_unocc = None
+        self.fan_sys_operation_during_occupied = None
+        self.fan_sys_operation_during_unoccupied = None
         self.fan_sys_has_lockout_central_heat_during_unoccupied = None
         self.fan_sys_fan_control = None
         self.fan_sys_reset_differential_temperature = None
@@ -708,15 +708,12 @@ class System(ParentNode):
 
     def populate_fan_system(self):
         self.fan_sys_id = self.u_name + " FanSys"
-
         self.fan_sys_fan_control = self.supply_fan_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.FAN_CONTROL)
         )
-
-        self.fan_sys_operation_during_unocc = self.unocc_fan_operation_map.get(
+        self.fan_sys_operation_during_unoccupied = self.unoccupied_fan_operation_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.NIGHT_CYCLE_CTRL)
         )
-
         self.fan_sys_demand_control_ventilation_control = self.dcv_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.MIN_OA_METHOD)
         )
@@ -775,7 +772,6 @@ class System(ParentNode):
 
     def populate_cooling_system(self):
         self.cool_sys_id = self.u_name + " CoolSys"
-
         self.cool_sys_type = self.system_cooling_type_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.TYPE)
         )
@@ -792,7 +788,6 @@ class System(ParentNode):
         self.cool_sys_chilled_water_loop = self.keyword_value_pairs.get(
             BDL_SystemKeywords.CHW_LOOP
         )
-
         self.cool_sys_condenser_water_loop = self.keyword_value_pairs.get(
             BDL_SystemKeywords.CW_LOOP
         )
@@ -819,11 +814,9 @@ class System(ParentNode):
 
     def populate_preheat_system(self):
         self.preheat_sys_id = self.u_name + " PreheatSys"
-
         self.preheat_sys_type = self.heat_type_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.PREHEAT_SOURCE)
         )
-
         self.preheat_sys_rated_capacity = self.try_float(
             self.keyword_value_pairs.get(BDL_SystemKeywords.PREHEAT_CAPACITY)
         )
@@ -837,7 +830,6 @@ class System(ParentNode):
         )
 
     def populate_fans(self, output_data):
-
         # There is always a supply fan for a fan system in eQUEST, so it is always populated
         self.fan_id[0] = self.u_name + " SupplyFan"
         self.fan_design_airflow[0] = output_data.get("Supply Fan - Airflow")
@@ -937,7 +929,6 @@ class System(ParentNode):
 
     def populate_air_energy_recovery(self):
         self.air_energy_recovery_id = self.u_name + " AirEnergyRecovery"
-
         recover_exhaust = self.keyword_value_pairs.get(
             BDL_SystemKeywords.RECOVER_EXHAUST
         )
@@ -953,25 +944,20 @@ class System(ParentNode):
             }
         )
         self.air_energy_recovery_type = self.has_recovery_map.get(recover_exhaust)
-
         self.air_energy_recovery_operation = self.er_operation_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.ERV_RUN_CTRL)
         )
-
         self.air_energy_recovery_supply_air_temperature_control = (
             self.er_sat_control_map.get(
                 self.keyword_value_pairs.get(BDL_SystemKeywords.ERV_TEMP_CTRL)
             )
         )
-
         self.air_energy_recovery_design_sensible_effectiveness = self.try_float(
             self.keyword_value_pairs.get(BDL_SystemKeywords.ERV_SENSIBLE_EFF)
         )
-
         self.air_energy_recovery_design_latent_effectiveness = self.try_float(
             self.keyword_value_pairs.get(BDL_SystemKeywords.ERV_LATENT_EFF)
         )
-
         self.air_energy_recovery_outdoor_airflow = self.try_float(
             self.keyword_value_pairs.get(BDL_SystemKeywords.ERV_OA_FLOW)
         )
