@@ -67,7 +67,6 @@ class System(ParentNode):
         BDL_SystemTypes.HP,
         BDL_SystemTypes.PTAC,
     ]
-
     heat_type_map = {
         BDL_SysemHeatingTypes.HEAT_PUMP: HeatingSystemOptions.HEAT_PUMP,
         BDL_SysemHeatingTypes.FURNACE: HeatingSystemOptions.FURNACE,
@@ -81,6 +80,11 @@ class System(ParentNode):
         BDL_SystemCoolingTypes.ELEC_DX: CoolingSystemOptions.DIRECT_EXPANSION,
         BDL_SystemCoolingTypes.CHILLED_WATER: CoolingSystemOptions.FLUID_LOOP,
         BDL_SystemCoolingTypes.NONE: CoolingSystemOptions.NONE,
+    }
+    output_cool_type_map = {
+        BDL_SystemCoolingTypes.ELEC_DX: BDL_OutputCoolingTypes.DX_AIR_COOLED,
+        BDL_SystemCoolingTypes.CHILLED_WATER: BDL_OutputCoolingTypes.CHILLED_WATER,
+        BDL_SystemCoolingTypes.NONE: None,
     }
     supply_fan_map = {
         BDL_SupplyFanTypes.CONSTANT_VOLUME: FanSystemSupplyFanControlOptions.CONSTANT,
@@ -116,6 +120,28 @@ class System(ParentNode):
         BDL_SystemTypes.RESYS2: CoolingSystemOptions.DIRECT_EXPANSION,
         BDL_SystemTypes.CBVAV: CoolingSystemOptions.FLUID_LOOP,
         BDL_SystemTypes.SUM: CoolingSystemOptions.NONE,
+        BDL_SystemTypes.DOAS: None,  # Mapping updated in populate_cooling_system method
+    }
+    output_system_cooling_type_map = {
+        BDL_SystemTypes.PTAC: BDL_OutputCoolingTypes.DX_AIR_COOLED,  # Unavailable in DOE 2.3
+        BDL_SystemTypes.PSZ: BDL_OutputCoolingTypes.DX_AIR_COOLED,
+        BDL_SystemTypes.PMZS: BDL_OutputCoolingTypes.DX_AIR_COOLED,
+        BDL_SystemTypes.PVAVS: BDL_OutputCoolingTypes.DX_AIR_COOLED,
+        BDL_SystemTypes.PVVT: BDL_OutputCoolingTypes.DX_AIR_COOLED,
+        BDL_SystemTypes.HP: BDL_OutputCoolingTypes.DX_WATER_COOLED,
+        BDL_SystemTypes.SZRH: BDL_OutputCoolingTypes.CHILLED_WATER,
+        BDL_SystemTypes.VAVS: BDL_OutputCoolingTypes.CHILLED_WATER,
+        BDL_SystemTypes.RHFS: BDL_OutputCoolingTypes.CHILLED_WATER,
+        BDL_SystemTypes.DDS: BDL_OutputCoolingTypes.CHILLED_WATER,
+        BDL_SystemTypes.MZS: BDL_OutputCoolingTypes.CHILLED_WATER,
+        BDL_SystemTypes.PIU: None,  # Mapping updated in populate_cooling_system method
+        BDL_SystemTypes.FC: BDL_OutputCoolingTypes.CHILLED_WATER,
+        BDL_SystemTypes.IU: BDL_OutputCoolingTypes.CHILLED_WATER,
+        BDL_SystemTypes.UVT: CoolingSystemOptions.NONE,
+        BDL_SystemTypes.UHT: CoolingSystemOptions.NONE,
+        BDL_SystemTypes.RESYS2: BDL_OutputCoolingTypes.DX_AIR_COOLED,
+        BDL_SystemTypes.CBVAV: BDL_OutputCoolingTypes.CHILLED_WATER,
+        BDL_SystemTypes.SUM: None,
         BDL_SystemTypes.DOAS: None,  # Mapping updated in populate_cooling_system method
     }
     economizer_map = {
@@ -181,6 +207,8 @@ class System(ParentNode):
         # HVACSystem data elements are not populated when SYSTEM TYPE = FC with HW or no heat
         self.is_terminal = False
         self.is_zonal_system = False
+        self.output_cool_type = None
+        self.output_heat_type = None
 
         # system data elements with children
         self.fan_system = {}
