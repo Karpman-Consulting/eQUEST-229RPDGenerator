@@ -72,35 +72,35 @@ class Zone(ChildNode):
         self.aggregation_factor = None
 
         # terminal data elements as a list of [Main Terminal, Baseboard Terminal, DOAS Terminal]
-        self.terminals_id = [None, None, None]
-        self.terminals_reporting_name = [None, None, None]
-        self.terminals_notes = [None, None, None]
-        self.terminals_type = [None, None, None]
-        self.terminals_served_by_heating_ventilating_air_conditioning_system = [
+        self.terminals_id: list = [None, None, None]
+        self.terminals_reporting_name: list = [None, None, None]
+        self.terminals_notes: list = [None, None, None]
+        self.terminals_type: list = [None, None, None]
+        self.terminals_served_by_heating_ventilating_air_conditioning_system: list = [
             None,
             None,
             None,
         ]
-        self.terminals_heating_source = [None, None, None]
-        self.terminals_heating_from_loop = [None, None, None]
-        self.terminals_cooling_source = [None, None, None]
-        self.terminals_cooling_from_loop = [None, None, None]
-        self.terminals_fan = [None, None, None]
-        self.terminals_fan_configuration = [None, None, None]
-        self.terminals_primary_airflow = [None, None, None]
-        self.terminals_secondary_airflow = [None, None, None]
-        self.terminals_max_heating_airflow = [None, None, None]
-        self.terminals_supply_design_heating_setpoint_temperature = [None, None, None]
-        self.terminals_supply_design_cooling_setpoint_temperature = [None, None, None]
-        self.terminals_temperature_control = [None, None, None]
-        self.terminals_minimum_airflow = [None, None, None]
-        self.terminals_minimum_outdoor_airflow = [None, None, None]
-        self.terminals_minimum_outdoor_airflow_multiplier_schedule = [None, None, None]
-        self.terminals_heating_capacity = [None, None, None]
-        self.terminals_cooling_capacity = [None, None, None]
-        self.terminals_is_supply_ducted = [None, None, None]
-        self.terminals_has_demand_control_ventilation = [None, None, None]
-        self.terminals_is_fan_first_stage_heat = [None, None, None]
+        self.terminals_heating_source: list = [None, None, None]
+        self.terminals_heating_from_loop: list = [None, None, None]
+        self.terminals_cooling_source: list = [None, None, None]
+        self.terminals_cooling_from_loop: list = [None, None, None]
+        self.terminals_fan: list = [None, None, None]
+        self.terminals_fan_configuration: list = [None, None, None]
+        self.terminals_primary_airflow: list = [None, None, None]
+        self.terminals_secondary_airflow: list = [None, None, None]
+        self.terminals_max_heating_airflow: list = [None, None, None]
+        self.terminals_supply_design_heating_setpoint_temperature: list = [None, None, None]
+        self.terminals_supply_design_cooling_setpoint_temperature: list = [None, None, None]
+        self.terminals_temperature_control: list = [None, None, None]
+        self.terminals_minimum_airflow: list = [None, None, None]
+        self.terminals_minimum_outdoor_airflow: list = [None, None, None]
+        self.terminals_minimum_outdoor_airflow_multiplier_schedule: list = [None, None, None]
+        self.terminals_heating_capacity: list = [None, None, None]
+        self.terminals_cooling_capacity: list = [None, None, None]
+        self.terminals_is_supply_ducted: list = [None, None, None]
+        self.terminals_has_demand_control_ventilation: list = [None, None, None]
+        self.terminals_is_fan_first_stage_heat: list = [None, None, None]
 
         # terminal fan data elements, maximum of 1 terminal fan per zone
         self.terminal_fan_id = None
@@ -149,19 +149,15 @@ class Zone(ChildNode):
         self.design_thermostat_cooling_setpoint = self.try_float(
             self.keyword_value_pairs.get(BDL_ZoneKeywords.DESIGN_COOL_T)
         )
-
         self.thermostat_cooling_setpoint_schedule = self.keyword_value_pairs.get(
             BDL_ZoneKeywords.COOL_TEMP_SCH
         )
-
         self.design_thermostat_heating_setpoint = self.try_float(
             self.keyword_value_pairs.get(BDL_ZoneKeywords.DESIGN_HEAT_T)
         )
-
         self.thermostat_heating_setpoint_schedule = self.keyword_value_pairs.get(
             BDL_ZoneKeywords.HEAT_TEMP_SCH
         )
-
         self.exhaust_airflow_rate_multiplier_schedule = self.keyword_value_pairs.get(
             BDL_ZoneKeywords.EXHAUST_FAN_SCH
         )
@@ -217,7 +213,6 @@ class Zone(ChildNode):
             self.terminals_id[1] = self.u_name + " Baseboard Terminal"
             # noinspection PyTypeChecker
             self.terminals_type[1] = TerminalOptions.BASEBOARD
-            # noinspection PyTypeChecker
             self.terminals_is_supply_ducted[1] = False
             self.terminals_heating_source[1] = self.heat_source_map.get(
                 self.keyword_value_pairs.get(BDL_ZoneKeywords.BASEBOARD_SOURCE)
@@ -248,9 +243,7 @@ class Zone(ChildNode):
 
         # Only populate MainTerminal Fan data elements here if the zone TERMINAL-TYPE is SERIES-PIU or PARALLEL-PIU
         if is_piu:
-
             self.terminal_fan_id = self.u_name + " MainTerminal Fan"
-
             self.terminal_fan_design_airflow = self.try_float(
                 output_data.get(
                     "HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Fan Flow"
@@ -260,31 +253,27 @@ class Zone(ChildNode):
             self.terminal_fan_specification_method = (
                 FanSpecificationMethodOptions.SIMPLE
             )
-
             self.terminal_fan_design_electric_power = output_data.get(
                 "HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Fan kW"
             )
 
         # Only populate MainTerminal Fan data elements here if the parent system type is FC with HW or no heat
         elif self.parent.is_terminal:
-
             self.terminal_fan_id = self.u_name + " MainTerminal Fan"
-
             self.terminal_fan_design_airflow = output_data.get(
                 "HVAC Systems - Design Parameters - Zone Design Data - General - Supply Airflow"
             )
-
             self.terminal_fan_design_electric_power = output_data.get(
                 "HVAC Systems - Design Parameters - Zone Design Data - General - Zone Fan Power"
             )
-
             self.terminal_fan_specification_method = (
                 FanSpecificationMethodOptions.SIMPLE
             )
 
-        if exhaust_airflow is not None and exhaust_airflow > 0.0:
+        if exhaust_airflow is not None and exhaust_airflow > 0:
             self.zone_exhaust_fan_id = self.u_name + " EF"
             self.zone_exhaust_fan_design_airflow = exhaust_airflow
+            self.zone_exhaust_fan_is_airflow_sized_based_on_design_day = False
             if (
                 self.keyword_value_pairs.get(BDL_ZoneKeywords.EXHAUST_STATIC)
                 is not None
