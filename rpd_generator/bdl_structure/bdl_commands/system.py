@@ -833,6 +833,8 @@ class System(ParentNode):
         self.fan_id[0] = self.u_name + " SupplyFan"
         self.fan_design_airflow[0] = output_data.get("Supply Fan - Airflow")
         self.fan_design_electric_power[0] = output_data.get("Supply Fan - Power")
+        if self.keyword_value_pairs.get(BDL_SystemKeywords.SUPPLY_FLOW) is not None:
+            self.fan_is_airflow_sized_based_on_design_day[0] = False
 
         self.fan_specification_method[0] = (
             FanSpecificationMethodOptions.DETAILED
@@ -862,6 +864,8 @@ class System(ParentNode):
             self.fan_design_electric_power[2] = output_data.get(
                 "Return Fan - Power", None
             )
+            if self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_FLOW) is not None:
+                self.fan_is_airflow_sized_based_on_design_day[2] = False
 
             self.fan_specification_method[2] = (
                 FanSpecificationMethodOptions.DETAILED
@@ -878,6 +882,8 @@ class System(ParentNode):
             self.fan_id[1] = self.u_name + " ReturnFan"
             self.fan_design_airflow[1] = output_data.get("Return Fan - Airflow", None)
             self.fan_design_electric_power[1] = output_data.get("Return Fan - Power")
+            if self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_FLOW) is not None:
+                self.fan_is_airflow_sized_based_on_design_day[1] = False
 
             self.fan_specification_method[1] = (
                 FanSpecificationMethodOptions.DETAILED
@@ -898,6 +904,8 @@ class System(ParentNode):
             self.fan_design_electric_power[3] = output_data.get(
                 "Heating Supply Fan - Power"
             )
+            if self.keyword_value_pairs.get(BDL_SystemKeywords.HSUPPLY_FLOW) is not None:
+                self.fan_is_airflow_sized_based_on_design_day[3] = False
 
             self.fan_specification_method[3] = (
                 FanSpecificationMethodOptions.DETAILED
