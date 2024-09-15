@@ -190,6 +190,9 @@ class Zone(ChildNode):
         minimum_airflow_ratio = output_data.get(
             "HVAC Systems - Design Parameters - Zone Design Data - General - Minimum Airflow Ratio"
         )
+        minimum_outdoor_airflow = output_data.get(
+            "HVAC Systems - Design Parameters - Zone Design Data - General - Outside Airflow"
+        )
 
         # Populate MainTerminal data elements
         self.terminals_id[0] = self.u_name + " MainTerminal"
@@ -203,11 +206,6 @@ class Zone(ChildNode):
             BDL_ZoneKeywords.HW_LOOP
         )
         self.terminals_primary_airflow[0] = supply_airflow
-        if supply_airflow is not None and minimum_airflow_ratio is not None:
-            self.terminals_minimum_airflow[0] = supply_airflow * minimum_airflow_ratio
-        self.terminals_minimum_outdoor_airflow[0] = output_data.get(
-            "HVAC Systems - Design Parameters - Zone Design Data - General - Outside Airflow"
-        )
         self.terminals_heating_capacity[0] = output_data.get(
             "HVAC Systems - Design Parameters - Zone Design Data - General - Heating Capacity"
         )
@@ -217,6 +215,9 @@ class Zone(ChildNode):
         exhaust_airflow = self.try_float(
             self.keyword_value_pairs.get(BDL_ZoneKeywords.EXHAUST_FLOW)
         )
+
+        if supply_airflow is not None and minimum_airflow_ratio is not None:
+            self.terminals_minimum_airflow[0] = supply_airflow * minimum_airflow_ratio
 
         if not has_doas:
             self.terminals_minimum_outdoor_airflow[0] = minimum_outdoor_airflow
