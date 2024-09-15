@@ -587,15 +587,6 @@ class System(ParentNode):
             )
             requests["Heating Supply Fan - Power"] = (2201036, self.u_name, "")
 
-        if self.cool_sys_type == CoolingSystemOptions.FLUID_LOOP:
-            requests[
-                "Design Day Cooling - chilled water - SYSTEM - capacity, btu/hr"
-            ] = (2203006, self.u_name, "")
-            requests["Design Cooling - chilled water - SYSTEM - capacity, btu/hr"] = (
-                2203015,
-                self.u_name,
-                "",
-            )
         match self.output_cool_type:
             case BDL_OutputCoolingTypes.CHILLED_WATER:
                 # Design data for Cooling - chilled water - SYSTEM - capacity, btu/hr
@@ -666,24 +657,51 @@ class System(ParentNode):
                     2203217, self.u_name, ""
                 )
 
+        match self.output_heat_type:
+            case BDL_OutputHeatingTypes.FURNACE:
+                requests["Design Heating capacity"] = (
+                    2203296, self.u_name, ""
+                )
+            case BDL_OutputHeatingTypes.HEAT_PUMP_AIR_COOLED:
+                # Design data for Heating - heat pump air cooled - SYSTEM - capacity, btu/hr
+                requests["Design Heating capacity"] = (
+                    2203372, self.u_name, ""
+                )
+                # Rated data for Heating - heat pump air cooled - SYSTEM - capacity, btu/hr
+                requests["Rated Heating capacity"] = (
+                    2203378, self.u_name, ""
+                )
+            case BDL_OutputHeatingTypes.HEAT_PUMP_WATER_COOLED:
+                # Design data for Heating - heat pump water cooled - SYSTEM - capacity, btu/hr
+                requests["Design Heating capacity"] = (
+                    2203414, self.u_name, ""
+                )
+                # Rated data for Heating - heat pump water cooled - SYSTEM - capacity, btu/hr
+                requests["Rated Heating capacity"] = (
+                    2203420, self.u_name, ""
+                )
+            case BDL_OutputHeatingTypes.VRF:
+                # Design data for Heating - VRF - SYSTEM - capacity, btu/hr
+                requests["Design Heating capacity"] = (
+                    2203460, self.u_name, ""
+                )
+                # Rated data for Heating - VRF - SYSTEM - capacity, btu/hr
+                requests["Rated Heating capacity"] = (
+                    2203466, self.u_name, ""
+                )
+
         match self.preheat_sys_type:
             case HeatingSystemOptions.FLUID_LOOP:
                 pass  # placeholder
             case HeatingSystemOptions.ELECTRIC_RESISTANCE:
                 pass  # placeholder
             case HeatingSystemOptions.FURNACE:
-                requests["Design Preheat - furnace - SYSTEM - capacity, btu/hr"] = (
+                # Design Preheat - furnace - SYSTEM - capacity, btu/hr
+                requests["Design Preheat capacity"] = (
                     2203311,
                     self.u_name,
                     "",
                 )
-
-        if self.heat_sys_type == HeatingSystemOptions.FLUID_LOOP:
-            requests["Design Day Heating - hot water - SYSTEM - capacity, btu/hr"] = (
-                2203258,
-                self.u_name,
-                "",
-            )
 
         return requests
 
@@ -848,24 +866,34 @@ class System(ParentNode):
                 )
             )
         else:
+            self.heat_sys_rated_capacity = self.try_abs(self.try_float(
+                self.keyword_value_pairs.get(BDL_SystemKeywords.HEATING_CAPACITY)
+            ))
+            if not self.heat_sys_rated_capacity:
+                self.heat_sys_rated_capacity = self.try_abs(output_data.get("Rated Heating capacity"))
+            if not self.heat_sys_rated_capacity:
+                self.heat_sys_rated_capacity = self.try_abs(output_data.get("Heating Capacity"))
+            self.heat_sys_design_capacity = self.try_abs(output_data.get("Design Heating capacity"))
+            if not self.heat_sys_design_capacity:
+                self.heat_sys_design_capacity = self.try_abs(output_data.get("Heating Capacity"))
             self.heat_sys_is_sized_based_on_design_day = (
-                not self.heat_sys_rated_capacity
+                not self.keyword_value_pairs.get(BDL_SystemKeywords.HEATING_CAPACITY)
             )
 
-        self.heat_sys_humidification_type = self.humidification_map.get(
-            self.keyword_value_pairs.get(BDL_SystemKeywords.HUMIDIFIER_TYPE)
-        )
-
-        self.heat_sys_heating_coil_setpoint = self.try_float(
-            self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_T)
-        )
-
-    def populate_cooling_system(self):
+    def populate_cooling_system(self, output_data):
         self.cool_sys_id = self.u_name + " CoolSys"
         self.cool_sys_type = self.system_cooling_type_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.TYPE)
         )
-
+        self.cool_sys_chilled_water_loop = self.keyword_value_pairs.get(
+            BDL_SystemKeywords.CHW_LOOP
+        )
+        self.cool_sys_condenser_water_loop = self.keyword_value_pairs.get(
+            BDL_SystemKeywords.CW_LOOP
+        )
+        self.cool_sys_rated_total_cool_capacity = self.try_float(
+            self.keyword_value_pairs.get(BDL_SystemKeywords.COOLING_CAPACITY)
+        )
         sizing_ratio = self.try_float(
             self.keyword_value_pairs.get(BDL_SystemKeywords.SIZING_RATIO)
         )
@@ -873,22 +901,16 @@ class System(ParentNode):
             self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_SIZING_RATI)
         )
         if sizing_ratio is not None and cool_sizing_ratio is not None:
-            self.cool_sys_oversizing_factor = sizing_ratio * cool_sizing_ratio - 1
+            self.cool_sys_oversizing_factor = max(0, sizing_ratio * cool_sizing_ratio - 1)
 
-        self.cool_sys_chilled_water_loop = self.keyword_value_pairs.get(
-            BDL_SystemKeywords.CHW_LOOP
-        )
-        self.cool_sys_condenser_water_loop = self.keyword_value_pairs.get(
-            BDL_SystemKeywords.CW_LOOP
-        )
-
-        self.cool_sys_rated_total_capacity = self.try_float(
-            self.keyword_value_pairs.get(BDL_SystemKeywords.COOLING_CAPACITY)
-        )
+        # self.cool_sys_design_total_cool_capacity = output_data.get("Cooling Capacity")
+        # shr = output_data.get("Sensible Heat Ratio")
+        # if shr is not None and self.cool_sys_design_total_cool_capacity is not None:
+        #     self.cool_sys_design_sensible_cool_capacity = shr * self.cool_sys_design_total_cool_capacity
 
         if self.is_zonal_system:
             self.cool_sys_is_sized_based_on_design_day = (
-                not self.cool_sys_design_total_capacity
+                not self.keyword_value_pairs.get(BDL_SystemKeywords.COOLING_CAPACITY)
                 and all(
                     not child.keyword_value_pairs.get(BDL_ZoneKeywords.MAX_COOL_RATE)
                     and not child.keyword_value_pairs.get(
@@ -926,7 +948,7 @@ class System(ParentNode):
                 self.cool_sys_design_sensible_cool_capacity = shr * self.cool_sys_design_total_cool_capacity
             self.cool_sys_is_sized_based_on_design_day = not self.keyword_value_pairs.get(BDL_SystemKeywords.COOLING_CAPACITY)
 
-    def populate_preheat_system(self):
+    def populate_preheat_system(self, output_data):
         self.preheat_sys_id = self.u_name + " PreheatSys"
         self.preheat_sys_type = self.heat_type_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.PREHEAT_SOURCE)
@@ -934,11 +956,7 @@ class System(ParentNode):
         self.preheat_sys_rated_capacity = self.try_float(
             self.keyword_value_pairs.get(BDL_SystemKeywords.PREHEAT_CAPACITY)
         )
-
-        self.preheat_sys_is_sized_based_on_design_day = (
-            not self.preheat_sys_rated_capacity
-        )
-
+        self.preheat_sys_is_sized_based_on_design_day = not self.keyword_value_pairs.get(BDL_SystemKeywords.PREHEAT_CAPACITY)
         self.preheat_sys_heating_coil_setpoint = self.try_float(
             self.keyword_value_pairs.get(BDL_SystemKeywords.PREHEAT_T)
         )
