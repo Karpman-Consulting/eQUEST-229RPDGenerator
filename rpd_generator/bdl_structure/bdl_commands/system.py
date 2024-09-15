@@ -192,6 +192,11 @@ class System(ParentNode):
         BDL_HumidificationOptions.HEAT_PUMP: HumidificationOptions.OTHER,
         BDL_HumidificationOptions.DHW_LOOP: HumidificationOptions.OTHER,
     }
+    heatpump_aux_type_map = {
+        BDL_HPSupplementSourceOptions.ELECTRIC: HeatpumpAuxiliaryHeatOptions.ELECTRIC_RESISTANCE,
+        BDL_HPSupplementSourceOptions.HOT_WATER: HeatpumpAuxiliaryHeatOptions.OTHER,
+        BDL_HPSupplementSourceOptions.FURNACE: HeatpumpAuxiliaryHeatOptions.FURNACE,
+    }
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
@@ -718,11 +723,31 @@ class System(ParentNode):
             self.keyword_value_pairs.get(BDL_SystemKeywords.MIN_OA_METHOD)
         )
 
-    def populate_heating_system(self):
+    def populate_heating_system(self, output_data):
         self.heat_sys_id = self.u_name + " HeatSys"
-
         self.heat_sys_type = self.heat_type_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_SOURCE)
+        )
+        self.heat_sys_hot_water_loop = self.keyword_value_pairs.get(
+            BDL_SystemKeywords.HW_LOOP
+        )
+        self.heat_sys_water_source_heat_pump_loop = self.keyword_value_pairs.get(
+            BDL_SystemKeywords.CW_LOOP
+        )
+        self.heat_sys_humidification_type = self.humidification_map.get(
+            self.keyword_value_pairs.get(BDL_SystemKeywords.HUMIDIFIER_TYPE)
+        )
+        self.heat_sys_heating_coil_setpoint = self.try_float(
+            self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_T)
+        )
+        self.heat_sys_heatpump_auxiliary_heat_type = self.heatpump_aux_type_map.get(
+            self.keyword_value_pairs.get(BDL_SystemKeywords.HP_SUPP_SOURCE)
+        )
+        self.heat_sys_heatpump_auxiliary_heat_high_shutoff_temperature = self.try_float(
+            self.keyword_value_pairs.get(BDL_SystemKeywords.MAX_HP_SUPP_T)
+        )
+        self.heat_sys_heatpump_low_shutoff_temperature = self.try_float(
+            self.keyword_value_pairs.get(BDL_SystemKeywords.MIN_HP_T)
         )
 
         sizing_ratio = self.try_float(
@@ -732,23 +757,11 @@ class System(ParentNode):
             self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_SIZING_RATI)
         )
         if sizing_ratio is not None and heat_sizing_ratio is not None:
-            self.heat_sys_oversizing_factor = sizing_ratio * heat_sizing_ratio - 1
-
-        self.heat_sys_hot_water_loop = self.keyword_value_pairs.get(
-            BDL_SystemKeywords.HW_LOOP
-        )
-
-        self.heat_sys_water_source_heat_pump_loop = self.keyword_value_pairs.get(
-            BDL_SystemKeywords.CW_LOOP
-        )
-
-        self.heat_sys_rated_capacity = self.try_float(
-            self.keyword_value_pairs.get(BDL_SystemKeywords.HEATING_CAPACITY)
-        )
+            self.heat_sys_oversizing_factor = max(0, sizing_ratio * heat_sizing_ratio - 1)
 
         if self.is_zonal_system:
             self.heat_sys_is_sized_based_on_design_day = (
-                not self.heat_sys_design_capacity
+                not self.keyword_value_pairs.get(BDL_SystemKeywords.HEATING_CAPACITY)
                 and all(
                     not child.keyword_value_pairs.get(BDL_ZoneKeywords.MAX_HEAT_RATE)
                     and not child.keyword_value_pairs.get(
