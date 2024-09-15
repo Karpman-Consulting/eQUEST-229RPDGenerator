@@ -32,9 +32,7 @@ BDL_SystemTypes = BDLEnums.bdl_enums["SystemTypes"]
 BDL_SysemHeatingTypes = BDLEnums.bdl_enums["SystemHeatingTypes"]
 BDL_SystemCoolingTypes = BDLEnums.bdl_enums["SystemCoolingTypes"]
 BDL_SupplyFanTypes = BDLEnums.bdl_enums["SystemSupplyFanTypes"]
-BDL_NightCycleControlOptions = BDLEnums.bdl_enums[
-    "SystemNightCycleControlOptions"
-]
+BDL_NightCycleControlOptions = BDLEnums.bdl_enums["SystemNightCycleControlOptions"]
 BDL_EconomizerOptions = BDLEnums.bdl_enums["SystemEconomizerOptions"]
 BDL_EnergyRecoveryTypes = BDLEnums.bdl_enums["SystemEnergyRecoveryTypes"]
 BDL_EnergyRecoveryOptions = BDLEnums.bdl_enums["SystemEnergyRecoveryOptions"]
@@ -325,7 +323,7 @@ class System(ParentNode):
         self.fan_specification_method: list = [None, None, None, None]
         self.fan_design_electric_power: list = [None, None, None, None]
         self.fan_design_pressure_rise: list = [None, None, None, None]
-        self.fan_motor_nameplate_power: list= [None, None, None, None]
+        self.fan_motor_nameplate_power: list = [None, None, None, None]
         self.fan_shaft_power: list = [None, None, None, None]
         self.fan_total_efficiency: list = [None, None, None, None]
         self.fan_motor_efficiency: list = [None, None, None, None]
@@ -475,209 +473,209 @@ class System(ParentNode):
                 case BDL_OutputCoolingTypes.CHILLED_WATER:
                     # Design data for Cooling - chilled water - ZONE - capacity, btu/hr
                     requests["Design Cooling capacity"] = (
-                        2203505, self.u_name, self.children[0].u_name
+                        2203505,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                     # Design data for Cooling - chilled water - ZONE - SHR
                     requests["Design Cooling SHR"] = (
-                        2203506, self.u_name, self.children[0].u_name
+                        2203506,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                     # Rated data for Cooling - chilled water - ZONE - capacity, btu/hr
                     requests["Rated Cooling capacity"] = (
-                        2203516, self.u_name, self.children[0].u_name
+                        2203516,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                     # Rated data for Cooling - chilled water - ZONE - SHR
                     requests["Rated Cooling SHR"] = (
-                        2203517, self.u_name, self.children[0].u_name
+                        2203517,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                 case BDL_OutputCoolingTypes.DX_AIR_COOLED:
                     # Design data for Cooling - DX air cooled - ZONE - capacity, btu/hr
                     requests["Design Cooling capacity"] = (
-                        2203557, self.u_name, self.children[0].u_name
+                        2203557,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                     # Design data for Cooling - DX air cooled - ZONE - SHR
                     requests["Design Cooling SHR"] = (
-                        2203558, self.u_name, self.children[0].u_name
+                        2203558,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                     # Rated data for Cooling - DX air cooled - ZONE - capacity, btu/hr
                     requests["Rated Cooling capacity"] = (
-                        2203566, self.u_name, self.children[0].u_name
+                        2203566,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                     # Rated data for Cooling - DX air cooled - ZONE - SHR
                     requests["Rated Cooling SHR"] = (
-                        2203567, self.u_name, self.children[0].u_name
+                        2203567,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                 case BDL_OutputCoolingTypes.DX_WATER_COOLED:
                     # Design data for Cooling - DX water cooled - ZONE - capacity, btu/hr
                     requests["Design Cooling capacity"] = (
-                        2203587, self.u_name, self.children[0].u_name
+                        2203587,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                     # Design data for Cooling - DX water cooled - ZONE - SHR
                     requests["Design Cooling SHR"] = (
-                        2203588, self.u_name, self.children[0].u_name
+                        2203588,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                     # Rated data for Cooling - DX water cooled - ZONE - capacity, btu/hr
                     requests["Rated Cooling capacity"] = (
-                        2203596, self.u_name, self.children[0].u_name
+                        2203596,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                     # Rated data for Cooling - DX water cooled - ZONE - SHR
                     requests["Rated Cooling SHR"] = (
-                        2203597, self.u_name, self.children[0].u_name
+                        2203597,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                 case BDL_OutputCoolingTypes.VRF:
                     # Design data for Cooling - VRF - ZONE - capacity, btu/hr
                     requests["Design Cooling capacity"] = (
-                        2203619, self.u_name, self.children[0].u_name
+                        2203619,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                     # Design data for Cooling - VRF - ZONE - SHR
                     requests["Design Cooling SHR"] = (
-                        2203620, self.u_name, self.children[0].u_name
+                        2203620,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                     # Rated data for Cooling - VRF - ZONE - capacity, btu/hr
                     requests["Rated Cooling capacity"] = (
-                        2203628, self.u_name, self.children[0].u_name
+                        2203628,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                     # Rated data for Cooling - VRF - ZONE - SHR
                     requests["Rated Cooling SHR"] = (
-                        2203629, self.u_name, self.children[0].u_name
+                        2203629,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
 
             match self.output_heat_type:
                 case BDL_OutputHeatingTypes.FURNACE:
                     # Design data for Heating - furnace - ZONE - capacity, btu/hr
                     requests["Design Heating capacity"] = (
-                        2203708, self.u_name, self.children[0].u_name
+                        2203708,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                 case BDL_OutputHeatingTypes.HEAT_PUMP_AIR_COOLED:
                     # Design data for Heating - heat pump air cooled - ZONE - capacity, btu/hr
                     requests["Design Heating capacity"] = (
-                        2203784, self.u_name, self.children[0].u_name
+                        2203784,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                     # Rated data for Heating - heat pump air cooled - ZONE - capacity, btu/hr
                     requests["Rated Heating capacity"] = (
-                        2203790, self.u_name, self.children[0].u_name
+                        2203790,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                 case BDL_OutputHeatingTypes.HEAT_PUMP_WATER_COOLED:
                     # Design data for Heating - heat pump water cooled - ZONE - capacity, btu/hr
                     requests["Design Heating capacity"] = (
-                        2203805, self.u_name, self.children[0].u_name
+                        2203805,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                     # Rated data for Heating - heat pump water cooled - ZONE - capacity, btu/hr
                     requests["Rated Heating capacity"] = (
-                        2203811, self.u_name, self.children[0].u_name
+                        2203811,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                 case BDL_OutputHeatingTypes.VRF:
                     # Design data for Heating - VRF - ZONE - capacity, btu/hr
                     requests["Design Heating capacity"] = (
-                        2203828, self.u_name, self.children[0].u_name
+                        2203828,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
                     # Rated data for Heating - VRF - ZONE - capacity, btu/hr
                     requests["Rated Heating capacity"] = (
-                        2203834, self.u_name, self.children[0].u_name
+                        2203834,
+                        self.u_name,
+                        self.children[0].u_name,
                     )
 
         else:
             match self.output_cool_type:
                 case BDL_OutputCoolingTypes.CHILLED_WATER:
                     # Design data for Cooling - chilled water - SYSTEM - capacity, btu/hr
-                    requests["Design Cooling capacity"] = (
-                        2203015, self.u_name, ""
-                    )
+                    requests["Design Cooling capacity"] = (2203015, self.u_name, "")
                     # Design data for Cooling - chilled water - SYSTEM - SHR
-                    requests["Design Cooling SHR"] = (
-                        2203016, self.u_name, ""
-                    )
+                    requests["Design Cooling SHR"] = (2203016, self.u_name, "")
                     # Rated data for Cooling - chilled water - SYSTEM - capacity, btu/hr
-                    requests["Rated Cooling capacity"] = (
-                        2203026, self.u_name, ""
-                    )
+                    requests["Rated Cooling capacity"] = (2203026, self.u_name, "")
                     # Rated data for Cooling - chilled water - SYSTEM - SHR
-                    requests["Rated Cooling SHR"] = (
-                        2203027, self.u_name, ""
-                    )
+                    requests["Rated Cooling SHR"] = (2203027, self.u_name, "")
                 case BDL_OutputCoolingTypes.DX_AIR_COOLED:
                     # Design data for Cooling - DX air cooled - SYSTEM - capacity, btu/hr
-                    requests["Design Cooling capacity"] = (
-                        2203083, self.u_name, ""
-                    )
+                    requests["Design Cooling capacity"] = (2203083, self.u_name, "")
                     # Design data for Cooling - DX air cooled - SYSTEM - SHR
-                    requests["Design Cooling SHR"] = (
-                        2203084, self.u_name, ""
-                    )
+                    requests["Design Cooling SHR"] = (2203084, self.u_name, "")
                     # Rated data for Cooling - DX air cooled - SYSTEM - capacity, btu/hr
-                    requests["Rated Cooling capacity"] = (
-                        2203092, self.u_name, ""
-                    )
+                    requests["Rated Cooling capacity"] = (2203092, self.u_name, "")
                     # Rated data for Cooling - DX air cooled - SYSTEM - SHR
-                    requests["Rated Cooling SHR"] = (
-                        2203093, self.u_name, ""
-                    )
+                    requests["Rated Cooling SHR"] = (2203093, self.u_name, "")
                 case BDL_OutputCoolingTypes.DX_WATER_COOLED:
                     # Design data for Cooling - DX water cooled - SYSTEM - capacity, btu/hr
-                    requests["Design Cooling capacity"] = (
-                        2203143, self.u_name, ""
-                    )
+                    requests["Design Cooling capacity"] = (2203143, self.u_name, "")
                     # Design data for Cooling - DX water cooled - SYSTEM - SHR
-                    requests["Design Cooling SHR"] = (
-                        2203144, self.u_name, ""
-                    )
+                    requests["Design Cooling SHR"] = (2203144, self.u_name, "")
                     # Rated data for Cooling - DX water cooled - SYSTEM - capacity, btu/hr
-                    requests["Rated Cooling capacity"] = (
-                        2203152, self.u_name, ""
-                    )
+                    requests["Rated Cooling capacity"] = (2203152, self.u_name, "")
                     # Rated data for Cooling - DX water cooled - SYSTEM - SHR
-                    requests["Rated Cooling SHR"] = (
-                        2203153, self.u_name, ""
-                    )
+                    requests["Rated Cooling SHR"] = (2203153, self.u_name, "")
                 case BDL_OutputCoolingTypes.VRF:
                     # Design data for Cooling - VRF - SYSTEM - capacity, btu/hr
-                    requests["Design Cooling capacity"] = (
-                        2203207, self.u_name, ""
-                    )
+                    requests["Design Cooling capacity"] = (2203207, self.u_name, "")
                     # Design data for Cooling - VRF - SYSTEM - SHR
-                    requests["Design Cooling SHR"] = (
-                        2203208, self.u_name, ""
-                    )
+                    requests["Design Cooling SHR"] = (2203208, self.u_name, "")
                     # Rated data for Cooling - VRF - SYSTEM - capacity, btu/hr
-                    requests["Rated Cooling capacity"] = (
-                        2203216, self.u_name, ""
-                    )
+                    requests["Rated Cooling capacity"] = (2203216, self.u_name, "")
                     # Rated data for Cooling - VRF - SYSTEM - SHR
-                    requests["Rated Cooling SHR"] = (
-                        2203217, self.u_name, ""
-                    )
+                    requests["Rated Cooling SHR"] = (2203217, self.u_name, "")
 
             match self.output_heat_type:
                 case BDL_OutputHeatingTypes.FURNACE:
-                    requests["Design Heating capacity"] = (
-                        2203296, self.u_name, ""
-                    )
+                    requests["Design Heating capacity"] = (2203296, self.u_name, "")
                 case BDL_OutputHeatingTypes.HEAT_PUMP_AIR_COOLED:
                     # Design data for Heating - heat pump air cooled - SYSTEM - capacity, btu/hr
-                    requests["Design Heating capacity"] = (
-                        2203372, self.u_name, ""
-                    )
+                    requests["Design Heating capacity"] = (2203372, self.u_name, "")
                     # Rated data for Heating - heat pump air cooled - SYSTEM - capacity, btu/hr
-                    requests["Rated Heating capacity"] = (
-                        2203378, self.u_name, ""
-                    )
+                    requests["Rated Heating capacity"] = (2203378, self.u_name, "")
                 case BDL_OutputHeatingTypes.HEAT_PUMP_WATER_COOLED:
                     # Design data for Heating - heat pump water cooled - SYSTEM - capacity, btu/hr
-                    requests["Design Heating capacity"] = (
-                        2203414, self.u_name, ""
-                    )
+                    requests["Design Heating capacity"] = (2203414, self.u_name, "")
                     # Rated data for Heating - heat pump water cooled - SYSTEM - capacity, btu/hr
-                    requests["Rated Heating capacity"] = (
-                        2203420, self.u_name, ""
-                    )
+                    requests["Rated Heating capacity"] = (2203420, self.u_name, "")
                 case BDL_OutputHeatingTypes.VRF:
                     # Design data for Heating - VRF - SYSTEM - capacity, btu/hr
-                    requests["Design Heating capacity"] = (
-                        2203460, self.u_name, ""
-                    )
+                    requests["Design Heating capacity"] = (2203460, self.u_name, "")
                     # Rated data for Heating - VRF - SYSTEM - capacity, btu/hr
-                    requests["Rated Heating capacity"] = (
-                        2203466, self.u_name, ""
-                    )
+                    requests["Rated Heating capacity"] = (2203466, self.u_name, "")
 
             match self.preheat_sys_type:
                 case HeatingSystemOptions.FLUID_LOOP:
@@ -800,8 +798,10 @@ class System(ParentNode):
         self.fan_sys_fan_control = self.supply_fan_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.FAN_CONTROL)
         )
-        self.fan_sys_operation_during_unoccupied = self.unoccupied_fan_operation_map.get(
-            self.keyword_value_pairs.get(BDL_SystemKeywords.NIGHT_CYCLE_CTRL)
+        self.fan_sys_operation_during_unoccupied = (
+            self.unoccupied_fan_operation_map.get(
+                self.keyword_value_pairs.get(BDL_SystemKeywords.NIGHT_CYCLE_CTRL)
+            )
         )
         self.fan_sys_demand_control_ventilation_control = self.dcv_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.MIN_OA_METHOD)
@@ -841,18 +841,30 @@ class System(ParentNode):
             self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_SIZING_RATI)
         )
         if sizing_ratio is not None and heat_sizing_ratio is not None:
-            self.heat_sys_oversizing_factor = max(0, sizing_ratio * heat_sizing_ratio - 1)
+            self.heat_sys_oversizing_factor = max(
+                0, sizing_ratio * heat_sizing_ratio - 1
+            )
 
-        self.heat_sys_rated_capacity = self.try_abs(self.try_float(
-            self.keyword_value_pairs.get(BDL_SystemKeywords.HEATING_CAPACITY)
-        ))
+        self.heat_sys_rated_capacity = self.try_abs(
+            self.try_float(
+                self.keyword_value_pairs.get(BDL_SystemKeywords.HEATING_CAPACITY)
+            )
+        )
         if not self.heat_sys_rated_capacity:
-            self.heat_sys_rated_capacity = self.try_abs(output_data.get("Rated Heating capacity"))
+            self.heat_sys_rated_capacity = self.try_abs(
+                output_data.get("Rated Heating capacity")
+            )
         if not self.heat_sys_rated_capacity:
-            self.heat_sys_rated_capacity = self.try_abs(output_data.get("Heating Capacity"))
-        self.heat_sys_design_capacity = self.try_abs(output_data.get("Design Heating capacity"))
+            self.heat_sys_rated_capacity = self.try_abs(
+                output_data.get("Heating Capacity")
+            )
+        self.heat_sys_design_capacity = self.try_abs(
+            output_data.get("Design Heating capacity")
+        )
         if not self.heat_sys_design_capacity:
-            self.heat_sys_design_capacity = self.try_abs(output_data.get("Heating Capacity"))
+            self.heat_sys_design_capacity = self.try_abs(
+                output_data.get("Heating Capacity")
+            )
 
         if self.is_zonal_system:
             self.heat_sys_is_sized_based_on_design_day = (
@@ -891,34 +903,54 @@ class System(ParentNode):
             self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_SIZING_RATI)
         )
         if sizing_ratio is not None and cool_sizing_ratio is not None:
-            self.cool_sys_oversizing_factor = max(0, sizing_ratio * cool_sizing_ratio - 1)
+            self.cool_sys_oversizing_factor = max(
+                0, sizing_ratio * cool_sizing_ratio - 1
+            )
 
-        self.cool_sys_rated_total_cool_capacity = self.try_abs(self.try_float(
-            self.keyword_value_pairs.get(BDL_SystemKeywords.COOLING_CAPACITY)
-        ))
+        self.cool_sys_rated_total_cool_capacity = self.try_abs(
+            self.try_float(
+                self.keyword_value_pairs.get(BDL_SystemKeywords.COOLING_CAPACITY)
+            )
+        )
         if not self.cool_sys_rated_total_cool_capacity:
-            self.cool_sys_rated_total_cool_capacity = self.try_abs(output_data.get("Rated Cooling capacity"))
+            self.cool_sys_rated_total_cool_capacity = self.try_abs(
+                output_data.get("Rated Cooling capacity")
+            )
         if not self.cool_sys_rated_total_cool_capacity:
-            self.cool_sys_rated_total_cool_capacity = self.try_abs(output_data.get("Cooling Capacity"))
-        self.cool_sys_rated_sensible_cool_capacity = self.try_abs(self.try_float(
-            self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_SH_CAP)
-        ))
+            self.cool_sys_rated_total_cool_capacity = self.try_abs(
+                output_data.get("Cooling Capacity")
+            )
+        self.cool_sys_rated_sensible_cool_capacity = self.try_abs(
+            self.try_float(self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_SH_CAP))
+        )
         if not self.cool_sys_rated_sensible_cool_capacity:
             rated_shr = self.try_abs(output_data.get("Rated Cooling SHR"))
             if rated_shr and self.cool_sys_rated_total_cool_capacity:
-                self.cool_sys_rated_sensible_cool_capacity = rated_shr * self.cool_sys_rated_total_cool_capacity
+                self.cool_sys_rated_sensible_cool_capacity = (
+                    rated_shr * self.cool_sys_rated_total_cool_capacity
+                )
         if not self.cool_sys_rated_sensible_cool_capacity:
             shr = self.try_abs(output_data.get("Sensible Heat Ratio"))
-            self.cool_sys_rated_sensible_cool_capacity = shr * self.cool_sys_rated_total_cool_capacity
-        self.cool_sys_design_total_cool_capacity = self.try_abs(output_data.get("Design Cooling capacity"))
+            self.cool_sys_rated_sensible_cool_capacity = (
+                shr * self.cool_sys_rated_total_cool_capacity
+            )
+        self.cool_sys_design_total_cool_capacity = self.try_abs(
+            output_data.get("Design Cooling capacity")
+        )
         if not self.cool_sys_design_total_cool_capacity:
-            self.cool_sys_design_total_cool_capacity = self.try_abs(output_data.get("Cooling Capacity"))
+            self.cool_sys_design_total_cool_capacity = self.try_abs(
+                output_data.get("Cooling Capacity")
+            )
         design_shr = self.try_abs(output_data.get("Design Cooling SHR"))
         if design_shr and self.cool_sys_design_total_cool_capacity:
-            self.cool_sys_design_sensible_cool_capacity = design_shr * self.cool_sys_design_total_cool_capacity
+            self.cool_sys_design_sensible_cool_capacity = (
+                design_shr * self.cool_sys_design_total_cool_capacity
+            )
         if not self.cool_sys_design_sensible_cool_capacity:
             shr = self.try_abs(output_data.get("Sensible Heat Ratio"))
-            self.cool_sys_design_sensible_cool_capacity = shr * self.cool_sys_design_total_cool_capacity
+            self.cool_sys_design_sensible_cool_capacity = (
+                shr * self.cool_sys_design_total_cool_capacity
+            )
 
         if self.is_zonal_system:
             self.cool_sys_is_sized_based_on_design_day = (
@@ -932,7 +964,9 @@ class System(ParentNode):
                 )
             )
         else:
-            self.cool_sys_is_sized_based_on_design_day = not self.keyword_value_pairs.get(BDL_SystemKeywords.COOLING_CAPACITY)
+            self.cool_sys_is_sized_based_on_design_day = (
+                not self.keyword_value_pairs.get(BDL_SystemKeywords.COOLING_CAPACITY)
+            )
 
     def populate_preheat_system(self, output_data):
         self.preheat_sys_id = self.u_name + " PreheatSys"
@@ -942,7 +976,9 @@ class System(ParentNode):
         self.preheat_sys_rated_capacity = self.try_float(
             self.keyword_value_pairs.get(BDL_SystemKeywords.PREHEAT_CAPACITY)
         )
-        self.preheat_sys_is_sized_based_on_design_day = not self.keyword_value_pairs.get(BDL_SystemKeywords.PREHEAT_CAPACITY)
+        self.preheat_sys_is_sized_based_on_design_day = (
+            not self.keyword_value_pairs.get(BDL_SystemKeywords.PREHEAT_CAPACITY)
+        )
         self.preheat_sys_heating_coil_setpoint = self.try_float(
             self.keyword_value_pairs.get(BDL_SystemKeywords.PREHEAT_T)
         )
@@ -1023,7 +1059,10 @@ class System(ParentNode):
             self.fan_design_electric_power[3] = output_data.get(
                 "Heating Supply Fan - Power"
             )
-            if self.keyword_value_pairs.get(BDL_SystemKeywords.HSUPPLY_FLOW) is not None:
+            if (
+                self.keyword_value_pairs.get(BDL_SystemKeywords.HSUPPLY_FLOW)
+                is not None
+            ):
                 self.fan_is_airflow_sized_based_on_design_day[3] = False
 
             self.fan_specification_method[3] = (
@@ -1047,7 +1086,8 @@ class System(ParentNode):
 
         self.air_econ_is_integrated = (
             True
-            if self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_SOURCE) == BDL_SystemCoolingTypes.CHILLED_WATER
+            if self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_SOURCE)
+            == BDL_SystemCoolingTypes.CHILLED_WATER
             else not self.boolean_map.get(
                 self.keyword_value_pairs.get(BDL_SystemKeywords.ECONO_LOCKOUT)
             )

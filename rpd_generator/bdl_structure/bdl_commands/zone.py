@@ -98,12 +98,24 @@ class Zone(ChildNode):
         self.terminals_primary_airflow: list = [None, None, None]
         self.terminals_secondary_airflow: list = [None, None, None]
         self.terminals_max_heating_airflow: list = [None, None, None]
-        self.terminals_supply_design_heating_setpoint_temperature: list = [None, None, None]
-        self.terminals_supply_design_cooling_setpoint_temperature: list = [None, None, None]
+        self.terminals_supply_design_heating_setpoint_temperature: list = [
+            None,
+            None,
+            None,
+        ]
+        self.terminals_supply_design_cooling_setpoint_temperature: list = [
+            None,
+            None,
+            None,
+        ]
         self.terminals_temperature_control: list = [None, None, None]
         self.terminals_minimum_airflow: list = [None, None, None]
         self.terminals_minimum_outdoor_airflow: list = [None, None, None]
-        self.terminals_minimum_outdoor_airflow_multiplier_schedule: list = [None, None, None]
+        self.terminals_minimum_outdoor_airflow_multiplier_schedule: list = [
+            None,
+            None,
+            None,
+        ]
         self.terminals_heating_capacity: list = [None, None, None]
         self.terminals_cooling_capacity: list = [None, None, None]
         self.terminals_is_supply_ducted: list = [None, None, None]
@@ -149,8 +161,12 @@ class Zone(ChildNode):
 
     def populate_data_elements(self):
         """Populate data elements for zone object."""
-        has_doas = bool(self.parent.keyword_value_pairs.get(BDL_SystemKeywords.DOA_SYSTEM))
-        has_baseboard = self.keyword_value_pairs.get(BDL_ZoneKeywords.BASEBOARD_CTRL) not in [
+        has_doas = bool(
+            self.parent.keyword_value_pairs.get(BDL_SystemKeywords.DOA_SYSTEM)
+        )
+        has_baseboard = self.keyword_value_pairs.get(
+            BDL_ZoneKeywords.BASEBOARD_CTRL
+        ) not in [
             None,
             BDL_BaseboardControlOptions.NONE,
         ]
@@ -221,8 +237,8 @@ class Zone(ChildNode):
 
         if not has_doas:
             self.terminals_minimum_outdoor_airflow[0] = minimum_outdoor_airflow
-            self.terminals_minimum_outdoor_airflow_multiplier_schedule[0] = self.keyword_value_pairs.get(
-                BDL_ZoneKeywords.MIN_AIR_SCH
+            self.terminals_minimum_outdoor_airflow_multiplier_schedule[0] = (
+                self.keyword_value_pairs.get(BDL_ZoneKeywords.MIN_AIR_SCH)
             )
 
         # Populate Baseboard Terminal data elements if applicable

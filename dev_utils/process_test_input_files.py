@@ -19,7 +19,9 @@ def process_test_input_files():
             print(f"Processing INP File for Test Case {test_inp_file.parent.name}...")
 
             # Prepare the inp file for processing and save the revised copy to the temporary directory
-            temp_file_path = rpd_generator.prepare_inp(Path(test_inp_file), Path(temp_dir))
+            temp_file_path = rpd_generator.prepare_inp(
+                Path(test_inp_file), Path(temp_dir)
+            )
 
             # Set the paths for the inp file, json file, and the directories
             temp_inp_path = Path(temp_file_path)

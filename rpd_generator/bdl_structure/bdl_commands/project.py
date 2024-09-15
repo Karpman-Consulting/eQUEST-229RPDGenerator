@@ -43,7 +43,9 @@ class SiteParameters(BaseDefinition):
 
     def create_ground_temp_schedule(self, monthly_ground_temps):
         """Create ground temperature schedule."""
-        assert len(monthly_ground_temps) == 12, "Ground temperature schedule must have 12 values."
+        assert (
+            len(monthly_ground_temps) == 12
+        ), "Ground temperature schedule must have 12 values."
         hours_in_month = [744, 672, 744, 720, 744, 720, 744, 744, 720, 744, 720, 744]
         hourly_values = []
         for i, temp in enumerate(monthly_ground_temps):
