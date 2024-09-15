@@ -149,6 +149,11 @@ class Zone(ChildNode):
 
     def populate_data_elements(self):
         """Populate data elements for zone object."""
+        has_doas = bool(self.parent.keyword_value_pairs.get(BDL_SystemKeywords.DOA_SYSTEM))
+        has_baseboard = self.keyword_value_pairs.get(BDL_ZoneKeywords.BASEBOARD_CTRL) not in [
+            None,
+            BDL_BaseboardControlOptions.NONE,
+        ]
         is_piu = self.keyword_value_pairs.get(BDL_ZoneKeywords.TERMINAL_TYPE) in [
             BDL_TerminalTypes.SERIES_PIU,
             BDL_TerminalTypes.PARALLEL_PIU,
@@ -213,15 +218,19 @@ class Zone(ChildNode):
             self.keyword_value_pairs.get(BDL_ZoneKeywords.EXHAUST_FLOW)
         )
 
+        if not has_doas:
+            self.terminals_minimum_outdoor_airflow[0] = minimum_outdoor_airflow
+            self.terminals_minimum_outdoor_airflow_multiplier_schedule[0] = self.keyword_value_pairs.get(
+                BDL_ZoneKeywords.MIN_AIR_SCH
+            )
+
         # Populate Baseboard Terminal data elements if applicable
-        baseboard_control = self.keyword_value_pairs.get(
-            BDL_ZoneKeywords.BASEBOARD_CTRL
-        )
-        if baseboard_control not in [None, BDL_BaseboardControlOptions.NONE]:
-            self.terminals_id[1] = self.u_name + " Baseboard Terminal"
-            # noinspection PyTypeChecker
+        if has_baseboard:
+            self.terminals_id[1] = self.u_name + " BaseboardTerminal"
             self.terminals_type[1] = TerminalOptions.BASEBOARD
             self.terminals_is_supply_ducted[1] = False
+            self.terminals_has_demand_control_ventilation[1] = False
+            self.terminals_cooling_capacity[1] = 0.0
             self.terminals_heating_source[1] = self.heat_source_map.get(
                 self.keyword_value_pairs.get(BDL_ZoneKeywords.BASEBOARD_SOURCE)
             )
@@ -233,19 +242,23 @@ class Zone(ChildNode):
             )
 
         # Populate DOAS Terminal data elements if applicable
-        if (
-            self.parent.keyword_value_pairs.get(BDL_SystemKeywords.DOA_SYSTEM)
-            is not None
-        ):
-            self.terminals_id[2] = self.u_name + " DOAS Terminal"
+        if has_doas:
+            doas_system = self.rmd.bdl_obj_instances.get(
+                self.parent.keyword_value_pairs.get(BDL_SystemKeywords.DOA_SYSTEM)
+            )
+            self.terminals_id[2] = self.u_name + " DOASTerminal"
+            self.terminals_cooling_capacity[2] = 0.0
+            self.terminals_heating_capacity[2] = 0.0
+            self.terminals_minimum_outdoor_airflow[2] = minimum_outdoor_airflow
+            self.terminals_primary_airflow[2] = minimum_outdoor_airflow
+            self.terminals_minimum_airflow[2] = minimum_outdoor_airflow
             if (
-                self.parent.fan_sys_fan_control
+                doas_system.fan_sys_fan_control
                 == FanSystemSupplyFanControlOptions.CONSTANT
+                or self.keyword_value_pairs.get(BDL_ZoneKeywords.MIN_FLOW_RATIO) == 1
             ):
                 self.terminals_type[2] = TerminalOptions.CONSTANT_AIR_VOLUME
-            elif self.keyword_value_pairs.get(BDL_ZoneKeywords.MIN_FLOW_RATIO) == 1:
-                self.terminals_type[2] = TerminalOptions.CONSTANT_AIR_VOLUME
-            # elif self.keyword_value_pairs.get("MIN-FLOW-SCH") is None and self.keyword_value_pairs.get("MIN-FLOW/AREA")
+            # TODO: Account for zone minimum air flow schedule(s)
             else:
                 self.terminals_type[2] = TerminalOptions.VARIABLE_AIR_VOLUME
 
