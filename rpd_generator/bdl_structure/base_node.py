@@ -146,6 +146,14 @@ class BaseNode:
             return 0
 
     @staticmethod
+    def try_abs(data: any):
+        """Attempt to get the absolute value of data, return None if it fails."""
+        try:
+            return abs(float(data))
+        except (TypeError, ValueError):
+            return None
+
+    @staticmethod
     def standardize_dict_values(data: dict, keys: list, n: int):
         """
         Standardizes the values of specified keys in a dictionary to lists of length n.
