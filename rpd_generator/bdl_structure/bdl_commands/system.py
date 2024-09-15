@@ -24,6 +24,7 @@ DemandControlVentilationControlOptions = SchemaEnums.schema_enums[
     "DemandControlVentilationControlOptions"
 ]
 HumidificationOptions = SchemaEnums.schema_enums["HumidificationOptions"]
+HeatpumpAuxiliaryHeatOptions = SchemaEnums.schema_enums["HeatpumpAuxiliaryHeatOptions"]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_SystemKeywords = BDLEnums.bdl_enums["SystemKeywords"]
 BDL_ZoneKeywords = BDLEnums.bdl_enums["ZoneKeywords"]
@@ -31,8 +32,8 @@ BDL_SystemTypes = BDLEnums.bdl_enums["SystemTypes"]
 BDL_SysemHeatingTypes = BDLEnums.bdl_enums["SystemHeatingTypes"]
 BDL_SystemCoolingTypes = BDLEnums.bdl_enums["SystemCoolingTypes"]
 BDL_SupplyFanTypes = BDLEnums.bdl_enums["SystemSupplyFanTypes"]
-BDL_UnoccupiedFanOperationOptions = BDLEnums.bdl_enums[
-    "SystemUnoccupiedFanOperationOptions"
+BDL_NightCycleControlOptions = BDLEnums.bdl_enums[
+    "SystemNightCycleControlOptions"
 ]
 BDL_EconomizerOptions = BDLEnums.bdl_enums["SystemEconomizerOptions"]
 BDL_EnergyRecoveryTypes = BDLEnums.bdl_enums["SystemEnergyRecoveryTypes"]
@@ -46,9 +47,13 @@ BDL_EnergyRecoveryTemperatureControlOptions = BDLEnums.bdl_enums[
 BDL_SystemMinimumOutdoorAirControlOptions = BDLEnums.bdl_enums[
     "SystemMinimumOutdoorAirControlOptions"
 ]
+BDL_IndoorFanModeOptions = BDLEnums.bdl_enums["SystemIndoorFanModeOptions"]
 BDL_HumidificationOptions = BDLEnums.bdl_enums["SystemHumidificationOptions"]
 BDL_DualDuctFanOptions = BDLEnums.bdl_enums["SystemDualDuctFanOptions"]
 BDL_ReturnFanOptions = BDLEnums.bdl_enums["SystemReturnFanLocationOptions"]
+BDL_HPSupplementSourceOptions = BDLEnums.bdl_enums["HPSupplementSourceOptions"]
+BDL_OutputCoolingTypes = BDLEnums.bdl_enums["OutputCoolingTypes"]
+BDL_OutputHeatingTypes = BDLEnums.bdl_enums["OutputHeatingTypes"]
 
 
 class System(ParentNode):
