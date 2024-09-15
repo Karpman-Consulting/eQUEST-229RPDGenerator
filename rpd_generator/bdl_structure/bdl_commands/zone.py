@@ -18,6 +18,7 @@ BDL_SystemTypes = BDLEnums.bdl_enums["SystemTypes"]
 BDL_ZoneHeatSourceOptions = BDLEnums.bdl_enums["ZoneHeatSourceOptions"]
 BDL_TerminalTypes = BDLEnums.bdl_enums["TerminalTypes"]
 BDL_BaseboardControlOptions = BDLEnums.bdl_enums["BaseboardControlOptions"]
+BDL_ZoneFanRunOptions = BDLEnums.bdl_enums["ZoneFanRunOptions"]
 
 
 class Zone(ChildNode):
@@ -33,6 +34,13 @@ class Zone(ChildNode):
         BDL_ZoneHeatSourceOptions.DHW_LOOP: HeatingSourceOptions.OTHER,
         BDL_ZoneHeatSourceOptions.STEAM: HeatingSourceOptions.OTHER,
         BDL_ZoneHeatSourceOptions.HEAT_PUMP: HeatingSourceOptions.OTHER,
+    }
+
+    is_fan_first_stage_map = {
+        BDL_ZoneFanRunOptions.HEATING_ONLY: False,
+        BDL_ZoneFanRunOptions.HEATING_DEADBAND: True,
+        BDL_ZoneFanRunOptions.CONTINUOUS: True,
+        BDL_ZoneFanRunOptions.HEATING_COOLING: False,
     }
 
     def __init__(self, u_name, parent, rmd):
@@ -249,7 +257,11 @@ class Zone(ChildNode):
                     "HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Fan Flow"
                 )
             )
-
+            self.terminals_is_fan_first_stage_heat[0] = self.is_fan_first_stage_map.get(
+                self.keyword_value_pairs.get(BDL_ZoneKeywords.ZONE_FAN_RUN)
+            )
+            if self.keyword_value_pairs.get(BDL_ZoneKeywords.ZONE_FAN_FLOW):
+                self.terminal_fan_is_airflow_sized_based_on_design_day = False
             self.terminal_fan_specification_method = (
                 FanSpecificationMethodOptions.SIMPLE
             )
