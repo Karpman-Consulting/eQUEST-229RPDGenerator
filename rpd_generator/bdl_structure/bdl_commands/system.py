@@ -211,6 +211,7 @@ class System(ParentNode):
         self.omit = False
         # HVACSystem data elements are not populated when SYSTEM TYPE = FC with HW or no heat
         self.is_terminal = False
+        # HVACSystems are replicated for each zone assigned to this eQUEST SYSTEM
         self.is_zonal_system = False
         self.output_cool_type = None
         self.output_heat_type = None
@@ -315,23 +316,23 @@ class System(ParentNode):
         self.heating_supply_fan = {}
 
         # [cooling supply, return, relief, heating supply] fan data elements
-        self.fan_id = [None, None, None, None]
-        self.fan_reporting_name = [None, None, None, None]
-        self.fan_notes = [None, None, None, None]
-        self.fan_design_airflow = [None, None, None, None]
-        self.fan_is_airflow_sized_based_on_design_day = [None, None, None, None]
-        self.fan_specification_method = [None, None, None, None]
-        self.fan_design_electric_power = [None, None, None, None]
-        self.fan_design_pressure_rise = [None, None, None, None]
-        self.fan_motor_nameplate_power = [None, None, None, None]
-        self.fan_shaft_power = [None, None, None, None]
-        self.fan_total_efficiency = [None, None, None, None]
-        self.fan_motor_efficiency = [None, None, None, None]
-        self.fan_motor_heat_to_airflow_fraction = [None, None, None, None]
-        self.fan_motor_heat_to_zone_fraction = [None, None, None, None]
-        self.fan_motor_location_zone = [None, None, None, None]
-        self.fan_status_type = [None, None, None, None]
-        self.fan_output_validation_points = [[], [], [], []]
+        self.fan_id: list = [None, None, None, None]
+        self.fan_reporting_name: list = [None, None, None, None]
+        self.fan_notes: list = [None, None, None, None]
+        self.fan_design_airflow: list = [None, None, None, None]
+        self.fan_is_airflow_sized_based_on_design_day: list = [None, None, None, None]
+        self.fan_specification_method: list = [None, None, None, None]
+        self.fan_design_electric_power: list = [None, None, None, None]
+        self.fan_design_pressure_rise: list = [None, None, None, None]
+        self.fan_motor_nameplate_power: list= [None, None, None, None]
+        self.fan_shaft_power: list = [None, None, None, None]
+        self.fan_total_efficiency: list = [None, None, None, None]
+        self.fan_motor_efficiency: list = [None, None, None, None]
+        self.fan_motor_heat_to_airflow_fraction: list = [None, None, None, None]
+        self.fan_motor_heat_to_zone_fraction: list = [None, None, None, None]
+        self.fan_motor_location_zone: list = [None, None, None, None]
+        self.fan_status_type: list = [None, None, None, None]
+        self.fan_output_validation_points: list = [[], [], [], []]
 
         # air economizer data elements
         self.air_econ_id = None
@@ -413,140 +414,6 @@ class System(ParentNode):
 
     def get_output_requests(self):
         """Get the output requests for the system dependent on various system component types."""
-        #      2201005,  38,  1,  2,  6,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - General - Outside Air Ratio
-        #      2201006,  38,  1,  2,  7,  1,  1,  1,  0, 64,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - General - Cooling Capacity
-        #      2201007,  38,  1,  2,  8,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - General - Sensible Heat Ratio
-        #      2201008,  38,  1,  2,  9,  1,  1,  1,  0, 64,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - General - Heating Capacity
-        #      2201009,  38,  1,  2, 10,  1,  1,  1,  0, 46,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - General - Cooling EIR
-        #      2201010,  38,  1,  2, 11,  1,  1,  1,  0, 46,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - General - Heating EIR
-        #      2201011,  38,  1,  2, 12,  1,  1,  1,  0, 64,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - General - Heat Pump Supplemental Heat
-        #      2201012,  38,  1,  4,  3,  1,  1,  1,  0, 25,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Supply Fan - Airflow
-        #      2201013,  38,  1,  4,  4,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Supply Fan - Diversity Factor
-        #      2201014,  38,  1,  4,  5,  1,  1,  1,  0, 28,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Supply Fan - Power
-        #      2201015,  38,  1,  4,  6,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Supply Fan - Air Temperature Rise
-        #      2201016,  38,  1,  4,  7,  1,  1,  1,  0, 26,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Supply Fan - Total Static Pressure
-        #      2201017,  38,  1,  4,  8,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Supply Fan - Overall Efficiency
-        #      2201018,  38,  1,  4,  9,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Supply Fan - Mechanical Efficiency
-        #      2201019,  38,  1,  4, 10,  2,  1,  3,  0,  1,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Supply Fan - Fan Placement
-        #      2201020,  38,  1,  4, 13,  2,  1,  2,  0,  1,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Supply Fan - Fan Control
-        #      2201021,  38,  1,  4, 15,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Supply Fan - Maximum Fan Output
-        #      2201022,  38,  1,  4, 16,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Supply Fan - Minimum Fan Output
-        #      2201023,  38,  1, 15,  3,  1,  1,  1,  0, 25,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Return Fan - Airflow
-        #      2201024,  38,  1, 15,  4,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Return Fan - Diversity Factor
-        #      2201025,  38,  1, 15,  5,  1,  1,  1,  0, 28,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Return Fan - Power
-        #      2201026,  38,  1, 15,  6,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Return Fan - Air Temperature Rise
-        #      2201027,  38,  1, 15,  7,  1,  1,  1,  0, 26,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Return Fan - Total Static Pressure
-        #      2201028,  38,  1, 15,  8,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Return Fan - Overall Efficiency
-        #      2201029,  38,  1, 15,  9,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Return Fan - Mechanical Efficiency
-        #      2201030,  38,  1, 15, 10,  2,  1,  3,  0,  1,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Return Fan - Fan Placement
-        #      2201031,  38,  1, 15, 13,  2,  1,  2,  0,  1,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Return Fan - Fan Control
-        #      2201032,  38,  1, 15, 15,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Return Fan - Maximum Fan Output
-        #      2201033,  38,  1, 15, 16,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Return Fan - Minimum Fan Output
-        #      2201034,  38,  1, 14,  3,  1,  1,  1,  0, 25,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Airflow
-        #      2201035,  38,  1, 14,  4,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Diversity Factor
-        #      2201036,  38,  1, 14,  5,  1,  1,  1,  0, 28,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Power
-        #      2201037,  38,  1, 14,  6,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Air Temperature Rise
-        #      2201038,  38,  1, 14,  7,  1,  1,  1,  0, 26,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Total Static Pressure
-        #      2201039,  38,  1, 14,  8,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Overall Efficiency
-        #      2201040,  38,  1, 14,  9,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Mechanical Efficiency
-        #      2201041,  38,  1, 14, 10,  2,  1,  3,  0,  1,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Fan Placement
-        #      2201042,  38,  1, 14, 13,  2,  1,  2,  0,  1,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Fan Control
-        #      2201043,  38,  1, 14, 15,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Maximum Fan Output
-        #      2201044,  38,  1, 14, 16,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; HVAC Systems - Design Parameters - Hot Deck Fan (Dual Fan) - Minimum Fan Output
-
-        #      2203001, 103,  1,  7,  9,  0,  1,  1,  0,  0,    0,  0,  0,  0, 2010   ; Design Day data for Cooling - chilled water - SYSTEM - month of peak
-        #      2203002, 103,  1,  7, 10,  0,  1,  1,  0,  0,    0,  0,  0,  0, 2010   ; Design Day data for Cooling - chilled water - SYSTEM - day of peak
-        #      2203003, 103,  1,  7, 11,  0,  1,  1,  0,  0,    0,  0,  0,  0, 2010   ; Design Day data for Cooling - chilled water - SYSTEM - hour of peak
-        #      2203004, 103,  1,  7, 12,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Cooling - chilled water - SYSTEM - outdoor DBT at peak
-        #      2203005, 103,  1,  7, 13,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Cooling - chilled water - SYSTEM - outdoor WBT at peak
-        #      2203006, 103,  1,  7, 14,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2010   ; Design Day data for Cooling - chilled water - SYSTEM - capacity, btu/hr
-        #      2203007, 103,  1,  7, 15,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; Design Day data for Cooling - chilled water - SYSTEM - SHR
-        #      2203008, 103,  1,  7, 16,  1,  1,  1,  0, 25,    0,  0,  0,  0, 2010   ; Design Day data for Cooling - chilled water - SYSTEM - air flow, cfm
-        #      2203009, 103,  1,  7, 17,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Cooling - chilled water - SYSTEM - coil entering drybulb
-        #      2203010, 103,  1,  7, 18,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Cooling - chilled water - SYSTEM - coil entering wetbulb
-        #      2203011, 103,  1,  7, 19,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Cooling - chilled water - SYSTEM - coil leaving drybulb
-        #      2203012, 103,  1,  7, 20,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Cooling - chilled water - SYSTEM - coil leaving wetbulb
-        #      2203013, 103,  1,  7, 21,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; Design Day data for Cooling - chilled water - SYSTEM - coil bypass factor
-        #      2203014, 103,  1,  7, 23,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Cooling - chilled water - SYSTEM - chilled water entering temp
-        #      2203015, 103,  1,  8, 14,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2010   ; Design data for Cooling - chilled water - SYSTEM - capacity, btu/hr
-        #      2203016, 103,  1,  8, 15,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; Design data for Cooling - chilled water - SYSTEM - SHR
-        #      2203017, 103,  1,  8, 16,  1,  1,  1,  0, 25,    0,  0,  0,  0, 2010   ; Design data for Cooling - chilled water - SYSTEM - air flow, cfm
-        #      2203018, 103,  1,  8, 17,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design data for Cooling - chilled water - SYSTEM - coil entering drybulb
-        #      2203019, 103,  1,  8, 18,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design data for Cooling - chilled water - SYSTEM - coil entering wetbulb
-        #      2203020, 103,  1,  8, 19,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design data for Cooling - chilled water - SYSTEM - coil leaving drybulb
-        #      2203021, 103,  1,  8, 20,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design data for Cooling - chilled water - SYSTEM - coil leaving wetbulb
-        #      2203022, 103,  1,  8, 21,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; Design data for Cooling - chilled water - SYSTEM - coil bypass factor
-        #      2203023, 103,  1,  8, 22,  1,  1,  1,  0,139,    0,  0,  0,  0, 2010   ; Design data for Cooling - chilled water - SYSTEM - chilled water flow, gpm
-        #      2203024, 103,  1,  8, 23,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design data for Cooling - chilled water - SYSTEM - chilled water entering temp
-        #      2203025, 103,  1,  8, 24,  1,  1,  1,  0, 74,    0,  0,  0,  0, 2010   ; Design data for Cooling - chilled water - SYSTEM - chilled water delta T
-        #      2203026, 103,  1,  9, 14,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2010   ; Rated data for Cooling - chilled water - SYSTEM - capacity, btu/hr
-        #      2203027, 103,  1,  9, 15,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; Rated data for Cooling - chilled water - SYSTEM - SHR
-        #      2203028, 103,  1,  9, 16,  1,  1,  1,  0, 25,    0,  0,  0,  0, 2010   ; Rated data for Cooling - chilled water - SYSTEM - air flow, cfm
-        #      2203029, 103,  1,  9, 17,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Rated data for Cooling - chilled water - SYSTEM - coil entering drybulb
-        #      2203030, 103,  1,  9, 18,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Rated data for Cooling - chilled water - SYSTEM - coil entering wetbulb
-        #      2203031, 103,  1,  9, 21,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2010   ; Rated data for Cooling - chilled water - SYSTEM - coil bypass factor
-        #      2203032, 103,  1,  9, 22,  1,  1,  1,  0,139,    0,  0,  0,  0, 2010   ; Rated data for Cooling - chilled water - SYSTEM - chilled water flow, gpm
-        #      2203033, 103,  1,  9, 23,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Rated data for Cooling - chilled water - SYSTEM - chilled water entering temp
-
-        #      2203301, 103,  1, 58,  9,  0,  1,  1,  0,  0,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - furnace - SYSTEM - month of peak
-        #      2203302, 103,  1, 58, 10,  0,  1,  1,  0,  0,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - furnace - SYSTEM - day of peak
-        #      2203303, 103,  1, 58, 11,  0,  1,  1,  0,  0,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - furnace - SYSTEM - hour of peak
-        #      2203304, 103,  1, 58, 12,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - furnace - SYSTEM - outdoor DBT at peak
-        #      2203305, 103,  1, 58, 13,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - furnace - SYSTEM - outdoor WBT at peak
-        #      2203306, 103,  1, 58, 14,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - furnace - SYSTEM - capacity, btu/hr
-        #      2203307, 103,  1, 58, 16,  1,  1,  1,  0, 25,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - furnace - SYSTEM - air flow, cfm
-        #      2203308, 103,  1, 58, 17,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - furnace - SYSTEM - coil entering drybulb
-        #      2203309, 103,  1, 58, 18,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - furnace - SYSTEM - coil entering wetbulb
-        #      2203310, 103,  1, 58, 19,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - furnace - SYSTEM - coil leaving drybulb
-        #      2203311, 103,  1, 59, 14,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2010   ; Design data for Preheat - furnace - SYSTEM - capacity, btu/hr
-        #      2203312, 103,  1, 59, 16,  1,  1,  1,  0, 25,    0,  0,  0,  0, 2010   ; Design data for Preheat - furnace - SYSTEM - air flow, cfm
-        #      2203313, 103,  1, 59, 17,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design data for Preheat - furnace - SYSTEM - coil entering drybulb
-        #      2203314, 103,  1, 59, 18,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design data for Preheat - furnace - SYSTEM - coil entering wetbulb
-        #      2203315, 103,  1, 59, 19,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design data for Preheat - furnace - SYSTEM - coil leaving drybulb
-
-        #      2203331, 103,  1, 64,  9,  0,  1,  1,  0,  0,    0,  0,  0,  0, 2010   ; Design Day data for Heating - electric - SYSTEM - month of peak
-        #      2203332, 103,  1, 64, 10,  0,  1,  1,  0,  0,    0,  0,  0,  0, 2010   ; Design Day data for Heating - electric - SYSTEM - day of peak
-        #      2203333, 103,  1, 64, 11,  0,  1,  1,  0,  0,    0,  0,  0,  0, 2010   ; Design Day data for Heating - electric - SYSTEM - hour of peak
-        #      2203334, 103,  1, 64, 12,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Heating - electric - SYSTEM - outdoor DBT at peak
-        #      2203335, 103,  1, 64, 13,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Heating - electric - SYSTEM - outdoor WBT at peak
-        #      2203336, 103,  1, 64, 14,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2010   ; Design Day data for Heating - electric - SYSTEM - capacity, btu/hr
-        #      2203337, 103,  1, 64, 16,  1,  1,  1,  0, 25,    0,  0,  0,  0, 2010   ; Design Day data for Heating - electric - SYSTEM - air flow, cfm
-        #      2203338, 103,  1, 64, 17,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Heating - electric - SYSTEM - coil entering drybulb
-        #      2203339, 103,  1, 64, 18,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Heating - electric - SYSTEM - coil entering wetbulb
-        #      2203340, 103,  1, 64, 19,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Heating - electric - SYSTEM - coil leaving drybulb
-        #      2203341, 103,  1, 67,  9,  0,  1,  1,  0,  0,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - electric - SYSTEM - month of peak
-        #      2203342, 103,  1, 67, 10,  0,  1,  1,  0,  0,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - electric - SYSTEM - day of peak
-        #      2203343, 103,  1, 67, 11,  0,  1,  1,  0,  0,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - electric - SYSTEM - hour of peak
-        #      2203344, 103,  1, 67, 12,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - electric - SYSTEM - outdoor DBT at peak
-        #      2203345, 103,  1, 67, 13,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - electric - SYSTEM - outdoor WBT at peak
-        #      2203346, 103,  1, 67, 14,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - electric - SYSTEM - capacity, btu/hr
-        #      2203347, 103,  1, 67, 16,  1,  1,  1,  0, 25,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - electric - SYSTEM - air flow, cfm
-        #      2203348, 103,  1, 67, 17,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - electric - SYSTEM - coil entering drybulb
-        #      2203349, 103,  1, 67, 18,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - electric - SYSTEM - coil entering wetbulb
-        #      2203350, 103,  1, 67, 19,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - electric - SYSTEM - coil leaving drybulb
-
-        #      2203382, 103,  1, 76,  9,  0,  1,  1,  0,  0,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - heat pump air cooled - SYSTEM - month of peak
-        #      2203383, 103,  1, 76, 10,  0,  1,  1,  0,  0,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - heat pump air cooled - SYSTEM - day of peak
-        #      2203384, 103,  1, 76, 11,  0,  1,  1,  0,  0,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - heat pump air cooled - SYSTEM - hour of peak
-        #      2203385, 103,  1, 76, 12,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - heat pump air cooled - SYSTEM - outdoor DBT at peak
-        #      2203386, 103,  1, 76, 13,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - heat pump air cooled - SYSTEM - outdoor WBT at peak
-        #      2203387, 103,  1, 76, 14,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - heat pump air cooled - SYSTEM - capacity, btu/hr
-        #      2203388, 103,  1, 76, 16,  1,  1,  1,  0, 25,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - heat pump air cooled - SYSTEM - air flow, cfm
-        #      2203389, 103,  1, 76, 17,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - heat pump air cooled - SYSTEM - coil entering drybulb
-        #      2203390, 103,  1, 76, 18,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - heat pump air cooled - SYSTEM - coil entering wetbulb
-        #      2203391, 103,  1, 76, 19,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - heat pump air cooled - SYSTEM - coil leaving drybulb
-        #      2203392, 103,  1, 76, 23,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design Day data for Preheat - heat pump air cooled - SYSTEM - outdoor temp
-        #      2203393, 103,  1, 77, 14,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2010   ; Design data for Preheat - heat pump air cooled - SYSTEM - capacity, btu/hr
-        #      2203394, 103,  1, 77, 16,  1,  1,  1,  0, 25,    0,  0,  0,  0, 2010   ; Design data for Preheat - heat pump air cooled - SYSTEM - air flow, cfm
-        #      2203395, 103,  1, 77, 17,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design data for Preheat - heat pump air cooled - SYSTEM - coil entering drybulb
-        #      2203396, 103,  1, 77, 18,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design data for Preheat - heat pump air cooled - SYSTEM - coil entering wetbulb
-        #      2203397, 103,  1, 77, 19,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design data for Preheat - heat pump air cooled - SYSTEM - coil leaving drybulb
-        #      2203398, 103,  1, 77, 23,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Design data for Preheat - heat pump air cooled - SYSTEM - outdoor temp
-        #      2203399, 103,  1, 78, 14,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2010   ; Rated data for Preheat - heat pump air cooled - SYSTEM - capacity, btu/hr
-        #      2203400, 103,  1, 78, 16,  1,  1,  1,  0, 25,    0,  0,  0,  0, 2010   ; Rated data for Preheat - heat pump air cooled - SYSTEM - air flow, cfm
-        #      2203401, 103,  1, 78, 17,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Rated data for Preheat - heat pump air cooled - SYSTEM - coil entering drybulb
-        #      2203402, 103,  1, 78, 23,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2010   ; Rated data for Preheat - heat pump air cooled - SYSTEM - outdoor temp
-
         requests = {
             "Outside Air Ratio": (2201005, self.u_name, ""),
             "Cooling Capacity": (2201006, self.u_name, ""),
@@ -1053,7 +920,7 @@ class System(ParentNode):
 
         self.air_econ_is_integrated = (
             True
-            if self.cool_sys_type == CoolingSystemOptions.FLUID_LOOP
+            if self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_SOURCE) == BDL_SystemCoolingTypes.CHILLED_WATER
             else not self.boolean_map.get(
                 self.keyword_value_pairs.get(BDL_SystemKeywords.ECONO_LOCKOUT)
             )
