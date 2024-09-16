@@ -243,12 +243,13 @@ class Zone(ChildNode):
                 self.parent.fan_sys_fan_control
                 == FanSystemSupplyFanControlOptions.CONSTANT
             ):
-                self.terminals_type = TerminalOptions.CONSTANT_AIR_VOLUME
+                self.terminals_type[2] = TerminalOptions.CONSTANT_AIR_VOLUME
             elif self.keyword_value_pairs.get(BDL_ZoneKeywords.MIN_FLOW_RATIO) == 1:
-                self.terminals_type = TerminalOptions.CONSTANT_AIR_VOLUME
+                self.terminals_type[2] = TerminalOptions.CONSTANT_AIR_VOLUME
             # elif self.keyword_value_pairs.get("MIN-FLOW-SCH") is None and self.keyword_value_pairs.get("MIN-FLOW/AREA")
             else:
-                self.terminals_type = TerminalOptions.VARIABLE_AIR_VOLUME
+                self.terminals_type[2] = TerminalOptions.VARIABLE_AIR_VOLUME
+
         # Only populate MainTerminal Fan data elements here if the zone TERMINAL-TYPE is SERIES-PIU or PARALLEL-PIU
         if is_piu:
 
