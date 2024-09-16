@@ -74,12 +74,18 @@ class System(ParentNode):
         BDL_SysemHeatingTypes.STEAM: HeatingSystemOptions.OTHER,
         BDL_SysemHeatingTypes.DHW_LOOP: HeatingSystemOptions.OTHER,
     }
+    BDL_output_heat_type_map = {
+        BDL_SysemHeatingTypes.HEAT_PUMP: BDL_OutputHeatingTypes.HEAT_PUMP_WATER_COOLED,
+        BDL_SysemHeatingTypes.FURNACE: BDL_OutputHeatingTypes.FURNACE,
+        BDL_SysemHeatingTypes.ELECTRIC: BDL_OutputHeatingTypes.ELECTRIC,
+        BDL_SysemHeatingTypes.HOT_WATER: BDL_OutputHeatingTypes.HOT_WATER,
+    }
     cool_type_map = {
         BDL_SystemCoolingTypes.ELEC_DX: CoolingSystemOptions.DIRECT_EXPANSION,
         BDL_SystemCoolingTypes.CHILLED_WATER: CoolingSystemOptions.FLUID_LOOP,
         BDL_SystemCoolingTypes.NONE: CoolingSystemOptions.NONE,
     }
-    output_cool_type_map = {
+    BDL_output_cool_type_map = {
         BDL_SystemCoolingTypes.ELEC_DX: BDL_OutputCoolingTypes.DX_AIR_COOLED,
         BDL_SystemCoolingTypes.CHILLED_WATER: BDL_OutputCoolingTypes.CHILLED_WATER,
         BDL_SystemCoolingTypes.NONE: None,
@@ -98,6 +104,28 @@ class System(ParentNode):
         BDL_NightCycleControlOptions.STAY_OFF: FanSystemOperationOptions.KEEP_OFF,
         BDL_NightCycleControlOptions.ZONE_FANS_ONLY: FanSystemOperationOptions.OTHER,
     }
+    system_heating_type_map = {
+        BDL_SystemTypes.PTAC: None,  # Mapping updated in populate_data_elements method  # Unavailable in DOE 2.3
+        BDL_SystemTypes.PSZ: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.PMZS: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.PVAVS: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.PVVT: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.HP: HeatingSystemOptions.HEAT_PUMP,
+        BDL_SystemTypes.SZRH: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.VAVS: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.RHFS: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.DDS: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.MZS: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.PIU: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.FC: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.IU: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.UVT: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.UHT: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.RESYS2: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.CBVAV: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.SUM: HeatingSystemOptions.NONE,
+        BDL_SystemTypes.DOAS: None,  # Mapping updated in populate_data_elements method
+    }
     system_cooling_type_map = {
         BDL_SystemTypes.PTAC: CoolingSystemOptions.DIRECT_EXPANSION,  # Unavailable in DOE 2.3
         BDL_SystemTypes.PSZ: CoolingSystemOptions.DIRECT_EXPANSION,
@@ -110,7 +138,7 @@ class System(ParentNode):
         BDL_SystemTypes.RHFS: CoolingSystemOptions.FLUID_LOOP,
         BDL_SystemTypes.DDS: CoolingSystemOptions.FLUID_LOOP,
         BDL_SystemTypes.MZS: CoolingSystemOptions.FLUID_LOOP,
-        BDL_SystemTypes.PIU: None,  # Mapping updated in populate_cooling_system method
+        BDL_SystemTypes.PIU: None,  # Mapping updated in populate_data_elements method
         BDL_SystemTypes.FC: CoolingSystemOptions.FLUID_LOOP,
         BDL_SystemTypes.IU: CoolingSystemOptions.FLUID_LOOP,
         BDL_SystemTypes.UVT: CoolingSystemOptions.NONE,
@@ -118,9 +146,31 @@ class System(ParentNode):
         BDL_SystemTypes.RESYS2: CoolingSystemOptions.DIRECT_EXPANSION,
         BDL_SystemTypes.CBVAV: CoolingSystemOptions.FLUID_LOOP,
         BDL_SystemTypes.SUM: CoolingSystemOptions.NONE,
-        BDL_SystemTypes.DOAS: None,  # Mapping updated in populate_cooling_system method
+        BDL_SystemTypes.DOAS: None,  # Mapping updated in populate_data_elements method
     }
-    output_system_cooling_type_map = {
+    BDL_output_system_heating_type_map = {
+        BDL_SystemTypes.PTAC: None,  # Mapping updated in populate_data_elements method  # Unavailable in DOE 2.3
+        BDL_SystemTypes.PSZ: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.PMZS: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.PVAVS: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.PVVT: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.HP: BDL_OutputHeatingTypes.HEAT_PUMP_WATER_COOLED,
+        BDL_SystemTypes.SZRH: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.VAVS: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.RHFS: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.DDS: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.MZS: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.PIU: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.FC: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.IU: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.UVT: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.UHT: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.RESYS2: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.CBVAV: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.SUM: None,
+        BDL_SystemTypes.DOAS: None,  # Mapping updated in populate_data_elements method
+    }
+    BDL_output_system_cooling_type_map = {
         BDL_SystemTypes.PTAC: BDL_OutputCoolingTypes.DX_AIR_COOLED,  # Unavailable in DOE 2.3
         BDL_SystemTypes.PSZ: BDL_OutputCoolingTypes.DX_AIR_COOLED,
         BDL_SystemTypes.PMZS: BDL_OutputCoolingTypes.DX_AIR_COOLED,
@@ -132,7 +182,7 @@ class System(ParentNode):
         BDL_SystemTypes.RHFS: BDL_OutputCoolingTypes.CHILLED_WATER,
         BDL_SystemTypes.DDS: BDL_OutputCoolingTypes.CHILLED_WATER,
         BDL_SystemTypes.MZS: BDL_OutputCoolingTypes.CHILLED_WATER,
-        BDL_SystemTypes.PIU: None,  # Mapping updated in populate_cooling_system method
+        BDL_SystemTypes.PIU: None,  # Mapping updated in populate_data_elements method
         BDL_SystemTypes.FC: BDL_OutputCoolingTypes.CHILLED_WATER,
         BDL_SystemTypes.IU: BDL_OutputCoolingTypes.CHILLED_WATER,
         BDL_SystemTypes.UVT: CoolingSystemOptions.NONE,
@@ -140,7 +190,7 @@ class System(ParentNode):
         BDL_SystemTypes.RESYS2: BDL_OutputCoolingTypes.DX_AIR_COOLED,
         BDL_SystemTypes.CBVAV: BDL_OutputCoolingTypes.CHILLED_WATER,
         BDL_SystemTypes.SUM: None,
-        BDL_SystemTypes.DOAS: None,  # Mapping updated in populate_cooling_system method
+        BDL_SystemTypes.DOAS: None,  # Mapping updated in populate_data_elements method
     }
     economizer_map = {
         BDL_EconomizerOptions.FIXED: AirEconomizerOptions.FIXED_FRACTION,
@@ -203,6 +253,7 @@ class System(ParentNode):
             "Default Building Segment", None
         )
 
+        self.sys_id = None
         self.system_data_structure = {}
         self.terminal_data_structure = {}
         # hvac system will be omitted when SYSTEM TYPE = SUM
@@ -362,8 +413,9 @@ class System(ParentNode):
         Use the current System object for the first zone assigned to the zonal system"""
 
         for zone in self.children[1:]:
-            sys_id = self.u_name + zone.u_name
-            zone_system = System(sys_id, self.rmd)
+            sys_id = f"{self.u_name} - {zone.u_name}"
+            zone_system = System(self.u_name, self.rmd)
+            zone_system.sys_id = sys_id
             zone_system.add_child(zone)
             zone.parent = zone_system
             zone_system.is_derived_system = True
@@ -386,26 +438,82 @@ class System(ParentNode):
             if not self.is_derived_system:
                 self.create_zonal_systems()
 
+        heat_source = self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_SOURCE)
+        heat_type = self.heat_type_map.get(heat_source)
+        output_heat_type = self.BDL_output_heat_type_map.get(
+            self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_SOURCE)
+        )
+        self.system_heating_type_map.update(
+            {
+                BDL_SystemTypes.PTAC: heat_type,
+                BDL_SystemTypes.PSZ: heat_type,
+                BDL_SystemTypes.PMZS: heat_type,
+                BDL_SystemTypes.PVAVS: heat_type,
+                BDL_SystemTypes.PVVT: heat_type,
+                BDL_SystemTypes.SZRH: heat_type,
+                BDL_SystemTypes.VAVS: heat_type,
+                BDL_SystemTypes.RHFS: heat_type,
+                BDL_SystemTypes.DDS: heat_type,
+                BDL_SystemTypes.MZS: heat_type,
+                BDL_SystemTypes.PIU: heat_type,
+                BDL_SystemTypes.FC: heat_type,
+                BDL_SystemTypes.IU: heat_type,
+                BDL_SystemTypes.UVT: heat_type,
+                BDL_SystemTypes.UHT: heat_type,
+                BDL_SystemTypes.RESYS2: heat_type,
+                BDL_SystemTypes.CBVAV: heat_type,
+                BDL_SystemTypes.DOAS: heat_type,
+            }
+        )
+        self.BDL_output_system_heating_type_map.update(
+            {
+                BDL_SystemTypes.PTAC: output_heat_type,
+                BDL_SystemTypes.PSZ: output_heat_type,
+                BDL_SystemTypes.PMZS: output_heat_type,
+                BDL_SystemTypes.PVAVS: output_heat_type,
+                BDL_SystemTypes.PVVT: output_heat_type,
+                BDL_SystemTypes.SZRH: output_heat_type,
+                BDL_SystemTypes.VAVS: output_heat_type,
+                BDL_SystemTypes.RHFS: output_heat_type,
+                BDL_SystemTypes.DDS: output_heat_type,
+                BDL_SystemTypes.MZS: output_heat_type,
+                BDL_SystemTypes.PIU: output_heat_type,
+                BDL_SystemTypes.FC: output_heat_type,
+                BDL_SystemTypes.IU: output_heat_type,
+                BDL_SystemTypes.UVT: output_heat_type,
+                BDL_SystemTypes.UHT: output_heat_type,
+                BDL_SystemTypes.RESYS2: output_heat_type,
+                BDL_SystemTypes.CBVAV: output_heat_type,
+                BDL_SystemTypes.DOAS: output_heat_type,
+            }
+        )
+
         cool_source = self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_SOURCE)
         cool_type = self.cool_type_map.get(cool_source)
-        self.output_cool_type = self.output_cool_type_map.get(cool_source)
-        # Update the cooling type map according to the COOL-SOURCE keyword (only used for PIU and DOAS)
+        output_cool_type = self.BDL_output_cool_type_map.get(
+            self.keyword_value_pairs.get(BDL_SystemKeywords.TYPE)
+        )
+
         self.system_cooling_type_map.update(
             {
                 BDL_SystemTypes.PIU: cool_type,
                 BDL_SystemTypes.DOAS: cool_type,
             }
         )
-        self.output_system_cooling_type_map.update(
+        self.BDL_output_system_cooling_type_map.update(
             {
-                BDL_SystemTypes.PIU: self.output_cool_type,
-                BDL_SystemTypes.DOAS: self.output_cool_type,
+                BDL_SystemTypes.PIU: output_cool_type,
+                BDL_SystemTypes.DOAS: output_cool_type,
             }
         )
 
-        heat_type = self.heat_type_map.get(
-            self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_SOURCE)
+        self.output_heat_type = self.BDL_output_system_heating_type_map.get(
+            self.keyword_value_pairs.get(BDL_SystemKeywords.TYPE)
         )
+        self.output_cool_type = self.BDL_output_system_cooling_type_map.get(
+            self.keyword_value_pairs.get(BDL_SystemKeywords.TYPE)
+        )
+
         # if the system type is FC with HW or no heat, this system is represented as terminal fan, heating, cooling
         terminal_system_conditions = self.keyword_value_pairs.get(
             BDL_SystemKeywords.TYPE
@@ -777,9 +885,12 @@ class System(ParentNode):
                 elif fan_dict and fan_dict_name == "relief_fan":
                     self.fan_sys_relief_fans.append(fan_dict)
 
+            if self.is_derived_system:
+                self.system_data_structure["id"] = self.sys_id
+            else:
+                self.system_data_structure["id"] = self.u_name
             self.system_data_structure.update(
                 {
-                    "id": self.u_name,
                     "fan_system": self.fan_system,
                     "heating_system": self.heating_system,
                     "cooling_system": self.cooling_system,
@@ -920,6 +1031,8 @@ class System(ParentNode):
             self.cool_sys_rated_total_cool_capacity = self.try_abs(
                 output_data.get("Cooling Capacity")
             )
+        else:
+            self.cool_sys_rated_total_cool_capacity = self.cool_sys_rated_total_cool_capacity / 1000
         self.cool_sys_rated_sensible_cool_capacity = self.try_abs(
             self.try_float(self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_SH_CAP))
         )
@@ -942,8 +1055,10 @@ class System(ParentNode):
             self.cool_sys_design_total_cool_capacity = self.try_abs(
                 output_data.get("Cooling Capacity")
             )
+        else:
+            self.cool_sys_design_total_cool_capacity = self.cool_sys_design_total_cool_capacity / 1000
         design_shr = self.try_abs(output_data.get("Design Cooling SHR"))
-        if design_shr and self.cool_sys_design_total_cool_capacity:
+        if design_shr and self.cool_sys_design_total_cool_capacity and design_shr != 1:
             self.cool_sys_design_sensible_cool_capacity = (
                 design_shr * self.cool_sys_design_total_cool_capacity
             )
