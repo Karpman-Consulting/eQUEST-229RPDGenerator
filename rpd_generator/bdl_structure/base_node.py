@@ -8,8 +8,14 @@ from rpd_generator.doe2_file_readers.model_output_reader import get_multiple_res
 from rpd_generator.config import Config
 
 
-path_to_ureg = os.path.join(os.path.dirname(os.path.dirname(__file__)), "utilities", "resources", "unit_registry.txt")
+path_to_ureg = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)),
+    "utilities",
+    "resources",
+    "unit_registry.txt",
+)
 ureg = pint.UnitRegistry(path_to_ureg, autoconvert_offset_to_baseunit=True)
+
 
 class BaseNode:
     """

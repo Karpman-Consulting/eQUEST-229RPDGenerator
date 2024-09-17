@@ -529,7 +529,9 @@ class System(ParentNode):
             requests = self.get_output_requests()
             output_data = self.get_output_data(requests)
             for key in ["Cooling Capacity", "Heating Capacity"]:
-                output_data[key] = self.try_convert_units(output_data[key], "kBtu/hr", "Btu/hr")
+                output_data[key] = self.try_convert_units(
+                    output_data[key], "kBtu/hr", "Btu/hr"
+                )
 
             self.populate_fan_system()
             self.populate_fans(output_data)
