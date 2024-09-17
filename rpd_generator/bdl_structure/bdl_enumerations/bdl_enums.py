@@ -20,6 +20,8 @@ class _ListEnum:
                 .replace("/", "_")
                 .replace("&", "_")
                 .replace("+", "_")
+                .replace(" ", "_")
+                .upper()
             )
             setattr(self, item_key, str_item)
 
@@ -505,7 +507,7 @@ class BDLEnums:
                 "FAN-EIR-FPLR",
             ]
         ),
-        "SystemUnoccupiedFanOperationOptions": _ListEnum(
+        "SystemNightCycleControlOptions": _ListEnum(
             ["CYCLE-ON-ANY", "CYCLE-ON-FIRST", "STAY-OFF", "ZONE-FANS-ONLY"]
         ),
         "SystemEconomizerOptions": _ListEnum(
@@ -583,6 +585,12 @@ class BDLEnums:
                 "RELIEF",
             ]
         ),
+        "SystemIndoorFanModeOptions": _ListEnum(
+            [
+                "CONTINUOUS",
+                "INTERMITTENT",
+            ]
+        ),
         "SystemKeywords": _ListEnum(
             [
                 "TYPE",
@@ -593,6 +601,7 @@ class BDLEnums:
                 "CW-LOOP",
                 "DDS-TYPE",
                 "FAN-CONTROL",
+                "INDOOR-FAN-MODE",
                 "NIGHT-CYCLE-CTRL",
                 "MIN-OA-METHOD",
                 "SIZING-RATIO",
@@ -600,13 +609,17 @@ class BDLEnums:
                 "COOL-SIZING-RATI",
                 "HEATING-CAPACITY",
                 "COOLING-CAPACITY",
+                "COOL-SH-CAP",
                 "HUMIDIFIER-TYPE",
                 "HEAT-T",
                 "PREHEAT-SOURCE",
                 "PREHEAT-CAPACITY",
                 "PREHEAT-T",
+                "SUPPLY-FLOW",
                 "SUPPLY-STATIC",
+                "RETURN-FLOW",
                 "RETURN-STATIC",
+                "HSUPPLY-FLOW",
                 "HSUPPLY-STATIC",
                 "RETURN-KW/FLOW",
                 "RETURN-FAN-LOC",
@@ -624,6 +637,9 @@ class BDLEnums:
                 "ERV-EXH-FLOW",
                 "ZONE-HEAT-SOURCE",
                 "BBRD-LOOP",
+                "HP-SUPP-SOURCE",
+                "MAX-HP-SUPP-T",
+                "MIN-HP-T",
             ]
         ),
         "UndergroundWallKeywords": _ListEnum(
@@ -689,6 +705,14 @@ class BDLEnums:
                 "OUTDOOR-RESET",
             ]
         ),
+        "ZoneFanRunOptions": _ListEnum(
+            [
+                "HEATING-ONLY",
+                "HEATING/DEADBAND",
+                "CONTINUOUS",
+                "HEATING/COOLING",
+            ]
+        ),
         "ZoneKeywords": _ListEnum(
             [
                 "TERMINAL-TYPE",
@@ -713,6 +737,35 @@ class BDLEnums:
                 "EXHAUST-STATIC",
                 "EXHAUST-EFF",
                 "EXHAUST-KW/FLOW",
+                "MIN-AIR-SCH",
+                "ZONE-FAN-FLOW",
+                "ZONE-FAN-CTRL",
+                "ZONE-FAN-RUN",
+            ]
+        ),
+        "HPSupplementSourceOptions": _ListEnum(
+            [
+                "ELECTRIC",
+                "HOT-WATER",
+                "FURNACE",
+            ]
+        ),
+        "OutputCoolingTypes": _ListEnum(
+            [
+                "chilled water",
+                "DX air cooled",
+                "DX water cooled",
+                "VRF",
+            ]
+        ),
+        "OutputHeatingTypes": _ListEnum(
+            [
+                "hot water",
+                "furnace",
+                "electric",
+                "heat pump air cooled",
+                "heat pump water cooled",
+                "VRF",
             ]
         ),
     }

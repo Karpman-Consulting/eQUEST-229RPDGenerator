@@ -26,6 +26,13 @@ class Space(ChildNode, ParentNode):
         BDL_InfiltrationAlgorithmOptions.ASHRAE_ENHANCED: "2005 ASHRAE Handbook Fundamentals - Enhanced Infiltration Method",
     }
 
+    energy_source_map = {
+        BDL_InternalEnergySourceOptions.GAS: EnergySourceOptions.NATURAL_GAS,
+        BDL_InternalEnergySourceOptions.ELECTRIC: EnergySourceOptions.ELECTRICITY,
+        BDL_InternalEnergySourceOptions.HOT_WATER: EnergySourceOptions.NONE,
+        BDL_InternalEnergySourceOptions.PROCESS: EnergySourceOptions.NONE,
+    }
+
     def __init__(self, u_name, parent, rmd):
         super().__init__(u_name, parent, rmd)
         ParentNode.__init__(self, u_name, rmd)
@@ -290,7 +297,6 @@ class Space(ChildNode, ParentNode):
                 else misc_eq_power
             )
             misc_eq_multiplier_schedule = schedule
-
             misc_eq_sensible_fraction = self.try_float(
                 self.try_access_index(
                     self.keyword_value_pairs.get(BDL_SpaceKeywords.EQUIP_SENSIBLE),
@@ -327,19 +333,10 @@ class Space(ChildNode, ParentNode):
                 self.misc_eq_has_automatic_control.append(None)
 
         elif equip_type == "INTERNAL_ENERGY_SOURCE":
-            source = self.keyword_value_pairs.get(BDL_SpaceKeywords.SOURCE_TYPE)
-            energy_type = None
-            if source == BDL_InternalEnergySourceOptions.GAS:
-                energy_type = EnergySourceOptions.NATURAL_GAS
-            elif source == BDL_InternalEnergySourceOptions.ELECTRIC:
-                energy_type = EnergySourceOptions.ELECTRICITY
-            elif source in [
-                BDL_InternalEnergySourceOptions.HOT_WATER,
-                BDL_InternalEnergySourceOptions.PROCESS,
-            ]:
-                # When HOT-WATER is selected as the source, we are noticing the behavior is identical to PROCESS. Energy consumption does not seem to behave as described in the DOE-2 help text.
-                # We are treating it the same as a PROCESS source
-                energy_type = EnergySourceOptions.NONE
+            source = self.try_access_index(
+                self.keyword_value_pairs.get(BDL_SpaceKeywords.SOURCE_TYPE), n - 1
+            )
+            energy_type = self.energy_source_map.get(source)
 
             if n == 0:
                 self.misc_eq_energy_type = [energy_type]

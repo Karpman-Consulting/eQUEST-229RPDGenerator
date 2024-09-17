@@ -1,8 +1,20 @@
+import os
+import pint
 from itertools import islice
 from pathlib import Path
 
+
 from rpd_generator.doe2_file_readers.model_output_reader import get_multiple_results
 from rpd_generator.config import Config
+
+
+path_to_ureg = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)),
+    "utilities",
+    "resources",
+    "unit_registry.txt",
+)
+ureg = pint.UnitRegistry(path_to_ureg, autoconvert_offset_to_baseunit=True)
 
 
 class BaseNode:
@@ -144,6 +156,35 @@ class BaseNode:
             return 1
         else:
             return 0
+
+    @staticmethod
+    def try_abs(data: any):
+        """Attempt to get the absolute value of data, return None if it fails."""
+        try:
+            return abs(float(data))
+        except (TypeError, ValueError):
+            return None
+
+    @staticmethod
+    def try_convert_units(value: any, from_units: str, to_units: str) -> float | None:
+        """
+        Convert a value from one unit to another.
+
+        Parameters:
+        value (any): The value to convert.
+        from_units (str): The units to convert from.
+        to_units (str): The units to convert to.
+
+        Returns:
+        float | None: The converted value or None if not possible to convert.
+        """
+        if isinstance(value, (int, float)):
+            try:
+                return value * ureg(from_units).to(to_units).magnitude
+            except pint.errors.DimensionalityError:
+                return None
+        else:
+            return None
 
     @staticmethod
     def standardize_dict_values(data: dict, keys: list, n: int):
