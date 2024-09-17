@@ -1192,7 +1192,7 @@
                                         ]
                                     },
                                     "heating_system": {
-                                        "design_capacity": 81.56448606051976,
+                                        "design_capacity": 81564.48606051975,
                                         "heatpump_auxiliary_heat_high_shutoff_temperature": 4.444444444444457,
                                         "heatpump_auxiliary_heat_type": "ELECTRIC_RESISTANCE",
                                         "heatpump_low_shutoff_temperature": -23.333333333333286,
@@ -1200,19 +1200,19 @@
                                         "id": "Baseline System 4 (South) HeatSys",
                                         "is_sized_based_on_design_day": true,
                                         "oversizing_factor": 0.25,
-                                        "rated_capacity": 81.56448606051976,
+                                        "rated_capacity": 81564.48606051975,
                                         "type": "HEAT_PUMP"
                                     },
                                     "cooling_system": {
-                                        "design_sensible_cool_capacity": 61.75375626032301,
-                                        "design_total_cool_capacity": 83.22723166361112,
+                                        "design_sensible_cool_capacity": 61753.756260322996,
+                                        "design_total_cool_capacity": 83227.2316636111,
                                         "efficiency_metric_types": [],
                                         "efficiency_metric_values": [],
                                         "id": "Baseline System 4 (South) CoolSys",
                                         "is_sized_based_on_design_day": true,
                                         "oversizing_factor": 0.1499999999999999,
-                                        "rated_sensible_cool_capacity": 67.2444601544473,
-                                        "rated_total_cool_capacity": 90.62720395138889,
+                                        "rated_sensible_cool_capacity": 67244.46015444728,
+                                        "rated_total_cool_capacity": 90627.20395138889,
                                         "type": "DIRECT_EXPANSION"
                                     },
                                     "preheat_system": {
@@ -1255,7 +1255,7 @@
                                         ]
                                     },
                                     "heating_system": {
-                                        "design_capacity": 59.2097599279107,
+                                        "design_capacity": 59209.7599279107,
                                         "heatpump_auxiliary_heat_high_shutoff_temperature": 4.444444444444457,
                                         "heatpump_auxiliary_heat_type": "ELECTRIC_RESISTANCE",
                                         "heatpump_low_shutoff_temperature": -23.333333333333286,
@@ -1263,19 +1263,19 @@
                                         "id": "Baseline System 4 (East) HeatSys",
                                         "is_sized_based_on_design_day": true,
                                         "oversizing_factor": 0.25,
-                                        "rated_capacity": 59.2097599279107,
+                                        "rated_capacity": 59209.7599279107,
                                         "type": "HEAT_PUMP"
                                     },
                                     "cooling_system": {
-                                        "design_sensible_cool_capacity": 44.828647031795256,
-                                        "design_total_cool_capacity": 60.416792725,
+                                        "design_sensible_cool_capacity": 44828.647031795255,
+                                        "design_total_cool_capacity": 60416.792725,
                                         "efficiency_metric_types": [],
                                         "efficiency_metric_values": [],
                                         "id": "Baseline System 4 (East) CoolSys",
                                         "is_sized_based_on_design_day": true,
                                         "oversizing_factor": 0.1499999999999999,
-                                        "rated_sensible_cool_capacity": 48.81448542349977,
-                                        "rated_total_cool_capacity": 65.78862133916667,
+                                        "rated_sensible_cool_capacity": 48814.48542349977,
+                                        "rated_total_cool_capacity": 65788.62133916667,
                                         "type": "DIRECT_EXPANSION"
                                     },
                                     "preheat_system": {
@@ -1318,7 +1318,7 @@
                                         ]
                                     },
                                     "heating_system": {
-                                        "design_capacity": 69.12654291754829,
+                                        "design_capacity": 69126.54291754829,
                                         "heatpump_auxiliary_heat_high_shutoff_temperature": 4.444444444444457,
                                         "heatpump_auxiliary_heat_type": "ELECTRIC_RESISTANCE",
                                         "heatpump_low_shutoff_temperature": -23.333333333333286,
@@ -1326,19 +1326,19 @@
                                         "id": "Baseline System 4 (North) HeatSys",
                                         "is_sized_based_on_design_day": true,
                                         "oversizing_factor": 0.25,
-                                        "rated_capacity": 69.12654291754829,
+                                        "rated_capacity": 69126.54291754829,
                                         "type": "HEAT_PUMP"
                                     },
                                     "cooling_system": {
-                                        "design_sensible_cool_capacity": 52.33680005055713,
-                                        "design_total_cool_capacity": 70.53574140458333,
+                                        "design_sensible_cool_capacity": 52336.80005055713,
+                                        "design_total_cool_capacity": 70535.74140458333,
                                         "efficiency_metric_types": [],
                                         "efficiency_metric_values": [],
                                         "id": "Baseline System 4 (North) CoolSys",
                                         "is_sized_based_on_design_day": true,
                                         "oversizing_factor": 0.1499999999999999,
-                                        "rated_sensible_cool_capacity": 56.990210878776395,
-                                        "rated_total_cool_capacity": 76.80727085444444,
+                                        "rated_sensible_cool_capacity": 56990.210878776394,
+                                        "rated_total_cool_capacity": 76807.27085444445,
                                         "type": "DIRECT_EXPANSION"
                                     },
                                     "preheat_system": {
@@ -1381,7 +1381,7 @@
                                         ]
                                     },
                                     "heating_system": {
-                                        "design_capacity": 59.95145307678223,
+                                        "design_capacity": 59951.45307678223,
                                         "heatpump_auxiliary_heat_high_shutoff_temperature": 4.444444444444457,
                                         "heatpump_auxiliary_heat_type": "ELECTRIC_RESISTANCE",
                                         "heatpump_low_shutoff_temperature": -23.333333333333286,
@@ -1389,19 +1389,19 @@
                                         "id": "Baseline System 4 (West) HeatSys",
                                         "is_sized_based_on_design_day": true,
                                         "oversizing_factor": 0.25,
-                                        "rated_capacity": 59.95145307678223,
+                                        "rated_capacity": 59951.45307678223,
                                         "type": "HEAT_PUMP"
                                     },
                                     "cooling_system": {
-                                        "design_sensible_cool_capacity": 45.39019238368682,
-                                        "design_total_cool_capacity": 61.17360765631945,
+                                        "design_sensible_cool_capacity": 45390.19238368682,
+                                        "design_total_cool_capacity": 61173.607656319444,
                                         "efficiency_metric_types": [],
                                         "efficiency_metric_values": [],
                                         "id": "Baseline System 4 (West) CoolSys",
                                         "is_sized_based_on_design_day": true,
                                         "oversizing_factor": 0.1499999999999999,
-                                        "rated_sensible_cool_capacity": 49.425960862802434,
-                                        "rated_total_cool_capacity": 66.61272356590278,
+                                        "rated_sensible_cool_capacity": 49425.96086280243,
+                                        "rated_total_cool_capacity": 66612.72356590278,
                                         "type": "DIRECT_EXPANSION"
                                     },
                                     "preheat_system": {
@@ -1444,7 +1444,7 @@
                                         ]
                                     },
                                     "heating_system": {
-                                        "design_capacity": 123.56047261528863,
+                                        "design_capacity": 123560.47261528863,
                                         "heatpump_auxiliary_heat_high_shutoff_temperature": 4.444444444444457,
                                         "heatpump_auxiliary_heat_type": "ELECTRIC_RESISTANCE",
                                         "heatpump_low_shutoff_temperature": -23.333333333333286,
@@ -1452,19 +1452,19 @@
                                         "id": "Baseline System 4 (Core) HeatSys",
                                         "is_sized_based_on_design_day": true,
                                         "oversizing_factor": 0.25,
-                                        "rated_capacity": 123.56047261528863,
+                                        "rated_capacity": 123560.47261528863,
                                         "type": "HEAT_PUMP"
                                     },
                                     "cooling_system": {
-                                        "design_sensible_cool_capacity": 144.810608056042,
-                                        "design_total_cool_capacity": 195.16522967805557,
+                                        "design_sensible_cool_capacity": 144810.60805604202,
+                                        "design_total_cool_capacity": 195165.22967805556,
                                         "efficiency_metric_types": [],
                                         "efficiency_metric_values": [],
                                         "id": "Baseline System 4 (Core) CoolSys",
                                         "is_sized_based_on_design_day": true,
                                         "oversizing_factor": 0.1499999999999999,
-                                        "rated_sensible_cool_capacity": 101.86734015124635,
-                                        "rated_total_cool_capacity": 137.28940927874999,
+                                        "rated_sensible_cool_capacity": 101867.34015124636,
+                                        "rated_total_cool_capacity": 137289.40927875,
                                         "type": "DIRECT_EXPANSION"
                                     },
                                     "preheat_system": {

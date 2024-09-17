@@ -528,6 +528,9 @@ class System(ParentNode):
         else:
             requests = self.get_output_requests()
             output_data = self.get_output_data(requests)
+            for key in ["Cooling Capacity", "Heating Capacity"]:
+                output_data[key] = self.try_convert_units(output_data[key], "kBtu/hr", "Btu/hr")
+
             self.populate_fan_system()
             self.populate_fans(output_data)
             self.populate_heating_system(output_data)
@@ -1031,14 +1034,12 @@ class System(ParentNode):
             self.cool_sys_rated_total_cool_capacity = self.try_abs(
                 output_data.get("Cooling Capacity")
             )
-        else:
-            self.cool_sys_rated_total_cool_capacity = self.cool_sys_rated_total_cool_capacity / 1000
         self.cool_sys_rated_sensible_cool_capacity = self.try_abs(
             self.try_float(self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_SH_CAP))
         )
         if not self.cool_sys_rated_sensible_cool_capacity:
             rated_shr = self.try_abs(output_data.get("Rated Cooling SHR"))
-            if rated_shr and self.cool_sys_rated_total_cool_capacity:
+            if rated_shr and self.cool_sys_rated_total_cool_capacity and rated_shr != 1:
                 self.cool_sys_rated_sensible_cool_capacity = (
                     rated_shr * self.cool_sys_rated_total_cool_capacity
                 )
@@ -1055,8 +1056,7 @@ class System(ParentNode):
             self.cool_sys_design_total_cool_capacity = self.try_abs(
                 output_data.get("Cooling Capacity")
             )
-        else:
-            self.cool_sys_design_total_cool_capacity = self.cool_sys_design_total_cool_capacity / 1000
+
         design_shr = self.try_abs(output_data.get("Design Cooling SHR"))
         if design_shr and self.cool_sys_design_total_cool_capacity and design_shr != 1:
             self.cool_sys_design_sensible_cool_capacity = (
