@@ -163,14 +163,3 @@ class TestElectricBoiler(unittest.TestCase):
         }
 
         self.assertDictEqual(self.boiler.boiler_data_structure, expected_data_structure)
-
-
-#
-#
-# BDL_BoilerTypes.HW_BOILER
-# BDL_BoilerTypes.HW_BOILER_W_DRAFT
-# BDL_BoilerTypes.ELEC_HW_BOILER
-# BDL_BoilerTypes.STM_BOILER
-# BDL_BoilerTypes.STM_BOILER_W_DRAFT
-# BDL_BoilerTypes.ELEC_STM_BOILER
-# BDL_BoilerTypes.HW_CONDENSING
