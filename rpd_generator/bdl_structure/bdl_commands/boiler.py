@@ -55,6 +55,8 @@ class Boiler(BaseNode):
 
         # data elements with children
         self.output_validation_points = []
+        self.efficiency_metrics = []
+        self.efficiency = []
 
         # data elements with no children
         self.loop = None
@@ -63,8 +65,6 @@ class Boiler(BaseNode):
         self.minimum_load_ratio = None
         self.draft_type = None
         self.energy_source_type = None
-        self.efficiency_metric = None
-        self.efficiency = None
         self.auxiliary_power = None
         self.operation_lower_limit = None
         self.operation_upper_limit = None
@@ -78,7 +78,7 @@ class Boiler(BaseNode):
         fuel_meter = self.rmd.bdl_obj_instances.get(fuel_meter_ref)
         # If the fuel meter is not found, then it must be a MasterMeter.
         if fuel_meter is None:
-            # This assumes the Master Fuel Meter is Natural Gas
+            # TODO get the fuel type of the master fuel meter, this assumes always Natural Gas
             fuel_type = BDL_FuelTypes.NATURAL_GAS
         else:
             fuel_meter_type = fuel_meter.keyword_value_pairs.get(
@@ -104,9 +104,45 @@ class Boiler(BaseNode):
         self.draft_type = self.draft_type_map.get(
             self.keyword_value_pairs.get(BDL_BoilerKeywords.TYPE)
         )
+        self.minimum_load_ratio = self.try_float(self.keyword_value_pairs.get(BDL_BoilerKeywords.MIN_RATIO))
+
         requests = self.get_output_requests()
         output_data = self.get_output_data(requests)
-        self.auxiliary_power = output_data.get("Boilers - Sizing Info/Boiler - Aux kW")
+        for key in ["Boilers - Design Parameters - Capacity", "Boilers - Rated Capacity at Peak (Btu/hr)"]:
+            if key in output_data:
+                output_data[key] = self.try_convert_units(
+                    output_data[key], "Btu/hr", "MMBtu/hr"
+                )
+        self.design_capacity = self.try_abs(output_data.get("Boilers - Design Parameters - Capacity"))
+        self.rated_capacity = self.try_abs(output_data.get("Boilers - Rated Capacity at Peak (Btu/hr)"))
+        self.auxiliary_power = output_data.get("Boilers - Design Parameters - Auxiliary Power")
+        if self.energy_source_type == EnergySourceOptions.ELECTRICITY:
+            boiler_e_i_r = output_data.get("Boilers - Design Parameters - Electric Input Ratio")
+            if boiler_e_i_r:
+                self.efficiency.append(1 / boiler_e_i_r)
+                self.efficiency_metrics.append(BoilerEfficiencyMetricOptions.THERMAL)
+            if boiler_e_i_r and boiler_e_i_r == 1:
+                self.efficiency.extend([1, 1])
+                self.efficiency_metrics.extend(
+                    [
+                        BoilerEfficiencyMetricOptions.COMBUSTION,
+                        BoilerEfficiencyMetricOptions.ANNUAL_FUEL_UTILIZATION,
+                    ]
+                )
+
+        else:
+            boiler_f_i_r = output_data.get("Boilers - Design Parameters - Fuel Input Ratio")
+            if boiler_f_i_r is not None and boiler_f_i_r != 0:
+                self.efficiency.append(1 / boiler_f_i_r)
+                self.efficiency_metrics.append(BoilerEfficiencyMetricOptions.THERMAL)
+                self.efficiency.append(1 / boiler_f_i_r + 0.02)
+                self.efficiency_metrics.append(BoilerEfficiencyMetricOptions.COMBUSTION)
+                if 0.825 > self.efficiency[0] > 0.8:
+                    self.efficiency.append((self.efficiency[0] - 0.725)/0.1)
+                    self.efficiency_metrics.append(BoilerEfficiencyMetricOptions.ANNUAL_FUEL_UTILIZATION)
+                elif 0.825 <= self.efficiency[0] <= 0.98:
+                    self.efficiency.append((self.efficiency[0] - 0.105)/0.875)
+                    self.efficiency_metrics.append(BoilerEfficiencyMetricOptions.ANNUAL_FUEL_UTILIZATION)
 
         # Assign pump data elements populated from the boiler keyword value pairs
         pump_name = self.keyword_value_pairs.get(BDL_BoilerKeywords.HW_PUMP)
@@ -117,80 +153,35 @@ class Boiler(BaseNode):
 
     def get_output_requests(self):
         """Get the output requests for the boiler object."""
-        #      2315001,  59,  1,  2,  5,  2,  1,  8,  0,  1,    0,  0,  0,  0, 2064   ; Boilers - Design Parameters - Heating Loop
-        #      2315002,  59,  1,  2,  1,  2,  1,  4,  0,  1,    0,  0,  0,  0, 2064   ; Boilers - Design Parameters - Type
-        #      2315003,  59,  1,  2, 13,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2064   ; Boilers - Design Parameters - Capacity
-        #      2315004,  59,  1,  2, 14,  1,  1,  1,  0, 52,    0,  0,  0,  0, 2064   ; Boilers - Design Parameters - Flow
-        #      2315005,  59,  1,  2, 15,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2064   ; Boilers - Design Parameters - Electric Input Ratio
-        #      2315006,  59,  1,  2, 16,  1,  1,  1,  0, 22,    0,  0,  0,  0, 2064   ; Boilers - Design Parameters - Fuel Input Ratio
-        #      2315007,  59,  1,  2, 17,  1,  1,  1,  0, 28,    0,  0,  0,  0, 2064   ; Boilers - Design Parameters - Auxiliary Power
-        #
-        #      2315034,  59,  1,  4, 18,  1, 12,  1,  0,  4,    0,  0,  0,  0, 2064   ; Boilers - All Months - Peaks - Heat Load
-        #      2315035,  59,  1,  4, 19,  1, 12,  1,  0, 28,    0,  0,  0,  0, 2064   ; Boilers - All Months - Peaks - Electrical Use
-        #      2315036,  59,  1,  4, 20,  1, 12,  1,  0,  4,    0,  0,  0,  0, 2064   ; Boilers - All Months - Peaks - Fuel Use
-        #      2315037,  59,  1,  4, 21,  1, 12,  1,  0, 28,    0,  0,  0,  0, 2064   ; Boilers - All Months - Peaks - Auxiliary Energy
-        #      2315038,  59,  1,  4, 34,  0, 12,  1,  0,  1,    0,  0,  0,  0, 2064   ; Boilers - All Months - Peaks - Peak Load Day
-        #      2315039,  59,  1,  4, 35,  0, 12,  1,  0,  1,    0,  0,  0,  0, 2064   ; Boilers - All Months - Peaks - Peak Load Hour
-        #      2315040,  59,  1,  4, 36,  0, 12,  1,  0,  1,    0,  0,  0,  0, 2064   ; Boilers - All Months - Peaks - Peak Electric Day
-        #      2315041,  59,  1,  4, 37,  0, 12,  1,  0,  1,    0,  0,  0,  0, 2064   ; Boilers - All Months - Peaks - Peak Electric Hour
-        #      2315042,  59,  1,  4, 38,  0, 12,  1,  0,  1,    0,  0,  0,  0, 2064   ; Boilers - All Months - Peaks - Peak Fuel Day
-        #      2315043,  59,  1,  4, 39,  0, 12,  1,  0,  1,    0,  0,  0,  0, 2064   ; Boilers - All Months - Peaks - Peak Fuel Hour
-        #      2315044,  59,  1,  4, 40,  0, 12,  1,  0,  1,    0,  0,  0,  0, 2064   ; Boilers - All Months - Peaks - Peak Aux. Day
-        #      2315045,  59,  1,  4, 41,  0, 12,  1,  0,  1,    0,  0,  0,  0, 2064   ; Boilers - All Months - Peaks - Peak Aux. Hour
 
-        #      2315901,  59,  1,  6,  1,  1,  1,  1,  0,  4,    0,  0,  0,  0, 2064   ; Boilers - Rated Capacity at Peak (Btu/hr)
-        #      2315902,  59,  1,  6,  2,  1,  1,  1,  0,  8,    0,  0,  0,  0, 2064   ; Boilers - Return Water Temperature at Peak (°F)
-        #
-        #      2315903,  59,  1,  9,  9,  1,  1,  1,  0, 34, 2062,  8,  1,  0, 2064   ; Boilers - Sizing Info/Circ Loop - Capacity, MBTU/HR !!! -99999.0 during trials
-        #      2315904,  59,  1,  9, 10,  1,  1,  1,  0,128, 2062,  8,  1,  0, 2064   ; Boilers - Sizing Info/Circ Loop - Head, FT !!! -99999.0 during trials
-        #      2315905,  59,  1,  9, 11,  1,  1,  1,  0, 15, 2062,  8,  1,  0, 2064   ; Boilers - Sizing Info/Circ Loop - Static, FT !!! -99999.0 during trials
-        #      2315906,  59,  1,  9, 12,  1,  1,  1,  0, 52, 2062,  8,  1,  0, 2064   ; Boilers - Sizing Info/Circ Loop - Flow, GPM !!! -99999.0 during trials
-        #      2315907,  59,  1,  9, 13,  1,  1,  1,  0, 74, 2062,  8,  1,  0, 2064   ; Boilers - Sizing Info/Circ Loop - Delta T, F !!! -99999.0 during trials
-        #      2315908,  59,  1,  9, 14,  1,  1,  1,  0,  8, 2062,  8,  1,  0, 2064   ; Boilers - Sizing Info/Circ Loop - Design T, F !!! -99999.0 during trials
-
-        #      2315911,  59,  1,  7,  5,  1,  1,  1,  0, 34,    0,  8,  1,  0, 2064   ; Boilers - Sizing Info/Boiler - Capacity
-        #      2315912,  59,  1,  7,  6,  1,  1,  1,  0, 23,    0,  8,  1,  0, 2064   ; Boilers - Sizing Info/Boiler - Start-up
-        #      2315913,  59,  1,  7,  7,  1,  1,  1,  0, 28,    0,  8,  1,  0, 2064   ; Boilers - Sizing Info/Boiler - Electric, kW
-        #      2315914,  59,  1,  7,  8,  1,  1,  1,  0, 46,    0,  8,  1,  0, 2064   ; Boilers - Sizing Info/Boiler - Heat EIR
-        #      2315915,  59,  1,  7,  9,  1,  1,  1,  0, 28,    0,  8,  1,  0, 2064   ; Boilers - Sizing Info/Boiler - Aux kW
-        #      2315916,  59,  1,  7, 10,  1,  1,  1,  0, 34,    0,  8,  1,  0, 2064   ; Boilers - Sizing Info/Boiler - Fuel
-        #      2315916,  59,  1,  7, 11,  1,  1,  1,  0, 46,    0,  8,  1,  0, 2064   ; Boilers - Sizing Info/Boiler - HIR !!! THIS DOESN'T WORK !!! SAME ID AS PREVIOUS, RESULTS ARE FOR PREVIOUS. 2315917 DOESN'T WORK EITHER
-
-        #      2401061,  12,  1,  7, 21,  1,  1,  1,  0, 34, 2064,  8,  1,  0,    0   ; Primary Equipment (Boilers) - Capacity (Btu/hr) !!! -99999.0 during trials
-        #      2401062,  12,  1,  7, 22,  1,  1,  1,  0, 52, 2064,  8,  1,  0,    0   ; Primary Equipment (Boilers) - Flow (gal/min) !!! -99999.0 during trials
-        #      2401063,  12,  1,  7, 23,  1,  1,  1,  0, 22, 2064,  8,  1,  0,    0   ; Primary Equipment (Boilers) - Rated EIR (frac) !!! -99999.0 during trials
-        #      2401064,  12,  1,  7, 24,  1,  1,  1,  0, 22, 2064,  8,  1,  0,    0   ; Primary Equipment (Boilers) - Rated HIR (frac) !!! -99999.0 during trials
-        #      2401065,  12,  1,  7, 25,  1,  1,  1,  0, 28, 2064,  8,  1,  0,    0   ; Primary Equipment (Boilers) - Auxiliary (kW) !!! -99999.0 during trials
-
-        # Selected requests to populate data elements
         requests = {
+            "Boilers - Design Parameters - Capacity": (
+                2315003,
+                self.u_name,
+                "",
+            ),
+            "Boilers - Design Parameters - Flow": (
+                2315004,
+                self.u_name,
+                "",
+            ),
+            "Boilers - Design Parameters - Electric Input Ratio": (
+                2315005,
+                self.u_name,
+                "",
+            ),
             "Boilers - Design Parameters - Fuel Input Ratio": (
                 2315006,
                 self.u_name,
                 "",
             ),
+            "Boilers - Design Parameters - Auxiliary Power": (
+                2315007,
+                self.u_name,
+                "",
+            ),
             "Boilers - Rated Capacity at Peak (Btu/hr)": (
                 2315901,
-                self.u_name,
-                "",
-            ),
-            "Boilers - Return Water Temperature at Peak (°F)": (
-                2315902,
-                self.u_name,
-                "",
-            ),
-            "Boilers - Sizing Info/Boiler - Capacity": (
-                2315911,
-                self.u_name,
-                "",
-            ),
-            "Boilers - Sizing Info/Boiler - Heat EIR": (
-                2315914,
-                self.u_name,
-                "",
-            ),
-            "Boilers - Sizing Info/Boiler - Aux kW": (
-                2315915,
                 self.u_name,
                 "",
             ),
@@ -201,6 +192,8 @@ class Boiler(BaseNode):
         """Populate schema structure for boiler object."""
         self.boiler_data_structure = {
             "id": self.u_name,
+            "efficiency": self.efficiency,
+            "efficiency_metrics": self.efficiency_metrics,
             "output_validation_points": self.output_validation_points,
         }
 
