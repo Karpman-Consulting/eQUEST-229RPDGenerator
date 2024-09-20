@@ -56,5 +56,5 @@ jobs:
           pipenv install -e .
 
       - name: Run RPD Tests
-        run: pipenv run python test/test_generated_rpd_files.py
+        run: pipenv run python test/full_rpd_test/test_generated_rpd_files.py
 
