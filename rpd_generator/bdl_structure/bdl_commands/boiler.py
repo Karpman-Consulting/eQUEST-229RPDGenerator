@@ -104,20 +104,33 @@ class Boiler(BaseNode):
         self.draft_type = self.draft_type_map.get(
             self.keyword_value_pairs.get(BDL_BoilerKeywords.TYPE)
         )
-        self.minimum_load_ratio = self.try_float(self.keyword_value_pairs.get(BDL_BoilerKeywords.MIN_RATIO))
+        self.minimum_load_ratio = self.try_float(
+            self.keyword_value_pairs.get(BDL_BoilerKeywords.MIN_RATIO)
+        )
 
         requests = self.get_output_requests()
         output_data = self.get_output_data(requests)
-        for key in ["Boilers - Design Parameters - Capacity", "Boilers - Rated Capacity at Peak (Btu/hr)"]:
+        for key in [
+            "Boilers - Design Parameters - Capacity",
+            "Boilers - Rated Capacity at Peak (Btu/hr)",
+        ]:
             if key in output_data:
                 output_data[key] = self.try_convert_units(
                     output_data[key], "Btu/hr", "MMBtu/hr"
                 )
-        self.design_capacity = self.try_abs(output_data.get("Boilers - Design Parameters - Capacity"))
-        self.rated_capacity = self.try_abs(output_data.get("Boilers - Rated Capacity at Peak (Btu/hr)"))
-        self.auxiliary_power = output_data.get("Boilers - Design Parameters - Auxiliary Power")
+        self.design_capacity = self.try_abs(
+            output_data.get("Boilers - Design Parameters - Capacity")
+        )
+        self.rated_capacity = self.try_abs(
+            output_data.get("Boilers - Rated Capacity at Peak (Btu/hr)")
+        )
+        self.auxiliary_power = output_data.get(
+            "Boilers - Design Parameters - Auxiliary Power"
+        )
         if self.energy_source_type == EnergySourceOptions.ELECTRICITY:
-            boiler_e_i_r = output_data.get("Boilers - Design Parameters - Electric Input Ratio")
+            boiler_e_i_r = output_data.get(
+                "Boilers - Design Parameters - Electric Input Ratio"
+            )
             if boiler_e_i_r:
                 self.efficiency.append(1 / boiler_e_i_r)
                 self.efficiency_metrics.append(BoilerEfficiencyMetricOptions.THERMAL)
@@ -131,18 +144,24 @@ class Boiler(BaseNode):
                 )
 
         else:
-            boiler_f_i_r = output_data.get("Boilers - Design Parameters - Fuel Input Ratio")
+            boiler_f_i_r = output_data.get(
+                "Boilers - Design Parameters - Fuel Input Ratio"
+            )
             if boiler_f_i_r is not None and boiler_f_i_r != 0:
                 self.efficiency.append(1 / boiler_f_i_r)
                 self.efficiency_metrics.append(BoilerEfficiencyMetricOptions.THERMAL)
                 self.efficiency.append(1 / boiler_f_i_r + 0.02)
                 self.efficiency_metrics.append(BoilerEfficiencyMetricOptions.COMBUSTION)
                 if 0.825 > self.efficiency[0] > 0.8:
-                    self.efficiency.append((self.efficiency[0] - 0.725)/0.1)
-                    self.efficiency_metrics.append(BoilerEfficiencyMetricOptions.ANNUAL_FUEL_UTILIZATION)
+                    self.efficiency.append((self.efficiency[0] - 0.725) / 0.1)
+                    self.efficiency_metrics.append(
+                        BoilerEfficiencyMetricOptions.ANNUAL_FUEL_UTILIZATION
+                    )
                 elif 0.825 <= self.efficiency[0] <= 0.98:
-                    self.efficiency.append((self.efficiency[0] - 0.105)/0.875)
-                    self.efficiency_metrics.append(BoilerEfficiencyMetricOptions.ANNUAL_FUEL_UTILIZATION)
+                    self.efficiency.append((self.efficiency[0] - 0.105) / 0.875)
+                    self.efficiency_metrics.append(
+                        BoilerEfficiencyMetricOptions.ANNUAL_FUEL_UTILIZATION
+                    )
 
         # Assign pump data elements populated from the boiler keyword value pairs
         pump_name = self.keyword_value_pairs.get(BDL_BoilerKeywords.HW_PUMP)

@@ -511,10 +511,14 @@ def handle_special_cases(json_key_path, object_id_map, generated_json, reference
     # Handle Special Case for design electric power based on design airflow (which is not a specified value)
     if json_key_path.split(".")[-1] == "design_electric_power":
 
-        generated_supply_fan = [fan for sys_fans in find_all(
-            "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.supply_fans",
-            generated_json,
-        ) for fan in sys_fans]
+        generated_supply_fan = [
+            fan
+            for sys_fans in find_all(
+                "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.supply_fans",
+                generated_json,
+            )
+            for fan in sys_fans
+        ]
         compare_fan_power_errors = compare_fan_power(generated_supply_fan, 0.3)
         if compare_fan_power_errors:
             errors.extend(

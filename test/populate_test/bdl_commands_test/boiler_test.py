@@ -31,7 +31,9 @@ class TestFuelBoiler(unittest.TestCase):
         self.rmd = RulesetModelDescription("Test RMD")
         self.rmd.doe2_version = "DOE-2.3"
         self.rmd.doe2_data_path = Config.DOE23_DATA_PATH
-        self.rmd.file_path = os.path.abspath("../full_rpd_test/E-2/229 Test Case E-2 (CHW VAV)")
+        self.rmd.file_path = os.path.abspath(
+            "../full_rpd_test/E-2/229 Test Case E-2 (CHW VAV)"
+        )
         self.boiler = Boiler("Boiler 1", self.rmd)
 
     def test_populate_data_elements_with_fuel_meter(self):
@@ -61,16 +63,8 @@ class TestFuelBoiler(unittest.TestCase):
             "design_capacity": 0.17634653125,
             "rated_capacity": 0.17634653125,
             "minimum_load_ratio": 0.33,
-            "efficiency": [
-                0.9000089372091853,
-                0.9200089372091853,
-                0.9085816425247832
-            ],
-            "efficiency_metrics": [
-                "THERMAL",
-                "COMBUSTION",
-                "ANNUAL_FUEL_UTILIZATION"
-            ],
+            "efficiency": [0.9000089372091853, 0.9200089372091853, 0.9085816425247832],
+            "efficiency_metrics": ["THERMAL", "COMBUSTION", "ANNUAL_FUEL_UTILIZATION"],
         }
 
         self.assertDictEqual(self.boiler.boiler_data_structure, expected_data_structure)
@@ -97,16 +91,8 @@ class TestFuelBoiler(unittest.TestCase):
             "design_capacity": 0.17634653125,
             "rated_capacity": 0.17634653125,
             "minimum_load_ratio": 0.33,
-            "efficiency": [
-                0.9000089372091853,
-                0.9200089372091853,
-                0.9085816425247832
-            ],
-            "efficiency_metrics": [
-                "THERMAL",
-                "COMBUSTION",
-                "ANNUAL_FUEL_UTILIZATION"
-            ],
+            "efficiency": [0.9000089372091853, 0.9200089372091853, 0.9085816425247832],
+            "efficiency_metrics": ["THERMAL", "COMBUSTION", "ANNUAL_FUEL_UTILIZATION"],
         }
 
         self.assertDictEqual(self.boiler.boiler_data_structure, expected_data_structure)
@@ -144,7 +130,7 @@ class TestElectricBoiler(unittest.TestCase):
             "rated_capacity": 0.8822398124999999,
             "minimum_load_ratio": 0.33,
             "efficiency": [0.9803921751955851],
-            "efficiency_metrics": ['THERMAL'],
+            "efficiency_metrics": ["THERMAL"],
         }
 
         self.assertDictEqual(self.boiler.boiler_data_structure, expected_data_structure)
@@ -173,14 +159,11 @@ class TestElectricBoiler(unittest.TestCase):
             "rated_capacity": 0.8822398124999999,
             "minimum_load_ratio": 0.33,
             "efficiency": [1, 1, 1],
-            "efficiency_metrics": [
-                "THERMAL",
-                "COMBUSTION",
-                "ANNUAL_FUEL_UTILIZATION"
-            ],
+            "efficiency_metrics": ["THERMAL", "COMBUSTION", "ANNUAL_FUEL_UTILIZATION"],
         }
 
         self.assertDictEqual(self.boiler.boiler_data_structure, expected_data_structure)
+
 
 #
 #
