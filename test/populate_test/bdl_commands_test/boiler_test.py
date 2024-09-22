@@ -31,8 +31,9 @@ class TestFuelBoiler(unittest.TestCase):
         self.rmd = RulesetModelDescription("Test RMD")
         self.rmd.doe2_version = "DOE-2.3"
         self.rmd.doe2_data_path = Config.DOE23_DATA_PATH
+        script_dir = os.path.dirname(os.path.abspath(__file__))
         self.rmd.file_path = os.path.abspath(
-            "../full_rpd_test/E-2/229 Test Case E-2 (CHW VAV)"
+            os.path.join(script_dir, "../../full_rpd_test/E-2/229 Test Case E-2 (CHW VAV)")
         )
         self.boiler = Boiler("Boiler 1", self.rmd)
 
@@ -107,7 +108,10 @@ class TestElectricBoiler(unittest.TestCase):
         self.boiler = Boiler("Boiler 1", self.rmd)
 
     def test_populate_data_elements_electric_boiler(self):
-        self.rmd.file_path = os.path.abspath("output_references/Electric Boiler")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        self.rmd.file_path = os.path.abspath(
+            os.path.join(script_dir, "../output_references/Electric Boiler")
+        )
         self.rmd.bdl_obj_instances = {}
 
         self.boiler.keyword_value_pairs = {
@@ -136,7 +140,10 @@ class TestElectricBoiler(unittest.TestCase):
         self.assertDictEqual(self.boiler.boiler_data_structure, expected_data_structure)
 
     def test_populate_data_elements_electric_steam_boiler_1EIR(self):
-        self.rmd.file_path = os.path.abspath("output_references/Electric Boiler - 1EIR")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        self.rmd.file_path = os.path.abspath(
+            os.path.join(script_dir, "../output_references/Electric Boiler - 1EIR")
+        )
         self.rmd.bdl_obj_instances = {}
 
         self.boiler.keyword_value_pairs = {
