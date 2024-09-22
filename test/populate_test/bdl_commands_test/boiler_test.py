@@ -26,14 +26,15 @@ BoilerEfficiencyMetricOptions = SchemaEnums.schema_enums[
 
 
 class TestFuelBoiler(unittest.TestCase):
-
     def setUp(self):
         self.rmd = RulesetModelDescription("Test RMD")
         self.rmd.doe2_version = "DOE-2.3"
         self.rmd.doe2_data_path = Config.DOE23_DATA_PATH
         script_dir = os.path.dirname(os.path.abspath(__file__))
         self.rmd.file_path = os.path.abspath(
-            os.path.join(script_dir, "../../full_rpd_test/E-2/229 Test Case E-2 (CHW VAV)")
+            os.path.join(
+                script_dir, "../../full_rpd_test/E-2/229 Test Case E-2 (CHW VAV)"
+            )
         )
         self.boiler = Boiler("Boiler 1", self.rmd)
 
@@ -100,7 +101,6 @@ class TestFuelBoiler(unittest.TestCase):
 
 
 class TestElectricBoiler(unittest.TestCase):
-
     def setUp(self):
         self.rmd = RulesetModelDescription("Test RMD")
         self.rmd.doe2_version = "DOE-2.3"

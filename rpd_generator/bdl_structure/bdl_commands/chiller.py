@@ -187,7 +187,11 @@ class Chiller(BaseNode):
                     self.u_name,
                     "",
                 ),
-                "Elec Chillers - Design Parameters - Capacity": (2318003, self.u_name, ""),
+                "Elec Chillers - Design Parameters - Capacity": (
+                    2318003,
+                    self.u_name,
+                    "",
+                ),
                 "Elec Chillers - Design Parameters - Flow": (2318004, self.u_name, ""),
                 "Elec Chillers - Design Parameters - Condenser Flow": (
                     2318009,
