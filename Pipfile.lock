@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "8ffa53ce7f0809dea0ee3adc7f3027f188db89d7c5e309491b725e00acd96b2c"
+            "sha256": "2e60432fbe1880a6a9b7d1d7d4ed1968e5045a0977272fe0abfdb78ae934b669"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -215,6 +215,10 @@
             ],
             "markers": "python_version >= '3.8'",
             "version": "==0.35.1"
+        },
+        "rpd-generator": {
+            "editable": true,
+            "file": "."
         },
         "rpds-py": {
             "hashes": [
