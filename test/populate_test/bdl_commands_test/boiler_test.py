@@ -63,7 +63,7 @@ class TestFuelBoiler(unittest.TestCase):
             "auxiliary_power": 0.0,
             "design_capacity": 0.17634653125,
             "rated_capacity": 0.17634653125,
-            "minimum_load_ratio": 0.33,
+            "minimum_load_ratio": 0.3,
             "efficiency": [0.9000089372091853, 0.9200089372091853, 0.9085816425247832],
             "efficiency_metrics": ["THERMAL", "COMBUSTION", "ANNUAL_FUEL_UTILIZATION"],
         }
