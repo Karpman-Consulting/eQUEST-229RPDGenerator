@@ -110,6 +110,7 @@ class BDLEnums:
                 "HW-PUMP",
                 "HW-LOOP",
                 "FUEL-METER",
+                "MIN-RATIO",
             ]
         ),
         "ChillerTypes": _ListEnum(
@@ -345,6 +346,11 @@ class BDLEnums:
             ]
         ),
         "MasterMeterKeywords": _ListEnum(
+            [
+                "TYPE",
+            ]
+        ),
+        "FuelMeterKeywords": _ListEnum(
             [
                 "TYPE",
             ]
@@ -591,6 +597,7 @@ class BDLEnums:
                 "INTERMITTENT",
             ]
         ),
+        "SystemReturnAirPathOptions": _ListEnum(["DIRECT", "DUCT", "PLENUM-ZONES"]),
         "SystemKeywords": _ListEnum(
             [
                 "TYPE",
@@ -619,6 +626,7 @@ class BDLEnums:
                 "SUPPLY-STATIC",
                 "RETURN-FLOW",
                 "RETURN-STATIC",
+                "RETURN-AIR-PATH",
                 "HSUPPLY-FLOW",
                 "HSUPPLY-STATIC",
                 "RETURN-KW/FLOW",
