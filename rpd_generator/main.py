@@ -154,10 +154,10 @@ def generate_rmds(bdl_input_reader: ModelInputReader, selected_models: list):
         for command in COMMAND_PROCESSING_ORDER:
             special_handling = {}
             if command == "ZONE":
-                special_handling[
-                    "ZONE"
-                ] = lambda obj, cmd_dict: rmd.space_map.setdefault(
-                    cmd_dict["SPACE"], obj
+                special_handling["ZONE"] = (
+                    lambda obj, cmd_dict: rmd.space_map.setdefault(
+                        cmd_dict["SPACE"], obj
+                    )
                 )
             _process_command_group(
                 command,

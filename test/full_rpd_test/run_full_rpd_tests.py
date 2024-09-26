@@ -643,9 +643,9 @@ def define_heat_rejection_map(generated_json, reference_json, object_id_map):
     if len(generated_heat_rejections) == 1:
         generated_heat_rejection_data = generated_heat_rejections[0]
         reference_heat_rejection_data = reference_heat_rejections[0]
-        heat_rejection_map[
-            generated_heat_rejection_data["id"]
-        ] = reference_heat_rejection_data["id"]
+        heat_rejection_map[generated_heat_rejection_data["id"]] = (
+            reference_heat_rejection_data["id"]
+        )
         return heat_rejection_map, errors
 
     else:
@@ -1356,9 +1356,9 @@ def handle_ordered_comparisons(
                 None,
             )
 
-            aligned_reference_values[
-                generated_heat_rejection_id
-            ] = aligned_reference_value
+            aligned_reference_values[generated_heat_rejection_id] = (
+                aligned_reference_value
+            )
 
         if all(value is None for value in aligned_generated_values.values()):
             warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
