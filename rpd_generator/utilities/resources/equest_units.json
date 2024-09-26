@@ -179,8 +179,8 @@
         "result": ""
     },
     "HeatRejection": {
-        "range": "F",
-        "approach": "F",
+        "range": "delta_F",
+        "approach": "delta_F",
         "fan_shaft_power": "",
         "fan_motor_efficiency": "",
         "fan_motor_nameplate_power": "",
