@@ -108,7 +108,8 @@
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*][?(@.classification = \"WALL\")].azimuth",
-        "compare-value": true
+        "compare-value": true,
+        "special-case": "azimuth"
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*].adjacent_to",
@@ -449,305 +450,287 @@
         "tolerance": 0.01
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].boilers",
+        "json-key-path": "$.ruleset_model_descriptions[0].boilers",
         "compare-value": false
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].boilers[*].loop",
+        "json-key-path": "$.ruleset_model_descriptions[0].boilers[*].loop",
         "compare-value": false
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].boilers[*].draft_type",
+        "json-key-path": "$.ruleset_model_descriptions[0].boilers[*].draft_type",
         "compare-value": true
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].boilers[*].energy_source_type",
+        "json-key-path": "$.ruleset_model_descriptions[0].boilers[*].energy_source_type",
         "compare-value": false
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].boilers[*].rated_capacity",
+        "json-key-path": "$.ruleset_model_descriptions[0].boilers[*].rated_capacity",
+        "compare-value": false
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].boilers[*].minimum_load_ratio",
+        "compare-value": true,
+        "tolerance": 0.01
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].boilers[*].operation_lower_limit",
         "compare-value": true,
         "tolerance": 1.0
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].boilers[*].minimum_load_ratio",
-        "compare-value": true,
-        "tolerance": 0.01
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].boilers[*].operation_lower_limit",
+        "json-key-path": "$.ruleset_model_descriptions[0].boilers[*].operation_upper_limit",
         "compare-value": true,
         "tolerance": 1.0
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].boilers[*].operation_upper_limit",
+        "json-key-path": "$.ruleset_model_descriptions[0].chillers",
+        "compare-value": false
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].chillers[*].cooling_loop",
+        "compare-value": false
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].chillers[*].condensing_loop",
+        "compare-value": false
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].chillers[*].is_chilled_water_pump_interlocked",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].chillers[*].is_condenser_water_pump_interlocked",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].chillers[*].compressor_type",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].chillers[*].energy_source_type",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].chillers[*].rated_capacity",
+        "compare-value": false
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].chillers[*].design_capacity",
+        "compare-value": false
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].chillers[*].minimum_load_ratio",
+        "compare-value": true,
+        "tolerance": 0.01
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].chillers[*].rated_entering_condenser_temperature",
+        "compare-value": true,
+        "tolerance": 0.1
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].chillers[*].rated_leaving_evaporator_temperature",
+        "compare-value": true,
+        "tolerance": 0.1
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].heat_rejections",
+        "compare-value": false
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].heat_rejections[*].loop",
+        "compare-value": false
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].heat_rejections[*].type",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].heat_rejections[*].fan_type",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].heat_rejections[*].fan_speed_control",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].heat_rejections[*].fluid",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].heat_rejections[*].range",
+        "compare-value": true,
+        "tolerance": 0.1
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].heat_rejections[*].approach",
+        "compare-value": true,
+        "tolerance": 0.1
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].heat_rejections[*].design_wetbulb_temperature",
+        "compare-value": true,
+        "tolerance": 0.1
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].heat_rejections[*].leaving_water_setpoint_temperature",
+        "compare-value": true,
+        "tolerance": 0.1
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].heat_rejections[*].rated_water_flowrate",
+        "compare-value": false
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].pumps",
+        "compare-value": false
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].pumps[*].loop_or_piping",
+        "compare-value": false
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].pumps[*].specification_method",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].pumps[*].design_electric_power",
+        "compare-value": true,
+        "tolerance": 0.1,
+        "special-case": "W/GPM",
+        "special-case-value": {"HW": 301, "PCHW": 143, "SCHW":  206, "CW": 301}
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].pumps[*].speed_control",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].pumps[*].design_flow",
+        "compare-value": true,
+        "tolerance": 0.01
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].pumps[*].is_flow_sized_based_on_design_day",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops",
+        "compare-value": false
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].type",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].pump_power_per_flow_rate",
         "compare-value": true,
         "tolerance": 1.0
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].boilers[*].efficiency_metric",
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].child_loops",
+        "compare-value": false
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].heating_design_and_control.design_supply_temperature",
+        "compare-value": true,
+        "tolerance": 0.1
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].heating_design_and_control.design_return_temperature",
+        "compare-value": true,
+        "tolerance": 0.1
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].heating_design_and_control.is_sized_using_coincident_load",
         "compare-value": true
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].boilers[*].efficiency",
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].heating_design_and_control.operation",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].heating_design_and_control.flow_control",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].heating_design_and_control.minimum_flow_fraction",
         "compare-value": true,
         "tolerance": 0.01
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].chillers",
-        "compare-value": false
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].chillers[*].cooling_loop",
-        "compare-value": false
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].chillers[*].condensing_loop",
-        "compare-value": false
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].chillers[*].is_chilled_water_pump_interlocked",
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].heating_design_and_control.temperature_reset_type",
         "compare-value": true
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].chillers[*].is_condenser_water_pump_interlocked",
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].cooling_or_condensing_design_and_control.design_supply_temperature",
+        "compare-value": true,
+        "tolerance": 0.1
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].cooling_or_condensing_design_and_control.design_return_temperature",
+        "compare-value": true,
+        "tolerance": 0.1
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].cooling_or_condensing_design_and_control.is_sized_using_coincident_load",
         "compare-value": true
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].chillers[*].compressor_type",
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].cooling_or_condensing_design_and_control.operation",
         "compare-value": true
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].chillers[*].energy_source_type",
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].cooling_or_condensing_design_and_control.flow_control",
         "compare-value": true
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].chillers[*].rated_capacity",
-        "compare-value": false
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].chillers[*].design_capacity",
-        "compare-value": false
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].chillers[*].minimum_load_ratio",
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].cooling_or_condensing_design_and_control.minimum_flow_fraction",
         "compare-value": true,
         "tolerance": 0.01
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].chillers[*].rated_entering_condenser_temperature",
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].cooling_or_condensing_design_and_control.temperature_reset_type",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].child_loops[*].type",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].child_loops[*].type",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].child_loops[*].cooling_or_condensing_design_and_control.design_supply_temperature",
         "compare-value": true,
         "tolerance": 0.1
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].chillers[*].rated_leaving_evaporator_temperature",
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].child_loops[*].cooling_or_condensing_design_and_control.design_return_temperature",
         "compare-value": true,
         "tolerance": 0.1
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].chillers[*].part_load_efficiency",
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].child_loops[*].cooling_or_condensing_design_and_control.is_sized_using_coincident_load",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].child_loops[*].cooling_or_condensing_design_and_control.operation",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].child_loops[*].cooling_or_condensing_design_and_control.flow_control",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].child_loops[*].cooling_or_condensing_design_and_control.minimum_flow_fraction",
         "compare-value": true,
         "tolerance": 0.01
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].chillers[*].part_load_efficiency_metric",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heat_rejections",
-        "compare-value": false
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heat_rejections[*].loop",
-        "compare-value": false
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heat_rejections[*].type",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heat_rejections[*].fan_type",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heat_rejections[*].fan_speed_control",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heat_rejections[*].fluid",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heat_rejections[*].range",
-        "compare-value": true,
-        "tolerance": 0.01
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heat_rejections[*].approach",
-        "compare-value": true,
-        "tolerance": 0.01
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heat_rejections[*].design_wetbulb_temperature",
-        "compare-value": true,
-        "tolerance": 0.1
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heat_rejections[*].leaving_water_setpoint_temperature",
-        "compare-value": true,
-        "tolerance": 0.1
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heat_rejections[*].rated_water_flowrate",
-        "compare-value": true,
-        "tolerance": 0.1
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].pumps",
-        "compare-value": false
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].pumps[*].loop_or_piping",
-        "compare-value": false
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].pumps[*].specification_method",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].pumps[*].design_electric_power",
-        "compare-value": true,
-        "tolerance": 0.1
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].pumps[*].speed_control",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].pumps[*].design_flow",
-        "compare-value": true,
-        "tolerance": 0.01
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].pumps[*].is_flow_sized_based_on_design_day",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops",
-        "compare-value": false
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.type",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.pump_power_per_flow_rate",
-        "compare-value": true,
-        "tolerance": 0.1
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.child_loops",
-        "compare-value": false
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.heating_design_and_control.design_supply_temperature",
-        "compare-value": true,
-        "tolerance": 0.1
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.heating_design_and_control.design_return_temperature",
-        "compare-value": true,
-        "tolerance": 0.1
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.heating_design_and_control.is_sized_using_coincident_load",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.heating_design_and_control.operation",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.heating_design_and_control.flow_control",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.heating_design_and_control.minimum_flow_fraction",
-        "compare-value": true,
-        "tolerance": 0.01
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.heating_design_and_control.temperature_reset_type",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.cooling_or_condensing_design_and_control.design_supply_temperature",
-        "compare-value": true,
-        "tolerance": 0.1
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.cooling_or_condensing_design_and_control.design_return_temperature",
-        "compare-value": true,
-        "tolerance": 0.1
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.cooling_or_condensing_design_and_control.is_sized_using_coincident_load",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.cooling_or_condensing_design_and_control.operation",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.cooling_or_condensing_design_and_control.flow_control",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.cooling_or_condensing_design_and_control.minimum_flow_fraction",
-        "compare-value": true,
-        "tolerance": 0.01
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.cooling_or_condensing_design_and_control.temperature_reset_type",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.child_loops[*].type",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.child_loops[*].type",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.child_loops[*].cooling_or_condensing_design_and_control.design_supply_temperature",
-        "compare-value": true,
-        "tolerance": 0.1
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.child_loops[*].cooling_or_condensing_design_and_control.design_return_temperature",
-        "compare-value": true,
-        "tolerance": 0.1
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.child_loops[*].cooling_or_condensing_design_and_control.is_sized_using_coincident_load",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.child_loops[*].cooling_or_condensing_design_and_control.operation",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.child_loops[*].cooling_or_condensing_design_and_control.flow_control",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.child_loops[*].cooling_or_condensing_design_and_control.minimum_flow_fraction",
-        "compare-value": true,
-        "tolerance": 0.01
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].fluid_loops.child_loops[*].cooling_or_condensing_design_and_control.temperature_reset_type",
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].child_loops[*].cooling_or_condensing_design_and_control.temperature_reset_type",
         "compare-value": true
         }
     ]

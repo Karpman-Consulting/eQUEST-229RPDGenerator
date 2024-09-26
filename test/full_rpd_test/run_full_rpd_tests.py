@@ -2,8 +2,7 @@ import sys
 import os
 import json
 import math
-from difflib import SequenceMatcher
-
+from difflib import get_close_matches
 
 from rpd_generator.utilities.jsonpath_utils import (
     find_one,
@@ -90,14 +89,10 @@ def get_zones_from_json(json_data):
     )
 
 
-def find_best_match(target, candidates):
+def find_best_match(target, candidates, cutoff=0.4):
     """Finds the best match for a target in a list of candidates."""
-    best_match_found, highest_ratio = None, 0.0
-    for candidate in candidates:
-        ratio = SequenceMatcher(None, target, candidate).ratio()
-        if ratio > highest_ratio:
-            highest_ratio, best_match_found = ratio, candidate
-    return best_match_found
+    matches = get_close_matches(target, candidates, n=1, cutoff=cutoff)
+    return matches[0] if matches else None
 
 
 def get_mapping(
@@ -137,6 +132,48 @@ def get_mapping(
             generated_values, reference_values, object_id_map
         )
 
+    if match_type == "Boilers":
+        mapping = match_by_attributes(
+            generated_values,
+            reference_values,
+            generated_zone_id,
+            reference_zone_id,
+            ["draft_type", "energy_source_type"],
+        )
+
+    if match_type == "Chillers":
+        mapping = match_by_attributes(
+            generated_values,
+            reference_values,
+            generated_zone_id,
+            reference_zone_id,
+            ["compressor_type", "energy_source_type"],
+        )
+
+    if match_type == "Heat Rejections":
+        mapping = match_by_attributes(
+            generated_values,
+            reference_values,
+            generated_zone_id,
+            reference_zone_id,
+            ["type", "fan_type", "fan_speed_control"],
+        )
+
+    if match_type == "Loops":
+        mapping = match_by_attributes(
+            generated_values,
+            reference_values,
+            generated_zone_id,
+            reference_zone_id,
+            ["type", "child_loops"],
+        )
+
+    if match_type == "Pumps":
+        mapping = match_pumps_by_references(
+            generated_values, reference_values, object_id_map
+        )
+
+    # TODO: Expand capabilities when length of mapping is less than length of generated_values -e.g. unmatched objects
     if not mapping:
         mapping = match_by_id(generated_values, reference_values)
 
@@ -220,6 +257,26 @@ def match_terminal_by_references(generated_values, reference_values, object_id_m
     return mapping
 
 
+def match_pumps_by_references(generated_values, reference_values, object_id_map):
+    """Match generated and reference pumps based on references to the loops that they serve."""
+    mapping = {}
+    for generated_object in generated_values:
+        generated_loop_id = generated_object.get("loop_or_piping")
+        if generated_loop_id:
+            reference_loop_id = object_id_map.get(generated_loop_id)
+            if reference_loop_id:
+                best_match = next(
+                    reference_value
+                    for reference_value in reference_values
+                    if reference_value.get("loop_or_piping") == reference_loop_id
+                )
+                if best_match:
+                    mapping[generated_object.get("id")] = best_match
+                    reference_values.pop(reference_values.index(best_match))
+
+    return mapping
+
+
 def get_best_match_attrs(
     target, candidates, attrs, generated_zone_id, reference_zone_id
 ):
@@ -263,8 +320,14 @@ def compare_attributes(target, candidate, attr, generated_zone_id, reference_zon
             target_value,
             candidate_value,
         )
+
     elif attr == "area":
         return compare_values(target_value, candidate_value, 0.1)
+
+    elif isinstance(target_value, list):
+        candidate_length = len(candidate_value) if candidate_value else 0
+        return len(target_value) == candidate_length
+
     else:
         return target_value == candidate_value
 
@@ -291,17 +354,49 @@ def compare_azimuth(
     return 0
 
 
-def compare_fan_power(generated_fans, expected_w_per_cfm):
+def compare_fan_power(generated_fans, expected_w_per_flow):
     """Compare the design electric power based on design airflow."""
+    warnings = []
     errors = []
+
     for fan in generated_fans:
-        design_airflow = fan.get("design_airflow")
+        design_flow = fan.get("design_airflow")
         design_power = fan.get("design_electric_power")
-        if not compare_values(design_power, expected_w_per_cfm * design_airflow, 1):
+        if not design_flow:
+            warnings.append(f"Missing design airflow for '{fan['id']}'")
+            continue
+
+        if not design_power:
+            warnings.append(f"Missing design electric power for '{fan['id']}'")
+            continue
+
+        if not compare_values(design_power, expected_w_per_flow * design_flow, 1):
             errors.append(
-                f"Value mismatch at '{fan['id']}'. Expected: {expected_w_per_cfm * design_airflow}; got: {design_power}"
+                f"Value mismatch at '{fan['id']}'. Expected: {expected_w_per_flow * design_flow}; got: {design_power}"
             )
-    return errors
+    return warnings, errors
+
+
+def compare_pump_power(pump: dict, expected_w_per_flow: float):
+    """Compare the design electric power based on design airflow."""
+    warnings = []
+    errors = []
+
+    design_flow = pump.get("design_flow")
+    design_power = pump.get("design_electric_power")
+    if not design_flow:
+        warnings.append(f"Missing design flow for '{pump['id']}'")
+        return warnings, errors
+
+    if not design_power:
+        warnings.append(f"Missing design electric power for '{pump['id']}'")
+        return warnings, errors
+
+    if not compare_values(design_power, expected_w_per_flow * design_flow, 1):
+        errors.append(
+            f"Value mismatch at '{pump['id']}'. Expected: {expected_w_per_flow * design_flow}; got: {design_power}"
+        )
+    return warnings, errors
 
 
 def define_surface_map(generated_zone, reference_zone, generated_json, reference_json):
@@ -451,8 +546,201 @@ def define_terminal_map(object_id_map, generated_zone, reference_zone):
             reference_zone_id=reference_zone["id"],
             object_id_map=object_id_map,
         )
-    print("bye")
     return terminal_map, errors
+
+
+def define_boiler_map(generated_json, reference_json, object_id_map):
+    errors = []
+    boiler_map = {}
+
+    generated_boilers = find_all(
+        "$.ruleset_model_descriptions[0].boilers[*]",
+        generated_json,
+    )
+    reference_boilers = find_all(
+        "$.ruleset_model_descriptions[0].boilers[*]",
+        reference_json,
+    )
+
+    if len(generated_boilers) != len(reference_boilers):
+        errors.append(
+            f"Boiler count mismatch. Expected: {len(reference_boilers)}; got: {len(generated_boilers)}"
+        )
+        return boiler_map, errors
+
+    if len(generated_boilers) == 1:
+        generated_boiler_data = generated_boilers[0]
+        reference_boiler_data = reference_boilers[0]
+        boiler_map[generated_boiler_data["id"]] = reference_boiler_data["id"]
+        return boiler_map, errors
+
+    else:
+        boiler_map = get_mapping(
+            "Boilers",
+            generated_boilers,
+            reference_boilers,
+            object_id_map=object_id_map,
+        )
+
+    return boiler_map, errors
+
+
+def define_chiller_map(generated_json, reference_json, object_id_map):
+    errors = []
+    chiller_map = {}
+
+    generated_chillers = find_all(
+        "$.ruleset_model_descriptions[0].chillers[*]",
+        generated_json,
+    )
+    reference_chillers = find_all(
+        "$.ruleset_model_descriptions[0].chillers[*]",
+        reference_json,
+    )
+
+    if len(generated_chillers) != len(reference_chillers):
+        errors.append(
+            f"Chiller count mismatch. Expected: {len(reference_chillers)}; got: {len(generated_chillers)}"
+        )
+        return chiller_map, errors
+
+    if len(generated_chillers) == 1:
+        generated_chiller_data = generated_chillers[0]
+        reference_chiller_data = reference_chillers[0]
+        chiller_map[generated_chiller_data["id"]] = reference_chiller_data["id"]
+        return chiller_map, errors
+
+    else:
+        chiller_map = get_mapping(
+            "Chillers",
+            generated_chillers,
+            reference_chillers,
+            object_id_map=object_id_map,
+        )
+
+    return chiller_map, errors
+
+
+def define_heat_rejection_map(generated_json, reference_json, object_id_map):
+    errors = []
+    heat_rejection_map = {}
+
+    generated_heat_rejections = find_all(
+        "$.ruleset_model_descriptions[0].heat_rejections[*]",
+        generated_json,
+    )
+    reference_heat_rejections = find_all(
+        "$.ruleset_model_descriptions[0].heat_rejections[*]",
+        reference_json,
+    )
+
+    if len(generated_heat_rejections) != len(reference_heat_rejections):
+        errors.append(
+            f"Heat Rejection count mismatch. Expected: {len(reference_heat_rejections)}; got: {len(generated_heat_rejections)}"
+        )
+        return heat_rejection_map, errors
+
+    if len(generated_heat_rejections) == 1:
+        generated_heat_rejection_data = generated_heat_rejections[0]
+        reference_heat_rejection_data = reference_heat_rejections[0]
+        heat_rejection_map[
+            generated_heat_rejection_data["id"]
+        ] = reference_heat_rejection_data["id"]
+        return heat_rejection_map, errors
+
+    else:
+        heat_rejection_map = get_mapping(
+            "Heat Rejections",
+            generated_heat_rejections,
+            reference_heat_rejections,
+            object_id_map=object_id_map,
+        )
+
+    return heat_rejection_map, errors
+
+
+def define_loop_map(generated_json, reference_json, object_id_map):
+    errors = []
+    loop_map = {}
+
+    generated_loops = find_all(
+        "$.ruleset_model_descriptions[0].fluid_loops[*]",
+        generated_json,
+    )
+    generated_loops.extend(
+        find_all(
+            "$.ruleset_model_descriptions[0].fluid_loops[*].child_loops[*]",
+            generated_json,
+        )
+    )
+    reference_loops = find_all(
+        "$.ruleset_model_descriptions[0].fluid_loops[*]",
+        reference_json,
+    )
+    reference_loops.extend(
+        find_all(
+            "$.ruleset_model_descriptions[0].fluid_loops[*].child_loops[*]",
+            reference_json,
+        )
+    )
+
+    if len(generated_loops) != len(reference_loops):
+        errors.append(
+            f"Loop count mismatch. Expected: {len(reference_loops)}; got: {len(generated_loops)}"
+        )
+        return loop_map, errors
+
+    if len(generated_loops) == 1:
+        generated_loop_data = generated_loops[0]
+        reference_loop_data = reference_loops[0]
+        loop_map[generated_loop_data["id"]] = reference_loop_data["id"]
+        return loop_map, errors
+
+    else:
+        loop_map = get_mapping(
+            "Loops",
+            generated_loops,
+            reference_loops,
+            object_id_map=object_id_map,
+        )
+
+    return loop_map, errors
+
+
+def define_pump_map(generated_json, reference_json, object_id_map):
+    errors = []
+    pump_map = {}
+
+    generated_pumps = find_all(
+        "$.ruleset_model_descriptions[0].pumps[*]",
+        generated_json,
+    )
+    reference_pumps = find_all(
+        "$.ruleset_model_descriptions[0].pumps[*]",
+        reference_json,
+    )
+
+    if len(generated_pumps) != len(reference_pumps):
+        errors.append(
+            f"Pump count mismatch. Expected: {len(reference_pumps)}; got: {len(generated_pumps)}"
+        )
+        return pump_map, errors
+
+    if len(generated_pumps) == 1:
+        generated_pump_data = generated_pumps[0]
+        reference_pump_data = reference_pumps[0]
+        pump_map[generated_pump_data["id"]] = reference_pump_data["id"]
+        return pump_map, errors
+
+    else:
+        pump_map = get_mapping(
+            "Pumps",
+            generated_pumps,
+            reference_pumps,
+            object_id_map=object_id_map,
+        )
+
+    return pump_map, errors
 
 
 def map_objects(generated_json, reference_json):
@@ -465,10 +753,10 @@ def map_objects(generated_json, reference_json):
     # Define a map for Zones. ! Maps for other objects will depend on this map !
     object_id_map = get_mapping("Zones", generated_zones, reference_zones)
 
-    if not object_id_map:
+    if len(object_id_map) != len(reference_zones):
         errors.append(
-            "Could not match zones between the generated and reference files. Try to better align your modeled zone names with the correct answer file's zone naming conventions."
-        )
+            f"""Could not match zones between the generated and reference files. Try to better align your modeled zone names with the correct answer file's zone naming conventions.\n{chr(10).join(f"- {zone['id']}" for zone in reference_zones)}"""
+        )  # chr(10) is a newline character
         # Return early if zones could not be matched
         return object_id_map, warnings, errors
 
@@ -501,17 +789,51 @@ def map_objects(generated_json, reference_json):
         object_id_map.update(terminal_map)
         errors.extend(terminal_map_errors)
 
+    boiler_map, boiler_map_errors = define_boiler_map(
+        generated_json, reference_json, object_id_map
+    )
+    object_id_map.update(boiler_map)
+    errors.extend(boiler_map_errors)
+
+    chiller_map, chiller_map_errors = define_chiller_map(
+        generated_json, reference_json, object_id_map
+    )
+    object_id_map.update(chiller_map)
+    errors.extend(chiller_map_errors)
+
+    heat_rejection_map, heat_rejection_map_errors = define_heat_rejection_map(
+        generated_json, reference_json, object_id_map
+    )
+    object_id_map.update(heat_rejection_map)
+    errors.extend(heat_rejection_map_errors)
+
+    loop_map, loop_map_errors = define_loop_map(
+        generated_json, reference_json, object_id_map
+    )
+    object_id_map.update(loop_map)
+    errors.extend(loop_map_errors)
+
+    pump_map, pump_map_errors = define_pump_map(
+        generated_json, reference_json, object_id_map
+    )
+    object_id_map.update(pump_map)
+    errors.extend(pump_map_errors)
+
     return object_id_map, warnings, errors
 
 
-def handle_special_cases(json_key_path, object_id_map, generated_json, reference_json):
+def handle_special_cases(path_spec, object_id_map, generated_json, reference_json):
     warnings = []
     errors = []
 
-    # Handle Special Case for design electric power based on design airflow (which is not a specified value)
-    if json_key_path.split(".")[-1] == "design_electric_power":
+    json_key_path = path_spec["json-key-path"]
+    special_case = path_spec["special-case"]
 
-        generated_supply_fan = [
+    # Handle Special Case for design electric power based on design airflow (which is not a specified value)
+    if special_case == "W/cfm":
+        special_case_value = path_spec["special-case-value"]
+
+        generated_supply_fans = [
             fan
             for sys_fans in find_all(
                 "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.supply_fans",
@@ -519,15 +841,73 @@ def handle_special_cases(json_key_path, object_id_map, generated_json, reference
             )
             for fan in sys_fans
         ]
-        compare_fan_power_errors = compare_fan_power(generated_supply_fan, 0.3)
+        compare_fan_power_warnings, compare_fan_power_errors = compare_fan_power(
+            generated_supply_fans, special_case_value
+        )
+        if compare_fan_power_warnings:
+            warnings.extend(compare_fan_power_warnings)
         if compare_fan_power_errors:
-            errors.extend(
-                f"Error at {json_key_path.split('.')[-1]}: {err}"
-                for err in compare_fan_power_errors
+            errors.extend(compare_fan_power_errors)
+
+    # Handle Special Case for design electric power based on design airflow (which is not a specified value)
+    elif special_case == "W/GPM":
+        special_case_value_dict = path_spec["special-case-value"]
+        special_case_value = None
+
+        generated_pumps = find_all(
+            "$.ruleset_model_descriptions[*].pumps[*]",
+            generated_json,
+        )
+
+        for pump in generated_pumps:
+            pump_type = "primary"
+            loop_id = pump.get("loop_or_piping")
+            loop = find_all_with_field_value(
+                "$.ruleset_model_descriptions[*].fluid_loops[*]",
+                "id",
+                loop_id,
+                generated_json,
             )
 
+            if not loop:
+                pump_type = "secondary"
+                loop = find_all_with_field_value(
+                    "$.ruleset_model_descriptions[*].fluid_loops[*].child_loops[*]",
+                    "id",
+                    loop_id,
+                    generated_json,
+                )
+
+            if not loop:
+                errors.append(
+                    f"Could not find loop with id '{loop_id}' for pump '{pump['id']}'"
+                )
+                continue
+
+            loop = loop[0]
+            loop_type = loop.get("type")
+
+            if loop_type == "COOLING" and pump_type == "primary":
+                special_case_value = special_case_value_dict["PCHW"]
+            elif loop_type == "COOLING" and pump_type == "secondary":
+                special_case_value = special_case_value_dict["SCHW"]
+            elif loop_type == "HEATING":
+                special_case_value = special_case_value_dict["HW"]
+            elif loop_type == "CONDENSER":
+                special_case_value = special_case_value_dict["CW"]
+
+            compare_pump_power_warnings, compare_pump_power_errors = compare_pump_power(
+                pump, special_case_value
+            )
+
+            if compare_pump_power_errors:
+                errors.extend(
+                    f"Error at {json_key_path.split('.')[-1]}: {err}"
+                    for err in compare_pump_power_errors
+                )
+
     # Handle Special Case for interior wall azimuths (which may be opposite due to the adjacent zone)
-    elif json_key_path.split(".")[-1] == "azimuth":
+    elif special_case == "azimuth":
         aligned_generated_values = {}
         aligned_reference_values = {}
 
@@ -814,34 +1194,30 @@ def handle_ordered_comparisons(
         generated_hvac_ids = [hvac["id"] for hvac in generated_hvacs]
 
         # Populate data for each zone individually and ensure correct alignment via object mapping
-        for generated_hvac in generated_hvacs:
-            generated_hvac_id = generated_hvac["id"]
-            reference_hvac_id = object_id_map[generated_hvac_id]
+        for generated_boiler in generated_hvacs:
+            generated_boiler_id = generated_boiler["id"]
+            reference_boiler_id = object_id_map[generated_boiler_id]
 
             hvac_data_path = json_key_path[
-                (
-                    json_key_path.index(
-                        "].",
-                        json_key_path.index(
-                            "heating_ventilating_air_conditioning_systems"
-                        ),
-                    )
-                    + 2
-                ) :
+                json_key_path.index(
+                    "].",
+                    json_key_path.index("heating_ventilating_air_conditioning_systems"),
+                )
+                + 2 :
             ]
-            generated_value = find_one(hvac_data_path, generated_hvac)
-            aligned_generated_values[generated_hvac_id] = generated_value
+            generated_value = find_one(hvac_data_path, generated_boiler)
+            aligned_generated_values[generated_boiler_id] = generated_value
             # Extract values from aligned zones using the specified key path
             aligned_reference_value = find_one(
                 json_key_path.replace(
                     "heating_ventilating_air_conditioning_systems[*]",
-                    f'heating_ventilating_air_conditioning_systems[*][?(@.id="{reference_hvac_id}")]',
+                    f'heating_ventilating_air_conditioning_systems[*][?(@.id="{reference_boiler_id}")]',
                 ),
                 reference_json,
                 None,
             )
 
-            aligned_reference_values[generated_hvac_id] = aligned_reference_value
+            aligned_reference_values[generated_boiler_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
             warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
@@ -855,11 +1231,243 @@ def handle_ordered_comparisons(
         )
         errors.extend(general_comparison_errors)
 
+    elif "boilers[" in json_key_path:
+        aligned_generated_values = {}
+        aligned_reference_values = {}
+
+        generated_boilers = find_all(
+            json_key_path[
+                : json_key_path.index("].", json_key_path.index("boilers")) + 1
+            ],
+            generated_json,
+        )
+        generated_boiler_ids = [boiler["id"] for boiler in generated_boilers]
+
+        for generated_boiler in generated_boilers:
+            generated_boiler_id = generated_boiler["id"]
+            reference_boiler_id = object_id_map[generated_boiler_id]
+
+            boiler_data_path = json_key_path[
+                json_key_path.index("].", json_key_path.index("boilers")) + 2 :
+            ]
+            generated_value = find_one(boiler_data_path, generated_boiler)
+            aligned_generated_values[generated_boiler_id] = generated_value
+
+            aligned_reference_value = find_one(
+                json_key_path.replace(
+                    "boilers[*]",
+                    f'boilers[*][?(@.id="{reference_boiler_id}")]',
+                ),
+                reference_json,
+                None,
+            )
+
+            aligned_reference_values[generated_boiler_id] = aligned_reference_value
+
+        if all(value is None for value in aligned_generated_values.values()):
+            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            return warnings, errors
+
+        general_comparison_warnings, general_comparison_errors = compare_json_values(
+            path_spec,
+            aligned_generated_values,
+            aligned_reference_values,
+            generated_boiler_ids,
+        )
+        errors.extend(general_comparison_errors)
+
+    elif "chillers[" in json_key_path:
+        aligned_generated_values = {}
+        aligned_reference_values = {}
+
+        generated_chillers = find_all(
+            json_key_path[
+                : json_key_path.index("].", json_key_path.index("chillers")) + 1
+            ],
+            generated_json,
+        )
+        generated_chiller_ids = [chiller["id"] for chiller in generated_chillers]
+
+        for generated_chiller in generated_chillers:
+            generated_chiller_id = generated_chiller["id"]
+            reference_chiller_id = object_id_map[generated_chiller_id]
+
+            chiller_data_path = json_key_path[
+                json_key_path.index("].", json_key_path.index("chillers")) + 2 :
+            ]
+            generated_value = find_one(chiller_data_path, generated_chiller)
+            aligned_generated_values[generated_chiller_id] = generated_value
+
+            aligned_reference_value = find_one(
+                json_key_path.replace(
+                    "chillers[*]",
+                    f'chillers[*][?(@.id="{reference_chiller_id}")]',
+                ),
+                reference_json,
+                None,
+            )
+
+            aligned_reference_values[generated_chiller_id] = aligned_reference_value
+
+        if all(value is None for value in aligned_generated_values.values()):
+            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            return warnings, errors
+
+        general_comparison_warnings, general_comparison_errors = compare_json_values(
+            path_spec,
+            aligned_generated_values,
+            aligned_reference_values,
+            generated_chiller_ids,
+        )
+        errors.extend(general_comparison_errors)
+
+    elif "heat_rejections[" in json_key_path:
+        aligned_generated_values = {}
+        aligned_reference_values = {}
+
+        generated_heat_rejections = find_all(
+            json_key_path[
+                : json_key_path.index("].", json_key_path.index("heat_rejections")) + 1
+            ],
+            generated_json,
+        )
+        generated_heat_rejection_ids = [
+            heat_rejection["id"] for heat_rejection in generated_heat_rejections
+        ]
+
+        for generated_heat_rejection in generated_heat_rejections:
+            generated_heat_rejection_id = generated_heat_rejection["id"]
+            reference_heat_rejection_id = object_id_map[generated_heat_rejection_id]
+
+            heat_rejection_data_path = json_key_path[
+                json_key_path.index("].", json_key_path.index("heat_rejections")) + 2 :
+            ]
+            generated_value = find_one(
+                heat_rejection_data_path, generated_heat_rejection
+            )
+            aligned_generated_values[generated_heat_rejection_id] = generated_value
+
+            aligned_reference_value = find_one(
+                json_key_path.replace(
+                    "heat_rejections[*]",
+                    f'heat_rejections[*][?(@.id="{reference_heat_rejection_id}")]',
+                ),
+                reference_json,
+                None,
+            )
+
+            aligned_reference_values[
+                generated_heat_rejection_id
+            ] = aligned_reference_value
+
+        if all(value is None for value in aligned_generated_values.values()):
+            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            return warnings, errors
+
+        general_comparison_warnings, general_comparison_errors = compare_json_values(
+            path_spec,
+            aligned_generated_values,
+            aligned_reference_values,
+            generated_heat_rejection_ids,
+        )
+        errors.extend(general_comparison_errors)
+
+    elif "fluid_loops[" in json_key_path:
+        aligned_generated_values = {}
+        aligned_reference_values = {}
+
+        generated_fluid_loops = find_all(
+            json_key_path[
+                : json_key_path.index("].", json_key_path.index("fluid_loops")) + 1
+            ],
+            generated_json,
+        )
+        generated_fluid_loop_ids = [
+            fluid_loop["id"] for fluid_loop in generated_fluid_loops
+        ]
+
+        for generated_fluid_loop in generated_fluid_loops:
+            generated_fluid_loop_id = generated_fluid_loop["id"]
+            reference_fluid_loop_id = object_id_map[generated_fluid_loop_id]
+
+            fluid_loop_data_path = json_key_path[
+                json_key_path.index("].", json_key_path.index("fluid_loops")) + 2 :
+            ]
+            generated_value = find_one(fluid_loop_data_path, generated_fluid_loop)
+            aligned_generated_values[generated_fluid_loop_id] = generated_value
+
+            aligned_reference_value = find_one(
+                json_key_path.replace(
+                    "fluid_loops[*]",
+                    f'fluid_loops[*][?(@.id="{reference_fluid_loop_id}")]',
+                ),
+                reference_json,
+                None,
+            )
+
+            aligned_reference_values[generated_fluid_loop_id] = aligned_reference_value
+
+        if all(value is None for value in aligned_generated_values.values()):
+            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            return warnings, errors
+
+        general_comparison_warnings, general_comparison_errors = compare_json_values(
+            path_spec,
+            aligned_generated_values,
+            aligned_reference_values,
+            generated_fluid_loop_ids,
+        )
+        errors.extend(general_comparison_errors)
+
+    elif "pumps[" in json_key_path:
+        aligned_generated_values = {}
+        aligned_reference_values = {}
+
+        generated_pumps = find_all(
+            json_key_path[
+                : json_key_path.index("].", json_key_path.index("pumps")) + 1
+            ],
+            generated_json,
+        )
+        generated_pump_ids = [pump["id"] for pump in generated_pumps]
+
+        for generated_pump in generated_pumps:
+            generated_pump_id = generated_pump["id"]
+            reference_pump_id = object_id_map[generated_pump_id]
+
+            pump_data_path = json_key_path[
+                json_key_path.index("].", json_key_path.index("pumps")) + 2 :
+            ]
+            generated_value = find_one(pump_data_path, generated_pump)
+            aligned_generated_values[generated_pump_id] = generated_value
+
+            aligned_reference_value = find_one(
+                json_key_path.replace(
+                    "pumps[*]",
+                    f'pumps[*][?(@.id="{reference_pump_id}")]',
+                ),
+                reference_json,
+                None,
+            )
+
+            aligned_reference_values[generated_pump_id] = aligned_reference_value
+
+        if all(value is None for value in aligned_generated_values.values()):
+            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            return warnings, errors
+
+        general_comparison_warnings, general_comparison_errors = compare_json_values(
+            path_spec,
+            aligned_generated_values,
+            aligned_reference_values,
+            generated_pump_ids,
+        )
+        errors.extend(general_comparison_errors)
+
     return warnings, errors
 
 
 def handle_unordered_comparisons(path_spec, reference_json, generated_json):
-
     json_key_path = path_spec["json-key-path"]
 
     warnings = []
@@ -916,11 +1524,12 @@ def run_file_comparison(spec_file, generated_json_file, reference_json_file):
     # Once maps have been defined, iterate through the test specs
     for path_spec in json_test_key_paths:
         json_key_path = path_spec["json-key-path"]
+        special_case = path_spec.get("special-case")
 
         # Handle any cases that require special logic
-        if json_key_path.split(".")[-1] in ["design_electric_power", "azimuth"]:
+        if special_case:
             special_case_warnings, special_case_errors = handle_special_cases(
-                json_key_path, object_id_map, generated_json, reference_json
+                path_spec, object_id_map, generated_json, reference_json
             )
             warnings.extend(special_case_warnings)
             errors.extend(special_case_errors)
@@ -936,22 +1545,29 @@ def run_file_comparison(spec_file, generated_json_file, reference_json_file):
                     "surfaces[",
                     "terminals[",
                     "heating_ventilating_air_conditioning_systems[",
+                    "boilers[",
+                    "chillers[",
+                    "heat_rejections[",
+                    "fluid_loops[",
+                    "pumps[",
                 ]
             ):
-                ordered_comparison_warnings, ordered_comparison_errors = (
-                    handle_ordered_comparisons(
-                        path_spec, object_id_map, reference_json, generated_json
-                    )
+                (
+                    ordered_comparison_warnings,
+                    ordered_comparison_errors,
+                ) = handle_ordered_comparisons(
+                    path_spec, object_id_map, reference_json, generated_json
                 )
                 warnings.extend(ordered_comparison_warnings)
                 errors.extend(ordered_comparison_errors)
 
             # Handle comparison of data that is not dependent on order
             else:
-                unordered_comparison_warnings, unordered_comparison_errors = (
-                    handle_unordered_comparisons(
-                        path_spec, reference_json, generated_json
-                    )
+                (
+                    unordered_comparison_warnings,
+                    unordered_comparison_errors,
+                ) = handle_unordered_comparisons(
+                    path_spec, reference_json, generated_json
                 )
                 warnings.extend(unordered_comparison_warnings)
                 errors.extend(unordered_comparison_errors)

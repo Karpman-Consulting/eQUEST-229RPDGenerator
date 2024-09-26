@@ -74,6 +74,7 @@ def write_rpd_json_from_inp(inp_path_str):
         bdl_path = temp_inp_path.with_suffix(".BDL")
         json_path = temp_inp_path.with_suffix(".json")
         doe23_path = Path(Config.DOE23_DATA_PATH) / "DOE23"
+        # TODO Correct this path to the eQUEST installation path when BDLCIO32 issue is resolved
         test_bdlcio32_path = Path(__file__).parents[1] / "test" / "BDLCIO32.dll"
 
         # Process the inp file to create the BDL file with Diagnostic Comments (defaults and evaluated values) in the temporary directory
@@ -153,10 +154,10 @@ def generate_rmds(bdl_input_reader: ModelInputReader, selected_models: list):
         for command in COMMAND_PROCESSING_ORDER:
             special_handling = {}
             if command == "ZONE":
-                special_handling["ZONE"] = (
-                    lambda obj, cmd_dict: rmd.space_map.setdefault(
-                        cmd_dict["SPACE"], obj
-                    )
+                special_handling[
+                    "ZONE"
+                ] = lambda obj, cmd_dict: rmd.space_map.setdefault(
+                    cmd_dict["SPACE"], obj
                 )
             _process_command_group(
                 command,
