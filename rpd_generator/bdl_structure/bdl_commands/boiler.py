@@ -118,6 +118,7 @@ class Boiler(BaseNode):
                 output_data[key] = self.try_convert_units(
                     output_data[key], "Btu/hr", "MMBtu/hr"
                 )
+
         self.design_capacity = self.try_abs(
             output_data.get("Boilers - Design Parameters - Capacity")
         )

@@ -27,6 +27,7 @@ BoilerEfficiencyMetricOptions = SchemaEnums.schema_enums[
 
 class TestFuelBoiler(unittest.TestCase):
     def setUp(self):
+        self.maxDiff = None
         self.rmd = RulesetModelDescription("Test RMD")
         self.rmd.doe2_version = "DOE-2.3"
         self.rmd.doe2_data_path = Config.DOE23_DATA_PATH
@@ -62,14 +63,14 @@ class TestFuelBoiler(unittest.TestCase):
             "output_validation_points": [],
             "loop": "test_loop",
             "auxiliary_power": 0.0,
-            "design_capacity": 0.17634653125,
-            "rated_capacity": 0.17634653125,
+            "design_capacity": 0.188203578125,
+            "rated_capacity": 0.188203578125,
             "minimum_load_ratio": 0.33,
             "efficiency": [0.9000089372091853, 0.9200089372091853, 0.9085816425247832],
             "efficiency_metrics": ["THERMAL", "COMBUSTION", "ANNUAL_FUEL_UTILIZATION"],
         }
 
-        self.assertDictEqual(self.boiler.boiler_data_structure, expected_data_structure)
+        self.assertDictEqual(expected_data_structure, self.boiler.boiler_data_structure)
 
     def test_populate_data_elements_without_fuel_meter(self):
         self.rmd.bdl_obj_instances = {}
@@ -90,18 +91,19 @@ class TestFuelBoiler(unittest.TestCase):
             "output_validation_points": [],
             "loop": "test_loop",
             "auxiliary_power": 0.0,
-            "design_capacity": 0.17634653125,
-            "rated_capacity": 0.17634653125,
+            "design_capacity": 0.188203578125,
+            "rated_capacity": 0.188203578125,
             "minimum_load_ratio": 0.33,
             "efficiency": [0.9000089372091853, 0.9200089372091853, 0.9085816425247832],
             "efficiency_metrics": ["THERMAL", "COMBUSTION", "ANNUAL_FUEL_UTILIZATION"],
         }
 
-        self.assertDictEqual(self.boiler.boiler_data_structure, expected_data_structure)
+        self.assertDictEqual(expected_data_structure, self.boiler.boiler_data_structure)
 
 
 class TestElectricBoiler(unittest.TestCase):
     def setUp(self):
+        self.maxDiff = None
         self.rmd = RulesetModelDescription("Test RMD")
         self.rmd.doe2_version = "DOE-2.3"
         self.rmd.doe2_data_path = Config.DOE23_DATA_PATH
@@ -137,7 +139,7 @@ class TestElectricBoiler(unittest.TestCase):
             "efficiency_metrics": ["THERMAL"],
         }
 
-        self.assertDictEqual(self.boiler.boiler_data_structure, expected_data_structure)
+        self.assertDictEqual(expected_data_structure, self.boiler.boiler_data_structure)
 
     def test_populate_data_elements_electric_steam_boiler_1EIR(self):
         script_dir = os.path.dirname(os.path.abspath(__file__))

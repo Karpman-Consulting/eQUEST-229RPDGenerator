@@ -105,47 +105,26 @@ class Chiller(BaseNode):
 
         if not absorp_or_engine:
             self.energy_source_type = EnergySourceOptions.ELECTRICITY
-
-            # This value comes out in tons of refrigeration
-            self.design_capacity = self.try_float(
-                output_data.get("Elec Chillers - Design Parameters - Capacity")
-            )
-
-            # This value comes out in Btu/hr
-            self.rated_capacity = self.try_float(
-                output_data.get(
-                    "Elec Chillers - Normalized (ARI) Capacity at Peak (Btu/hr)"
-                )
-            )
-
-            self.design_flow_evaporator = self.try_float(
-                output_data.get("Elec Chillers - Design Parameters - Flow")
-            )
-
-            self.design_flow_condenser = self.try_float(
-                output_data.get("Elec Chillers - Design Parameters - Condenser Flow")
-            )
-
         else:
-            # This value comes out in tons of refrigeration
-            self.design_capacity = self.try_float(
-                output_data.get("Abs/Eng Chillers - Design Parameters - Capacity")
-            )
+            pass  # TODO: Add energy source type for absorp_or_engine
 
-            # This value comes out in Btu/hr
-            self.rated_capacity = self.try_float(
-                output_data.get(
-                    "Abs/Eng Chillers - Normalized (ARI) Capacity at Peak (Btu/hr)"
-                )
-            )
+        # This value comes out in tons of refrigeration
+        self.design_capacity = self.try_float(
+            output_data.get("Design Parameters - Capacity")
+        )
 
-            self.design_flow_evaporator = self.try_float(
-                output_data.get("Abs/Eng Chillers - Design Parameters - Flow")
-            )
+        # This value comes out in Btu/hr
+        self.rated_capacity = self.try_float(
+            output_data.get("Normalized (ARI) Capacity at Peak (Btu/hr)")
+        )
 
-            self.design_flow_condenser = self.try_float(
-                output_data.get("Abs/Eng Chillers - Design Parameters - Condenser Flow")
-            )
+        self.design_flow_evaporator = self.try_float(
+            output_data.get("Design Parameters - Flow")
+        )
+
+        self.design_flow_condenser = self.try_float(
+            output_data.get("Design Parameters - Condenser Flow")
+        )
 
         self.rated_leaving_evaporator_temperature = self.try_float(
             self.keyword_value_pairs.get(BDL_ChillerKeywords.RATED_CHW_T)
@@ -182,18 +161,28 @@ class Chiller(BaseNode):
 
         if not absorp_or_engine:
             requests = {
-                "Elec Chillers - Normalized (ARI) Capacity at Peak (Btu/hr)": (
+                "Normalized (ARI) Capacity at Peak (Btu/hr)": (
                     2318901,
                     self.u_name,
                     "",
                 ),
-                "Elec Chillers - Design Parameters - Capacity": (
+                "Normalized (ARI) Leaving Chilled Water Temperature (°F)": (
+                    2318902,
+                    self.u_name,
+                    "",
+                ),
+                "Normalized (ARI) Entering Condenser Water Temperature (°F)": (
+                    2318903,
+                    self.u_name,
+                    "",
+                ),
+                "Design Parameters - Capacity": (
                     2318003,
                     self.u_name,
                     "",
                 ),
-                "Elec Chillers - Design Parameters - Flow": (2318004, self.u_name, ""),
-                "Elec Chillers - Design Parameters - Condenser Flow": (
+                "Design Parameters - Flow": (2318004, self.u_name, ""),
+                "Design Parameters - Condenser Flow": (
                     2318009,
                     self.u_name,
                     "",
@@ -201,22 +190,32 @@ class Chiller(BaseNode):
             }
         else:
             requests = {
-                "Abs/Eng Chillers - Normalized (ARI) Capacity at Peak (Btu/hr)": (
+                "Normalized (ARI) Capacity at Peak (Btu/hr)": (
                     2319901,
                     self.u_name,
                     "",
                 ),
-                "Abs/Eng Chillers - Design Parameters - Capacity": (
+                "Normalized (ARI) Leaving Chilled Water Temperature (°F)": (
+                    2319902,
+                    self.u_name,
+                    "",
+                ),
+                "Normalized (ARI) Entering Condenser Water Temperature (°F)": (
+                    2319903,
+                    self.u_name,
+                    "",
+                ),
+                "Design Parameters - Capacity": (
                     2319003,
                     self.u_name,
                     "",
                 ),
-                "Abs/Eng Chillers - Design Parameters - Flow": (
+                "Design Parameters - Flow": (
                     2319004,
                     self.u_name,
                     "",
                 ),
-                "Abs/Eng Chillers - Design Parameters - Condenser Flow": (
+                "Design Parameters - Condenser Flow": (
                     2319010,
                     self.u_name,
                     "",
