@@ -90,6 +90,14 @@ class Chiller(BaseNode):
 
         requests = self.get_output_requests(absorp_or_engine)
         output_data = self.get_output_data(requests)
+        for key in [
+            "Design Parameters - Capacity",
+            "Normalized (ARI) Capacity at Peak (Btu/hr)",
+        ]:
+            if key in output_data:
+                output_data[key] = self.try_convert_units(
+                    output_data[key], "Btu/hr", "MMBtu/hr"
+                )
 
         self.cooling_loop = self.keyword_value_pairs.get(BDL_ChillerKeywords.CHW_LOOP)
 

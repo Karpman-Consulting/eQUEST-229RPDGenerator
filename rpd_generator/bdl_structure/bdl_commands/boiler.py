@@ -148,11 +148,12 @@ class Boiler(BaseNode):
             boiler_f_i_r = output_data.get(
                 "Boilers - Design Parameters - Fuel Input Ratio"
             )
-            if boiler_f_i_r is not None and boiler_f_i_r != 0:
+            if boiler_f_i_r:
                 self.efficiency.append(1 / boiler_f_i_r)
                 self.efficiency_metrics.append(BoilerEfficiencyMetricOptions.THERMAL)
                 self.efficiency.append(1 / boiler_f_i_r + 0.02)
                 self.efficiency_metrics.append(BoilerEfficiencyMetricOptions.COMBUSTION)
+                # EQUATIONS DERIVED FROM PRM REFERENCE MANUAL
                 if 0.825 > self.efficiency[0] > 0.8:
                     self.efficiency.append((self.efficiency[0] - 0.725) / 0.1)
                     self.efficiency_metrics.append(
