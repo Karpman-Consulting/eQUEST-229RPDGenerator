@@ -87,6 +87,13 @@ class Pump(BaseNode):
             self.speed_control = [
                 self.pump_speed_control_map.get(pump_cap_ctrl)
             ] * self.qty
+        input_design_flow = self.try_float(
+            self.keyword_value_pairs.get(BDL_PumpKeywords.FLOW)
+        )
+        if input_design_flow:
+            self.is_flow_sized_based_on_design_day = [False] * self.qty
+        else:
+            self.is_flow_sized_based_on_design_day = [True] * self.qty
 
     def get_output_requests(self):
         """Get the output requests for the pump object."""
