@@ -143,6 +143,7 @@ class BDLEnums:
                 "DESIGN-COND-T",
                 "CHW-PUMP",
                 "CW-PUMP",
+                "MIN-RATIO",
             ]
         ),
         "CirculationLoopTypes": _ListEnum(
@@ -172,7 +173,7 @@ class BDLEnums:
         "CirculationLoopOperationOptions": _ListEnum(
             [
                 "STANDBY",
-                "DEMAND-ONLY",
+                "DEMAND",
                 "SNAP",
                 "SCHEDULED",
                 "SUBHOUR-DEMAND",
@@ -379,11 +380,20 @@ class BDLEnums:
                 "DAYS",
             ]
         ),
+        "PumpCapacityControlOptions": _ListEnum(
+            [
+                "ONE-SPEED-PUMP",
+                "TWO-SPEED-PUMP",
+                "VAR-SPEED-PUMP",
+            ]
+        ),
         "PumpKeywords": _ListEnum(
             [
                 "NUMBER",
                 "PUMP-KW",
                 "HEAD",
+                "CAP-CTRL",
+                "FLOW",
             ]
         ),
         "ScheduleTypes": _ListEnum(
@@ -478,6 +488,15 @@ class BDLEnums:
                 "ELEC-DX",
                 "CHILLED-WATER",
                 "NONE",
+            ]
+        ),
+        "SystemCoolControlOptions": _ListEnum(
+            [
+                "CONSTANT",
+                "WARMEST",
+                "COLDEST",
+                "RESET",
+                "SCHEDULED",
             ]
         ),
         "SystemTypes": _ListEnum(
@@ -603,6 +622,7 @@ class BDLEnums:
                 "TYPE",
                 "HEAT-SOURCE",
                 "COOL-SOURCE",
+                "PHW-LOOP",
                 "HW-LOOP",
                 "CHW-LOOP",
                 "CW-LOOP",
@@ -617,6 +637,9 @@ class BDLEnums:
                 "HEATING-CAPACITY",
                 "COOLING-CAPACITY",
                 "COOL-SH-CAP",
+                "COOL-CONTROL",
+                "COOL-MIN-RESET-T",
+                "COOL-MAX-RESET-T",
                 "HUMIDIFIER-TYPE",
                 "HEAT-T",
                 "PREHEAT-SOURCE",
@@ -624,8 +647,12 @@ class BDLEnums:
                 "PREHEAT-T",
                 "SUPPLY-FLOW",
                 "SUPPLY-STATIC",
+                "SUPPLY-MTR-EFF",
+                "SUPPLY-MECH-EFF",
                 "RETURN-FLOW",
                 "RETURN-STATIC",
+                "RETURN-MTR-EFF",
+                "RETURN-MECH-EFF",
                 "RETURN-AIR-PATH",
                 "HSUPPLY-FLOW",
                 "HSUPPLY-STATIC",
