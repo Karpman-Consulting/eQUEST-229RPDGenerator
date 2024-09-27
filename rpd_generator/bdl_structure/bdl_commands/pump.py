@@ -6,14 +6,22 @@ from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 PumpSpecificationMethodOptions = SchemaEnums.schema_enums[
     "PumpSpecificationMethodOptions"
 ]
+PumpSpeedControlOptions = SchemaEnums.schema_enums["PumpSpeedControlOptions"]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_PumpKeywords = BDLEnums.bdl_enums["PumpKeywords"]
+BDL_PumpCapacityControlOptions = BDLEnums.bdl_enums["PumpCapacityControlOptions"]
 
 
 class Pump(BaseNode):
     """Pump object in the tree."""
 
     bdl_command = BDL_Commands.PUMP
+
+    pump_speed_control_map = {
+        BDL_PumpCapacityControlOptions.ONE_SPEED_PUMP: PumpSpeedControlOptions.FIXED_SPEED,
+        BDL_PumpCapacityControlOptions.TWO_SPEED_PUMP: PumpSpeedControlOptions.TWO_SPEED,
+        BDL_PumpCapacityControlOptions.VAR_SPEED_PUMP: PumpSpeedControlOptions.VARIABLE_SPEED,
+    }
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
@@ -74,6 +82,11 @@ class Pump(BaseNode):
             self.output_data.get("Pump - Motor Eff (frac)")
         ] * self.qty
         self.design_flow = [self.output_data.get("Pump - Flow (gal/min)")] * self.qty
+        pump_cap_ctrl = self.keyword_value_pairs.get(BDL_PumpKeywords.CAP_CTRL)
+        if pump_cap_ctrl:
+            self.speed_control = [
+                self.pump_speed_control_map.get(pump_cap_ctrl)
+            ] * self.qty
         input_design_flow = self.try_float(
             self.keyword_value_pairs.get(BDL_PumpKeywords.FLOW)
         )
