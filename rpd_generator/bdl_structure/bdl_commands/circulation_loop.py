@@ -20,7 +20,6 @@ BDL_CirculationLoopTemperatureResetOptions = BDLEnums.bdl_enums[
 ]
 
 
-# noinspection PyUnresolvedReferences
 class CirculationLoop(BaseNode):
     """CirculationLoop object in the tree."""
 
@@ -43,7 +42,7 @@ class CirculationLoop(BaseNode):
 
     loop_operation_map = {
         BDL_CirculationLoopOperationOptions.STANDBY: FluidLoopOperationOptions.INTERMITTENT,
-        BDL_CirculationLoopOperationOptions.DEMAND_ONLY: FluidLoopOperationOptions.INTERMITTENT,
+        BDL_CirculationLoopOperationOptions.DEMAND: FluidLoopOperationOptions.INTERMITTENT,
         BDL_CirculationLoopOperationOptions.SNAP: FluidLoopOperationOptions.INTERMITTENT,
         BDL_CirculationLoopOperationOptions.SCHEDULED: FluidLoopOperationOptions.SCHEDULED,
         BDL_CirculationLoopOperationOptions.SUBHOUR_DEMAND: FluidLoopOperationOptions.INTERMITTENT,
@@ -80,20 +79,20 @@ class CirculationLoop(BaseNode):
         self.tanks = {}
 
         # FluidLoopDesignAndControl data elements with no children [cooling, heating]
-        self.design_supply_temperature = [None, None]
-        self.design_return_temperature = [None, None]
-        self.is_sized_using_coincident_loads = [None, None]
-        self.minimum_flow_fraction = [None, None]
-        self.operation = [None, None]
-        self.operation_schedule = [None, None]
-        self.flow_control = [None, None]
-        self.temperature_reset_type = [None, None]
-        self.outdoor_high_for_loop_supply_reset_temperature = [None, None]
-        self.outdoor_low_for_loop_supply_reset_temperature = [None, None]
-        self.loop_supply_temperature_at_outdoor_high = [None, None]
-        self.loop_supply_temperature_at_outdoor_low = [None, None]
-        self.loop_supply_temperature_at_low_load = [None, None]
-        self.has_integrated_waterside_economizer = [None, None]
+        self.design_supply_temperature: list = [None, None]
+        self.design_return_temperature: list = [None, None]
+        self.is_sized_using_coincident_load: list = [None, None]
+        self.minimum_flow_fraction: list = [None, None]
+        self.operation: list = [None, None]
+        self.operation_schedule: list = [None, None]
+        self.flow_control: list = [None, None]
+        self.temperature_reset_type: list = [None, None]
+        self.outdoor_high_for_loop_supply_reset_temperature: list = [None, None]
+        self.outdoor_low_for_loop_supply_reset_temperature: list = [None, None]
+        self.loop_supply_temperature_at_outdoor_high: list = [None, None]
+        self.loop_supply_temperature_at_outdoor_low: list = [None, None]
+        self.loop_supply_temperature_at_low_load: list = [None, None]
+        self.has_integrated_waterside_economizer: list = [None, None]
 
         # ServiceWaterHeatingDistributionSystem data elements with no children
         self.swh_design_supply_temperature = None
@@ -121,16 +120,13 @@ class CirculationLoop(BaseNode):
     def __repr__(self):
         return f"CirculationLoop(u_name='{self.u_name}')"
 
-    # noinspection PyUnresolvedReferences
     def populate_data_elements(self):
         """Populate data elements from the keyword_value pairs returned from model_input_reader"""
 
         # Assign pump data elements populated from the circulation loop keyword value pairs
         pump_name = self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_PUMP)
         if pump_name is not None:
-            pump = self.rmd.bdl_obj_instances.get(pump_name)
-            if pump is not None:
-                pump.loop_or_piping = [self.u_name] * pump.qty
+            self.populate_pump_data_elements(pump_name)
 
         self.circulation_loop_type = self.determine_circ_loop_type()
         if self.circulation_loop_type in ["FluidLoop", "SecondaryFluidLoop"]:
@@ -171,7 +167,7 @@ class CirculationLoop(BaseNode):
         design_and_control_elements = [
             "design_supply_temperature",
             "design_return_temperature",
-            "is_sized_using_coincident_loads",
+            "is_sized_using_coincident_load",
             "minimum_flow_fraction",
             "operation",
             "operation_schedule",
@@ -326,7 +322,7 @@ class CirculationLoop(BaseNode):
             self.design_return_temperature[1] = (
                 self.design_supply_temperature[1] - loop_design_dt
             )
-        self.is_sized_using_coincident_loads[1] = self.sizing_option_map.get(
+        self.is_sized_using_coincident_load[1] = self.sizing_option_map.get(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.SIZING_OPTION)
         )
         self.minimum_flow_fraction[1] = self.try_float(
@@ -355,7 +351,7 @@ class CirculationLoop(BaseNode):
             self.design_return_temperature[0] = (
                 self.design_supply_temperature[0] + loop_design_dt
             )
-        self.is_sized_using_coincident_loads[0] = self.sizing_option_map.get(
+        self.is_sized_using_coincident_load[0] = self.sizing_option_map.get(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.SIZING_OPTION)
         )
         self.minimum_flow_fraction[0] = self.try_float(
@@ -384,7 +380,7 @@ class CirculationLoop(BaseNode):
             self.design_return_temperature[0] = (
                 self.design_supply_temperature[0] + loop_design_dt
             )
-        self.is_sized_using_coincident_loads[0] = self.sizing_option_map.get(
+        self.is_sized_using_coincident_load[0] = self.sizing_option_map.get(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.SIZING_OPTION)
         )
         self.minimum_flow_fraction[0] = self.try_float(
@@ -413,7 +409,7 @@ class CirculationLoop(BaseNode):
             self.design_return_temperature[0] = (
                 self.design_supply_temperature[0] + loop_design_dt
             )
-        self.is_sized_using_coincident_loads[0] = self.sizing_option_map.get(
+        self.is_sized_using_coincident_load[0] = self.sizing_option_map.get(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.SIZING_OPTION)
         )
         self.minimum_flow_fraction[0] = self.try_float(
@@ -435,7 +431,7 @@ class CirculationLoop(BaseNode):
             self.design_return_temperature[1] = (
                 self.design_supply_temperature[1] - loop_design_dt
             )
-        self.is_sized_using_coincident_loads[1] = self.sizing_option_map.get(
+        self.is_sized_using_coincident_load[1] = self.sizing_option_map.get(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.SIZING_OPTION)
         )
         self.minimum_flow_fraction[1] = self.try_float(
@@ -463,3 +459,19 @@ class CirculationLoop(BaseNode):
 
     def populate_service_water_piping(self):
         pass
+
+    def populate_pump_data_elements(self, pump_name):
+        pump = self.rmd.bdl_obj_instances.get(pump_name)
+        if not pump:
+            return
+
+        pump.loop_or_piping = [self.u_name] * pump.qty
+        for i in range(pump.qty):
+            if pump.is_flow_sized_based_on_design_day[i]:
+                # Override is_flow_sized_based_on_design_day if the circulation loop is not sized based on design loads
+                pump.is_flow_sized_based_on_design_day[i] = (
+                    self.keyword_value_pairs.get(
+                        BDL_CirculationLoopKeywords.SIZING_OPTION
+                    )
+                    != BDL_CirculationLoopSizingOptions.PRIMARY
+                )
