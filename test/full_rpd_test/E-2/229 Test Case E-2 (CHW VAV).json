@@ -123810,7 +123810,7 @@
                         "id": "Condenser Water Loop CondensingDesign/Control",
                         "design_supply_temperature": 21.111111111111143,
                         "design_return_temperature": 26.666666666666686,
-                        "is_sized_using_coincident_load": false,
+                        "is_sized_using_coincident_load": true,
                         "minimum_flow_fraction": 0.05,
                         "temperature_reset_type": "NO_RESET"
                     },
@@ -124009,7 +124009,7 @@
                     "range": 5.555555555555555,
                     "approach": 3.8888888888888893,
                     "fan_speed_control": "VARIABLE_SPEED",
-                    "rated_water_flowrate": 4.461292394638063,
+                    "rated_water_flowrate": 4.4612909507751475,
                     "leaving_water_setpoint_temperature": 21.111111111111143
                 }
             ],
