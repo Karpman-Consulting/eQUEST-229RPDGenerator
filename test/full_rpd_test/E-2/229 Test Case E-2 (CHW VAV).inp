@@ -1229,6 +1229,7 @@ $ ---------------------------------------------------------
    ..
 "Condenser Water Loop" = CIRCULATION-LOOP
    TYPE             = CW
+   SIZING-OPTION    = COINCIDENT
    DESIGN-COOL-T    = 70
    COOL-SETPT-T     = 70
    LOOP-PUMP        = "Condenser Water Pump"

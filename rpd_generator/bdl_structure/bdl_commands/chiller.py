@@ -150,6 +150,10 @@ class Chiller(BaseNode):
             self.keyword_value_pairs.get(BDL_ChillerKeywords.DESIGN_COND_T)
         )
 
+        self.minimum_load_ratio = self.try_float(
+            self.keyword_value_pairs.get(BDL_ChillerKeywords.MIN_RATIO)
+        )
+
         # Assign pump data elements populated from the boiler keyword value pairs
         chw_pump_name = self.keyword_value_pairs.get(BDL_ChillerKeywords.CHW_PUMP)
         if chw_pump_name is not None:
