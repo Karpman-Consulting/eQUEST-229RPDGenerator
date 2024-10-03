@@ -55,6 +55,7 @@ class BDLEnums:
                 "CHILLER",
                 "DW-HEATER",
                 "HEAT-REJECTION",
+                "GROUND-LOOP-HX",
                 "FLOOR",
                 "SYSTEM",
                 "ZONE",
@@ -111,6 +112,7 @@ class BDLEnums:
                 "HW-LOOP",
                 "FUEL-METER",
                 "MIN-RATIO",
+                "HW-FLOW-CTRL",
             ]
         ),
         "ChillerTypes": _ListEnum(
@@ -131,19 +133,32 @@ class BDLEnums:
                 "STRAINER-CYCLE",
             ]
         ),
+        "FlowControlOptions": _ListEnum(
+            [
+                "CONSTANT-FLOW",
+                "VARIABLE-FLOW",
+            ]
+        ),
         "ChillerKeywords": _ListEnum(
             [
                 "TYPE",
-                "CHW-LOOP",
-                "CW-LOOP",
-                "HTREC-LOOP",
                 "RATED-CHW-T",
                 "RATED-COND-T",
                 "DESIGN-CHW-T",
                 "DESIGN-COND-T",
+                "MIN-RATIO",
+                "CHW-LOOP",
+                "CW-LOOP",
+                "HW-LOOP",
+                "HTREC-LOOP",
                 "CHW-PUMP",
                 "CW-PUMP",
-                "MIN-RATIO",
+                "HW-PUMP",
+                "HTREC-PUMP",
+                "CHW-FLOW-CTRL",
+                "CW-FLOW-CTRL",
+                "HW-FLOW-CTRL",
+                "HTREC-FLOW-CTRL",
             ]
         ),
         "CirculationLoopTypes": _ListEnum(
@@ -188,12 +203,20 @@ class BDLEnums:
                 "WETBULB-RESET",
             ]
         ),
+        "CirculationLoopSecondaryValveTypes": _ListEnum(
+            [
+                "TWO-WAY",
+                "THREE-WAY",
+            ]
+        ),
         "CirculationLoopKeywords": _ListEnum(
             [
                 "LOOP-PUMP",
+                "LOOP-OPERATION",
                 "TYPE",
                 "SUBTYPE",
                 "PRIMARY-LOOP",
+                "VALVE-TYPE-2ND",
                 "DESIGN-HEAT-T",
                 "DESIGN-COOL-T",
                 "LOOP-DESIGN-DT",
@@ -295,6 +318,7 @@ class BDLEnums:
                 "CW-LOOP",
                 "TYPE",
                 "CW-PUMP",
+                "CW-FLOW-CTRL",
                 "CAPACITY-CTRL",
                 "RATED-RANGE",
                 "RATED-APPROACH",
@@ -378,6 +402,12 @@ class BDLEnums:
                 "TYPE",
                 "MONTHS",
                 "DAYS",
+            ]
+        ),
+        "GroundLoopHXKeywords": _ListEnum(
+            [
+                "CIRCULATION-LOOP",
+                "HX-FLOW-CTRL",
             ]
         ),
         "PumpCapacityControlOptions": _ListEnum(
@@ -483,6 +513,12 @@ class BDLEnums:
                 "DHW-LOOP",
             ]
         ),
+        "SystemHeatingValveTypes": _ListEnum(
+            [
+                "TWO-WAY",
+                "THREE-WAY",
+            ]
+        ),
         "SystemCoolingTypes": _ListEnum(
             [
                 "ELEC-DX",
@@ -497,6 +533,12 @@ class BDLEnums:
                 "COLDEST",
                 "RESET",
                 "SCHEDULED",
+            ]
+        ),
+        "SystemCoolingValveTypes": _ListEnum(
+            [
+                "TWO-WAY",
+                "THREE-WAY",
             ]
         ),
         "SystemTypes": _ListEnum(
@@ -626,6 +668,9 @@ class BDLEnums:
                 "HW-LOOP",
                 "CHW-LOOP",
                 "CW-LOOP",
+                "CHW-VALVE-TYPE",
+                "HW-VALVE-TYPE",
+                "PHW-VALVE-TYPE",
                 "DDS-TYPE",
                 "FAN-CONTROL",
                 "INDOOR-FAN-MODE",
@@ -748,6 +793,12 @@ class BDLEnums:
                 "HEATING/COOLING",
             ]
         ),
+        "ZoneCWValveOptions": _ListEnum(
+            [
+                "YES",
+                "NO",
+            ]
+        ),
         "ZoneKeywords": _ListEnum(
             [
                 "TERMINAL-TYPE",
@@ -776,6 +827,13 @@ class BDLEnums:
                 "ZONE-FAN-FLOW",
                 "ZONE-FAN-CTRL",
                 "ZONE-FAN-RUN",
+                "CHW-LOOP",
+                "CW-LOOP",
+                "WSE-LOOP",
+                "HW-VALVE-TYPE",
+                "CHW-VALVE-TYPE",
+                "CW-VALVE",
+                "WSE-VALVE-TYPE",
             ]
         ),
         "HPSupplementSourceOptions": _ListEnum(

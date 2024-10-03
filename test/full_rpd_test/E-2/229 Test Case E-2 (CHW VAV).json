@@ -956,20 +956,15 @@
                                         "air_energy_recovery": {
                                             "design_latent_effectiveness": 0.5,
                                             "design_sensible_effectiveness": 0.5,
-                                            "exhaust_airflow": 471.9632125399846,
                                             "id": "Baseline System 7 (CHW VAV) AirEnergyRecovery",
                                             "operation": "WHEN_FANS_ON",
-                                            "outdoor_airflow": 471.9632125399846,
                                             "supply_air_temperature_control": "MIXED_AIR_RESET",
                                             "type": "ENTHALPY_HEAT_WHEEL"
                                         },
                                         "demand_control_ventilation_control": "CO2_RETURN_AIR",
                                         "exhaust_fans": [],
                                         "fan_control": "VARIABLE_SPEED_DRIVE",
-                                        "has_fully_ducted_return": true,
                                         "id": "Baseline System 7 (CHW VAV) FanSys",
-                                        "minimum_airflow": 1415.8896727839528,
-                                        "minimum_outdoor_airflow": 471.9632125399846,
                                         "operation_during_unoccupied": "KEEP_OFF",
                                         "relief_fans": [],
                                         "return_fans": [
@@ -123762,8 +123757,9 @@
                         "id": "Hot Water Loop HeatingDesign/Control",
                         "design_supply_temperature": 82.22222222222229,
                         "design_return_temperature": 54.44444444444446,
-                        "is_sized_using_coincident_loads": true,
+                        "is_sized_using_coincident_load": true,
                         "minimum_flow_fraction": 0.25,
+                        "operation": "INTERMITTENT",
                         "temperature_reset_type": "NO_RESET"
                     },
                     "child_loops": [],
@@ -123776,8 +123772,9 @@
                         "id": "Chilled Water Loop (Primary) CoolingDesign/Control",
                         "design_supply_temperature": 6.666666666666686,
                         "design_return_temperature": 13.333333333333371,
-                        "is_sized_using_coincident_loads": true,
+                        "is_sized_using_coincident_load": true,
                         "minimum_flow_fraction": 0.25,
+                        "operation": "INTERMITTENT",
                         "temperature_reset_type": "OUTSIDE_AIR_RESET"
                     },
                     "child_loops": [
@@ -123787,8 +123784,9 @@
                                 "id": "Chilled Water Loop (Secondary) CoolingDesign/Control",
                                 "design_supply_temperature": 6.666666666666686,
                                 "design_return_temperature": 13.333333333333371,
-                                "is_sized_using_coincident_loads": true,
+                                "is_sized_using_coincident_load": true,
                                 "minimum_flow_fraction": 0.25,
+                                "operation": "INTERMITTENT",
                                 "temperature_reset_type": "OUTSIDE_AIR_RESET"
                             },
                             "child_loops": [],
@@ -123805,8 +123803,9 @@
                         "id": "Condenser Water Loop CondensingDesign/Control",
                         "design_supply_temperature": 21.111111111111143,
                         "design_return_temperature": 26.666666666666686,
-                        "is_sized_using_coincident_loads": false,
+                        "is_sized_using_coincident_load": true,
                         "minimum_flow_fraction": 0.05,
+                        "operation": "INTERMITTENT",
                         "temperature_reset_type": "NO_RESET"
                     },
                     "child_loops": [],
@@ -123849,7 +123848,9 @@
                     "design_electric_power": 299.7424602508545,
                     "impeller_efficiency": 0.7699999809265137,
                     "motor_efficiency": 0.5960000157356262,
-                    "design_flow": 0.9976681241989139
+                    "speed_control": "VARIABLE_SPEED",
+                    "design_flow": 0.9976681241989139,
+                    "is_flow_sized_based_on_design_day": true
                 },
                 {
                     "id": "Hot Water Pumps 1",
@@ -123859,7 +123860,9 @@
                     "design_electric_power": 299.7424602508545,
                     "impeller_efficiency": 0.7699999809265137,
                     "motor_efficiency": 0.5960000157356262,
-                    "design_flow": 0.9976681241989139
+                    "speed_control": "VARIABLE_SPEED",
+                    "design_flow": 0.9976681241989139,
+                    "is_flow_sized_based_on_design_day": true
                 },
                 {
                     "id": "CHW Pump (Primary)",
@@ -123870,7 +123873,9 @@
                     "design_head": 89672.01,
                     "impeller_efficiency": 0.7699999809265137,
                     "motor_efficiency": 0.8140000104904175,
-                    "design_flow": 3.3092271960576385
+                    "speed_control": "FIXED_SPEED",
+                    "design_flow": 3.3092271960576385,
+                    "is_flow_sized_based_on_design_day": true
                 },
                 {
                     "id": "CHW Pump (Primary) 1",
@@ -123881,7 +123886,9 @@
                     "design_head": 89672.01,
                     "impeller_efficiency": 0.7699999809265137,
                     "motor_efficiency": 0.8140000104904175,
-                    "design_flow": 3.3092271960576385
+                    "speed_control": "FIXED_SPEED",
+                    "design_flow": 3.3092271960576385,
+                    "is_flow_sized_based_on_design_day": true
                 },
                 {
                     "id": "Condenser Water Pump",
@@ -123891,7 +123898,9 @@
                     "design_electric_power": 1409.847617149353,
                     "impeller_efficiency": 0.7699999809265137,
                     "motor_efficiency": 0.8769999742507935,
-                    "design_flow": 4.684355738957724
+                    "speed_control": "FIXED_SPEED",
+                    "design_flow": 4.684355738957724,
+                    "is_flow_sized_based_on_design_day": true
                 },
                 {
                     "id": "CHW Pump (Secondary)",
@@ -123901,7 +123910,9 @@
                     "design_electric_power": 681.6624402999878,
                     "impeller_efficiency": 0.7699999809265137,
                     "motor_efficiency": 0.7580000162124634,
-                    "design_flow": 3.3092271960576385
+                    "speed_control": "VARIABLE_SPEED",
+                    "design_flow": 3.3092271960576385,
+                    "is_flow_sized_based_on_design_day": true
                 }
             ],
             "boilers": [
@@ -123959,8 +123970,8 @@
                     "condensing_loop": "Condenser Water Loop",
                     "compressor_type": "CENTRIFUGAL",
                     "energy_source_type": "ELECTRICITY",
-                    "design_capacity": 44529540589.51389,
-                    "rated_capacity": 35195594329.13194,
+                    "design_capacity": 44529.54058951389,
+                    "rated_capacity": 35195.59432913194,
                     "rated_entering_condenser_temperature": 29.444444444444457,
                     "rated_leaving_evaporator_temperature": 6.666666666666686,
                     "design_flow_evaporator": 1.8219753581682847,
@@ -123976,8 +123987,8 @@
                     "condensing_loop": "Condenser Water Loop",
                     "compressor_type": "SCREW",
                     "energy_source_type": "ELECTRICITY",
-                    "design_capacity": 44529540589.51389,
-                    "rated_capacity": 37653382541.25,
+                    "design_capacity": 44529.54058951389,
+                    "rated_capacity": 37653.38254125,
                     "rated_entering_condenser_temperature": 29.444444444444457,
                     "rated_leaving_evaporator_temperature": 6.666666666666686,
                     "design_flow_evaporator": 1.747057883739472,
@@ -123992,7 +124003,7 @@
                     "range": 5.555555555555555,
                     "approach": 3.8888888888888893,
                     "fan_speed_control": "VARIABLE_SPEED",
-                    "rated_water_flowrate": 4.461292394638063,
+                    "rated_water_flowrate": 4.4612909507751475,
                     "leaving_water_setpoint_temperature": 21.111111111111143
                 }
             ],

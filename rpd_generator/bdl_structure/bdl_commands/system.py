@@ -1092,8 +1092,10 @@ class System(ParentNode):
         self.preheat_sys_type = self.heat_type_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.PREHEAT_SOURCE)
         )
-        self.preheat_sys_rated_capacity = self.try_float(
-            self.keyword_value_pairs.get(BDL_SystemKeywords.PREHEAT_CAPACITY)
+        self.preheat_sys_rated_capacity = self.try_abs(
+            self.try_float(
+                self.keyword_value_pairs.get(BDL_SystemKeywords.PREHEAT_CAPACITY)
+            )
         )
         self.preheat_sys_is_sized_based_on_design_day = (
             not self.keyword_value_pairs.get(BDL_SystemKeywords.PREHEAT_CAPACITY)
