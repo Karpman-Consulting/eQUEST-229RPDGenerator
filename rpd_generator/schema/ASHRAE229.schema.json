@@ -3426,6 +3426,7 @@
             "type": "string",
             "enum": [
                 "FIXED_SPEED",
+                "TWO_SPEED",
                 "VARIABLE_SPEED"
             ],
             "descriptions": [
