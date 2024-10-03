@@ -334,6 +334,9 @@ class CirculationLoop(BaseNode):
         self.loop_supply_temperature_at_low_load[1] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MIN_RESET_T)
         )
+        self.operation[1] = self.loop_operation_map.get(
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_OPERATION)
+        )
 
     def populate_cool_fluid_loop_design_and_control(self):
         self.cooling_or_condensing_design_and_control["id"] = (
@@ -362,6 +365,9 @@ class CirculationLoop(BaseNode):
         )
         self.loop_supply_temperature_at_low_load[0] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MAX_RESET_T)
+        )
+        self.operation[0] = self.loop_operation_map.get(
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_OPERATION)
         )
 
     def populate_cond_fluid_loop_design_and_control(self):
@@ -392,6 +398,9 @@ class CirculationLoop(BaseNode):
         self.loop_supply_temperature_at_low_load[0] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MAX_RESET_T)
         )
+        self.operation[0] = self.loop_operation_map.get(
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_OPERATION)
+        )
 
     def populate_heat_cool_fluid_loop_design_and_control(self):
         self.cooling_or_condensing_design_and_control["id"] = (
@@ -421,6 +430,9 @@ class CirculationLoop(BaseNode):
         self.loop_supply_temperature_at_low_load[0] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MAX_RESET_T)
         )
+        self.operation[0] = self.loop_operation_map.get(
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_OPERATION)
+        )
         self.heating_design_and_control["id"] = self.u_name + " HeatingDesign/Control"
         self.design_supply_temperature[1] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.DESIGN_HEAT_T)
@@ -442,6 +454,9 @@ class CirculationLoop(BaseNode):
         )
         self.loop_supply_temperature_at_low_load[1] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MIN_RESET_T)
+        )
+        self.operation[1] = self.loop_operation_map.get(
+            self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_OPERATION)
         )
 
     def populate_service_water_heating_distribution_system(self):
