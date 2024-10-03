@@ -1009,7 +1009,7 @@
                                         "type": "FLUID_LOOP"
                                     },
                                     "cooling_system": {
-                                        "chilled_water_loop": "Chilled Water Loop (Secondary",
+                                        "chilled_water_loop": "Chilled Water Loop (Secondary)",
                                         "design_sensible_cool_capacity": 71384.67002031794,
                                         "design_total_cool_capacity": 87916.83652347223,
                                         "efficiency_metric_types": [],
@@ -123769,6 +123769,7 @@
                         "design_return_temperature": 54.44444444444446,
                         "is_sized_using_coincident_load": true,
                         "minimum_flow_fraction": 0.25,
+                        "flow_control": "VARIABLE_FLOW",
                         "temperature_reset_type": "NO_RESET"
                     },
                     "child_loops": [],
@@ -123783,6 +123784,7 @@
                         "design_return_temperature": 13.333333333333371,
                         "is_sized_using_coincident_load": true,
                         "minimum_flow_fraction": 0.25,
+                        "flow_control": "FIXED_FLOW",
                         "temperature_reset_type": "OUTSIDE_AIR_RESET"
                     },
                     "child_loops": [
@@ -123794,6 +123796,7 @@
                                 "design_return_temperature": 13.333333333333371,
                                 "is_sized_using_coincident_load": true,
                                 "minimum_flow_fraction": 0.25,
+                                "flow_control": "VARIABLE_FLOW",
                                 "temperature_reset_type": "OUTSIDE_AIR_RESET"
                             },
                             "child_loops": [],
@@ -123812,6 +123815,7 @@
                         "design_return_temperature": 26.666666666666686,
                         "is_sized_using_coincident_load": true,
                         "minimum_flow_fraction": 0.05,
+                        "flow_control": "FIXED_FLOW",
                         "temperature_reset_type": "NO_RESET"
                     },
                     "child_loops": [],
@@ -123980,6 +123984,7 @@
                     "rated_capacity": 35195.59432913194,
                     "rated_entering_condenser_temperature": 29.444444444444457,
                     "rated_leaving_evaporator_temperature": 6.666666666666686,
+                    "minimum_load_ratio": 0.25,
                     "design_flow_evaporator": 1.8219753581682847,
                     "design_flow_condenser": 2.277468987147014
                 },
@@ -123997,6 +124002,7 @@
                     "rated_capacity": 37653.38254125,
                     "rated_entering_condenser_temperature": 29.444444444444457,
                     "rated_leaving_evaporator_temperature": 6.666666666666686,
+                    "minimum_load_ratio": 0.25,
                     "design_flow_evaporator": 1.747057883739472,
                     "design_flow_condenser": 2.183822444915772
                 }

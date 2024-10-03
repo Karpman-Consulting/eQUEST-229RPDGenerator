@@ -10,6 +10,7 @@ class BaseDefinition:
     Base class for BDL commands that are not nodes in the tree, but are used to populate 229 schema data elements.
     """
 
+    bdl_command = None
     boolean_map = {
         "YES": True,
         "NO": False,

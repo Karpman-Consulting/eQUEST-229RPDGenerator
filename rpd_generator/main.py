@@ -46,6 +46,7 @@ COMMAND_PROCESSING_ORDER = [
     "CHILLER",
     "DW-HEATER",
     "HEAT-REJECTION",
+    "GROUND-LOOP-HX",
     "FLOOR",  # Floors must populate before Spaces
     "SYSTEM",  # Systems must populate before Zones
     "ZONE",  # Zones must populate before Spaces
