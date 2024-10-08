@@ -52,10 +52,10 @@ class CirculationLoop(BaseNode):
     }
 
     loop_operation_map = {
-        BDL_CirculationLoopOperationOptions.STANDBY: FluidLoopOperationOptions.INTERMITTENT,
+        BDL_CirculationLoopOperationOptions.STANDBY: None,  # This is a special case
         BDL_CirculationLoopOperationOptions.DEMAND: FluidLoopOperationOptions.INTERMITTENT,
         BDL_CirculationLoopOperationOptions.SNAP: FluidLoopOperationOptions.INTERMITTENT,
-        BDL_CirculationLoopOperationOptions.SCHEDULED: FluidLoopOperationOptions.SCHEDULED,
+        BDL_CirculationLoopOperationOptions.SCHEDULED: None,  # This is a special case
         BDL_CirculationLoopOperationOptions.SUBHOUR_DEMAND: FluidLoopOperationOptions.INTERMITTENT,
     }
 
@@ -346,6 +346,24 @@ class CirculationLoop(BaseNode):
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MIN_RESET_T)
         )
         self.flow_control[1] = self.determine_loop_flow_control()
+        operation = self.keyword_value_pairs.get(
+            BDL_CirculationLoopKeywords.LOOP_OPERATION
+        )
+        if operation == BDL_CirculationLoopOperationOptions.SCHEDULED:
+            schedule = self.keyword_value_pairs.get(
+                BDL_CirculationLoopKeywords.HEATING_SCHEDULE
+            )
+            if schedule and self.is_operation_schedule_continuous(schedule):
+                self.operation[1] = FluidLoopOperationOptions.CONTINUOUS
+            else:
+                self.operation[1] = FluidLoopOperationOptions.SCHEDULED
+        elif operation == BDL_CirculationLoopOperationOptions.STANDBY:
+            if self.is_loop_operation_continuous():
+                self.operation[1] = FluidLoopOperationOptions.CONTINUOUS
+            else:
+                self.operation[1] = FluidLoopOperationOptions.INTERMITTENT
+        else:
+            self.operation[1] = self.loop_operation_map.get(operation)
 
     def populate_cool_fluid_loop_design_and_control(self):
         self.cooling_or_condensing_design_and_control["id"] = (
@@ -376,6 +394,24 @@ class CirculationLoop(BaseNode):
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MAX_RESET_T)
         )
         self.flow_control[0] = self.determine_loop_flow_control()
+        operation = self.keyword_value_pairs.get(
+            BDL_CirculationLoopKeywords.LOOP_OPERATION
+        )
+        if operation == BDL_CirculationLoopOperationOptions.SCHEDULED:
+            schedule = self.keyword_value_pairs.get(
+                BDL_CirculationLoopKeywords.COOLING_SCHEDULE
+            )
+            if schedule and self.is_operation_schedule_continuous(schedule):
+                self.operation[0] = FluidLoopOperationOptions.CONTINUOUS
+            else:
+                self.operation[0] = FluidLoopOperationOptions.SCHEDULED
+        elif operation == BDL_CirculationLoopOperationOptions.STANDBY:
+            if self.is_loop_operation_continuous():
+                self.operation[0] = FluidLoopOperationOptions.CONTINUOUS
+            else:
+                self.operation[0] = FluidLoopOperationOptions.INTERMITTENT
+        else:
+            self.operation[0] = self.loop_operation_map.get(operation)
 
     def populate_cond_fluid_loop_design_and_control(self):
         self.cooling_or_condensing_design_and_control["id"] = (
@@ -406,6 +442,24 @@ class CirculationLoop(BaseNode):
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MAX_RESET_T)
         )
         self.flow_control[0] = self.determine_loop_flow_control()
+        operation = self.keyword_value_pairs.get(
+            BDL_CirculationLoopKeywords.LOOP_OPERATION
+        )
+        if operation == BDL_CirculationLoopOperationOptions.SCHEDULED:
+            schedule = self.keyword_value_pairs.get(
+                BDL_CirculationLoopKeywords.COOLING_SCHEDULE
+            )
+            if schedule and self.is_operation_schedule_continuous(schedule):
+                self.operation[0] = FluidLoopOperationOptions.CONTINUOUS
+            else:
+                self.operation[0] = FluidLoopOperationOptions.SCHEDULED
+        elif operation == BDL_CirculationLoopOperationOptions.STANDBY:
+            if self.is_loop_operation_continuous():
+                self.operation[0] = FluidLoopOperationOptions.CONTINUOUS
+            else:
+                self.operation[0] = FluidLoopOperationOptions.INTERMITTENT
+        else:
+            self.operation[0] = self.loop_operation_map.get(operation)
 
     def populate_heat_cool_fluid_loop_design_and_control(self):
         self.cooling_or_condensing_design_and_control["id"] = (
@@ -436,6 +490,24 @@ class CirculationLoop(BaseNode):
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MAX_RESET_T)
         )
         self.flow_control[0] = self.determine_loop_flow_control()
+        operation = self.keyword_value_pairs.get(
+            BDL_CirculationLoopKeywords.LOOP_OPERATION
+        )
+        if operation == BDL_CirculationLoopOperationOptions.SCHEDULED:
+            schedule = self.keyword_value_pairs.get(
+                BDL_CirculationLoopKeywords.COOLING_SCHEDULE
+            )
+            if schedule and self.is_operation_schedule_continuous(schedule):
+                self.operation[0] = FluidLoopOperationOptions.CONTINUOUS
+            else:
+                self.operation[0] = FluidLoopOperationOptions.SCHEDULED
+        elif operation == BDL_CirculationLoopOperationOptions.STANDBY:
+            if self.is_loop_operation_continuous():
+                self.operation[0] = FluidLoopOperationOptions.CONTINUOUS
+            else:
+                self.operation[0] = FluidLoopOperationOptions.INTERMITTENT
+        else:
+            self.operation[0] = self.loop_operation_map.get(operation)
         self.heating_design_and_control["id"] = self.u_name + " HeatingDesign/Control"
         self.design_supply_temperature[1] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.DESIGN_HEAT_T)
@@ -459,6 +531,24 @@ class CirculationLoop(BaseNode):
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MIN_RESET_T)
         )
         self.flow_control[1] = self.determine_loop_flow_control()
+        operation = self.keyword_value_pairs.get(
+            BDL_CirculationLoopKeywords.LOOP_OPERATION
+        )
+        if operation == BDL_CirculationLoopOperationOptions.SCHEDULED:
+            schedule = self.keyword_value_pairs.get(
+                BDL_CirculationLoopKeywords.HEATING_SCHEDULE
+            )
+            if schedule and self.is_operation_schedule_continuous(schedule):
+                self.operation[1] = FluidLoopOperationOptions.CONTINUOUS
+            else:
+                self.operation[1] = FluidLoopOperationOptions.SCHEDULED
+        elif operation == BDL_CirculationLoopOperationOptions.STANDBY:
+            if self.is_loop_operation_continuous():
+                self.operation[1] = FluidLoopOperationOptions.CONTINUOUS
+            else:
+                self.operation[1] = FluidLoopOperationOptions.INTERMITTENT
+        else:
+            self.operation[1] = self.loop_operation_map.get(operation)
 
     def populate_service_water_heating_distribution_system(self):
         self.swh_design_supply_temperature = self.try_float(
@@ -757,3 +847,27 @@ class CirculationLoop(BaseNode):
                         return FluidLoopFlowControlOptions.VARIABLE_FLOW
 
         return FluidLoopFlowControlOptions.FIXED_FLOW
+
+    def is_loop_operation_continuous(self):
+        for obj in self.rmd.bdl_obj_instances.values():
+            if not isinstance(obj, (BaseNode, BaseDefinition)):
+                continue
+
+            if obj.bdl_command == BDL_Commands.SYSTEM:
+                system_fan_schedule = obj.keyword_value_pairs.get(
+                    BDL_SystemKeywords.FAN_SCHEDULE
+                )
+                if system_fan_schedule:
+                    if self.is_operation_schedule_continuous(system_fan_schedule):
+                        return True
+        return False
+
+    def is_operation_schedule_continuous(self, schedule_u_name):
+        schedule = self.rmd.bdl_obj_instances.get(schedule_u_name)
+        if schedule:
+            hourly_values = schedule.hourly_values
+            if hourly_values:
+                # If hourly_values contains any 0 or -1, the system is not continuous
+                return not any([x == 0 or x == -1 for x in hourly_values])
+        else:
+            raise ValueError(f"Schedule {schedule_u_name} not found in the RMD.")

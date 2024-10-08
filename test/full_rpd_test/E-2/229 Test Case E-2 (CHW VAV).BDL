@@ -64,7 +64,7 @@
      *   1 * INPUT ..
                      B D L   P R O C E S S O R   I N P U T   D A T A
 
-                           10/03/2024    13:17:26  BDL RUN   2
+                           10/07/2024    23:25:08  BDL RUN   2
 
 
 
@@ -6407,14 +6407,16 @@
      *1203 *    TYPE             = HW
      *1204 *    LOOP-DESIGN-DT   = 50
      *1205 *    LOOP-MIN-FLOW    = 0.25
-     *1206 *    DESIGN-HEAT-T    = 180
-     *1207 *    LOOP-PUMP        = "Hot Water Pumps"
-     *1208 *    ..
+     *1206 *    LOOP-OPERATION   = DEMAND
+     *1207 *    DESIGN-HEAT-T    = 180
+     *1208 *    LOOP-PUMP        = "Hot Water Pumps"
+     *1209 *    ..
 
 -NOTE- - -         DATA FOR     Hot Water Loop
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = HW
 -INPUT - -                                              LOOP-DESIGN-DT   =                      50.0000 F (DELTA)
 -INPUT - -                                              LOOP-MIN-FLOW    =                       0.2500 FRAC.OR MULT.
+-INPUT - -                                              LOOP-OPERATION   = DEMAND
 -INPUT - -                                              DESIGN-HEAT-T    =                     180.0000 F
 -INPUT - -                                              LOOP-PUMP        = Hot Water Pumps
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  SUBTYPE          = PRIMARY
@@ -6428,7 +6430,6 @@
 -DEFAULT -                                              *PRIMARY-TRANSFE = *DIRECT
 -DEFAULT -                                              *PRIMARY-HX-DT   =                      10.0000 F (DELTA)
 -DEFAULT -                                              *PRIMARY-HX-HEAD =                      20.0000  FT
--DEFAULT -                                              LOOP-OPERATION   = STANDBY
 -DEFAULT -                                              HEAT-SETPT-CTRL  = FIXED
 -DEFAULT -                                              HEAT-SETPT-T     =                     180.0500 F
 -DEFAULT -                                              LOOP-SETPT-RNG   =                       0.1000 F (DELTA)
@@ -6517,15 +6518,15 @@
 -DEFAULT -                                              C-C-LOOP-OPER-CD =                       0.0000
 -DEFAULT -                                              C-C-LOOP-OPER-2T =                       0.0000
 -DEFAULT -                                              C-C-LOOP-OPER-BC =                       0.0000
-     *1209 * "Chilled Water Loop (Primary)" = CIRCULATION-LOOP
-     *1210 *    TYPE             = CHW
-     *1211 *    LOOP-DESIGN-DT   = 12
-     *1212 *    LOOP-MIN-FLOW    = 0.25
-     *1213 *    DESIGN-COOL-T    = 44
-     *1214 *    COOL-SETPT-CTRL  = OA-RESET
-     *1215 *    COOL-RESET-SCH   = "OA Reset Annual"
-     *1216 *    LOOP-PUMP        = "CHW Pump (Primary)"
-     *1217 *    ..
+     *1210 * "Chilled Water Loop (Primary)" = CIRCULATION-LOOP
+     *1211 *    TYPE             = CHW
+     *1212 *    LOOP-DESIGN-DT   = 12
+     *1213 *    LOOP-MIN-FLOW    = 0.25
+     *1214 *    DESIGN-COOL-T    = 44
+     *1215 *    COOL-SETPT-CTRL  = OA-RESET
+     *1216 *    COOL-RESET-SCH   = "OA Reset Annual"
+     *1217 *    LOOP-PUMP        = "CHW Pump (Primary)"
+     *1218 *    ..
 
 -NOTE- - -         DATA FOR     Chilled Water Loop (Primary)
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = CHW
@@ -6634,18 +6635,18 @@
 -DEFAULT -                                              C-C-LOOP-OPER-CD =                       0.0000
 -DEFAULT -                                              C-C-LOOP-OPER-2T =                       0.0000
 -DEFAULT -                                              C-C-LOOP-OPER-BC =                       0.0000
-     *1218 * "Chilled Water Loop (Secondary)" = CIRCULATION-LOOP
-     *1219 *    TYPE             = CHW
-     *1220 *    SUBTYPE          = SECONDARY
-     *1221 *    LOOP-DESIGN-DT   = 12
-     *1222 *    LOOP-MIN-FLOW    = 0.25
-     *1223 *    PRIMARY-LOOP     = "Chilled Water Loop (Primary)"
-     *1224 *    LOOP-OPERATION   = STANDBY
-     *1225 *    DESIGN-COOL-T    = 44
-     *1226 *    COOL-SETPT-CTRL  = OA-RESET
-     *1227 *    COOL-RESET-SCH   = "OA Reset Annual"
-     *1228 *    LOOP-PUMP        = "CHW Pump (Secondary)"
-     *1229 *    ..
+     *1219 * "Chilled Water Loop (Secondary)" = CIRCULATION-LOOP
+     *1220 *    TYPE             = CHW
+     *1221 *    SUBTYPE          = SECONDARY
+     *1222 *    LOOP-DESIGN-DT   = 12
+     *1223 *    LOOP-MIN-FLOW    = 0.25
+     *1224 *    PRIMARY-LOOP     = "Chilled Water Loop (Primary)"
+     *1225 *    LOOP-OPERATION   = STANDBY
+     *1226 *    DESIGN-COOL-T    = 44
+     *1227 *    COOL-SETPT-CTRL  = OA-RESET
+     *1228 *    COOL-RESET-SCH   = "OA Reset Annual"
+     *1229 *    LOOP-PUMP        = "CHW Pump (Secondary)"
+     *1230 *    ..
 
 -NOTE- - -         DATA FOR     Chilled Water Loop (Secondary)
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = CHW
@@ -6756,17 +6757,21 @@
 -DEFAULT -                                              C-C-LOOP-OPER-CD =                       0.0000
 -DEFAULT -                                              C-C-LOOP-OPER-2T =                       0.0000
 -DEFAULT -                                              C-C-LOOP-OPER-BC =                       0.0000
-     *1230 * "Condenser Water Loop" = CIRCULATION-LOOP
-     *1231 *    TYPE             = CW
-     *1232 *    SIZING-OPTION    = COINCIDENT
-     *1233 *    DESIGN-COOL-T    = 70
-     *1234 *    COOL-SETPT-T     = 70
-     *1235 *    LOOP-PUMP        = "Condenser Water Pump"
-     *1236 *    ..
+     *1231 * "Condenser Water Loop" = CIRCULATION-LOOP
+     *1232 *    TYPE             = CW
+     *1233 *    SIZING-OPTION    = COINCIDENT
+     *1234 *    LOOP-OPERATION   = SCHEDULED
+     *1235 *    COOLING-SCHEDULE = "Schedule ON/OFF"
+     *1236 *    DESIGN-COOL-T    = 70
+     *1237 *    COOL-SETPT-T     = 70
+     *1238 *    LOOP-PUMP        = "Condenser Water Pump"
+     *1239 *    ..
 
 -NOTE- - -         DATA FOR     Condenser Water Loop
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = CW
 -INPUT - -                                              SIZING-OPTION    = COINCIDENT
+-INPUT - -                                              LOOP-OPERATION   = SCHEDULED
+-INPUT - -                                              COOLING-SCHEDULE = Schedule ON/OFF
 -INPUT - -                                              DESIGN-COOL-T    =                      70.0000 F
 -INPUT - -                                              COOL-SETPT-T     =                      70.0000 F
 -INPUT - -                                              LOOP-PUMP        = Condenser Water Pump
@@ -6780,7 +6785,7 @@
 -DEFAULT -                                              *PRIMARY-TRANSFE = *DIRECT
 -DEFAULT -                                              *PRIMARY-HX-DT   =                      10.0000 F (DELTA)
 -DEFAULT -                                              *PRIMARY-HX-HEAD =                      20.0000  FT
--DEFAULT -                                              LOOP-OPERATION   = DEMAND
+-DEFAULT -                                              SNAP-LOCN        = OUTDOOR
 -DEFAULT -                                              COOL-SETPT-CTRL  = FIXED
 -DEFAULT -                                              LOOP-SETPT-RNG   =                       5.0000 F (DELTA)
 -DEFAULT -                                              MAX-ALARM-T      =                     200.0000 F
@@ -6867,20 +6872,20 @@
 -DEFAULT -                                              C-C-LOOP-OPER-CD =                       0.0000
 -DEFAULT -                                              C-C-LOOP-OPER-2T =                       0.0000
 -DEFAULT -                                              C-C-LOOP-OPER-BC =                       0.0000
-     *1237 *  
-     *1238 *  
-     *1239 * $ ---------------------------------------------------------
-     *1240 * $              Chillers
-     *1241 * $ ---------------------------------------------------------
-     *1242 *  
-     *1243 * "Chiller 1" = CHILLER
-     *1244 *    TYPE             = ELEC-OPEN-CENT
-     *1245 *    MIN-RATIO        = 0.25
-     *1246 *    VARIABLE-SPEED   = YES
-     *1247 *    CHW-LOOP         = "Chilled Water Loop (Primary)"
-     *1248 *    CONDENSER-TYPE   = WATER-COOLED
-     *1249 *    CW-LOOP          = "Condenser Water Loop"
-     *1250 *    ..
+     *1240 *  
+     *1241 *  
+     *1242 * $ ---------------------------------------------------------
+     *1243 * $              Chillers
+     *1244 * $ ---------------------------------------------------------
+     *1245 *  
+     *1246 * "Chiller 1" = CHILLER
+     *1247 *    TYPE             = ELEC-OPEN-CENT
+     *1248 *    MIN-RATIO        = 0.25
+     *1249 *    VARIABLE-SPEED   = YES
+     *1250 *    CHW-LOOP         = "Chilled Water Loop (Primary)"
+     *1251 *    CONDENSER-TYPE   = WATER-COOLED
+     *1252 *    CW-LOOP          = "Condenser Water Loop"
+     *1253 *    ..
      *   1 * $LIBRARY-ENTRY CentH2OVSD-Cap-fCHWT&ECT        CURVE-FIT       Herm Centrifugal
      *   2 *   TYPE = BI-QUADRATIC-T   INPUT-TYPE COEFFICIENTS
      *   3 *   COEF = (-0.38924539,-0.02195141,-0.00027343,
@@ -6960,13 +6965,13 @@
 -DEFAULT -                                              C-NUM-OF-UNITS   =                       1.0000
 -DEFAULT -                                              C-TYPE           =                       1.0000
 -DEFAULT -                                              C-C-ENG-HEAT-TOT =                       0.0000 FRAC.OR MULT.
-     *1251 * "Chiller 2" = CHILLER
-     *1252 *    TYPE             = ELEC-SCREW
-     *1253 *    MIN-RATIO        = 0.25
-     *1254 *    CHW-LOOP         = "Chilled Water Loop (Primary)"
-     *1255 *    CONDENSER-TYPE   = WATER-COOLED
-     *1256 *    CW-LOOP          = "Condenser Water Loop"
-     *1257 *    ..
+     *1254 * "Chiller 2" = CHILLER
+     *1255 *    TYPE             = ELEC-SCREW
+     *1256 *    MIN-RATIO        = 0.25
+     *1257 *    CHW-LOOP         = "Chilled Water Loop (Primary)"
+     *1258 *    CONDENSER-TYPE   = WATER-COOLED
+     *1259 *    CW-LOOP          = "Condenser Water Loop"
+     *1260 *    ..
      *   1 * $LIBRARY-ENTRY ScrewH2O-Cap-fCHWT&ECT          CURVE-FIT       Screw
      *   2 *   TYPE = BI-QUADRATIC-T   INPUT-TYPE COEFFICIENTS
      *   3 *   COEF = ( 0.89823067, 0.00045350, 0.00023690,
@@ -7045,19 +7050,19 @@
 -DEFAULT -                                              C-NUM-OF-UNITS   =                       1.0000
 -DEFAULT -                                              C-TYPE           =                       1.0000
 -DEFAULT -                                              C-C-ENG-HEAT-TOT =                       0.0000 FRAC.OR MULT.
-     *1258 *  
-     *1259 *  
-     *1260 * $ ---------------------------------------------------------
-     *1261 * $              Boilers
-     *1262 * $ ---------------------------------------------------------
-     *1263 *  
-     *1264 * "Boiler 1" = BOILER
-     *1265 *    TYPE             = HW-BOILER
-     *1266 *    MIN-RATIO        = 0.33
-     *1267 *    ELEC-INPUT-RATIO = 0
-     *1268 *    HEAT-INPUT-RATIO = 1.1111
-     *1269 *    HW-LOOP          = "Hot Water Loop"
-     *1270 *    ..
+     *1261 *  
+     *1262 *  
+     *1263 * $ ---------------------------------------------------------
+     *1264 * $              Boilers
+     *1265 * $ ---------------------------------------------------------
+     *1266 *  
+     *1267 * "Boiler 1" = BOILER
+     *1268 *    TYPE             = HW-BOILER
+     *1269 *    MIN-RATIO        = 0.33
+     *1270 *    ELEC-INPUT-RATIO = 0
+     *1271 *    HEAT-INPUT-RATIO = 1.1111
+     *1272 *    HW-LOOP          = "Hot Water Loop"
+     *1273 *    ..
      *   1 * $LIBRARY-ENTRY Atmospheric-Blr-HIR-fPLR        CURVE-FIT       Fuel Boilers
      *   2 *   TYPE=QUADRATIC
      *   3 *   INPUT-TYPE COEFFICIENTS
@@ -7093,13 +7098,13 @@
 -DEFAULT -                                              C-NUM-OF-UNITS   =                       1.0000
 -DEFAULT -                                              C-AFUE           =                       0.0000 FRAC.OR MULT.
 -DEFAULT -                                              C-THERM-EFF-MAX  =                       0.0000 FRAC.OR MULT.
-     *1271 * "Boiler 2" = BOILER
-     *1272 *    TYPE             = HW-BOILER
-     *1273 *    MIN-RATIO        = 0.33
-     *1274 *    ELEC-INPUT-RATIO = 0
-     *1275 *    HEAT-INPUT-RATIO = 1.11111
-     *1276 *    HW-LOOP          = "Hot Water Loop"
-     *1277 *    ..
+     *1274 * "Boiler 2" = BOILER
+     *1275 *    TYPE             = HW-BOILER
+     *1276 *    MIN-RATIO        = 0.33
+     *1277 *    ELEC-INPUT-RATIO = 0
+     *1278 *    HEAT-INPUT-RATIO = 1.11111
+     *1279 *    HW-LOOP          = "Hot Water Loop"
+     *1280 *    ..
 
 -NOTE- - -         DATA FOR     Boiler 2
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = HW-BOILER
@@ -7122,25 +7127,25 @@
 -DEFAULT -                                              C-NUM-OF-UNITS   =                       1.0000
 -DEFAULT -                                              C-AFUE           =                       0.0000 FRAC.OR MULT.
 -DEFAULT -                                              C-THERM-EFF-MAX  =                       0.0000 FRAC.OR MULT.
-     *1278 *  
-     *1279 *  
-     *1280 * $ ---------------------------------------------------------
-     *1281 * $              Domestic Water Heaters
-     *1282 * $ ---------------------------------------------------------
-     *1283 *  
-     *1284 * "DHW Plant 1 Wtr Htr" = DW-HEATER
-     *1285 *    TYPE             = GAS
-     *1286 *    TANK-VOLUME      = 44.7174
-     *1287 *    CAPACITY         = 0.0595993
-     *1288 *    HIR-FPLR         = "DW-Gas-Pilotless-HIR-fPLR"
+     *1281 *  
+     *1282 *  
+     *1283 * $ ---------------------------------------------------------
+     *1284 * $              Domestic Water Heaters
+     *1285 * $ ---------------------------------------------------------
+     *1286 *  
+     *1287 * "DHW Plant 1 Wtr Htr" = DW-HEATER
+     *1288 *    TYPE             = GAS
+     *1289 *    TANK-VOLUME      = 44.7174
+     *1290 *    CAPACITY         = 0.0595993
+     *1291 *    HIR-FPLR         = "DW-Gas-Pilotless-HIR-fPLR"
 -NOTE- - - ----------------------- =========================== -------------------------------THIS ITEM HAS BEEN FETCHED FROM LIBRARY 
-     *1289 *    TANK-UA          = 1.86322
-     *1290 *    LOCATION         = ZONE
-     *1291 *    ZONE-NAME        = "Core Zone"
-     *1292 *    DHW-LOOP         = "DHW Plant 1 Loop"
-     *1293 *    C-ENERGY-FACTOR  = 0.535037
-     *1294 *    C-TANK-EXT-RVAL  = 12
-     *1295 *    ..
+     *1292 *    TANK-UA          = 1.86322
+     *1293 *    LOCATION         = ZONE
+     *1294 *    ZONE-NAME        = "Core Zone"
+     *1295 *    DHW-LOOP         = "DHW Plant 1 Loop"
+     *1296 *    C-ENERGY-FACTOR  = 0.535037
+     *1297 *    C-TANK-EXT-RVAL  = 12
+     *1298 *    ..
      *   1 * $LIBRARY-ENTRY DW-Gas-Pilotless-HIR-fPLR       CURVE-FIT       Gas DW-Heater
      *   2 *   TYPE=QUADRATIC      COEF=( 0, 0.99945700, 0.00054300)
      *   3 *   INPUT-TYPE COEFFICIENTS ..
@@ -7176,17 +7181,17 @@
 -DEFAULT -                                              C-TANK-INT-RVAL  =                       0.0000 HR-SQFT-F /BTU
 -DEFAULT -                                              C-NUM-OF-UNITS   =                       1.0000
 -DEFAULT -                                              C-C-TANK-UA      =                       0.0000 BTU/HR-F
-     *1296 *  
-     *1297 *  
-     *1298 * $ ---------------------------------------------------------
-     *1299 * $              Heat Rejection
-     *1300 * $ ---------------------------------------------------------
-     *1301 *  
-     *1302 * "Heat Rejection 1" = HEAT-REJECTION
-     *1303 *    TYPE             = OPEN-TWR
-     *1304 *    CAPACITY-CTRL    = VARIABLE-SPEED-FAN
-     *1305 *    CW-LOOP          = "Condenser Water Loop"
-     *1306 *    ..
+     *1299 *  
+     *1300 *  
+     *1301 * $ ---------------------------------------------------------
+     *1302 * $              Heat Rejection
+     *1303 * $ ---------------------------------------------------------
+     *1304 *  
+     *1305 * "Heat Rejection 1" = HEAT-REJECTION
+     *1306 *    TYPE             = OPEN-TWR
+     *1307 *    CAPACITY-CTRL    = VARIABLE-SPEED-FAN
+     *1308 *    CW-LOOP          = "Condenser Water Loop"
+     *1309 *    ..
      *   1 * $LIBRARY-ENTRY OpenTwr-FluidCap-fApp&WB        CURVE-FIT       Open Tower
      *   2 *   TYPE=BI-QUADRATIC-DT&T
      *   3 *                       COEF=( 0.50061393, 0.00588251, 0.00021630,
@@ -7329,146 +7334,146 @@
 -DEFAULT -                                              EQUIPMENT-REPORT = YES
 -DEFAULT -                                              C-NUM-OF-UNITS   =                       1.0000
 -DEFAULT -                                              C-C-CAPAC-CTRL   =                       0.0000
-     *1307 *  
-     *1308 *  
-     *1309 * $ ---------------------------------------------------------
-     *1310 * $              Tower Free Cooling
-     *1311 * $ ---------------------------------------------------------
-     *1312 *  
-     *1313 *  
-     *1314 *  
-     *1315 * $ ---------------------------------------------------------
-     *1316 * $              Photovoltaic Modules
-     *1317 * $ ---------------------------------------------------------
-     *1318 *  
-     *1319 *  
-     *1320 *  
-     *1321 * $ ---------------------------------------------------------
-     *1322 * $              Electric Generators
-     *1323 * $ ---------------------------------------------------------
-     *1324 *  
-     *1325 *  
-     *1326 *  
-     *1327 * $ ---------------------------------------------------------
-     *1328 * $              Thermal Storage
-     *1329 * $ ---------------------------------------------------------
-     *1330 *  
-     *1331 *  
-     *1332 *  
-     *1333 * $ ---------------------------------------------------------
-     *1334 * $              Ground Loop Heat Exchangers
-     *1335 * $ ---------------------------------------------------------
-     *1336 *  
-     *1337 *  
-     *1338 *  
-     *1339 * $ ---------------------------------------------------------
-     *1340 * $              Compliance DHW (residential dwelling units)
-     *1341 * $ ---------------------------------------------------------
-     *1342 *  
-     *1343 *  
-     *1344 *  
-     *1345 * $ *********************************************************
-     *1346 * $ **                                                     **
-     *1347 * $ **            Steam & Chilled Water Meters             **
-     *1348 * $ **                                                     **
-     *1349 * $ *********************************************************
-     *1350 *  
-     *1351 * $ ---------------------------------------------------------
-     *1352 * $              Steam Meters
-     *1353 * $ ---------------------------------------------------------
-     *1354 *  
-     *1355 *  
-     *1356 *  
-     *1357 * $ ---------------------------------------------------------
-     *1358 * $              Chilled Water Meters
-     *1359 * $ ---------------------------------------------------------
-     *1360 *  
-     *1361 *  
-     *1362 *  
-     *1363 * $ *********************************************************
-     *1364 * $ **                                                     **
-     *1365 * $ **               HVAC Systems / Zones                  **
-     *1366 * $ **                                                     **
-     *1367 * $ *********************************************************
-     *1368 *  
-     *1369 * SET-DEFAULT FOR SYSTEM
-     *1370 *    TYPE = PSZ
-     *1371 *    FAN-CONTROL      = CONSTANT-VOLUME
-     *1372 *    ERV-RECOVER-TYPE = ENTHALPY-HX
-     *1373 *    ERV-RUN-CTRL     = WHEN-MIN-OA
-     *1374 *    ERV-TEMP-CTRL    = FIXED-SETPT
-     *1375 *    ..
-     *1376 * SET-DEFAULT FOR SYSTEM
-     *1377 *    TYPE = PMZS
-     *1378 *    HUMIDIFIER-TYPE  = STEAM
-     *1379 *    COOL-MIN-RESET-T = 60
-     *1380 *    FAN-CONTROL      = SPEED
-     *1381 *    RETURN-FAN-CONTR = SPEED
-     *1382 *    ..
-     *1383 * SET-DEFAULT FOR SYSTEM
-     *1384 *    TYPE = PVAVS
-     *1385 *    HUMIDIFIER-TYPE  = STEAM
-     *1386 *    HP-SUPP-SOURCE   = HOT-WATER
-     *1387 *    PHT-COIL-AIR-DT  = 20
-     *1388 *    ..
-     *1389 * SET-DEFAULT FOR SYSTEM
-     *1390 *    TYPE = PVVT
-     *1391 *    HUMIDIFIER-TYPE  = STEAM
-     *1392 *    HP-SUPP-SOURCE   = HOT-WATER
-     *1393 *    HT-RATED-EDB     = 70
-     *1394 *    ..
-     *1395 * SET-DEFAULT FOR SYSTEM
-     *1396 *    TYPE = DOAS
-     *1397 *    HUMIDIFIER-TYPE  = STEAM
-     *1398 *    ..
-     *1399 *  
-     *1400 * "Baseline System 7 (CHW VAV)" = SYSTEM
-     *1401 *    TYPE             = VAVS
-     *1402 *    HEAT-SOURCE      = HOT-WATER
-     *1403 *    ZONE-HEAT-SOURCE = HOT-WATER
-     *1404 *    PREHEAT-SOURCE   = HOT-WATER
-     *1405 *    HUMIDIFIER-TYPE  = ELECTRIC
-     *1406 *    MAX-SUPPLY-T     = 90
-     *1407 *    HEAT-CONTROL     = CONSTANT
-     *1408 *    COOL-CONTROL     = CONSTANT
-     *1409 *    MAX-HUMIDITY     = 80
-     *1410 *    MIN-HUMIDITY     = 40
-     *1411 *    ECONO-LIMIT-T    = 70
-     *1412 *    PREHEAT-T        = 50
-     *1413 *    COOL-MIN-RESET-T = 55
-     *1414 *    MIN-OA-METHOD    = DCV-RETURN-SENSOR
-     *1415 *    SUPPLY-FLOW      = 10000
-     *1416 *    RETURN-FLOW      = 9000
-     *1417 *    RECOVER-EXHAUST  = RELIEF-ONLY
-     *1418 *    FAN-SCHEDULE     = "Fan Sched"
-     *1419 *    FAN-CONTROL      = SPEED
-     *1420 *    SUPPLY-STATIC    = 3.5
-     *1421 *    SUPPLY-MECH-EFF  = 1
-     *1422 *    RETURN-STATIC    = 2
-     *1423 *    NIGHT-CYCLE-CTRL = STAY-OFF
-     *1424 *    RETURN-FAN-CONTR = SPEED
-     *1425 *    REHEAT-DELTA-T   = 40
-     *1426 *    HW-VALVE-TYPE    = TWO-WAY
-     *1427 *    HW-LOOP          = "Hot Water Loop"
-     *1428 *    CHW-VALVE-TYPE   = TWO-WAY
-     *1429 *    CHW-LOOP         = "Chilled Water Loop (Secondary)"
-     *1430 *    COOLING-CAPACITY = 300000
-     *1431 *    HEATING-CAPACITY = 0
-     *1432 *    PREHEAT-CAPACITY = -300000
-     *1433 *    ZONE-HW-LOOP     = "Hot Water Loop"
-     *1434 *    ERV-RECOVER-TYPE = ENTHALPY-WHEEL
-     *1435 *    ERV-SENSIBLE-EFF = 0.5
-     *1436 *    ERV-LATENT-EFF   = 0.5
-     *1437 *    ERV-TEMP-CTRL    = MIXED-AIR-RESET
-     *1438 *    ERV-CAP-CTRL     = BYPASS-EXHAUST
-     *1439 *    ERV-FANS         = SELF-CONTAINED
-     *1440 *    SUPPLY-MTR-EFF   = 0.6
-     *1441 *    RETURN-MECH-EFF  = 1
-     *1442 *    RETURN-MTR-EFF   = 0.6
-     *1443 *    PREHEAT-LOCN     = MIXED-AIR
-     *1444 *    ZONE-OA-METHOD   = SUM-OCC-AND-AREA
-     *1445 *    RHT-SIZING-METHO = MAX-SUPPLY-T
-     *1446 *    ..
+     *1310 *  
+     *1311 *  
+     *1312 * $ ---------------------------------------------------------
+     *1313 * $              Tower Free Cooling
+     *1314 * $ ---------------------------------------------------------
+     *1315 *  
+     *1316 *  
+     *1317 *  
+     *1318 * $ ---------------------------------------------------------
+     *1319 * $              Photovoltaic Modules
+     *1320 * $ ---------------------------------------------------------
+     *1321 *  
+     *1322 *  
+     *1323 *  
+     *1324 * $ ---------------------------------------------------------
+     *1325 * $              Electric Generators
+     *1326 * $ ---------------------------------------------------------
+     *1327 *  
+     *1328 *  
+     *1329 *  
+     *1330 * $ ---------------------------------------------------------
+     *1331 * $              Thermal Storage
+     *1332 * $ ---------------------------------------------------------
+     *1333 *  
+     *1334 *  
+     *1335 *  
+     *1336 * $ ---------------------------------------------------------
+     *1337 * $              Ground Loop Heat Exchangers
+     *1338 * $ ---------------------------------------------------------
+     *1339 *  
+     *1340 *  
+     *1341 *  
+     *1342 * $ ---------------------------------------------------------
+     *1343 * $              Compliance DHW (residential dwelling units)
+     *1344 * $ ---------------------------------------------------------
+     *1345 *  
+     *1346 *  
+     *1347 *  
+     *1348 * $ *********************************************************
+     *1349 * $ **                                                     **
+     *1350 * $ **            Steam & Chilled Water Meters             **
+     *1351 * $ **                                                     **
+     *1352 * $ *********************************************************
+     *1353 *  
+     *1354 * $ ---------------------------------------------------------
+     *1355 * $              Steam Meters
+     *1356 * $ ---------------------------------------------------------
+     *1357 *  
+     *1358 *  
+     *1359 *  
+     *1360 * $ ---------------------------------------------------------
+     *1361 * $              Chilled Water Meters
+     *1362 * $ ---------------------------------------------------------
+     *1363 *  
+     *1364 *  
+     *1365 *  
+     *1366 * $ *********************************************************
+     *1367 * $ **                                                     **
+     *1368 * $ **               HVAC Systems / Zones                  **
+     *1369 * $ **                                                     **
+     *1370 * $ *********************************************************
+     *1371 *  
+     *1372 * SET-DEFAULT FOR SYSTEM
+     *1373 *    TYPE = PSZ
+     *1374 *    FAN-CONTROL      = CONSTANT-VOLUME
+     *1375 *    ERV-RECOVER-TYPE = ENTHALPY-HX
+     *1376 *    ERV-RUN-CTRL     = WHEN-MIN-OA
+     *1377 *    ERV-TEMP-CTRL    = FIXED-SETPT
+     *1378 *    ..
+     *1379 * SET-DEFAULT FOR SYSTEM
+     *1380 *    TYPE = PMZS
+     *1381 *    HUMIDIFIER-TYPE  = STEAM
+     *1382 *    COOL-MIN-RESET-T = 60
+     *1383 *    FAN-CONTROL      = SPEED
+     *1384 *    RETURN-FAN-CONTR = SPEED
+     *1385 *    ..
+     *1386 * SET-DEFAULT FOR SYSTEM
+     *1387 *    TYPE = PVAVS
+     *1388 *    HUMIDIFIER-TYPE  = STEAM
+     *1389 *    HP-SUPP-SOURCE   = HOT-WATER
+     *1390 *    PHT-COIL-AIR-DT  = 20
+     *1391 *    ..
+     *1392 * SET-DEFAULT FOR SYSTEM
+     *1393 *    TYPE = PVVT
+     *1394 *    HUMIDIFIER-TYPE  = STEAM
+     *1395 *    HP-SUPP-SOURCE   = HOT-WATER
+     *1396 *    HT-RATED-EDB     = 70
+     *1397 *    ..
+     *1398 * SET-DEFAULT FOR SYSTEM
+     *1399 *    TYPE = DOAS
+     *1400 *    HUMIDIFIER-TYPE  = STEAM
+     *1401 *    ..
+     *1402 *  
+     *1403 * "Baseline System 7 (CHW VAV)" = SYSTEM
+     *1404 *    TYPE             = VAVS
+     *1405 *    HEAT-SOURCE      = HOT-WATER
+     *1406 *    ZONE-HEAT-SOURCE = HOT-WATER
+     *1407 *    PREHEAT-SOURCE   = HOT-WATER
+     *1408 *    HUMIDIFIER-TYPE  = ELECTRIC
+     *1409 *    MAX-SUPPLY-T     = 90
+     *1410 *    HEAT-CONTROL     = CONSTANT
+     *1411 *    COOL-CONTROL     = CONSTANT
+     *1412 *    MAX-HUMIDITY     = 80
+     *1413 *    MIN-HUMIDITY     = 40
+     *1414 *    ECONO-LIMIT-T    = 70
+     *1415 *    PREHEAT-T        = 50
+     *1416 *    COOL-MIN-RESET-T = 55
+     *1417 *    MIN-OA-METHOD    = DCV-RETURN-SENSOR
+     *1418 *    SUPPLY-FLOW      = 10000
+     *1419 *    RETURN-FLOW      = 9000
+     *1420 *    RECOVER-EXHAUST  = RELIEF-ONLY
+     *1421 *    FAN-SCHEDULE     = "Fan Sched"
+     *1422 *    FAN-CONTROL      = SPEED
+     *1423 *    SUPPLY-STATIC    = 3.5
+     *1424 *    SUPPLY-MECH-EFF  = 1
+     *1425 *    RETURN-STATIC    = 2
+     *1426 *    NIGHT-CYCLE-CTRL = STAY-OFF
+     *1427 *    RETURN-FAN-CONTR = SPEED
+     *1428 *    REHEAT-DELTA-T   = 40
+     *1429 *    HW-VALVE-TYPE    = TWO-WAY
+     *1430 *    HW-LOOP          = "Hot Water Loop"
+     *1431 *    CHW-VALVE-TYPE   = TWO-WAY
+     *1432 *    CHW-LOOP         = "Chilled Water Loop (Secondary)"
+     *1433 *    COOLING-CAPACITY = 300000
+     *1434 *    HEATING-CAPACITY = 0
+     *1435 *    PREHEAT-CAPACITY = -300000
+     *1436 *    ZONE-HW-LOOP     = "Hot Water Loop"
+     *1437 *    ERV-RECOVER-TYPE = ENTHALPY-WHEEL
+     *1438 *    ERV-SENSIBLE-EFF = 0.5
+     *1439 *    ERV-LATENT-EFF   = 0.5
+     *1440 *    ERV-TEMP-CTRL    = MIXED-AIR-RESET
+     *1441 *    ERV-CAP-CTRL     = BYPASS-EXHAUST
+     *1442 *    ERV-FANS         = SELF-CONTAINED
+     *1443 *    SUPPLY-MTR-EFF   = 0.6
+     *1444 *    RETURN-MECH-EFF  = 1
+     *1445 *    RETURN-MTR-EFF   = 0.6
+     *1446 *    PREHEAT-LOCN     = MIXED-AIR
+     *1447 *    ZONE-OA-METHOD   = SUM-OCC-AND-AREA
+     *1448 *    RHT-SIZING-METHO = MAX-SUPPLY-T
+     *1449 *    ..
      *   1 * $LIBRARY-ENTRY FC-Fan-w/Dampers                CURVE-FIT       AHU Fan Power
      *   2 *   TYPE = QUADRATIC  INPUT-TYPE DATA  OUTPUT-MIN = .10  OUTPUT-MAX = 1.05
      *   3 *   INDEPENDENT (1.0,  0.9,  0.8,  0.7,  0.6,  0.4,  0.3,  0.2)
@@ -7903,16 +7908,16 @@
 -DEFAULT -                                              C-C-PROP-SR-1    =                       0.0000
 -DEFAULT -                                              C-C-PROP-SR-2    =                       0.0000
 -DEFAULT -                                              C-C-PROP-SR-3    =                       0.0000
-     *1447 * "Perimeter Zone 1 (South)" = ZONE
-     *1448 *    TYPE             = CONDITIONED
-     *1449 *    ASSIGNED-FLOW    = 2000
-     *1450 *    DESIGN-HEAT-T    = 70
-     *1451 *    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
-     *1452 *    DESIGN-COOL-T    = 75
-     *1453 *    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
-     *1454 *    SPACE            = "Perimeter Space 1 (South)"
-     *1455 *    OUTSIDE-AIR-FLOW = ( 200 )
-     *1456 *    ..
+     *1450 * "Perimeter Zone 1 (South)" = ZONE
+     *1451 *    TYPE             = CONDITIONED
+     *1452 *    ASSIGNED-FLOW    = 2000
+     *1453 *    DESIGN-HEAT-T    = 70
+     *1454 *    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
+     *1455 *    DESIGN-COOL-T    = 75
+     *1456 *    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
+     *1457 *    SPACE            = "Perimeter Space 1 (South)"
+     *1458 *    OUTSIDE-AIR-FLOW = ( 200 )
+     *1459 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Zone 1 (South)
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = CONDITIONED
@@ -7984,16 +7989,16 @@
 -DEFAULT -                                              C-C-PROP-ZR-1    =                       0.0000
 -DEFAULT -                                              C-C-PROP-ZR-2    =                       0.0000
 -DEFAULT -                                              C-C-PROP-ZR-3    =                       0.0000
-     *1457 * "Perimeter Zone 2 (East)" = ZONE
-     *1458 *    TYPE             = CONDITIONED
-     *1459 *    ASSIGNED-FLOW    = 2000
-     *1460 *    DESIGN-HEAT-T    = 70
-     *1461 *    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
-     *1462 *    DESIGN-COOL-T    = 75
-     *1463 *    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
-     *1464 *    SPACE            = "Perimeter Space 2 (East)"
-     *1465 *    OUTSIDE-AIR-FLOW = ( 200 )
-     *1466 *    ..
+     *1460 * "Perimeter Zone 2 (East)" = ZONE
+     *1461 *    TYPE             = CONDITIONED
+     *1462 *    ASSIGNED-FLOW    = 2000
+     *1463 *    DESIGN-HEAT-T    = 70
+     *1464 *    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
+     *1465 *    DESIGN-COOL-T    = 75
+     *1466 *    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
+     *1467 *    SPACE            = "Perimeter Space 2 (East)"
+     *1468 *    OUTSIDE-AIR-FLOW = ( 200 )
+     *1469 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Zone 2 (East)
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = CONDITIONED
@@ -8065,16 +8070,16 @@
 -DEFAULT -                                              C-C-PROP-ZR-1    =                       0.0000
 -DEFAULT -                                              C-C-PROP-ZR-2    =                       0.0000
 -DEFAULT -                                              C-C-PROP-ZR-3    =                       0.0000
-     *1467 * "Perimeter Zone 3 (North)" = ZONE
-     *1468 *    TYPE             = CONDITIONED
-     *1469 *    ASSIGNED-FLOW    = 2000
-     *1470 *    DESIGN-HEAT-T    = 70
-     *1471 *    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
-     *1472 *    DESIGN-COOL-T    = 75
-     *1473 *    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
-     *1474 *    SPACE            = "Perimeter Space 3 (North)"
-     *1475 *    OUTSIDE-AIR-FLOW = ( 200 )
-     *1476 *    ..
+     *1470 * "Perimeter Zone 3 (North)" = ZONE
+     *1471 *    TYPE             = CONDITIONED
+     *1472 *    ASSIGNED-FLOW    = 2000
+     *1473 *    DESIGN-HEAT-T    = 70
+     *1474 *    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
+     *1475 *    DESIGN-COOL-T    = 75
+     *1476 *    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
+     *1477 *    SPACE            = "Perimeter Space 3 (North)"
+     *1478 *    OUTSIDE-AIR-FLOW = ( 200 )
+     *1479 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Zone 3 (North)
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = CONDITIONED
@@ -8146,16 +8151,16 @@
 -DEFAULT -                                              C-C-PROP-ZR-1    =                       0.0000
 -DEFAULT -                                              C-C-PROP-ZR-2    =                       0.0000
 -DEFAULT -                                              C-C-PROP-ZR-3    =                       0.0000
-     *1477 * "Perimeter Zone 4 (West)" = ZONE
-     *1478 *    TYPE             = CONDITIONED
-     *1479 *    ASSIGNED-FLOW    = 2000
-     *1480 *    DESIGN-HEAT-T    = 70
-     *1481 *    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
-     *1482 *    DESIGN-COOL-T    = 75
-     *1483 *    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
-     *1484 *    SPACE            = "Perimeter Space 4 (West)"
-     *1485 *    OUTSIDE-AIR-FLOW = ( 200 )
-     *1486 *    ..
+     *1480 * "Perimeter Zone 4 (West)" = ZONE
+     *1481 *    TYPE             = CONDITIONED
+     *1482 *    ASSIGNED-FLOW    = 2000
+     *1483 *    DESIGN-HEAT-T    = 70
+     *1484 *    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
+     *1485 *    DESIGN-COOL-T    = 75
+     *1486 *    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
+     *1487 *    SPACE            = "Perimeter Space 4 (West)"
+     *1488 *    OUTSIDE-AIR-FLOW = ( 200 )
+     *1489 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Zone 4 (West)
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = CONDITIONED
@@ -8227,16 +8232,16 @@
 -DEFAULT -                                              C-C-PROP-ZR-1    =                       0.0000
 -DEFAULT -                                              C-C-PROP-ZR-2    =                       0.0000
 -DEFAULT -                                              C-C-PROP-ZR-3    =                       0.0000
-     *1487 * "Core Zone" = ZONE
-     *1488 *    TYPE             = CONDITIONED
-     *1489 *    ASSIGNED-FLOW    = 2000
-     *1490 *    DESIGN-HEAT-T    = 70
-     *1491 *    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
-     *1492 *    DESIGN-COOL-T    = 75
-     *1493 *    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
-     *1494 *    SPACE            = "Core Space 1"
-     *1495 *    OUTSIDE-AIR-FLOW = ( 200 )
-     *1496 *    ..
+     *1490 * "Core Zone" = ZONE
+     *1491 *    TYPE             = CONDITIONED
+     *1492 *    ASSIGNED-FLOW    = 2000
+     *1493 *    DESIGN-HEAT-T    = 70
+     *1494 *    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
+     *1495 *    DESIGN-COOL-T    = 75
+     *1496 *    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
+     *1497 *    SPACE            = "Core Space 1"
+     *1498 *    OUTSIDE-AIR-FLOW = ( 200 )
+     *1499 *    ..
 
 -NOTE- - -         DATA FOR     Core Zone
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = CONDITIONED
@@ -8308,51 +8313,51 @@
 -DEFAULT -                                              C-C-PROP-ZR-1    =                       0.0000
 -DEFAULT -                                              C-C-PROP-ZR-2    =                       0.0000
 -DEFAULT -                                              C-C-PROP-ZR-3    =                       0.0000
-     *1497 *  
-     *1498 *  
-     *1499 * $ *********************************************************
-     *1500 * $ **                                                     **
-     *1501 * $ **                Metering & Misc HVAC                 **
-     *1502 * $ **                                                     **
-     *1503 * $ *********************************************************
-     *1504 *  
-     *1505 * $ ---------------------------------------------------------
-     *1506 * $              Equipment Controls
-     *1507 * $ ---------------------------------------------------------
-     *1508 *  
-     *1509 *  
-     *1510 *  
-     *1511 * $ ---------------------------------------------------------
-     *1512 * $              Load Management
-     *1513 * $ ---------------------------------------------------------
-     *1514 *  
-     *1515 *  
-     *1516 *  
-     *1517 * $ *********************************************************
-     *1518 * $ **                                                     **
-     *1519 * $ **                    Utility Rates                    **
-     *1520 * $ **                                                     **
-     *1521 * $ *********************************************************
-     *1522 *  
-     *1523 * $ ---------------------------------------------------------
-     *1524 * $              Ratchets
-     *1525 * $ ---------------------------------------------------------
-     *1526 *  
-     *1527 *  
-     *1528 *  
-     *1529 * $ ---------------------------------------------------------
-     *1530 * $              Block Charges
-     *1531 * $ ---------------------------------------------------------
-     *1532 *  
-     *1533 *  
-     *1534 *  
-     *1535 * $ ---------------------------------------------------------
-     *1536 * $              Utility Rates
-     *1537 * $ ---------------------------------------------------------
-     *1538 *  
-     *1539 * "Custom Elec Rate" = UTILITY-RATE
-     *1540 *    TYPE             = ELECTRICITY
-     *1541 *    ..
+     *1500 *  
+     *1501 *  
+     *1502 * $ *********************************************************
+     *1503 * $ **                                                     **
+     *1504 * $ **                Metering & Misc HVAC                 **
+     *1505 * $ **                                                     **
+     *1506 * $ *********************************************************
+     *1507 *  
+     *1508 * $ ---------------------------------------------------------
+     *1509 * $              Equipment Controls
+     *1510 * $ ---------------------------------------------------------
+     *1511 *  
+     *1512 *  
+     *1513 *  
+     *1514 * $ ---------------------------------------------------------
+     *1515 * $              Load Management
+     *1516 * $ ---------------------------------------------------------
+     *1517 *  
+     *1518 *  
+     *1519 *  
+     *1520 * $ *********************************************************
+     *1521 * $ **                                                     **
+     *1522 * $ **                    Utility Rates                    **
+     *1523 * $ **                                                     **
+     *1524 * $ *********************************************************
+     *1525 *  
+     *1526 * $ ---------------------------------------------------------
+     *1527 * $              Ratchets
+     *1528 * $ ---------------------------------------------------------
+     *1529 *  
+     *1530 *  
+     *1531 *  
+     *1532 * $ ---------------------------------------------------------
+     *1533 * $              Block Charges
+     *1534 * $ ---------------------------------------------------------
+     *1535 *  
+     *1536 *  
+     *1537 *  
+     *1538 * $ ---------------------------------------------------------
+     *1539 * $              Utility Rates
+     *1540 * $ ---------------------------------------------------------
+     *1541 *  
+     *1542 * "Custom Elec Rate" = UTILITY-RATE
+     *1543 *    TYPE             = ELECTRICITY
+     *1544 *    ..
 
 -NOTE- - -         DATA FOR     Custom Elec Rate
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = ELECTRICITY
@@ -8377,9 +8382,9 @@
 -DEFAULT -                                              PCT-SRCHGS-APPLY = BASE
 -DEFAULT -                                              DEMAND-INTERVAL  =                      15.0000 MINUTES
 -DEFAULT -                                              BUY/SELL-MODE    = BUY/SELL
-     *1542 * "Custom Gas Rate" = UTILITY-RATE
-     *1543 *    TYPE             = NATURAL-GAS
-     *1544 *    ..
+     *1545 * "Custom Gas Rate" = UTILITY-RATE
+     *1546 *    TYPE             = NATURAL-GAS
+     *1547 *    ..
 
 -NOTE- - -         DATA FOR     Custom Gas Rate
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = NATURAL-GAS
@@ -8401,54 +8406,54 @@
 -DEFAULT -                                              PCT-TAXES-APPLY  = BASE
 -DEFAULT -                                              PCT-SRCHGS-APPLY = BASE
 -DEFAULT -                                              DEMAND-INTERVAL  =                      60.0000 MINUTES
-     *1545 *  
-     *1546 *  
-     *1547 * $ *********************************************************
-     *1548 * $ **                                                     **
-     *1549 * $ **                 Output Reporting                    **
-     *1550 * $ **                                                     **
-     *1551 * $ *********************************************************
-     *1552 *  
-     *1553 * $ ---------------------------------------------------------
-     *1554 * $              Loads Non-Hourly Reporting
-     *1555 * $ ---------------------------------------------------------
-     *1556 *  
-     *1557 * LOADS-REPORT
-     *1558 *    VERIFICATION     = ( ALL-VERIFICATION )
-     *1559 *    SUMMARY          = ( ALL-SUMMARY )
-     *1560 *    ..
+     *1548 *  
+     *1549 *  
+     *1550 * $ *********************************************************
+     *1551 * $ **                                                     **
+     *1552 * $ **                 Output Reporting                    **
+     *1553 * $ **                                                     **
+     *1554 * $ *********************************************************
+     *1555 *  
+     *1556 * $ ---------------------------------------------------------
+     *1557 * $              Loads Non-Hourly Reporting
+     *1558 * $ ---------------------------------------------------------
+     *1559 *  
+     *1560 * LOADS-REPORT
+     *1561 *    VERIFICATION     = ( ALL-VERIFICATION )
+     *1562 *    SUMMARY          = ( ALL-SUMMARY )
+     *1563 *    ..
 
 -NOTE- - -         DATA FOR     LOADS-REPORT
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  VERIFICATION     = ALL-VERIFICATION
 -INPUT - -                                              SUMMARY          = ALL-SUMMARY
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  REPORT-FREQUENCY = HOURLY
 -DEFAULT -                                              HOURLY-DATA-SAVE = NO-SAVE
-     *1561 *  
-     *1562 *  
-     *1563 * $ ---------------------------------------------------------
-     *1564 * $              Systems Non-Hourly Reporting
-     *1565 * $ ---------------------------------------------------------
-     *1566 *  
-     *1567 * SYSTEMS-REPORT
-     *1568 *    VERIFICATION     = ( ALL-VERIFICATION )
-     *1569 *    SUMMARY          = ( ALL-SUMMARY )
-     *1570 *    ..
+     *1564 *  
+     *1565 *  
+     *1566 * $ ---------------------------------------------------------
+     *1567 * $              Systems Non-Hourly Reporting
+     *1568 * $ ---------------------------------------------------------
+     *1569 *  
+     *1570 * SYSTEMS-REPORT
+     *1571 *    VERIFICATION     = ( ALL-VERIFICATION )
+     *1572 *    SUMMARY          = ( ALL-SUMMARY )
+     *1573 *    ..
 
 -NOTE- - -         DATA FOR     SYSTEMS-REPORT
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  VERIFICATION     = ALL-VERIFICATION
 -INPUT - -                                              SUMMARY          = ALL-SUMMARY
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  REPORT-FREQUENCY = HOURLY
 -DEFAULT -                                              HOURLY-DATA-SAVE = NO-SAVE
-     *1571 *  
-     *1572 *  
-     *1573 * $ ---------------------------------------------------------
-     *1574 * $              Plant Non-Hourly Reporting
-     *1575 * $ ---------------------------------------------------------
-     *1576 *  
-     *1577 * PLANT-REPORT
-     *1578 *    VERIFICATION     = ( ALL-VERIFICATION )
-     *1579 *    SUMMARY          = ( ALL-SUMMARY )
-     *1580 *    ..
+     *1574 *  
+     *1575 *  
+     *1576 * $ ---------------------------------------------------------
+     *1577 * $              Plant Non-Hourly Reporting
+     *1578 * $ ---------------------------------------------------------
+     *1579 *  
+     *1580 * PLANT-REPORT
+     *1581 *    VERIFICATION     = ( ALL-VERIFICATION )
+     *1582 *    SUMMARY          = ( ALL-SUMMARY )
+     *1583 *    ..
 
 -NOTE- - -         DATA FOR     PLANT-REPORT
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  VERIFICATION     = ALL-VERIFICATION
@@ -8457,16 +8462,16 @@
 -INPUT - -                                              SUMMARY          = BEPS
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  REPORT-FREQUENCY = HOURLY
 -DEFAULT -                                              HOURLY-DATA-SAVE = NO-SAVE
-     *1581 *  
-     *1582 *  
-     *1583 * $ ---------------------------------------------------------
-     *1584 * $              Economics Non-Hourly Reporting
-     *1585 * $ ---------------------------------------------------------
-     *1586 *  
-     *1587 * ECONOMICS-REPORT
-     *1588 *    VERIFICATION     = ( ALL-VERIFICATION )
-     *1589 *    SUMMARY          = ( ALL-SUMMARY )
-     *1590 *    ..
+     *1584 *  
+     *1585 *  
+     *1586 * $ ---------------------------------------------------------
+     *1587 * $              Economics Non-Hourly Reporting
+     *1588 * $ ---------------------------------------------------------
+     *1589 *  
+     *1590 * ECONOMICS-REPORT
+     *1591 *    VERIFICATION     = ( ALL-VERIFICATION )
+     *1592 *    SUMMARY          = ( ALL-SUMMARY )
+     *1593 *    ..
 
 -NOTE- - -         DATA FOR     ECONOMICS-REPORT
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  VERIFICATION     = ALL-VERIFICATION
@@ -8474,15 +8479,15 @@
 -INPUT - -                                              SUMMARY          = ES-D
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  REPORT-FREQUENCY = HOURLY
 -DEFAULT -                                              HOURLY-DATA-SAVE = NO-SAVE
-     *1591 *  
-     *1592 *  
-     *1593 * $ ---------------------------------------------------------
-     *1594 * $              Hourly Reporting
-     *1595 * $ ---------------------------------------------------------
-     *1596 *  
-     *1597 *  
-     *1598 * "Hourly Report" = HOURLY-REPORT
-     *1599 *    LIBRARY-ENTRY "Hourly Report"
+     *1594 *  
+     *1595 *  
+     *1596 * $ ---------------------------------------------------------
+     *1597 * $              Hourly Reporting
+     *1598 * $ ---------------------------------------------------------
+     *1599 *  
+     *1600 *  
+     *1601 * "Hourly Report" = HOURLY-REPORT
+     *1602 *    LIBRARY-ENTRY "Hourly Report"
 -NOTE- - - ------------------ =============== ------------------------------------------------THIS ITEM HAS BEEN FETCHED FROM LIBRARY 
      *   1 * $LIBRARY-ENTRY Hourly Report                   HOURLY-REPORT   Hourly Reports
      *   2 *    REPORT-SCHEDULE = "Hourly Report Schedule"
@@ -8538,9 +8543,9 @@
 -LIBRARY -                                              DAY              =                      31.0000
 -LIBRARY -                                              WEEK-SCHEDULES   = Hourly Report Week Sched
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  PHOTOCELL-CTRL   = NONE
-     *1600 *    REPORT-BLOCK     = ( "EM1 Hourly Report Block", "FM1 Hourly Report Block" )
+     *1603 *    REPORT-BLOCK     = ( "EM1 Hourly Report Block", "FM1 Hourly Report Block" )
 *WARNING******* ============ *****************************************************************KEYWORD LIBRARY VALUE BEING REPLACED
-     *1601 *    ..
+     *1604 *    ..
 
 -NOTE- - -         DATA FOR     Hourly Report
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  REPORT-BLOCK     = EM1 Hourly Report Block
@@ -8559,20 +8564,20 @@
 -DEFAULT -                                              DIVIDE           =                       1.0000 UNITS
 -DEFAULT -                                              DIVIDE           =                       1.0000 UNITS
 -DEFAULT -                                              DIVIDE           =                       1.0000 UNITS
-     *1602 *  
-     *1603 *  
-     *1604 * $ ---------------------------------------------------------
-     *1605 * $              THE END
-     *1606 * $ ---------------------------------------------------------
-     *1607 *  
-     *1608 * END ..
+     *1605 *  
+     *1606 *  
+     *1607 * $ ---------------------------------------------------------
+     *1608 * $              THE END
+     *1609 * $ ---------------------------------------------------------
+     *1610 *  
+     *1611 * END ..
 *WARNING**************************************************************************************
 *WARNING***SPACE Perimeter Space 4 (West) has 0 delayed walls, 1 delayed
             floors and 0 delayed ceilings. There should be at least a delayed
             wall and floor, a delayed wall and ceiling, or a delayed ceiling and
             floor for custom weighting factors to be calculated. ASHRAE
             weighting factors with floor weight of 70 lb/ft2 (342 kg/m2) will be
-            used for this space.229 Test Case 1 updated                                                                   10/03/2024    13:17:26  BDL  RUN 2
+            used for this space.229 Test Case 1 updated                                                                   10/07/2024    23:25:08  BDL  RUN 2
                                                                                                                         
 REPORT- LV-K  WEIGHTING FACTOR SUMMARY
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -8632,5 +8637,5 @@ G2*          0.30229          0.23580          0.12926          0.08000         
 G3*         -0.00015         -0.00102         -0.00196          0.00000         -0.00012
 P1          -1.24986         -1.21343         -1.16998         -0.87000         -1.24082
 P2           0.34926          0.31903          0.22253          0.00000          0.34074
-     *1609 * COMPUTE ..
-     *1610 * STOP ..
+     *1612 * COMPUTE ..
+     *1613 * STOP ..
