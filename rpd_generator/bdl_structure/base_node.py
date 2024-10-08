@@ -23,6 +23,7 @@ class BaseNode:
     'Node' refers to rpd_generator objects that map directly to a 229 schema data group.
     """
 
+    bdl_command = None
     boolean_map = {
         "YES": True,
         "NO": False,

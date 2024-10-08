@@ -1,7 +1,7 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
+from rpd_generator.bdl_structure.base_definition import BaseDefinition
 from rpd_generator.schema.schema_enums import SchemaEnums
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
-
 
 FluidLoopOptions = SchemaEnums.schema_enums["FluidLoopOptions"]
 FluidLoopOperationOptions = SchemaEnums.schema_enums["FluidLoopOperationOptions"]
@@ -18,6 +18,17 @@ BDL_CirculationLoopOperationOptions = BDLEnums.bdl_enums[
 BDL_CirculationLoopTemperatureResetOptions = BDLEnums.bdl_enums[
     "CirculationLoopTemperatureResetOptions"
 ]
+BDL_SecondaryLoopValveTypes = BDLEnums.bdl_enums["CirculationLoopSecondaryValveTypes"]
+BDL_SystemCoolingValveTypes = BDLEnums.bdl_enums["SystemCoolingValveTypes"]
+BDL_SystemHeatingValveTypes = BDLEnums.bdl_enums["SystemHeatingValveTypes"]
+BDL_FlowControlOptions = BDLEnums.bdl_enums["FlowControlOptions"]
+BDL_ZoneCondenserValveOptions = BDLEnums.bdl_enums["ZoneCWValveOptions"]
+BDL_ChillerKeywords = BDLEnums.bdl_enums["ChillerKeywords"]
+BDL_BoilerKeywords = BDLEnums.bdl_enums["BoilerKeywords"]
+BDL_HeatRejectionKeywords = BDLEnums.bdl_enums["HeatRejectionKeywords"]
+BDL_SystemKeywords = BDLEnums.bdl_enums["SystemKeywords"]
+BDL_GroundLoopHXKeywords = BDLEnums.bdl_enums["GroundLoopHXKeywords"]
+BDL_ZoneKeywords = BDLEnums.bdl_enums["ZoneKeywords"]
 
 
 class CirculationLoop(BaseNode):
@@ -334,6 +345,7 @@ class CirculationLoop(BaseNode):
         self.loop_supply_temperature_at_low_load[1] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MIN_RESET_T)
         )
+        self.flow_control[1] = self.determine_loop_flow_control()
         self.operation[1] = self.loop_operation_map.get(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_OPERATION)
         )
@@ -366,6 +378,7 @@ class CirculationLoop(BaseNode):
         self.loop_supply_temperature_at_low_load[0] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MAX_RESET_T)
         )
+        self.flow_control[0] = self.determine_loop_flow_control()
         self.operation[0] = self.loop_operation_map.get(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_OPERATION)
         )
@@ -398,6 +411,7 @@ class CirculationLoop(BaseNode):
         self.loop_supply_temperature_at_low_load[0] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MAX_RESET_T)
         )
+        self.flow_control[0] = self.determine_loop_flow_control()
         self.operation[0] = self.loop_operation_map.get(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_OPERATION)
         )
@@ -430,6 +444,7 @@ class CirculationLoop(BaseNode):
         self.loop_supply_temperature_at_low_load[0] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MAX_RESET_T)
         )
+        self.flow_control[0] = self.determine_loop_flow_control()
         self.operation[0] = self.loop_operation_map.get(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_OPERATION)
         )
@@ -455,6 +470,7 @@ class CirculationLoop(BaseNode):
         self.loop_supply_temperature_at_low_load[1] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MIN_RESET_T)
         )
+        self.flow_control[1] = self.determine_loop_flow_control()
         self.operation[1] = self.loop_operation_map.get(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.LOOP_OPERATION)
         )
@@ -490,3 +506,269 @@ class CirculationLoop(BaseNode):
                     )
                     != BDL_CirculationLoopSizingOptions.PRIMARY
                 )
+
+    def determine_loop_flow_control(self):
+        """Determine the flow control type for the circulation loop"""
+        loop_type = self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.TYPE)
+        for obj in self.rmd.bdl_obj_instances.values():
+            if not isinstance(obj, (BaseNode, BaseDefinition)):
+                continue
+
+            if obj.bdl_command == BDL_Commands.CIRCULATION_LOOP:
+                primary_loop = self.keyword_value_pairs.get(
+                    BDL_CirculationLoopKeywords.PRIMARY_LOOP
+                )
+                valve_type = self.keyword_value_pairs.get(
+                    BDL_CirculationLoopKeywords.VALVE_TYPE_2ND
+                )
+                if (
+                    primary_loop == self.u_name
+                    and valve_type == BDL_SecondaryLoopValveTypes.TWO_WAY
+                ):
+                    return FluidLoopFlowControlOptions.VARIABLE_FLOW
+
+            elif obj.bdl_command == BDL_Commands.SYSTEM:
+                if loop_type == BDL_CirculationLoopTypes.CHW:
+                    cooling_loop = obj.keyword_value_pairs.get(
+                        BDL_SystemKeywords.CHW_LOOP
+                    )
+                    valve_type = obj.keyword_value_pairs.get(
+                        BDL_SystemKeywords.CHW_VALVE_TYPE
+                    )
+                    if (
+                        cooling_loop == self.u_name
+                        and valve_type == BDL_SystemCoolingValveTypes.TWO_WAY
+                    ):
+                        return FluidLoopFlowControlOptions.VARIABLE_FLOW
+                elif loop_type == BDL_CirculationLoopTypes.HW:
+                    heating_loop = obj.keyword_value_pairs.get(
+                        BDL_SystemKeywords.HW_LOOP
+                    )
+                    valve_type = obj.keyword_value_pairs.get(
+                        BDL_SystemKeywords.HW_VALVE_TYPE
+                    )
+                    if (
+                        heating_loop == self.u_name
+                        and valve_type == BDL_SystemHeatingValveTypes.TWO_WAY
+                    ):
+                        return FluidLoopFlowControlOptions.VARIABLE_FLOW
+                elif loop_type == BDL_CirculationLoopTypes.CW:
+                    pass
+                elif loop_type == BDL_CirculationLoopTypes.PIPE2:
+                    cooling_loop = obj.keyword_value_pairs.get(
+                        BDL_SystemKeywords.CHW_LOOP
+                    )
+                    heating_loop = obj.keyword_value_pairs.get(
+                        BDL_SystemKeywords.HW_LOOP
+                    )
+                    cooling_valve_type = obj.keyword_value_pairs.get(
+                        BDL_SystemKeywords.CHW_VALVE_TYPE
+                    )
+                    heating_valve_type = obj.keyword_value_pairs.get(
+                        BDL_SystemKeywords.HW_VALVE_TYPE
+                    )
+                    if (
+                        cooling_loop == self.u_name
+                        and cooling_valve_type == BDL_SystemCoolingValveTypes.TWO_WAY
+                    ):
+                        return FluidLoopFlowControlOptions.VARIABLE_FLOW
+                    if (
+                        heating_loop == self.u_name
+                        and heating_valve_type == BDL_SystemHeatingValveTypes.TWO_WAY
+                    ):
+                        return FluidLoopFlowControlOptions.VARIABLE_FLOW
+                elif loop_type == BDL_CirculationLoopTypes.WLHP:
+                    pass
+
+            elif obj.bdl_command == BDL_Commands.ZONE:
+                if loop_type == BDL_CirculationLoopTypes.CHW:
+                    cooling_loop = obj.keyword_value_pairs.get(
+                        BDL_ZoneKeywords.CHW_LOOP
+                    )
+                    valve_type = obj.keyword_value_pairs.get(
+                        BDL_ZoneKeywords.CHW_VALVE_TYPE
+                    )
+                    if (
+                        cooling_loop == self.u_name
+                        and valve_type == BDL_FlowControlOptions.VARIABLE_FLOW
+                    ):
+                        return FluidLoopFlowControlOptions.VARIABLE_FLOW
+                elif loop_type == BDL_CirculationLoopTypes.HW:
+                    heating_loop = obj.keyword_value_pairs.get(BDL_ZoneKeywords.HW_LOOP)
+                    valve_type = obj.keyword_value_pairs.get(
+                        BDL_ZoneKeywords.HW_VALVE_TYPE
+                    )
+                    if (
+                        heating_loop == self.u_name
+                        and valve_type == BDL_FlowControlOptions.VARIABLE_FLOW
+                    ):
+                        return FluidLoopFlowControlOptions.VARIABLE_FLOW
+                elif loop_type in [
+                    BDL_CirculationLoopTypes.CW,
+                    BDL_CirculationLoopTypes.WLHP,
+                ]:
+                    condensing_loop = obj.keyword_value_pairs.get(
+                        BDL_ZoneKeywords.CW_LOOP
+                    )
+                    has_valve = obj.keyword_value_pairs.get(BDL_ZoneKeywords.CW_VALVE)
+                    if (
+                        condensing_loop == self.u_name
+                        and has_valve == BDL_ZoneCondenserValveOptions.YES
+                    ):
+                        return FluidLoopFlowControlOptions.VARIABLE_FLOW
+                elif loop_type == BDL_CirculationLoopTypes.PIPE2:
+                    heating_loop = obj.keyword_value_pairs.get(BDL_ZoneKeywords.HW_LOOP)
+                    cooling_loop = obj.keyword_value_pairs.get(
+                        BDL_ZoneKeywords.CHW_LOOP
+                    )
+                    heating_valve_type = obj.keyword_value_pairs.get(
+                        BDL_ZoneKeywords.HW_VALVE_TYPE
+                    )
+                    cooling_valve_type = obj.keyword_value_pairs.get(
+                        BDL_ZoneKeywords.CHW_VALVE_TYPE
+                    )
+                    if (
+                        heating_loop == self.u_name
+                        and heating_valve_type == BDL_FlowControlOptions.VARIABLE_FLOW
+                    ):
+                        return FluidLoopFlowControlOptions.VARIABLE_FLOW
+                    if (
+                        cooling_loop == self.u_name
+                        and cooling_valve_type == BDL_FlowControlOptions.VARIABLE_FLOW
+                    ):
+                        return FluidLoopFlowControlOptions.VARIABLE_FLOW
+
+            elif obj.bdl_command == BDL_Commands.CHILLER:
+                if loop_type == BDL_CirculationLoopTypes.CHW:
+                    cooling_loop = obj.keyword_value_pairs.get(
+                        BDL_ChillerKeywords.CHW_LOOP
+                    )
+                    valve_type = obj.keyword_value_pairs.get(
+                        BDL_ChillerKeywords.CHW_FLOW_CTRL
+                    )
+                    if (
+                        cooling_loop == self.u_name
+                        and valve_type == BDL_FlowControlOptions.VARIABLE_FLOW
+                    ):
+                        return FluidLoopFlowControlOptions.VARIABLE_FLOW
+                elif loop_type == BDL_CirculationLoopTypes.HW:
+                    heating_loop = obj.keyword_value_pairs.get(
+                        BDL_ChillerKeywords.HTREC_LOOP
+                    )
+                    valve_type = obj.keyword_value_pairs.get(
+                        BDL_ChillerKeywords.HTREC_FLOW_CTRL
+                    )
+                    if (
+                        heating_loop == self.u_name
+                        and valve_type == BDL_FlowControlOptions.VARIABLE_FLOW
+                    ):
+                        return FluidLoopFlowControlOptions.VARIABLE_FLOW
+                elif loop_type == BDL_CirculationLoopTypes.CW:
+                    condensing_loop = obj.keyword_value_pairs.get(
+                        BDL_ChillerKeywords.CW_LOOP
+                    )
+                    valve_type = obj.keyword_value_pairs.get(
+                        BDL_ChillerKeywords.CW_FLOW_CTRL
+                    )
+                    if (
+                        condensing_loop == self.u_name
+                        and valve_type == BDL_FlowControlOptions.VARIABLE_FLOW
+                    ):
+                        return FluidLoopFlowControlOptions.VARIABLE_FLOW
+                elif loop_type == BDL_CirculationLoopTypes.PIPE2:
+                    cooling_loop = obj.keyword_value_pairs.get(
+                        BDL_ChillerKeywords.CHW_LOOP
+                    )
+                    heating_loop = obj.keyword_value_pairs.get(
+                        BDL_ChillerKeywords.HTREC_LOOP
+                    )
+                    cooling_valve_type = obj.keyword_value_pairs.get(
+                        BDL_ChillerKeywords.CHW_FLOW_CTRL
+                    )
+                    heating_valve_type = obj.keyword_value_pairs.get(
+                        BDL_ChillerKeywords.HTREC_FLOW_CTRL
+                    )
+                    if (
+                        cooling_loop == self.u_name
+                        and cooling_valve_type == BDL_FlowControlOptions.VARIABLE_FLOW
+                    ):
+                        return FluidLoopFlowControlOptions.VARIABLE_FLOW
+                    if (
+                        heating_loop == self.u_name
+                        and heating_valve_type == BDL_FlowControlOptions.VARIABLE_FLOW
+                    ):
+                        return FluidLoopFlowControlOptions.VARIABLE_FLOW
+                elif loop_type == BDL_CirculationLoopTypes.WLHP:
+                    pass  # Unused for chillers
+
+            elif obj.bdl_command == BDL_Commands.BOILER:
+                if loop_type in [
+                    BDL_CirculationLoopTypes.CHW,
+                    BDL_CirculationLoopTypes.CW,
+                ]:
+                    pass  # Unused for boilers
+                elif loop_type in [
+                    BDL_CirculationLoopTypes.HW,
+                    BDL_CirculationLoopTypes.PIPE2,
+                    BDL_CirculationLoopTypes.WLHP,
+                ]:
+                    heating_loop = obj.keyword_value_pairs.get(
+                        BDL_BoilerKeywords.HW_LOOP
+                    )
+                    valve_type = obj.keyword_value_pairs.get(
+                        BDL_BoilerKeywords.HW_FLOW_CTRL
+                    )
+                    if (
+                        heating_loop == self.u_name
+                        and valve_type == BDL_FlowControlOptions.VARIABLE_FLOW
+                    ):
+                        return FluidLoopFlowControlOptions.VARIABLE_FLOW
+
+            elif obj.bdl_command == BDL_Commands.HEAT_REJECTION:
+                if loop_type in [
+                    BDL_CirculationLoopTypes.CHW,
+                    BDL_CirculationLoopTypes.HW,
+                    BDL_CirculationLoopTypes.PIPE2,
+                ]:
+                    pass  # Unused for heat rejections
+
+                elif loop_type in [
+                    BDL_CirculationLoopTypes.CW,
+                    BDL_CirculationLoopTypes.WLHP,
+                ]:
+                    condensing_loop = obj.keyword_value_pairs.get(
+                        BDL_HeatRejectionKeywords.CW_LOOP
+                    )
+                    valve_type = obj.keyword_value_pairs.get(
+                        BDL_HeatRejectionKeywords.CW_FLOW_CTRL
+                    )
+                    if (
+                        condensing_loop == self.u_name
+                        and valve_type == BDL_FlowControlOptions.VARIABLE_FLOW
+                    ):
+                        return FluidLoopFlowControlOptions.VARIABLE_FLOW
+
+            elif obj.bdl_command == BDL_Commands.GROUND_LOOP_HX:
+                if loop_type in [
+                    BDL_CirculationLoopTypes.CHW,
+                    BDL_CirculationLoopTypes.HW,
+                    BDL_CirculationLoopTypes.PIPE2,
+                ]:
+                    pass  # Unused for ground loop heat exchangers
+                elif loop_type in [
+                    BDL_CirculationLoopTypes.CW,
+                    BDL_CirculationLoopTypes.WLHP,
+                ]:
+                    condensing_loop = obj.keyword_value_pairs.get(
+                        BDL_GroundLoopHXKeywords.CIRCULATION_LOOP
+                    )
+                    valve_type = obj.keyword_value_pairs.get(
+                        BDL_GroundLoopHXKeywords.HX_FLOW_CTRL
+                    )
+                    if (
+                        condensing_loop == self.u_name
+                        and valve_type == BDL_FlowControlOptions.VARIABLE_FLOW
+                    ):
+                        return FluidLoopFlowControlOptions.VARIABLE_FLOW
+
+        return FluidLoopFlowControlOptions.FIXED_FLOW

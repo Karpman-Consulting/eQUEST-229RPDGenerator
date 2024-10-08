@@ -31,6 +31,7 @@ BDL_ZoneKeywords = BDLEnums.bdl_enums["ZoneKeywords"]
 BDL_SystemTypes = BDLEnums.bdl_enums["SystemTypes"]
 BDL_SysemHeatingTypes = BDLEnums.bdl_enums["SystemHeatingTypes"]
 BDL_SystemCoolingTypes = BDLEnums.bdl_enums["SystemCoolingTypes"]
+BDL_CoolControlOptions = BDLEnums.bdl_enums["SystemCoolControlOptions"]
 BDL_SupplyFanTypes = BDLEnums.bdl_enums["SystemSupplyFanTypes"]
 BDL_NightCycleControlOptions = BDLEnums.bdl_enums["SystemNightCycleControlOptions"]
 BDL_EconomizerOptions = BDLEnums.bdl_enums["SystemEconomizerOptions"]
@@ -52,6 +53,7 @@ BDL_ReturnFanOptions = BDLEnums.bdl_enums["SystemReturnFanLocationOptions"]
 BDL_HPSupplementSourceOptions = BDLEnums.bdl_enums["HPSupplementSourceOptions"]
 BDL_OutputCoolingTypes = BDLEnums.bdl_enums["OutputCoolingTypes"]
 BDL_OutputHeatingTypes = BDLEnums.bdl_enums["OutputHeatingTypes"]
+BDL_ReturnAirPathOptions = BDLEnums.bdl_enums["SystemReturnAirPathOptions"]
 
 
 class System(ParentNode):
@@ -529,11 +531,12 @@ class System(ParentNode):
             requests = self.get_output_requests()
             output_data = self.get_output_data(requests)
             for key in ["Cooling Capacity", "Heating Capacity"]:
-                output_data[key] = self.try_convert_units(
-                    output_data[key], "kBtu/hr", "Btu/hr"
-                )
+                if key in output_data:
+                    output_data[key] = self.try_convert_units(
+                        output_data[key], "kBtu/hr", "Btu/hr"
+                    )
 
-            self.populate_fan_system()
+            self.populate_fan_system(output_data)
             self.populate_fans(output_data)
             self.populate_heating_system(output_data)
             self.populate_cooling_system(output_data)
@@ -550,6 +553,7 @@ class System(ParentNode):
             "Heating Capacity": (2201008, self.u_name, ""),
             "Supply Fan - Airflow": (2201012, self.u_name, ""),
             "Supply Fan - Power": (2201014, self.u_name, ""),
+            "Supply Fan - Min Flow Ratio": (2201022, self.u_name, ""),
         }
 
         return_or_relief = (
@@ -909,8 +913,12 @@ class System(ParentNode):
             return
         self.parent_building_segment.hvac_systems.append(self.system_data_structure)
 
-    def populate_fan_system(self):
+    def populate_fan_system(self, output_data):
         self.fan_sys_id = self.u_name + " FanSys"
+        self.fan_sys_has_fully_ducted_return = (
+            self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_AIR_PATH)
+            == BDL_ReturnAirPathOptions.DUCT
+        )
         self.fan_sys_fan_control = self.supply_fan_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.FAN_CONTROL)
         )
@@ -922,6 +930,28 @@ class System(ParentNode):
         self.fan_sys_demand_control_ventilation_control = self.dcv_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.MIN_OA_METHOD)
         )
+        cool_control = self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_CONTROL)
+        min_reset_t = self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_MIN_RESET_T)
+        max_reset_t = self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_MAX_RESET_T)
+        if (
+            cool_control == BDL_CoolControlOptions.WARMEST
+            and min_reset_t
+            and max_reset_t
+        ):
+            self.fan_sys_reset_differential_temperature = self.try_float(
+                max_reset_t
+            ) - self.try_float(min_reset_t)
+        supply_fan_airflow = output_data.get("Supply Fan - Airflow")
+        supply_fan_min_ratio = output_data.get("Supply Fan - Min Flow Ratio")
+        oa_ratio = output_data.get("Outside Air Ratio")
+        if oa_ratio and supply_fan_airflow:
+            self.fan_sys_minimum_outdoor_airflow = self.try_float(
+                oa_ratio
+            ) * self.try_float(supply_fan_airflow)
+        if supply_fan_min_ratio and supply_fan_airflow:
+            self.fan_sys_minimum_airflow = self.try_float(
+                supply_fan_min_ratio
+            ) * self.try_float(supply_fan_airflow)
 
     def populate_heating_system(self, output_data):
         self.heat_sys_id = self.u_name + " HeatSys"
@@ -1022,7 +1052,6 @@ class System(ParentNode):
             self.cool_sys_oversizing_factor = max(
                 0, sizing_ratio * cool_sizing_ratio - 1
             )
-
         self.cool_sys_rated_total_cool_capacity = self.try_abs(
             self.try_float(
                 self.keyword_value_pairs.get(BDL_SystemKeywords.COOLING_CAPACITY)
@@ -1058,7 +1087,6 @@ class System(ParentNode):
             self.cool_sys_design_total_cool_capacity = self.try_abs(
                 output_data.get("Cooling Capacity")
             )
-
         design_shr = self.try_abs(output_data.get("Design Cooling SHR"))
         if design_shr and self.cool_sys_design_total_cool_capacity and design_shr != 1:
             self.cool_sys_design_sensible_cool_capacity = (
@@ -1070,7 +1098,6 @@ class System(ParentNode):
                 self.cool_sys_design_sensible_cool_capacity = (
                     shr * self.cool_sys_design_total_cool_capacity
                 )
-
         if self.is_zonal_system:
             self.cool_sys_is_sized_based_on_design_day = (
                 not self.keyword_value_pairs.get(BDL_SystemKeywords.COOLING_CAPACITY)
@@ -1103,6 +1130,9 @@ class System(ParentNode):
         self.preheat_sys_heating_coil_setpoint = self.try_float(
             self.keyword_value_pairs.get(BDL_SystemKeywords.PREHEAT_T)
         )
+        self.preheat_sys_hot_water_loop = self.keyword_value_pairs.get(
+            BDL_SystemKeywords.PHW_LOOP
+        )
 
     def populate_fans(self, output_data):
         # There is always a supply fan for a fan system in eQUEST, so it is always populated
@@ -1111,7 +1141,6 @@ class System(ParentNode):
         self.fan_design_electric_power[0] = output_data.get("Supply Fan - Power")
         if self.keyword_value_pairs.get(BDL_SystemKeywords.SUPPLY_FLOW) is not None:
             self.fan_is_airflow_sized_based_on_design_day[0] = False
-
         self.fan_specification_method[0] = (
             FanSpecificationMethodOptions.DETAILED
             if self.keyword_value_pairs.get(BDL_SystemKeywords.SUPPLY_STATIC)
@@ -1121,8 +1150,18 @@ class System(ParentNode):
         self.fan_design_pressure_rise[0] = self.try_float(
             self.keyword_value_pairs.get(BDL_SystemKeywords.SUPPLY_STATIC)
         )
+        self.fan_motor_efficiency[0] = self.try_float(
+            self.keyword_value_pairs.get(BDL_SystemKeywords.SUPPLY_MTR_EFF)
+        )
+        supply_mech_eff = self.try_float(
+            self.keyword_value_pairs.get(BDL_SystemKeywords.SUPPLY_MECH_EFF)
+        )
+        if self.fan_motor_efficiency[0] and supply_mech_eff:
+            self.fan_total_efficiency[0] = (
+                self.fan_motor_efficiency[0] * supply_mech_eff
+            )
 
-        # Determine if there is a return or relief fan
+        # Determine if there is either a return or relief fan
         return_or_relief = (
             self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_STATIC) is not None
             or self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_KW_FLOW)
@@ -1142,7 +1181,6 @@ class System(ParentNode):
             )
             if self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_FLOW) is not None:
                 self.fan_is_airflow_sized_based_on_design_day[2] = False
-
             self.fan_specification_method[2] = (
                 FanSpecificationMethodOptions.DETAILED
                 if self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_STATIC)
@@ -1152,6 +1190,16 @@ class System(ParentNode):
             self.fan_design_pressure_rise[2] = self.try_float(
                 self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_STATIC)
             )
+            self.fan_motor_efficiency[2] = self.try_float(
+                self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_MTR_EFF)
+            )
+            return_mech_eff = self.try_float(
+                self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_MECH_EFF)
+            )
+            if self.fan_motor_efficiency[2] and return_mech_eff:
+                self.fan_total_efficiency[2] = (
+                    self.fan_motor_efficiency[2] * return_mech_eff
+                )
 
         # If the return or relief fan location is not set to RELIEF, it is categorized as a return fan
         elif return_or_relief:
@@ -1170,7 +1218,18 @@ class System(ParentNode):
             self.fan_design_pressure_rise[1] = self.try_float(
                 self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_STATIC)
             )
+            self.fan_motor_efficiency[1] = self.try_float(
+                self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_MTR_EFF)
+            )
+            return_mech_eff = self.try_float(
+                self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_MECH_EFF)
+            )
+            if self.fan_motor_efficiency[1] and return_mech_eff:
+                self.fan_total_efficiency[1] = (
+                    self.fan_motor_efficiency[1] * return_mech_eff
+                )
 
+        # If the system is a dual duct system and the dual duct fan option is dual fan, there is a heating supply fan
         if (
             self.keyword_value_pairs.get(BDL_SystemKeywords.DDS_TYPE)
             == BDL_DualDuctFanOptions.DUAL_FAN
@@ -1185,7 +1244,6 @@ class System(ParentNode):
                 is not None
             ):
                 self.fan_is_airflow_sized_based_on_design_day[3] = False
-
             self.fan_specification_method[3] = (
                 FanSpecificationMethodOptions.DETAILED
                 if self.keyword_value_pairs.get(BDL_SystemKeywords.HSUPPLY_STATIC)
@@ -1204,7 +1262,6 @@ class System(ParentNode):
         self.air_econ_high_limit_shutoff_temperature = self.try_float(
             self.keyword_value_pairs.get(BDL_SystemKeywords.ECONO_LIMIT_T)
         )
-
         self.air_econ_is_integrated = (
             True
             if self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_SOURCE)
@@ -1249,12 +1306,13 @@ class System(ParentNode):
             self.keyword_value_pairs.get(BDL_SystemKeywords.ERV_OA_FLOW)
         )
         if self.air_energy_recovery_outdoor_airflow is None:
-            # TODO populate ERV outdoor airflow when it is autosized
-            pass
-
+            self.air_energy_recovery_outdoor_airflow = (
+                self.fan_sys_minimum_outdoor_airflow
+            )
         self.air_energy_recovery_exhaust_airflow = self.try_float(
             self.keyword_value_pairs.get(BDL_SystemKeywords.ERV_EXH_FLOW)
         )
         if self.air_energy_recovery_exhaust_airflow is None:
-            # TODO populate ERV exhaust airflow when it is autosized
-            pass
+            self.air_energy_recovery_exhaust_airflow = (
+                self.air_energy_recovery_outdoor_airflow
+            )
