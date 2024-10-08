@@ -1203,6 +1203,7 @@ $ ---------------------------------------------------------
    TYPE             = HW
    LOOP-DESIGN-DT   = 50
    LOOP-MIN-FLOW    = 0.25
+   LOOP-OPERATION   = DEMAND
    DESIGN-HEAT-T    = 180
    LOOP-PUMP        = "Hot Water Pumps"
    ..
@@ -1230,6 +1231,8 @@ $ ---------------------------------------------------------
 "Condenser Water Loop" = CIRCULATION-LOOP
    TYPE             = CW
    SIZING-OPTION    = COINCIDENT
+   LOOP-OPERATION   = SCHEDULED
+   COOLING-SCHEDULE = "Schedule ON/OFF"
    DESIGN-COOL-T    = 70
    COOL-SETPT-T     = 70
    LOOP-PUMP        = "Condenser Water Pump"
