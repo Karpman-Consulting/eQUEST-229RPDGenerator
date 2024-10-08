@@ -77,6 +77,7 @@ class Schedule(BaseNode):
     LAST_DAY = 364
     supported_hourly_schedules = [
         BDL_ScheduleTypes.ON_OFF,
+        BDL_ScheduleTypes.ON_OFF_FLAG,
         BDL_ScheduleTypes.FRACTION,
         BDL_ScheduleTypes.MULTIPLIER,
         BDL_ScheduleTypes.TEMPERATURE,

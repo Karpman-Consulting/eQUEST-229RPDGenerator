@@ -228,6 +228,8 @@ class BDLEnums:
                 "MAX-RESET-T",
                 "DHW-INLET-T",
                 "DHW-INLET-T-SCH",
+                "COOLING-SCHEDULE",
+                "HEATING-SCHEDULE",
             ]
         ),
         "ConstructionKeywords": _ListEnum(["LAYERS", "ABSORPTANCE", "U-VALUE"]),
@@ -673,6 +675,7 @@ class BDLEnums:
                 "PHW-VALVE-TYPE",
                 "DDS-TYPE",
                 "FAN-CONTROL",
+                "FAN-SCHEDULE",
                 "INDOOR-FAN-MODE",
                 "NIGHT-CYCLE-CTRL",
                 "MIN-OA-METHOD",
