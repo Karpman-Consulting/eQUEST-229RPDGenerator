@@ -1,5 +1,7 @@
 import unittest
 import os
+from unittest.mock import patch
+
 from rpd_generator.config import Config
 from rpd_generator.utilities import validate_configuration
 from rpd_generator.schema.schema_enums import SchemaEnums
@@ -31,7 +33,28 @@ class TestElectricChillers(unittest.TestCase):
         )
         self.chiller = Chiller("Chiller 1", self.rmd)
 
-    def test_populate_data_elements_with_centrif_chiller(self):
+    @patch('rpd_generator.bdl_structure.base_node.get_multiple_results')
+    def test_populate_data_elements_with_centrif_chiller(self, mock_get_multiple_results):
+        mock_get_multiple_results.return_value = {
+                "id": "Chiller 1",
+                "compressor_type": "CENTRIFUGAL",
+                "energy_source_type": "ELECTRICITY",
+                "cooling_loop": "Chilled Water Loop (Primary)",
+                "condensing_loop": "Condenser Water Loop",
+                "design_entering_condenser_temperature": 70.0,
+                "design_leaving_evaporator_temperature": 50.0,
+                "rated_entering_condenser_temperature": 85.0,
+                "rated_leaving_evaporator_temperature": 44.0,
+                "rated_capacity": 0.12009233593749999,
+                "design_capacity": 0.151941078125,
+                "design_flow_condenser": 36.10254669189453,
+                "design_flow_evaporator": 28.88204002380371,
+                "capacity_validation_points": [],
+                "power_validation_points": [],
+                "part_load_efficiency": [],
+                "part_load_efficiency_metrics": [],
+            }
+        Config.EQUEST_INSTALL_PATH = "local"
         self.chiller.keyword_value_pairs = {
             BDL_ChillerKeywords.TYPE: BDL_ChillerTypes.ELEC_OPEN_CENT,
             BDL_ChillerKeywords.CHW_LOOP: "Chilled Water Loop (Primary)",
@@ -41,7 +64,7 @@ class TestElectricChillers(unittest.TestCase):
             BDL_ChillerKeywords.DESIGN_CHW_T: "50",
             BDL_ChillerKeywords.DESIGN_COND_T: "70",
         }
-
+        
         self.chiller.populate_data_elements()
         self.chiller.populate_data_group()
 
