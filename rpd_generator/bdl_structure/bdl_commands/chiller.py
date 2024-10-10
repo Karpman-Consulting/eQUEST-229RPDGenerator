@@ -154,6 +154,14 @@ class Chiller(BaseNode):
             self.keyword_value_pairs.get(BDL_ChillerKeywords.MIN_RATIO)
         )
 
+        self.is_condenser_water_pump_interlocked = bool(
+            self.keyword_value_pairs.get(BDL_ChillerKeywords.CW_PUMP)
+        )
+
+        self.is_chilled_water_pump_interlocked = bool(
+            self.keyword_value_pairs.get(BDL_ChillerKeywords.CHW_PUMP)
+        )
+
         # Assign pump data elements populated from the boiler keyword value pairs
         chw_pump_name = self.keyword_value_pairs.get(BDL_ChillerKeywords.CHW_PUMP)
         if chw_pump_name is not None:
