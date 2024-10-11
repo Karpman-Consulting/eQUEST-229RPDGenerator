@@ -5,7 +5,7 @@ from rpd_generator.utilities import validate_configuration
 
 def generate_test_rpds_from_bdls():
 
-    test_directory = Path(__file__).parents[2] / "test"
+    test_directory = Path(__file__).parent
     test_bdl_files = [bdl_file for bdl_file in test_directory.rglob("*.BDL")]
 
     for test_bdl_file in test_bdl_files:

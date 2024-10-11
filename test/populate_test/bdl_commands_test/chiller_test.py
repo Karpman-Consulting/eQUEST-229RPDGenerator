@@ -1,5 +1,4 @@
 import unittest
-import os
 from unittest.mock import patch
 
 from rpd_generator.config import Config
@@ -23,16 +22,10 @@ class TestElectricChillers(unittest.TestCase):
         self.rmd = RulesetModelDescription("Test RMD")
         self.rmd.doe2_version = "DOE-2.3"
         self.rmd.doe2_data_path = Config.DOE23_DATA_PATH
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        self.rmd.file_path = os.path.abspath(
-            os.path.join(
-                script_dir, "../../full_rpd_test/E-2/229 Test Case E-2 (CHW VAV)"
-            )
-        )
         self.chiller = Chiller("Chiller 1", self.rmd)
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
-    def test_populate_data_elements_with_centrif_chiller(self, mock_get_output_data):
+    def test_populate_data_with_centrif_chiller(self, mock_get_output_data):
         mock_get_output_data.return_value = {
             "Design Parameters - Capacity": 151941.078125,
             "Design Parameters - Condenser Flow": 36.10254669189453,
@@ -41,7 +34,7 @@ class TestElectricChillers(unittest.TestCase):
             "Normalized (ARI) Entering Condenser Water Temperature (°F)": 70.0,
             "Normalized (ARI) Leaving Chilled Water Temperature (°F)": 44.0,
         }
-        Config.EQUEST_INSTALL_PATH = "local"
+
         self.chiller.keyword_value_pairs = {
             BDL_ChillerKeywords.TYPE: BDL_ChillerTypes.ELEC_OPEN_CENT,
             BDL_ChillerKeywords.CHW_LOOP: "Chilled Water Loop (Primary)",
@@ -84,14 +77,10 @@ class TestEngineChillers(unittest.TestCase):
         self.rmd = RulesetModelDescription("Test RMD")
         self.rmd.doe2_version = "DOE-2.3"
         self.rmd.doe2_data_path = Config.DOE23_DATA_PATH
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        self.rmd.file_path = os.path.abspath(
-            os.path.join(script_dir, "../output_references/Engine Chiller")
-        )
         self.chiller = Chiller("Chiller 1", self.rmd)
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
-    def test_populate_data_elements_with_engine_chiller(self, mock_get_output_data):
+    def test_populate_data_with_engine_chiller(self, mock_get_output_data):
         mock_get_output_data.return_value = {
             "Design Parameters - Capacity": 151941.078125,
             "Design Parameters - Condenser Flow": 35.50693130493164,
