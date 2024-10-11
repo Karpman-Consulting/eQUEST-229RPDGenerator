@@ -3,7 +3,7 @@ repos:
     hooks:
       - id: run-tests
         name: Run Unit Tests
-        entry: pipenv run python test/populate_test/run_tests.py
+        entry: pipenv run python test/run_unit_tests.py
         language: system
         pass_filenames: false
         always_run: true

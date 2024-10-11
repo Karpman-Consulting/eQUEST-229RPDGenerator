@@ -1,28 +1,14 @@
 import unittest
-import os
+from unittest.mock import patch
 from rpd_generator.config import Config
-from rpd_generator.utilities import validate_configuration
 from rpd_generator.schema.schema_enums import SchemaEnums
 
 Config.set_active_ruleset("ASHRAE 90.1-2019")
 SchemaEnums.update_schema_enum(Config.ACTIVE_RULESET)
-validate_configuration.find_equest_installation()
 
 from rpd_generator.artifacts.ruleset_model_description import RulesetModelDescription
-from rpd_generator.bdl_structure.bdl_commands.boiler import Boiler
-from rpd_generator.bdl_structure.bdl_commands.meters import MasterMeters, FuelMeter
-from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
-
-BDL_Commands = BDLEnums.bdl_enums["Commands"]
-BDL_BoilerKeywords = BDLEnums.bdl_enums["BoilerKeywords"]
-BDL_BoilerTypes = BDLEnums.bdl_enums["BoilerTypes"]
-BDL_FuelTypes = BDLEnums.bdl_enums["FuelTypes"]
-BDL_FuelMeterKeywords = BDLEnums.bdl_enums["FuelMeterKeywords"]
-BoilerCombustionOptions = SchemaEnums.schema_enums["BoilerCombustionOptions"]
-EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
-BoilerEfficiencyMetricOptions = SchemaEnums.schema_enums[
-    "BoilerEfficiencyMetricOptions"
-]
+from rpd_generator.bdl_structure.bdl_commands.boiler import *
+from rpd_generator.bdl_structure.bdl_commands.meters import FuelMeter
 
 
 class TestFuelBoiler(unittest.TestCase):
@@ -31,15 +17,19 @@ class TestFuelBoiler(unittest.TestCase):
         self.rmd = RulesetModelDescription("Test RMD")
         self.rmd.doe2_version = "DOE-2.3"
         self.rmd.doe2_data_path = Config.DOE23_DATA_PATH
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        self.rmd.file_path = os.path.abspath(
-            os.path.join(
-                script_dir, "../../full_rpd_test/E-2/229 Test Case E-2 (CHW VAV)"
-            )
-        )
         self.boiler = Boiler("Boiler 1", self.rmd)
 
-    def test_populate_data_elements_with_fuel_meter(self):
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_populate_data_elements_with_fuel_meter(self, mock_get_output_data):
+        mock_get_output_data.return_value = {
+            "Boilers - Design Parameters - Capacity": 188203.578125,
+            "Boilers - Design Parameters - Flow": 28.88204002380371,
+            "Boilers - Design Parameters - Efficiency": 0.9000089372091853,
+            "Boilers - Design Parameters - Electric Input Ratio": 0.0,
+            "Boilers - Design Parameters - Fuel Input Ratio": 1.1111,
+            "Boilers - Design Parameters - Auxiliary Power": 0.0,
+            "Boilers - Rated Capacity at Peak (Btu/hr)": 188203.578125,
+        }
         fuel_meter = FuelMeter("Test Fuel Meter", self.rmd)
         fuel_meter.keyword_value_pairs = {
             BDL_FuelMeterKeywords.TYPE: BDL_FuelTypes.METHANOL
@@ -66,13 +56,23 @@ class TestFuelBoiler(unittest.TestCase):
             "design_capacity": 0.188203578125,
             "rated_capacity": 0.188203578125,
             "minimum_load_ratio": 0.33,
-            "efficiency": [0.9000089372091853, 0.9200089372091853, 0.9085816425247832],
+            "efficiency": [0.900009000090001, 0.920009000090001, 0.9085817143885725],
             "efficiency_metrics": ["THERMAL", "COMBUSTION", "ANNUAL_FUEL_UTILIZATION"],
         }
 
         self.assertDictEqual(expected_data_structure, self.boiler.boiler_data_structure)
 
-    def test_populate_data_elements_without_fuel_meter(self):
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_populate_data_elements_without_fuel_meter(self, mock_get_output_data):
+        mock_get_output_data.return_value = {
+            "Boilers - Design Parameters - Capacity": 188203.578125,
+            "Boilers - Design Parameters - Flow": 28.88204002380371,
+            "Boilers - Design Parameters - Efficiency": 0.9000089372091853,
+            "Boilers - Design Parameters - Electric Input Ratio": 0.0,
+            "Boilers - Design Parameters - Fuel Input Ratio": 1.1111,
+            "Boilers - Design Parameters - Auxiliary Power": 0.0,
+            "Boilers - Rated Capacity at Peak (Btu/hr)": 188203.578125,
+        }
         self.rmd.bdl_obj_instances = {}
 
         self.boiler.keyword_value_pairs = {
@@ -94,7 +94,7 @@ class TestFuelBoiler(unittest.TestCase):
             "design_capacity": 0.188203578125,
             "rated_capacity": 0.188203578125,
             "minimum_load_ratio": 0.33,
-            "efficiency": [0.9000089372091853, 0.9200089372091853, 0.9085816425247832],
+            "efficiency": [0.900009000090001, 0.920009000090001, 0.9085817143885725],
             "efficiency_metrics": ["THERMAL", "COMBUSTION", "ANNUAL_FUEL_UTILIZATION"],
         }
 
@@ -109,11 +109,14 @@ class TestElectricBoiler(unittest.TestCase):
         self.rmd.doe2_data_path = Config.DOE23_DATA_PATH
         self.boiler = Boiler("Boiler 1", self.rmd)
 
-    def test_populate_data_elements_electric_boiler(self):
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        self.rmd.file_path = os.path.abspath(
-            os.path.join(script_dir, "../output_references/Electric Boiler")
-        )
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_populate_data_elements_electric_boiler(self, mock_get_output_data):
+        mock_get_output_data.return_value = {
+            "Boilers - Design Parameters - Capacity": 882239.8125,
+            "Boilers - Rated Capacity at Peak (Btu/hr)": 882239.8125,
+            "Boilers - Design Parameters - Electric Input Ratio": 1.02,
+            "Boilers - Design Parameters - Auxiliary Power": 0.0,
+        }
         self.rmd.bdl_obj_instances = {}
 
         self.boiler.keyword_value_pairs = {
@@ -135,17 +138,22 @@ class TestElectricBoiler(unittest.TestCase):
             "design_capacity": 0.8822398124999999,
             "rated_capacity": 0.8822398124999999,
             "minimum_load_ratio": 0.33,
-            "efficiency": [0.9803921751955851],
+            "efficiency": [0.9803921568627451],
             "efficiency_metrics": ["THERMAL"],
         }
 
         self.assertDictEqual(expected_data_structure, self.boiler.boiler_data_structure)
 
-    def test_populate_data_elements_electric_steam_boiler_1EIR(self):
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        self.rmd.file_path = os.path.abspath(
-            os.path.join(script_dir, "../output_references/Electric Boiler - 1EIR")
-        )
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_populate_data_elements_electric_steam_boiler_1EIR(
+        self, mock_get_output_data
+    ):
+        mock_get_output_data.return_value = {
+            "Boilers - Design Parameters - Capacity": 882239.8125,
+            "Boilers - Rated Capacity at Peak (Btu/hr)": 882239.8125,
+            "Boilers - Design Parameters - Electric Input Ratio": 1.0,
+            "Boilers - Design Parameters - Auxiliary Power": 0.0,
+        }
         self.rmd.bdl_obj_instances = {}
 
         self.boiler.keyword_value_pairs = {

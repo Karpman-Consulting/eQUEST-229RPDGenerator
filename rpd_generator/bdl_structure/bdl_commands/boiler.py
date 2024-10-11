@@ -12,7 +12,7 @@ BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_BoilerKeywords = BDLEnums.bdl_enums["BoilerKeywords"]
 BDL_BoilerTypes = BDLEnums.bdl_enums["BoilerTypes"]
 BDL_FuelTypes = BDLEnums.bdl_enums["FuelTypes"]
-BDL_MasterMeterKeywords = BDLEnums.bdl_enums["MasterMeterKeywords"]
+BDL_FuelMeterKeywords = BDLEnums.bdl_enums["FuelMeterKeywords"]
 
 
 class Boiler(BaseNode):
@@ -82,7 +82,7 @@ class Boiler(BaseNode):
             fuel_type = BDL_FuelTypes.NATURAL_GAS
         else:
             fuel_meter_type = fuel_meter.keyword_value_pairs.get(
-                BDL_MasterMeterKeywords.TYPE
+                BDL_FuelMeterKeywords.TYPE
             )
             fuel_type = self.fuel_type_map.get(fuel_meter_type)
         self.energy_source_map.update(
