@@ -106,6 +106,10 @@ class System(ParentNode):
         BDL_NightCycleControlOptions.STAY_OFF: FanSystemOperationOptions.KEEP_OFF,
         BDL_NightCycleControlOptions.ZONE_FANS_ONLY: FanSystemOperationOptions.OTHER,
     }
+    occupied_fan_operation_map = {
+        BDL_IndoorFanModeOptions.CONTINUOUS: FanSystemOperationOptions.CONTINUOUS,
+        BDL_IndoorFanModeOptions.INTERMITTENT: FanSystemOperationOptions.CYCLING,
+    }
     system_heating_type_map = {
         BDL_SystemTypes.PTAC: None,  # Mapping updated in populate_data_elements method  # Unavailable in DOE 2.3
         BDL_SystemTypes.PSZ: None,  # Mapping updated in populate_data_elements method
@@ -258,12 +262,13 @@ class System(ParentNode):
         self.sys_id = None
         self.system_data_structure = {}
         self.terminal_data_structure = {}
-        # hvac system will be omitted when SYSTEM TYPE = SUM
+        # HVACSystem will be omitted when SYSTEM TYPE = SUM
         self.omit = False
         # HVACSystem data elements are not populated when SYSTEM TYPE = FC with HW or no heat
         self.is_terminal = False
-        # HVACSystems are replicated for each zone assigned to this eQUEST SYSTEM
+        # HVACSystems are derived from this eQUEST SYSTEM for each zone served beyond the first
         self.is_zonal_system = False
+        # HVACSystem is derived from a zonal system
         self.is_derived_system = False
         self.output_cool_type = None
         self.output_heat_type = None
@@ -922,11 +927,6 @@ class System(ParentNode):
         self.fan_sys_fan_control = self.supply_fan_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.FAN_CONTROL)
         )
-        self.fan_sys_operation_during_unoccupied = (
-            self.unoccupied_fan_operation_map.get(
-                self.keyword_value_pairs.get(BDL_SystemKeywords.NIGHT_CYCLE_CTRL)
-            )
-        )
         self.fan_sys_demand_control_ventilation_control = self.dcv_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.MIN_OA_METHOD)
         )
@@ -952,6 +952,14 @@ class System(ParentNode):
             self.fan_sys_minimum_airflow = self.try_float(
                 supply_fan_min_ratio
             ) * self.try_float(supply_fan_airflow)
+        self.fan_sys_operation_during_unoccupied = (
+            self.unoccupied_fan_operation_map.get(
+                self.keyword_value_pairs.get(BDL_SystemKeywords.NIGHT_CYCLE_CTRL)
+            )
+        )
+        self.fan_sys_operation_during_occupied = (
+            self.populate_fan_operation_during_occupied()
+        )
 
     def populate_heating_system(self, output_data):
         self.heat_sys_id = self.u_name + " HeatSys"
@@ -968,7 +976,7 @@ class System(ParentNode):
             self.keyword_value_pairs.get(BDL_SystemKeywords.HUMIDIFIER_TYPE)
         )
         self.heat_sys_heating_coil_setpoint = self.try_float(
-            self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_T)
+            self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_SET_T)
         )
         self.heat_sys_heatpump_auxiliary_heat_type = self.heatpump_aux_type_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.HP_SUPP_SOURCE)
@@ -1038,9 +1046,6 @@ class System(ParentNode):
         )
         self.cool_sys_condenser_water_loop = self.keyword_value_pairs.get(
             BDL_SystemKeywords.CW_LOOP
-        )
-        self.cool_sys_rated_total_cool_capacity = self.try_float(
-            self.keyword_value_pairs.get(BDL_SystemKeywords.COOLING_CAPACITY)
         )
         sizing_ratio = self.try_float(
             self.keyword_value_pairs.get(BDL_SystemKeywords.SIZING_RATIO)
@@ -1141,6 +1146,31 @@ class System(ParentNode):
         self.fan_design_electric_power[0] = output_data.get("Supply Fan - Power")
         if self.keyword_value_pairs.get(BDL_SystemKeywords.SUPPLY_FLOW) is not None:
             self.fan_is_airflow_sized_based_on_design_day[0] = False
+        if self.fan_is_airflow_sized_based_on_design_day[0] is None:
+            self.fan_is_airflow_sized_based_on_design_day[0] = (
+                # If any zone served by the system has assigned flow rates, the fan is not sized based on design day
+                any(
+                    child_zone.keyword_value_pairs.get(BDL_ZoneKeywords.ASSIGNED_FLOW)
+                    or child_zone.keyword_value_pairs.get(
+                        BDL_ZoneKeywords.HASSIGNED_FLOW
+                    )
+                    or child_zone.keyword_value_pairs.get(BDL_ZoneKeywords.FLOW_AREA)
+                    or child_zone.keyword_value_pairs.get(BDL_ZoneKeywords.HFLOW_AREA)
+                    or child_zone.keyword_value_pairs.get(
+                        BDL_ZoneKeywords.AIR_CHANGES_HR
+                    )
+                    or child_zone.keyword_value_pairs.get(
+                        BDL_ZoneKeywords.HAIR_CHANGES_HR
+                    )
+                    or child_zone.keyword_value_pairs.get(
+                        BDL_ZoneKeywords.MIN_FLOW_AREA
+                    )
+                    or child_zone.keyword_value_pairs.get(
+                        BDL_ZoneKeywords.HMIN_FLOW_AREA
+                    )
+                    for child_zone in self.children
+                )
+            )
         self.fan_specification_method[0] = (
             FanSpecificationMethodOptions.DETAILED
             if self.keyword_value_pairs.get(BDL_SystemKeywords.SUPPLY_STATIC)
@@ -1181,6 +1211,11 @@ class System(ParentNode):
             )
             if self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_FLOW) is not None:
                 self.fan_is_airflow_sized_based_on_design_day[2] = False
+            if self.fan_is_airflow_sized_based_on_design_day[2] is None:
+                self.fan_is_airflow_sized_based_on_design_day[2] = (
+                    self.fan_is_airflow_sized_based_on_design_day[0]
+                )
+
             self.fan_specification_method[2] = (
                 FanSpecificationMethodOptions.DETAILED
                 if self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_STATIC)
@@ -1208,6 +1243,10 @@ class System(ParentNode):
             self.fan_design_electric_power[1] = output_data.get("Return Fan - Power")
             if self.keyword_value_pairs.get(BDL_SystemKeywords.RETURN_FLOW) is not None:
                 self.fan_is_airflow_sized_based_on_design_day[1] = False
+            if self.fan_is_airflow_sized_based_on_design_day[1] is None:
+                self.fan_is_airflow_sized_based_on_design_day[1] = (
+                    self.fan_is_airflow_sized_based_on_design_day[0]
+                )
 
             self.fan_specification_method[1] = (
                 FanSpecificationMethodOptions.DETAILED
@@ -1244,6 +1283,26 @@ class System(ParentNode):
                 is not None
             ):
                 self.fan_is_airflow_sized_based_on_design_day[3] = False
+            if self.fan_is_airflow_sized_based_on_design_day[3] is None:
+                self.fan_is_airflow_sized_based_on_design_day[3] = (
+                    # If any zone served by the system has assigned flow rates, the fan is not sized based on design day
+                    any(
+                        child_zone.keyword_value_pairs.get(
+                            BDL_ZoneKeywords.HASSIGNED_FLOW
+                        )
+                        or child_zone.keyword_value_pairs.get(
+                            BDL_ZoneKeywords.HFLOW_AREA
+                        )
+                        or child_zone.keyword_value_pairs.get(
+                            BDL_ZoneKeywords.HAIR_CHANGES_HR
+                        )
+                        or child_zone.keyword_value_pairs.get(
+                            BDL_ZoneKeywords.HMIN_FLOW_AREA
+                        )
+                        for child_zone in self.children
+                    )
+                )
+
             self.fan_specification_method[3] = (
                 FanSpecificationMethodOptions.DETAILED
                 if self.keyword_value_pairs.get(BDL_SystemKeywords.HSUPPLY_STATIC)
@@ -1316,3 +1375,70 @@ class System(ParentNode):
             self.air_energy_recovery_exhaust_airflow = (
                 self.air_energy_recovery_outdoor_airflow
             )
+
+    def populate_fan_operation_during_occupied(self):
+        fan_sch_name = self.keyword_value_pairs.get(BDL_SystemKeywords.FAN_SCHEDULE)
+
+        if (
+            self.keyword_value_pairs.get(BDL_SystemKeywords.TYPE)
+            == BDL_SystemTypes.RESVVT
+        ):
+            return FanSystemOperationOptions.CYCLING
+
+        elif (
+            self.keyword_value_pairs.get(BDL_SystemKeywords.TYPE)
+            == BDL_SystemTypes.DOAS
+        ):
+            fan_sch = self.rmd.bdl_obj_instances.get(fan_sch_name)
+            if not fan_sch:
+                return FanSystemOperationOptions.INTERMITTENT
+            else:
+                return FanSystemOperationOptions.CONTINUOUS
+
+        elif self.keyword_value_pairs.get(BDL_SystemKeywords.TYPE) in [
+            BDL_SystemTypes.PTAC,
+            BDL_SystemTypes.HP,
+            BDL_SystemTypes.UVT,
+        ]:
+            if not self.fan_sys_minimum_outdoor_airflow:
+                return FanSystemOperationOptions.CYCLING
+
+            min_oa_sch_name = self.keyword_value_pairs.get(
+                BDL_SystemKeywords.MIN_AIR_SCH
+            )
+            fan_sch = self.rmd.bdl_obj_instances.get(fan_sch_name)
+            min_oa_sch = self.rmd.bdl_obj_instances.get(min_oa_sch_name)
+            if not min_oa_sch:
+                return FanSystemOperationOptions.CONTINUOUS
+            if not fan_sch:  # (and min_oa_sch)
+                min_oa_sch_values = min_oa_sch.hourly_values
+                if min_oa_sch_values:
+                    for i in range(len(min_oa_sch_values)):
+                        if min_oa_sch_values[i] == 0:
+                            return FanSystemOperationOptions.CYCLING
+                    return FanSystemOperationOptions.CONTINUOUS
+                return FanSystemOperationOptions.CYCLING
+            if fan_sch and min_oa_sch:
+                fan_sch_values = fan_sch.hourly_values
+                min_oa_sch_values = min_oa_sch.hourly_values
+                if fan_sch_values and min_oa_sch_values:
+                    for i in range(len(fan_sch_values)):
+                        if min_oa_sch_values[i] == 0 and fan_sch_values[i] in (1, -999):
+                            return FanSystemOperationOptions.CYCLING
+                    return FanSystemOperationOptions.CONTINUOUS
+
+        elif self.keyword_value_pairs.get(BDL_SystemKeywords.TYPE) in [
+            BDL_SystemTypes.PSZ,
+            BDL_SystemTypes.PVVT,
+            BDL_SystemTypes.RESYS2,
+            BDL_SystemTypes.EVAP_COOL,
+            BDL_SystemTypes.FC,
+            BDL_SystemTypes.SZRH,
+            BDL_SystemTypes.HP,
+        ]:
+            return self.occupied_fan_operation_map.get(
+                self.keyword_value_pairs.get(BDL_SystemKeywords.INDOOR_FAN_MODE)
+            )
+
+        else:
+            return FanSystemOperationOptions.CONTINUOUS
