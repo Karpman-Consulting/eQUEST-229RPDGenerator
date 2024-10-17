@@ -981,7 +981,7 @@ class System(ParentNode):
             self.keyword_value_pairs.get(BDL_SystemKeywords.HUMIDIFIER_TYPE)
         )
         self.heat_sys_heating_coil_setpoint = self.try_float(
-            self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_T)
+            self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_SET_T)
         )
         self.heat_sys_heatpump_auxiliary_heat_type = self.heatpump_aux_type_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.HP_SUPP_SOURCE)
