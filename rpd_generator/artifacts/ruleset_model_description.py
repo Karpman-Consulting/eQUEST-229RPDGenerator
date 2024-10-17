@@ -7,7 +7,17 @@ class RulesetModelDescription:
         self.file_path = None
         self.doe2_version = None
         self.doe2_data_path = None
+
         self.building_azimuth = None
+        self.system_names = []
+        self.zone_names = []
+        self.circulation_loop_names = []
+        self.boiler_names = []
+        self.chiller_names = []
+        self.heat_rejection_names = []
+        self.ground_loop_hx_names = []
+        self.steam_meter_names = []
+        self.equip_ctrl_names = []
 
         # store BDL objects for the model associated with the RMD
         self.bdl_obj_instances = {}

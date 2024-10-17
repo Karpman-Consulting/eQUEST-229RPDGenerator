@@ -40,13 +40,6 @@ COMMAND_PROCESSING_ORDER = [
     "DAY-SCHEDULE-PD",
     "WEEK-SCHEDULE-PD",
     "SCHEDULE-PD",
-    "PUMP",  # Pumps must populate before Boiler, Chiller, Heat-Rejection, Circulation-Loop
-    "CIRCULATION-LOOP",  # Circulation loops must populate before Boiler, Chiller, DWHeater, Heat-Rejection
-    "BOILER",
-    "CHILLER",
-    "DW-HEATER",
-    "HEAT-REJECTION",
-    "GROUND-LOOP-HX",
     "FLOOR",  # Floors must populate before Spaces
     "SYSTEM",  # Systems must populate before Zones
     "ZONE",  # Zones must populate before Spaces
@@ -54,6 +47,15 @@ COMMAND_PROCESSING_ORDER = [
     "EXTERIOR-WALL",  # Exterior walls must populate before Windows, Doors
     "INTERIOR-WALL",  # Interior walls must populate before Windows, Doors
     "UNDERGROUND-WALL",
+    "PUMP",  # Pumps must populate before Boiler, Chiller, Heat-Rejection, Circulation-Loop
+    "CIRCULATION-LOOP",  # Circulation loops must populate before Boiler, Chiller, DWHeater, Heat-Rejection
+    "BOILER",
+    "CHILLER",
+    "DW-HEATER",
+    "HEAT-REJECTION",
+    "GROUND-LOOP-HX",
+    "EQUIP-CTRL",
+    "LOAD-MANAGEMENT",
     "WINDOW",
     "DOOR",
 ]

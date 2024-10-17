@@ -40,6 +40,7 @@ class HeatRejection(BaseNode):
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
+        self.rmd.heat_rejection_names.append(u_name)
 
         self.heat_rejection_data_structure = {}
 
