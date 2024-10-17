@@ -515,6 +515,15 @@ class BDLEnums:
                 "DHW-LOOP",
             ]
         ),
+        "SystemHeatControlOptions": _ListEnum(
+            [
+                "CONSTANT",
+                "WARMEST",
+                "COLDEST",
+                "RESET",
+                "SCHEDULED",
+            ]
+        ),
         "SystemHeatingValveTypes": _ListEnum(
             [
                 "TWO-WAY",
