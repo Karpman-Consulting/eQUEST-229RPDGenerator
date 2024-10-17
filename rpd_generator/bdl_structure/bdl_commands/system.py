@@ -254,6 +254,7 @@ class System(ParentNode):
         self.parent_building_segment = rmd.bdl_obj_instances.get(
             "Default Building Segment", None
         )
+        self.rmd.system_names.append(u_name)
 
         self.sys_id = None
         self.system_data_structure = {}

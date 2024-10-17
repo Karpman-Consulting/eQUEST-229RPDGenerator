@@ -19,6 +19,8 @@ class MasterMeters(BaseDefinition):
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
 
+        self.rmd.master_meters = u_name
+
     def __repr__(self):
         return f"MasterMeters(u_name='{self.u_name}')"
 
@@ -52,13 +54,14 @@ class SteamMeter(BaseNode):
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
+        self.rmd.steam_meter_names.append(u_name)
 
         self.data_structure = {}
 
         # data elements with no children
         self.loop = None
-        self.type = None
-        self.energy_source_type = None
+        self.type = STEAM
+        self.energy_source_type = OTHER
 
     def __repr__(self):
         return f"SteamMeter(u_name='{self.u_name}')"
@@ -68,8 +71,6 @@ class SteamMeter(BaseNode):
         self.loop = self.keyword_value_pairs.get(
             BDL_SteamAndCHWaterMeterKeywords.CIRCULATION_LOOP
         )
-        self.type = STEAM
-        self.energy_source_type = OTHER
 
     def populate_data_group(self):
         """Populate schema structure for ExternalFluidSource object."""
@@ -107,8 +108,8 @@ class CHWMeter(BaseNode):
 
         # data elements with no children
         self.loop = None
-        self.type = None
-        self.energy_source_type = None
+        self.type = CHILLED_WATER
+        self.energy_source_type = OTHER
 
     def __repr__(self):
         return f"CHWMeter(u_name='{self.u_name}')"
@@ -118,8 +119,6 @@ class CHWMeter(BaseNode):
         self.loop = self.keyword_value_pairs.get(
             BDL_SteamAndCHWaterMeterKeywords.CIRCULATION_LOOP
         )
-        self.type = CHILLED_WATER
-        self.energy_source_type = OTHER
 
     def populate_data_group(self):
         """Populate schema structure for ExternalFluidSource object."""
