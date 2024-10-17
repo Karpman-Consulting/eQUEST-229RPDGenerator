@@ -1476,4 +1476,3 @@ class System(ParentNode):
             and heat_control == BDL_HeatControlOptions.COLDEST
         ):
             return FanSystemTemperatureControlOptions.ZONE_RESET
-
