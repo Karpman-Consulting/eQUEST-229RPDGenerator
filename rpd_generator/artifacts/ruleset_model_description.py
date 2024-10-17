@@ -9,6 +9,9 @@ class RulesetModelDescription:
         self.doe2_data_path = None
 
         self.building_azimuth = None
+        self.master_meters = None
+        # False by default, will set to True if a FIXED-SHADE object is found
+        self.has_site_shading = False
         self.system_names = []
         self.zone_names = []
         self.circulation_loop_names = []
