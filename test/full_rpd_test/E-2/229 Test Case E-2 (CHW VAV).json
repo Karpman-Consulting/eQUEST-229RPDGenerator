@@ -970,6 +970,7 @@
                                         "id": "Baseline System 7 (CHW VAV) FanSys",
                                         "minimum_airflow": 1415.8896727839528,
                                         "minimum_outdoor_airflow": 471.9632125399846,
+                                        "operation_during_occupied": "CONTINUOUS",
                                         "operation_during_unoccupied": "KEEP_OFF",
                                         "relief_fans": [],
                                         "return_fans": [
@@ -1001,6 +1002,7 @@
                                     },
                                     "heating_system": {
                                         "design_capacity": 0.0,
+                                        "heating_coil_setpoint": 10.000000000000057,
                                         "hot_water_loop": "Hot Water Loop",
                                         "humidification_type": "OTHER",
                                         "id": "Baseline System 7 (CHW VAV) HeatSys",
