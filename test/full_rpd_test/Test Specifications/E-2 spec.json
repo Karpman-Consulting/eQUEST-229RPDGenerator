@@ -476,11 +476,13 @@
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].boilers[*].operation_lower_limit",
+        "special-case": "operation_lower_limit",
         "compare-value": true,
         "tolerance": 1.0
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].boilers[*].operation_upper_limit",
+        "special-case": "operation_upper_limit",
         "compare-value": true,
         "tolerance": 1.0
         },
