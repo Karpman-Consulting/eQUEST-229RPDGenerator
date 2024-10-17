@@ -97,6 +97,8 @@ class ModelInputReader:
             record_data_for = False
 
             for line in bdl_file:
+                if not line.strip():
+                    continue
 
                 if "JJHirsch DOE-2 Version:" in line:
                     doe2_version = line.split(":")[1].split()[0].strip()
