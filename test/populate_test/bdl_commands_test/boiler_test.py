@@ -19,6 +19,7 @@ BDL_BoilerKeywords = BDLEnums.bdl_enums["BoilerKeywords"]
 BDL_BoilerTypes = BDLEnums.bdl_enums["BoilerTypes"]
 BDL_FuelTypes = BDLEnums.bdl_enums["FuelTypes"]
 BDL_FuelMeterKeywords = BDLEnums.bdl_enums["FuelMeterKeywords"]
+BDL_MasterMeterKeywords = BDLEnums.bdl_enums["MasterMeterKeywords"]
 BoilerCombustionOptions = SchemaEnums.schema_enums["BoilerCombustionOptions"]
 EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
 BoilerEfficiencyMetricOptions = SchemaEnums.schema_enums[
@@ -55,7 +56,6 @@ class TestFuelBoiler(unittest.TestCase):
         }
         self.rmd.bdl_obj_instances["Test Fuel Meter"] = fuel_meter
 
-
         self.boiler.keyword_value_pairs = {
             BDL_BoilerKeywords.TYPE: BDL_BoilerTypes.HW_BOILER,
             BDL_BoilerKeywords.FUEL_METER: "Test Fuel Meter",
@@ -85,6 +85,12 @@ class TestFuelBoiler(unittest.TestCase):
         self.assertDictEqual(expected_data_structure, self.boiler.boiler_data_structure)
 
     def test_populate_data_elements_without_fuel_meter(self):
+        self.master_meter.keyword_value_pairs = {
+            BDL_MasterMeterKeywords.HEAT_FUEL_METER: "Test Fuel Meter"
+        }
+        self.fuel_meter.keyword_value_pairs = {
+            BDL_FuelMeterKeywords.TYPE: BDL_FuelTypes.NATURAL_GAS
+        }
         test_hw_loop = CirculationLoop("Test HW Loop", self.rmd)
         self.rmd.bdl_obj_instances["Test HW Loop"] = test_hw_loop
 
