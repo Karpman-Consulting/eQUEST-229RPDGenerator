@@ -96,13 +96,9 @@ class RunPeriod(BaseDefinition):
 class FixedShade(BaseDefinition):
     bdl_command = BDL_Commands.FIXED_SHADE
 
-    has_site_shading = False
-
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
-
-        if not self.has_site_shading:
-            self.has_site_shading = True
+        self.rmd.has_site_shading = True
 
 
 class Holidays(BaseDefinition):
