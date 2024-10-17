@@ -132713,7 +132713,9 @@
                     "minimum_load_ratio": 0.33,
                     "draft_type": "NATURAL",
                     "energy_source_type": "NATURAL_GAS",
-                    "auxiliary_power": 0.0
+                    "auxiliary_power": 0.0,
+                    "operation_lower_limit": 0.0,
+                    "operation_upper_limit": 55157.03175618056
                 },
                 {
                     "id": "Boiler 2",
@@ -132734,7 +132736,9 @@
                     "minimum_load_ratio": 0.33,
                     "draft_type": "NATURAL",
                     "energy_source_type": "NATURAL_GAS",
-                    "auxiliary_power": 0.0
+                    "auxiliary_power": 0.0,
+                    "operation_lower_limit": 55157.03175618056,
+                    "operation_upper_limit": 110314.06351236111
                 }
             ],
             "chillers": [

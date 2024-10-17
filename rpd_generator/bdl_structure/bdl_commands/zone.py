@@ -45,6 +45,8 @@ class Zone(ChildNode):
 
     def __init__(self, u_name, parent, rmd):
         super().__init__(u_name, parent, rmd)
+        self.rmd.zone_names.append(u_name)
+
         # On initialization the parent building segment is not known. It will be set in the GUI.
         self.parent_building_segment = rmd.bdl_obj_instances.get(
             "Default Building Segment", None
@@ -267,6 +269,9 @@ class Zone(ChildNode):
             self.terminals_cooling_capacity[2] = 0.0
             self.terminals_heating_capacity[2] = 0.0
             self.terminals_minimum_outdoor_airflow[2] = minimum_outdoor_airflow
+            self.terminals_minimum_outdoor_airflow_multiplier_schedule[2] = (
+                self.keyword_value_pairs.get(BDL_ZoneKeywords.MIN_AIR_SCH)
+            )
             self.terminals_primary_airflow[2] = minimum_outdoor_airflow
             self.terminals_minimum_airflow[2] = minimum_outdoor_airflow
             if (
@@ -411,17 +416,6 @@ class Zone(ChildNode):
 
     def get_output_requests(self):
         """Get the output requests for the zone."""
-        #      2201045,  38,  1,  6,  9,  1,  1,  1,  0, 25, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Supply Airflow
-        #      2201046,  38,  1,  6, 10,  1,  1,  1,  0, 25, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Exhaust Airflow
-        #      2201047,  38,  1,  6, 11,  1,  1,  1,  0, 28, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Zone Fan Power
-        #      2201048,  38,  1,  6, 12,  1,  1,  1,  0, 22, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Minimum Airflow Ratio
-        #      2201049,  38,  1,  6, 13,  1,  1,  1,  0, 25, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Outside Airflow
-        #      2201050,  38,  1,  6, 14,  1,  1,  1,  0, 64, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Cooling Capacity
-        #      2201051,  38,  1,  6, 15,  1,  1,  1,  0, 22, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Sensible Heat Ratio
-        #      2201052,  38,  1,  6, 16,  1,  1,  1,  0, 64, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Heat Extraction Rate
-        #      2201053,  38,  1,  6, 17,  1,  1,  1,  0, 64, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Heating Capacity
-        #      2201054,  38,  1,  6, 18,  1,  1,  1,  0, 64, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Heat Addition Rate
-        #      2201055,  38,  1,  6, 19,  1,  1,  1,  0,  1, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - General - Zone Multiplier
         requests = {
             "HVAC Systems - Design Parameters - Zone Design Data - General - Supply Airflow": (
                 2201045,
@@ -474,12 +468,6 @@ class Zone(ChildNode):
             BDL_TerminalTypes.SERIES_PIU,
             BDL_TerminalTypes.PARALLEL_PIU,
         ]:
-            #      2202001,  57,  1,  2,  9,  1,  1,  1,  0, 25, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Fan Flow
-            #      2202002,  57,  1,  2, 10,  1,  1,  1,  0, 25, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Cold Deck Flow
-            #      2202003,  57,  1,  2, 11,  1,  1,  1,  0, 22, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Cold Deck Minimum Airflow Ratio
-            #      2202004,  57,  1,  2, 12,  1,  1,  1,  0, 74, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Reheat Temperature Rise
-            #      2202005,  57,  1,  2, 13,  1,  1,  1,  0, 74, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Fan Air Temperature Rise
-            #      2202006,  57,  1,  2, 14,  1,  1,  1,  0, 28, 2019,  8,  1,  0, 2010   ; HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Fan kW
             requests.update(
                 {
                     "HVAC Systems - Design Parameters - Zone Design Data - Powered Induction Units - Fan Flow": (

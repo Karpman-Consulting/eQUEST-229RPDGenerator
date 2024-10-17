@@ -9,6 +9,9 @@ FanSystemSupplyFanControlOptions = SchemaEnums.schema_enums[
     "FanSystemSupplyFanControlOptions"
 ]
 FanSystemOperationOptions = SchemaEnums.schema_enums["FanSystemOperationOptions"]
+FanSystemTemperatureControlOptions = SchemaEnums.schema_enums[
+    "FanSystemTemperatureControlOptions"
+]
 FanSpecificationMethodOptions = SchemaEnums.schema_enums[
     "FanSpecificationMethodOptions"
 ]
@@ -32,6 +35,7 @@ BDL_SystemTypes = BDLEnums.bdl_enums["SystemTypes"]
 BDL_SysemHeatingTypes = BDLEnums.bdl_enums["SystemHeatingTypes"]
 BDL_SystemCoolingTypes = BDLEnums.bdl_enums["SystemCoolingTypes"]
 BDL_CoolControlOptions = BDLEnums.bdl_enums["SystemCoolControlOptions"]
+BDL_HeatControlOptions = BDLEnums.bdl_enums["SystemHeatControlOptions"]
 BDL_SupplyFanTypes = BDLEnums.bdl_enums["SystemSupplyFanTypes"]
 BDL_NightCycleControlOptions = BDLEnums.bdl_enums["SystemNightCycleControlOptions"]
 BDL_EconomizerOptions = BDLEnums.bdl_enums["SystemEconomizerOptions"]
@@ -109,6 +113,13 @@ class System(ParentNode):
     occupied_fan_operation_map = {
         BDL_IndoorFanModeOptions.CONTINUOUS: FanSystemOperationOptions.CONTINUOUS,
         BDL_IndoorFanModeOptions.INTERMITTENT: FanSystemOperationOptions.CYCLING,
+    }
+    temperature_control_map = {
+        BDL_CoolControlOptions.CONSTANT: FanSystemTemperatureControlOptions.CONSTANT,
+        BDL_CoolControlOptions.RESET: FanSystemTemperatureControlOptions.OUTDOOR_AIR_RESET,
+        BDL_CoolControlOptions.WARMEST: FanSystemTemperatureControlOptions.ZONE_RESET,
+        BDL_CoolControlOptions.COLDEST: FanSystemTemperatureControlOptions.ZONE_RESET,
+        BDL_CoolControlOptions.SCHEDULED: FanSystemTemperatureControlOptions.SCHEDULED,
     }
     system_heating_type_map = {
         BDL_SystemTypes.PTAC: None,  # Mapping updated in populate_data_elements method  # Unavailable in DOE 2.3
@@ -258,6 +269,7 @@ class System(ParentNode):
         self.parent_building_segment = rmd.bdl_obj_instances.get(
             "Default Building Segment", None
         )
+        self.rmd.system_names.append(u_name)
 
         self.sys_id = None
         self.system_data_structure = {}
@@ -405,8 +417,8 @@ class System(ParentNode):
         self.air_energy_recovery_notes = None
         self.air_energy_recovery_type = None
         self.air_energy_recovery_enthalpy_recovery_ratio = None
-        self.air_energy_recovery_operation = None
-        self.air_energy_recovery_supply_air_temperature_control = None
+        self.air_energy_recovery_energy_recovery_operation = None
+        self.air_energy_recovery_energy_recovery_supply_air_temperature_control = None
         self.air_energy_recovery_design_sensible_effectiveness = None
         self.air_energy_recovery_design_latent_effectiveness = None
         self.air_energy_recovery_outdoor_airflow = None
@@ -927,6 +939,12 @@ class System(ParentNode):
         self.fan_sys_fan_control = self.supply_fan_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.FAN_CONTROL)
         )
+        self.fan_sys_temperature_control = self.get_temperature_control()
+        self.fan_sys_operation_during_unoccupied = (
+            self.unoccupied_fan_operation_map.get(
+                self.keyword_value_pairs.get(BDL_SystemKeywords.NIGHT_CYCLE_CTRL)
+            )
+        )
         self.fan_sys_demand_control_ventilation_control = self.dcv_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.MIN_OA_METHOD)
         )
@@ -1347,10 +1365,10 @@ class System(ParentNode):
             }
         )
         self.air_energy_recovery_type = self.has_recovery_map.get(recover_exhaust)
-        self.air_energy_recovery_operation = self.er_operation_map.get(
+        self.air_energy_recovery_energy_recovery_operation = self.er_operation_map.get(
             self.keyword_value_pairs.get(BDL_SystemKeywords.ERV_RUN_CTRL)
         )
-        self.air_energy_recovery_supply_air_temperature_control = (
+        self.air_energy_recovery_energy_recovery_supply_air_temperature_control = (
             self.er_sat_control_map.get(
                 self.keyword_value_pairs.get(BDL_SystemKeywords.ERV_TEMP_CTRL)
             )
@@ -1442,3 +1460,20 @@ class System(ParentNode):
 
         else:
             return FanSystemOperationOptions.CONTINUOUS
+
+    def get_temperature_control(self):
+        heat_control = self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_CONTROL)
+        cool_control = self.keyword_value_pairs.get(BDL_SystemKeywords.COOL_CONTROL)
+
+        if not heat_control:
+            return self.temperature_control_map.get(cool_control)
+        if not cool_control:
+            return self.temperature_control_map.get(heat_control)
+        if cool_control == heat_control:
+            return self.temperature_control_map.get(cool_control)
+        if (
+            cool_control == BDL_CoolControlOptions.WARMEST
+            and heat_control == BDL_HeatControlOptions.COLDEST
+        ):
+            return FanSystemTemperatureControlOptions.ZONE_RESET
+
