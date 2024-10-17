@@ -2,7 +2,6 @@ from rpd_generator.bdl_structure.base_node import BaseNode
 from rpd_generator.schema.schema_enums import SchemaEnums
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
-
 BoilerCombustionOptions = SchemaEnums.schema_enums["BoilerCombustionOptions"]
 EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
 BoilerEfficiencyMetricOptions = SchemaEnums.schema_enums[
@@ -13,6 +12,7 @@ BDL_BoilerKeywords = BDLEnums.bdl_enums["BoilerKeywords"]
 BDL_BoilerTypes = BDLEnums.bdl_enums["BoilerTypes"]
 BDL_FuelTypes = BDLEnums.bdl_enums["FuelTypes"]
 BDL_MasterMeterKeywords = BDLEnums.bdl_enums["MasterMeterKeywords"]
+BDL_EquipCtrlKeywords = BDLEnums.bdl_enums["EquipCtrlKeywords"]
 
 
 class Boiler(BaseNode):
@@ -120,12 +120,14 @@ class Boiler(BaseNode):
                     output_data[key], "Btu/hr", "MMBtu/hr"
                 )
 
+        if not self.rated_capacity:
+            self.rated_capacity = self.try_abs(
+                output_data.get("Boilers - Rated Capacity at Peak (Btu/hr)")
+            )
         self.design_capacity = self.try_abs(
             output_data.get("Boilers - Design Parameters - Capacity")
         )
-        self.rated_capacity = self.try_abs(
-            output_data.get("Boilers - Rated Capacity at Peak (Btu/hr)")
-        )
+        self.populate_operation_limits()
         self.auxiliary_power = output_data.get(
             "Boilers - Design Parameters - Auxiliary Power"
         )
@@ -202,12 +204,15 @@ class Boiler(BaseNode):
                 self.u_name,
                 "",
             ),
-            "Boilers - Rated Capacity at Peak (Btu/hr)": (
+        }
+
+        if not self.rated_capacity:
+            requests["Boilers - Rated Capacity at Peak (Btu/hr)"] = (
                 2315901,
                 self.u_name,
                 "",
-            ),
-        }
+            )
+
         return requests
 
     def populate_data_group(self):
@@ -241,3 +246,62 @@ class Boiler(BaseNode):
 
     def insert_to_rpd(self, rmd):
         rmd.boilers.append(self.boiler_data_structure)
+
+    def populate_operation_limits(self):
+        requests = {}
+        boiler_capacities = {}
+        for boiler_name in self.rmd.boiler_names:
+            boiler = self.rmd.bdl_obj_instances.get(boiler_name)
+            if boiler.rated_capacity:
+                boiler_capacities[boiler_name] = boiler.rated_capacity
+            else:
+                requests[boiler_name] = (
+                    2315901,
+                    boiler_name,
+                    "",
+                )
+        output_data = self.get_output_data(requests)
+        for boiler_name, capacity in output_data.items():
+            boiler_capacities[boiler_name] = self.try_abs(
+                self.try_convert_units(capacity, "Btu/hr", "MMBtu/hr")
+            )
+
+        # Assign the rated capacity to the boiler object so this does not need to be done again
+        for boiler_name in output_data:
+            boiler = self.rmd.bdl_obj_instances.get(boiler_name)
+            boiler.rated_capacity = boiler_capacities[boiler_name]
+
+        hw_loop_equip_ctrls = []
+        for equip_ctrl_name in self.rmd.equip_ctrl_names:
+            equip_ctrl = self.rmd.bdl_obj_instances.get(equip_ctrl_name)
+            if (
+                equip_ctrl.keyword_value_pairs.get(
+                    BDL_EquipCtrlKeywords.CIRCULATION_LOOP
+                )
+                == self.loop
+            ):
+                hw_loop_equip_ctrls.append(equip_ctrl)
+
+        if len(hw_loop_equip_ctrls) > 1:
+            return
+
+        sequence = []
+        if len(hw_loop_equip_ctrls) == 1:
+            equip_ctrl = hw_loop_equip_ctrls[0]
+            hw_loop = self.rmd.bdl_obj_instances.get(self.loop)
+            sequence = hw_loop.get_hw_equipment_sequencing(equip_ctrl)
+
+        if len(hw_loop_equip_ctrls) == 0:
+            hw_loop = self.rmd.bdl_obj_instances.get(self.loop)
+            sequence = hw_loop.get_hw_equipment_sequencing()
+
+        operation_lower_limit = 0
+        for boiler_name in sequence:
+            if boiler_name == self.u_name:
+                self.operation_lower_limit = operation_lower_limit
+                self.operation_upper_limit = (
+                    operation_lower_limit + boiler_capacities[self.u_name]
+                )
+                return
+            if boiler_name != self.u_name:
+                operation_lower_limit += boiler_capacities[boiler_name]

@@ -146,8 +146,8 @@
         "design_capacity": "MMbtu_h",
         "rated_capacity": "MMbtu_h",
         "auxiliary_power": "kW",
-        "operation_lower_limit": "",
-        "operation_upper_limit": ""
+        "operation_lower_limit": "MMbtu_h",
+        "operation_upper_limit": "MMbtu_h"
     },
     "BoilerOutputValidationPoint": {
         "load": "",
