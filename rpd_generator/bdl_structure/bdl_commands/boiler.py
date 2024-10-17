@@ -12,6 +12,7 @@ BDL_BoilerKeywords = BDLEnums.bdl_enums["BoilerKeywords"]
 BDL_BoilerTypes = BDLEnums.bdl_enums["BoilerTypes"]
 BDL_FuelTypes = BDLEnums.bdl_enums["FuelTypes"]
 BDL_MasterMeterKeywords = BDLEnums.bdl_enums["MasterMeterKeywords"]
+BDL_FuelMeterKeywords = BDLEnums.bdl_enums["FuelMeterKeywords"]
 BDL_EquipCtrlKeywords = BDLEnums.bdl_enums["EquipCtrlKeywords"]
 
 
@@ -75,17 +76,28 @@ class Boiler(BaseNode):
 
     def populate_data_elements(self):
         """Populate data elements for boiler object."""
-        fuel_meter_ref = self.keyword_value_pairs.get(BDL_BoilerKeywords.FUEL_METER)
-        fuel_meter = self.rmd.bdl_obj_instances.get(fuel_meter_ref)
-        # If the fuel meter is not found, then it must be a MasterMeter.
+        fuel_meter_name = self.keyword_value_pairs.get(BDL_BoilerKeywords.FUEL_METER)
+        fuel_meter = self.rmd.bdl_obj_instances.get(fuel_meter_name)
+        fuel_type = None
         if fuel_meter is None:
-            # TODO get the fuel type of the master fuel meter, this assumes always Natural Gas
-            fuel_type = BDL_FuelTypes.NATURAL_GAS
+            master_meters = self.rmd.bdl_obj_instances.get(self.rmd.master_meters)
+            if master_meters:
+                heat_fuel_meter_name = master_meters.keyword_value_pairs.get(
+                    BDL_MasterMeterKeywords.HEAT_FUEL_METER
+                )
+                heat_fuel_meter = self.rmd.bdl_obj_instances.get(heat_fuel_meter_name)
+                if heat_fuel_meter:
+                    meter_fuel_type = heat_fuel_meter.keyword_value_pairs.get(
+                        BDL_FuelMeterKeywords.TYPE
+                    )
+                    fuel_type = self.fuel_type_map.get(meter_fuel_type)
+
         else:
             fuel_meter_type = fuel_meter.keyword_value_pairs.get(
-                BDL_MasterMeterKeywords.TYPE
+                BDL_FuelMeterKeywords.TYPE
             )
             fuel_type = self.fuel_type_map.get(fuel_meter_type)
+
         self.energy_source_map.update(
             {
                 BDL_BoilerTypes.HW_BOILER: fuel_type,

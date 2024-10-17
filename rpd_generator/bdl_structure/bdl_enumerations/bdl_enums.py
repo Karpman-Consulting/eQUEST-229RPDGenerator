@@ -374,12 +374,35 @@ class BDLEnums:
         ),
         "MasterMeterKeywords": _ListEnum(
             [
-                "TYPE",
+                "MSTR-ELEC-METER",
+                "LIGHT-ELEC-METER",
+                "TASK-ELEC-METER",
+                "EQUIP-ELEC-METER",
+                "SOURCE-ELEC-METER",
+                "HEAT-ELEC-METER",
+                "COOL-ELEC-METER",
+                "HTREJ-ELEC-METER",
+                "AUX-ELEC-METER",
+                "VENT-ELEC-METER",
+                "REFG-ELEC-METER",
+                "SUPP-ELEC-METER",
+                "DHW-ELEC-METER",
+                "MSTR-FUEL-METER",
+                "SOURCE-FUEL-METER",
+                "HEAT-FUEL-METER",
+                "COOL-FUEL-METER",
+                "SUPP-FUEL-METER",
+                "DHW-FUEL-METER",
+                "EXCLUDE-FROM-TDV",
             ]
         ),
         "FuelMeterKeywords": _ListEnum(
             [
                 "TYPE",
+                "ENERGY/UNIT",
+                "SOURCE-SITE-EFF",
+                "UNIT-INDEX",
+                "DEM-UNIT-INDEX",
             ]
         ),
         "SiteParameterKeywords": _ListEnum(
@@ -513,6 +536,15 @@ class BDLEnums:
                 "NONE",
                 "STEAM",
                 "DHW-LOOP",
+            ]
+        ),
+        "SystemHeatControlOptions": _ListEnum(
+            [
+                "CONSTANT",
+                "WARMEST",
+                "COLDEST",
+                "RESET",
+                "SCHEDULED",
             ]
         ),
         "SystemHeatingValveTypes": _ListEnum(

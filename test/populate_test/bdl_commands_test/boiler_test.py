@@ -11,7 +11,7 @@ validate_configuration.find_equest_installation()
 from rpd_generator.artifacts.ruleset_model_description import RulesetModelDescription
 from rpd_generator.bdl_structure.bdl_commands.boiler import Boiler
 from rpd_generator.bdl_structure.bdl_commands.circulation_loop import CirculationLoop
-from rpd_generator.bdl_structure.bdl_commands.meters import FuelMeter
+from rpd_generator.bdl_structure.bdl_commands.meters import MasterMeters, FuelMeter
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
@@ -38,8 +38,13 @@ class TestFuelBoiler(unittest.TestCase):
                 script_dir, "../../full_rpd_test/E-2/229 Test Case E-2 (CHW VAV)"
             )
         )
+        self.master_meter = MasterMeters("Master Meters", self.rmd)
+        self.fuel_meter = FuelMeter("Test Fuel Meter", self.rmd)
         self.boiler = Boiler("Boiler 1", self.rmd)
+
         self.rmd.bdl_obj_instances["Boiler 1"] = self.boiler
+        self.rmd.bdl_obj_instances["Master Meters"] = self.master_meter
+        self.rmd.bdl_obj_instances["Test Fuel Meter"] = self.fuel_meter
 
     def test_populate_data_elements_with_fuel_meter(self):
         test_hw_loop = CirculationLoop("Test HW Loop", self.rmd)
@@ -49,6 +54,7 @@ class TestFuelBoiler(unittest.TestCase):
             BDL_FuelMeterKeywords.TYPE: BDL_FuelTypes.METHANOL
         }
         self.rmd.bdl_obj_instances["Test Fuel Meter"] = fuel_meter
+
 
         self.boiler.keyword_value_pairs = {
             BDL_BoilerKeywords.TYPE: BDL_BoilerTypes.HW_BOILER,
@@ -79,7 +85,6 @@ class TestFuelBoiler(unittest.TestCase):
         self.assertDictEqual(expected_data_structure, self.boiler.boiler_data_structure)
 
     def test_populate_data_elements_without_fuel_meter(self):
-
         test_hw_loop = CirculationLoop("Test HW Loop", self.rmd)
         self.rmd.bdl_obj_instances["Test HW Loop"] = test_hw_loop
 
@@ -95,7 +100,7 @@ class TestFuelBoiler(unittest.TestCase):
         expected_data_structure = {
             "id": "Boiler 1",
             "draft_type": "FORCED",
-            "energy_source_type": "NATURAL-GAS",
+            "energy_source_type": "NATURAL_GAS",
             "output_validation_points": [],
             "loop": "Test HW Loop",
             "auxiliary_power": 0.0,
@@ -117,7 +122,12 @@ class TestElectricBoiler(unittest.TestCase):
         self.rmd = RulesetModelDescription("Test RMD")
         self.rmd.doe2_version = "DOE-2.3"
         self.rmd.doe2_data_path = Config.DOE23_DATA_PATH
+
+        self.master_meter = MasterMeters("Master Meters", self.rmd)
+        self.fuel_meter = FuelMeter("Test Fuel Meter", self.rmd)
         self.boiler = Boiler("Boiler 1", self.rmd)
+        self.rmd.bdl_obj_instances["Master Meters"] = self.master_meter
+        self.rmd.bdl_obj_instances["Test Fuel Meter"] = self.master_meter
         self.rmd.bdl_obj_instances["Boiler 1"] = self.boiler
 
     def test_populate_data_elements_electric_boiler(self):
