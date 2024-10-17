@@ -269,6 +269,9 @@ class Zone(ChildNode):
             self.terminals_cooling_capacity[2] = 0.0
             self.terminals_heating_capacity[2] = 0.0
             self.terminals_minimum_outdoor_airflow[2] = minimum_outdoor_airflow
+            self.terminals_minimum_outdoor_airflow_multiplier_schedule[2] = (
+                self.keyword_value_pairs.get(BDL_ZoneKeywords.MIN_AIR_SCH)
+            )
             self.terminals_primary_airflow[2] = minimum_outdoor_airflow
             self.terminals_minimum_airflow[2] = minimum_outdoor_airflow
             if (
