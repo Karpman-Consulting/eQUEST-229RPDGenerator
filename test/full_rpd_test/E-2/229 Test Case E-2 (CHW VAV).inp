@@ -474,10 +474,10 @@ $ ---------------------------------------------------------
    ..
 "OA Reset Day" = DAY-SCHEDULE-PD
    TYPE             = RESET-TEMP
-   OUTSIDE-HI       = 60
-   OUTSIDE-LO       = 80
-   SUPPLY-HI        = 44
-   SUPPLY-LO        = 54
+   OUTSIDE-HI       = 80
+   OUTSIDE-LO       = 60
+   SUPPLY-HI        = 54
+   SUPPLY-LO        = 44
    ..
 "Fan Sched Saturday" = DAY-SCHEDULE-PD
    TYPE             = ON/OFF/FLAG

@@ -667,6 +667,26 @@
         "compare-value": true
         },
         {
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].heating_design_and_control.outdoor_high_for_loop_supply_reset_temperature",
+        "compare-value": true,
+        "tolerance": 0.1
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].heating_design_and_control.outdoor_low_for_loop_supply_reset_temperature",
+        "compare-value": true,
+        "tolerance": 0.1
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].heating_design_and_control.loop_supply_temperature_at_outdoor_high",
+        "compare-value": true,
+        "tolerance": 0.1
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].heating_design_and_control.loop_supply_temperature_at_outdoor_low",
+        "compare-value": true,
+        "tolerance": 0.1
+        },
+        {
         "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].cooling_or_condensing_design_and_control.design_supply_temperature",
         "compare-value": true,
         "tolerance": 0.1

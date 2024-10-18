@@ -343,6 +343,24 @@ class CirculationLoop(BaseNode):
         self.temperature_reset_type[1] = self.temp_reset_map.get(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.HEAT_SETPT_CTRL)
         )
+        if self.temperature_reset_type[1] == TemperatureResetOptions.OUTSIDE_AIR_RESET:
+            oa_reset_schedule_name = self.keyword_value_pairs.get(
+                BDL_CirculationLoopKeywords.HEAT_RESET_SCH
+            )
+            oa_reset_schedule = self.rmd.bdl_obj_instances.get(oa_reset_schedule_name)
+            if oa_reset_schedule:
+                self.outdoor_high_for_loop_supply_reset_temperature[1] = (
+                    oa_reset_schedule.outdoor_high_for_loop_supply_reset_temperature
+                )
+                self.outdoor_low_for_loop_supply_reset_temperature[1] = (
+                    oa_reset_schedule.outdoor_low_for_loop_supply_reset_temperature
+                )
+                self.loop_supply_temperature_at_outdoor_high[1] = (
+                    oa_reset_schedule.loop_supply_temperature_at_outdoor_high
+                )
+                self.loop_supply_temperature_at_outdoor_low[1] = (
+                    oa_reset_schedule.loop_supply_temperature_at_outdoor_low
+                )
         self.loop_supply_temperature_at_low_load[1] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MIN_RESET_T)
         )
@@ -391,6 +409,24 @@ class CirculationLoop(BaseNode):
         self.temperature_reset_type[0] = self.temp_reset_map.get(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.COOL_SETPT_CTRL)
         )
+        if self.temperature_reset_type[0] == TemperatureResetOptions.OUTSIDE_AIR_RESET:
+            oa_reset_schedule_name = self.keyword_value_pairs.get(
+                BDL_CirculationLoopKeywords.COOL_RESET_SCH
+            )
+            oa_reset_schedule = self.rmd.bdl_obj_instances.get(oa_reset_schedule_name)
+            if oa_reset_schedule:
+                self.outdoor_high_for_loop_supply_reset_temperature[0] = (
+                    oa_reset_schedule.outdoor_high_for_loop_supply_reset_temperature
+                )
+                self.outdoor_low_for_loop_supply_reset_temperature[0] = (
+                    oa_reset_schedule.outdoor_low_for_loop_supply_reset_temperature
+                )
+                self.loop_supply_temperature_at_outdoor_high[0] = (
+                    oa_reset_schedule.loop_supply_temperature_at_outdoor_high
+                )
+                self.loop_supply_temperature_at_outdoor_low[0] = (
+                    oa_reset_schedule.loop_supply_temperature_at_outdoor_low
+                )
         self.loop_supply_temperature_at_low_load[0] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MAX_RESET_T)
         )
@@ -439,6 +475,24 @@ class CirculationLoop(BaseNode):
         self.temperature_reset_type[0] = self.temp_reset_map.get(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.COOL_SETPT_CTRL)
         )
+        if self.temperature_reset_type[0] == TemperatureResetOptions.OUTSIDE_AIR_RESET:
+            oa_reset_schedule_name = self.keyword_value_pairs.get(
+                BDL_CirculationLoopKeywords.COOL_RESET_SCH
+            )
+            oa_reset_schedule = self.rmd.bdl_obj_instances.get(oa_reset_schedule_name)
+            if oa_reset_schedule:
+                self.outdoor_high_for_loop_supply_reset_temperature[0] = (
+                    oa_reset_schedule.outdoor_high_for_loop_supply_reset_temperature
+                )
+                self.outdoor_low_for_loop_supply_reset_temperature[0] = (
+                    oa_reset_schedule.outdoor_low_for_loop_supply_reset_temperature
+                )
+                self.loop_supply_temperature_at_outdoor_high[0] = (
+                    oa_reset_schedule.loop_supply_temperature_at_outdoor_high
+                )
+                self.loop_supply_temperature_at_outdoor_low[0] = (
+                    oa_reset_schedule.loop_supply_temperature_at_outdoor_low
+                )
         self.loop_supply_temperature_at_low_load[0] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MAX_RESET_T)
         )
@@ -487,6 +541,24 @@ class CirculationLoop(BaseNode):
         self.temperature_reset_type[0] = self.temp_reset_map.get(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.COOL_SETPT_CTRL)
         )
+        if self.temperature_reset_type[0] == TemperatureResetOptions.OUTSIDE_AIR_RESET:
+            oa_reset_schedule_name = self.keyword_value_pairs.get(
+                BDL_CirculationLoopKeywords.HEAT_RESET_SCH
+            )
+            oa_reset_schedule = self.rmd.bdl_obj_instances.get(oa_reset_schedule_name)
+            if oa_reset_schedule:
+                self.outdoor_high_for_loop_supply_reset_temperature[0] = (
+                    oa_reset_schedule.outdoor_high_for_loop_supply_reset_temperature
+                )
+                self.outdoor_low_for_loop_supply_reset_temperature[0] = (
+                    oa_reset_schedule.outdoor_low_for_loop_supply_reset_temperature
+                )
+                self.loop_supply_temperature_at_outdoor_high[0] = (
+                    oa_reset_schedule.loop_supply_temperature_at_outdoor_high
+                )
+                self.loop_supply_temperature_at_outdoor_low[0] = (
+                    oa_reset_schedule.loop_supply_temperature_at_outdoor_low
+                )
         self.loop_supply_temperature_at_low_load[0] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MAX_RESET_T)
         )
@@ -528,6 +600,24 @@ class CirculationLoop(BaseNode):
         self.temperature_reset_type[1] = self.temp_reset_map.get(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.HEAT_SETPT_CTRL)
         )
+        if self.temperature_reset_type[1] == TemperatureResetOptions.OUTSIDE_AIR_RESET:
+            oa_reset_schedule_name = self.keyword_value_pairs.get(
+                BDL_CirculationLoopKeywords.HEAT_RESET_SCH
+            )
+            oa_reset_schedule = self.rmd.bdl_obj_instances.get(oa_reset_schedule_name)
+            if oa_reset_schedule:
+                self.outdoor_high_for_loop_supply_reset_temperature[1] = (
+                    oa_reset_schedule.outdoor_high_for_loop_supply_reset_temperature
+                )
+                self.outdoor_low_for_loop_supply_reset_temperature[1] = (
+                    oa_reset_schedule.outdoor_low_for_loop_supply_reset_temperature
+                )
+                self.loop_supply_temperature_at_outdoor_high[1] = (
+                    oa_reset_schedule.loop_supply_temperature_at_outdoor_high
+                )
+                self.loop_supply_temperature_at_outdoor_low[1] = (
+                    oa_reset_schedule.loop_supply_temperature_at_outdoor_low
+                )
         self.loop_supply_temperature_at_low_load[1] = self.try_float(
             self.keyword_value_pairs.get(BDL_CirculationLoopKeywords.MIN_RESET_T)
         )
