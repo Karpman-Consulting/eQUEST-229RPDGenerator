@@ -19,6 +19,7 @@ class RulesetModelDescription:
         self.chiller_names = []
         self.heat_rejection_names = []
         self.ground_loop_hx_names = []
+        self.pump_names = []
         self.steam_meter_names = []
         self.equip_ctrl_names = []
 

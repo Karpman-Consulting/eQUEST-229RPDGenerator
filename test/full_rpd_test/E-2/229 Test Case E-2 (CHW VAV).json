@@ -132759,7 +132759,9 @@
                     "rated_leaving_evaporator_temperature": 6.666666666666686,
                     "minimum_load_ratio": 0.25,
                     "design_flow_evaporator": 1.8219753581682847,
-                    "design_flow_condenser": 2.277468987147014
+                    "design_flow_condenser": 2.277468987147014,
+                    "is_chilled_water_pump_interlocked": false,
+                    "is_condenser_water_pump_interlocked": false
                 },
                 {
                     "id": "Chiller 2",
@@ -132777,7 +132779,9 @@
                     "rated_leaving_evaporator_temperature": 6.666666666666686,
                     "minimum_load_ratio": 0.25,
                     "design_flow_evaporator": 1.747057883739472,
-                    "design_flow_condenser": 2.183822444915772
+                    "design_flow_condenser": 2.183822444915772,
+                    "is_chilled_water_pump_interlocked": false,
+                    "is_condenser_water_pump_interlocked": false
                 }
             ],
             "heat_rejections": [

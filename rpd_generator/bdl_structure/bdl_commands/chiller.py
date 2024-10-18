@@ -168,13 +168,10 @@ class Chiller(BaseNode):
             self.keyword_value_pairs.get(BDL_ChillerKeywords.MIN_RATIO)
         )
 
-        self.is_condenser_water_pump_interlocked = bool(
-            self.keyword_value_pairs.get(BDL_ChillerKeywords.CW_PUMP)
-        )
-
-        self.is_chilled_water_pump_interlocked = bool(
-            self.keyword_value_pairs.get(BDL_ChillerKeywords.CHW_PUMP)
-        )
+        (
+            self.is_chilled_water_pump_interlocked,
+            self.is_condenser_water_pump_interlocked,
+        ) = self.are_pumps_interlocked(self.cooling_loop, self.condensing_loop)
 
         # Assign pump data elements populated from the boiler keyword value pairs
         chw_pump_name = self.keyword_value_pairs.get(BDL_ChillerKeywords.CHW_PUMP)
@@ -327,3 +324,20 @@ class Chiller(BaseNode):
             return energy_source_set.pop()
         else:
             return EnergySourceOptions.OTHER
+
+    def are_pumps_interlocked(self, chw_loop_name, cw_loop_name):
+        """Check if the chiller has a pump with interlocked operation."""
+        chw_pump_interlocked = False
+        cw_pump_interlocked = False
+        for pump_name in self.rmd.pump_names:
+            pump = self.rmd.bdl_obj_instances.get(pump_name)
+            if pump.loop_or_piping == chw_loop_name:
+                chw_pump_interlocked = bool(
+                    self.keyword_value_pairs.get(BDL_ChillerKeywords.CHW_PUMP)
+                )
+
+            if pump.loop_or_piping == cw_loop_name:
+                cw_pump_interlocked = bool(
+                    self.keyword_value_pairs.get(BDL_ChillerKeywords.CW_PUMP)
+                )
+        return chw_pump_interlocked, cw_pump_interlocked
