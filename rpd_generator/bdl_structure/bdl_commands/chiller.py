@@ -35,6 +35,7 @@ class Chiller(BaseNode):
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
+        self.rmd.chiller_names.append(u_name)
 
         self.omit = False
         self.chiller_data_structure = {}
@@ -113,10 +114,23 @@ class Chiller(BaseNode):
 
         if not absorp_or_engine:
             self.energy_source_type = EnergySourceOptions.ELECTRICITY
-        else:
-            pass  # TODO: Add energy source type for absorp_or_engine
+        elif self.keyword_value_pairs.get(BDL_ChillerKeywords.TYPE) in [
+            BDL_ChillerTypes.ENGINE,
+            BDL_ChillerTypes.GAS_ABSOR,
+        ]:
+            self.energy_source_type = EnergySourceOptions.NATURAL_GAS
+        elif self.keyword_value_pairs.get(BDL_ChillerKeywords.TYPE) in [
+            BDL_ChillerTypes.ABSOR_1,
+            BDL_ChillerTypes.ABSOR_2,
+        ]:
+            hot_water_loop_name = self.rmd.bdl_obj_instances.get(
+                self.keyword_value_pairs.get(BDL_ChillerKeywords.HW_LOOP)
+            )
+            hot_water_loop = self.rmd.bdl_obj_instances.get(hot_water_loop_name)
+            if hot_water_loop:
+                self.energy_source_type = self.get_loop_energy_source(hot_water_loop)
 
-        # This value comes out in tons of refrigeration
+        # This value comes out in Btu/hr
         self.design_capacity = self.try_float(
             output_data.get("Design Parameters - Capacity")
         )
@@ -290,3 +304,26 @@ class Chiller(BaseNode):
             return
 
         rmd.chillers.append(self.chiller_data_structure)
+
+    def get_loop_energy_source(self, hot_water_loop):
+        """Get the energy source type for the loop. Used for absorption chillers to populate the energy_source_type."""
+        energy_source_set = set()
+        for boiler_name in self.rmd.boiler_names:
+            boiler = self.rmd.bdl_obj_instances.get(boiler_name)
+            if boiler.loop == hot_water_loop.u_name:
+                energy_source_set.add(boiler.energy_source_type)
+
+        for steam_meter_name in self.rmd.steam_meter_names:
+            steam_meter = self.rmd.bdl_obj_instances.get(steam_meter_name)
+            if steam_meter.loop == hot_water_loop.u_name:
+                energy_source_set.add(steam_meter.energy_source_type)
+
+        for chiller_name in self.rmd.chiller_names:
+            chiller = self.rmd.bdl_obj_instances.get(chiller_name)
+            if chiller.heat_recovery_loop == hot_water_loop.u_name:
+                energy_source_set.add(EnergySourceOptions.ELECTRICITY)
+
+        if len(energy_source_set) == 1:
+            return energy_source_set.pop()
+        else:
+            return EnergySourceOptions.OTHER

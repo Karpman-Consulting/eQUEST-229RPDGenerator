@@ -101,6 +101,7 @@ class TestEngineChillers(unittest.TestCase):
             "compressor_type": "SINGLE_EFFECT_DIRECT_FIRED_ABSORPTION",
             "cooling_loop": "Chilled Water Loop (Primary)",
             "condensing_loop": "Condenser Water Loop",
+            "energy_source_type": "NATURAL_GAS",
             "design_entering_condenser_temperature": 70.0,
             "design_leaving_evaporator_temperature": 50.0,
             "rated_entering_condenser_temperature": 85.0,

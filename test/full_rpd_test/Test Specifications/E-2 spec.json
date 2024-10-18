@@ -358,7 +358,8 @@
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].fan_system.reset_differential_temperature",
-        "compare-value": true
+        "compare-value": true,
+        "tolerance": 0.01
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].fan_system.fan_volume_reset_type",
@@ -476,11 +477,13 @@
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].boilers[*].operation_lower_limit",
+        "special-case": "operation_lower_limit",
         "compare-value": true,
         "tolerance": 1.0
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].boilers[*].operation_upper_limit",
+        "special-case": "operation_upper_limit",
         "compare-value": true,
         "tolerance": 1.0
         },
