@@ -224,6 +224,8 @@ class BDLEnums:
                 "LOOP-MIN-FLOW",
                 "HEAT-SETPT-CTRL",
                 "COOL-SETPT-CTRL",
+                "HEAT-RESET-SCH",
+                "COOL-RESET-SCH",
                 "MIN-RESET-T",
                 "MAX-RESET-T",
                 "DHW-INLET-T",
@@ -237,6 +239,10 @@ class BDLEnums:
             [
                 "TYPE",
                 "VALUES",
+                "OUTSIDE-HI",
+                "OUTSIDE-LO",
+                "SUPPLY-HI",
+                "SUPPLY-LO",
             ]
         ),
         "DomesticWaterHeaterTypes": _ListEnum(
