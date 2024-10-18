@@ -956,11 +956,11 @@
                                         "air_energy_recovery": {
                                             "design_latent_effectiveness": 0.5,
                                             "design_sensible_effectiveness": 0.5,
+                                            "energy_recovery_operation": "WHEN_FANS_ON",
+                                            "energy_recovery_supply_air_temperature_control": "MIXED_AIR_RESET",
                                             "exhaust_airflow": 471.9632125399846,
                                             "id": "Baseline System 7 (CHW VAV) AirEnergyRecovery",
-                                            "operation": "WHEN_FANS_ON",
                                             "outdoor_airflow": 471.9632125399846,
-                                            "supply_air_temperature_control": "MIXED_AIR_RESET",
                                             "type": "ENTHALPY_HEAT_WHEEL"
                                         },
                                         "demand_control_ventilation_control": "CO2_RETURN_AIR",
@@ -973,6 +973,7 @@
                                         "operation_during_occupied": "CONTINUOUS",
                                         "operation_during_unoccupied": "KEEP_OFF",
                                         "relief_fans": [],
+                                        "reset_differential_temperature": 2.7777777777777777,
                                         "return_fans": [
                                             {
                                                 "design_airflow": 4247.668941741898,
@@ -998,17 +999,17 @@
                                                 "specification_method": "DETAILED",
                                                 "total_efficiency": 0.6
                                             }
-                                        ]
+                                        ],
+                                        "temperature_control": "ZONE_RESET"
                                     },
                                     "heating_system": {
                                         "design_capacity": 0.0,
-                                        "heating_coil_setpoint": 10.000000000000057,
                                         "hot_water_loop": "Hot Water Loop",
                                         "humidification_type": "OTHER",
                                         "id": "Baseline System 7 (CHW VAV) HeatSys",
                                         "is_sized_based_on_design_day": false,
                                         "rated_capacity": 0.0,
-                                        "type": "FLUID_LOOP"
+                                        "type": "NONE"
                                     },
                                     "cooling_system": {
                                         "chilled_water_loop": "Chilled Water Loop (Secondary)",
