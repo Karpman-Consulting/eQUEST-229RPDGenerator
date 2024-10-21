@@ -69,6 +69,8 @@ class BDLEnums:
                 "EQUIP-CTRL",
                 "DESIGN-DAY",
                 "CONDENSING-UNIT",
+                "ELEC-GENERATOR",
+                "UTILITY-RATE",
             ]
         ),
         "FuelTypes": _ListEnum(
@@ -931,6 +933,51 @@ class BDLEnums:
                 "GLHX-3",
                 "GLHX-4",
                 "GLHX-5",
+            ]
+        ),
+        "ElecGeneratorKeywords": _ListEnum(
+            [
+                "TYPE",
+                "ELEC-METER",
+                "SURPLUS-METER",
+                "CAPACITY",
+                "PV-MODULE",
+                "ELEC-INPUT-RATIO",
+                "HEAT-INPUT-RATIO",
+                "NUM-INVERTERS",
+                "MOUNT-TYPE",
+                "MOUNT-TILT",
+                "MIN-TRACK-VOLTS",
+                "MAX-TRACK-VOLTS",
+            ]
+        ),
+        "ElecGeneratorTypes": _ListEnum(
+            [
+                "ENGINE-GENERATOR",
+                "GAS-TURBINE-GENERATOR",
+                "STEAM-TURBINE-GENERATOR",
+                "PV-ARRAY",
+            ]
+        ),
+        "UtilityRateKeywords": _ListEnum(
+            [
+                "TYPE",
+                "ENERGY-CHG",
+            ]
+        ),
+        "UtilityRateTypes": _ListEnum(
+            [
+                "STEAM",
+                "CHILLED-WATER",
+                "ELECTRICITY",
+                "ELECTRIC-SALE",
+                "NATURAL-GAS",
+                "LPG",
+                "FUEL-OIL",
+                "DIESEL-OIL",
+                "COAL",
+                "METHANOL",
+                "OTHER-FUEL",
             ]
         ),
         "OutputCoolingTypes": _ListEnum(
