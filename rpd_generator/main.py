@@ -13,7 +13,6 @@ from rpd_generator.doe2_file_readers.bdlcio32 import process_input_file
 from rpd_generator.doe2_file_readers.model_input_reader import ModelInputReader
 from rpd_generator.bdl_structure import *
 from rpd_generator.config import Config
-from rpd_generator.schema.schema_enums import SchemaEnums
 from rpd_generator.utilities import validate_configuration
 from rpd_generator.utilities import unit_converter
 from rpd_generator.utilities import ensure_valid_rpd
@@ -31,6 +30,7 @@ COMMAND_PROCESSING_ORDER = [
     "ELEC-METER",  # Meters must populate before Systems, Boilers, DW-Heaters, Chillers
     "STEAM-METER",  # Meters must populate before Systems, Boilers, DW-Heaters, Chillers
     "CHW-METER",  # Meters must populate before Systems, Boilers, DW-Heaters, Chillers
+    "UTILITY-RATE",
     "FIXED-SHADE",
     "GLASS-TYPE",
     "MATERIAL",  # Materials must populate before Layers, Constructions
@@ -47,6 +47,8 @@ COMMAND_PROCESSING_ORDER = [
     "EXTERIOR-WALL",  # Exterior walls must populate before Windows, Doors
     "INTERIOR-WALL",  # Interior walls must populate before Windows, Doors
     "UNDERGROUND-WALL",
+    "WINDOW",
+    "DOOR",
     "PUMP",  # Pumps must populate before Boiler, Chiller, Heat-Rejection, Circulation-Loop
     "CIRCULATION-LOOP",  # Circulation loops must populate before Boiler, Chiller, DWHeater, Heat-Rejection
     "BOILER",
@@ -56,8 +58,8 @@ COMMAND_PROCESSING_ORDER = [
     "GROUND-LOOP-HX",
     "EQUIP-CTRL",
     "LOAD-MANAGEMENT",
-    "WINDOW",
-    "DOOR",
+    "ELEC-GENERATOR",
+    "UTILITY-RATE",
 ]
 
 
@@ -96,9 +98,6 @@ def write_rpd_json_from_inp(inp_path_str):
 
 
 def write_rpd_json_from_bdl(selected_models: list, json_file_path: str):
-    Config.set_active_ruleset("ASHRAE 90.1-2019")
-    SchemaEnums.update_schema_enum(Config.ACTIVE_RULESET)
-
     bdl_input_reader = ModelInputReader()
     RulesetProjectDescription.bdl_command_dict = bdl_input_reader.bdl_command_dict
     rpd = RulesetProjectDescription()
@@ -119,6 +118,7 @@ def write_rpd_json_from_bdl(selected_models: list, json_file_path: str):
         rmd.bdl_obj_instances["Default Building Segment"].insert_to_rpd()
         rmd.bdl_obj_instances["Default Building"].populate_data_group()
         rmd.bdl_obj_instances["Default Building"].insert_to_rpd(rmd)
+        rmd.populate_data_elements()
         rmd.populate_data_group()
         rmd.insert_to_rpd(rpd)
 
@@ -269,10 +269,17 @@ def _process_command_group(
 if __name__ == "__main__":
     validate_configuration.find_equest_installation()
     write_rpd_json_from_bdl(
-        [Path(__file__).parents[1] / "test" / "E-1" / "229 Test Case E-1 (PSZHP).BDL"],
+        [
+            Path(__file__).parents[1]
+            / "test"
+            / "full_rpd_test"
+            / "E-1"
+            / "229 Test Case E-1 (PSZHP).BDL"
+        ],
         str(
             Path(__file__).parents[1]
             / "test"
+            / "full_rpd_test"
             / "E-1"
             / "229 Test Case E-1 (PSZHP).json"
         ),

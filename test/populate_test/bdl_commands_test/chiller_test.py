@@ -1,13 +1,9 @@
 import unittest
 import os
+
 from rpd_generator.config import Config
 from rpd_generator.utilities import validate_configuration
 from rpd_generator.schema.schema_enums import SchemaEnums
-
-Config.set_active_ruleset("ASHRAE 90.1-2019")
-SchemaEnums.update_schema_enum(Config.ACTIVE_RULESET)
-validate_configuration.find_equest_installation()
-
 from rpd_generator.artifacts.ruleset_model_description import RulesetModelDescription
 from rpd_generator.bdl_structure.bdl_commands.chiller import Chiller, BDL_ChillerTypes
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
@@ -20,6 +16,7 @@ EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
 class TestElectricChillers(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
+        validate_configuration.find_equest_installation()
         self.rmd = RulesetModelDescription("Test RMD")
         self.rmd.doe2_version = "DOE-2.3"
         self.rmd.doe2_data_path = Config.DOE23_DATA_PATH
