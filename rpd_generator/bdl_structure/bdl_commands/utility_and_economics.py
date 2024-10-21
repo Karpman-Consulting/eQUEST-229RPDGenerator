@@ -31,6 +31,7 @@ class FuelMeter(BaseDefinition):
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
+        self.rmd.fuel_meter_names.append(u_name)
 
     def __repr__(self):
         return f"FuelMeter(u_name='{self.u_name}')"
@@ -42,9 +43,35 @@ class ElecMeter(BaseDefinition):
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
+        self.rmd.electric_meter_names.append(u_name)
 
     def __repr__(self):
         return f"ElecMeter(u_name='{self.u_name}')"
+
+
+class UtilityRate(BaseDefinition):
+
+    bdl_command = BDL_Commands.UTILITY_RATE
+
+    def __init__(self, u_name, rmd):
+        super().__init__(u_name, rmd)
+        self.rmd.utility_rate_names.append(u_name)
+
+    def __repr__(self):
+        return f"UtilityRate(u_name='{self.u_name}')"
+
+
+class ElecGenerator(BaseDefinition):
+    """ElecGenerator object in the tree."""
+
+    bdl_command = BDL_Commands.ELEC_GENERATOR
+
+    def __init__(self, u_name, rmd):
+        super().__init__(u_name, rmd)
+        self.rmd.elec_generator_names.append(u_name)
+
+    def __repr__(self):
+        return f"ElecGenerator(u_name='{self.u_name}')"
 
 
 class SteamMeter(BaseNode):
@@ -103,6 +130,7 @@ class CHWMeter(BaseNode):
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
+        self.rmd.chilled_water_meter_names.append(u_name)
 
         self.data_structure = {}
 
