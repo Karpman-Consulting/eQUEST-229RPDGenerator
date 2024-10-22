@@ -1200,6 +1200,7 @@
                                     },
                                     "heating_system": {
                                         "design_capacity": 81564.48606051975,
+                                        "energy_source_type": "ELECTRICITY",
                                         "heating_coil_setpoint": 32.222222222222285,
                                         "heatpump_auxiliary_heat_high_shutoff_temperature": 4.444444444444457,
                                         "heatpump_auxiliary_heat_type": "ELECTRIC_RESISTANCE",
@@ -1224,6 +1225,7 @@
                                         "type": "DIRECT_EXPANSION"
                                     },
                                     "preheat_system": {
+                                        "energy_source_type": "NONE",
                                         "id": "Baseline System 4 (South) PreheatSys",
                                         "is_sized_based_on_design_day": true,
                                         "type": "NONE"
@@ -1271,6 +1273,7 @@
                                     },
                                     "heating_system": {
                                         "design_capacity": 59209.7599279107,
+                                        "energy_source_type": "ELECTRICITY",
                                         "heating_coil_setpoint": 32.222222222222285,
                                         "heatpump_auxiliary_heat_high_shutoff_temperature": 4.444444444444457,
                                         "heatpump_auxiliary_heat_type": "ELECTRIC_RESISTANCE",
@@ -1295,6 +1298,7 @@
                                         "type": "DIRECT_EXPANSION"
                                     },
                                     "preheat_system": {
+                                        "energy_source_type": "NONE",
                                         "id": "Baseline System 4 (East) PreheatSys",
                                         "is_sized_based_on_design_day": true,
                                         "type": "NONE"
@@ -1342,6 +1346,7 @@
                                     },
                                     "heating_system": {
                                         "design_capacity": 69126.54291754829,
+                                        "energy_source_type": "ELECTRICITY",
                                         "heating_coil_setpoint": 32.222222222222285,
                                         "heatpump_auxiliary_heat_high_shutoff_temperature": 4.444444444444457,
                                         "heatpump_auxiliary_heat_type": "ELECTRIC_RESISTANCE",
@@ -1366,6 +1371,7 @@
                                         "type": "DIRECT_EXPANSION"
                                     },
                                     "preheat_system": {
+                                        "energy_source_type": "NONE",
                                         "id": "Baseline System 4 (North) PreheatSys",
                                         "is_sized_based_on_design_day": true,
                                         "type": "NONE"
@@ -1413,6 +1419,7 @@
                                     },
                                     "heating_system": {
                                         "design_capacity": 59951.45307678223,
+                                        "energy_source_type": "ELECTRICITY",
                                         "heating_coil_setpoint": 32.222222222222285,
                                         "heatpump_auxiliary_heat_high_shutoff_temperature": 4.444444444444457,
                                         "heatpump_auxiliary_heat_type": "ELECTRIC_RESISTANCE",
@@ -1437,6 +1444,7 @@
                                         "type": "DIRECT_EXPANSION"
                                     },
                                     "preheat_system": {
+                                        "energy_source_type": "NONE",
                                         "id": "Baseline System 4 (West) PreheatSys",
                                         "is_sized_based_on_design_day": true,
                                         "type": "NONE"
@@ -1484,6 +1492,7 @@
                                     },
                                     "heating_system": {
                                         "design_capacity": 123560.47261528863,
+                                        "energy_source_type": "ELECTRICITY",
                                         "heating_coil_setpoint": 32.222222222222285,
                                         "heatpump_auxiliary_heat_high_shutoff_temperature": 4.444444444444457,
                                         "heatpump_auxiliary_heat_type": "ELECTRIC_RESISTANCE",
@@ -1508,6 +1517,7 @@
                                         "type": "DIRECT_EXPANSION"
                                     },
                                     "preheat_system": {
+                                        "energy_source_type": "NONE",
                                         "id": "Baseline System 4 (Core) PreheatSys",
                                         "is_sized_based_on_design_day": true,
                                         "type": "NONE"
@@ -106742,109 +106752,19 @@
                     "unmet_load_hours_cooling": 0.0,
                     "annual_source_results": [
                         {
-                            "id": "ELECTRICITY",
-                            "energy_source": "ELECTRICITY",
-                            "annual_consumption": 314513.5,
-                            "annual_demand": 97.52542114257812
-                        },
-                        {
                             "id": "NATURAL-GAS",
                             "energy_source": "NATURAL_GAS",
                             "annual_consumption": 335.6202392578125,
                             "annual_demand": 10184.0244140625
+                        },
+                        {
+                            "id": "ELECTRICITY",
+                            "energy_source": "ELECTRICITY",
+                            "annual_consumption": 314513.5,
+                            "annual_demand": 97.52542114257812
                         }
                     ],
                     "annual_end_use_results": [
-                        {
-                            "id": "ELECTRICITY - Interior Lighting",
-                            "type": "INTERIOR_LIGHTING",
-                            "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 45050.78125,
-                            "annual_site_coincident_demand": 17.41742706298828,
-                            "annual_site_non_coincident_demand": 17.41742706298828,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "ELECTRICITY - Misc Equipment",
-                            "type": "MISC_EQUIPMENT",
-                            "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 54307.5234375,
-                            "annual_site_coincident_demand": 11.537089347839355,
-                            "annual_site_non_coincident_demand": 11.537089347839355,
-                            "is_regulated": false
-                        },
-                        {
-                            "id": "ELECTRICITY - Space Heating",
-                            "type": "SPACE_HEATING",
-                            "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 133280.078125,
-                            "annual_site_coincident_demand": 52.61386489868164,
-                            "annual_site_non_coincident_demand": 70.46714782714844,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "ELECTRICITY - Space Cooling",
-                            "type": "SPACE_COOLING",
-                            "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 5985.95263671875,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 14.675445556640625,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "ELECTRICITY - Heat Rejection",
-                            "type": "HEAT_REJECTION",
-                            "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "ELECTRICITY - Pumps & Aux",
-                            "type": "PUMPS",
-                            "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 0.7050504684448242,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.37324756383895874,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "ELECTRICITY - Ventilation Fans",
-                            "type": "FANS_INTERIOR_VENTILATION",
-                            "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 75871.7890625,
-                            "annual_site_coincident_demand": 15.957037925720215,
-                            "annual_site_non_coincident_demand": 15.957037925720215,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "ELECTRICITY - Refrigeration Display",
-                            "type": "REFRIGERATION_EQUIPMENT",
-                            "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "ELECTRICITY - Ht Pump Supplemental Heat",
-                            "type": "HEAT_PUMP_SUPPLEMENTAL_HEATING",
-                            "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 16.893421173095703,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 9.358084678649902,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "ELECTRICITY - Domestic Hot Water",
-                            "type": "SERVICE_WATER_HEATING",
-                            "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
                         {
                             "id": "NATURAL-GAS - Interior Lighting",
                             "type": "INTERIOR_LIGHTING",
@@ -106933,6 +106853,96 @@
                             "annual_site_energy_use": 335.6202392578125,
                             "annual_site_coincident_demand": 10184.0244140625,
                             "annual_site_non_coincident_demand": 8.0,
+                            "is_regulated": true
+                        },
+                        {
+                            "id": "ELECTRICITY - Interior Lighting",
+                            "type": "INTERIOR_LIGHTING",
+                            "energy_source": "ELECTRICITY",
+                            "annual_site_energy_use": 45050.78125,
+                            "annual_site_coincident_demand": 17.41742706298828,
+                            "annual_site_non_coincident_demand": 17.41742706298828,
+                            "is_regulated": true
+                        },
+                        {
+                            "id": "ELECTRICITY - Misc Equipment",
+                            "type": "MISC_EQUIPMENT",
+                            "energy_source": "ELECTRICITY",
+                            "annual_site_energy_use": 54307.5234375,
+                            "annual_site_coincident_demand": 11.537089347839355,
+                            "annual_site_non_coincident_demand": 11.537089347839355,
+                            "is_regulated": false
+                        },
+                        {
+                            "id": "ELECTRICITY - Space Heating",
+                            "type": "SPACE_HEATING",
+                            "energy_source": "ELECTRICITY",
+                            "annual_site_energy_use": 133280.078125,
+                            "annual_site_coincident_demand": 52.61386489868164,
+                            "annual_site_non_coincident_demand": 70.46714782714844,
+                            "is_regulated": true
+                        },
+                        {
+                            "id": "ELECTRICITY - Space Cooling",
+                            "type": "SPACE_COOLING",
+                            "energy_source": "ELECTRICITY",
+                            "annual_site_energy_use": 5985.95263671875,
+                            "annual_site_coincident_demand": 0.0,
+                            "annual_site_non_coincident_demand": 14.675445556640625,
+                            "is_regulated": true
+                        },
+                        {
+                            "id": "ELECTRICITY - Heat Rejection",
+                            "type": "HEAT_REJECTION",
+                            "energy_source": "ELECTRICITY",
+                            "annual_site_energy_use": 0.0,
+                            "annual_site_coincident_demand": 0.0,
+                            "annual_site_non_coincident_demand": 0.0,
+                            "is_regulated": true
+                        },
+                        {
+                            "id": "ELECTRICITY - Pumps & Aux",
+                            "type": "PUMPS",
+                            "energy_source": "ELECTRICITY",
+                            "annual_site_energy_use": 0.7050504684448242,
+                            "annual_site_coincident_demand": 0.0,
+                            "annual_site_non_coincident_demand": 0.37324756383895874,
+                            "is_regulated": true
+                        },
+                        {
+                            "id": "ELECTRICITY - Ventilation Fans",
+                            "type": "FANS_INTERIOR_VENTILATION",
+                            "energy_source": "ELECTRICITY",
+                            "annual_site_energy_use": 75871.7890625,
+                            "annual_site_coincident_demand": 15.957037925720215,
+                            "annual_site_non_coincident_demand": 15.957037925720215,
+                            "is_regulated": true
+                        },
+                        {
+                            "id": "ELECTRICITY - Refrigeration Display",
+                            "type": "REFRIGERATION_EQUIPMENT",
+                            "energy_source": "ELECTRICITY",
+                            "annual_site_energy_use": 0.0,
+                            "annual_site_coincident_demand": 0.0,
+                            "annual_site_non_coincident_demand": 0.0,
+                            "is_regulated": true
+                        },
+                        {
+                            "id": "ELECTRICITY - Ht Pump Supplemental Heat",
+                            "type": "HEAT_PUMP_SUPPLEMENTAL_HEATING",
+                            "energy_source": "ELECTRICITY",
+                            "annual_site_energy_use": 16.893421173095703,
+                            "annual_site_coincident_demand": 0.0,
+                            "annual_site_non_coincident_demand": 9.358084678649902,
+                            "is_regulated": true
+                        },
+                        {
+                            "id": "ELECTRICITY - Domestic Hot Water",
+                            "type": "SERVICE_WATER_HEATING",
+                            "energy_source": "ELECTRICITY",
+                            "annual_site_energy_use": 0.0,
+                            "annual_site_coincident_demand": 0.0,
+                            "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": true
                         }
                     ]

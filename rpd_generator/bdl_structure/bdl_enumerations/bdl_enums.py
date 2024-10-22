@@ -537,13 +537,14 @@ class BDLEnums:
         ),
         "SystemHeatingTypes": _ListEnum(
             [
-                "HEAT-PUMP",
-                "FURNACE",
+                "NONE",
                 "ELECTRIC",
                 "HOT-WATER",
-                "NONE",
-                "STEAM",
+                "FURNACE",
+                "HEAT-PUMP",
+                "CONDENSING-UNIT",
                 "DHW-LOOP",
+                "STEAM",
             ]
         ),
         "SystemHeatControlOptions": _ListEnum(
@@ -1001,17 +1002,18 @@ class BDLEnums:
     }
 
 
-# def print_schema_enums():
-#     """Print all the schema enumerations with their names and values
-#
-#     This is primarily useful for debugging purposes
-#     """
-#
-#     for key in BDLEnums.bdl_enums:
-#         print(f"{key}:")
-#         for e in BDLEnums.bdl_enums[key].get_list():
-#             print(f"    {e}")
-#         print()
-#
-#
-# print_schema_enums()
+def print_schema_enums():
+    """Print all the schema enumerations with their names and values
+
+    This is primarily useful for debugging purposes
+    """
+
+    for key in BDLEnums.bdl_enums:
+        print(f"{key}:")
+        for e in BDLEnums.bdl_enums[key].get_list():
+            print(f"    {e}")
+        print()
+
+
+if __name__ == "__main__":
+    print_schema_enums()

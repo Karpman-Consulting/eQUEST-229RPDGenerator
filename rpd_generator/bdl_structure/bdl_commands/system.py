@@ -3,6 +3,7 @@ from rpd_generator.schema.schema_enums import SchemaEnums
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 
+EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
 HeatingSystemOptions = SchemaEnums.schema_enums["HeatingSystemOptions"]
 CoolingSystemOptions = SchemaEnums.schema_enums["CoolingSystemOptions"]
 FanSystemSupplyFanControlOptions = SchemaEnums.schema_enums[
@@ -31,8 +32,9 @@ HeatpumpAuxiliaryHeatOptions = SchemaEnums.schema_enums["HeatpumpAuxiliaryHeatOp
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_SystemKeywords = BDLEnums.bdl_enums["SystemKeywords"]
 BDL_ZoneKeywords = BDLEnums.bdl_enums["ZoneKeywords"]
+BDL_MasterMeterKeywords = BDLEnums.bdl_enums["MasterMeterKeywords"]
 BDL_SystemTypes = BDLEnums.bdl_enums["SystemTypes"]
-BDL_SysemHeatingTypes = BDLEnums.bdl_enums["SystemHeatingTypes"]
+BDL_SystemHeatingTypes = BDLEnums.bdl_enums["SystemHeatingTypes"]
 BDL_SystemCoolingTypes = BDLEnums.bdl_enums["SystemCoolingTypes"]
 BDL_CoolControlOptions = BDLEnums.bdl_enums["SystemCoolControlOptions"]
 BDL_HeatControlOptions = BDLEnums.bdl_enums["SystemHeatControlOptions"]
@@ -72,19 +74,20 @@ class System(ParentNode):
         BDL_SystemTypes.PTAC,
     ]
     heat_type_map = {
-        BDL_SysemHeatingTypes.HEAT_PUMP: HeatingSystemOptions.HEAT_PUMP,
-        BDL_SysemHeatingTypes.FURNACE: HeatingSystemOptions.FURNACE,
-        BDL_SysemHeatingTypes.ELECTRIC: HeatingSystemOptions.ELECTRIC_RESISTANCE,
-        BDL_SysemHeatingTypes.HOT_WATER: HeatingSystemOptions.FLUID_LOOP,
-        BDL_SysemHeatingTypes.NONE: HeatingSystemOptions.NONE,
-        BDL_SysemHeatingTypes.STEAM: HeatingSystemOptions.OTHER,
-        BDL_SysemHeatingTypes.DHW_LOOP: HeatingSystemOptions.OTHER,
+        BDL_SystemHeatingTypes.NONE: HeatingSystemOptions.NONE,
+        BDL_SystemHeatingTypes.ELECTRIC: HeatingSystemOptions.ELECTRIC_RESISTANCE,
+        BDL_SystemHeatingTypes.HOT_WATER: HeatingSystemOptions.FLUID_LOOP,
+        BDL_SystemHeatingTypes.FURNACE: HeatingSystemOptions.FURNACE,
+        BDL_SystemHeatingTypes.HEAT_PUMP: HeatingSystemOptions.HEAT_PUMP,
+        BDL_SystemHeatingTypes.CONDENSING_UNIT: HeatingSystemOptions.HEAT_PUMP,
+        BDL_SystemHeatingTypes.DHW_LOOP: HeatingSystemOptions.OTHER,
+        BDL_SystemHeatingTypes.STEAM: HeatingSystemOptions.OTHER,
     }
     BDL_output_heat_type_map = {
-        BDL_SysemHeatingTypes.HEAT_PUMP: BDL_OutputHeatingTypes.HEAT_PUMP_WATER_COOLED,
-        BDL_SysemHeatingTypes.FURNACE: BDL_OutputHeatingTypes.FURNACE,
-        BDL_SysemHeatingTypes.ELECTRIC: BDL_OutputHeatingTypes.ELECTRIC,
-        BDL_SysemHeatingTypes.HOT_WATER: BDL_OutputHeatingTypes.HOT_WATER,
+        BDL_SystemHeatingTypes.HEAT_PUMP: BDL_OutputHeatingTypes.HEAT_PUMP_WATER_COOLED,
+        BDL_SystemHeatingTypes.FURNACE: BDL_OutputHeatingTypes.FURNACE,
+        BDL_SystemHeatingTypes.ELECTRIC: BDL_OutputHeatingTypes.ELECTRIC,
+        BDL_SystemHeatingTypes.HOT_WATER: BDL_OutputHeatingTypes.HOT_WATER,
     }
     cool_type_map = {
         BDL_SystemCoolingTypes.ELEC_DX: CoolingSystemOptions.DIRECT_EXPANSION,
@@ -459,9 +462,7 @@ class System(ParentNode):
 
         heat_source = self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_SOURCE)
         heat_type = self.heat_type_map.get(heat_source)
-        output_heat_type = self.BDL_output_heat_type_map.get(
-            self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_SOURCE)
-        )
+        output_heat_type = self.BDL_output_heat_type_map.get(heat_source)
         self.system_heating_type_map.update(
             {
                 BDL_SystemTypes.PTAC: heat_type,
@@ -555,7 +556,7 @@ class System(ParentNode):
 
             self.populate_fan_system(output_data)
             self.populate_fans(output_data)
-            self.populate_heating_system(output_data)
+            self.populate_heating_system(output_data, heat_source)
             self.populate_cooling_system(output_data)
             self.populate_preheat_system(output_data)
             self.populate_air_economizer()
@@ -979,11 +980,9 @@ class System(ParentNode):
             self.populate_fan_operation_during_occupied()
         )
 
-    def populate_heating_system(self, output_data):
+    def populate_heating_system(self, output_data, heat_source):
         self.heat_sys_id = self.u_name + " HeatSys"
-        self.heat_sys_type = self.heat_type_map.get(
-            self.keyword_value_pairs.get(BDL_SystemKeywords.HEAT_SOURCE)
-        )
+        self.heat_sys_type = self.heat_type_map.get(heat_source)
         self.heat_sys_hot_water_loop = self.keyword_value_pairs.get(
             BDL_SystemKeywords.HW_LOOP
         )
@@ -1053,6 +1052,24 @@ class System(ParentNode):
             self.heat_sys_is_sized_based_on_design_day = (
                 not self.keyword_value_pairs.get(BDL_SystemKeywords.HEATING_CAPACITY)
             )
+
+        if self.heat_sys_type in [
+            HeatingSystemOptions.FLUID_LOOP,
+            HeatingSystemOptions.OTHER,
+        ]:
+            loop_name = self.keyword_value_pairs.get(BDL_SystemKeywords.HW_LOOP)
+            loop = self.rmd.bdl_obj_instances.get(loop_name)
+            if loop:
+                self.heat_sys_energy_source_type = self.get_loop_energy_source(loop)
+        elif self.heat_sys_type in [
+            HeatingSystemOptions.ELECTRIC_RESISTANCE,
+            HeatingSystemOptions.HEAT_PUMP,
+        ]:
+            self.heat_sys_energy_source_type = EnergySourceOptions.ELECTRICITY
+        elif self.heat_sys_type == HeatingSystemOptions.FURNACE:
+            self.heat_sys_energy_source_type = self.get_furnace_energy_source()
+        elif self.heat_sys_type == HeatingSystemOptions.NONE:
+            self.heat_sys_energy_source_type = EnergySourceOptions.NONE
 
     def populate_cooling_system(self, output_data):
         self.cool_sys_id = self.u_name + " CoolSys"
@@ -1147,6 +1164,9 @@ class System(ParentNode):
                 self.keyword_value_pairs.get(BDL_SystemKeywords.PREHEAT_CAPACITY)
             )
         )
+        self.preheat_sys_design_capacity = self.try_abs(
+            output_data.get("Design Preheat capacity")
+        )
         self.preheat_sys_is_sized_based_on_design_day = (
             not self.keyword_value_pairs.get(BDL_SystemKeywords.PREHEAT_CAPACITY)
         )
@@ -1156,6 +1176,23 @@ class System(ParentNode):
         self.preheat_sys_hot_water_loop = self.keyword_value_pairs.get(
             BDL_SystemKeywords.PHW_LOOP
         )
+
+        if self.preheat_sys_type in [
+            HeatingSystemOptions.FLUID_LOOP,
+            HeatingSystemOptions.OTHER,
+        ]:
+            loop = self.rmd.bdl_obj_instances.get(self.preheat_sys_hot_water_loop)
+            if loop:
+                self.preheat_sys_energy_source_type = self.get_loop_energy_source(loop)
+        elif self.preheat_sys_type in [
+            HeatingSystemOptions.ELECTRIC_RESISTANCE,
+            HeatingSystemOptions.HEAT_PUMP,
+        ]:
+            self.preheat_sys_energy_source_type = EnergySourceOptions.ELECTRICITY
+        elif self.preheat_sys_type == HeatingSystemOptions.FURNACE:
+            self.preheat_sys_energy_source_type = self.get_furnace_energy_source()
+        elif self.preheat_sys_type == HeatingSystemOptions.NONE:
+            self.preheat_sys_energy_source_type = EnergySourceOptions.NONE
 
     def populate_fans(self, output_data):
         # There is always a supply fan for a fan system in eQUEST, so it is always populated
@@ -1476,3 +1513,51 @@ class System(ParentNode):
             and heat_control == BDL_HeatControlOptions.COLDEST
         ):
             return FanSystemTemperatureControlOptions.ZONE_RESET
+
+    def get_loop_energy_source(self, loop):
+        """Get the energy source type for the loop. Used to populate the energy_source_type."""
+        energy_source_set = set()
+        for boiler_name in self.rmd.boiler_names:
+            boiler = self.rmd.bdl_obj_instances.get(boiler_name)
+            if boiler.loop == loop.u_name:
+                energy_source_set.add(boiler.energy_source_type)
+
+        for steam_meter_name in self.rmd.steam_meter_names:
+            steam_meter = self.rmd.bdl_obj_instances.get(steam_meter_name)
+            if steam_meter.loop == loop.u_name:
+                energy_source_set.add(steam_meter.energy_source_type)
+
+        for chiller_name in self.rmd.chiller_names:
+            chiller = self.rmd.bdl_obj_instances.get(chiller_name)
+            if chiller.heat_recovery_loop == loop.u_name:
+                energy_source_set.add(EnergySourceOptions.ELECTRICITY)
+
+        for domestic_water_heater_name in self.rmd.domestic_water_heater_names:
+            domestic_water_heater = self.rmd.bdl_obj_instances.get(
+                domestic_water_heater_name
+            )
+            if domestic_water_heater.hot_water_loop == loop.u_name:
+                energy_source_set.add(domestic_water_heater.heater_fuel_type)
+
+        if len(energy_source_set) == 1:
+            return energy_source_set.pop()
+        else:
+            return EnergySourceOptions.OTHER
+
+    def get_furnace_energy_source(self):
+        """Get the energy source type for the furnace. Used to populate the energy_source_type."""
+        heat_fuel_meter_name = self.keyword_value_pairs.get(
+            BDL_SystemKeywords.HEAT_FUEL_METER
+        )
+        heat_fuel_meter = self.rmd.bdl_obj_instances.get(heat_fuel_meter_name)
+        if heat_fuel_meter:
+            return heat_fuel_meter.fuel_type
+        else:
+            master_meters = self.rmd.bdl_obj_instances.get(self.rmd.master_meters)
+            if master_meters:
+                heat_fuel_meter_name = master_meters.keyword_value_pairs.get(
+                    BDL_MasterMeterKeywords.HEAT_FUEL_METER
+                )
+                heat_fuel_meter = self.rmd.bdl_obj_instances.get(heat_fuel_meter_name)
+                if heat_fuel_meter:
+                    return heat_fuel_meter.fuel_type

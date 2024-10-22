@@ -12,23 +12,14 @@ BDL_DWHeaterKeywords = BDLEnums.bdl_enums["DomesticWaterHeaterKeywords"]
 BDL_DWHeaterTypes = BDLEnums.bdl_enums["DomesticWaterHeaterTypes"]
 BDL_DWHeaterLocationOptions = BDLEnums.bdl_enums["DomesticWaterHeaterLocationOptions"]
 BDL_FuelTypes = BDLEnums.bdl_enums["FuelTypes"]
+BDL_MasterMeterKeywords = BDLEnums.bdl_enums["MasterMeterKeywords"]
+BDL_FuelMeterKeywords = BDLEnums.bdl_enums["FuelMeterKeywords"]
 
 
 class DomesticWaterHeater(BaseNode):
     """DomesticWaterHeater object in the tree."""
 
     bdl_command = BDL_Commands.DW_HEATER
-
-    fuel_type_map = {
-        BDL_FuelTypes.ELECTRICITY: EnergySourceOptions.ELECTRICITY,
-        BDL_FuelTypes.NATURAL_GAS: EnergySourceOptions.NATURAL_GAS,
-        BDL_FuelTypes.LPG: EnergySourceOptions.PROPANE,
-        BDL_FuelTypes.FUEL_OIL: EnergySourceOptions.FUEL_OIL,
-        BDL_FuelTypes.DIESEL_OIL: EnergySourceOptions.OTHER,
-        BDL_FuelTypes.COAL: EnergySourceOptions.OTHER,
-        BDL_FuelTypes.METHANOL: EnergySourceOptions.OTHER,
-        BDL_FuelTypes.OTHER_FUEL: EnergySourceOptions.OTHER,
-    }
 
     heater_type_map = {
         BDL_DWHeaterTypes.GAS: ServiceWaterHeaterOptions.CONVENTIONAL,
@@ -43,6 +34,7 @@ class DomesticWaterHeater(BaseNode):
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
+        self.rmd.domestic_water_heater_names.append(u_name)
 
         self.data_structure = {}
 
@@ -93,17 +85,34 @@ class DomesticWaterHeater(BaseNode):
         requests = self.get_output_requests()
         output_data = self.get_output_data(requests)
 
-        fuel_meter_ref = self.keyword_value_pairs.get(BDL_DWHeaterKeywords.FUEL_METER)
-        fuel_meter = self.rmd.bdl_obj_instances.get(fuel_meter_ref)
-        # If the fuel meter is not found, then it must be a MasterMeter.
-        if fuel_meter is None:
-            # This assumes the Master Fuel Meter is Natural Gas
-            self.heater_fuel_type = BDL_FuelTypes.NATURAL_GAS
+        self.heater_type = self.heater_type_map.get(
+            self.keyword_value_pairs.get(BDL_DWHeaterKeywords.TYPE)
+        )
+
+        if (
+            self.keyword_value_pairs.get(BDL_DWHeaterKeywords.TYPE)
+            == BDL_DWHeaterTypes.ELEC
+        ):
+            self.heater_fuel_type = EnergySourceOptions.ELECTRICITY
+
         else:
-            fuel_meter_type = fuel_meter.keyword_value_pairs.get(
-                BDL_DWHeaterKeywords.TYPE
+            fuel_meter_ref = self.keyword_value_pairs.get(
+                BDL_DWHeaterKeywords.FUEL_METER
             )
-            self.heater_fuel_type = self.fuel_type_map.get(fuel_meter_type)
+            fuel_meter = self.rmd.bdl_obj_instances.get(fuel_meter_ref)
+
+            # If the fuel meter is not found, then it must be a MasterMeter.
+            if fuel_meter is None:
+                master_meters = self.rmd.bdl_obj_instances.get(self.rmd.master_meters)
+                if master_meters:
+                    dhw_fuel_meter_name = master_meters.keyword_value_pairs.get(
+                        BDL_MasterMeterKeywords.DHW_FUEL_METER
+                    )
+                    dhw_fuel_meter = self.rmd.bdl_obj_instances.get(dhw_fuel_meter_name)
+                    if dhw_fuel_meter:
+                        self.heater_fuel_type = dhw_fuel_meter.fuel_type
+            else:
+                self.heater_fuel_type = fuel_meter.fuel_type
 
         self.distribution_system = self.keyword_value_pairs.get(
             BDL_DWHeaterKeywords.DHW_LOOP
@@ -122,10 +131,6 @@ class DomesticWaterHeater(BaseNode):
             self.setpoint_temperature = max(loop_stpt, tank_stpt)
         elif tank_stpt is None:
             self.setpoint_temperature = loop_stpt
-
-        self.heater_type = self.heater_type_map.get(
-            self.keyword_value_pairs.get(BDL_DWHeaterKeywords.TYPE)
-        )
 
         self.storage_capacity = self.try_float(
             self.keyword_value_pairs.get(BDL_DWHeaterKeywords.TANK_VOLUME)

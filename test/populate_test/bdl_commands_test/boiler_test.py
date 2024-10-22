@@ -43,19 +43,18 @@ class TestFuelBoiler(unittest.TestCase):
         self.master_meter = MasterMeters("Master Meters", self.rmd)
         self.fuel_meter = FuelMeter("Test Fuel Meter", self.rmd)
         self.boiler = Boiler("Boiler 1", self.rmd)
+        self.loop = CirculationLoop("Test HW Loop", self.rmd)
 
         self.rmd.bdl_obj_instances["Boiler 1"] = self.boiler
+        self.rmd.bdl_obj_instances["Test HW Loop"] = self.loop
         self.rmd.bdl_obj_instances["Master Meters"] = self.master_meter
         self.rmd.bdl_obj_instances["Test Fuel Meter"] = self.fuel_meter
 
     def test_populate_data_elements_with_fuel_meter(self):
-        test_hw_loop = CirculationLoop("Test HW Loop", self.rmd)
-        self.rmd.bdl_obj_instances["Test HW Loop"] = test_hw_loop
-        fuel_meter = FuelMeter("Test Fuel Meter", self.rmd)
-        fuel_meter.keyword_value_pairs = {
+        self.fuel_meter.keyword_value_pairs = {
             BDL_FuelMeterKeywords.TYPE: BDL_FuelTypes.METHANOL
         }
-        self.rmd.bdl_obj_instances["Test Fuel Meter"] = fuel_meter
+        self.fuel_meter.populate_data_elements()
 
         self.boiler.keyword_value_pairs = {
             BDL_BoilerKeywords.TYPE: BDL_BoilerTypes.HW_BOILER,
@@ -92,8 +91,7 @@ class TestFuelBoiler(unittest.TestCase):
         self.fuel_meter.keyword_value_pairs = {
             BDL_FuelMeterKeywords.TYPE: BDL_FuelTypes.NATURAL_GAS
         }
-        test_hw_loop = CirculationLoop("Test HW Loop", self.rmd)
-        self.rmd.bdl_obj_instances["Test HW Loop"] = test_hw_loop
+        self.fuel_meter.populate_data_elements()
 
         self.boiler.keyword_value_pairs = {
             BDL_BoilerKeywords.TYPE: BDL_BoilerTypes.HW_BOILER_W_DRAFT,
@@ -135,18 +133,18 @@ class TestElectricBoiler(unittest.TestCase):
         self.master_meter = MasterMeters("Master Meters", self.rmd)
         self.fuel_meter = FuelMeter("Test Fuel Meter", self.rmd)
         self.boiler = Boiler("Boiler 1", self.rmd)
+        self.loop = CirculationLoop("Test HW Loop", self.rmd)
+
+        self.rmd.bdl_obj_instances["Boiler 1"] = self.boiler
+        self.rmd.bdl_obj_instances["Test HW Loop"] = self.loop
         self.rmd.bdl_obj_instances["Master Meters"] = self.master_meter
         self.rmd.bdl_obj_instances["Test Fuel Meter"] = self.master_meter
-        self.rmd.bdl_obj_instances["Boiler 1"] = self.boiler
 
     def test_populate_data_elements_electric_boiler(self):
         script_dir = os.path.dirname(os.path.abspath(__file__))
         self.rmd.file_path = os.path.abspath(
             os.path.join(script_dir, "../output_references/Electric Boiler")
         )
-
-        test_hw_loop = CirculationLoop("Test HW Loop", self.rmd)
-        self.rmd.bdl_obj_instances["Test HW Loop"] = test_hw_loop
 
         self.boiler.keyword_value_pairs = {
             BDL_BoilerKeywords.TYPE: BDL_BoilerTypes.ELEC_HW_BOILER,
@@ -180,9 +178,6 @@ class TestElectricBoiler(unittest.TestCase):
         self.rmd.file_path = os.path.abspath(
             os.path.join(script_dir, "../output_references/Electric Boiler - 1EIR")
         )
-
-        test_hw_loop = CirculationLoop("Test HW Loop", self.rmd)
-        self.rmd.bdl_obj_instances["Test HW Loop"] = test_hw_loop
 
         self.boiler.keyword_value_pairs = {
             BDL_BoilerKeywords.TYPE: BDL_BoilerTypes.ELEC_STM_BOILER,

@@ -1,9 +1,13 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
 from rpd_generator.bdl_structure.base_definition import BaseDefinition
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
+from rpd_generator.schema.schema_enums import SchemaEnums
 
 
+EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
+BDL_FuelMeterKeywords = BDLEnums.bdl_enums["FuelMeterKeywords"]
+BDL_FuelTypes = BDLEnums.bdl_enums["FuelTypes"]
 BDL_SteamAndCHWaterMeterKeywords = BDLEnums.bdl_enums[
     "SteamAndChilledWaterMeterKeywords"
 ]
@@ -29,12 +33,29 @@ class FuelMeter(BaseDefinition):
 
     bdl_command = BDL_Commands.FUEL_METER
 
+    fuel_type_map = {
+        BDL_FuelTypes.NATURAL_GAS: EnergySourceOptions.NATURAL_GAS,
+        BDL_FuelTypes.LPG: EnergySourceOptions.PROPANE,
+        BDL_FuelTypes.FUEL_OIL: EnergySourceOptions.FUEL_OIL,
+        BDL_FuelTypes.DIESEL_OIL: EnergySourceOptions.OTHER,
+        BDL_FuelTypes.COAL: EnergySourceOptions.OTHER,
+        BDL_FuelTypes.METHANOL: EnergySourceOptions.OTHER,
+        BDL_FuelTypes.OTHER_FUEL: EnergySourceOptions.OTHER,
+    }
+
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
         self.rmd.fuel_meter_names.append(u_name)
 
+        self.fuel_type = None
+
     def __repr__(self):
         return f"FuelMeter(u_name='{self.u_name}')"
+
+    def populate_data_elements(self):
+        """Populate data elements for FuelMeter object."""
+        fuel_meter_type = self.keyword_value_pairs.get(BDL_FuelMeterKeywords.TYPE)
+        self.fuel_type = self.fuel_type_map.get(fuel_meter_type)
 
 
 class ElecMeter(BaseDefinition):

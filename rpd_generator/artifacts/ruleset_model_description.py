@@ -38,7 +38,13 @@ class RulesetModelDescription(Base):
         self.doe2_version = None
         self.doe2_data_path = None
 
-        self.building_azimuth = None
+        # store BDL objects for the model associated with the RMD
+        self.bdl_obj_instances = {}
+        # store space names mapped to their zone objects for quick access
+        self.space_map = {}
+
+        self.rmd_data_structure = {}
+
         self.master_meters = None
         self.electric_meter_names = []
         self.fuel_meter_names = []
@@ -46,24 +52,20 @@ class RulesetModelDescription(Base):
         self.chilled_water_meter_names = []
         self.utility_rate_names = []
         self.elec_generator_names = []
-        # False by default, will set to True if a FIXED-SHADE object is found
-        self.has_site_shading = False
         self.system_names = []
         self.zone_names = []
         self.circulation_loop_names = []
         self.boiler_names = []
         self.chiller_names = []
+        self.domestic_water_heater_names = []
         self.heat_rejection_names = []
         self.ground_loop_hx_names = []
         self.pump_names = []
         self.equip_ctrl_names = []
 
-        # store BDL objects for the model associated with the RMD
-        self.bdl_obj_instances = {}
-        # store space names mapped to their zone objects for quick access
-        self.space_map = {}
-
-        self.rmd_data_structure = {}
+        self.building_azimuth = None
+        # False by default, will set to True if a FIXED-SHADE object is found
+        self.has_site_shading = False
 
         # data elements with children
         self.transformers = []
