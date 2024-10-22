@@ -39,15 +39,6 @@ class Boiler(BaseNode):
         BDL_BoilerTypes.ELEC_STM_BOILER: EnergySourceOptions.ELECTRICITY,
         BDL_BoilerTypes.HW_CONDENSING: None,
     }
-    fuel_type_map = {
-        BDL_FuelTypes.NATURAL_GAS: EnergySourceOptions.NATURAL_GAS,
-        BDL_FuelTypes.LPG: EnergySourceOptions.PROPANE,
-        BDL_FuelTypes.FUEL_OIL: EnergySourceOptions.FUEL_OIL,
-        BDL_FuelTypes.DIESEL_OIL: EnergySourceOptions.OTHER,
-        BDL_FuelTypes.COAL: EnergySourceOptions.OTHER,
-        BDL_FuelTypes.METHANOL: EnergySourceOptions.OTHER,
-        BDL_FuelTypes.OTHER_FUEL: EnergySourceOptions.OTHER,
-    }
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
@@ -87,16 +78,10 @@ class Boiler(BaseNode):
                 )
                 heat_fuel_meter = self.rmd.bdl_obj_instances.get(heat_fuel_meter_name)
                 if heat_fuel_meter:
-                    meter_fuel_type = heat_fuel_meter.keyword_value_pairs.get(
-                        BDL_FuelMeterKeywords.TYPE
-                    )
-                    fuel_type = self.fuel_type_map.get(meter_fuel_type)
+                    fuel_type = heat_fuel_meter.fuel_type
 
         else:
-            fuel_meter_type = fuel_meter.keyword_value_pairs.get(
-                BDL_FuelMeterKeywords.TYPE
-            )
-            fuel_type = self.fuel_type_map.get(fuel_meter_type)
+            fuel_type = fuel_meter.fuel_type
 
         self.energy_source_map.update(
             {
