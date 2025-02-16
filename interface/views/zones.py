@@ -6,11 +6,14 @@ from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
 
 
-STANDARD_FONT = ("Arial", 16, "bold")
+LABEL_FONT = ("Arial", 16, "bold")
 READONLY = "readonly"
 LEFT = "left"
+FILL = "nsew"
+TOP_HORZ = "new"
+E = "e"
 W = "w"
-PAD20 = (0, 20)
+PAD20END = (0, 20)
 
 
 class ZonesView(BaseView):
@@ -24,9 +27,9 @@ class ZonesView(BaseView):
         self.directions_label = ctk.CTkLabel(
             self.directions_frame,
             text="Directions: ",
-            anchor="e",
-            justify="left",
-            font=STANDARD_FONT,
+            anchor=E,
+            justify=LEFT,
+            font=LABEL_FONT,
         )
         self.directions_widget = ctk.CTkLabel(
             self.directions_frame,
@@ -36,8 +39,8 @@ class ZonesView(BaseView):
             "Spaces column to open the Child Spaces window. Child Spaces should be created as necessary to represent the entirety of the Zone, e.g. an aggregated \n"
             "zone that is in reality 3 zones where each zone has 2 spaces should have 6 Child Spaces total.",
             font=("Arial", 14, "bold"),
-            anchor="w",
-            justify="left",
+            anchor=W,
+            justify=LEFT,
         )
 
     def __repr__(self):
@@ -53,19 +56,19 @@ class ZonesView(BaseView):
         self.grid_columnconfigure(0, weight=1)
 
         # Directions
-        self.directions_frame.grid(row=0, column=0, sticky="nsew", padx=50, pady=20)
+        self.directions_frame.grid(row=0, column=0, sticky=FILL, padx=50, pady=20)
         self.directions_label.grid(row=0, column=0, sticky="ew", padx=5, pady=20)
         self.directions_widget.grid(
             row=0, column=1, columnspan=8, sticky="new", padx=5, pady=20
         )
 
         # Subview frame
-        self.view_frame.grid(row=1, column=0, sticky="nsew", padx=20, pady=PAD20)
+        self.view_frame.grid(row=1, column=0, sticky=FILL, padx=20, pady=PAD20END)
         self.view_frame.grid_rowconfigure(0, weight=1)
         self.view_frame.grid_columnconfigure(0, weight=1)
 
         zones_view = ZonesSubview(self.view_frame)
-        zones_view.grid(row=0, column=0, sticky="nsew")
+        zones_view.grid(row=0, column=0, sticky=FILL)
         zones_view.open_view()
 
 
@@ -103,25 +106,23 @@ class ZonesSubview(CTkXYFrame):
         self.is_view_populated = True
 
     def add_column_headers(self):
-        collapse_expand_label = ctk.CTkLabel(self, text="", font=STANDARD_FONT)
-        collapse_expand_label.grid(row=0, column=0, padx=PAD20, pady=5)
+        collapse_expand_label = ctk.CTkLabel(self, text="", font=LABEL_FONT)
+        collapse_expand_label.grid(row=0, column=0, padx=PAD20END, pady=5)
 
-        zone_floor_label = ctk.CTkLabel(self, text="Floor/Zone", font=STANDARD_FONT)
-        zone_floor_label.grid(row=0, column=1, padx=PAD20, pady=5)
-        building_area_label = ctk.CTkLabel(
-            self, text="Building Area", font=STANDARD_FONT
-        )
-        building_area_label.grid(row=0, column=2, padx=PAD20, pady=5)
+        zone_floor_label = ctk.CTkLabel(self, text="Floor/Zone", font=LABEL_FONT)
+        zone_floor_label.grid(row=0, column=1, padx=PAD20END, pady=5)
+        building_area_label = ctk.CTkLabel(self, text="Building Area", font=LABEL_FONT)
+        building_area_label.grid(row=0, column=2, padx=PAD20END, pady=5)
         aggregated_zone_quantity_label = ctk.CTkLabel(
-            self, text="Aggregated Zone Qty", font=STANDARD_FONT
+            self, text="Aggregated Zone Qty", font=LABEL_FONT
         )
-        aggregated_zone_quantity_label.grid(row=0, column=3, padx=PAD20, pady=5)
+        aggregated_zone_quantity_label.grid(row=0, column=3, padx=PAD20END, pady=5)
         measured_infiltration_rate_label = ctk.CTkLabel(
-            self, text="Measured Infiltration Rate?", font=STANDARD_FONT
+            self, text="Measured Infiltration Rate?", font=LABEL_FONT
         )
-        measured_infiltration_rate_label.grid(row=0, column=4, padx=PAD20, pady=5)
-        child_spaces_label = ctk.CTkLabel(self, text="Child Spaces", font=STANDARD_FONT)
-        child_spaces_label.grid(row=0, column=5, padx=PAD20, pady=5)
+        measured_infiltration_rate_label.grid(row=0, column=4, padx=PAD20END, pady=5)
+        child_spaces_label = ctk.CTkLabel(self, text="Child Spaces", font=LABEL_FONT)
+        child_spaces_label.grid(row=0, column=5, padx=PAD20END, pady=5)
 
     def add_main_row(self, i, floor_name):
         # Frame spanning all columns with a different background color
@@ -172,17 +173,21 @@ class ZonesSubview(CTkXYFrame):
         )
         building_area_combo.set("Building Area 1")
         building_area_combo._entry.configure(justify=LEFT)
-        building_area_combo.grid(row=(i + 1), column=2, padx=PAD20, pady=10)
+        building_area_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=10)
 
         self.floor_comboboxes[floor_name] = building_area_combo
 
         # Add empty labels in `main_row_frame` for spacing
-        ctk.CTkLabel(main_row_frame, text="").grid(row=0, column=3, padx=PAD20, pady=10)
-        ctk.CTkLabel(main_row_frame, text="").grid(row=0, column=4, padx=PAD20, pady=10)
+        ctk.CTkLabel(main_row_frame, text="").grid(
+            row=0, column=3, padx=PAD20END, pady=10
+        )
+        ctk.CTkLabel(main_row_frame, text="").grid(
+            row=0, column=4, padx=PAD20END, pady=10
+        )
 
     def add_row(self, i, zone_name):
         floor_label = ctk.CTkLabel(self, text=f"{zone_name}")
-        floor_label.grid(row=(i + 1), column=1, padx=20, pady=PAD20, sticky=W)
+        floor_label.grid(row=(i + 1), column=1, padx=20, pady=PAD20END, sticky=W)
         building_area_combo = ctk.CTkComboBox(
             self,
             # TODO: Placeholder for Building Areas tab data
@@ -191,17 +196,17 @@ class ZonesSubview(CTkXYFrame):
         )
         building_area_combo.set("Building Area 1")
         building_area_combo._entry.configure(justify=LEFT)
-        building_area_combo.grid(row=(i + 1), column=2, padx=PAD20, pady=PAD20)
+        building_area_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=PAD20END)
 
         self.zone_comboboxes[zone_name] = building_area_combo
         # TODO: Apply numerical entry validation
         aggregated_zone_qty_spinbox = cw.IntSpinbox(self, width=125, default_value=1)
         aggregated_zone_qty_spinbox.grid(
-            row=(i + 1), column=3, padx=PAD20, pady=PAD20, sticky="nsew"
+            row=(i + 1), column=3, padx=PAD20END, pady=PAD20END, sticky=FILL
         )
         measured_infiltration_rate_checkbox = ctk.CTkCheckBox(self, text="", width=30)
         measured_infiltration_rate_checkbox.grid(
-            row=(i + 1), column=4, padx=PAD20, pady=PAD20
+            row=(i + 1), column=4, padx=PAD20END, pady=PAD20END
         )
         image = ctk.CTkImage(
             light_image=Image.open("interface/static/white_plus.png"),
@@ -217,7 +222,7 @@ class ZonesSubview(CTkXYFrame):
             corner_radius=10,
             command=self.open_child_space_window,
         )
-        add_child_space_button.grid(row=(i + 1), column=5, padx=PAD20, pady=PAD20)
+        add_child_space_button.grid(row=(i + 1), column=5, padx=PAD20END, pady=PAD20END)
 
         self.zone_widgets[zone_name] = [
             floor_label,

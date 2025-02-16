@@ -4,10 +4,16 @@ from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
 
 
-STANDARD_FONT = ("Arial", 16, "bold")
+LABEL_FONT = ("Arial", 16, "bold")
 READONLY = "readonly"
-LEFT = "left"
 W = "w"
+E = "e"
+FILL = "nsew"
+LEFT = "left"
+PAD20END = (0, 20)
+BLACK = "black"
+SUBVIEW_BUTTON_COLOR = "#FFD966"
+ACTIVE_SUBVIEW_BUTTON_COLOR = "#FFED67"
 
 
 class SurfacesView(BaseView):
@@ -33,7 +39,7 @@ class SurfacesView(BaseView):
         self.directions_label = ctk.CTkLabel(
             self.directions_frame,
             text="Directions: ",
-            font=STANDARD_FONT,
+            font=LABEL_FONT,
         )
         self.directions_widget = ctk.CTkLabel(
             self.directions_frame,
@@ -43,6 +49,7 @@ class SurfacesView(BaseView):
 
         # Subview buttons
         self.subview_buttons = {}
+        self.border_line = ctk.CTkFrame(self, height=2, fg_color=BLACK)
         self.subview_button_frame = ctk.CTkFrame(
             self, corner_radius=0, fg_color="transparent"
         )
@@ -55,13 +62,13 @@ class SurfacesView(BaseView):
         self.toggle_active_button("Surfaces")
         self.grid_propagate(False)
 
-        """3 rows in the main surface view structure. Subview frame (row 3, index 2) has a weight to make it fill up
-        the empty space in the window"""
-        self.grid_rowconfigure(2, weight=1)
+        # 3 rows in the main surface view structure.
+        # Subview frame (row 4, index 3) has a weight to make it fill up the empty space in the window
+        self.grid_rowconfigure(3, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
         # Directions
-        self.directions_frame.grid(row=0, column=0, sticky="nsew", padx=50, pady=20)
+        self.directions_frame.grid(row=0, column=0, sticky=FILL, padx=50, pady=20)
         self.directions_label.grid(row=0, column=0)
         self.directions_widget.grid(row=0, column=1)
 
@@ -72,8 +79,10 @@ class SurfacesView(BaseView):
             button = self.subview_buttons[name]
             button.grid(row=0, column=index, padx=(0, 4))
 
+        self.border_line.grid(row=2, column=0, columnspan=5, sticky=E + W, padx=20)
+
         # Subview frame
-        self.subview_frame.grid(row=2, column=0, sticky="nsew", padx=20, pady=(0, 20))
+        self.subview_frame.grid(row=3, column=0, sticky=FILL, padx=20, pady=PAD20END)
         self.subview_frame.grid_rowconfigure(0, weight=1)
         self.subview_frame.grid_columnconfigure(0, weight=1)
 
@@ -104,9 +113,9 @@ class SurfacesView(BaseView):
             button = ctk.CTkButton(
                 self.subview_button_frame,
                 text=name,
-                fg_color="#FFD966",
-                hover_color="#FFD966",
-                text_color="black",
+                fg_color=SUBVIEW_BUTTON_COLOR,
+                hover_color=SUBVIEW_BUTTON_COLOR,
+                text_color=BLACK,
                 font=("Arial", 12, "bold"),
                 width=140,
                 height=30,
@@ -124,22 +133,22 @@ class SurfacesView(BaseView):
         subview = self.subviews.get(subview_name)
         if subview:
             self.current_subview = subview
-            self.current_subview.grid(row=0, column=0, sticky="nsew")
+            self.current_subview.grid(row=0, column=0, sticky=FILL)
             self.current_subview.open_subview()
 
     def toggle_active_subbutton(self, active_subbutton_name):
         for name, button in self.subview_buttons.items():
             if name == active_subbutton_name:
                 self.subview_buttons[name].configure(
-                    fg_color="#FFED67",
-                    hover_color="#FFED67",
-                    text_color="black",
+                    fg_color=ACTIVE_SUBVIEW_BUTTON_COLOR,
+                    hover_color=ACTIVE_SUBVIEW_BUTTON_COLOR,
+                    text_color=BLACK,
                 )
             else:
                 self.subview_buttons[name].configure(
-                    fg_color="#FFD966",
-                    hover_color="#FFD966",
-                    text_color="black",
+                    fg_color=SUBVIEW_BUTTON_COLOR,
+                    hover_color=SUBVIEW_BUTTON_COLOR,
+                    text_color=BLACK,
                 )
 
 
@@ -166,21 +175,23 @@ class ExteriorSurfaceView(CTkXYFrame):
         self.is_subview_populated = True
 
     def add_column_headers(self):
-        name_label = ctk.CTkLabel(self, text="Name", font=STANDARD_FONT)
-        name_label.grid(row=0, column=0, padx=(0, 20), pady=5)
-        status_label = ctk.CTkLabel(self, text="Status", font=STANDARD_FONT)
-        status_label.grid(row=0, column=1, padx=(0, 20), pady=5)
+        name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
+        name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
+        status_label = ctk.CTkLabel(self, text="Status", font=LABEL_FONT)
+        status_label.grid(row=0, column=1, padx=PAD20END, pady=5)
 
     def add_row(self, i, ext_wall_name):
         surface_label = ctk.CTkLabel(self, text=f"{ext_wall_name}")
-        surface_label.grid(row=(i + 1), column=0, padx=(0, 20), pady=(0, 20), sticky=W)
+        surface_label.grid(
+            row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
+        )
         status_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.StatusDescriptions,
             state=READONLY,
         )
         status_combo._entry.configure(justify=LEFT)
-        status_combo.grid(row=(i + 1), column=1, padx=(0, 20), pady=(0, 20))
+        status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
 
 
 class InteriorSurfaceView(CTkXYFrame):
@@ -206,21 +217,23 @@ class InteriorSurfaceView(CTkXYFrame):
         self.is_subview_populated = True
 
     def add_column_headers(self):
-        name_label = ctk.CTkLabel(self, text="Name", font=STANDARD_FONT)
-        name_label.grid(row=0, column=0, padx=(0, 20), pady=5)
-        status_label = ctk.CTkLabel(self, text="Status", font=STANDARD_FONT)
-        status_label.grid(row=0, column=1, padx=(0, 20), pady=5)
+        name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
+        name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
+        status_label = ctk.CTkLabel(self, text="Status", font=LABEL_FONT)
+        status_label.grid(row=0, column=1, padx=PAD20END, pady=5)
 
     def add_row(self, i, int_wall_name):
         surface_label = ctk.CTkLabel(self, text=f"{int_wall_name}")
-        surface_label.grid(row=(i + 1), column=0, padx=(0, 20), pady=(0, 20), sticky=W)
+        surface_label.grid(
+            row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
+        )
         status_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.StatusDescriptions,
             state=READONLY,
         )
         status_combo._entry.configure(justify=LEFT)
-        status_combo.grid(row=(i + 1), column=1, padx=(0, 20), pady=(0, 20))
+        status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
 
 
 class UndergroundSurfaceView(CTkXYFrame):
@@ -246,21 +259,23 @@ class UndergroundSurfaceView(CTkXYFrame):
         self.is_subview_populated = True
 
     def add_column_headers(self):
-        name_label = ctk.CTkLabel(self, text="Name", font=STANDARD_FONT)
-        name_label.grid(row=0, column=0, padx=(0, 20), pady=5)
-        status_label = ctk.CTkLabel(self, text="Status", font=STANDARD_FONT)
-        status_label.grid(row=0, column=1, padx=(0, 20), pady=5)
+        name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
+        name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
+        status_label = ctk.CTkLabel(self, text="Status", font=LABEL_FONT)
+        status_label.grid(row=0, column=1, padx=PAD20END, pady=5)
 
     def add_row(self, i, undg_wall_name):
         surface_label = ctk.CTkLabel(self, text=f"{undg_wall_name}")
-        surface_label.grid(row=(i + 1), column=0, padx=(0, 20), pady=(0, 20), sticky=W)
+        surface_label.grid(
+            row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
+        )
         status_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.StatusDescriptions,
             state=READONLY,
         )
         status_combo._entry.configure(justify=LEFT)
-        status_combo.grid(row=(i + 1), column=1, padx=(0, 20), pady=(0, 20))
+        status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
 
 
 class WindowSurfaceView(CTkXYFrame):
@@ -286,56 +301,58 @@ class WindowSurfaceView(CTkXYFrame):
         self.is_subview_populated = True
 
     def add_column_headers(self):
-        name_label = ctk.CTkLabel(self, text="Name", font=STANDARD_FONT)
-        name_label.grid(row=0, column=0, padx=(0, 20), pady=5)
-        status_label = ctk.CTkLabel(self, text="Status", font=STANDARD_FONT)
-        status_label.grid(row=0, column=1, padx=(0, 20), pady=5)
+        name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
+        name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
+        status_label = ctk.CTkLabel(self, text="Status", font=LABEL_FONT)
+        status_label.grid(row=0, column=1, padx=PAD20END, pady=5)
         classification_label = ctk.CTkLabel(
-            self, text="Classification", font=STANDARD_FONT
+            self, text="Classification", font=LABEL_FONT
         )
-        classification_label.grid(row=0, column=2, padx=(0, 20), pady=5)
-        framing_type_label = ctk.CTkLabel(self, text="Framing Type", font=STANDARD_FONT)
-        framing_type_label.grid(row=0, column=3, padx=(0, 20), pady=5)
-        operable_label = ctk.CTkLabel(self, text="Operable?", font=STANDARD_FONT)
-        operable_label.grid(row=0, column=4, padx=(0, 20), pady=5)
-        open_sensor_label = ctk.CTkLabel(self, text="Open Sensor?", font=STANDARD_FONT)
-        open_sensor_label.grid(row=0, column=5, padx=(0, 20), pady=5)
+        classification_label.grid(row=0, column=2, padx=PAD20END, pady=5)
+        framing_type_label = ctk.CTkLabel(self, text="Framing Type", font=LABEL_FONT)
+        framing_type_label.grid(row=0, column=3, padx=PAD20END, pady=5)
+        operable_label = ctk.CTkLabel(self, text="Operable?", font=LABEL_FONT)
+        operable_label.grid(row=0, column=4, padx=PAD20END, pady=5)
+        open_sensor_label = ctk.CTkLabel(self, text="Open Sensor?", font=LABEL_FONT)
+        open_sensor_label.grid(row=0, column=5, padx=PAD20END, pady=5)
         manual_interior_shades_label = ctk.CTkLabel(
-            self, text="Manual Interior Shades?", font=STANDARD_FONT
+            self, text="Manual Interior Shades?", font=LABEL_FONT
         )
-        manual_interior_shades_label.grid(row=0, column=6, padx=(0, 20), pady=5)
+        manual_interior_shades_label.grid(row=0, column=6, padx=PAD20END, pady=5)
 
     def add_row(self, i, window_name):
         surface_label = ctk.CTkLabel(self, text=f"{window_name}")
-        surface_label.grid(row=(i + 1), column=0, padx=(0, 20), pady=(0, 20), sticky=W)
+        surface_label.grid(
+            row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
+        )
         status_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.StatusDescriptions,
             state=READONLY,
         )
         status_combo._entry.configure(justify=LEFT)
-        status_combo.grid(row=(i + 1), column=1, padx=(0, 20), pady=(0, 20))
+        status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
         classification_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.SubsurfaceSubclassificationDescriptions2019ASHRAE901,
             state=READONLY,
         )
         classification_combo._entry.configure(justify=LEFT)
-        classification_combo.grid(row=(i + 1), column=2, padx=(0, 20), pady=(0, 20))
+        classification_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=PAD20END)
         framing_type_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.SubsurfaceSubclassificationDescriptions2019ASHRAE901,
             state=READONLY,
         )
         framing_type_combo._entry.configure(justify=LEFT)
-        framing_type_combo.grid(row=(i + 1), column=3, padx=(0, 20), pady=(0, 20))
+        framing_type_combo.grid(row=(i + 1), column=3, padx=PAD20END, pady=PAD20END)
         operable_checkbox = ctk.CTkCheckBox(self, text="", width=30)
-        operable_checkbox.grid(row=(i + 1), column=4, padx=(0, 20), pady=(0, 20))
+        operable_checkbox.grid(row=(i + 1), column=4, padx=PAD20END, pady=PAD20END)
         open_sensor_checkbox = ctk.CTkCheckBox(self, text="", width=30)
-        open_sensor_checkbox.grid(row=(i + 1), column=5, padx=(0, 20), pady=(0, 20))
+        open_sensor_checkbox.grid(row=(i + 1), column=5, padx=PAD20END, pady=PAD20END)
         manual_interior_shades_checkbox = ctk.CTkCheckBox(self, text="", width=30)
         manual_interior_shades_checkbox.grid(
-            row=(i + 1), column=6, padx=(0, 20), pady=(0, 20)
+            row=(i + 1), column=6, padx=PAD20END, pady=PAD20END
         )
 
 
@@ -362,56 +379,58 @@ class SkylightSurfaceView(CTkXYFrame):
         self.is_subview_populated = True
 
     def add_column_headers(self):
-        name_label = ctk.CTkLabel(self, text="Name", font=STANDARD_FONT)
-        name_label.grid(row=0, column=0, padx=(0, 20), pady=5)
-        status_label = ctk.CTkLabel(self, text="Status", font=STANDARD_FONT)
-        status_label.grid(row=0, column=1, padx=(0, 20), pady=5)
+        name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
+        name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
+        status_label = ctk.CTkLabel(self, text="Status", font=LABEL_FONT)
+        status_label.grid(row=0, column=1, padx=PAD20END, pady=5)
         classification_label = ctk.CTkLabel(
-            self, text="Classification", font=STANDARD_FONT
+            self, text="Classification", font=LABEL_FONT
         )
-        classification_label.grid(row=0, column=2, padx=(0, 20), pady=5)
-        framing_type_label = ctk.CTkLabel(self, text="Framing Type", font=STANDARD_FONT)
-        framing_type_label.grid(row=0, column=3, padx=(0, 20), pady=5)
-        operable_label = ctk.CTkLabel(self, text="Operable?", font=STANDARD_FONT)
-        operable_label.grid(row=0, column=4, padx=(0, 20), pady=5)
-        open_sensor_label = ctk.CTkLabel(self, text="Open Sensor?", font=STANDARD_FONT)
-        open_sensor_label.grid(row=0, column=5, padx=(0, 20), pady=5)
+        classification_label.grid(row=0, column=2, padx=PAD20END, pady=5)
+        framing_type_label = ctk.CTkLabel(self, text="Framing Type", font=LABEL_FONT)
+        framing_type_label.grid(row=0, column=3, padx=PAD20END, pady=5)
+        operable_label = ctk.CTkLabel(self, text="Operable?", font=LABEL_FONT)
+        operable_label.grid(row=0, column=4, padx=PAD20END, pady=5)
+        open_sensor_label = ctk.CTkLabel(self, text="Open Sensor?", font=LABEL_FONT)
+        open_sensor_label.grid(row=0, column=5, padx=PAD20END, pady=5)
         manual_interior_shades_label = ctk.CTkLabel(
-            self, text="Manual Interior Shades?", font=STANDARD_FONT
+            self, text="Manual Interior Shades?", font=LABEL_FONT
         )
-        manual_interior_shades_label.grid(row=0, column=6, padx=(0, 20), pady=5)
+        manual_interior_shades_label.grid(row=0, column=6, padx=PAD20END, pady=5)
 
     def add_row(self, i, skylight_name):
         surface_label = ctk.CTkLabel(self, text=f"{skylight_name}")
-        surface_label.grid(row=(i + 1), column=0, padx=(0, 20), pady=(0, 20), sticky=W)
+        surface_label.grid(
+            row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
+        )
         status_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.StatusDescriptions,
             state=READONLY,
         )
         status_combo._entry.configure(justify=LEFT)
-        status_combo.grid(row=(i + 1), column=1, padx=(0, 20), pady=(0, 20))
+        status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
         classification_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.SubsurfaceSubclassificationDescriptions2019ASHRAE901,
             state=READONLY,
         )
         classification_combo._entry.configure(justify=LEFT)
-        classification_combo.grid(row=(i + 1), column=2, padx=(0, 20), pady=(0, 20))
+        classification_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=PAD20END)
         framing_type_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.SubsurfaceFrameDescriptions2019ASHRAE901,
             state=READONLY,
         )
         framing_type_combo._entry.configure(justify=LEFT)
-        framing_type_combo.grid(row=(i + 1), column=3, padx=(0, 20), pady=(0, 20))
+        framing_type_combo.grid(row=(i + 1), column=3, padx=PAD20END, pady=PAD20END)
         operable_checkbox = ctk.CTkCheckBox(self, text="", width=30)
-        operable_checkbox.grid(row=(i + 1), column=4, padx=(0, 20), pady=(0, 20))
+        operable_checkbox.grid(row=(i + 1), column=4, padx=PAD20END, pady=PAD20END)
         open_sensor_checkbox = ctk.CTkCheckBox(self, text="", width=30)
-        open_sensor_checkbox.grid(row=(i + 1), column=5, padx=(0, 20), pady=(0, 20))
+        open_sensor_checkbox.grid(row=(i + 1), column=5, padx=PAD20END, pady=PAD20END)
         manual_interior_shades_checkbox = ctk.CTkCheckBox(self, text="", width=30)
         manual_interior_shades_checkbox.grid(
-            row=(i + 1), column=6, padx=(0, 20), pady=(0, 20)
+            row=(i + 1), column=6, padx=PAD20END, pady=PAD20END
         )
 
 
@@ -438,29 +457,31 @@ class DoorSurfaceView(CTkXYFrame):
         self.is_subview_populated = True
 
     def add_column_headers(self):
-        name_label = ctk.CTkLabel(self, text="Name", font=STANDARD_FONT)
-        name_label.grid(row=0, column=0, padx=(0, 20), pady=5)
-        status_label = ctk.CTkLabel(self, text="Status", font=STANDARD_FONT)
-        status_label.grid(row=0, column=1, padx=(0, 20), pady=5)
+        name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
+        name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
+        status_label = ctk.CTkLabel(self, text="Status", font=LABEL_FONT)
+        status_label.grid(row=0, column=1, padx=PAD20END, pady=5)
         classification_label = ctk.CTkLabel(
-            self, text="Classification", font=STANDARD_FONT
+            self, text="Classification", font=LABEL_FONT
         )
-        classification_label.grid(row=0, column=2, padx=(0, 20), pady=5)
+        classification_label.grid(row=0, column=2, padx=PAD20END, pady=5)
 
     def add_row(self, i, door_name):
         surface_label = ctk.CTkLabel(self, text=f"{door_name}")
-        surface_label.grid(row=(i + 1), column=0, padx=(0, 20), pady=(0, 20), sticky=W)
+        surface_label.grid(
+            row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
+        )
         status_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.StatusDescriptions,
             state=READONLY,
         )
         status_combo._entry.configure(justify=LEFT)
-        status_combo.grid(row=(i + 1), column=1, padx=(0, 20), pady=(0, 20))
+        status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
         classification_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.SubsurfaceSubclassificationDescriptions2019ASHRAE901,
             state=READONLY,
         )
         classification_combo._entry.configure(justify=LEFT)
-        classification_combo.grid(row=(i + 1), column=2, padx=(0, 20), pady=(0, 20))
+        classification_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=PAD20END)
