@@ -74,13 +74,18 @@ class MainAppData:
 
     def generate_rmd_data(self, rpd):
         for ruleset_model_type, file_path in self.ruleset_model_file_paths.items():
+            rmd_type_enum = (
+                ruleset_model_type.upper() + "_0"
+                if ruleset_model_type == "Baseline"
+                else ruleset_model_type.upper().replace(" ", "_")
+            )
             if file_path:
                 rmd = rpd_generator.generate_rmd_structure_from_inp(
                     rpd, file_path, self.processing_dir
                 )
 
                 rmd.populate_all_child_data_elements()
-                rmd.type = ruleset_model_type
+                rmd.type = rmd_type_enum
                 self.rmds.append(rmd)
 
     def call_write_rpd_json_from_inp(self):
