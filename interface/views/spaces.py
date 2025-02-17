@@ -170,7 +170,7 @@ class SpacesSubview(CTkXYFrame):
         swh_space_type_combo.grid(row=(i + 1), column=5, padx=PAD20END, pady=PAD20END)
         lighting_occ_controls_combo = ctk.CTkComboBox(
             self,
-            values=self.app_data.LightingOccupancyControlOptions,
+            values=self.app_data.LightingOccupancyControlDesriptions,
             state=READONLY,
         )
         lighting_occ_controls_combo._entry.configure(justify=LEFT)
@@ -179,7 +179,7 @@ class SpacesSubview(CTkXYFrame):
         )
         daylighting_controls_combo = ctk.CTkComboBox(
             self,
-            values=self.app_data.LightingDaylightingControlOptions,
+            values=self.app_data.LightingDaylightingControlDescriptions,
             state=READONLY,
         )
         daylighting_controls_combo._entry.configure(justify=LEFT)
