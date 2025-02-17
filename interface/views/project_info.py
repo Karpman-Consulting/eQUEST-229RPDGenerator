@@ -4,6 +4,14 @@ from pathlib import Path
 
 from interface.base_view import BaseView
 
+LABEL_FONT = ("Arial", 14, "bold")
+TEXT_FONT = ("Arial", 14)
+E = "e"
+W = "w"
+FILL = "nsew"
+LEFT = "left"
+READONLY = "readonly"
+
 
 class ProjectInfoView(BaseView):
     def __init__(self, window):
@@ -15,37 +23,37 @@ class ProjectInfoView(BaseView):
         self.directions_label = ctk.CTkLabel(
             self,
             text="Directions: ",
-            anchor="e",
-            justify="left",
-            font=("Arial", 16, "bold"),
+            anchor=E,
+            justify=LEFT,
+            font=LABEL_FONT,
         )
 
         directions_text = "Select the Energy Code or Above-Code Program for your project, then browse and select the eQUEST model input files (*.inp) associated with each of the \napplicable models expected by the ruleset."
         self.directions = ctk.CTkLabel(
             self,
             text=directions_text,
-            anchor="w",
-            justify="left",
-            font=("Arial", 14, "bold"),
+            anchor=W,
+            justify=LEFT,
+            font=LABEL_FONT,
         )
         self.note_label = ctk.CTkLabel(
-            self, text="Note: ", anchor="e", justify="left", font=("Arial", 16, "bold")
+            self, text="Note: ", anchor=E, justify=LEFT, font=LABEL_FONT
         )
         note_text = "When you select an input file, it is expected that the same directory will also include the simulation output files associated with the selected input file. \nThis application will check for the following associated file extensions:\n(*.nhk), (*.lrp), (*.srp), (*.erp)\n\n(*) can be identical to the selected *.inp file or can include the suffix ' - Baseline Design'"
         self.note = ctk.CTkLabel(
-            self, text=note_text, anchor="w", justify="left", font=("Arial", 14)
+            self, text=note_text, anchor=W, justify=LEFT, font=TEXT_FONT
         )
         self.project_name_label = ctk.CTkLabel(
-            self, text="Project Name: ", font=("Arial", 14, "bold"), anchor="e"
+            self, text="Project Name: ", font=LABEL_FONT, anchor=E
         )
         self.project_name_entry = ctk.CTkEntry(
             self,
-            font=("Arial", 14),
+            font=TEXT_FONT,
             textvariable=self.app_data.project_name,
-            state="readonly",
+            state=READONLY,
         )
         self.ruleset_label = ctk.CTkLabel(
-            self, text="Energy Code/Program:", font=("Arial", 14, "bold"), anchor="e"
+            self, text="Energy Code/Program:", font=LABEL_FONT, anchor=E
         )
         self.ruleset_models_frame = ctk.CTkFrame(self, width=800, height=250)
         self.ruleset_dropdown = ctk.CTkOptionMenu(
@@ -57,23 +65,23 @@ class ProjectInfoView(BaseView):
         self.rotation_exception_checkbox = ctk.CTkCheckBox(
             self,
             text="Baseline Rotation Exempt? (90.1-2019 Table G3.1(5) Baseline Building Performance (a))",
-            font=("Arial", 14),
+            font=TEXT_FONT,
             variable=self.app_data.has_rotation_exception,
             command=self.toggle_baseline_rotations,
         )
         self.ruleset_models_label = ctk.CTkLabel(
             self,
             text="Models: ",
-            anchor="e",
-            justify="left",
-            font=("Arial", 14, "bold"),
+            anchor=E,
+            justify=LEFT,
+            font=LABEL_FONT,
         )
         self.output_dir_label = ctk.CTkLabel(
-            self, text="Output Directory:", font=("Arial", 14, "bold"), anchor="e"
+            self, text="Output Directory:", font=LABEL_FONT, anchor=E
         )
         self.output_dir_entry = ctk.CTkEntry(
             self,
-            font=("Arial", 14),
+            font=TEXT_FONT,
             width=500,
             textvariable=self.app_data.output_directory,
         )
@@ -99,43 +107,43 @@ class ProjectInfoView(BaseView):
 
         # Place widgets
         # Row 0
-        self.directions_label.grid(row=0, column=0, sticky="ew", padx=5, pady=(20, 5))
+        self.directions_label.grid(row=0, column=0, sticky=E + W, padx=5, pady=(20, 5))
         self.directions.grid(
             row=0, column=1, columnspan=8, sticky="new", padx=5, pady=(20, 5)
         )
 
         # Row 1
         self.note_label.grid(row=1, column=0, sticky="new", padx=5, pady=5)
-        self.note.grid(row=1, column=1, columnspan=8, sticky="ew", padx=5, pady=5)
+        self.note.grid(row=1, column=1, columnspan=8, sticky=E + W, padx=5, pady=5)
 
         # Row 2
-        self.project_name_label.grid(row=2, column=0, sticky="e", padx=5, pady=(50, 10))
+        self.project_name_label.grid(row=2, column=0, sticky=E, padx=5, pady=(50, 10))
         self.project_name_entry.grid(
-            row=2, column=1, columnspan=3, sticky="ew", padx=5, pady=(50, 10)
+            row=2, column=1, columnspan=3, sticky=E + W, padx=5, pady=(50, 10)
         )
 
         # Row 3
-        self.ruleset_label.grid(row=3, column=0, sticky="e", padx=5, pady=5)
+        self.ruleset_label.grid(row=3, column=0, sticky=E, padx=5, pady=5)
         self.ruleset_dropdown.grid(
-            row=3, column=1, columnspan=2, sticky="ew", padx=5, pady=5
+            row=3, column=1, columnspan=2, sticky=E + W, padx=5, pady=5
         )
 
         # Row 4 Placeholder for the rotation exception checkbox
 
         # Row 5
-        self.ruleset_models_label.grid(row=5, column=0, sticky="ew", padx=5, pady=5)
+        self.ruleset_models_label.grid(row=5, column=0, sticky=E + W, padx=5, pady=5)
 
         self.show_ruleset_models()
-        self.ruleset_models_frame.grid(row=5, column=1, columnspan=8, sticky="nsew")
+        self.ruleset_models_frame.grid(row=5, column=1, columnspan=8, sticky=FILL)
 
         # Row 6
         self.output_dir_label.grid(
-            row=6, column=0, sticky="e", padx=(20, 5), pady=(15, 5)
+            row=6, column=0, sticky=E, padx=(20, 5), pady=(15, 5)
         )
         self.output_dir_entry.grid(
-            row=6, column=1, columnspan=5, sticky="ew", padx=5, pady=(15, 5)
+            row=6, column=1, columnspan=5, sticky=E + W, padx=5, pady=(15, 5)
         )
-        self.output_dir_button.grid(row=6, column=6, sticky="ew", padx=5, pady=(15, 5))
+        self.output_dir_button.grid(row=6, column=6, sticky=E + W, padx=5, pady=(15, 5))
 
     def update_ruleset_model_frame(self, selected_ruleset):
         self.app_data.selected_ruleset.set(selected_ruleset)
@@ -147,7 +155,7 @@ class ProjectInfoView(BaseView):
         # Main logic
         if self.app_data.selected_ruleset.get() == "ASHRAE 90.1-2019":
             self.rotation_exception_checkbox.grid(
-                row=4, column=1, columnspan=4, sticky="w", padx=5, pady=(15, 5)
+                row=4, column=1, columnspan=4, sticky=W, padx=5, pady=(15, 5)
             )
             labels = ["Design: ", "Proposed: ", "Baseline: "]
             if not self.rotation_exception_checkbox.get():
@@ -164,11 +172,11 @@ class ProjectInfoView(BaseView):
             label, path_entry, select_button = self.create_file_row(label_text)
 
             # Place widgets using grid
-            label.grid(row=row_num, column=0, sticky="ew", padx=5, pady=5)
+            label.grid(row=row_num, column=0, sticky=E + W, padx=5, pady=5)
             path_entry.grid(
-                row=row_num, column=1, columnspan=7, sticky="ew", padx=5, pady=5
+                row=row_num, column=1, columnspan=7, sticky=E + W, padx=5, pady=5
             )
-            select_button.grid(row=row_num, column=8, sticky="ew", padx=5, pady=5)
+            select_button.grid(row=row_num, column=8, sticky=E + W, padx=5, pady=5)
 
             if len(labels) == 1:
                 self.ruleset_models_frame.grid_rowconfigure(
@@ -211,9 +219,9 @@ class ProjectInfoView(BaseView):
         label = ctk.CTkLabel(
             self.ruleset_models_frame,
             text=label_text,
-            font=("Arial", 14),
+            font=TEXT_FONT,
             width=90,
-            anchor="e",  # Align text to the right within the label
+            anchor=E,  # Align text to the right within the label
         )
 
         # Create entry, prepopulate project info if selected in project config on startup
