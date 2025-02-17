@@ -166,13 +166,13 @@ class Chiller(BaseNode):
             if hw_loop:
                 self.energy_source_type = self.get_loop_energy_source(hw_loop)
 
-        chw_loop = self.get_obj(self.cooling_loop)
-
         self.design_leaving_evaporator_temperature = (
             self.try_float(self.get_inp(BDL_ChillerKeywords.DESIGN_CHW_T))
             if self.get_inp(BDL_ChillerKeywords.DESIGN_CHW_T)
             else self.try_float(
-                chw_loop.get_inp(BDL_CirculationLoopKeywords.DESIGN_COOL_T)
+                output_data.get(
+                    "Normalized (ARI) Leaving Chilled Water Temperature (°F)"
+                )
             )
         )
 
@@ -733,7 +733,10 @@ class Chiller(BaseNode):
             if are_curve_outputs_all_equal_to_one_at_ahri_temperatures:
                 self.populate_iplv(performance_curve_data)
 
-        # If capacity is hard-coded and PLR Rated is n/a or 1
+        # If capacity is hard-coded and PLR Rated is n/a or 1. Note that eQuest does actually adjust the actually modeled rated_capacity and efficiency by the
+        # Cap-ft and combined PLR, eir-ft, and eir-plr outputs. The curves should be normalized to 1 at ahri conditions so the impact should be minimal.
+        # To avoid confusion the rated_capacity and efficency values are populated as the user defined them. If the performance curves are not normalized
+        # to rated conditions (i.e., curves output 1 at rated ahri conditions) then eQuest could be using very different capacities and efficiencies each hour.
         elif (
             self.try_float(self.get_inp(BDL_ChillerKeywords.CAPACITY))
             and user_defined_rated_plr == 1
@@ -744,6 +747,7 @@ class Chiller(BaseNode):
             self.efficiency_metric_values.append(
                 1 / self.try_float(self.get_inp(self.input_ratio_keyword))
             )
+
             self.efficiency_metric_types.append(
                 ChillerEfficiencyMetricOptions.FULL_LOAD_EFFICIENCY_RATED
             )
@@ -752,7 +756,7 @@ class Chiller(BaseNode):
             if are_curve_outputs_all_equal_to_one_at_ahri_temperatures:
                 self.populate_iplv(performance_curve_data)
 
-        #  If capacity is auto-sized and Rated is n/a or 1
+        #  If capacity is auto-sized and Rated is n/a or 1.
         else:
             # Obtain results of curves at 100% load and design temperature conditions
             curve_results_at_design_conditions_and_full_load = (
@@ -870,7 +874,7 @@ class Chiller(BaseNode):
             # Adjusts from design to rated conditions.
             self.rated_capacity = (
                 autosized_design_capacity
-                * cap_f_t_result_design
+                / cap_f_t_result_design
                 / user_defined_rated_plr
             )
             self.populate_full_load_efficiency(
