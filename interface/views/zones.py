@@ -6,7 +6,7 @@ from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
 
 
-LABEL_FONT = ("Arial", 16, "bold")
+LABEL_FONT = ("Arial", 14, "bold")
 READONLY = "readonly"
 LEFT = "left"
 FILL = "nsew"
@@ -14,6 +14,10 @@ TOP_HORZ = "new"
 E = "e"
 W = "w"
 PAD20END = (0, 20)
+FLOOR_COMBOBOX_COLOR = "#5B9BD5"
+FLOOR_COMBOBOX_BTN_COLOR = "#3A7EBF"
+LIGHTBLUE = "lightblue"
+GRAY30 = "gray30"
 
 
 class ZonesView(BaseView):
@@ -22,7 +26,7 @@ class ZonesView(BaseView):
 
         self.view_frame = ctk.CTkFrame(self)
 
-        """Directions frame holds all directions info and will get 'gridded' within the surfaces view grid"""
+        # Directions frame holds all directions info and will get 'gridded' within the surfaces view grid
         self.directions_frame = ctk.CTkFrame(self, fg_color="transparent")
         self.directions_label = ctk.CTkLabel(
             self.directions_frame,
@@ -31,14 +35,11 @@ class ZonesView(BaseView):
             justify=LEFT,
             font=LABEL_FONT,
         )
+        directions_text = "Assign all Zones in your model to the Building Areas created on the previous tab. This can be done by Floor, or more granularly by Zone. If any zones in the \nmodel represent multiple zones in the design, provide the quantity of aggregated zones. If a zone's infiltration in the Proposed model is based on a \nmeasured infiltration rate declare so here. If a zone contains more than 1 space, define additional spaces as necessary by clicking the quantity in the Child \nSpaces column to open the Child Spaces window. Child Spaces should be created as necessary to represent the entirety of the Zone, e.g. an aggregated \nzone that is in reality 3 zones where each zone has 2 spaces should have 6 Child Spaces total."
         self.directions_widget = ctk.CTkLabel(
             self.directions_frame,
-            text="Assign all Zones in your model to the Building Areas created on the previous tab. This can be done by Floor, or more granularly by Zone. If any zones in the \n"
-            "model represent multiple zones in the design, provide the quantity of aggregated zones. If a zone's infiltration in the Proposed model is based on a \n"
-            "measured infiltration rate declare so here. If a zone contains more than 1 space, define additional spaces as necessary by clicking the quantity in the Child \n"
-            "Spaces column to open the Child Spaces window. Child Spaces should be created as necessary to represent the entirety of the Zone, e.g. an aggregated \n"
-            "zone that is in reality 3 zones where each zone has 2 spaces should have 6 Child Spaces total.",
-            font=("Arial", 14, "bold"),
+            text=directions_text,
+            font=LABEL_FONT,
             anchor=W,
             justify=LEFT,
         )
@@ -50,14 +51,14 @@ class ZonesView(BaseView):
         self.toggle_active_button("Zones")
         self.grid_propagate(False)
 
-        """2 rows in the main surface view structure. View frame (row 2, index 1) has a weight to make it fill up
-        the empty space in the window"""
+        # 2 rows in the main surface view structure.
+        # View frame (row 2, index 1) has a weight to make it fill up the empty space in the window
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
         # Directions
         self.directions_frame.grid(row=0, column=0, sticky=FILL, padx=50, pady=20)
-        self.directions_label.grid(row=0, column=0, sticky="ew", padx=5, pady=20)
+        self.directions_label.grid(row=0, column=0, sticky=E + W, padx=5, pady=20)
         self.directions_widget.grid(
             row=0, column=1, columnspan=8, sticky="new", padx=5, pady=20
         )
@@ -97,7 +98,7 @@ class ZonesSubview(CTkXYFrame):
 
         main_row = 0
         for floor, zones in self.zones_by_floor.items():
-            self.add_main_row(main_row, floor)
+            self.add_floor_row(main_row, floor)
             main_row += 1
             for zone in zones:
                 self.add_row(main_row, zone)
@@ -124,10 +125,10 @@ class ZonesSubview(CTkXYFrame):
         child_spaces_label = ctk.CTkLabel(self, text="Child Spaces", font=LABEL_FONT)
         child_spaces_label.grid(row=0, column=5, padx=PAD20END, pady=5)
 
-    def add_main_row(self, i, floor_name):
+    def add_floor_row(self, i, floor_name):
         # Frame spanning all columns with a different background color
-        main_row_frame = ctk.CTkFrame(self, fg_color="gray30")
-        main_row_frame.grid(row=(i + 1), column=0, columnspan=6, sticky="ew")
+        floor_row_frame = ctk.CTkFrame(self, fg_color=GRAY30)
+        floor_row_frame.grid(row=(i + 1), column=0, columnspan=6, sticky=E + W)
 
         collapse_button = ctk.CTkButton(
             self,
@@ -136,22 +137,22 @@ class ZonesSubview(CTkXYFrame):
             height=30,
             corner_radius=10,
             command=lambda: self.toggle_zone_visibility(floor_name, collapse_button),
-            bg_color="gray30",  # Same color as the frame
+            bg_color=GRAY30,  # Same color as the frame
         )
         collapse_button.grid(row=(i + 1), column=0, padx=(5, 0))
 
         # Ensure the frame stretches across all columns
         for col in range(5):
-            main_row_frame.grid_columnconfigure(col, weight=1)
+            floor_row_frame.grid_columnconfigure(col, weight=1)
 
         floor_label = ctk.CTkLabel(
             self,
             text=f"{floor_name}",
             width=135,
             anchor=W,
-            font=("Arial", 14, "bold"),  # Larger, bold font
+            font=LABEL_FONT,
             text_color="white",
-            bg_color="gray30",  # Same color as the frame
+            bg_color=GRAY30,  # Same color as the frame
         )
         floor_label.grid(row=(i + 1), column=1, padx=20, pady=10, sticky=W)
 
@@ -161,12 +162,12 @@ class ZonesSubview(CTkXYFrame):
             # TODO: Placeholder for Building Areas tab data
             values=["Building Area 1"],
             state=READONLY,
-            fg_color="#5B9BD5",
-            border_color="#5B9BD5",
-            button_color="#3A7EBF",
-            dropdown_fg_color="#5B9BD5",
-            dropdown_hover_color="lightblue",
-            bg_color="gray30",  # Same color as the frame
+            fg_color=FLOOR_COMBOBOX_COLOR,
+            border_color=FLOOR_COMBOBOX_COLOR,
+            button_color=FLOOR_COMBOBOX_BTN_COLOR,
+            dropdown_fg_color=FLOOR_COMBOBOX_COLOR,
+            dropdown_hover_color=LIGHTBLUE,
+            bg_color=GRAY30,  # Same color as the frame
             command=lambda value, floor=floor_name: self.set_default_value_by_floor(
                 floor, value
             ),
@@ -178,10 +179,10 @@ class ZonesSubview(CTkXYFrame):
         self.floor_comboboxes[floor_name] = building_area_combo
 
         # Add empty labels in `main_row_frame` for spacing
-        ctk.CTkLabel(main_row_frame, text="").grid(
+        ctk.CTkLabel(floor_row_frame, text="").grid(
             row=0, column=3, padx=PAD20END, pady=10
         )
-        ctk.CTkLabel(main_row_frame, text="").grid(
+        ctk.CTkLabel(floor_row_frame, text="").grid(
             row=0, column=4, padx=PAD20END, pady=10
         )
 

@@ -5,7 +5,7 @@ from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
 
 
-LABEL_FONT = ("Arial", 16, "bold")
+LABEL_FONT = ("Arial", 14, "bold")
 READONLY = "readonly"
 W = "w"
 E = "e"
@@ -40,7 +40,7 @@ class SystemsView(BaseView):
         )
         self.directions_widget = ctk.CTkLabel(
             self.directions_frame,
-            text=" Assign the various data parameters for each surface.",
+            text="Assign the various data parameters for each system.",
             font=("Arial", 14),
         )
 
