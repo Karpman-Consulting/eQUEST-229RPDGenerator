@@ -20,8 +20,8 @@ class SurfacesView(BaseView):
     def __init__(self, window):
         super().__init__(window)
 
-        """All subviews will be placed inside this frame. Single row/column allows formatting of subview to be
-        handled by the subview itself"""
+        # All subviews will be placed inside this frame.
+        # Single row/column allows formatting of subview to be handled by the subview itself
         self.subview_frame = ctk.CTkFrame(self)
         self.current_subview = None
 
@@ -34,7 +34,7 @@ class SurfacesView(BaseView):
             "Doors": DoorSurfaceView(self.subview_frame),
         }
 
-        """Directions frame holds all directions info and will get 'gridded' within the surfaces view grid"""
+        # Directions frame holds all directions info and will get 'gridded' within the surfaces view grid
         self.directions_frame = ctk.CTkFrame(self, fg_color="transparent")
         self.directions_label = ctk.CTkLabel(
             self.directions_frame,
@@ -134,6 +134,7 @@ class SurfacesView(BaseView):
         if subview:
             self.current_subview = subview
             self.current_subview.grid(row=0, column=0, sticky=FILL)
+            self.current_subview.focus_set()
             self.current_subview.open_subview()
 
     def toggle_active_subbutton(self, active_subbutton_name):

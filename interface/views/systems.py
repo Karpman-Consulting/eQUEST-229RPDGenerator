@@ -128,6 +128,7 @@ class SystemsView(BaseView):
         if subview:
             self.current_subview = subview
             self.current_subview.grid(row=0, column=0, sticky=FILL)
+            self.current_subview.focus_set()
             self.current_subview.open_subview()
 
     def toggle_active_subbutton(self, active_subbutton_name):
@@ -188,7 +189,7 @@ class HeatRejectionView(CTkXYFrame):
         fan_type_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
 
 
-class HVACSystemView(ctk.CTkFrame):
+class HVACSystemView(CTkXYFrame):
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.systems_view = subview_frame.master
@@ -257,7 +258,7 @@ class HVACSystemView(ctk.CTkFrame):
         )
 
 
-class ZonalExhaustView(ctk.CTkFrame):
+class ZonalExhaustView(CTkXYFrame):
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.systems_view = subview_frame.master
