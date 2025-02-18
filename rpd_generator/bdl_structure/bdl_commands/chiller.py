@@ -578,7 +578,7 @@ class Chiller(BaseNode):
         rated_full_load_cop = (
             curve_results["eff_f_t_result"]
             * curve_results["eff_f_plr_result"]
-            / (user_defined_input_ratio * user_defined_rated_plr)
+            / (user_defined_input_ratio * user_defined_rated_plr * curve_results.get("part_load_ratio", 1))
         )
 
         self.efficiency_metric_values.append(rated_full_load_cop)
@@ -838,12 +838,24 @@ class Chiller(BaseNode):
             )
         )
 
+        # Obtain results of curves at 100% load and ahti rated temperature conditions
+        curve_results_at_ahri_conditions_and_full_load = (
+            curve_funcs.get_output_of_curves_at_temperature_and_load_conditions(
+                performance_curve_data,
+                self.rated_leaving_evaporator_temperature,
+                self.rated_entering_condenser_temperature,
+                1,
+            )
+        )
+
         cap_f_t_result_user_defined_temps_full_load = (
             curve_results_at_user_defined_conditions_and_full_load["cap_f_t_result"]
         )
         cap_f_t_result_design = curve_results_at_design_conditions_and_full_load[
             "cap_f_t_result"
         ]
+
+        cap_f_t_result_ahri = curve_results_at_ahri_conditions_and_full_load["cap_f_t_result"]
 
         # If capacity is hard coded and PLR RATED is entered (not n/a). (This is the same as used above for when it is at AHRI)
         if (
@@ -903,10 +915,8 @@ class Chiller(BaseNode):
                 output_data.get("Primary Equipment (Chillers) - Capacity (Btu/hr)")
             )
             # Adjusts from design to rated conditions. (Differs from AHRI section above. It may be because curves = 1 at ahri so it may actually be the same)
-            self.rated_capacity = autosized_design_capacity * (
-                cap_f_t_result_user_defined_temps_full_load / cap_f_t_result_design
-            )
+            self.rated_capacity = autosized_design_capacity * (cap_f_t_result_ahri / cap_f_t_result_design)
             self.populate_full_load_efficiency(
-                curve_results_at_user_defined_conditions_and_full_load
+                curve_results_at_user_defined_part_load_rating
             )
             self.populate_iplv(performance_curve_data)
