@@ -5,24 +5,15 @@ from pathlib import Path
 from interface.base_view import BaseView
 from interface.ctk_xyframe import CTkXYFrame
 
-STANDARD_FONT = ("Arial", 16, "bold")
-SMALL_BOLD = ("Arial", 14, "bold")
-SMALL_STANDARD = ("Arial", 14)
-READONLY = "readonly"
-W = "w"
-E = "e"
-LEFT = "left"
-PAD20 = (0, 20)
-LEFT_PADX_20 = (20, 0)
-TOP_PADY_20 = (20, 0)
-
 LABEL_FONT = ("Arial", 14, "bold")
 TEXT_FONT = ("Arial", 14)
-E = "e"
+READONLY = "readonly"
 W = "w"
+E = "e"
 FILL = "nsew"
 LEFT = "left"
-READONLY = "readonly"
+PAD20END = (0, 20)
+PAD20START = (20, 0)
 
 
 class ProjectInfoView(BaseView):
@@ -68,7 +59,7 @@ class ProjectInfoView(BaseView):
             button.grid(row=0, column=index, padx=(0, 4))
 
         # Subview frame
-        self.subview_frame.grid(row=1, column=0, sticky="nsew", padx=20, pady=PAD20)
+        self.subview_frame.grid(row=1, column=0, sticky="nsew", padx=20, pady=PAD20END)
         self.subview_frame.grid_rowconfigure(0, weight=1)
         self.subview_frame.grid_columnconfigure(0, weight=1)
 
@@ -139,7 +130,7 @@ class ProjectDetailsView(CTkXYFrame):
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.project_info_view = subview_frame.master
-        self.main_app_data = self.project_info_view.window.main_app.data
+        self.app_data = self.project_info_view.window.main_app.data
         self.is_subview_populated = False
 
         # Initialize Widgets
@@ -151,11 +142,11 @@ class ProjectDetailsView(CTkXYFrame):
             self.options_frame,
             text="ASHRAE Climate Zone:",
             anchor=E,
-            font=SMALL_BOLD,
+            font=LABEL_FONT,
         )
         self.climate_zone_combo = ctk.CTkComboBox(
             self.options_frame,
-            values=self.main_app_data.ClimateZoneDescriptions2019ASHRAE901.get_list(),
+            values=self.app_data.ClimateZoneDescriptions2019ASHRAE901,
             state=READONLY,
         )
         self.climate_zone_combo._entry.configure(justify=LEFT)
@@ -163,11 +154,11 @@ class ProjectDetailsView(CTkXYFrame):
             self.options_frame,
             text="Exterior Lighting Zone:",
             anchor=E,
-            font=SMALL_BOLD,
+            font=LABEL_FONT,
         )
         self.lighting_zone_combo = ctk.CTkComboBox(
             self.options_frame,
-            values=self.main_app_data.ExteriorLightingZoneDescriptions2019ASHRAE901.get_list(),
+            values=self.app_data.ExteriorLightingZoneDescriptions2019ASHRAE901,
             state=READONLY,
         )
         self.lighting_zone_combo._entry.configure(justify=LEFT)
@@ -175,7 +166,7 @@ class ProjectDetailsView(CTkXYFrame):
             self.options_frame,
             text="Building Open Schedule:",
             anchor=E,
-            font=SMALL_BOLD,
+            font=LABEL_FONT,
         )
         self.open_from_label = ctk.CTkLabel(
             self.options_frame,
@@ -195,11 +186,11 @@ class ProjectDetailsView(CTkXYFrame):
             self.options_frame,
             text="Heating Design Day Criteria:",
             anchor=E,
-            font=SMALL_BOLD,
+            font=LABEL_FONT,
         )
         self.heating_design_day_combo = ctk.CTkComboBox(
             self.options_frame,
-            values=self.main_app_data.HeatingDesignDayDescriptions.get_list(),
+            values=self.app_data.HeatingDesignDayDescriptions,
             state=READONLY,
         )
         self.heating_design_day_combo._entry.configure(justify=LEFT)
@@ -207,18 +198,18 @@ class ProjectDetailsView(CTkXYFrame):
             self.options_frame,
             text="Cooling Design Day Criteria:",
             anchor=E,
-            font=SMALL_BOLD,
+            font=LABEL_FONT,
         )
         self.cooling_design_day_combo = ctk.CTkComboBox(
             self.options_frame,
-            values=self.main_app_data.CoolingDesignDayDescriptions.get_list(),
+            values=self.app_data.CoolingDesignDayDescriptions,
             state=READONLY,
         )
         self.cooling_design_day_combo._entry.configure(justify=LEFT)
         self.measured_infiltration_checkbox = ctk.CTkCheckBox(
             self.infiltration_frame,
             text="Measured Infiltration?",
-            font=SMALL_BOLD,
+            font=LABEL_FONT,
             command=self.toggle_measured_infiltration,
         )
         self.pressure_difference_label = ctk.CTkLabel(
@@ -246,28 +237,28 @@ class ProjectDetailsView(CTkXYFrame):
     def populate_subview(self):
         # Place widgets
         self.climate_zone_label.grid(
-            row=0, column=0, sticky="ew", padx=LEFT_PADX_20, pady=TOP_PADY_20
+            row=0, column=0, sticky="ew", padx=PAD20START, pady=PAD20START
         )
         self.climate_zone_combo.grid(
-            row=0, column=1, sticky="ew", padx=5, pady=TOP_PADY_20
+            row=0, column=1, sticky="ew", padx=5, pady=PAD20START
         )
         self.lighting_zone_label.grid(
-            row=1, column=0, sticky="ew", padx=LEFT_PADX_20, pady=5
+            row=1, column=0, sticky="ew", padx=PAD20START, pady=5
         )
         self.lighting_zone_combo.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
         self.building_open_schedule_label.grid(
-            row=2, column=0, sticky="ew", padx=LEFT_PADX_20, pady=5
+            row=2, column=0, sticky="ew", padx=PAD20START, pady=5
         )
         self.open_from_label.grid(row=3, column=0, sticky="ew", pady=5)
         self.open_from_input.grid(row=3, column=1, sticky="ew", padx=5, pady=5)
         self.open_to_label.grid(row=4, column=0, sticky="ew", pady=5)
         self.open_to_input.grid(row=4, column=1, sticky="ew", padx=5, pady=5)
         self.heating_design_day_label.grid(
-            row=5, column=0, sticky="ew", padx=LEFT_PADX_20, pady=5
+            row=5, column=0, sticky="ew", padx=PAD20START, pady=5
         )
         self.heating_design_day_combo.grid(row=5, column=1, sticky="ew", padx=5, pady=5)
         self.cooling_design_day_label.grid(
-            row=6, column=0, sticky="ew", padx=LEFT_PADX_20, pady=5
+            row=6, column=0, sticky="ew", padx=PAD20START, pady=5
         )
         self.cooling_design_day_combo.grid(row=6, column=1, sticky="ew", padx=5, pady=5)
 
@@ -280,7 +271,7 @@ class ProjectDetailsView(CTkXYFrame):
             columnspan=2,
             sticky="nsew",
             padx=200,
-            pady=TOP_PADY_20,
+            pady=PAD20START,
         )
         self.measured_infiltration_checkbox.grid(row=0, column=0, sticky="ew", padx=5)
         self.measured_infiltration_checkbox.select()
@@ -302,27 +293,27 @@ class ProjectDetailsView(CTkXYFrame):
 
     # TODO: not necessarily "configuration data". Maybe change to "project data" or have 2 data structures
     def save_project_details(self):
-        self.main_app_data.configuration_data["ashrae_climate_zone"] = (
+        self.app_data.configuration_data["ashrae_climate_zone"] = (
             self.climate_zone_combo.get()
         )
-        self.main_app_data.configuration_data["exterior_lighting_zone"] = (
+        self.app_data.configuration_data["exterior_lighting_zone"] = (
             self.lighting_zone_combo.get()
         )
-        self.main_app_data.configuration_data["open_from"] = self.open_from_input.get()
-        self.main_app_data.configuration_data["open_to"] = self.open_to_input.get()
-        self.main_app_data.configuration_data["heating_design_day_criteria"] = (
+        self.app_data.configuration_data["open_from"] = self.open_from_input.get()
+        self.app_data.configuration_data["open_to"] = self.open_to_input.get()
+        self.app_data.configuration_data["heating_design_day_criteria"] = (
             self.heating_design_day_combo.get()
         )
-        self.main_app_data.configuration_data["cooling_design_day_criteria"] = (
+        self.app_data.configuration_data["cooling_design_day_criteria"] = (
             self.cooling_design_day_combo.get()
         )
-        self.main_app_data.configuration_data["uses_measured_infiltration"] = bool(
+        self.app_data.configuration_data["uses_measured_infiltration"] = bool(
             self.measured_infiltration_checkbox.get()
         )
-        self.main_app_data.configuration_data["pressure_difference"] = (
+        self.app_data.configuration_data["pressure_difference"] = (
             self.pressure_difference_input.get()
         )
-        self.main_app_data.configuration_data["based_on_site_testing"] = bool(
+        self.app_data.configuration_data["based_on_site_testing"] = bool(
             self.site_testing_checkbox.get()
         )
 
@@ -331,7 +322,7 @@ class ProjectConfigView(CTkXYFrame):
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.project_info_view = subview_frame.master
-        self.main_app_data = self.project_info_view.window.main_app.data
+        self.app_data = self.project_info_view.window.main_app.data
         self.is_subview_populated = False
 
         self.ruleset_model_row_widgets = {}
@@ -645,7 +636,7 @@ class ProjectConfigView(CTkXYFrame):
     #     self.app_data.generate_rmds()
 
     def view_continue(self):
-        self.window.show_view("Buildings")
+        self.project_info_view.window.show_view("Buildings")
 
     def select_output_directory(self):
         """Opens a directory selection dialog and updates the entry field."""

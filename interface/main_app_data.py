@@ -142,20 +142,6 @@ class MainAppData:
                 schema_descriptions.get_list(),
             )
 
-    def meets_baseline_exception(self):
-        meets_baseline_exception = self.configuration_data.get("baseline_exception")
-        if meets_baseline_exception:
-            return True
-        return False
-
-    def uses_measured_infiltration(self):
-        uses_measured_infiltration = self.configuration_data.get(
-            "uses_measured_infiltration"
-        )
-        if uses_measured_infiltration:
-            return True
-        return False
-
     @staticmethod
     def validate_entry(arg):
         if str.isdigit(arg) or arg == "":
