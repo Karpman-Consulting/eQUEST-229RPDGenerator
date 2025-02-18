@@ -31,6 +31,9 @@ class SpacesView(BaseView):
             text="Assign the various space data parameters for each space.",
             font=LABEL_FONT,
         )
+        self.subviews = {
+            "Spaces": SpacesSubview(self.view_frame),
+        }
 
     def __repr__(self):
         return "SpacesView"
@@ -54,7 +57,7 @@ class SpacesView(BaseView):
         self.view_frame.grid_rowconfigure(0, weight=1)
         self.view_frame.grid_columnconfigure(0, weight=1)
 
-        spaces_view = SpacesSubview(self.view_frame)
+        spaces_view = self.subviews["Spaces"]
         spaces_view.grid(row=0, column=0, sticky=FILL)
         spaces_view.open_view()
 
@@ -76,6 +79,9 @@ class SpacesSubview(CTkXYFrame):
         self.add_column_headers()
 
         for i, space_name in enumerate(self.app_data.rmds[0].space_map.keys()):
+            # Add data vars for each space
+            self.app_data.lighting_space_type_vars[space_name] = ctk.StringVar()
+            # Add widget row for each space
             self.add_row(i, space_name)
 
         self.is_view_populated = True
@@ -137,6 +143,10 @@ class SpacesSubview(CTkXYFrame):
         lighting_space_type_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.LightingSpaceDescriptions2019ASHRAE901TG37,
+            variable=self.app_data.lighting_space_type_vars[space_name],
+            command=lambda _: self.app_data.insert_to_rpd(
+                space_name, self.app_data.LightingSpaceMapping2019ASHRAE901TG37
+            ),
             state=READONLY,
         )
         lighting_space_type_combo._entry.configure(justify=LEFT)
