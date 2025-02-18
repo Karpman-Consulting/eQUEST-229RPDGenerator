@@ -35,6 +35,14 @@ class MainAppData:
         self.is_all_new_construction = ctk.BooleanVar()
         self.ruleset_model_file_paths = {}
         self.output_directory = ctk.StringVar()
+        self.climate_zone = ctk.StringVar()
+        self.lighting_zone = ctk.StringVar()
+        self.heating_design_day = ctk.StringVar()
+        self.cooling_design_day = ctk.StringVar()
+        self.has_measured_infiltration = ctk.BooleanVar()
+        self.is_based_on_site_testing = ctk.BooleanVar()
+        # TODO: Change to IntVar
+        self.measured_pressure_difference = ctk.StringVar()
 
         self.rmds = []
         self.warnings = []

@@ -15,6 +15,8 @@ LEFT = "left"
 PAD20END = (0, 20)
 PAD20START = (20, 0)
 BLACK = "black"
+SUBVIEW_BUTTON_COLOR = "#FFD966"
+ACTIVE_SUBVIEW_BUTTON_COLOR = "#FFED67"
 
 
 class ProjectInfoView(BaseView):
@@ -63,7 +65,7 @@ class ProjectInfoView(BaseView):
         self.border_line.grid(row=1, column=0, columnspan=5, sticky=E + W, padx=20)
 
         # Subview frame
-        self.subview_frame.grid(row=2, column=0, sticky="nsew", padx=20, pady=PAD20END)
+        self.subview_frame.grid(row=2, column=0, sticky=FILL, padx=20, pady=PAD20END)
         self.subview_frame.grid_rowconfigure(0, weight=1)
         self.subview_frame.grid_columnconfigure(0, weight=1)
 
@@ -83,9 +85,9 @@ class ProjectInfoView(BaseView):
             button = ctk.CTkButton(
                 self.subview_button_frame,
                 text=name,
-                fg_color="#FFD966",
-                hover_color="#FFD966",
-                text_color="black",
+                fg_color=SUBVIEW_BUTTON_COLOR,
+                hover_color=SUBVIEW_BUTTON_COLOR,
+                text_color=BLACK,
                 font=("Arial", 12, "bold"),
                 width=140,
                 height=30,
@@ -104,29 +106,27 @@ class ProjectInfoView(BaseView):
         subview = self.subviews.get(subview_name)
         if subview:
             self.current_subview = subview
-            self.current_subview.grid(row=0, column=0, sticky="nsew")
+            self.current_subview.grid(row=0, column=0, sticky=FILL)
             self.current_subview.open_subview()
 
     def toggle_active_subbutton(self, active_subbutton_name):
         for name, button in self.subview_buttons.items():
             if name == active_subbutton_name:
                 self.subview_buttons[name].configure(
-                    fg_color="#FFED67",
-                    hover_color="#FFED67",
-                    text_color="black",
+                    fg_color=ACTIVE_SUBVIEW_BUTTON_COLOR,
+                    hover_color=ACTIVE_SUBVIEW_BUTTON_COLOR,
+                    text_color=BLACK,
                     font=("Arial", 12, "bold"),
                 )
             else:
                 self.subview_buttons[name].configure(
-                    fg_color="#FFD966",
-                    hover_color="#FFD966",
-                    text_color="black",
+                    fg_color=SUBVIEW_BUTTON_COLOR,
+                    hover_color=SUBVIEW_BUTTON_COLOR,
+                    text_color=BLACK,
                     font=("Arial", 12, "bold"),
                 )
 
     def view_continue(self):
-        if self.current_subview == self.subviews.get("Project Details"):
-            self.current_subview.save_project_details()
         self.window.show_view("Buildings")
 
 
@@ -152,6 +152,7 @@ class ProjectDetailsView(CTkXYFrame):
             self.options_frame,
             values=self.app_data.ClimateZoneDescriptions2019ASHRAE901,
             state=READONLY,
+            variable=self.app_data.climate_zone,
         )
         self.climate_zone_combo._entry.configure(justify=LEFT)
         self.lighting_zone_label = ctk.CTkLabel(
@@ -164,6 +165,7 @@ class ProjectDetailsView(CTkXYFrame):
             self.options_frame,
             values=self.app_data.ExteriorLightingZoneDescriptions2019ASHRAE901,
             state=READONLY,
+            variable=self.app_data.lighting_zone,
         )
         self.lighting_zone_combo._entry.configure(justify=LEFT)
         self.building_open_schedule_label = ctk.CTkLabel(
@@ -176,14 +178,14 @@ class ProjectDetailsView(CTkXYFrame):
             self.options_frame,
             text="From:",
             anchor=E,
-            font=("Arial", 14),
+            font=TEXT_FONT,
         )
         self.open_from_input = ctk.CTkEntry(self.options_frame)
         self.open_to_label = ctk.CTkLabel(
             self.options_frame,
             text="From:",
             anchor=E,
-            font=("Arial", 14),
+            font=TEXT_FONT,
         )
         self.open_to_input = ctk.CTkEntry(self.options_frame)
         self.heating_design_day_label = ctk.CTkLabel(
@@ -196,6 +198,7 @@ class ProjectDetailsView(CTkXYFrame):
             self.options_frame,
             values=self.app_data.HeatingDesignDayDescriptions,
             state=READONLY,
+            variable=self.app_data.heating_design_day,
         )
         self.heating_design_day_combo._entry.configure(justify=LEFT)
         self.cooling_design_day_label = ctk.CTkLabel(
@@ -208,25 +211,33 @@ class ProjectDetailsView(CTkXYFrame):
             self.options_frame,
             values=self.app_data.CoolingDesignDayDescriptions,
             state=READONLY,
+            variable=self.app_data.cooling_design_day,
         )
         self.cooling_design_day_combo._entry.configure(justify=LEFT)
         self.measured_infiltration_checkbox = ctk.CTkCheckBox(
             self.infiltration_frame,
             text="Measured Infiltration?",
             font=LABEL_FONT,
+            variable=self.app_data.has_measured_infiltration,
             command=self.toggle_measured_infiltration,
         )
         self.pressure_difference_label = ctk.CTkLabel(
             self.infiltration_frame,
             text="Pressure Difference:",
             anchor=E,
-            font=("Arial", 14),
+            font=TEXT_FONT,
         )
-        self.pressure_difference_input = ctk.CTkEntry(self.infiltration_frame)
+        # TODO: Change to IntVar
+        self.pressure_difference_input = ctk.CTkEntry(
+            self.infiltration_frame,
+            textvariable=self.app_data.measured_pressure_difference,
+        )
+        # TODO: Add units label "Pa"
         self.site_testing_checkbox = ctk.CTkCheckBox(
             self.infiltration_frame,
-            text="Based on Site Selection?",
-            font=("Arial", 14),
+            text="Based on Site Testing?",
+            font=TEXT_FONT,
+            variable=self.app_data.is_based_on_site_testing,
         )
 
         self.populate_subview()
@@ -266,14 +277,14 @@ class ProjectDetailsView(CTkXYFrame):
         )
         self.cooling_design_day_combo.grid(row=6, column=1, sticky="ew", padx=5, pady=5)
 
-        self.options_frame.grid(row=0, column=0, sticky="nsew")
+        self.options_frame.grid(row=0, column=0, sticky=FILL)
 
         self.infiltration_frame.grid(
             row=0,
             column=2,
             rowspan=3,
             columnspan=2,
-            sticky="nsew",
+            sticky=FILL,
             padx=200,
             pady=PAD20START,
         )
@@ -295,32 +306,6 @@ class ProjectDetailsView(CTkXYFrame):
             self.pressure_difference_input.grid_remove()
             self.site_testing_checkbox.grid_remove()
 
-    # TODO: not necessarily "configuration data". Maybe change to "project data" or have 2 data structures
-    def save_project_details(self):
-        self.app_data.configuration_data["ashrae_climate_zone"] = (
-            self.climate_zone_combo.get()
-        )
-        self.app_data.configuration_data["exterior_lighting_zone"] = (
-            self.lighting_zone_combo.get()
-        )
-        self.app_data.configuration_data["open_from"] = self.open_from_input.get()
-        self.app_data.configuration_data["open_to"] = self.open_to_input.get()
-        self.app_data.configuration_data["heating_design_day_criteria"] = (
-            self.heating_design_day_combo.get()
-        )
-        self.app_data.configuration_data["cooling_design_day_criteria"] = (
-            self.cooling_design_day_combo.get()
-        )
-        self.app_data.configuration_data["uses_measured_infiltration"] = bool(
-            self.measured_infiltration_checkbox.get()
-        )
-        self.app_data.configuration_data["pressure_difference"] = (
-            self.pressure_difference_input.get()
-        )
-        self.app_data.configuration_data["based_on_site_testing"] = bool(
-            self.site_testing_checkbox.get()
-        )
-
 
 class ProjectConfigView(CTkXYFrame):
     def __init__(self, subview_frame):
@@ -335,7 +320,7 @@ class ProjectConfigView(CTkXYFrame):
         self.new_construction_checkbox = ctk.CTkCheckBox(
             self,
             text="All new construction?",
-            font=("Arial", 14),
+            font=TEXT_FONT,
         )
         self.directions_label = ctk.CTkLabel(
             self,
