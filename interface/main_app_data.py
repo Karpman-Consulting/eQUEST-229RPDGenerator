@@ -18,6 +18,8 @@ class MainAppData:
 
         self.bdl_reader = ModelInputReader()
         self.rpd = None
+        # TODO: Set the active RMD based on the Proposed/Baseline toggle
+        self.active_rmd = None
 
         # Config data
         self.installation_path = ctk.StringVar()
@@ -35,6 +37,15 @@ class MainAppData:
         self.is_all_new_construction = ctk.BooleanVar()
         self.ruleset_model_file_paths = {}
         self.output_directory = ctk.StringVar()
+        self.climate_zone = ctk.StringVar()
+        self.lighting_zone = ctk.StringVar()
+        self.heating_design_day = ctk.StringVar()
+        self.cooling_design_day = ctk.StringVar()
+        self.has_measured_infiltration = ctk.BooleanVar()
+        self.is_based_on_site_testing = ctk.BooleanVar()
+        # TODO: Change to IntVar
+        self.measured_pressure_difference = ctk.StringVar()
+        self.lighting_space_type_vars = {}
 
         self.rmds = []
         self.warnings = []
@@ -140,6 +151,28 @@ class MainAppData:
                 self,
                 f"{enumerator.replace('Options', 'Descriptions')}",
                 schema_descriptions.get_list(),
+            )
+            setattr(
+                self,
+                f"{enumerator.replace('Options', 'Mapping')}",
+                (
+                    enumerator,
+                    dict(zip(schema_descriptions.get_list(), schema_enums.get_list())),
+                ),
+            )
+
+    def insert_to_rpd(self, space_name, mapping):
+        # TODO: Make sure to get the object from the correct RMD
+        obj = self.rmds[0].get_obj(space_name)
+        enumeration = mapping[0]
+        enumerations_map = mapping[1]
+        print(obj.u_name)
+        print(enumeration)
+        print(enumerations_map)
+        # TODO: Improve mapping to object attributes (data elements) from enumeration name
+        if enumeration == "LightingSpaceOptions2019ASHRAE901TG37":
+            obj.lighting_space_type = enumerations_map.get(
+                self.lighting_space_type_vars[space_name].get()
             )
 
     @staticmethod

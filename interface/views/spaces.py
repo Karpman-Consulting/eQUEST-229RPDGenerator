@@ -79,6 +79,9 @@ class SpacesSubview(CTkXYFrame):
         self.add_column_headers()
 
         for i, space_name in enumerate(self.app_data.rmds[0].space_map.keys()):
+            # Add data vars for each space
+            self.app_data.lighting_space_type_vars[space_name] = ctk.StringVar()
+            # Add widget row for each space
             self.add_row(i, space_name)
 
         self.is_view_populated = True
@@ -140,6 +143,10 @@ class SpacesSubview(CTkXYFrame):
         lighting_space_type_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.LightingSpaceDescriptions2019ASHRAE901TG37,
+            variable=self.app_data.lighting_space_type_vars[space_name],
+            command=lambda _: self.app_data.insert_to_rpd(
+                space_name, self.app_data.LightingSpaceMapping2019ASHRAE901TG37
+            ),
             state=READONLY,
         )
         lighting_space_type_combo._entry.configure(justify=LEFT)
@@ -173,7 +180,7 @@ class SpacesSubview(CTkXYFrame):
         swh_space_type_combo.grid(row=(i + 1), column=5, padx=PAD20END, pady=PAD20END)
         lighting_occ_controls_combo = ctk.CTkComboBox(
             self,
-            values=self.app_data.LightingOccupancyControlDesriptions,
+            values=self.app_data.LightingOccupancyControlDescriptions,
             state=READONLY,
         )
         lighting_occ_controls_combo._entry.configure(justify=LEFT)
