@@ -33,6 +33,7 @@ class SurfacesView(BaseView):
             "Skylights": SkylightSurfaceView(self.subview_frame),
             "Doors": DoorSurfaceView(self.subview_frame),
         }
+        self.subview_buttons = {}
 
         # Directions frame holds all directions info and will get 'gridded' within the surfaces view grid
         self.directions_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -48,7 +49,6 @@ class SurfacesView(BaseView):
         )
 
         # Subview buttons
-        self.subview_buttons = {}
         self.border_line = ctk.CTkFrame(self, height=2, fg_color=BLACK)
         self.subview_button_frame = ctk.CTkFrame(
             self, corner_radius=0, fg_color="transparent"

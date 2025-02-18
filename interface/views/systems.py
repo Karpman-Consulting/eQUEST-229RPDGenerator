@@ -41,7 +41,7 @@ class SystemsView(BaseView):
         self.directions_widget = ctk.CTkLabel(
             self.directions_frame,
             text="Assign the various data parameters for each system.",
-            font=("Arial", 14),
+            font=LABEL_FONT,
         )
 
         self.subview_buttons = {}

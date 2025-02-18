@@ -29,7 +29,7 @@ class SpacesView(BaseView):
         self.directions_widget = ctk.CTkLabel(
             self.directions_frame,
             text="Assign the various space data parameters for each space.",
-            font=("Arial", 14),
+            font=LABEL_FONT,
         )
 
     def __repr__(self):

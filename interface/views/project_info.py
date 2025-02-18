@@ -14,6 +14,7 @@ FILL = "nsew"
 LEFT = "left"
 PAD20END = (0, 20)
 PAD20START = (20, 0)
+BLACK = "black"
 
 
 class ProjectInfoView(BaseView):
@@ -28,8 +29,9 @@ class ProjectInfoView(BaseView):
             "Project Details": ProjectDetailsView(self.subview_frame),
             "Project Config.": ProjectConfigView(self.subview_frame),
         }
-
         self.subview_buttons = {}
+
+        self.border_line = ctk.CTkFrame(self, height=2, fg_color=BLACK)
         self.subview_button_frame = ctk.CTkFrame(
             self, corner_radius=0, fg_color="transparent"
         )
@@ -48,7 +50,7 @@ class ProjectInfoView(BaseView):
         self.grid_propagate(False)
 
         # 3 rows in the main surface view structure. Subview frame (row 2, index 1) has a weight to make it fill up the empty space in the window
-        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
         # Subview buttons
@@ -58,8 +60,10 @@ class ProjectInfoView(BaseView):
             button = self.subview_buttons[name]
             button.grid(row=0, column=index, padx=(0, 4))
 
+        self.border_line.grid(row=1, column=0, columnspan=5, sticky=E + W, padx=20)
+
         # Subview frame
-        self.subview_frame.grid(row=1, column=0, sticky="nsew", padx=20, pady=PAD20END)
+        self.subview_frame.grid(row=2, column=0, sticky="nsew", padx=20, pady=PAD20END)
         self.subview_frame.grid_rowconfigure(0, weight=1)
         self.subview_frame.grid_columnconfigure(0, weight=1)
 
