@@ -31,6 +31,9 @@ class SpacesView(BaseView):
             text="Assign the various space data parameters for each space.",
             font=("Arial", 14),
         )
+        self.subviews = {
+            "Spaces": SpacesSubview(self.view_frame),
+        }
 
     def __repr__(self):
         return "SpacesView"
@@ -54,7 +57,7 @@ class SpacesView(BaseView):
         self.view_frame.grid_rowconfigure(0, weight=1)
         self.view_frame.grid_columnconfigure(0, weight=1)
 
-        spaces_view = SpacesSubview(self.view_frame)
+        spaces_view = self.subviews["Spaces"]
         spaces_view.grid(row=0, column=0, sticky=FILL)
         spaces_view.open_view()
 
