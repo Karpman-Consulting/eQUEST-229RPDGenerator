@@ -5,7 +5,7 @@ from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
 
 
-ARIAL_16_BOLD = ("Arial", 16, "bold")
+STANDARD_FONT = ("Arial", 16, "bold")
 READONLY = "readonly"
 W = "w"
 LEFT = "left"
@@ -31,12 +31,16 @@ class SystemsView(BaseView):
         self.directions_label = ctk.CTkLabel(
             self.directions_frame,
             text="Directions: ",
-            font=ARIAL_16_BOLD,
+            anchor="e",
+            justify="left",
+            font=STANDARD_FONT,
         )
         self.directions_widget = ctk.CTkLabel(
             self.directions_frame,
             text=" Assign the various data parameters for each surface.",
             font=("Arial", 14),
+            anchor="w",
+            justify="left",
         )
 
         self.subview_buttons = {}
@@ -58,8 +62,10 @@ class SystemsView(BaseView):
 
         # Directions
         self.directions_frame.grid(row=0, column=0, sticky="nsew", padx=50, pady=20)
-        self.directions_label.grid(row=0, column=0)
-        self.directions_widget.grid(row=0, column=1)
+        self.directions_label.grid(row=0, column=0, sticky="ew", padx=5, pady=20)
+        self.directions_widget.grid(
+            row=0, column=1, columnspan=8, sticky="new", padx=5, pady=20
+        )
 
         # Subview buttons
         self.subview_button_frame.grid(row=1, column=0, sticky=W, padx=20)
@@ -72,6 +78,10 @@ class SystemsView(BaseView):
         self.subview_frame.grid(row=2, column=0, sticky="nsew", padx=20, pady=PAD20)
         self.subview_frame.grid_rowconfigure(0, weight=1)
         self.subview_frame.grid_columnconfigure(0, weight=1)
+
+        # Show default subview
+        self.show_subview("Windows")
+        self.toggle_active_subbutton("Windows")
 
     def create_subbutton_bar(self):
         # TODO: Check for empty subviews
@@ -161,9 +171,9 @@ class HeatRejectionView(CTkXYFrame):
         self.is_subview_populated = True
 
     def add_column_headers(self):
-        name_label = ctk.CTkLabel(self, text="Name", font=ARIAL_16_BOLD)
+        name_label = ctk.CTkLabel(self, text="Name", font=STANDARD_FONT)
         name_label.grid(row=0, column=0, padx=PAD20, pady=5)
-        fan_type_label = ctk.CTkLabel(self, text="Fan Type", font=ARIAL_16_BOLD)
+        fan_type_label = ctk.CTkLabel(self, text="Fan Type", font=STANDARD_FONT)
         fan_type_label.grid(row=0, column=1, padx=PAD20, pady=5)
 
     def add_row(self, i, heat_rejection_name):
@@ -201,21 +211,21 @@ class HVACSystemView(ctk.CTkFrame):
         self.is_subview_populated = True
 
     def add_column_headers(self):
-        name_label = ctk.CTkLabel(self, text="Name", font=ARIAL_16_BOLD)
+        name_label = ctk.CTkLabel(self, text="Name", font=STANDARD_FONT)
         name_label.grid(row=0, column=0, padx=PAD20, pady=5)
         if not self.main_app_data.is_all_new_construction():
-            status_label = ctk.CTkLabel(self, text="Status", font=ARIAL_16_BOLD)
+            status_label = ctk.CTkLabel(self, text="Status", font=STANDARD_FONT)
             status_label.grid(row=0, column=1, padx=PAD20, pady=5)
         dehumidification_type_label = ctk.CTkLabel(
-            self, text="Dehumidification Type", font=ARIAL_16_BOLD
+            self, text="Dehumidification Type", font=STANDARD_FONT
         )
         dehumidification_type_label.grid(row=0, column=2, padx=PAD20, pady=5)
         ducted_supply_label = ctk.CTkLabel(
-            self, text="Ducted Supply?", font=ARIAL_16_BOLD
+            self, text="Ducted Supply?", font=STANDARD_FONT
         )
         ducted_supply_label.grid(row=0, column=3, padx=PAD20, pady=5)
         air_filter_merv_rating_label = ctk.CTkLabel(
-            self, text="Air Filter MERV Rating", font=ARIAL_16_BOLD
+            self, text="Air Filter MERV Rating", font=STANDARD_FONT
         )
         air_filter_merv_rating_label.grid(row=0, column=4, padx=PAD20, pady=5)
 
@@ -285,9 +295,9 @@ class ZonalExhaustView(ctk.CTkFrame):
         return zonal_exhaust_fans
 
     def add_column_headers(self):
-        name_label = ctk.CTkLabel(self, text="Name", font=ARIAL_16_BOLD)
+        name_label = ctk.CTkLabel(self, text="Name", font=STANDARD_FONT)
         name_label.grid(row=0, column=0, padx=PAD20, pady=5)
-        status_label = ctk.CTkLabel(self, text="Fan Type", font=ARIAL_16_BOLD)
+        status_label = ctk.CTkLabel(self, text="Fan Type", font=STANDARD_FONT)
         status_label.grid(row=0, column=1, padx=PAD20, pady=5)
 
     def add_row(self, i, exhaust_fan_dict):

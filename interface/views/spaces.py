@@ -21,12 +21,16 @@ class SpacesView(BaseView):
         self.directions_label = ctk.CTkLabel(
             self.directions_frame,
             text="Directions: ",
+            anchor="e",
+            justify="left",
             font=STANDARD_FONT,
         )
         self.directions_widget = ctk.CTkLabel(
             self.directions_frame,
             text=" Directions: Assign the various space data parameters for each Space.",
             font=("Arial", 14),
+            anchor="w",
+            justify="left",
         )
 
     def __repr__(self):
@@ -43,8 +47,10 @@ class SpacesView(BaseView):
 
         # Directions
         self.directions_frame.grid(row=0, column=0, sticky="nsew", padx=50, pady=20)
-        self.directions_label.grid(row=0, column=0)
-        self.directions_widget.grid(row=0, column=1)
+        self.directions_label.grid(row=0, column=0, sticky="ew", padx=5, pady=20)
+        self.directions_widget.grid(
+            row=0, column=1, columnspan=8, sticky="new", padx=5, pady=20
+        )
 
         # Subview frame
         self.view_frame.grid(row=1, column=0, sticky="nsew", padx=20, pady=(0, 20))

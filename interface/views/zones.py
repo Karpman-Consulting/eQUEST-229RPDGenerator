@@ -11,6 +11,7 @@ READONLY = "readonly"
 LEFT = "left"
 W = "w"
 PAD20 = (0, 20)
+PAD10SYM = 10
 
 
 class ZonesView(BaseView):
@@ -35,7 +36,7 @@ class ZonesView(BaseView):
             "measured infiltration rate declare so here. If a zone contains more than 1 space, define additional spaces as necessary by clicking the quantity in the Child \n"
             "Spaces column to open the Child Spaces window. Child Spaces should be created as necessary to represent the entirety of the Zone, e.g. an aggregated \n"
             "zone that is in reality 3 zones where each zone has 2 spaces should have 6 Child Spaces total.",
-            font=("Arial", 14, "bold"),
+            font=("Arial", 14),
             anchor="w",
             justify="left",
         )
@@ -155,34 +156,31 @@ class ZonesSubview(CTkXYFrame):
         floor_label.grid(row=(i + 1), column=1, padx=20, pady=10, sticky=W)
 
         # Place the Building Area ComboBox in `self` (not inside `main_row_frame`) to align properly
-        building_area_combo = ctk.CTkComboBox(
+        building_area_combo = ctk.CTkOptionMenu(
             self,
             # TODO: Placeholder for Building Areas tab data
             values=["Building Area 1"],
-            state=READONLY,
-            fg_color="#5B9BD5",
-            border_color="#5B9BD5",
-            button_color="#3A7EBF",
-            dropdown_fg_color="#5B9BD5",
-            dropdown_hover_color="lightblue",
             bg_color="gray30",  # Same color as the frame
             command=lambda value, floor=floor_name: self.set_default_value_by_floor(
                 floor, value
             ),
         )
         building_area_combo.set("Building Area 1")
-        building_area_combo._entry.configure(justify=LEFT)
-        building_area_combo.grid(row=(i + 1), column=2, padx=PAD20, pady=10)
+        building_area_combo.grid(row=(i + 1), column=2, padx=PAD20, pady=PAD10SYM)
 
         self.floor_comboboxes[floor_name] = building_area_combo
 
         # Add empty labels in `main_row_frame` for spacing
-        ctk.CTkLabel(main_row_frame, text="").grid(row=0, column=3, padx=PAD20, pady=10)
-        ctk.CTkLabel(main_row_frame, text="").grid(row=0, column=4, padx=PAD20, pady=10)
+        ctk.CTkLabel(main_row_frame, text="").grid(
+            row=0, column=3, padx=PAD20, pady=PAD10SYM
+        )
+        ctk.CTkLabel(main_row_frame, text="").grid(
+            row=0, column=4, padx=PAD20, pady=PAD10SYM
+        )
 
     def add_row(self, i, zone_name):
         floor_label = ctk.CTkLabel(self, text=f"{zone_name}")
-        floor_label.grid(row=(i + 1), column=1, padx=20, pady=PAD20, sticky=W)
+        floor_label.grid(row=(i + 1), column=1, padx=20, pady=PAD10SYM, sticky=W)
         building_area_combo = ctk.CTkComboBox(
             self,
             # TODO: Placeholder for Building Areas tab data
@@ -191,17 +189,17 @@ class ZonesSubview(CTkXYFrame):
         )
         building_area_combo.set("Building Area 1")
         building_area_combo._entry.configure(justify=LEFT)
-        building_area_combo.grid(row=(i + 1), column=2, padx=PAD20, pady=PAD20)
+        building_area_combo.grid(row=(i + 1), column=2, padx=PAD20, pady=PAD10SYM)
 
         self.zone_comboboxes[zone_name] = building_area_combo
         # TODO: Apply numerical entry validation
         aggregated_zone_qty_spinbox = cw.IntSpinbox(self, width=125, default_value=1)
         aggregated_zone_qty_spinbox.grid(
-            row=(i + 1), column=3, padx=PAD20, pady=PAD20, sticky="nsew"
+            row=(i + 1), column=3, padx=PAD20, pady=PAD10SYM, sticky="nsew"
         )
         measured_infiltration_rate_checkbox = ctk.CTkCheckBox(self, text="", width=30)
         measured_infiltration_rate_checkbox.grid(
-            row=(i + 1), column=4, padx=PAD20, pady=PAD20
+            row=(i + 1), column=4, padx=PAD20, pady=PAD10SYM
         )
         image = ctk.CTkImage(
             light_image=Image.open("interface/static/white_plus.png"),
@@ -217,7 +215,7 @@ class ZonesSubview(CTkXYFrame):
             corner_radius=10,
             command=self.open_child_space_window,
         )
-        add_child_space_button.grid(row=(i + 1), column=5, padx=PAD20, pady=PAD20)
+        add_child_space_button.grid(row=(i + 1), column=5, padx=PAD20, pady=PAD10SYM)
 
         self.zone_widgets[zone_name] = [
             floor_label,

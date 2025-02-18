@@ -33,12 +33,16 @@ class SurfacesView(BaseView):
         self.directions_label = ctk.CTkLabel(
             self.directions_frame,
             text="Directions: ",
+            anchor="e",
+            justify="left",
             font=STANDARD_FONT,
         )
         self.directions_widget = ctk.CTkLabel(
             self.directions_frame,
             text=" Assign the various data parameters for each surface.",
             font=("Arial", 14),
+            anchor="w",
+            justify="left",
         )
 
         # Subview buttons
@@ -62,8 +66,10 @@ class SurfacesView(BaseView):
 
         # Directions
         self.directions_frame.grid(row=0, column=0, sticky="nsew", padx=50, pady=20)
-        self.directions_label.grid(row=0, column=0)
-        self.directions_widget.grid(row=0, column=1)
+        self.directions_label.grid(row=0, column=0, sticky="ew", padx=5, pady=20)
+        self.directions_widget.grid(
+            row=0, column=1, columnspan=8, sticky="new", padx=5, pady=20
+        )
 
         # Subview buttons
         self.subview_button_frame.grid(row=1, column=0, sticky=W, padx=20)
@@ -76,6 +82,14 @@ class SurfacesView(BaseView):
         self.subview_frame.grid(row=2, column=0, sticky="nsew", padx=20, pady=(0, 20))
         self.subview_frame.grid_rowconfigure(0, weight=1)
         self.subview_frame.grid_columnconfigure(0, weight=1)
+
+        # Show default subview
+        if self.window.main_app.data.is_all_new_construction():
+            self.show_subview("Windows")
+            self.toggle_active_subbutton("Windows")
+        else:
+            self.show_subview("Exterior")
+            self.toggle_active_subbutton("Exterior")
 
     def create_subbutton_bar(self):
         callback_methods = {}

@@ -390,3 +390,6 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         self.main_app.data.configuration_data["new_construction"] = bool(
             self.new_construction_checkbox.get()
         )
+        self.main_app.data.configuration_data["baseline_exception"] = bool(
+            self.rotation_exception_checkbox.get()
+        )
