@@ -578,7 +578,11 @@ class Chiller(BaseNode):
         rated_full_load_cop = (
             curve_results["eff_f_t_result"]
             * curve_results["eff_f_plr_result"]
-            / (user_defined_input_ratio * user_defined_rated_plr * curve_results.get("part_load_ratio", 1))
+            / (
+                user_defined_input_ratio
+                * user_defined_rated_plr
+                * curve_results.get("part_load_ratio", 1)
+            )
         )
 
         self.efficiency_metric_values.append(rated_full_load_cop)
@@ -855,7 +859,9 @@ class Chiller(BaseNode):
             "cap_f_t_result"
         ]
 
-        cap_f_t_result_ahri = curve_results_at_ahri_conditions_and_full_load["cap_f_t_result"]
+        cap_f_t_result_ahri = curve_results_at_ahri_conditions_and_full_load[
+            "cap_f_t_result"
+        ]
 
         # If capacity is hard coded and PLR RATED is entered (not n/a). (This is the same as used above for when it is at AHRI)
         if (
@@ -915,7 +921,9 @@ class Chiller(BaseNode):
                 output_data.get("Primary Equipment (Chillers) - Capacity (Btu/hr)")
             )
             # Adjusts from design to rated conditions. (Differs from AHRI section above. It may be because curves = 1 at ahri so it may actually be the same)
-            self.rated_capacity = autosized_design_capacity * (cap_f_t_result_ahri / cap_f_t_result_design)
+            self.rated_capacity = autosized_design_capacity * (
+                cap_f_t_result_ahri / cap_f_t_result_design
+            )
             self.populate_full_load_efficiency(
                 curve_results_at_user_defined_part_load_rating
             )

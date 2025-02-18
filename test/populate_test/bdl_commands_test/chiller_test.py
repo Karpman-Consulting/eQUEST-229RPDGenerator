@@ -602,6 +602,8 @@ class TestElectricChillers(unittest.TestCase):
             "efficiency_metric_values": [4.222623076739573, 7.29779841980996],
         }
         self.assertEqual(expected_data_structure, self.chiller.chiller_data_structure)
+
+
 class TestEngineChillers(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
