@@ -510,7 +510,6 @@ class Chiller(BaseNode):
     def populate_iplv(self, performance_curve_data):
         """Populates IPLV based upon the modeled performance curves and the rated conditions.
         No corrections for fouling factor have been included - perhaps not relevant."""
-        # TODO continued Do more testing to ensure it producing the correct results
 
         # If the chiller cannot be unloaded to all the IPLV load categories then do not perform calcs and return nothing
         if self.minimum_load_ratio > MIN_AHRI_PART_LOAD:
