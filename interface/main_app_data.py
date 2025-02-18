@@ -166,9 +166,6 @@ class MainAppData:
         obj = self.rmds[0].get_obj(space_name)
         enumeration = mapping[0]
         enumerations_map = mapping[1]
-        print(obj.u_name)
-        print(enumeration)
-        print(enumerations_map)
         # TODO: Improve mapping to object attributes (data elements) from enumeration name
         if enumeration == "LightingSpaceOptions2019ASHRAE901TG37":
             obj.lighting_space_type = enumerations_map.get(
