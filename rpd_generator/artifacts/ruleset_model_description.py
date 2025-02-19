@@ -2035,7 +2035,7 @@ class RulesetModelDescription(Base):
                 "chillers": self.chillers,
                 "heat_rejections": self.heat_rejections,
                 "external_fluid_sources": self.external_fluid_sources,
-                "output": self.output,
+                # "output": self.output,
             }.items()
             if value is not None
         }
