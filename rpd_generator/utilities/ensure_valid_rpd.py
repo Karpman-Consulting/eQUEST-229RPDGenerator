@@ -27,6 +27,12 @@ def make_ids_unique(
     if visited is None:
         visited = set()
 
+    if isinstance(data, dict) and "ruleset_model_descriptions" in data:
+        # Process only within ruleset_model_descriptions to make IDs unique
+        for model in data["ruleset_model_descriptions"]:
+            make_ids_unique(model, {}, {}, set())  # Reset ID tracking within each model
+        return
+
     if isinstance(data, dict):
         obj_id = id(data)
 
