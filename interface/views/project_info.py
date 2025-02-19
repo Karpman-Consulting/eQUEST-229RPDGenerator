@@ -153,6 +153,9 @@ class ProjectDetailsView(CTkXYFrame):
             values=self.app_data.ClimateZoneDescriptions2019ASHRAE901,
             state=READONLY,
             variable=self.app_data.climate_zone,
+            command=lambda _: self.app_data.insert_to_rpd(
+                self.app_data.ClimateZoneMapping2019ASHRAE901
+            ),
         )
         self.climate_zone_combo._entry.configure(justify=LEFT)
         self.lighting_zone_label = ctk.CTkLabel(

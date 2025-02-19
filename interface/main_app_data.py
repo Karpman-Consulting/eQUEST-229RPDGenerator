@@ -161,16 +161,21 @@ class MainAppData:
                 ),
             )
 
-    def insert_to_rpd(self, space_name, mapping):
+    def insert_to_rpd(self, mapping, obj_u_name: str = None):
         # TODO: Make sure to get the object from the correct RMD
-        obj = self.rmds[0].get_obj(space_name)
+        obj = self.rmds[0].get_obj(obj_u_name)
         enumeration = mapping[0]
         enumerations_map = mapping[1]
         # TODO: Improve mapping to object attributes (data elements) from enumeration name
         if enumeration == "LightingSpaceOptions2019ASHRAE901TG37":
             obj.lighting_space_type = enumerations_map.get(
-                self.lighting_space_type_vars[space_name].get()
+                self.lighting_space_type_vars[obj_u_name].get()
             )
+        elif enumeration == "ClimateZoneOptions2019ASHRAE901":
+            for rmd in self.rmds:
+                rmd.weather.setdefault(
+                    "climate_zone", enumerations_map.get(self.climate_zone.get())
+                )
 
     @staticmethod
     def validate_entry(arg):
