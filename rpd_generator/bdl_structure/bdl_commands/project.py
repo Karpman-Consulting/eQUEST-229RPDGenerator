@@ -25,7 +25,7 @@ class SiteParameters(BaseDefinition):
 
     def populate_data_elements(self):
         """Populate schema structure for site parameters object."""
-        self.rmd.calendar.setdefault(
+        self.rmd.rpd.calendar.setdefault(
             "has_daylight_saving_time",
             self.boolean_map.get(
                 self.get_inp(BDL_SiteParameterKeywords.DAYLIGHT_SAVINGS)
@@ -33,12 +33,14 @@ class SiteParameters(BaseDefinition):
         )
         monthly_ground_temps = self.get_inp(BDL_SiteParameterKeywords.GROUND_T)
         if monthly_ground_temps:
-            self.rmd.weather.setdefault(
+            self.rmd.rpd.weather.setdefault(
                 "ground_temperature_schedule", "Ground Temperature Schedule"
             )
             self.create_ground_temp_schedule(monthly_ground_temps)
 
-        self.rmd.weather.setdefault("file_name", self.get_single_string_output(1101006))
+        self.rmd.rpd.weather.setdefault(
+            "file_name", self.get_single_string_output(1101006)
+        )
 
     def create_ground_temp_schedule(self, monthly_ground_temps):
         """Create ground temperature schedule."""
