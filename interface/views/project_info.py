@@ -74,7 +74,6 @@ class ProjectInfoView(BaseView):
         self.toggle_active_subbutton("Project Details")
 
     def create_subbutton_bar(self):
-        # TODO: Check for empty subviews
         callback_methods = {
             "Project Details": lambda: self.show_subview("Project Details"),
             "Project Config.": lambda: self.show_subview("Project Config."),
@@ -136,6 +135,7 @@ class ProjectDetailsView(CTkXYFrame):
         self.project_info_view = subview_frame.master
         self.app_data = self.project_info_view.window.main_app.data
         self.is_subview_populated = False
+        validate_double_entry = self.register(self.app_data.validate_double_entry)
 
         # Initialize Widgets
         self.options_frame = ctk.CTkFrame(subview_frame, fg_color="transparent")
@@ -230,12 +230,19 @@ class ProjectDetailsView(CTkXYFrame):
             anchor=E,
             font=TEXT_FONT,
         )
-        # TODO: Change to IntVar
         self.pressure_difference_input = ctk.CTkEntry(
             self.infiltration_frame,
+            width=75,
             textvariable=self.app_data.measured_pressure_difference,
+            validate="all",
+            validatecommand=(validate_double_entry, "%P"),
         )
-        # TODO: Add units label "Pa"
+        self.pressure_units_label = ctk.CTkLabel(
+            self.infiltration_frame,
+            text="Pa",
+            anchor=W,
+            font=TEXT_FONT,
+        )
         self.site_testing_checkbox = ctk.CTkCheckBox(
             self.infiltration_frame,
             text="Based on Site Testing?",
@@ -286,7 +293,7 @@ class ProjectDetailsView(CTkXYFrame):
             row=0,
             column=2,
             rowspan=3,
-            columnspan=2,
+            columnspan=3,
             sticky=FILL,
             padx=200,
             pady=PAD20START,
@@ -295,6 +302,7 @@ class ProjectDetailsView(CTkXYFrame):
         self.measured_infiltration_checkbox.select()
         self.pressure_difference_label.grid(row=1, column=0, sticky="ew", padx=5)
         self.pressure_difference_input.grid(row=1, column=1, sticky="ew", padx=5)
+        self.pressure_units_label.grid(row=1, column=2, sticky="ew")
         self.site_testing_checkbox.grid(
             row=2, column=0, columnspan=2, sticky="ew", padx=50
         )
@@ -572,7 +580,6 @@ class ProjectConfigView(CTkXYFrame):
 
         return label, path_entry, select_button
 
-    # TODO: When model files are changed, show a button that allows regeneration of the RMDs
     # TODO: When options on this view are changed, show warning
     def validate_project_info(self):
         """Verify that all required file paths have been selected."""
