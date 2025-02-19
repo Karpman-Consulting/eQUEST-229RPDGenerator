@@ -2020,6 +2020,8 @@ class RulesetModelDescription(Base):
             for key, value in {
                 "id": self.obj_id,
                 "type": self.type,
+                "weather": self.weather,
+                "calendar": self.calendar,
                 "measured_infiltration_pressure_difference": self.measured_infiltration_pressure_difference,
                 "is_measured_infiltration_based_on_test": self.is_measured_infiltration_based_on_test,
                 "altitude": self.altitude,
