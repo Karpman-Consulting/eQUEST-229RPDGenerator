@@ -147,7 +147,7 @@ class SpacesSubview(CTkXYFrame):
             command=lambda _: self.app_data.insert_to_rpd(
                 self.app_data.LightingSpaceMapping2019ASHRAE901TG37, space_name
             ),
-            state=READONLY,
+            # state=READONLY,
         )
         lighting_space_type_combo._entry.configure(justify=LEFT)
         lighting_space_type_combo.grid(
