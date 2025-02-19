@@ -13,6 +13,8 @@ class RulesetProjectDescription:
         self.rpd_data_structure = {}
 
         # data elements with children
+        self.weather = {}
+        self.calendar = {}
         self.ruleset_model_descriptions = []
         self.ground_temperature_schedule = None
         self.file_name = None
@@ -35,6 +37,8 @@ class RulesetProjectDescription:
         """
         self.rpd_data_structure = {
             "id": f"{self.project_name}",
+            "weather": self.weather,
+            "calendar": self.calendar,
             "ruleset_model_descriptions": self.ruleset_model_descriptions,
         }
 
