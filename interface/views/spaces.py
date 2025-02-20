@@ -29,7 +29,7 @@ class SpacesView(BaseView):
         self.directions_widget = ctk.CTkLabel(
             self.directions_frame,
             text="Assign the various space data parameters for each space.",
-            font=("Arial", 14),
+            font=LABEL_FONT,
         )
         self.subviews = {
             "Spaces": SpacesSubview(self.view_frame),
@@ -145,7 +145,7 @@ class SpacesSubview(CTkXYFrame):
             values=self.app_data.LightingSpaceDescriptions2019ASHRAE901TG37,
             variable=self.app_data.lighting_space_type_vars[space_name],
             command=lambda _: self.app_data.insert_to_rpd(
-                space_name, self.app_data.LightingSpaceMapping2019ASHRAE901TG37
+                self.app_data.LightingSpaceMapping2019ASHRAE901TG37, space_name
             ),
             state=READONLY,
         )

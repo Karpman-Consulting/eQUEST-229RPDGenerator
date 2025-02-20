@@ -1315,6 +1315,14 @@ class Zone(ChildNode):
         elif (zone_min_flow_ratio and zone_min_flow_ratio < 1) or (
             system_min_flow_ratio and system_min_flow_ratio < 1
         ):
+            # Override fan control of systems that have CONSTANT_VOLUME fans with a minimum flow ratio less than 1
+            if (
+                self.parent.fan_sys_fan_control
+                == FanSystemSupplyFanControlOptions.CONSTANT
+            ):
+                self.parent.fan_sys_fan_control = (
+                    FanSystemSupplyFanControlOptions.DISCHARGE_DAMPER
+                )
             return TerminalOptions.VARIABLE_AIR_VOLUME
         else:
             return TerminalOptions.CONSTANT_AIR_VOLUME

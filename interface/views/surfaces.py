@@ -33,6 +33,7 @@ class SurfacesView(BaseView):
             "Skylights": SkylightSurfaceView(self.subview_frame),
             "Doors": DoorSurfaceView(self.subview_frame),
         }
+        self.subview_buttons = {}
 
         # Directions frame holds all directions info and will get 'gridded' within the surfaces view grid
         self.directions_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -48,7 +49,6 @@ class SurfacesView(BaseView):
         )
 
         # Subview buttons
-        self.subview_buttons = {}
         self.border_line = ctk.CTkFrame(self, height=2, fg_color=BLACK)
         self.subview_button_frame = ctk.CTkFrame(
             self, corner_radius=0, fg_color="transparent"
@@ -304,8 +304,9 @@ class WindowSurfaceView(CTkXYFrame):
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
         name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
-        status_label = ctk.CTkLabel(self, text="Status", font=LABEL_FONT)
-        status_label.grid(row=0, column=1, padx=PAD20END, pady=5)
+        if not self.app_data.is_all_new_construction:
+            status_label = ctk.CTkLabel(self, text="Status", font=LABEL_FONT)
+            status_label.grid(row=0, column=1, padx=PAD20END, pady=5)
         classification_label = ctk.CTkLabel(
             self, text="Classification", font=LABEL_FONT
         )
@@ -316,23 +317,20 @@ class WindowSurfaceView(CTkXYFrame):
         operable_label.grid(row=0, column=4, padx=PAD20END, pady=5)
         open_sensor_label = ctk.CTkLabel(self, text="Open Sensor?", font=LABEL_FONT)
         open_sensor_label.grid(row=0, column=5, padx=PAD20END, pady=5)
-        manual_interior_shades_label = ctk.CTkLabel(
-            self, text="Manual Interior Shades?", font=LABEL_FONT
-        )
-        manual_interior_shades_label.grid(row=0, column=6, padx=PAD20END, pady=5)
 
     def add_row(self, i, window_name):
         surface_label = ctk.CTkLabel(self, text=f"{window_name}")
         surface_label.grid(
             row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
         )
-        status_combo = ctk.CTkComboBox(
-            self,
-            values=self.app_data.StatusDescriptions,
-            state=READONLY,
-        )
-        status_combo._entry.configure(justify=LEFT)
-        status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
+        if not self.app_data.is_all_new_construction:
+            status_combo = ctk.CTkComboBox(
+                self,
+                values=self.app_data.StatusDescriptions,
+                state=READONLY,
+            )
+            status_combo._entry.configure(justify=LEFT)
+            status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
         classification_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.SubsurfaceSubclassificationDescriptions2019ASHRAE901,
@@ -351,10 +349,6 @@ class WindowSurfaceView(CTkXYFrame):
         operable_checkbox.grid(row=(i + 1), column=4, padx=PAD20END, pady=PAD20END)
         open_sensor_checkbox = ctk.CTkCheckBox(self, text="", width=30)
         open_sensor_checkbox.grid(row=(i + 1), column=5, padx=PAD20END, pady=PAD20END)
-        manual_interior_shades_checkbox = ctk.CTkCheckBox(self, text="", width=30)
-        manual_interior_shades_checkbox.grid(
-            row=(i + 1), column=6, padx=PAD20END, pady=PAD20END
-        )
 
 
 class SkylightSurfaceView(CTkXYFrame):
@@ -382,8 +376,9 @@ class SkylightSurfaceView(CTkXYFrame):
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
         name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
-        status_label = ctk.CTkLabel(self, text="Status", font=LABEL_FONT)
-        status_label.grid(row=0, column=1, padx=PAD20END, pady=5)
+        if not self.app_data.is_all_new_construction:
+            status_label = ctk.CTkLabel(self, text="Status", font=LABEL_FONT)
+            status_label.grid(row=0, column=1, padx=PAD20END, pady=5)
         classification_label = ctk.CTkLabel(
             self, text="Classification", font=LABEL_FONT
         )
@@ -394,23 +389,20 @@ class SkylightSurfaceView(CTkXYFrame):
         operable_label.grid(row=0, column=4, padx=PAD20END, pady=5)
         open_sensor_label = ctk.CTkLabel(self, text="Open Sensor?", font=LABEL_FONT)
         open_sensor_label.grid(row=0, column=5, padx=PAD20END, pady=5)
-        manual_interior_shades_label = ctk.CTkLabel(
-            self, text="Manual Interior Shades?", font=LABEL_FONT
-        )
-        manual_interior_shades_label.grid(row=0, column=6, padx=PAD20END, pady=5)
 
     def add_row(self, i, skylight_name):
         surface_label = ctk.CTkLabel(self, text=f"{skylight_name}")
         surface_label.grid(
             row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
         )
-        status_combo = ctk.CTkComboBox(
-            self,
-            values=self.app_data.StatusDescriptions,
-            state=READONLY,
-        )
-        status_combo._entry.configure(justify=LEFT)
-        status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
+        if not self.app_data.is_all_new_construction:
+            status_combo = ctk.CTkComboBox(
+                self,
+                values=self.app_data.StatusDescriptions,
+                state=READONLY,
+            )
+            status_combo._entry.configure(justify=LEFT)
+            status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
         classification_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.SubsurfaceSubclassificationDescriptions2019ASHRAE901,
@@ -429,10 +421,6 @@ class SkylightSurfaceView(CTkXYFrame):
         operable_checkbox.grid(row=(i + 1), column=4, padx=PAD20END, pady=PAD20END)
         open_sensor_checkbox = ctk.CTkCheckBox(self, text="", width=30)
         open_sensor_checkbox.grid(row=(i + 1), column=5, padx=PAD20END, pady=PAD20END)
-        manual_interior_shades_checkbox = ctk.CTkCheckBox(self, text="", width=30)
-        manual_interior_shades_checkbox.grid(
-            row=(i + 1), column=6, padx=PAD20END, pady=PAD20END
-        )
 
 
 class DoorSurfaceView(CTkXYFrame):

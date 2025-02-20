@@ -5,7 +5,7 @@ License: MIT
 """
 
 import customtkinter
-from tkinter import Canvas
+from tkinter import Canvas, Event
 
 
 class CTkXYFrame(customtkinter.CTkFrame):
@@ -138,15 +138,13 @@ class CTkXYFrame(customtkinter.CTkFrame):
             self.hsb.grid(row=1, column=0, sticky="nwe", padx=(5, 0))
         self.hsb.set(x, y)
 
-    def on_frame_configure(self, canvas):
-        canvas.configure(scrollregion=canvas.bbox("all"))
+    def _on_mousewheel(self, event: Event | int) -> None:
+        delta: int = event.delta if isinstance(event, Event) else event
+        self.xy_canvas.yview_scroll(int(-1 * (delta / 120)), "units")
 
-    def _on_mousewheel(self, event):
-        # On Windows and Mac, event.delta is typically a multiple of 120.
-        self.xy_canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
-
-    def _on_mousewheel_shift(self, event):
-        self.xy_canvas.xview_scroll(int(-1 * (event.delta / 120)), "units")
+    def _on_mousewheel_shift(self, event: Event | int) -> None:
+        delta: int = event.delta if isinstance(event, Event) else event
+        self.xy_canvas.xview_scroll(int(-1 * (delta / 120)), "units")
 
     def pack(self, **kwargs):
         self.parent_frame.pack(**kwargs)
@@ -192,3 +190,7 @@ class CTkXYFrame(customtkinter.CTkFrame):
         if "height" in kwargs:
             self.xy_canvas.config(height=kwargs["height"])
         self.parent_frame.configure(**kwargs)
+
+    @staticmethod
+    def on_frame_configure(canvas):
+        canvas.configure(scrollregion=canvas.bbox("all"))

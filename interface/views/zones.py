@@ -14,6 +14,7 @@ TOP_HORZ = "new"
 E = "e"
 W = "w"
 PAD20END = (0, 20)
+PAD10SYM = 10
 FLOOR_COMBOBOX_COLOR = "#5B9BD5"
 FLOOR_COMBOBOX_BTN_COLOR = "#3A7EBF"
 LIGHTBLUE = "lightblue"
@@ -180,15 +181,15 @@ class ZonesSubview(CTkXYFrame):
 
         # Add empty labels in `main_row_frame` for spacing
         ctk.CTkLabel(floor_row_frame, text="").grid(
-            row=0, column=3, padx=PAD20END, pady=10
+            row=0, column=3, padx=PAD20END, pady=PAD10SYM
         )
         ctk.CTkLabel(floor_row_frame, text="").grid(
-            row=0, column=4, padx=PAD20END, pady=10
+            row=0, column=4, padx=PAD20END, pady=PAD10SYM
         )
 
     def add_row(self, i, zone_name):
         floor_label = ctk.CTkLabel(self, text=f"{zone_name}")
-        floor_label.grid(row=(i + 1), column=1, padx=20, pady=PAD20END, sticky=W)
+        floor_label.grid(row=(i + 1), column=1, padx=20, pady=PAD10SYM, sticky=W)
         building_area_combo = ctk.CTkComboBox(
             self,
             # TODO: Placeholder for Building Areas tab data
@@ -197,17 +198,17 @@ class ZonesSubview(CTkXYFrame):
         )
         building_area_combo.set("Building Area 1")
         building_area_combo._entry.configure(justify=LEFT)
-        building_area_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=PAD20END)
+        building_area_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=PAD10SYM)
 
         self.zone_comboboxes[zone_name] = building_area_combo
         # TODO: Apply numerical entry validation
         aggregated_zone_qty_spinbox = cw.IntSpinbox(self, width=125, default_value=1)
         aggregated_zone_qty_spinbox.grid(
-            row=(i + 1), column=3, padx=PAD20END, pady=PAD20END, sticky=FILL
+            row=(i + 1), column=3, padx=PAD20END, pady=PAD10SYM, sticky=FILL
         )
         measured_infiltration_rate_checkbox = ctk.CTkCheckBox(self, text="", width=30)
         measured_infiltration_rate_checkbox.grid(
-            row=(i + 1), column=4, padx=PAD20END, pady=PAD20END
+            row=(i + 1), column=4, padx=PAD20END, pady=PAD10SYM
         )
         image = ctk.CTkImage(
             light_image=Image.open("interface/static/white_plus.png"),
@@ -223,7 +224,7 @@ class ZonesSubview(CTkXYFrame):
             corner_radius=10,
             command=self.open_child_space_window,
         )
-        add_child_space_button.grid(row=(i + 1), column=5, padx=PAD20END, pady=PAD20END)
+        add_child_space_button.grid(row=(i + 1), column=5, padx=PAD20END, pady=PAD10SYM)
 
         self.zone_widgets[zone_name] = [
             floor_label,
