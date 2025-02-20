@@ -674,7 +674,7 @@ class Chiller(BaseNode):
                 curve_funcs.calculate_eff_performance_curve_results(
                     self.rated_leaving_evaporator_temperature,
                     self.rated_entering_condenser_temperature,
-                    performance_curve_data["performance_curves"],
+                    performance_curve_data,
                     user_defined_rated_plr,
                 )
             )
@@ -712,7 +712,7 @@ class Chiller(BaseNode):
                 curve_funcs.calculate_eff_performance_curve_results(
                     self.rated_leaving_evaporator_temperature,
                     self.rated_entering_condenser_temperature,
-                    performance_curve_data["performance_curves"],
+                    performance_curve_data,
                     user_defined_rated_plr,
                 )
             )
@@ -835,7 +835,7 @@ class Chiller(BaseNode):
             curve_funcs.calculate_eff_performance_curve_results(
                 user_defined_leaving_evaporator_temperature,
                 user_defined_entering_condenser_temperature,
-                performance_curve_data["performance_curves"],
+                performance_curve_data,
                 user_defined_rated_plr,
             )
         )

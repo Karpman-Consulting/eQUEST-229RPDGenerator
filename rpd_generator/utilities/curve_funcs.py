@@ -220,7 +220,7 @@ def calculate_eff_performance_curve_results(
             The evaporator leaving temperature in degrees Fahrenheit.
         condenser_entering_temp (int):
             The condenser entering temperature in degrees Fahrenheit.
-        curves (dict):
+        performance_curve_data (dict):
             A dictionary containing curve objects, including coefficients
             and output range values.
         part_load_ratio (float):
@@ -247,46 +247,33 @@ def calculate_eff_performance_curve_results(
         "errors": [],
     }
 
-    coeffs = {}
-    min_outputs = {}
-    max_outputs = {}
-
-    eff_f_plr_curve_type = curves["cap_f_t"].get_inp(BDL_CurveFitKeywords.TYPE)
-
-    for key, obj in curves.items():
-        coeffs[f"{key}_coeffs"] = list(
-            map(float, obj.get_inp(BDL_CurveFitKeywords.COEF))
-        )
-        min_outputs[f"{key}_min_output"] = float(
-            obj.get_inp(BDL_CurveFitKeywords.OUTPUT_MIN)
-        )
-        max_outputs[f"{key}_max_output"] = float(
-            obj.get_inp(BDL_CurveFitKeywords.OUTPUT_MAX)
-        )
+    eff_f_plr_curve_type = performance_curve_data["performance_curves"][
+        "cap_f_t"
+    ].get_inp(BDL_CurveFitKeywords.TYPE)
 
     results["eff_f_t_result"] = calculate_bi_quadratic(
-        coeffs["eff_f_t_coeffs"],
+        performance_curve_data["coefficients"]["eff_f_t_coeffs"],
         evap_leaving_temp,
         condenser_entering_temp,
-        min_outputs["eff_f_t_min_output"],
-        max_outputs["eff_f_t_max_output"],
+        performance_curve_data["min_outputs"]["eff_f_t_min_output"],
+        performance_curve_data["max_outputs"]["eff_f_t_max_output"],
     )
 
     if eff_f_plr_curve_type in CURVE_FUNCTION_MAP:
         results["eff_f_plr_result"] = CURVE_FUNCTION_MAP[eff_f_plr_curve_type](
-            coeffs["eff_f_plr_coeffs"],
+            performance_curve_data["coefficients"]["eff_f_plr_coeffs"],
             part_load_ratio,
-            min_outputs["eff_f_plr_min_output"],
-            max_outputs["eff_f_plr_max_output"],
+            performance_curve_data["min_outputs"]["eff_f_plr_min_output"],
+            performance_curve_data["max_outputs"]["eff_f_plr_max_output"],
         )
     else:
         chw_delta_t = condenser_entering_temp - evap_leaving_temp
         results["eff_f_plr_result"] = calculate_bi_quadratic(
-            coeffs["eff_f_plr_coeffs"],
+            performance_curve_data["coefficients"]["eff_f_plr_coeffs"],
             part_load_ratio,
             chw_delta_t,
-            min_outputs["eff_f_plr_min_output"],
-            max_outputs["eff_f_plr_max_output"],
+            performance_curve_data["min_outputs"]["eff_f_plr_min_output"],
+            performance_curve_data["max_outputs"]["eff_f_plr_max_output"],
         )
 
     return results
