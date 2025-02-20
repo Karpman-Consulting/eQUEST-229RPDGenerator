@@ -5,7 +5,7 @@ License: MIT
 """
 
 import customtkinter
-from tkinter import Canvas
+from tkinter import Canvas, Event
 
 
 class CTkXYFrame(customtkinter.CTkFrame):
@@ -19,9 +19,11 @@ class CTkXYFrame(customtkinter.CTkFrame):
         scrollbar_button_hover_color=None,
         **kwargs
     ):
-
+        # Create a parent frame for the canvas and scrollbars.
         self.parent_frame = customtkinter.CTkFrame(master=master, **kwargs)
         self.bg_color = self.parent_frame.cget("fg_color")
+
+        # Create the canvas that will host the scrollable frame.
         self.xy_canvas = Canvas(
             self.parent_frame,
             width=width,
@@ -33,6 +35,7 @@ class CTkXYFrame(customtkinter.CTkFrame):
         self.parent_frame.rowconfigure(0, weight=1)
         self.parent_frame.columnconfigure(0, weight=1)
 
+        # Initialize the CTkXYFrame as a child of the canvas.
         customtkinter.CTkFrame.__init__(
             self,
             master=self.xy_canvas,
@@ -41,6 +44,7 @@ class CTkXYFrame(customtkinter.CTkFrame):
         )
         self.xy_canvas.create_window((0, 0), window=self, anchor="nw")
 
+        # Create vertical and horizontal scrollbars.
         self.vsb = customtkinter.CTkScrollbar(
             self.parent_frame,
             orientation="vertical",
@@ -58,28 +62,57 @@ class CTkXYFrame(customtkinter.CTkFrame):
             button_hover_color=scrollbar_button_hover_color,
         )
 
+        # Configure the canvas scrolling commands.
         self.xy_canvas.configure(
             yscrollcommand=lambda x, y: self.dynamic_scrollbar_vsb(x, y),
             xscrollcommand=lambda x, y: self.dynamic_scrollbar_hsb(x, y),
         )
         self.xy_canvas.grid(row=0, column=0, sticky="nsew", padx=(7, 0), pady=(7, 0))
 
+        # Bind the configure event so the scrollregion is updated when needed.
         self.bind(
             "<Configure>",
             lambda event, canvas=self.xy_canvas: self.on_frame_configure(canvas),
         )
-        self.xy_canvas.bind_all("<MouseWheel>", lambda e: self._on_mousewheel(e.delta))
-        self.xy_canvas.bind_all(
-            "<Shift-MouseWheel>", lambda e: self._on_mousewheel_shift(e.delta)
+
+        # Bind mouse wheel events on the scrollable frame (self).
+        self.bind("<MouseWheel>", self._on_mousewheel, add="+")
+        self.bind("<Shift-MouseWheel>", self._on_mousewheel_shift, add="+")
+        # For Linux (Button-4/5 events)
+        self.bind("<Button-4>", lambda e: self._on_mousewheel(120), add="+")
+        self.bind("<Button-5>", lambda e: self._on_mousewheel(-120), add="+")
+        self.bind("<Shift-Button-4>", lambda e: self._on_mousewheel_shift(120), add="+")
+        self.bind(
+            "<Shift-Button-5>", lambda e: self._on_mousewheel_shift(-120), add="+"
         )
-        self.xy_canvas.bind_all("<Button-4>", lambda e: self._on_mousewheel(120))
-        self.xy_canvas.bind_all("<Button-5>", lambda e: self._on_mousewheel(-120))
-        self.xy_canvas.bind_all(
-            "<Shift-Button-4>", lambda e: self._on_mousewheel_shift(120)
+
+        # Bind mouse wheel events on the canvas for empty space.
+        self.xy_canvas.bind("<MouseWheel>", self._on_mousewheel, add="+")
+        self.xy_canvas.bind("<Shift-MouseWheel>", self._on_mousewheel_shift, add="+")
+        self.xy_canvas.bind("<Button-4>", lambda e: self._on_mousewheel(120), add="+")
+        self.xy_canvas.bind("<Button-5>", lambda e: self._on_mousewheel(-120), add="+")
+        self.xy_canvas.bind(
+            "<Shift-Button-4>", lambda e: self._on_mousewheel_shift(120), add="+"
         )
-        self.xy_canvas.bind_all(
-            "<Shift-Button-5>", lambda e: self._on_mousewheel_shift(-120)
+        self.xy_canvas.bind(
+            "<Shift-Button-5>", lambda e: self._on_mousewheel_shift(-120), add="+"
         )
+
+        # Update bindtags for any child widgets so their events bubble up.
+        self._bind_mousewheel_to_children(self)
+
+    def _bind_mousewheel_to_children(self, widget):
+        """
+        Recursively add 'self' as a bindtag for all children.
+        This ensures that if a child widget receives a mousewheel event,
+        it will bubble up and trigger the _on_mousewheel/_on_mousewheel_shift handler.
+        """
+        for child in widget.winfo_children():
+            tags = list(child.bindtags())
+            if self not in tags:
+                tags.insert(0, self)
+                child.bindtags(tuple(tags))
+            self._bind_mousewheel_to_children(child)
 
     def destroy(self):
         customtkinter.CTkFrame.destroy(self)
@@ -105,14 +138,13 @@ class CTkXYFrame(customtkinter.CTkFrame):
             self.hsb.grid(row=1, column=0, sticky="nwe", padx=(5, 0))
         self.hsb.set(x, y)
 
-    def on_frame_configure(self, canvas):
-        canvas.configure(scrollregion=canvas.bbox("all"))
+    def _on_mousewheel(self, event: Event | int) -> None:
+        delta: int = event.delta if isinstance(event, Event) else event
+        self.xy_canvas.yview_scroll(int(-1 * (delta / 120)), "units")
 
-    def _on_mousewheel(self, event):
-        self.xy_canvas.yview_scroll(int(-1 * (event / 120)), "units")
-
-    def _on_mousewheel_shift(self, event):
-        self.xy_canvas.xview_scroll(int(-1 * (event / 120)), "units")
+    def _on_mousewheel_shift(self, event: Event | int) -> None:
+        delta: int = event.delta if isinstance(event, Event) else event
+        self.xy_canvas.xview_scroll(int(-1 * (delta / 120)), "units")
 
     def pack(self, **kwargs):
         self.parent_frame.pack(**kwargs)
@@ -136,7 +168,7 @@ class CTkXYFrame(customtkinter.CTkFrame):
         self.parent_frame.grid_remove()
 
     def grid_propagate(self, **kwargs):
-        self.parent_frame.grid_propagate()
+        self.parent_frame.grid_propagate(**kwargs)
 
     def grid_info(self, **kwargs):
         return self.parent_frame.grid_info()
@@ -151,9 +183,14 @@ class CTkXYFrame(customtkinter.CTkFrame):
         if "fg_color" in kwargs:
             self.bg_color = kwargs["fg_color"]
             self.xy_canvas.config(bg=self.bg_color)
-            self.configure(fg_color=self.bg_color)
+            # Update both the CTkXYFrame and its parent.
+            super().configure(fg_color=self.bg_color)
         if "width" in kwargs:
-            self.xy_canvas.config(bg=kwargs["width"])
+            self.xy_canvas.config(width=kwargs["width"])
         if "height" in kwargs:
-            self.xy_canvas.config(bg=kwargs["height"])
+            self.xy_canvas.config(height=kwargs["height"])
         self.parent_frame.configure(**kwargs)
+
+    @staticmethod
+    def on_frame_configure(canvas):
+        canvas.configure(scrollregion=canvas.bbox("all"))

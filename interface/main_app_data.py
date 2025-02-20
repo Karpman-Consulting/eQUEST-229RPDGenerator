@@ -1,144 +1,56 @@
 import atexit
 import tempfile
-
 import customtkinter as ctk
 from pathlib import Path
 
 from rpd_generator import main as rpd_generator
-from rpd_generator.artifacts.ruleset_project_description import (
-    RulesetProjectDescription,
-)
 from rpd_generator.doe2_file_readers.model_input_reader import ModelInputReader
 from rpd_generator.config import Config
 from rpd_generator.schema.schema_enums import SchemaEnums
 
 
 class MainAppData:
-    SubsurfaceClassificationOptions = SchemaEnums.schema_enums[
-        "SubsurfaceClassificationOptions"
-    ]
-    CommonConstructionClassificationDescriptions = SchemaEnums.schema_descriptions[
-        "CommonConstructionClassificationOptions"
-    ]
-    CommonRulesetModelDescriptions = SchemaEnums.schema_descriptions[
-        "CommonRulesetModelOptions"
-    ]
-    ComponentLocationDescriptions = SchemaEnums.schema_descriptions[
-        "ComponentLocationOptions"
-    ]
-    CoolingDesignDayDescriptions = SchemaEnums.schema_descriptions[
-        "CoolingDesignDayOptions"
-    ]
-    DehumidificationDescriptions = SchemaEnums.schema_descriptions[
-        "DehumidificationOptions"
-    ]
-    DrawPatternDescriptions = SchemaEnums.schema_descriptions["DrawPatternOptions"]
-    HeatRejectionFanDescriptions = SchemaEnums.schema_descriptions[
-        "HeatRejectionFanOptions"
-    ]
-    HeatingDesignDayDescriptions = SchemaEnums.schema_descriptions[
-        "HeatingDesignDayOptions"
-    ]
-    MiscellaneousEquipmentDescriptions = SchemaEnums.schema_descriptions[
-        "MiscellaneousEquipmentOptions"
-    ]
-    SpaceFunctionDescriptions = SchemaEnums.schema_descriptions["SpaceFunctionOptions"]
-    StatusDescriptions = SchemaEnums.schema_descriptions["StatusOptions"]
-    WeatherFileDataSourceDescriptions = SchemaEnums.schema_descriptions[
-        "WeatherFileDataSourceOptions"
-    ]
-    ClimateZoneDescriptions2019ASHRAE901 = SchemaEnums.schema_descriptions[
-        "ClimateZoneOptions2019ASHRAE901"
-    ]
-    CompliancePathDescriptions2019ASHRAE901 = SchemaEnums.schema_descriptions[
-        "CompliancePathOptions2019ASHRAE901"
-    ]
-    ConstructionClassificationDescriptions2019ASHRAE901 = (
-        SchemaEnums.schema_descriptions[
-            "ConstructionClassificationOptions2019ASHRAE901"
-        ]
-    )
-    EnvelopeSpaceDescriptions2019ASHRAE901 = SchemaEnums.schema_descriptions[
-        "EnvelopeSpaceOptions2019ASHRAE901"
-    ]
-    ExteriorLightingZoneDescriptions2019ASHRAE901 = SchemaEnums.schema_descriptions[
-        "ExteriorLightingZoneOptions2019ASHRAE901"
-    ]
-    HeatingVentilatingAirConditioningBuildingAreaDescriptions2019ASHRAE901 = (
-        SchemaEnums.schema_descriptions[
-            "HeatingVentilatingAirConditioningBuildingAreaOptions2019ASHRAE901"
-        ]
-    )
-    LightingBuildingAreaDescriptions2019ASHRAE901T951TG38 = (
-        SchemaEnums.schema_descriptions[
-            "LightingBuildingAreaOptions2019ASHRAE901T951TG38"
-        ]
-    )
-    LightingPurposeDescriptions2019ASHRAE901 = SchemaEnums.schema_descriptions[
-        "LightingPurposeOptions2019ASHRAE901"
-    ]
-    LightingSpaceDescriptions2019ASHRAE901TG37 = SchemaEnums.schema_descriptions[
-        "LightingSpaceOptions2019ASHRAE901TG37"
-    ]
-    LightingOccupancyControlOptions = SchemaEnums.schema_descriptions[
-        "LightingOccupancyControlOptions"
-    ]
-    LightingDaylightingControlOptions = SchemaEnums.schema_descriptions[
-        "LightingDaylightingControlOptions"
-    ]
-    OutputSchemaDescriptions2019ASHRAE901 = SchemaEnums.schema_descriptions[
-        "OutputSchemaOptions2019ASHRAE901"
-    ]
-    RulesetModelDescriptions2019ASHRAE901 = SchemaEnums.schema_descriptions[
-        "RulesetModelOptions2019ASHRAE901"
-    ]
-    ServiceWaterHeatingSpaceDescriptions2019ASHRAE901 = SchemaEnums.schema_descriptions[
-        "ServiceWaterHeatingSpaceOptions2019ASHRAE901"
-    ]
-    SubsurfaceFrameDescriptions2019ASHRAE901 = SchemaEnums.schema_descriptions[
-        "SubsurfaceFrameOptions2019ASHRAE901"
-    ]
-    SubsurfaceSubclassificationDescriptions2019ASHRAE901 = (
-        SchemaEnums.schema_descriptions[
-            "SubsurfaceSubclassificationOptions2019ASHRAE901"
-        ]
-    )
-    VentilationSpaceDescriptions2019ASHRAE901 = SchemaEnums.schema_descriptions[
-        "VentilationSpaceOptions2019ASHRAE901"
-    ]
-    VerticalFenestrationBuildingAreaDescriptions2019ASHRAE901 = (
-        SchemaEnums.schema_descriptions[
-            "VerticalFenestrationBuildingAreaOptions2019ASHRAE901"
-        ]
-    )
 
     def __init__(self):
+        self.set_enumeration_data()
         self.processing_dir = tempfile.TemporaryDirectory()
         atexit.register(self.processing_dir.cleanup)
 
         self.bdl_reader = ModelInputReader()
-        RulesetProjectDescription.bdl_command_dict = self.bdl_reader.bdl_command_dict
-        self.rpd = RulesetProjectDescription()
+        self.rpd = None
+        # TODO: Set the active RMD based on the Proposed/Baseline toggle
+        self.active_rmd = None
 
         # Config data
         self.installation_path = ctk.StringVar()
-        self.user_lib_path = None
+        self.user_lib_path = ctk.StringVar()
         self.files_verified = False
 
         # Test data
         self.test_inp_path = ctk.StringVar()
 
         # Project data
+        self.project_name = ctk.StringVar()
         self.selected_ruleset = ctk.StringVar()
         self.selected_ruleset.set("ASHRAE 90.1-2019")
+        self.has_rotation_exception = ctk.BooleanVar()
+        self.is_all_new_construction = ctk.BooleanVar()
         self.ruleset_model_file_paths = {}
+        self.output_directory = ctk.StringVar()
+        self.climate_zone = ctk.StringVar()
+        self.lighting_zone = ctk.StringVar()
+        self.heating_design_day = ctk.StringVar()
+        self.cooling_design_day = ctk.StringVar()
+        self.has_measured_infiltration = ctk.BooleanVar()
+        self.is_based_on_site_testing = ctk.BooleanVar()
+        self.measured_pressure_difference = ctk.StringVar()
+        self.lighting_space_type_vars = {}
 
         self.rmds = []
         self.warnings = []
         self.errors = []
 
         self.installation_path.set(Config.EQUEST_INSTALL_PATH)
-        self.configuration_data = {}
 
     @staticmethod
     def verify_associated_files(file_path: str) -> bool:
@@ -170,30 +82,129 @@ class MainAppData:
 
         return True
 
-    def generate_rmds(self):
+    def generate_rmd_data(self, rpd):
         for ruleset_model_type, file_path in self.ruleset_model_file_paths.items():
+            rmd_type_enum = (
+                ruleset_model_type.upper() + "_0"
+                if ruleset_model_type == "Baseline"
+                else ruleset_model_type.upper().replace(" ", "_")
+            )
             if file_path:
-                rmd = rpd_generator.generate_rmd_from_inp(
-                    file_path, self.processing_dir
+                rmd = rpd_generator.generate_rmd_structure_from_inp(
+                    rpd, file_path, self.processing_dir
                 )
-                rmd.bdl_obj_instances["ASHRAE 229"] = self.rpd
 
-                rmd.populate_rmd_data()
-                rmd.type = ruleset_model_type
+                rmd.populate_all_child_data_elements()
+                rmd.type = rmd_type_enum
                 self.rmds.append(rmd)
 
     def call_write_rpd_json_from_inp(self):
         rpd_generator.write_rpd_json_from_inp(str(self.test_inp_path.get()))
 
-    def is_all_new_construction(self):
-        is_all_new_construction = self.configuration_data.get("new_construction")
-        if is_all_new_construction:
-            return True
-        return False
+    def call_write_rpd_json_from_rmds(self):
+        rpd_generator.write_rpd_json_from_rpd(
+            self.rpd,
+            self.rmds,
+            str(Path(self.output_directory.get()) / f"{self.project_name.get()}.json"),
+        )
+
+    def set_enumeration_data(self):
+        enumerators = [
+            "SubsurfaceClassificationOptions",
+            "CommonConstructionClassificationOptions",
+            "CommonRulesetModelOptions",
+            "ComponentLocationOptions",
+            "CoolingDesignDayOptions",
+            "DehumidificationOptions",
+            "DrawPatternOptions",
+            "HeatRejectionFanOptions",
+            "HeatingDesignDayOptions",
+            "MiscellaneousEquipmentOptions",
+            "SpaceFunctionOptions",
+            "StatusOptions",
+            "WeatherFileDataSourceOptions",
+            "ClimateZoneOptions2019ASHRAE901",
+            "CompliancePathOptions2019ASHRAE901",
+            "ConstructionClassificationOptions2019ASHRAE901",
+            "EnvelopeSpaceOptions2019ASHRAE901",
+            "ExteriorLightingZoneOptions2019ASHRAE901",
+            "HeatingVentilatingAirConditioningBuildingAreaOptions2019ASHRAE901",
+            "LightingBuildingAreaOptions2019ASHRAE901T951TG38",
+            "LightingPurposeOptions2019ASHRAE901",
+            "LightingSpaceOptions2019ASHRAE901TG37",
+            "LightingOccupancyControlOptions",
+            "LightingDaylightingControlOptions",
+            "OutputSchemaOptions2019ASHRAE901",
+            "RulesetModelOptions2019ASHRAE901",
+            "ServiceWaterHeatingSpaceOptions2019ASHRAE901",
+            "SubsurfaceFrameOptions2019ASHRAE901",
+            "SubsurfaceSubclassificationOptions2019ASHRAE901",
+            "VentilationSpaceOptions2019ASHRAE901",
+            "VerticalFenestrationBuildingAreaOptions2019ASHRAE901",
+        ]
+        for enumerator in enumerators:
+            schema_enums = SchemaEnums.schema_enums[enumerator]
+            schema_descriptions = SchemaEnums.schema_descriptions[enumerator]
+            setattr(self, enumerator, schema_enums.get_list())
+            setattr(
+                self,
+                f"{enumerator.replace('Options', 'Descriptions')}",
+                schema_descriptions.get_list(),
+            )
+            setattr(
+                self,
+                f"{enumerator.replace('Options', 'Mapping')}",
+                (
+                    enumerator,
+                    dict(zip(schema_descriptions.get_list(), schema_enums.get_list())),
+                ),
+            )
+
+    def insert_to_rpd(self, mapping, obj_u_name: str = None):
+        # TODO: Make sure to get the object from the correct RMD
+        obj = self.rmds[0].get_obj(obj_u_name)
+        enumeration = mapping[0]
+        enumerations_map = mapping[1]
+        # TODO: Improve mapping to object attributes (data elements) from enumeration name
+        if enumeration == "LightingSpaceOptions2019ASHRAE901TG37":
+            obj.lighting_space_type = enumerations_map.get(
+                self.lighting_space_type_vars[obj_u_name].get()
+            )
+        elif enumeration == "ClimateZoneOptions2019ASHRAE901":
+            for rmd in self.rmds:
+                rmd.weather.setdefault(
+                    "climate_zone", enumerations_map.get(self.climate_zone.get())
+                )
+        elif enumeration == "ExteriorLightingZoneOptions2019ASHRAE901":
+            for rmd in self.rmds:
+                rmd.site_zone_type = enumerations_map.get(self.lighting_zone.get())
+        elif enumeration == "HeatingDesignDayOptions":
+            for rmd in self.rmds:
+                rmd.weather.setdefault(
+                    "heating_design_day_type",
+                    enumerations_map.get(self.heating_design_day.get()),
+                )
+        elif enumeration == "CoolingDesignDayOptions":
+            for rmd in self.rmds:
+                rmd.weather.setdefault(
+                    "cooling_design_day_type",
+                    enumerations_map.get(self.cooling_design_day.get()),
+                )
 
     @staticmethod
-    def validate_entry(arg):
-        if str.isdigit(arg) or arg == "":
+    def validate_int_entry(entry):
+        if str.isdigit(entry) or entry == "":
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def validate_double_entry(entry):
+        if (
+            all(char in "0123456789.-" for char in entry)
+            and "-" not in entry[1:]
+            and entry.count(".") <= 1
+        ) or entry == "":
             return True
         else:
             return False

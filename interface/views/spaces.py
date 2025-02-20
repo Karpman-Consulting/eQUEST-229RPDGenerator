@@ -4,10 +4,13 @@ from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
 
 
-STANDARD_FONT = ("Arial", 16, "bold")
+LABEL_FONT = ("Arial", 14, "bold")
 READONLY = "readonly"
 LEFT = "left"
+E = "e"
 W = "w"
+FILL = "nsew"
+PAD20END = (0, 20)
 
 
 class SpacesView(BaseView):
@@ -16,18 +19,21 @@ class SpacesView(BaseView):
 
         self.view_frame = ctk.CTkFrame(self)
 
-        """Directions frame holds all directions info and will get 'gridded' within the surfaces view grid"""
+        # Directions frame holds all directions info and will get 'gridded' within the surfaces view grid
         self.directions_frame = ctk.CTkFrame(self, fg_color="transparent")
         self.directions_label = ctk.CTkLabel(
             self.directions_frame,
             text="Directions: ",
-            font=STANDARD_FONT,
+            font=LABEL_FONT,
         )
         self.directions_widget = ctk.CTkLabel(
             self.directions_frame,
-            text=" Directions: Assign the various space data parameters for each Space.",
-            font=("Arial", 14),
+            text="Assign the various space data parameters for each space.",
+            font=LABEL_FONT,
         )
+        self.subviews = {
+            "Spaces": SpacesSubview(self.view_frame),
+        }
 
     def __repr__(self):
         return "SpacesView"
@@ -36,23 +42,23 @@ class SpacesView(BaseView):
         self.toggle_active_button("Spaces")
         self.grid_propagate(False)
 
-        """2 rows in the main surface view structure. View frame (row 2, index 1) has a weight to make it fill up
-        the empty space in the window"""
+        # 2 rows in the main surface view structure.
+        # View frame (row 2, index 1) has a weight to make it fill up the empty space in the window
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
         # Directions
-        self.directions_frame.grid(row=0, column=0, sticky="nsew", padx=50, pady=20)
+        self.directions_frame.grid(row=0, column=0, sticky=FILL, padx=50, pady=20)
         self.directions_label.grid(row=0, column=0)
         self.directions_widget.grid(row=0, column=1)
 
         # Subview frame
-        self.view_frame.grid(row=1, column=0, sticky="nsew", padx=20, pady=(0, 20))
+        self.view_frame.grid(row=1, column=0, sticky=FILL, padx=20, pady=PAD20END)
         self.view_frame.grid_rowconfigure(0, weight=1)
         self.view_frame.grid_columnconfigure(0, weight=1)
 
-        spaces_view = SpacesSubview(self.view_frame)
-        spaces_view.grid(row=0, column=0, sticky="nsew")
+        spaces_view = self.subviews["Spaces"]
+        spaces_view.grid(row=0, column=0, sticky=FILL)
         spaces_view.open_view()
 
 
@@ -60,7 +66,7 @@ class SpacesSubview(CTkXYFrame):
     def __init__(self, view_frame):
         super().__init__(view_frame)
         self.spaces_view = view_frame.master
-        self.main_app_data = self.spaces_view.window.main_app.data
+        self.app_data = self.spaces_view.app_data
         self.is_view_populated = False
 
     def __repr__(self):
@@ -72,122 +78,129 @@ class SpacesSubview(CTkXYFrame):
     def populate_subview(self):
         self.add_column_headers()
 
-        for i, space_name in enumerate(self.main_app_data.rmds[0].space_map.keys()):
+        for i, space_name in enumerate(self.app_data.rmds[0].space_map.keys()):
+            # Add data vars for each space
+            self.app_data.lighting_space_type_vars[space_name] = ctk.StringVar()
+            # Add widget row for each space
             self.add_row(i, space_name)
 
         self.is_view_populated = True
 
     def add_column_headers(self):
-        name_label = ctk.CTkLabel(self, text="Name", font=STANDARD_FONT)
-        name_label.grid(row=0, column=0, padx=(0, 20), pady=5)
-        if not self.main_app_data.is_all_new_construction():
-            status_label = ctk.CTkLabel(self, text="Status", font=STANDARD_FONT)
-            status_label.grid(row=0, column=1, padx=(0, 20), pady=5)
+        name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
+        name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
+        if not self.app_data.is_all_new_construction:
+            status_label = ctk.CTkLabel(self, text="Status", font=LABEL_FONT)
+            status_label.grid(row=0, column=1, padx=PAD20END, pady=5)
         lighting_space_type_label = ctk.CTkLabel(
-            self, text="Lighting Space Type", font=STANDARD_FONT
+            self, text="Lighting Space Type", font=LABEL_FONT
         )
-        lighting_space_type_label.grid(row=0, column=2, padx=(0, 20), pady=5)
+        lighting_space_type_label.grid(row=0, column=2, padx=PAD20END, pady=5)
         envelope_space_type_label = ctk.CTkLabel(
-            self, text="Envelope Space Type", font=STANDARD_FONT
+            self, text="Envelope Space Type", font=LABEL_FONT
         )
-        envelope_space_type_label.grid(row=0, column=3, padx=(0, 20), pady=5)
+        envelope_space_type_label.grid(row=0, column=3, padx=PAD20END, pady=5)
         ventilation_space_type_label = ctk.CTkLabel(
-            self, text="Ventilation Space Type", font=STANDARD_FONT
+            self, text="Ventilation Space Type", font=LABEL_FONT
         )
-        ventilation_space_type_label.grid(row=0, column=4, padx=(0, 20), pady=5)
+        ventilation_space_type_label.grid(row=0, column=4, padx=PAD20END, pady=5)
         swh_space_type_label = ctk.CTkLabel(
-            self, text="SWH Space Type", font=STANDARD_FONT
+            self, text="SWH Space Type", font=LABEL_FONT
         )
-        swh_space_type_label.grid(row=0, column=5, padx=(0, 20), pady=5)
+        swh_space_type_label.grid(row=0, column=5, padx=PAD20END, pady=5)
         lighting_occ_controls_label = ctk.CTkLabel(
-            self, text="Lighting Occ. Controls", font=STANDARD_FONT
+            self, text="Lighting Occ. Controls", font=LABEL_FONT
         )
-        lighting_occ_controls_label.grid(row=0, column=6, padx=(0, 20), pady=5)
+        lighting_occ_controls_label.grid(row=0, column=6, padx=PAD20END, pady=5)
         daylighting_controls_label = ctk.CTkLabel(
-            self, text="Daylighting Controls", font=STANDARD_FONT
+            self, text="Daylighting Controls", font=LABEL_FONT
         )
-        daylighting_controls_label.grid(row=0, column=7, padx=(0, 20), pady=5)
+        daylighting_controls_label.grid(row=0, column=7, padx=PAD20END, pady=5)
         occ_controls_modeled_via_schedule_label = ctk.CTkLabel(
-            self, text="Occ. Controls Modeled via Schedule?", font=STANDARD_FONT
+            self, text="Occ. Controls Modeled via Schedule?", font=LABEL_FONT
         )
         occ_controls_modeled_via_schedule_label.grid(
-            row=0, column=8, padx=(0, 20), pady=5
+            row=0, column=8, padx=PAD20END, pady=5
         )
         daylighting_modeled_via_schedule_label = ctk.CTkLabel(
-            self, text="Daylighting Modeled via Schedule?", font=STANDARD_FONT
+            self, text="Daylighting Modeled via Schedule?", font=LABEL_FONT
         )
         daylighting_modeled_via_schedule_label.grid(
-            row=0, column=9, padx=(0, 20), pady=5
+            row=0, column=9, padx=PAD20END, pady=5
         )
 
     def add_row(self, i, space_name):
         name_label = ctk.CTkLabel(self, text=f"{space_name}")
-        name_label.grid(row=(i + 1), column=0, padx=(0, 20), pady=(0, 20), sticky=W)
-        if not self.main_app_data.is_all_new_construction():
+        name_label.grid(row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W)
+        if not self.app_data.is_all_new_construction:
             status_combo = ctk.CTkComboBox(
                 self,
-                values=self.main_app_data.StatusDescriptions.get_list(),
+                values=self.app_data.StatusDescriptions,
                 state=READONLY,
             )
             status_combo._entry.configure(justify=LEFT)
-            status_combo.grid(row=(i + 1), column=1, padx=(0, 20), pady=(0, 20))
+            status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
         lighting_space_type_combo = ctk.CTkComboBox(
             self,
-            values=self.main_app_data.LightingSpaceDescriptions2019ASHRAE901TG37.get_list(),
+            values=self.app_data.LightingSpaceDescriptions2019ASHRAE901TG37,
+            variable=self.app_data.lighting_space_type_vars[space_name],
+            command=lambda _: self.app_data.insert_to_rpd(
+                self.app_data.LightingSpaceMapping2019ASHRAE901TG37, space_name
+            ),
             state=READONLY,
         )
         lighting_space_type_combo._entry.configure(justify=LEFT)
         lighting_space_type_combo.grid(
-            row=(i + 1), column=2, padx=(0, 20), pady=(0, 20)
+            row=(i + 1), column=2, padx=PAD20END, pady=PAD20END
         )
         envelope_space_type_combo = ctk.CTkComboBox(
             self,
-            values=self.main_app_data.EnvelopeSpaceDescriptions2019ASHRAE901.get_list(),
+            values=self.app_data.EnvelopeSpaceDescriptions2019ASHRAE901,
             state=READONLY,
         )
         envelope_space_type_combo._entry.configure(justify=LEFT)
         envelope_space_type_combo.grid(
-            row=(i + 1), column=3, padx=(0, 20), pady=(0, 20)
+            row=(i + 1), column=3, padx=PAD20END, pady=PAD20END
         )
         ventilation_space_type_combo = ctk.CTkComboBox(
             self,
-            values=self.main_app_data.VentilationSpaceDescriptions2019ASHRAE901.get_list(),
+            values=self.app_data.VentilationSpaceDescriptions2019ASHRAE901,
             state=READONLY,
         )
         ventilation_space_type_combo._entry.configure(justify=LEFT)
         ventilation_space_type_combo.grid(
-            row=(i + 1), column=4, padx=(0, 20), pady=(0, 20)
+            row=(i + 1), column=4, padx=PAD20END, pady=PAD20END
         )
         swh_space_type_combo = ctk.CTkComboBox(
             self,
-            values=self.main_app_data.ServiceWaterHeatingSpaceDescriptions2019ASHRAE901.get_list(),
+            values=self.app_data.ServiceWaterHeatingSpaceDescriptions2019ASHRAE901,
             state=READONLY,
         )
         swh_space_type_combo._entry.configure(justify=LEFT)
-        swh_space_type_combo.grid(row=(i + 1), column=5, padx=(0, 20), pady=(0, 20))
+        swh_space_type_combo.grid(row=(i + 1), column=5, padx=PAD20END, pady=PAD20END)
         lighting_occ_controls_combo = ctk.CTkComboBox(
             self,
-            values=self.main_app_data.LightingOccupancyControlOptions.get_list(),
+            values=self.app_data.LightingOccupancyControlDescriptions,
             state=READONLY,
         )
         lighting_occ_controls_combo._entry.configure(justify=LEFT)
         lighting_occ_controls_combo.grid(
-            row=(i + 1), column=6, padx=(0, 20), pady=(0, 20)
+            row=(i + 1), column=6, padx=PAD20END, pady=PAD20END
         )
         daylighting_controls_combo = ctk.CTkComboBox(
             self,
-            values=self.main_app_data.LightingDaylightingControlOptions.get_list(),
+            values=self.app_data.LightingDaylightingControlDescriptions,
             state=READONLY,
         )
         daylighting_controls_combo._entry.configure(justify=LEFT)
         daylighting_controls_combo.grid(
-            row=(i + 1), column=7, padx=(0, 20), pady=(0, 20)
+            row=(i + 1), column=7, padx=PAD20END, pady=PAD20END
         )
         occ_controls_modeled_checkbox = ctk.CTkCheckBox(self, text="", width=30)
         occ_controls_modeled_checkbox.grid(
-            row=(i + 1), column=8, padx=(0, 20), pady=(0, 20)
+            row=(i + 1), column=8, padx=PAD20END, pady=PAD20END
         )
         daylighting_modeled_checkbox = ctk.CTkCheckBox(self, text="", width=30)
         daylighting_modeled_checkbox.grid(
-            row=(i + 1), column=9, padx=(0, 20), pady=(0, 20)
+            row=(i + 1), column=9, padx=PAD20END, pady=PAD20END
         )
