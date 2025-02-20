@@ -1006,12 +1006,25 @@ class System(ParentNode):
         ):
             self.fan_sys_reset_differential_temperature = max_reset_t - min_reset_t
         supply_fan_airflow = output_data.get("Supply Fan - Airflow")
-        supply_fan_min_ratio = output_data.get("Supply Fan - Min Flow Ratio")
+        supply_min_flow_ratio = self.try_float(
+            self.get_inp(BDL_SystemKeywords.MIN_FLOW_RATIO)
+        )
+        supply_min_fan_ratio = output_data.get("Supply Fan - Min Flow Ratio")
         oa_ratio = output_data.get("Outside Air Ratio")
         if oa_ratio and supply_fan_airflow:
             self.fan_sys_minimum_outdoor_airflow = oa_ratio * supply_fan_airflow
-        if supply_fan_min_ratio and supply_fan_airflow:
-            self.fan_sys_minimum_airflow = supply_fan_min_ratio * supply_fan_airflow
+        if supply_min_fan_ratio and supply_fan_airflow:
+            self.fan_sys_minimum_airflow = supply_min_fan_ratio * supply_fan_airflow
+        # Set fan control of systems that have a min flow ratio of 1
+        if supply_min_flow_ratio == 1:
+            self.fan_sys_fan_control = FanSystemSupplyFanControlOptions.CONSTANT
+        # Override fan control of systems that have CONSTANT_VOLUME fans with a minimum flow ratio less than 1
+        elif (
+            supply_min_fan_ratio
+            and supply_min_fan_ratio < 1
+            and self.fan_sys_fan_control == FanSystemSupplyFanControlOptions.CONSTANT
+        ):
+            self.fan_sys_fan_control = FanSystemSupplyFanControlOptions.DISCHARGE_DAMPER
         self.fan_sys_operation_during_unoccupied = (
             self.unoccupied_fan_operation_map.get(
                 self.get_inp(BDL_SystemKeywords.NIGHT_CYCLE_CTRL)

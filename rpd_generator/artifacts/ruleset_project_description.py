@@ -17,9 +17,6 @@ class RulesetProjectDescription:
         self.ground_temperature_schedule = None
         self.file_name = None
         self.data_source_type = None
-        self.climate_zone = None
-        self.cooling_design_day_type = None
-        self.heating_design_day_type = None
 
         # data elements with no children
         self.reporting_name = None

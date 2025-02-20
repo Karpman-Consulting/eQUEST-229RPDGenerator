@@ -96,22 +96,18 @@ class Window(ChildNode):
             self.classification = SubsurfaceClassificationOptions.WINDOW
             self.rmd.window_names.append(self.u_name)
 
-        if self.try_float(
-            self.get_inp(BDL_WindowKeywords.LEFT_FIN_D)
-        ) or self.try_float(self.get_inp(BDL_WindowKeywords.RIGHT_FIN_D)):
-            self.has_shading_sidefins = True
-
-        if self.try_float(self.get_inp(BDL_WindowKeywords.OVERHANG_D)):
-            self.depth_of_overhang = self.try_float(
-                self.get_inp(BDL_WindowKeywords.OVERHANG_D)
-            )
-            self.has_shading_overhang = True
-
-        if self.get_inp(BDL_WindowKeywords.WIN_SHADE_TYPE) in [
-            BDL_WindowShadeTypes.MOVABLE_INTERIOR,
-            BDL_WindowShadeTypes.MOVABLE_EXTERIOR,
-        ] and self.get_inp(BDL_WindowKeywords.SHADING_SCHEDULE):
-            self.has_manual_interior_shades = True
+        self.has_shading_sidefins = self.get_inp(
+            BDL_WindowKeywords.LEFT_FIN_D
+        ) or self.get_inp(BDL_WindowKeywords.RIGHT_FIN_D)
+        self.depth_of_overhang = self.try_float(
+            self.get_inp(BDL_WindowKeywords.OVERHANG_D)
+        )
+        self.has_shading_overhang = bool(self.depth_of_overhang)
+        self.has_manual_interior_shades = bool(
+            self.get_inp(BDL_WindowKeywords.WIN_SHADE_TYPE)
+            == BDL_WindowShadeTypes.MOVABLE_INTERIOR
+            and self.get_inp(BDL_WindowKeywords.SHADING_SCHEDULE)
+        )
 
         glass_type = self.get_obj(self.get_inp(BDL_WindowKeywords.GLASS_TYPE))
         if not glass_type:

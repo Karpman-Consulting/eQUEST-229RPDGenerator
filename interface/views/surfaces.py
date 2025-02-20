@@ -317,10 +317,6 @@ class WindowSurfaceView(CTkXYFrame):
         operable_label.grid(row=0, column=4, padx=PAD20END, pady=5)
         open_sensor_label = ctk.CTkLabel(self, text="Open Sensor?", font=LABEL_FONT)
         open_sensor_label.grid(row=0, column=5, padx=PAD20END, pady=5)
-        manual_interior_shades_label = ctk.CTkLabel(
-            self, text="Manual Interior Shades?", font=LABEL_FONT
-        )
-        manual_interior_shades_label.grid(row=0, column=6, padx=PAD20END, pady=5)
 
     def add_row(self, i, window_name):
         surface_label = ctk.CTkLabel(self, text=f"{window_name}")
@@ -353,10 +349,6 @@ class WindowSurfaceView(CTkXYFrame):
         operable_checkbox.grid(row=(i + 1), column=4, padx=PAD20END, pady=PAD20END)
         open_sensor_checkbox = ctk.CTkCheckBox(self, text="", width=30)
         open_sensor_checkbox.grid(row=(i + 1), column=5, padx=PAD20END, pady=PAD20END)
-        manual_interior_shades_checkbox = ctk.CTkCheckBox(self, text="", width=30)
-        manual_interior_shades_checkbox.grid(
-            row=(i + 1), column=6, padx=PAD20END, pady=PAD20END
-        )
 
 
 class SkylightSurfaceView(CTkXYFrame):
@@ -397,10 +389,6 @@ class SkylightSurfaceView(CTkXYFrame):
         operable_label.grid(row=0, column=4, padx=PAD20END, pady=5)
         open_sensor_label = ctk.CTkLabel(self, text="Open Sensor?", font=LABEL_FONT)
         open_sensor_label.grid(row=0, column=5, padx=PAD20END, pady=5)
-        manual_interior_shades_label = ctk.CTkLabel(
-            self, text="Manual Interior Shades?", font=LABEL_FONT
-        )
-        manual_interior_shades_label.grid(row=0, column=6, padx=PAD20END, pady=5)
 
     def add_row(self, i, skylight_name):
         surface_label = ctk.CTkLabel(self, text=f"{skylight_name}")
@@ -433,10 +421,6 @@ class SkylightSurfaceView(CTkXYFrame):
         operable_checkbox.grid(row=(i + 1), column=4, padx=PAD20END, pady=PAD20END)
         open_sensor_checkbox = ctk.CTkCheckBox(self, text="", width=30)
         open_sensor_checkbox.grid(row=(i + 1), column=5, padx=PAD20END, pady=PAD20END)
-        manual_interior_shades_checkbox = ctk.CTkCheckBox(self, text="", width=30)
-        manual_interior_shades_checkbox.grid(
-            row=(i + 1), column=6, padx=PAD20END, pady=PAD20END
-        )
 
 
 class DoorSurfaceView(CTkXYFrame):

@@ -169,6 +169,9 @@ class ProjectDetailsView(CTkXYFrame):
             values=self.app_data.ExteriorLightingZoneDescriptions2019ASHRAE901,
             state=READONLY,
             variable=self.app_data.lighting_zone,
+            command=lambda _: self.app_data.insert_to_rpd(
+                self.app_data.ExteriorLightingZoneMapping2019ASHRAE901
+            ),
         )
         self.lighting_zone_combo._entry.configure(justify=LEFT)
         self.building_open_schedule_label = ctk.CTkLabel(
@@ -202,6 +205,9 @@ class ProjectDetailsView(CTkXYFrame):
             values=self.app_data.HeatingDesignDayDescriptions,
             state=READONLY,
             variable=self.app_data.heating_design_day,
+            command=lambda _: self.app_data.insert_to_rpd(
+                self.app_data.HeatingDesignDayMapping
+            ),
         )
         self.heating_design_day_combo._entry.configure(justify=LEFT)
         self.cooling_design_day_label = ctk.CTkLabel(
@@ -215,6 +221,9 @@ class ProjectDetailsView(CTkXYFrame):
             values=self.app_data.CoolingDesignDayDescriptions,
             state=READONLY,
             variable=self.app_data.cooling_design_day,
+            command=lambda _: self.app_data.insert_to_rpd(
+                self.app_data.CoolingDesignDayMapping
+            ),
         )
         self.cooling_design_day_combo._entry.configure(justify=LEFT)
         self.measured_infiltration_checkbox = ctk.CTkCheckBox(

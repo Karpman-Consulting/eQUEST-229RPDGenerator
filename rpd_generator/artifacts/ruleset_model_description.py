@@ -156,6 +156,7 @@ class RulesetModelDescription(Base):
         self.measured_infiltration_pressure_difference = None
         self.is_measured_infiltration_based_on_test = None
         self.altitude = None
+        self.site_zone_type = None
 
         # output data elements
         self.output_id = "Output2019ASHRAE901"
@@ -2025,6 +2026,7 @@ class RulesetModelDescription(Base):
                 "measured_infiltration_pressure_difference": self.measured_infiltration_pressure_difference,
                 "is_measured_infiltration_based_on_test": self.is_measured_infiltration_based_on_test,
                 "altitude": self.altitude,
+                "site_zone_type": self.site_zone_type,
                 "buildings": self.buildings,
                 "schedules": self.schedules,
                 "fluid_loops": self.fluid_loops,
