@@ -16,5 +16,20 @@ class CurveFit(BaseDefinition):
         self.rmd.curve_fit_names.append(u_name)
         self.rmd.bdl_obj_instances[u_name] = self
 
+        self.coefficients = []
+        self.minimum_output = None
+        self.maximum_output = None
+
     def __repr__(self):
         return f"CurveFit(u_name='{self.u_name}')"
+
+    def populate_data_elements(self):
+        self.coefficients = list(
+            map(self.try_float, self.get_inp(BDL_CurveFitKeywords.COEF, []))
+        )
+        self.minimum_output = self.try_float(
+            self.get_inp(BDL_CurveFitKeywords.OUTPUT_MIN)
+        )
+        self.maximum_output = self.try_float(
+            self.get_inp(BDL_CurveFitKeywords.OUTPUT_MAX)
+        )

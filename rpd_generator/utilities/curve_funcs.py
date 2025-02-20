@@ -1,3 +1,5 @@
+from typing import Dict, List
+
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 
@@ -7,11 +9,36 @@ BDL_CurveFitTypes = BDLEnums.bdl_enums["CurveFitTypes"]
 
 
 def calculate_bi_quadratic(
-    curve_coeffs: list, x: float, y: float, min_val: float, max_val: float
+    curve_coeffs: List[float], x: float, y: float, min_val: float, max_val: float
 ) -> float:
-    """Function takes a list of curve coefficients with a = 0 index and f = 5th index and two independent variables x and y.
-    Function then computes and returns Z = a + b * x + c * x^2 + d * y + e * y^2 + f * x * y ensuring z is within the range min_val and max_val
-    This function works for any eQuest BI-QUADRATIC curve
+    """
+    Computes the output of a bi-quadratic equation using the given coefficients and two independent variables.
+
+    The function evaluates the equation:
+
+        Z = a + b*x + c*x² + d*y + e*y² + f*x*y
+
+    where `curve_coeffs` is a list of six coefficients corresponding to:
+    - `a` (index 0): Constant term
+    - `b` (index 1): Linear term for `x`
+    - `c` (index 2): Quadratic term for `x`
+    - `d` (index 3): Linear term for `y`
+    - `e` (index 4): Quadratic term for `y`
+    - `f` (index 5): Interaction term (`x*y`)
+
+    The computed value `Z` is then constrained within the range `[min_val, max_val]`.
+
+    This function is designed to process eQuest BI-QUADRATIC curves.
+
+    Parameters:
+        curve_coeffs (List[float]): A list of six coefficients `[a, b, c, d, e, f]` defining the bi-quadratic equation.
+        x (float): The first independent variable.
+        y (float): The second independent variable.
+        min_val (float): The minimum allowable value for the computed result.
+        max_val (float): The maximum allowable value for the computed result.
+
+    Returns:
+        float: The computed `Z` value, constrained within `[min_val, max_val]`.
     """
     z = (
         curve_coeffs[0]
@@ -29,10 +56,31 @@ def calculate_bi_quadratic(
 
 
 def calculate_cubic(
-    curve_coeffs: list, x: float, min_val: float, max_val: float
+    curve_coeffs: List[float], x: float, min_val: float, max_val: float
 ) -> float:
-    """Function takes a list of curve coefficients with a = 0 index and d = 3rd index and an independent variable X.
-    Function then computes and returns Z = a + b * X + c * X^2 + d * X^3 ensuring z is within the range min_val and max_val
+    """
+    Computes the output of a cubic equation using the given coefficients and an independent variable.
+
+    The function evaluates the equation:
+
+        Z = a + b*x + c*x² + d*x³
+
+    where `curve_coeffs` is a list of four coefficients corresponding to:
+    - `a` (index 0): Constant term
+    - `b` (index 1): Linear term for `x`
+    - `c` (index 2): Quadratic term for `x`
+    - `d` (index 3): Cubic term for `x`
+
+    The computed value `Z` is then constrained within the range `[min_val, max_val]`.
+
+    Parameters:
+        curve_coeffs (List[float]): A list of four coefficients `[a, b, c, d]` defining the cubic equation.
+        x (float): The independent variable.
+        min_val (float): The minimum allowable value for the computed result.
+        max_val (float): The maximum allowable value for the computed result.
+
+    Returns:
+        float: The computed `Z` value, constrained within `[min_val, max_val]`.
     """
     z = (
         curve_coeffs[0]
@@ -48,10 +96,30 @@ def calculate_cubic(
 
 
 def calculate_quadratic(
-    curve_coeffs: list, x: float, min_val: float, max_val: float
+    curve_coeffs: List[float], x: float, min_val: float, max_val: float
 ) -> float:
-    """Function takes a list of curve coefficients with a = 0 index and c = 2nd index and an independent variable X.
-    Function then computes and returns Z = a + b * X + c * X^2 ensuring z is within the range min_val and max_val
+    """
+    Computes the output of a quadratic equation using the given coefficients and an independent variable.
+
+    The function evaluates the equation:
+
+        Z = a + b*x + c*x²
+
+    where `curve_coeffs` is a list of three coefficients corresponding to:
+    - `a` (index 0): Constant term
+    - `b` (index 1): Linear term for `x`
+    - `c` (index 2): Quadratic term for `x`
+
+    The computed value `Z` is then constrained within the range `[min_val, max_val]`.
+
+    Parameters:
+        curve_coeffs (List[float]): A list of three coefficients `[a, b, c]` defining the quadratic equation.
+        x (float): The independent variable.
+        min_val (float): The minimum allowable value for the computed result.
+        max_val (float): The maximum allowable value for the computed result.
+
+    Returns:
+        float: The computed `Z` value, constrained within `[min_val, max_val]`.
     """
     z = curve_coeffs[0] + curve_coeffs[1] * x + curve_coeffs[2] * x**2
 
@@ -64,72 +132,120 @@ def calculate_quadratic(
 CURVE_FUNCTION_MAP = {
     BDL_CurveFitTypes.QUADRATIC: calculate_quadratic,
     BDL_CurveFitTypes.CUBIC: calculate_cubic,
+    BDL_CurveFitTypes.BI_QUADRATIC_T: calculate_bi_quadratic,
 }
 
 
 def calculate_results_of_performance_curves(
-    performance_curve_data,
-    evap_leaving_temp,
-    condenser_entering_temp,
-    eff_f_plr_curve_type,
-    load_ratio,
-):
-    """Returns the results of performance curves and partload ratio for cap_f_t, eir_PLR, eir_f_t"""
+    performance_curve_data: Dict[str, dict],
+    evap_leaving_temp: float,
+    condenser_entering_temp: float,
+    eff_f_plr_curve_type: str,
+    load_ratio: float,
+) -> dict:
+    """
+    Calculates and returns the results of performance curves for capacity (`cap_f_t`),
+    efficiency (`eff_f_t`), energy input ratio (`eir_PLR`), and efficiency as a function
+    of part-load ratio (`eff_f_plr`).
+
+    The function evaluates various performance curves using temperature and load ratio inputs.
+    It computes adjustments based on curve coefficients and ensures results adhere to minimum
+    and maximum bounds.
+
+    Parameters:
+        performance_curve_data (Dict[str, Dict[str, Any]]):
+            A dictionary containing performance curve coefficients, min/max outputs,
+            and other related data.
+        evap_leaving_temp (float): The evaporator leaving temperature.
+        condenser_entering_temp (float): The condenser entering temperature.
+        eff_f_plr_curve_type (str): The type of efficiency curve used for part-load ratio adjustments.
+        load_ratio (float): The current load ratio, typically between 0 and 1.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing:
+            - `"cap_f_t"` (float): Capacity adjustment factor as a function of temperature.
+            - `"eff_f_t"` (float): Efficiency adjustment factor as a function of temperature.
+            - `"part_load_ratio"` (float): Computed part-load ratio.
+            - `"eff_f_plr"` (float, optional): Efficiency adjustment factor as a function of PLR.
+            - `"errors"` (List[str]): A list of error messages if any issues arise.
+    """
+
+    results = {
+        "cap_f_t": None,
+        "eff_f_t": None,
+        "part_load_ratio": None,
+        "eff_f_plr": None,
+        "errors": [],
+    }
 
     coefficients = performance_curve_data["coefficients"]
     min_outputs = performance_curve_data["min_outputs"]
     max_outputs = performance_curve_data["max_outputs"]
 
-    cap_f_t_result = calculate_bi_quadratic(
-        coefficients["cap_f_t_coeffs"],
+    results["cap_f_t"] = calculate_bi_quadratic(
+        coefficients["cap_f_t"],
         evap_leaving_temp,
         condenser_entering_temp,
-        min_outputs["cap_f_t_min_output"],
-        max_outputs["cap_f_t_max_output"],
+        min_outputs["cap_f_t"],
+        max_outputs["cap_f_t"],
     )
-    eff_f_t_result = calculate_bi_quadratic(
-        coefficients["eff_f_t_coeffs"],
+    results["eff_f_t"] = calculate_bi_quadratic(
+        coefficients["eff_f_t"],
         evap_leaving_temp,
         condenser_entering_temp,
-        min_outputs["eff_f_t_min_output"],
-        max_outputs["eff_f_t_max_output"],
+        min_outputs["eff_f_t"],
+        max_outputs["eff_f_t"],
     )
-    adj_part_load_ratio = load_ratio / cap_f_t_result
+    results["part_load_ratio"] = load_ratio / results["cap_f_t"]
 
-    if eff_f_plr_curve_type in CURVE_FUNCTION_MAP:
-        eff_f_plr_result = CURVE_FUNCTION_MAP[eff_f_plr_curve_type](
-            coefficients["eff_f_plr_coeffs"],
-            adj_part_load_ratio,
-            min_outputs["eff_f_plr_min_output"],
-            max_outputs["eff_f_plr_max_output"],
+    if eff_f_plr_curve_type in [BDL_CurveFitTypes.QUADRATIC, BDL_CurveFitTypes.CUBIC]:
+        results["eff_f_plr"] = CURVE_FUNCTION_MAP[eff_f_plr_curve_type](
+            coefficients["eff_f_plr"],
+            results["part_load_ratio"],
+            min_outputs["eff_f_plr"],
+            max_outputs["eff_f_plr"],
+        )
+    elif eff_f_plr_curve_type == BDL_CurveFitTypes.BI_QUADRATIC_T:
+        delta_temp = condenser_entering_temp - evap_leaving_temp
+        results["eff_f_plr"] = calculate_bi_quadratic(
+            coefficients["eff_f_plr"],
+            results["part_load_ratio"],
+            delta_temp,
+            min_outputs["eff_f_plr"],
+            max_outputs["eff_f_plr"],
         )
     else:
-        delta_temp = condenser_entering_temp - evap_leaving_temp
-        eff_f_plr_result = calculate_bi_quadratic(
-            coefficients["eff_f_plr_coeffs"],
-            adj_part_load_ratio,
-            delta_temp,
-            min_outputs["eff_f_plr_min_output"],
-            max_outputs["eff_f_plr_max_output"],
+        results["errors"].append(
+            f"Unsupported efficiency curve type: {eff_f_plr_curve_type}"
         )
-    results = {
-        "cap_f_t_result": cap_f_t_result,
-        "eff_f_t_result": eff_f_t_result,
-        "part_load_ratio": adj_part_load_ratio,
-        "eff_f_plr_result": eff_f_plr_result,
-    }
+
     return results
 
 
 def are_curve_outputs_all_equal_to_a_value_of_one(
-    performance_curve_data: dict,
+    performance_curve_data: Dict[str, dict],
     evap_leaving_temp: float,
     condenser_entering_temp: float,
-    percent_margin_of_error: float,
-) -> [bool, None]:
-    """This assumes 100% load. The function checks whether the output of each curve is equal to 1 with the specified margin of error.
-    The function returns a True or False. This was created to assess cap_f_t, eff_ct, and eir_f_plr curves only. The margin of error
-    is expected to be a number from 0 to 100 (not a fraction). Default based on observations of curves 1.5.
+    decimal_margin_of_error: float,
+) -> bool:
+    """
+    Checks whether the output of specific performance curves (`cap_f_t`, `eff_f_t`, and `eir_f_plr`)
+    is approximately equal to 1 within a specified margin of error.
+
+    This function assumes 100% load conditions and evaluates the performance curves used
+    for capacity, efficiency, and energy input ratio (EIR) adjustments. The margin of error
+    is expected to be given as a percentage (not a fraction), e.g., `1.5` for ±1.5%.
+
+    Parameters:
+        performance_curve_data (Dict[str, dict]): A dictionary containing performance curve data.
+        evap_leaving_temp (float): The evaporator leaving temperature.
+        condenser_entering_temp (float): The condenser entering temperature.
+        decimal_margin_of_error (float): The allowable deviation from 1, expressed as a percentage.
+
+    Returns:
+        bool:
+            - `True` if all curve outputs are within the specified margin of error.
+            - `False` if any curve output deviates beyond the margin.
     """
 
     eff_f_plr_curve_type = performance_curve_data["performance_curves"][
@@ -146,13 +262,13 @@ def are_curve_outputs_all_equal_to_a_value_of_one(
     )
 
     is_cap_f_t_within_margin = is_within_margin(
-        results["cap_f_t_result"], 1, percent_margin_of_error
+        results["cap_f_t"], 1, decimal_margin_of_error
     )
     is_eff_f_t_within_margin = is_within_margin(
-        results["eff_f_t_result"], 1, percent_margin_of_error
+        results["eff_f_t"], 1, decimal_margin_of_error
     )
     is_eff_plr_within_margin = is_within_margin(
-        results["eff_f_plr_result"], 1, percent_margin_of_error
+        results["eff_f_plr"], 1, decimal_margin_of_error
     )
 
     return all(
@@ -160,19 +276,42 @@ def are_curve_outputs_all_equal_to_a_value_of_one(
     )
 
 
-def is_within_margin(value, target, percent_margin):
-    lower_bound = target * (1 - percent_margin)
-    upper_bound = target * (1 + percent_margin)
+def is_within_margin(value: float, target: float, decimal_margin: float) -> bool:
+    """
+    Determines whether a given value is within a specified percentage margin of a target value.
+
+    Parameters:
+        value (float): The value to check.
+        target (float): The reference target value.
+        decimal_margin (float): The allowable margin as a decimal (e.g., 0.05 for ±5%).
+
+    Returns:
+        bool: True if the value is within the margin, False otherwise.
+    """
+    lower_bound = target * (1 - decimal_margin)
+    upper_bound = target * (1 + decimal_margin)
     return lower_bound <= value <= upper_bound
 
 
 def adjust_capacity_for_user_defined_plr(
     plr_rated: float, capacity: float, capft_result: float
 ):
-    """Function adjusts capacity for the situation when part load ratio rated in defined.
-    This formula adjusts to AHRI rated conditions. plr_rated is the part load ratio defined in the
-    eQuest UI. Capacity is the unadjusted capacity. cap_f_t_result is the results of the capacity as
-    a function of temperature curve"""
+    """
+    Adjusts the equipment capacity based on a user-defined part load ratio (PLR)
+    and AHRI-rated conditions.
+
+    This function modifies the given capacity to account for the user-defined PLR
+    as specified in the eQuest UI and the capacity adjustment due to temperature
+    variation.
+
+    Parameters:
+        plr_rated (float): The part load ratio defined in the eQuest UI.
+        capacity (float): The unadjusted equipment capacity.
+        capft_result (float): The capacity adjustment factor as a function of temperature.
+
+    Returns:
+        float: The adjusted equipment capacity.
+    """
 
     capacity_adj = capacity * (1 / capft_result) * (1 / plr_rated)
 
@@ -180,12 +319,36 @@ def adjust_capacity_for_user_defined_plr(
 
 
 def get_output_of_curves_at_temperature_and_load_conditions(
-    performance_curve_data,
+    performance_curve_data: Dict[str, dict],
     evap_leaving_temp: float,
     cond_entering_temp: float,
     load: float,
-):
-    """Returns the results of the Cap_f_t curve given the temperatures and % load sent to the function."""
+) -> dict:
+    """
+    Compute performance curve results for given temperature and load conditions.
+
+    This function evaluates the capacity adjustment factor (`cap_f_t`) based on
+    the provided evaporator leaving temperature, condenser entering temperature,
+    and load percentage.
+
+    Parameters:
+        performance_curve_data (dict):
+            A dictionary containing performance curve objects and their data.
+        evap_leaving_temp (float):
+            The evaporator leaving temperature in degrees Fahrenheit.
+        cond_entering_temp (float):
+            The condenser entering temperature in degrees Fahrenheit.
+        load (float):
+            The part-load ratio or percentage load at which performance is evaluated.
+
+    Returns:
+        dict: A dictionary containing the computed performance curve results.
+
+    Notes:
+        - The function determines the curve type of `cap_f_t` and uses it in the
+          `calculate_results_of_performance_curves` function to compute results.
+        - The `cap_f_t` curve is used to adjust capacity based on temperature conditions.
+    """
 
     cap_f_t = performance_curve_data["performance_curves"]["cap_f_t"]
     cap_f_t_curve_type = cap_f_t.get_inp(BDL_CurveFitKeywords.TYPE)
@@ -202,9 +365,9 @@ def get_output_of_curves_at_temperature_and_load_conditions(
 
 
 def calculate_eff_performance_curve_results(
-    evap_leaving_temp: int,
-    condenser_entering_temp: int,
-    performance_curve_data: dict,
+    evap_leaving_temp: float,
+    condenser_entering_temp: float,
+    performance_curve_data: Dict[str, dict],
     part_load_ratio: float,
 ) -> dict:
     """
@@ -228,9 +391,9 @@ def calculate_eff_performance_curve_results(
 
     Returns:
         dict: A dictionary containing:
-            - `"eff_f_t_result"` (float or None): The efficiency adjustment factor as
+            - `"eff_f_t"` (float or None): The efficiency adjustment factor as
               a function of temperature.
-            - `"eff_f_plr_result"` (float or None): The efficiency adjustment factor
+            - `"eff_f_plr"` (float or None): The efficiency adjustment factor
               as a function of part-load ratio.
             - `"errors"` (list): A list of error messages, if any.
 
@@ -242,8 +405,8 @@ def calculate_eff_performance_curve_results(
     """
 
     results = {
-        "eff_f_t_result": None,
-        "eff_f_plr_result": None,
+        "eff_f_t": None,
+        "eff_f_plr": None,
         "errors": [],
     }
 
@@ -251,29 +414,33 @@ def calculate_eff_performance_curve_results(
         "cap_f_t"
     ].get_inp(BDL_CurveFitKeywords.TYPE)
 
-    results["eff_f_t_result"] = calculate_bi_quadratic(
-        performance_curve_data["coefficients"]["eff_f_t_coeffs"],
+    results["eff_f_t"] = calculate_bi_quadratic(
+        performance_curve_data["coefficients"]["eff_f_t"],
         evap_leaving_temp,
         condenser_entering_temp,
-        performance_curve_data["min_outputs"]["eff_f_t_min_output"],
-        performance_curve_data["max_outputs"]["eff_f_t_max_output"],
+        performance_curve_data["min_outputs"]["eff_f_t"],
+        performance_curve_data["max_outputs"]["eff_f_t"],
     )
 
-    if eff_f_plr_curve_type in CURVE_FUNCTION_MAP:
-        results["eff_f_plr_result"] = CURVE_FUNCTION_MAP[eff_f_plr_curve_type](
-            performance_curve_data["coefficients"]["eff_f_plr_coeffs"],
+    if eff_f_plr_curve_type in [BDL_CurveFitTypes.QUADRATIC, BDL_CurveFitTypes.CUBIC]:
+        results["eff_f_plr"] = CURVE_FUNCTION_MAP[eff_f_plr_curve_type](
+            performance_curve_data["coefficients"]["eff_f_plr"],
             part_load_ratio,
-            performance_curve_data["min_outputs"]["eff_f_plr_min_output"],
-            performance_curve_data["max_outputs"]["eff_f_plr_max_output"],
+            performance_curve_data["min_outputs"]["eff_f_plr"],
+            performance_curve_data["max_outputs"]["eff_f_plr"],
         )
-    else:
+    elif eff_f_plr_curve_type == BDL_CurveFitTypes.BI_QUADRATIC_T:
         chw_delta_t = condenser_entering_temp - evap_leaving_temp
-        results["eff_f_plr_result"] = calculate_bi_quadratic(
-            performance_curve_data["coefficients"]["eff_f_plr_coeffs"],
+        results["eff_f_plr"] = CURVE_FUNCTION_MAP[eff_f_plr_curve_type](
+            performance_curve_data["coefficients"]["eff_f_plr"],
             part_load_ratio,
             chw_delta_t,
-            performance_curve_data["min_outputs"]["eff_f_plr_min_output"],
-            performance_curve_data["max_outputs"]["eff_f_plr_max_output"],
+            performance_curve_data["min_outputs"]["eff_f_plr"],
+            performance_curve_data["max_outputs"]["eff_f_plr"],
+        )
+    else:
+        results["errors"].append(
+            f"Unsupported efficiency curve type: {eff_f_plr_curve_type}"
         )
 
     return results

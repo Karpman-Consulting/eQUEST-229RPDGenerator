@@ -1,3 +1,5 @@
+from typing import Dict
+
 from rpd_generator.bdl_structure.base_node import BaseNode
 from rpd_generator.schema.schema_enums import SchemaEnums
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
@@ -77,6 +79,9 @@ class Chiller(BaseNode):
         self.omit = False
         self.absorp_or_engine = False
         self.input_ratio_keyword = None
+        self.cap_f_t_curve = None
+        self.eff_f_t_curve = None
+        self.eff_f_plr_curve = None
 
         self.chiller_data_structure = {}
 
@@ -87,6 +92,7 @@ class Chiller(BaseNode):
         self.power_validation_points = []
 
         # data elements with no children
+        self.notes = None
         self.cooling_loop = None
         self.condensing_loop = None
         self.compressor_type = None
@@ -233,6 +239,21 @@ class Chiller(BaseNode):
             self.get_inp(BDL_ChillerKeywords.CONDENSER_TYPE)
         )
 
+        self.cap_f_t_curve = self.get_obj(self.get_inp(BDL_ChillerKeywords.CAPACITY_FT))
+        self.eff_f_t_curve = self.get_obj(
+            self.get_inp(
+                BDL_ChillerKeywords.HIR_FT
+                if self.absorp_or_engine
+                else BDL_ChillerKeywords.EIR_FT
+            )
+        )
+        self.eff_f_plr_curve = self.get_obj(
+            self.get_inp(
+                BDL_ChillerKeywords.HIR_FPLR
+                if self.absorp_or_engine
+                else BDL_ChillerKeywords.EIR_FPLR
+            )
+        )
         performance_curve_data = self.get_performance_curve_data()
 
         curve_calcs_unavailable = not performance_curve_data["coefficients"]
@@ -256,7 +277,7 @@ class Chiller(BaseNode):
                 and not are_curve_outputs_all_equal_to_one_at_ahri_temperatures
             )
             if curve_calcs_unavailable:
-                self.notes = "Performance curve INPUT-TYPE of DATA is not currently supported for determining and populating chiller IPLV."
+                self.notes = "The rated temperatures entered in the model do not align with AHRI conditions."
                 self.populate_full_load_eff_with_curve_calcs_unavailable()
                 return
 
@@ -381,6 +402,7 @@ class Chiller(BaseNode):
         }
 
         no_children_attributes = [
+            "notes",
             "cooling_loop",
             "condensing_loop",
             "compressor_type",
@@ -465,26 +487,14 @@ class Chiller(BaseNode):
                 - **max_outputs (dict):** Maps string keys (formatted as "<curve_key>_max_otpt") to the maximum output values (floats) for each curve.
         """
         perf_curves = {
-            "cap_f_t": self.get_obj(self.get_inp(BDL_ChillerKeywords.CAPACITY_FT)),
-            "eff_f_t": self.get_obj(
-                self.get_inp(
-                    BDL_ChillerKeywords.HIR_FT
-                    if self.absorp_or_engine
-                    else BDL_ChillerKeywords.EIR_FT
-                )
-            ),
-            "eff_f_plr": self.get_obj(
-                self.get_inp(
-                    BDL_ChillerKeywords.HIR_FPLR
-                    if self.absorp_or_engine
-                    else BDL_ChillerKeywords.EIR_FPLR
-                )
-            ),
+            "cap_f_t": self.cap_f_t_curve,
+            "eff_f_t": self.eff_f_t_curve,
+            "eff_f_plr": self.eff_f_plr_curve,
         }
-
         coefficients = {}
         min_outputs = {}
         max_outputs = {}
+
         for curve_name, curve in perf_curves.items():
             input_type = curve.get_inp(BDL_CurveFitKeywords.INPUT_TYPE)
             if input_type == BDL_CurveFitInputTypes.DATA:
@@ -495,15 +505,9 @@ class Chiller(BaseNode):
                     "max_outputs": {},
                 }
 
-            coefficients[f"{curve_name}_coeffs"] = list(
-                map(float, curve.get_inp(BDL_CurveFitKeywords.COEF))
-            )
-            min_outputs[f"{curve_name}_min_output"] = float(
-                curve.get_inp(BDL_CurveFitKeywords.OUTPUT_MIN)
-            )
-            max_outputs[f"{curve_name}_max_output"] = float(
-                curve.get_inp(BDL_CurveFitKeywords.OUTPUT_MAX)
-            )
+            coefficients[curve_name] = curve.coefficients
+            min_outputs[curve_name] = curve.minimum_output
+            max_outputs[curve_name] = curve.maximum_output
 
         return {
             "performance_curves": perf_curves,
@@ -512,9 +516,37 @@ class Chiller(BaseNode):
             "max_outputs": max_outputs,
         }
 
-    def populate_iplv(self, performance_curve_data):
-        """Populates IPLV based upon the modeled performance curves and the rated conditions.
-        No corrections for fouling factor have been included - perhaps not relevant."""
+    def populate_iplv(self, performance_curve_data: Dict[str, dict]) -> None:
+        """
+        Calculates and populates the Integrated Part Load Value (IPLV) based on
+        modeled performance curves and rated conditions.
+
+        The IPLV represents the efficiency of the chiller at varying part-load
+        conditions, weighted according to AHRI 550/590-2023 standard load factors.
+
+        **Key Features of This Calculation:**
+        - Uses the modeled performance curves (`cap_f_t`, `eff_f_t`, `eff_f_plr`)
+          to determine efficiency at different part-load ratios.
+        - Considers the evaporator leaving temperature (`AHRI_550_590_2023_EVAP_LEAVING_T`).
+        - Adjusts condenser entering temperatures based on condenser type.
+        - Does **not** include fouling factor corrections.
+
+        **Calculation Process:**
+        1. If the chiller's minimum load ratio is greater than the lowest AHRI
+           part-load ratio, the function exits early.
+        2. Retrieves the appropriate condenser entering temperature conditions
+           based on condenser type.
+        3. Iterates through each IPLV-defined part-load ratio to calculate efficiency.
+        4. Uses the AHRI weighting factors to compute the weighted IPLV efficiency.
+        5. Stores the final IPLV efficiency value in the object's efficiency metrics.
+
+        Parameters:
+            performance_curve_data (Dict[str, Any]): A dictionary containing
+                performance curves for capacity and efficiency calculations.
+
+        Returns:
+            None: Updates the object's efficiency metric values and types.
+        """
 
         # If the chiller cannot be unloaded to all the IPLV load categories then do not perform calcs and return nothing
         if self.minimum_load_ratio > MIN_AHRI_PART_LOAD:
@@ -549,8 +581,8 @@ class Chiller(BaseNode):
                 percent_load,
             )
 
-            eff_f_t_result = results["eff_f_t_result"]
-            eff_f_plr_result = results["eff_f_plr_result"]
+            eff_f_t_result = results["eff_f_t"]
+            eff_f_plr_result = results["eff_f_plr"]
             part_load_ratio = results["part_load_ratio"]
 
             eff_result_cop = part_load_ratio / (
@@ -566,8 +598,36 @@ class Chiller(BaseNode):
                 ChillerEfficiencyMetricOptions.INTEGRATED_PART_LOAD_VALUE
             )
 
-    def populate_full_load_efficiency(self, curve_results):
-        """Populates the full load efficiency for the chiller object."""
+    def populate_full_load_efficiency(self, curve_results: Dict[str, float]) -> None:
+        """
+        Populates the full-load efficiency for the chiller object based on curve results
+        and user-defined parameters.
+
+        This method calculates the rated full-load coefficient of performance (COP)
+        using efficiency curve factors and user-defined parameters. The computed value
+        is stored in the object's efficiency metric lists.
+
+        The formula used for `rated_full_load_cop` is:
+
+            rated_full_load_cop = (eff_f_t * eff_f_plr) /
+                                  (user_defined_input_ratio * user_defined_rated_plr * part_load_ratio)
+
+        where:
+        - `eff_f_t`: Efficiency factor as a function of temperature.
+        - `eff_f_plr`: Efficiency factor as a function of part-load ratio.
+        - `user_defined_input_ratio`: User-defined input ratio (fallback to `None` if not set).
+        - `user_defined_rated_plr`: User-defined rated part-load ratio (defaults to `1` if not set).
+        - `part_load_ratio`: Curve-determined part-load ratio (defaults to `1` if missing).
+
+        Parameters:
+            curve_results (Dict[str, float]): A dictionary containing:
+                - `"eff_f_t"`: Efficiency factor as a function of temperature.
+                - `"eff_f_plr"`: Efficiency factor as a function of part-load ratio.
+                - `"part_load_ratio"` (optional): Computed part-load ratio (defaults to `1` if missing).
+
+        Returns:
+            None: Updates the object's efficiency metric lists.
+        """
         user_defined_rated_plr = (
             self.try_float(self.get_inp(BDL_ChillerKeywords.RATED_PLR)) or 1
         )
@@ -577,8 +637,8 @@ class Chiller(BaseNode):
         )
 
         rated_full_load_cop = (
-            curve_results["eff_f_t_result"]
-            * curve_results["eff_f_plr_result"]
+            curve_results["eff_f_t"]
+            * curve_results["eff_f_plr"]
             / (
                 user_defined_input_ratio
                 * user_defined_rated_plr
@@ -592,9 +652,28 @@ class Chiller(BaseNode):
         )
 
     def are_user_defined_input_ratio_and_cap_at_ahri_rating_conditions(self) -> bool:
-        """Function compares the user defined rating conditions (evap leaving and condenser entering
-        temperatures) associated with the user entered eff and capacity to AHRI 550 590-2023
-        rated temperature conditions. Returns True if user defined (or eQuest defaults) match AHRI conditions.
+        """
+        Checks if the user-defined rating conditions match AHRI 550/590-2023 standard conditions.
+
+        This method compares the user-defined evaporator leaving temperature and
+        condenser entering temperature (or the default eQuest values) against the
+        AHRI 550/590-2023 rated temperature conditions.
+
+        The function returns `True` if both the user-defined values match the AHRI
+        standard conditions, otherwise returns `False`.
+
+        Comparison parameters:
+        - **User-defined evaporator leaving temperature** vs. **AHRI-rated evaporator leaving temperature**.
+        - **User-defined condenser entering temperature** vs. **AHRI-rated condenser entering temperature**,
+          determined based on the chiller's condenser type.
+
+        Parameters:
+            (operates on instance attributes)
+
+        Returns:
+            bool:
+                - `True` if user-defined (or eQuest default) conditions match AHRI conditions.
+                - `False` otherwise.
         """
         user_defined_evaporator_leaving_t = self.try_float(
             self.get_inp(BDL_ChillerKeywords.RATED_CHW_T)
@@ -661,7 +740,7 @@ class Chiller(BaseNode):
             )
         )
         cap_f_t_result = curve_results_at_rated_conditions_and_100_percent_load[
-            "cap_f_t_result"
+            "cap_f_t"
         ]
 
         # If capacity is hard coded and PLR RATED is entered (not n/a).
@@ -717,7 +796,7 @@ class Chiller(BaseNode):
                 )
             )
             cap_f_t_result_design = curve_results_at_design_conditions_and_full_load[
-                "cap_f_t_result"
+                "cap_f_t"
             ]
             autosized_design_capacity = self.try_float(
                 output_data.get("Primary Equipment (Chillers) - Capacity (Btu/hr)")
@@ -770,7 +849,7 @@ class Chiller(BaseNode):
                 )
             )
             cap_f_t_result_design = curve_results_at_design_conditions_and_full_load[
-                "cap_f_t_result"
+                "cap_f_t"
             ]
 
             autosized_design_capacity = self.try_float(
@@ -851,15 +930,13 @@ class Chiller(BaseNode):
         )
 
         cap_f_t_result_user_defined_temps_full_load = (
-            curve_results_at_user_defined_conditions_and_full_load["cap_f_t_result"]
+            curve_results_at_user_defined_conditions_and_full_load["cap_f_t"]
         )
         cap_f_t_result_design = curve_results_at_design_conditions_and_full_load[
-            "cap_f_t_result"
+            "cap_f_t"
         ]
 
-        cap_f_t_result_ahri = curve_results_at_ahri_conditions_and_full_load[
-            "cap_f_t_result"
-        ]
+        cap_f_t_result_ahri = curve_results_at_ahri_conditions_and_full_load["cap_f_t"]
 
         # If capacity is hard coded and PLR RATED is entered (not n/a). (This is the same as used above for when it is at AHRI)
         if (
