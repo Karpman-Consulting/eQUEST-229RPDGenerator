@@ -43,7 +43,6 @@ class MainAppData:
         self.cooling_design_day = ctk.StringVar()
         self.has_measured_infiltration = ctk.BooleanVar()
         self.is_based_on_site_testing = ctk.BooleanVar()
-        # TODO: Change to IntVar
         self.measured_pressure_difference = ctk.StringVar()
         self.lighting_space_type_vars = {}
 
@@ -176,10 +175,36 @@ class MainAppData:
                 rmd.weather.setdefault(
                     "climate_zone", enumerations_map.get(self.climate_zone.get())
                 )
+        elif enumeration == "ExteriorLightingZoneOptions2019ASHRAE901":
+            for rmd in self.rmds:
+                rmd.site_zone_type = enumerations_map.get(self.lighting_zone.get())
+        elif enumeration == "HeatingDesignDayOptions":
+            for rmd in self.rmds:
+                rmd.weather.setdefault(
+                    "heating_design_day_type",
+                    enumerations_map.get(self.heating_design_day.get()),
+                )
+        elif enumeration == "CoolingDesignDayOptions":
+            for rmd in self.rmds:
+                rmd.weather.setdefault(
+                    "cooling_design_day_type",
+                    enumerations_map.get(self.cooling_design_day.get()),
+                )
 
     @staticmethod
-    def validate_entry(arg):
-        if str.isdigit(arg) or arg == "":
+    def validate_int_entry(entry):
+        if str.isdigit(entry) or entry == "":
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def validate_double_entry(entry):
+        if (
+            all(char in "0123456789.-" for char in entry)
+            and "-" not in entry[1:]
+            and entry.count(".") <= 1
+        ) or entry == "":
             return True
         else:
             return False
