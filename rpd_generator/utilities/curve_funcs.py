@@ -206,7 +206,41 @@ def calculate_eff_performance_curve_results(
     condenser_entering_temp: int,
     curves: dict,
     part_load_ratio: float,
-):
+) -> dict:
+    """
+    Calculate efficiency performance curve results based on temperature conditions,
+    curve coefficients, and part-load ratio.
+
+    This function evaluates efficiency performance curves using given evaporator
+    and condenser temperatures, along with the part-load ratio, to determine
+    efficiency adjustment factors.
+
+    Parameters:
+        evap_leaving_temp (int):
+            The evaporator leaving temperature in degrees Fahrenheit.
+        condenser_entering_temp (int):
+            The condenser entering temperature in degrees Fahrenheit.
+        curves (dict):
+            A dictionary containing curve objects, including coefficients
+            and output range values.
+        part_load_ratio (float):
+            The part-load ratio at which efficiency is evaluated.
+
+    Returns:
+        dict: A dictionary containing:
+            - `"eff_f_t_result"` (float or None): The efficiency adjustment factor as
+              a function of temperature.
+            - `"eff_f_plr_result"` (float or None): The efficiency adjustment factor
+              as a function of part-load ratio.
+            - `"errors"` (list): A list of error messages, if any.
+
+    Notes:
+        - The function determines the appropriate curve function type (quadratic,
+          cubic, or bi-quadratic) and applies it to compute efficiency results.
+        - If the efficiency adjustment curve type is unsupported, a bi-quadratic
+          calculation is performed using the part-load ratio and chilled water delta-T.
+    """
+
     results = {
         "eff_f_t_result": None,
         "eff_f_plr_result": None,
@@ -220,10 +254,6 @@ def calculate_eff_performance_curve_results(
     eff_f_plr_curve_type = curves["cap_f_t"].get_inp(BDL_CurveFitKeywords.TYPE)
 
     for key, obj in curves.items():
-        input_type = obj.get_inp(BDL_CurveFitKeywords.INPUT_TYPE)
-        if input_type == BDL_CurveFitInputTypes.DATA:
-            # Currently, we are unable to obtain the curve coefficients when DATA is the input_type
-            return ["Keyword DATA was used for coefficient determination"]
         coeffs[f"{key}_coeffs"] = list(
             map(float, obj.get_inp(BDL_CurveFitKeywords.COEF))
         )
