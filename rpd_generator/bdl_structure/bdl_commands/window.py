@@ -96,9 +96,10 @@ class Window(ChildNode):
             self.classification = SubsurfaceClassificationOptions.WINDOW
             self.rmd.window_names.append(self.u_name)
 
-        self.has_shading_sidefins = self.get_inp(
-            BDL_WindowKeywords.LEFT_FIN_D
-        ) or self.get_inp(BDL_WindowKeywords.RIGHT_FIN_D)
+        self.has_shading_sidefins = bool(
+            self.try_float(self.get_inp(BDL_WindowKeywords.LEFT_FIN_D))
+            or self.try_float(self.get_inp(BDL_WindowKeywords.RIGHT_FIN_D))
+        )
         self.depth_of_overhang = self.try_float(
             self.get_inp(BDL_WindowKeywords.OVERHANG_D)
         )
