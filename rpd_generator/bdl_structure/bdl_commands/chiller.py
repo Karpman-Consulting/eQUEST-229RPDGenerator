@@ -235,26 +235,31 @@ class Chiller(BaseNode):
 
         performance_curve_data = self.get_performance_curve_data()
 
-        are_curve_outputs_all_equal_to_one_at_ahri_temperatures = (
-            curve_funcs.are_curve_outputs_all_equal_to_a_value_of_one(
-                performance_curve_data,
-                AHRI_550_590_2023_EVAP_LEAVING_T,
-                ahri_condenser_entering_t,
-                ERROR_MARGIN,
-            )
-        )
-        # Checks if any of the performance curves were defined as data_input type of DATA or if the entered rated conditions match AHRI and if the performance curves are normalized to ahri conditions.
-        curve_calcs_unavailable = not performance_curve_data["coefficients"] or (
-            not self.are_user_defined_input_ratio_and_cap_at_ahri_rating_conditions()
-            and not are_curve_outputs_all_equal_to_one_at_ahri_temperatures
-        )
-
+        curve_calcs_unavailable = not performance_curve_data["coefficients"]
         if curve_calcs_unavailable:
-            self.populate_full_load_eff_with_curve_calcs_unavailable(
-                performance_curve_data["coefficients"]
-            )
+            self.notes = "Performance curve INPUT-TYPE of DATA is not currently supported for determining and populating chiller IPLV."
+            self.populate_full_load_eff_with_curve_calcs_unavailable()
 
         else:
+            are_curve_outputs_all_equal_to_one_at_ahri_temperatures = (
+                curve_funcs.are_curve_outputs_all_equal_to_a_value_of_one(
+                    performance_curve_data,
+                    AHRI_550_590_2023_EVAP_LEAVING_T,
+                    ahri_condenser_entering_t,
+                    ERROR_MARGIN,
+                )
+            )
+
+            # Checks if the entered rated conditions match AHRI and if the performance curves are normalized to ahri conditions.
+            curve_calcs_unavailable = (
+                not self.are_user_defined_input_ratio_and_cap_at_ahri_rating_conditions()
+                and not are_curve_outputs_all_equal_to_one_at_ahri_temperatures
+            )
+            if curve_calcs_unavailable:
+                self.notes = "Performance curve INPUT-TYPE of DATA is not currently supported for determining and populating chiller IPLV."
+                self.populate_full_load_eff_with_curve_calcs_unavailable()
+                return
+
             # Capacity and efficiency are defined at AHRI conditions, so adjustments for rating conditions are not necessary
             if self.are_user_defined_input_ratio_and_cap_at_ahri_rating_conditions():
                 self.populate_efficiency_when_user_defined_rated_temps_match_ahri(
@@ -515,9 +520,6 @@ class Chiller(BaseNode):
         if self.minimum_load_ratio > MIN_AHRI_PART_LOAD:
             return
 
-        if not performance_curve_data["coefficients"]:
-            return "Keyword DATA was used for coefficient determination"
-
         condenser_type = self.get_inp(BDL_ChillerKeywords.CONDENSER_TYPE)
         ahri_evaporator_leaving_t = AHRI_550_590_2023_EVAP_LEAVING_T
         iplv_condenser_temp_conditions = (
@@ -609,11 +611,8 @@ class Chiller(BaseNode):
             and user_defined_condenser_entering_t == rated_condenser_entering_temp
         )
 
-    def populate_full_load_eff_with_curve_calcs_unavailable(self, coefficients):
+    def populate_full_load_eff_with_curve_calcs_unavailable(self):
         # Instead of setting these to AHRI conditions and adjusting capacity and efficiency to match AHRI conditions we just populate these as defined.
-        if not coefficients:
-            self.notes = "Performance curve INPUT-TYPE of DATA is not currently supported for determining and populating chiller IPLV."
-
         self.rated_leaving_evaporator_temperature = self.try_float(
             self.get_inp(BDL_ChillerKeywords.RATED_CHW_T)
         )
@@ -672,7 +671,7 @@ class Chiller(BaseNode):
         ):
             # Obtain results of efficiency curves (not capacity curves) by plugging the user defined rated part load ratio into the curves equations
             efficiency_curve_result_rated_part_load = (
-                curve_funcs.calculate_efficiency_at_part_load_ratio(
+                curve_funcs.calculate_eff_performance_curve_results(
                     self.rated_leaving_evaporator_temperature,
                     self.rated_entering_condenser_temperature,
                     performance_curve_data["performance_curves"],
@@ -710,7 +709,7 @@ class Chiller(BaseNode):
 
             # Obtain results of efficiency curves (not capacity curves) by plugging the user defined rated part load ratio into the curves equations
             efficiency_curve_result_rated_part_load = (
-                curve_funcs.calculate_efficiency_at_part_load_ratio(
+                curve_funcs.calculate_eff_performance_curve_results(
                     self.rated_leaving_evaporator_temperature,
                     self.rated_entering_condenser_temperature,
                     performance_curve_data["performance_curves"],
@@ -833,7 +832,7 @@ class Chiller(BaseNode):
         )
         # Obtain results of efficiency curves (not capacity curves) by plugging the user defined rated part load ratio into the curves equations
         curve_results_at_user_defined_part_load_rating = (
-            curve_funcs.calculate_efficiency_at_part_load_ratio(
+            curve_funcs.calculate_eff_performance_curve_results(
                 user_defined_leaving_evaporator_temperature,
                 user_defined_entering_condenser_temperature,
                 performance_curve_data["performance_curves"],

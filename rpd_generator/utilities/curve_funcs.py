@@ -61,6 +61,12 @@ def calculate_quadratic(
     return z
 
 
+CURVE_FUNCTION_MAP = {
+    BDL_CurveFitTypes.QUADRATIC: calculate_quadratic,
+    BDL_CurveFitTypes.CUBIC: calculate_cubic,
+}
+
+
 def calculate_results_of_performance_curves(
     performance_curve_data,
     evap_leaving_temp,
@@ -69,10 +75,7 @@ def calculate_results_of_performance_curves(
     load_ratio,
 ):
     """Returns the results of performance curves and partload ratio for cap_f_t, eir_PLR, eir_f_t"""
-    curve_function_map = {
-        BDL_CurveFitTypes.QUADRATIC: calculate_quadratic,
-        BDL_CurveFitTypes.CUBIC: calculate_cubic,
-    }
+
     coefficients = performance_curve_data["coefficients"]
     min_outputs = performance_curve_data["min_outputs"]
     max_outputs = performance_curve_data["max_outputs"]
@@ -93,8 +96,8 @@ def calculate_results_of_performance_curves(
     )
     adj_part_load_ratio = load_ratio / cap_f_t_result
 
-    if eff_f_plr_curve_type in curve_function_map:
-        eff_f_plr_result = curve_function_map[eff_f_plr_curve_type](
+    if eff_f_plr_curve_type in CURVE_FUNCTION_MAP:
+        eff_f_plr_result = CURVE_FUNCTION_MAP[eff_f_plr_curve_type](
             coefficients["eff_f_plr_coeffs"],
             adj_part_load_ratio,
             min_outputs["eff_f_plr_min_output"],
@@ -132,14 +135,6 @@ def are_curve_outputs_all_equal_to_a_value_of_one(
     eff_f_plr_curve_type = performance_curve_data["performance_curves"][
         "cap_f_t"
     ].get_inp(BDL_CurveFitKeywords.TYPE)
-
-    for curve_name, curve in performance_curve_data["performance_curves"].items():
-        if (
-            curve.get_inp(BDL_CurveFitKeywords.INPUT_TYPE)
-            == BDL_CurveFitInputTypes.DATA
-        ):
-            # Currently, we are unable to obtain the curve coefficients when DATA is the input_type
-            return ["Keyword DATA was used for coefficient determination"]
 
     # Calculate and retrieve the results
     results = calculate_results_of_performance_curves(
@@ -206,15 +201,23 @@ def get_output_of_curves_at_temperature_and_load_conditions(
     return results
 
 
-def calculate_efficiency_at_part_load_ratio(
+def calculate_eff_performance_curve_results(
     evap_leaving_temp: int,
     condenser_entering_temp: int,
     curves: dict,
     part_load_ratio: float,
 ):
+    results = {
+        "eff_f_t_result": None,
+        "eff_f_plr_result": None,
+        "errors": [],
+    }
+
     coeffs = {}
     min_outputs = {}
     max_outputs = {}
+
+    eff_f_plr_curve_type = curves["cap_f_t"].get_inp(BDL_CurveFitKeywords.TYPE)
 
     for key, obj in curves.items():
         input_type = obj.get_inp(BDL_CurveFitKeywords.INPUT_TYPE)
@@ -231,14 +234,7 @@ def calculate_efficiency_at_part_load_ratio(
             obj.get_inp(BDL_CurveFitKeywords.OUTPUT_MAX)
         )
 
-    eff_f_plr_curve_type = curves["cap_f_t"].get_inp(BDL_CurveFitKeywords.TYPE)
-
-    curve_function_map = {
-        BDL_CurveFitTypes.QUADRATIC: calculate_quadratic,
-        BDL_CurveFitTypes.CUBIC: calculate_cubic,
-    }
-
-    eff_f_t_result = calculate_bi_quadratic(
+    results["eff_f_t_result"] = calculate_bi_quadratic(
         coeffs["eff_f_t_coeffs"],
         evap_leaving_temp,
         condenser_entering_temp,
@@ -246,8 +242,8 @@ def calculate_efficiency_at_part_load_ratio(
         max_outputs["eff_f_t_max_output"],
     )
 
-    if eff_f_plr_curve_type in curve_function_map:
-        eff_f_plr_result = curve_function_map[eff_f_plr_curve_type](
+    if eff_f_plr_curve_type in CURVE_FUNCTION_MAP:
+        results["eff_f_plr_result"] = CURVE_FUNCTION_MAP[eff_f_plr_curve_type](
             coeffs["eff_f_plr_coeffs"],
             part_load_ratio,
             min_outputs["eff_f_plr_min_output"],
@@ -255,15 +251,12 @@ def calculate_efficiency_at_part_load_ratio(
         )
     else:
         chw_delta_t = condenser_entering_temp - evap_leaving_temp
-        eff_f_plr_result = calculate_bi_quadratic(
+        results["eff_f_plr_result"] = calculate_bi_quadratic(
             coeffs["eff_f_plr_coeffs"],
             part_load_ratio,
             chw_delta_t,
             min_outputs["eff_f_plr_min_output"],
             max_outputs["eff_f_plr_max_output"],
         )
-    results = {
-        "eff_f_t_result": eff_f_t_result,
-        "eff_f_plr_result": eff_f_plr_result,
-    }
+
     return results
