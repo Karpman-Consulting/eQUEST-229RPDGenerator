@@ -204,7 +204,7 @@ def get_output_of_curves_at_temperature_and_load_conditions(
 def calculate_eff_performance_curve_results(
     evap_leaving_temp: int,
     condenser_entering_temp: int,
-    curves: dict,
+    performance_curve_data: dict,
     part_load_ratio: float,
 ) -> dict:
     """
