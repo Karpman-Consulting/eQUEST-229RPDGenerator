@@ -89,7 +89,7 @@ class SpacesSubview(CTkXYFrame):
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
         name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
-        if not self.app_data.is_all_new_construction:
+        if not self.app_data.is_all_new_construction.get():
             status_label = ctk.CTkLabel(self, text="Status", font=LABEL_FONT)
             status_label.grid(row=0, column=1, padx=PAD20END, pady=5)
         lighting_space_type_label = ctk.CTkLabel(
@@ -132,7 +132,7 @@ class SpacesSubview(CTkXYFrame):
     def add_row(self, i, space_name):
         name_label = ctk.CTkLabel(self, text=f"{space_name}")
         name_label.grid(row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W)
-        if not self.app_data.is_all_new_construction:
+        if not self.app_data.is_all_new_construction.get():
             status_combo = ctk.CTkComboBox(
                 self,
                 values=self.app_data.StatusDescriptions,

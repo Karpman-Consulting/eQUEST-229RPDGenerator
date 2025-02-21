@@ -232,6 +232,8 @@ class ProjectDetailsView(CTkXYFrame):
             font=LABEL_FONT,
             variable=self.app_data.has_measured_infiltration,
             command=self.toggle_measured_infiltration,
+            onvalue=True,
+            offvalue=False,
         )
         self.pressure_difference_label = ctk.CTkLabel(
             self.infiltration_frame,
@@ -257,6 +259,8 @@ class ProjectDetailsView(CTkXYFrame):
             text="Based on Site Testing?",
             font=TEXT_FONT,
             variable=self.app_data.is_based_on_site_testing,
+            onvalue=True,
+            offvalue=False,
         )
 
         self.populate_subview()

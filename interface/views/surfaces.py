@@ -92,7 +92,7 @@ class SurfacesView(BaseView):
 
     def create_subbutton_bar(self):
         callback_methods = {}
-        if not self.app_data.is_all_new_construction:
+        if not self.app_data.is_all_new_construction.get():
             if len(self.app_data.rmds[0].ext_wall_names) > 0:
                 callback_methods["Exterior"] = lambda: self.show_subview("Exterior")
             if len(self.app_data.rmds[0].int_wall_names) > 0:
@@ -304,7 +304,7 @@ class WindowSurfaceView(CTkXYFrame):
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
         name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
-        if not self.app_data.is_all_new_construction:
+        if not self.app_data.is_all_new_construction.get():
             status_label = ctk.CTkLabel(self, text="Status", font=LABEL_FONT)
             status_label.grid(row=0, column=1, padx=PAD20END, pady=5)
         classification_label = ctk.CTkLabel(
@@ -323,7 +323,7 @@ class WindowSurfaceView(CTkXYFrame):
         surface_label.grid(
             row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
         )
-        if not self.app_data.is_all_new_construction:
+        if not self.app_data.is_all_new_construction.get():
             status_combo = ctk.CTkComboBox(
                 self,
                 values=self.app_data.StatusDescriptions,
@@ -376,7 +376,7 @@ class SkylightSurfaceView(CTkXYFrame):
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
         name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
-        if not self.app_data.is_all_new_construction:
+        if not self.app_data.is_all_new_construction.get():
             status_label = ctk.CTkLabel(self, text="Status", font=LABEL_FONT)
             status_label.grid(row=0, column=1, padx=PAD20END, pady=5)
         classification_label = ctk.CTkLabel(
@@ -395,7 +395,7 @@ class SkylightSurfaceView(CTkXYFrame):
         surface_label.grid(
             row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
         )
-        if not self.app_data.is_all_new_construction:
+        if not self.app_data.is_all_new_construction.get():
             status_combo = ctk.CTkComboBox(
                 self,
                 values=self.app_data.StatusDescriptions,

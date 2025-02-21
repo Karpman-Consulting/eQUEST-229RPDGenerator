@@ -95,7 +95,7 @@ class SystemsView(BaseView):
             callback_methods["HVAC Systems"] = lambda: self.show_subview("HVAC Systems")
         if (
             len(self.app_data.rmds[0].zonal_exh_fan_names) > 0
-            and not self.app_data.is_all_new_construction
+            and not self.app_data.is_all_new_construction.get()
         ):
             callback_methods["Zonal Exhaust"] = lambda: self.show_subview(
                 "Zonal Exhaust"
@@ -214,7 +214,7 @@ class HVACSystemView(CTkXYFrame):
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
         name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
-        if not self.app_data.is_all_new_construction:
+        if not self.app_data.is_all_new_construction.get():
             status_label = ctk.CTkLabel(self, text="Status", font=LABEL_FONT)
             status_label.grid(row=0, column=1, padx=PAD20END, pady=5)
         dehumidification_type_label = ctk.CTkLabel(
@@ -231,7 +231,7 @@ class HVACSystemView(CTkXYFrame):
     def add_row(self, i, hvac_system_name):
         system_label = ctk.CTkLabel(self, text=f"{hvac_system_name}")
         system_label.grid(row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W)
-        if not self.app_data.is_all_new_construction:
+        if not self.app_data.is_all_new_construction.get():
             status_combo = ctk.CTkComboBox(
                 self,
                 values=self.app_data.StatusDescriptions,

@@ -58,6 +58,8 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             text="All New Construction?",
             font=("Arial", 14),
             variable=self.main_app.data.is_all_new_construction,
+            onvalue=True,
+            offvalue=False,
         )
         self.rotation_exception_checkbox = ctk.CTkCheckBox(
             self,
@@ -65,6 +67,8 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             font=("Arial", 14),
             variable=self.main_app.data.has_rotation_exception,
             command=self.toggle_baseline_rotations,
+            onvalue=True,
+            offvalue=False,
         )
         self.ruleset_models_frame = ctk.CTkFrame(self, width=800)
         self.ruleset_dropdown = ctk.CTkOptionMenu(
