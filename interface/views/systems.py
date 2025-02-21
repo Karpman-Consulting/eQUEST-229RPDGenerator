@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import interface.custom_widgets as cw
 
+from interface.CTkScrollableDropdown import CTkScrollableDropdown
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
 
@@ -15,6 +16,7 @@ PAD20END = (0, 20)
 BLACK = "black"
 SUBVIEW_BUTTON_COLOR = "#FFD966"
 ACTIVE_SUBVIEW_BUTTON_COLOR = "#FFED67"
+DROPDOWN_HOVER_COLOR = "#5B9BD5"
 
 
 class SystemsView(BaseView):
@@ -182,11 +184,14 @@ class HeatRejectionView(CTkXYFrame):
         heat_rejection_label.grid(
             row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
         )
-        fan_type_combo = ctk.CTkComboBox(
-            self, values=self.app_data.HeatRejectionFanDescriptions, state=READONLY
-        )
-        fan_type_combo._entry.configure(justify=LEFT)
+        fan_type_combo = ctk.CTkComboBox(self, state=READONLY)
         fan_type_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
+        CTkScrollableDropdown(
+            fan_type_combo,
+            values=self.app_data.HeatRejectionFanDescriptions,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
+        )
 
 
 class HVACSystemView(CTkXYFrame):
@@ -232,21 +237,23 @@ class HVACSystemView(CTkXYFrame):
         system_label = ctk.CTkLabel(self, text=f"{hvac_system_name}")
         system_label.grid(row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W)
         if not self.app_data.is_all_new_construction:
-            status_combo = ctk.CTkComboBox(
-                self,
-                values=self.app_data.StatusDescriptions,
-                state=READONLY,
-            )
-            status_combo._entry.configure(justify=LEFT)
+            status_combo = ctk.CTkComboBox(self, state=READONLY)
             status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
-        dehumidification_type_combo = ctk.CTkComboBox(
-            self,
-            values=self.app_data.DehumidificationDescriptions,
-            state=READONLY,
-        )
-        dehumidification_type_combo._entry.configure(justify=LEFT)
+            CTkScrollableDropdown(
+                status_combo,
+                values=self.app_data.StatusDescriptions,
+                justify=LEFT,
+                hover_color=DROPDOWN_HOVER_COLOR,
+            )
+        dehumidification_type_combo = ctk.CTkComboBox(self, state=READONLY)
         dehumidification_type_combo.grid(
             row=(i + 1), column=2, padx=PAD20END, pady=PAD20END
+        )
+        CTkScrollableDropdown(
+            dehumidification_type_combo,
+            values=self.app_data.DehumidificationDescriptions,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
         )
         ducted_supply_checkbox = ctk.CTkCheckBox(self, text="", width=30)
         ducted_supply_checkbox.grid(row=(i + 1), column=3, padx=PAD20END, pady=PAD20END)
@@ -302,10 +309,11 @@ class ZonalExhaustView(CTkXYFrame):
         zonal_exhaust_fan_label.grid(
             row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
         )
-        status_combo = ctk.CTkComboBox(
-            self,
-            values=self.app_data.StatusDescriptions,
-            state=READONLY,
-        )
-        status_combo._entry.configure(justify=LEFT)
+        status_combo = ctk.CTkComboBox(self, state=READONLY)
         status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
+        CTkScrollableDropdown(
+            status_combo,
+            values=self.app_data.StatusDescriptions,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
+        )

@@ -2,6 +2,7 @@ import customtkinter as ctk
 from tkinter import filedialog
 from pathlib import Path
 
+from interface.CTkScrollableDropdown import CTkScrollableDropdown
 from interface.base_view import BaseView
 from interface.ctk_xyframe import CTkXYFrame
 
@@ -17,6 +18,7 @@ PAD20START = (20, 0)
 BLACK = "black"
 SUBVIEW_BUTTON_COLOR = "#FFD966"
 ACTIVE_SUBVIEW_BUTTON_COLOR = "#FFED67"
+DROPDOWN_HOVER_COLOR = "#5B9BD5"
 
 
 class ProjectInfoView(BaseView):
@@ -150,14 +152,18 @@ class ProjectDetailsView(CTkXYFrame):
         )
         self.climate_zone_combo = ctk.CTkComboBox(
             self.options_frame,
-            values=self.app_data.ClimateZoneDescriptions2019ASHRAE901,
             state=READONLY,
             variable=self.app_data.climate_zone,
             command=lambda _: self.app_data.insert_to_rpd(
                 self.app_data.ClimateZoneMapping2019ASHRAE901
             ),
         )
-        self.climate_zone_combo._entry.configure(justify=LEFT)
+        CTkScrollableDropdown(
+            self.climate_zone_combo,
+            values=self.app_data.ClimateZoneDescriptions2019ASHRAE901,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
+        )
         self.lighting_zone_label = ctk.CTkLabel(
             self.options_frame,
             text="Exterior Lighting Zone:",
@@ -166,14 +172,18 @@ class ProjectDetailsView(CTkXYFrame):
         )
         self.lighting_zone_combo = ctk.CTkComboBox(
             self.options_frame,
-            values=self.app_data.ExteriorLightingZoneDescriptions2019ASHRAE901,
             state=READONLY,
             variable=self.app_data.lighting_zone,
             command=lambda _: self.app_data.insert_to_rpd(
                 self.app_data.ExteriorLightingZoneMapping2019ASHRAE901
             ),
         )
-        self.lighting_zone_combo._entry.configure(justify=LEFT)
+        CTkScrollableDropdown(
+            self.lighting_zone_combo,
+            values=self.app_data.ExteriorLightingZoneDescriptions2019ASHRAE901,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
+        )
         self.building_open_schedule_label = ctk.CTkLabel(
             self.options_frame,
             text="Building Open Schedule:",
@@ -202,14 +212,18 @@ class ProjectDetailsView(CTkXYFrame):
         )
         self.heating_design_day_combo = ctk.CTkComboBox(
             self.options_frame,
-            values=self.app_data.HeatingDesignDayDescriptions,
             state=READONLY,
             variable=self.app_data.heating_design_day,
             command=lambda _: self.app_data.insert_to_rpd(
                 self.app_data.HeatingDesignDayMapping
             ),
         )
-        self.heating_design_day_combo._entry.configure(justify=LEFT)
+        CTkScrollableDropdown(
+            self.heating_design_day_combo,
+            values=self.app_data.HeatingDesignDayDescriptions,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
+        )
         self.cooling_design_day_label = ctk.CTkLabel(
             self.options_frame,
             text="Cooling Design Day Criteria:",
@@ -218,14 +232,18 @@ class ProjectDetailsView(CTkXYFrame):
         )
         self.cooling_design_day_combo = ctk.CTkComboBox(
             self.options_frame,
-            values=self.app_data.CoolingDesignDayDescriptions,
             state=READONLY,
             variable=self.app_data.cooling_design_day,
             command=lambda _: self.app_data.insert_to_rpd(
                 self.app_data.CoolingDesignDayMapping
             ),
         )
-        self.cooling_design_day_combo._entry.configure(justify=LEFT)
+        CTkScrollableDropdown(
+            self.cooling_design_day_combo,
+            values=self.app_data.CoolingDesignDayDescriptions,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
+        )
         self.measured_infiltration_checkbox = ctk.CTkCheckBox(
             self.infiltration_frame,
             text="Measured Infiltration?",
@@ -380,10 +398,15 @@ class ProjectConfigView(CTkXYFrame):
         self.ruleset_models_frame = ctk.CTkFrame(self, width=800, height=250)
         self.ruleset_dropdown = ctk.CTkOptionMenu(
             self,
-            values=["ASHRAE 90.1-2019", "None"],
             command=lambda selection: self.update_ruleset_model_frame(selection),
         )
         self.ruleset_dropdown.set(self.app_data.selected_ruleset.get())
+        CTkScrollableDropdown(
+            self.ruleset_dropdown,
+            values=["ASHRAE 90.1-2019", "None"],
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
+        )
         self.rotation_exception_checkbox = ctk.CTkCheckBox(
             self,
             text="Baseline Rotation Exempt? (90.1-2019 Table G3.1(5) Baseline Building Performance (a))",

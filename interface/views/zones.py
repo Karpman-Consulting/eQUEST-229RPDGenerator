@@ -4,6 +4,7 @@ from PIL import Image
 
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
+from interface.CTkScrollableDropdown import CTkScrollableDropdown
 
 
 LABEL_FONT = ("Arial", 14, "bold")
@@ -15,6 +16,7 @@ E = "e"
 W = "w"
 PAD20END = (0, 20)
 PAD10SYM = 10
+DROPDOWN_HOVER_COLOR = "#5B9BD5"
 FLOOR_COMBOBOX_COLOR = "#5B9BD5"
 FLOOR_COMBOBOX_BTN_COLOR = "#3A7EBF"
 LIGHTBLUE = "lightblue"
@@ -157,25 +159,24 @@ class ZonesSubview(CTkXYFrame):
         )
         floor_label.grid(row=(i + 1), column=1, padx=20, pady=10, sticky=W)
 
-        # Place the Building Area ComboBox in `self` (not inside `main_row_frame`) to align properly
-        building_area_combo = ctk.CTkComboBox(
+        # Changed to OptionsMenu to match theming of other blue dropdowns without having to change defaults
+        building_area_combo = ctk.CTkOptionMenu(
             self,
-            # TODO: Placeholder for Building Areas tab data
-            values=["Building Area 1"],
             state=READONLY,
-            fg_color=FLOOR_COMBOBOX_COLOR,
-            border_color=FLOOR_COMBOBOX_COLOR,
-            button_color=FLOOR_COMBOBOX_BTN_COLOR,
-            dropdown_fg_color=FLOOR_COMBOBOX_COLOR,
-            dropdown_hover_color=LIGHTBLUE,
             bg_color=GRAY30,  # Same color as the frame
             command=lambda value, floor=floor_name: self.set_default_value_by_floor(
                 floor, value
             ),
         )
         building_area_combo.set("Building Area 1")
-        building_area_combo._entry.configure(justify=LEFT)
         building_area_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=10)
+        CTkScrollableDropdown(
+            building_area_combo,
+            # TODO: Placeholder for Building Areas tab data
+            values=["Building Area 1"],
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
+        )
 
         self.floor_comboboxes[floor_name] = building_area_combo
 
@@ -192,13 +193,17 @@ class ZonesSubview(CTkXYFrame):
         floor_label.grid(row=(i + 1), column=1, padx=20, pady=PAD10SYM, sticky=W)
         building_area_combo = ctk.CTkComboBox(
             self,
-            # TODO: Placeholder for Building Areas tab data
-            values=["Building Area 1"],
             state=READONLY,
         )
         building_area_combo.set("Building Area 1")
-        building_area_combo._entry.configure(justify=LEFT)
         building_area_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=PAD10SYM)
+        CTkScrollableDropdown(
+            building_area_combo,
+            # TODO: Placeholder for Building Areas tab data
+            values=["Building Area 1"],
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
+        )
 
         self.zone_comboboxes[zone_name] = building_area_combo
         # TODO: Apply numerical entry validation

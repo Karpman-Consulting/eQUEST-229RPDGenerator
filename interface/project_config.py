@@ -2,11 +2,16 @@ import customtkinter as ctk
 from tkinter import Menu, filedialog
 from pathlib import Path
 
+from interface.CTkScrollableDropdown import CTkScrollableDropdown
 from interface.disclaimer_window import DisclaimerWindow
 from interface.error_window import ErrorWindow
 from rpd_generator.artifacts.ruleset_project_description import (
     RulesetProjectDescription,
 )
+
+
+LEFT = "left"
+DROPDOWN_HOVER_COLOR = "#5B9BD5"
 
 
 class ProjectConfigWindow(ctk.CTkToplevel):
@@ -73,6 +78,14 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             variable=self.main_app.data.selected_ruleset,
             command=self.update_ruleset_model_frame,
         )
+        # TODO: Leaving this one for now so we can proceed. Variable not linking. Discuss.
+        # CTkScrollableDropdown(
+        #     self.ruleset_dropdown,
+        #     values=["ASHRAE 90.1-2019", "None"],
+        #     justify=LEFT,
+        #     hover_color=DROPDOWN_HOVER_COLOR,
+        #     command=self.update_ruleset_model_frame,
+        # )
         self.ruleset_models_label = ctk.CTkLabel(
             self,
             text="Models: ",
@@ -194,6 +207,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         self.output_dir_button.grid(row=6, column=6, sticky="ew", padx=5, pady=(15, 5))
 
     def update_ruleset_model_frame(self, selected_ruleset):
+        print("inside")
         self.rotation_exception_checkbox.grid_remove()
         self.clear_ruleset_models_frame()
         self.show_ruleset_models()

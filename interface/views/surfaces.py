@@ -1,5 +1,6 @@
 import customtkinter as ctk
 
+from interface.CTkScrollableDropdown import CTkScrollableDropdown
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
 
@@ -14,6 +15,7 @@ PAD20END = (0, 20)
 BLACK = "black"
 SUBVIEW_BUTTON_COLOR = "#FFD966"
 ACTIVE_SUBVIEW_BUTTON_COLOR = "#FFED67"
+DROPDOWN_HOVER_COLOR = "#5B9BD5"
 
 
 class SurfacesView(BaseView):
@@ -186,13 +188,14 @@ class ExteriorSurfaceView(CTkXYFrame):
         surface_label.grid(
             row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
         )
-        status_combo = ctk.CTkComboBox(
-            self,
-            values=self.app_data.StatusDescriptions,
-            state=READONLY,
-        )
-        status_combo._entry.configure(justify=LEFT)
+        status_combo = ctk.CTkComboBox(self, state=READONLY)
         status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
+        CTkScrollableDropdown(
+            status_combo,
+            values=self.app_data.StatusDescriptions,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
+        )
 
 
 class InteriorSurfaceView(CTkXYFrame):
@@ -228,13 +231,14 @@ class InteriorSurfaceView(CTkXYFrame):
         surface_label.grid(
             row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
         )
-        status_combo = ctk.CTkComboBox(
-            self,
-            values=self.app_data.StatusDescriptions,
-            state=READONLY,
-        )
-        status_combo._entry.configure(justify=LEFT)
+        status_combo = ctk.CTkComboBox(self, state=READONLY)
         status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
+        CTkScrollableDropdown(
+            status_combo,
+            values=self.app_data.StatusDescriptions,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
+        )
 
 
 class UndergroundSurfaceView(CTkXYFrame):
@@ -270,13 +274,14 @@ class UndergroundSurfaceView(CTkXYFrame):
         surface_label.grid(
             row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
         )
-        status_combo = ctk.CTkComboBox(
-            self,
-            values=self.app_data.StatusDescriptions,
-            state=READONLY,
-        )
-        status_combo._entry.configure(justify=LEFT)
+        status_combo = ctk.CTkComboBox(self, state=READONLY)
         status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
+        CTkScrollableDropdown(
+            status_combo,
+            values=self.app_data.StatusDescriptions,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
+        )
 
 
 class WindowSurfaceView(CTkXYFrame):
@@ -324,27 +329,30 @@ class WindowSurfaceView(CTkXYFrame):
             row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
         )
         if not self.app_data.is_all_new_construction:
-            status_combo = ctk.CTkComboBox(
-                self,
-                values=self.app_data.StatusDescriptions,
-                state=READONLY,
-            )
-            status_combo._entry.configure(justify=LEFT)
+            status_combo = ctk.CTkComboBox(self, state=READONLY)
             status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
-        classification_combo = ctk.CTkComboBox(
-            self,
-            values=self.app_data.SubsurfaceSubclassificationDescriptions2019ASHRAE901,
-            state=READONLY,
-        )
-        classification_combo._entry.configure(justify=LEFT)
+            CTkScrollableDropdown(
+                status_combo,
+                values=self.app_data.StatusDescriptions,
+                justify=LEFT,
+                hover_color=DROPDOWN_HOVER_COLOR,
+            )
+        classification_combo = ctk.CTkComboBox(self, state=READONLY)
         classification_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=PAD20END)
-        framing_type_combo = ctk.CTkComboBox(
-            self,
+        CTkScrollableDropdown(
+            classification_combo,
             values=self.app_data.SubsurfaceSubclassificationDescriptions2019ASHRAE901,
-            state=READONLY,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
         )
-        framing_type_combo._entry.configure(justify=LEFT)
+        framing_type_combo = ctk.CTkComboBox(self, state=READONLY)
         framing_type_combo.grid(row=(i + 1), column=3, padx=PAD20END, pady=PAD20END)
+        CTkScrollableDropdown(
+            framing_type_combo,
+            values=self.app_data.SubsurfaceSubclassificationDescriptions2019ASHRAE901,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
+        )
         operable_checkbox = ctk.CTkCheckBox(self, text="", width=30)
         operable_checkbox.grid(row=(i + 1), column=4, padx=PAD20END, pady=PAD20END)
         open_sensor_checkbox = ctk.CTkCheckBox(self, text="", width=30)
@@ -396,27 +404,30 @@ class SkylightSurfaceView(CTkXYFrame):
             row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
         )
         if not self.app_data.is_all_new_construction:
-            status_combo = ctk.CTkComboBox(
-                self,
-                values=self.app_data.StatusDescriptions,
-                state=READONLY,
-            )
-            status_combo._entry.configure(justify=LEFT)
+            status_combo = ctk.CTkComboBox(self, state=READONLY)
             status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
-        classification_combo = ctk.CTkComboBox(
-            self,
-            values=self.app_data.SubsurfaceSubclassificationDescriptions2019ASHRAE901,
-            state=READONLY,
-        )
-        classification_combo._entry.configure(justify=LEFT)
+            CTkScrollableDropdown(
+                status_combo,
+                values=self.app_data.StatusDescriptions,
+                justify=LEFT,
+                hover_color=DROPDOWN_HOVER_COLOR,
+            )
+        classification_combo = ctk.CTkComboBox(self, state=READONLY)
         classification_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=PAD20END)
-        framing_type_combo = ctk.CTkComboBox(
-            self,
-            values=self.app_data.SubsurfaceFrameDescriptions2019ASHRAE901,
-            state=READONLY,
+        CTkScrollableDropdown(
+            classification_combo,
+            values=self.app_data.SubsurfaceSubclassificationDescriptions2019ASHRAE901,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
         )
-        framing_type_combo._entry.configure(justify=LEFT)
+        framing_type_combo = ctk.CTkComboBox(self, state=READONLY)
         framing_type_combo.grid(row=(i + 1), column=3, padx=PAD20END, pady=PAD20END)
+        CTkScrollableDropdown(
+            framing_type_combo,
+            values=self.app_data.SubsurfaceFrameDescriptions2019ASHRAE901,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
+        )
         operable_checkbox = ctk.CTkCheckBox(self, text="", width=30)
         operable_checkbox.grid(row=(i + 1), column=4, padx=PAD20END, pady=PAD20END)
         open_sensor_checkbox = ctk.CTkCheckBox(self, text="", width=30)
@@ -460,17 +471,19 @@ class DoorSurfaceView(CTkXYFrame):
         surface_label.grid(
             row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
         )
-        status_combo = ctk.CTkComboBox(
-            self,
-            values=self.app_data.StatusDescriptions,
-            state=READONLY,
-        )
-        status_combo._entry.configure(justify=LEFT)
+        status_combo = ctk.CTkComboBox(self, state=READONLY)
         status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
-        classification_combo = ctk.CTkComboBox(
-            self,
-            values=self.app_data.SubsurfaceSubclassificationDescriptions2019ASHRAE901,
-            state=READONLY,
+        CTkScrollableDropdown(
+            status_combo,
+            values=self.app_data.StatusDescriptions,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
         )
-        classification_combo._entry.configure(justify=LEFT)
+        classification_combo = ctk.CTkComboBox(self, state=READONLY)
         classification_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=PAD20END)
+        CTkScrollableDropdown(
+            classification_combo,
+            values=self.app_data.SubsurfaceSubclassificationDescriptions2019ASHRAE901,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
+        )

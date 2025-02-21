@@ -1,5 +1,6 @@
 import customtkinter as ctk
 
+from interface.CTkScrollableDropdown import CTkScrollableDropdown
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
 
@@ -11,6 +12,7 @@ E = "e"
 W = "w"
 FILL = "nsew"
 PAD20END = (0, 20)
+DROPDOWN_HOVER_COLOR = "#5B9BD5"
 
 
 class SpacesView(BaseView):
@@ -133,68 +135,78 @@ class SpacesSubview(CTkXYFrame):
         name_label = ctk.CTkLabel(self, text=f"{space_name}")
         name_label.grid(row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W)
         if not self.app_data.is_all_new_construction:
-            status_combo = ctk.CTkComboBox(
-                self,
-                values=self.app_data.StatusDescriptions,
-                state=READONLY,
-            )
-            status_combo._entry.configure(justify=LEFT)
+            status_combo = ctk.CTkComboBox(self, state=READONLY)
             status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
+            CTkScrollableDropdown(
+                status_combo,
+                values=self.app_data.StatusDescriptions,
+                justify=LEFT,
+                hover_color=DROPDOWN_HOVER_COLOR,
+            )
         lighting_space_type_combo = ctk.CTkComboBox(
             self,
-            values=self.app_data.LightingSpaceDescriptions2019ASHRAE901TG37,
             variable=self.app_data.lighting_space_type_vars[space_name],
             command=lambda _: self.app_data.insert_to_rpd(
                 self.app_data.LightingSpaceMapping2019ASHRAE901TG37, space_name
             ),
             state=READONLY,
         )
-        lighting_space_type_combo._entry.configure(justify=LEFT)
         lighting_space_type_combo.grid(
             row=(i + 1), column=2, padx=PAD20END, pady=PAD20END
         )
-        envelope_space_type_combo = ctk.CTkComboBox(
-            self,
-            values=self.app_data.EnvelopeSpaceDescriptions2019ASHRAE901,
-            state=READONLY,
+        CTkScrollableDropdown(
+            lighting_space_type_combo,
+            values=self.app_data.LightingSpaceDescriptions2019ASHRAE901TG37,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
         )
-        envelope_space_type_combo._entry.configure(justify=LEFT)
+        envelope_space_type_combo = ctk.CTkComboBox(self, state=READONLY)
         envelope_space_type_combo.grid(
             row=(i + 1), column=3, padx=PAD20END, pady=PAD20END
         )
-        ventilation_space_type_combo = ctk.CTkComboBox(
-            self,
-            values=self.app_data.VentilationSpaceDescriptions2019ASHRAE901,
-            state=READONLY,
+        CTkScrollableDropdown(
+            envelope_space_type_combo,
+            values=self.app_data.EnvelopeSpaceDescriptions2019ASHRAE901,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
         )
-        ventilation_space_type_combo._entry.configure(justify=LEFT)
+        ventilation_space_type_combo = ctk.CTkComboBox(self, state=READONLY)
         ventilation_space_type_combo.grid(
             row=(i + 1), column=4, padx=PAD20END, pady=PAD20END
         )
-        swh_space_type_combo = ctk.CTkComboBox(
-            self,
-            values=self.app_data.ServiceWaterHeatingSpaceDescriptions2019ASHRAE901,
-            state=READONLY,
+        CTkScrollableDropdown(
+            ventilation_space_type_combo,
+            values=self.app_data.VentilationSpaceDescriptions2019ASHRAE901,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
         )
-        swh_space_type_combo._entry.configure(justify=LEFT)
+        swh_space_type_combo = ctk.CTkComboBox(self, state=READONLY)
         swh_space_type_combo.grid(row=(i + 1), column=5, padx=PAD20END, pady=PAD20END)
-        lighting_occ_controls_combo = ctk.CTkComboBox(
-            self,
-            values=self.app_data.LightingOccupancyControlDescriptions,
-            state=READONLY,
+        CTkScrollableDropdown(
+            swh_space_type_combo,
+            values=self.app_data.ServiceWaterHeatingSpaceDescriptions2019ASHRAE901,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
         )
-        lighting_occ_controls_combo._entry.configure(justify=LEFT)
+        lighting_occ_controls_combo = ctk.CTkComboBox(self, state=READONLY)
         lighting_occ_controls_combo.grid(
             row=(i + 1), column=6, padx=PAD20END, pady=PAD20END
         )
-        daylighting_controls_combo = ctk.CTkComboBox(
-            self,
-            values=self.app_data.LightingDaylightingControlDescriptions,
-            state=READONLY,
+        CTkScrollableDropdown(
+            lighting_occ_controls_combo,
+            values=self.app_data.LightingOccupancyControlDescriptions,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
         )
-        daylighting_controls_combo._entry.configure(justify=LEFT)
+        daylighting_controls_combo = ctk.CTkComboBox(self, state=READONLY)
         daylighting_controls_combo.grid(
             row=(i + 1), column=7, padx=PAD20END, pady=PAD20END
+        )
+        CTkScrollableDropdown(
+            daylighting_controls_combo,
+            values=self.app_data.LightingDaylightingControlDescriptions,
+            justify=LEFT,
+            hover_color=DROPDOWN_HOVER_COLOR,
         )
         occ_controls_modeled_checkbox = ctk.CTkCheckBox(self, text="", width=30)
         occ_controls_modeled_checkbox.grid(

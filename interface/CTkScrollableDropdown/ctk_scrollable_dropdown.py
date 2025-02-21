@@ -150,13 +150,16 @@ class CTkScrollableDropdown(customtkinter.CTkToplevel):
         self.no_match = customtkinter.CTkLabel(self.frame, text="No Match")
         self.height = height
         self.height_new = height
-        self.width = width
         self.command = command
         self.fade = False
         self.resize = resize
         self.autocomplete = autocomplete
         self.var_update = customtkinter.StringVar()
         self.appear = False
+
+        if width is None:
+            longest_value = max([len(str(i)) for i in values])
+            self.width = longest_value * 7 + 50
 
         if justify.lower() == "left":
             self.justify = "w"
