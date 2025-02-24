@@ -1001,8 +1001,8 @@ class System(ParentNode):
         max_reset_t = self.try_float(self.get_inp(BDL_SystemKeywords.COOL_MAX_RESET_T))
         if (
             cool_control == BDL_CoolControlOptions.WARMEST
-            and min_reset_t
-            and max_reset_t
+            and min_reset_t is not None
+            and max_reset_t is not None
         ):
             self.fan_sys_reset_differential_temperature = max_reset_t - min_reset_t
         supply_fan_airflow = output_data.get("Supply Fan - Airflow")
@@ -1011,16 +1011,16 @@ class System(ParentNode):
         )
         supply_min_fan_ratio = output_data.get("Supply Fan - Min Flow Ratio")
         oa_ratio = output_data.get("Outside Air Ratio")
-        if oa_ratio and supply_fan_airflow:
+        if oa_ratio is not None and supply_fan_airflow is not None:
             self.fan_sys_minimum_outdoor_airflow = oa_ratio * supply_fan_airflow
-        if supply_min_fan_ratio and supply_fan_airflow:
+        if supply_min_fan_ratio is not None and supply_fan_airflow is not None:
             self.fan_sys_minimum_airflow = supply_min_fan_ratio * supply_fan_airflow
         # Set fan control of systems that have a min flow ratio of 1
         if supply_min_flow_ratio == 1:
             self.fan_sys_fan_control = FanSystemSupplyFanControlOptions.CONSTANT
         # Override fan control of systems that have CONSTANT_VOLUME fans with a minimum flow ratio less than 1
         elif (
-            supply_min_fan_ratio
+            supply_min_fan_ratio is not None
             and supply_min_fan_ratio < 1
             and self.fan_sys_fan_control == FanSystemSupplyFanControlOptions.CONSTANT
         ):
