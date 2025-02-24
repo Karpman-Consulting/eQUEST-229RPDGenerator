@@ -21,11 +21,12 @@ class Polygon(BaseDefinition):
         return f"Polygon(u_name='{self.u_name}')"
 
     def populate_data_elements(self):
-        self.coordinates = [
-            tuple(map(float, map(str.strip, v)))
-            for i in range(1, 121)
-            if (v := self.get_inp(f"V{i}"))
-        ]
+        self.coordinates = []
+        for i in range(1, 121):
+            v = self.get_inp(f"V{i}")
+            if v is None:
+                break  # Stop iteration if vertex doesn't exist
+            self.coordinates.append(tuple(map(float, map(str.strip, v))))
 
         self.calculate_area_of_polygon_coords()
 
