@@ -18,6 +18,10 @@ SUBVIEW_BUTTON_COLOR = "#FFD966"
 ACTIVE_SUBVIEW_BUTTON_COLOR = "#FFED67"
 
 
+# TODO: Don't allow last row removal for buildings or areas
+# TODO: Save buildings on switching tabs
+# TODO: Update combo values in building areas on adding/removing building
+# TODO: Remove Buildings tab from main frame
 class BuildingAreasView(BaseView):
     def __init__(self, window):
         super().__init__(window)
