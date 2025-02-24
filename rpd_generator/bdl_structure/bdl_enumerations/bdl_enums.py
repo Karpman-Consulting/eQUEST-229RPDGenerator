@@ -50,6 +50,7 @@ class BDLEnums:
                 "DAY-SCHEDULE-PD",
                 "WEEK-SCHEDULE-PD",
                 "SCHEDULE-PD",
+                "POLYGON",
                 "PUMP",
                 "CIRCULATION-LOOP",
                 "BOILER",
@@ -373,6 +374,7 @@ class BDLEnums:
                 "AREA",
                 "HEIGHT",
                 "WIDTH",
+                "POLYGON",
                 "LOCATION",
                 "TILT",
                 "AZIMUTH",
@@ -452,6 +454,7 @@ class BDLEnums:
                 "NEXT-TO",
                 "AREA",
                 "HEIGHT",
+                "POLYGON",
                 "WIDTH",
                 "LOCATION",
                 "TILT",
@@ -557,6 +560,7 @@ class BDLEnums:
                 "HX-FLOW-CTRL",
             ]
         ),
+        "PolygonKeywords": _ListEnum([f"V{i}" for i in range(1, 121)]),
         "PumpCapacityControlOptions": _ListEnum(
             [
                 "ONE-SPEED-PUMP",
@@ -949,6 +953,7 @@ class BDLEnums:
                 "AREA",
                 "HEIGHT",
                 "WIDTH",
+                "POLYGON",
                 "LOCATION",
                 "TILT",
                 "AZIMUTH",

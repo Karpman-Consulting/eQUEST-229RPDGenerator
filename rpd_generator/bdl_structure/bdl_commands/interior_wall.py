@@ -86,6 +86,9 @@ class InteriorWall(
             width = self.try_float(self.get_inp(BDL_InteriorWallKeywords.WIDTH))
             if height is not None and width is not None:
                 self.area = height * width
+        if self.area is None:
+            polygon = self.get_obj(self.get_inp(BDL_InteriorWallKeywords.POLYGON))
+            self.area = polygon.area if polygon else None
 
         self.tilt = self.try_float(self.get_inp(BDL_InteriorWallKeywords.TILT))
         if self.tilt is not None and self.tilt < self.CEILING_TILT_THRESHOLD:
