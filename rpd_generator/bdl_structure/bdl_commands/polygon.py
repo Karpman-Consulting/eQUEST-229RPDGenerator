@@ -3,7 +3,6 @@ from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
-BDL_PolygonKeywords = BDLEnums.bdl_enums["CurveFitKeywords"]
 
 
 class Polygon(BaseDefinition):
