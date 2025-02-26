@@ -12,6 +12,7 @@ pip = "==23.3"
 rpd-generator = {file = ".", editable = true}
 jsonschema = "*"
 jsonpath-ng = "*"
+ctktooltip = "*"
 
 [dev-packages]
 pytest = "*"

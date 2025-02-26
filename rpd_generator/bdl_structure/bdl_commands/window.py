@@ -33,7 +33,6 @@ class Window(ChildNode):
 
     def __init__(self, u_name, parent, rmd):
         super().__init__(u_name, parent, rmd)
-        self.rmd.window_names.append(u_name)
         self.rmd.bdl_obj_instances[u_name] = self
 
         self.window_data_structure = {}
@@ -92,25 +91,24 @@ class Window(ChildNode):
             == BDL_WallLocationOptions.TOP
         ):
             self.classification = SubsurfaceClassificationOptions.SKYLIGHT
+            self.rmd.skylight_names.append(self.u_name)
         else:
             self.classification = SubsurfaceClassificationOptions.WINDOW
+            self.rmd.window_names.append(self.u_name)
 
-        if self.try_float(
-            self.get_inp(BDL_WindowKeywords.LEFT_FIN_D)
-        ) or self.try_float(self.get_inp(BDL_WindowKeywords.RIGHT_FIN_D)):
-            self.has_shading_sidefins = True
-
-        if self.try_float(self.get_inp(BDL_WindowKeywords.OVERHANG_D)):
-            self.depth_of_overhang = self.try_float(
-                self.get_inp(BDL_WindowKeywords.OVERHANG_D)
-            )
-            self.has_shading_overhang = True
-
-        if self.get_inp(BDL_WindowKeywords.WIN_SHADE_TYPE) in [
-            BDL_WindowShadeTypes.MOVABLE_INTERIOR,
-            BDL_WindowShadeTypes.MOVABLE_EXTERIOR,
-        ] and self.get_inp(BDL_WindowKeywords.SHADING_SCHEDULE):
-            self.has_manual_interior_shades = True
+        self.has_shading_sidefins = bool(
+            self.try_float(self.get_inp(BDL_WindowKeywords.LEFT_FIN_D))
+            or self.try_float(self.get_inp(BDL_WindowKeywords.RIGHT_FIN_D))
+        )
+        self.depth_of_overhang = self.try_float(
+            self.get_inp(BDL_WindowKeywords.OVERHANG_D)
+        )
+        self.has_shading_overhang = bool(self.depth_of_overhang)
+        self.has_manual_interior_shades = bool(
+            self.get_inp(BDL_WindowKeywords.WIN_SHADE_TYPE)
+            == BDL_WindowShadeTypes.MOVABLE_INTERIOR
+            and self.get_inp(BDL_WindowKeywords.SHADING_SCHEDULE)
+        )
 
         glass_type = self.get_obj(self.get_inp(BDL_WindowKeywords.GLASS_TYPE))
         if not glass_type:
@@ -214,7 +212,7 @@ class Window(ChildNode):
             if value is not None:
                 self.window_data_structure[attr] = value
 
-    def insert_to_rpd(self, rmd):
+    def insert_to_rpd(self):
         """Insert window object into the rpd data structure."""
         surface = self.get_obj(self.parent.u_name)
         surface.subsurfaces.append(self.window_data_structure)

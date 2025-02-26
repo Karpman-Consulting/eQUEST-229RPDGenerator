@@ -2,6 +2,9 @@ import unittest
 from unittest.mock import patch
 
 from rpd_generator.config import Config
+from rpd_generator.artifacts.ruleset_project_description import (
+    RulesetProjectDescription,
+)
 from rpd_generator.artifacts.ruleset_model_description import RulesetModelDescription
 from rpd_generator.bdl_structure.bdl_commands.floor import Floor
 from rpd_generator.bdl_structure.bdl_commands.construction import Construction
@@ -18,7 +21,9 @@ class TestWindows(unittest.TestCase):
     @patch("rpd_generator.bdl_structure.bdl_commands.space.Space")
     def setUp(self, MockSpace):
         self.maxDiff = None
-        self.rmd = RulesetModelDescription("Test RMD")
+
+        self.rpd = RulesetProjectDescription("Test RPD")
+        self.rmd = RulesetModelDescription("Test RMD", self.rpd)
         self.rmd.doe2_version = "DOE-2.3"
         self.rmd.doe2_data_path = Config.DOE23_DATA_PATH
         self.floor = Floor("Floor 1", self.rmd)
@@ -95,6 +100,9 @@ class TestWindows(unittest.TestCase):
             "glazed_area": 12.0,
             "opaque_area": 3.75,
             "u_factor": 0.5632360471070148,
+            "has_manual_interior_shades": False,
+            "has_shading_overhang": False,
+            "has_shading_sidefins": False,
         }
         self.assertEqual(expected_data_structure, self.window.window_data_structure)
 
@@ -124,6 +132,9 @@ class TestWindows(unittest.TestCase):
             "glazed_area": 12.0,
             "opaque_area": 3.75,
             "u_factor": 0.10972130787798991,
+            "has_manual_interior_shades": False,
+            "has_shading_overhang": False,
+            "has_shading_sidefins": False,
         }
         self.assertEqual(expected_data_structure, self.window.window_data_structure)
 
@@ -157,6 +168,9 @@ class TestWindows(unittest.TestCase):
             "glazed_area": 12.0,
             "opaque_area": 3.75,
             "u_factor": 0.5829540792474073,
+            "has_manual_interior_shades": False,
+            "has_shading_overhang": False,
+            "has_shading_sidefins": False,
         }
         self.assertEqual(expected_data_structure, self.window.window_data_structure)
 
@@ -174,6 +188,9 @@ class TestWindows(unittest.TestCase):
             "id": "Window 1",
             "glazed_area": 12.0,
             "opaque_area": 0.0,
+            "has_manual_interior_shades": False,
+            "has_shading_overhang": False,
+            "has_shading_sidefins": False,
         }
         self.assertEqual(expected_data_structure, self.window.window_data_structure)
 
@@ -189,6 +206,9 @@ class TestWindows(unittest.TestCase):
         expected_data_structure = {
             "classification": "WINDOW",
             "id": "Window 1",
+            "has_manual_interior_shades": False,
+            "has_shading_overhang": False,
+            "has_shading_sidefins": False,
         }
         self.assertEqual(expected_data_structure, self.window.window_data_structure)
 
@@ -198,7 +218,13 @@ class TestWindows(unittest.TestCase):
         self.window.keyword_value_pairs = {BDL_WindowKeywords.LEFT_FIN_D: "0.0"}
 
         self.rmd.populate_rmd_data(testing=True)
-        expected_data_structure = {"classification": "WINDOW", "id": "Window 1"}
+        expected_data_structure = {
+            "classification": "WINDOW",
+            "id": "Window 1",
+            "has_manual_interior_shades": False,
+            "has_shading_overhang": False,
+            "has_shading_sidefins": False,
+        }
         self.assertEqual(expected_data_structure, self.window.window_data_structure)
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
@@ -210,7 +236,14 @@ class TestWindows(unittest.TestCase):
         }
 
         self.rmd.populate_rmd_data(testing=True)
-        expected_data_structure = {"classification": "WINDOW", "id": "Window 1"}
+        expected_data_structure = {
+            "classification": "WINDOW",
+            "id": "Window 1",
+            "has_manual_interior_shades": False,
+            "has_shading_overhang": False,
+            "depth_of_overhang": 0.0,
+            "has_shading_sidefins": False,
+        }
         self.assertEqual(expected_data_structure, self.window.window_data_structure)
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
@@ -222,5 +255,11 @@ class TestWindows(unittest.TestCase):
         }
 
         self.rmd.populate_rmd_data(testing=True)
-        expected_data_structure = {"classification": "WINDOW", "id": "Window 1"}
+        expected_data_structure = {
+            "classification": "WINDOW",
+            "id": "Window 1",
+            "has_manual_interior_shades": False,
+            "has_shading_overhang": False,
+            "has_shading_sidefins": False,
+        }
         self.assertEqual(expected_data_structure, self.window.window_data_structure)

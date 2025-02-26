@@ -2,6 +2,7 @@ import customtkinter as ctk
 from PIL import Image
 from tkinter import Menu
 
+from interface.views.spaces import SpacesView
 from interface.views.test import TestView
 from interface.views.project_info import ProjectInfoView
 from interface.views.buildings import BuildingsView
@@ -9,7 +10,8 @@ from interface.views.building_areas import BuildingAreasView
 from interface.views.zones import ZonesView
 from interface.views.surfaces import SurfacesView
 from interface.views.systems import SystemsView
-from interface.views.ext_lighting import ExteriorLightingView
+
+# from interface.views.ext_lighting import ExteriorLightingView
 from interface.views.miscellaneous import MiscellaneousView
 from interface.views.results import ResultsView
 from interface.disclaimer_window import DisclaimerWindow
@@ -19,6 +21,7 @@ ctk.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
 ctk.set_default_color_theme(
     "dark-blue"
 )  # Themes: "blue" (standard), "green", "dark-blue"
+ICON_SIZE = (36, 36)
 
 
 class ComplianceParameterWindow(ctk.CTkToplevel):
@@ -26,7 +29,9 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         super().__init__()
         self.main_app = main_app
 
-        self.title("eQUEST 229 RPD Generator")
+        self.title(
+            f"eQUEST 229 RPD Generator - {self.main_app.data.project_name.get()}"
+        )
         self.geometry(f"{1300}x{700}")
         self.minsize(1300, 350)
         self.grid_propagate(False)
@@ -46,9 +51,10 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             "Buildings": BuildingsView(self),
             "Building Areas": BuildingAreasView(self),
             "Zones": ZonesView(self),
+            "Spaces": SpacesView(self),
             "Surfaces": SurfacesView(self),
             "Systems": SystemsView(self),
-            "Ext. Lighting": ExteriorLightingView(self),
+            # "Ext. Lighting": ExteriorLightingView(self),
             "Misc.": MiscellaneousView(self),
             "Results": ResultsView(self),
         }
@@ -81,11 +87,15 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             ),
         )
         self.continue_button = ctk.CTkButton(
+            self, text="Continue", width=100, corner_radius=12
+        )
+        self.generate_RPD_button = ctk.CTkButton(
             self,
-            text="Continue",
+            text="Generate RPD",
             width=100,
-            corner_radius=12,
-            command=self.raise_error_window("\n".join(self.main_app.data.errors)),
+            fg_color="green",
+            hover_color="#006400",
+            command=self.main_app.data.call_write_rpd_json_from_rmds,
         )
 
         self.license_window = None
@@ -131,9 +141,10 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             "Buildings",
             "Building Areas",
             "Zones",
+            "Spaces",
             "Surfaces",
             "Systems",
-            "Ext. Lighting",
+            # "Ext. Lighting",
             "Misc.",
             "Results",
         ]
@@ -143,10 +154,11 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             "menu.png",
             "buildings.png",
             "building_areas.png",
+            "square.png",
             "spaces.png",
             "surfaces.png",
             "systems.png",
-            "ext_lighting.png",
+            # "ext_lighting.png",
             "misc.png",
             "results.png",
         ]
@@ -155,35 +167,37 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             "Buildings": lambda: self.show_view("Buildings"),
             "Building Areas": lambda: self.show_view("Building Areas"),
             "Zones": lambda: self.show_view("Zones"),
+            "Spaces": lambda: self.show_view("Spaces"),
             "Surfaces": lambda: self.show_view("Surfaces"),
             "Systems": lambda: self.show_view("Systems"),
-            "Ext. Lighting": lambda: self.show_view("Ext. Lighting"),
+            # "Ext. Lighting": lambda: self.show_view("Ext. Lighting"),
             "Misc.": lambda: self.show_view("Misc."),
             "Results": lambda: self.show_view("Results"),
         }
 
         for index, (name, icon_path) in enumerate(zip(button_names, icon_paths)):
-            # Load and recolor the icon for the button
+            # Load and resize the icon
             icon = Image.open(f"interface/static/{icon_path}").convert("RGBA")
+            icon = icon.resize(ICON_SIZE, Image.LANCZOS)  # Resize icon
 
             r, g, b, alpha = icon.split()
-            white_icon = Image.merge(
-                "RGBA", (alpha, alpha, alpha, alpha)
-            )  # Merge all channels into alpha to keep transparency
-            icon_image = ctk.CTkImage(white_icon)
+            white_icon = Image.merge("RGBA", (alpha, alpha, alpha, alpha))
 
-            # Create a frame for each button that will act as the border
-            button_frame = ctk.CTkFrame(self, width=144, height=36, corner_radius=0)
+            # Create a CTkImage with the new size
+            icon_image = ctk.CTkImage(light_image=white_icon, size=ICON_SIZE)
+
+            # Create a frame for each button
+            button_frame = ctk.CTkFrame(self, width=144, height=50, corner_radius=0)
             button_frame.grid(row=0, column=index, sticky="nsew")
 
-            # Then create the button inside this frame with the icon
+            # Create the button inside the frame
             button = ctk.CTkButton(
                 button_frame,
                 image=icon_image,
                 text=name,
                 font=("Arial", 12),
                 width=140,
-                height=30,
+                height=46,
                 corner_radius=0,
                 compound="left",
                 command=callback_methods[name],
@@ -191,43 +205,14 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             button.place(relx=0.5, rely=0.5, anchor="center")
             self.navbar_buttons[name] = button
 
-            # Keep a reference to the image to prevent garbage collection
+            # Keep a reference to the image
             button.image = icon_image
 
     def create_nav_bar(self):
-        warnings_button = ctk.CTkButton(
-            self,
-            text="Warnings",
-            width=90,
-            fg_color="orange",
-            hover_color="#FF8C00",
-            corner_radius=12,
-            command=lambda: self.raise_error_window(
-                "\n".join(self.main_app.data.warnings)
-            ),
-        )
-        errors_button = ctk.CTkButton(
-            self,
-            text="Errors",
-            width=90,
-            fg_color="red",
-            hover_color="#E60000",
-            corner_radius=12,
-            command=lambda: self.raise_error_window(
-                "\n".join(self.main_app.data.errors)
-            ),
-        )
-        continue_button = ctk.CTkButton(
-            self, text="Continue", width=100, corner_radius=12
-        )
-
-        warnings_button.grid(row=2, column=0, pady=5)
-        errors_button.grid(row=2, column=1, pady=5)
-        continue_button.grid(row=2, column=3, columnspan=3, pady=5)
-
-        self.continue_button = continue_button
-        self.warnings_button = warnings_button
-        self.errors_button = errors_button
+        self.warnings_button.grid(row=2, column=0, pady=5)
+        self.errors_button.grid(row=2, column=1, pady=5)
+        self.continue_button.grid(row=2, column=3, columnspan=3, pady=5)
+        self.generate_RPD_button.grid(row=2, column=8, pady=5)
 
     def show_view(self, view_name):
         # Clear previous view

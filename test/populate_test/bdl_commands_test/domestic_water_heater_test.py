@@ -6,6 +6,9 @@ from rpd_generator.bdl_structure.bdl_commands.utility_and_economics import (
     MasterMeters,
 )
 from rpd_generator.config import Config
+from rpd_generator.artifacts.ruleset_project_description import (
+    RulesetProjectDescription,
+)
 from rpd_generator.artifacts.ruleset_model_description import RulesetModelDescription
 from rpd_generator.bdl_structure.bdl_commands.domestic_water_heater import *
 from rpd_generator.bdl_structure.bdl_commands.circulation_loop import (
@@ -18,7 +21,9 @@ from rpd_generator.bdl_structure.bdl_commands.circulation_loop import (
 class TestDomesticWaterHeater(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.rmd = RulesetModelDescription("Test RMD")
+
+        self.rpd = RulesetProjectDescription("Test RPD")
+        self.rmd = RulesetModelDescription("Test RMD", self.rpd)
         self.rmd.doe2_version = "DOE-2.3"
         self.rmd.doe2_data_path = Config.DOE23_DATA_PATH
         self.domestic_water_heater = DomesticWaterHeater("DWH 1", self.rmd)
@@ -69,7 +74,8 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "distribution_system": "Loop 1",
             "rated_capacity": 123.456789,
             "setpoint_temperature": 70.2,
-            "thermal_efficiency": 10.0,
+            "efficiency_metric_types": ["THERMAL_EFFICIENCY"],
+            "efficiency_metric_values": [10.0],
         }
         self.assertEqual(
             expected_data_structure, self.domestic_water_heater.data_structure
@@ -117,7 +123,8 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "distribution_system": "Loop 1",
             "rated_capacity": 123.456789,
             "setpoint_temperature": 70.2,
-            "thermal_efficiency": 10.0,
+            "efficiency_metric_types": ["THERMAL_EFFICIENCY"],
+            "efficiency_metric_values": [10.0],
         }
         self.assertEqual(
             expected_data_structure, self.domestic_water_heater.data_structure
@@ -167,7 +174,8 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "distribution_system": "Loop 1",
             "rated_capacity": 123.456789,
             "setpoint_temperature": 70.2,
-            "thermal_efficiency": 10.0,
+            "efficiency_metric_types": ["THERMAL_EFFICIENCY"],
+            "efficiency_metric_values": [10.0],
         }
         self.assertEqual(
             expected_data_structure, self.domestic_water_heater.data_structure
@@ -213,7 +221,8 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "distribution_system": "Loop 1",
             "rated_capacity": 123.456789,
             "setpoint_temperature": 70.2,
-            "thermal_efficiency": 1.0,
+            "efficiency_metric_types": ["THERMAL_EFFICIENCY"],
+            "efficiency_metric_values": [1.0],
         }
         self.assertEqual(
             expected_data_structure, self.domestic_water_heater.data_structure
@@ -260,7 +269,8 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "distribution_system": "Loop 1",
             "rated_capacity": 123.456789,
             "setpoint_temperature": 70.2,
-            "thermal_efficiency": 0.8,
+            "efficiency_metric_types": ["THERMAL_EFFICIENCY"],
+            "efficiency_metric_values": [0.8],
         }
         self.assertEqual(
             expected_data_structure, self.domestic_water_heater.data_structure
@@ -307,7 +317,8 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "distribution_system": "Loop 1",
             "rated_capacity": 123.456789,
             "setpoint_temperature": 70.2,
-            "thermal_efficiency": 1.0,
+            "efficiency_metric_types": ["THERMAL_EFFICIENCY"],
+            "efficiency_metric_values": [1.0],
         }
         self.assertEqual(
             expected_data_structure, self.domestic_water_heater.data_structure
@@ -354,7 +365,8 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "distribution_system": "Loop 1",
             "rated_capacity": 123.456789,
             "setpoint_temperature": 65.0,
-            "thermal_efficiency": 0.8,
+            "efficiency_metric_types": ["THERMAL_EFFICIENCY"],
+            "efficiency_metric_values": [0.80],
         }
         self.assertEqual(
             expected_data_structure, self.domestic_water_heater.data_structure
@@ -402,7 +414,8 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "distribution_system": "Loop 1",
             "rated_capacity": 123.456789,
             "setpoint_temperature": 70.2,
-            "thermal_efficiency": 0.8333333333333334,
+            "efficiency_metric_types": ["THERMAL_EFFICIENCY"],
+            "efficiency_metric_values": [0.8333333333333334],
         }
         self.assertEqual(
             expected_data_structure, self.domestic_water_heater.data_structure
@@ -455,7 +468,8 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "distribution_system": "Loop 1",
             "rated_capacity": 123.456789,
             "setpoint_temperature": 70.2,
-            "thermal_efficiency": 2.0,
+            "efficiency_metric_types": ["THERMAL_EFFICIENCY"],
+            "efficiency_metric_values": [2.0],
         }
         self.assertEqual(
             expected_data_structure, self.domestic_water_heater.data_structure
