@@ -7,6 +7,14 @@ from interface.error_window import ErrorWindow
 from rpd_generator.artifacts.ruleset_project_description import (
     RulesetProjectDescription,
 )
+from rpd_generator.bdl_structure.bdl_commands.space import BDL_SpaceKeywords
+from rpd_generator.bdl_structure.bdl_commands.zone import BDL_ZoneKeywords
+from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
+
+
+BDL_ZoneTypeOptions = BDLEnums.bdl_enums["ZoneTypeOptions"]
+BDL_LightingSpecMethodOptions = BDLEnums.bdl_enums["LightingSpecMethodOptions"]
+BDL_ModelOptions = BDLEnums.bdl_enums["ModelOptions"]
 
 
 class ProjectConfigWindow(ctk.CTkToplevel):
@@ -138,7 +146,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
     def raise_disclaimer_window(self):
         if self.disclaimer_window is None or not self.disclaimer_window.winfo_exists():
             self.disclaimer_window = DisclaimerWindow(self)
-            self.disclaimer_window.after(100, self.disclaimer_window.lift)
+            self.disclaimer_window.after(100, self.disclaimer_window.lift, None)
         else:
             self.disclaimer_window.focus()  # if window exists, focus it
 
@@ -146,7 +154,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         if not error_text:
             return
         self.error_window = ErrorWindow(self, error_text)
-        self.error_window.after(100, self.error_window.lift)
+        self.error_window.after(100, self.error_window.lift, None)
 
     def place_widgets(self):
         # Place widgets
@@ -424,7 +432,12 @@ class ProjectConfigWindow(ctk.CTkToplevel):
                     f"'{rmd.type}' model does not use DOE-2.3"
                 )
 
-            if rmd.type in ["Baseline 90", "Baseline 180", "Baseline 270", "Proposed"]:
+            if rmd.type in [
+                BDL_ModelOptions.PROPOSED,
+                BDL_ModelOptions.BASELINE_90,
+                BDL_ModelOptions.BASELINE_180,
+                BDL_ModelOptions.BASELINE_270,
+            ]:
                 rmd_spaces_zones_list.append(len(rmd.zone_names))
                 for space in rmd.space_map:
                     rmd_spaces_zones_list.append(space)
@@ -441,13 +454,16 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             Errors: Verify that the LTG-SPEC-METHOD is POWER-DEFINITION for all spaces"""
             for space in rmd.space_map:
                 space_obj = rmd.get_obj(space)
-                if space_obj.keyword_value_pairs["ZONE-TYPE"] == "PLENUM":
+                if (
+                    space_obj.get_inp(BDL_SpaceKeywords.ZONE_TYPE)
+                    == BDL_ZoneTypeOptions.PLENUM
+                ):
                     self.main_app.data.errors.append(
                         f"Error: '{rmd.type}' model, space '{space}' has a plenum zone type"
                     )
                 if (
-                    space_obj.keyword_value_pairs["LTG-SPEC-METHOD"]
-                    != "POWER-DEFINITION"
+                    space_obj.get_inp(BDL_SpaceKeywords.LTG_SPEC_METHOD)
+                    != BDL_LightingSpecMethodOptions.POWER_DEFINITION
                 ):
                     self.main_app.data.errors.append(
                         f"Error: '{rmd.type}' model, does not have a power definition lighting specification method"
@@ -456,7 +472,10 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             """Errors: Verify that TYPE keyword is not PLENUM for all zones"""
             for zone in rmd.zone_names:
                 zone_obj = rmd.get_obj(zone)
-                if zone_obj.keyword_value_pairs["TYPE"] == "PLENUM":
+                if (
+                    zone_obj.get_inp(BDL_ZoneKeywords.TYPE)
+                    == BDL_ZoneTypeOptions.PLENUM
+                ):
                     self.main_app.data.errors.append(
                         f"Error: '{rmd.type}' model, zone '{zone}' has a plenum zone type"
                     )
@@ -465,29 +484,27 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             values > 0 for HEAT-INPUT-RATIO, HEAT-INPUT-RATIO, and FURNACE-HIR respectively"""
             for boiler in rmd.boiler_names:
                 boiler_obj = rmd.get_obj(boiler)
-                heat_input_ratio = boiler_obj.keyword_value_pairs.get(
-                    "HEAT-INPUT-RATIO"
-                )
+                heat_input_ratio = boiler_obj.get_inp("HEAT-INPUT-RATIO")
                 if heat_input_ratio and float(heat_input_ratio) <= 0.0:
                     self.main_app.data.errors.append(
                         f"Warning: '{rmd.type}' model, boiler '{boiler}' has a heat input ratio of {heat_input_ratio}"
                     )
             for domestic_water_heater in rmd.domestic_water_heater_names:
                 domestic_water_heater_obj = rmd.get_obj(domestic_water_heater)
-                heat_input_ratio = domestic_water_heater_obj.keyword_value_pairs.get(
-                    "HEAT-INPUT-RATIO"
-                )
+                heat_input_ratio = domestic_water_heater_obj.get_inp("HEAT-INPUT-RATIO")
                 if heat_input_ratio and float(heat_input_ratio) <= 0.0:
                     self.main_app.data.errors.append(
                         f"Warning: '{rmd.type}' model, domestic water heater '{domestic_water_heater}' "
                         f"has a heat input ratio of {heat_input_ratio}"
                     )
-            # TODO: Circle back to this. Not finding "FURNACE-HIR" keyword
-            # for system in rmd.system_names:
-            #     system_obj = rmd.get_obj(system)
-            #     furnace_hir = float(system_obj.keyword_value_pairs["FURNACE-HIR"])
-            #     if furnace_hir <= 0.0:
-            #         print("Add warning")
+            for system in rmd.system_names:
+                system_obj = rmd.get_obj(system)
+                furnace_hir = system_obj.get_inp("FURNACE-HIR")
+                if furnace_hir and float(furnace_hir) <= 0.0:
+                    self.main_app.data.errors.append(
+                        f"Warning: '{rmd.type}' model, domestic water heater '{system}' "
+                        f"has a heat input ratio of {furnace_hir}"
+                    )
 
         """Warnings: Verify that Baseline (90, 180, 270) and Proposed have the same number of zones and 
         that the IDs of all zones and spaces match between models"""

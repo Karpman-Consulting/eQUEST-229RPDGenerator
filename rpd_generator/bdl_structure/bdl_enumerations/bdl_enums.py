@@ -641,6 +641,15 @@ class BDLEnums:
                 "INF-METHOD",
                 "INF-FLOW/AREA",
                 "AIR-CHANGES/HR",
+                "ZONE-TYPE",
+                "LTG-SPEC-METHOD",
+            ]
+        ),
+        "LightingSpecMethodOptions": _ListEnum(
+            [
+                "POWER-DEFINITION",
+                "LUMINAIRE-COUNT",
+                "ILLUMINANCE",
             ]
         ),
         "SteamAndChilledWaterMeterKeywords": _ListEnum(
@@ -1133,6 +1142,14 @@ class BDLEnums:
                 "INDUCTION-RATIO",
                 "INDUCED-AIR-SRC",
                 "SPACE",
+                "TYPE",
+            ]
+        ),
+        "ZoneTypeOptions": _ListEnum(
+            [
+                "CONDITIONED",
+                "UNCONDITIONED",
+                "PLENUM",
             ]
         ),
         "HPSupplementSourceOptions": _ListEnum(
@@ -1238,6 +1255,16 @@ class BDLEnums:
                 "heat pump air cooled",
                 "heat pump water cooled",
                 "VRF",
+            ]
+        ),
+        "ModelOptions": _ListEnum(
+            [
+                "USER",
+                "PROPOSED",
+                "BASELINE",
+                "BASELINE_90",
+                "BASELINE_180",
+                "BASELINE_270",
             ]
         ),
     }
