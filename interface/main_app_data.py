@@ -175,7 +175,7 @@ class MainAppData:
                 )
         elif enumeration == "ClimateZoneOptions2019ASHRAE901":
             for rmd in self.rmds:
-                rmd.rpd.weather.setdefault(
+                rmd.weather.setdefault(
                     "climate_zone", enumerations_map.get(self.climate_zone.get())
                 )
         elif enumeration == "ExteriorLightingZoneOptions2019ASHRAE901":
@@ -183,13 +183,13 @@ class MainAppData:
                 rmd.site_zone_type = enumerations_map.get(self.lighting_zone.get())
         elif enumeration == "HeatingDesignDayOptions":
             for rmd in self.rmds:
-                rmd.rpd.weather.setdefault(
+                rmd.weather.setdefault(
                     "heating_design_day_type",
                     enumerations_map.get(self.heating_design_day.get()),
                 )
         elif enumeration == "CoolingDesignDayOptions":
             for rmd in self.rmds:
-                rmd.rpd.weather.setdefault(
+                rmd.weather.setdefault(
                     "cooling_design_day_type",
                     enumerations_map.get(self.cooling_design_day.get()),
                 )
