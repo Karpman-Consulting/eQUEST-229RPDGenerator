@@ -14,7 +14,9 @@ class RulesetProjectDescription:
 
         # data elements with children
         self.weather = {}
-        self.calendar = {}
+        self.calendar = {
+            "is_leap_year": False,
+        }
         self.ruleset_model_descriptions = []
         self.ground_temperature_schedule = None
         self.file_name = None

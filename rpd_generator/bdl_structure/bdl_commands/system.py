@@ -1494,7 +1494,7 @@ class System(ParentNode):
                 )
             if is_all_1:
                 self.fan_sys_operation_during_unoccupied = (
-                    FanSystemOperationOptions.KEEP_OFF
+                    FanSystemOperationOptions.CYCLING
                 )
 
             mixed_operation = has_one and has_neg_999
@@ -1514,7 +1514,7 @@ class System(ParentNode):
                     )
                 if all(value == 1 for value in fan_sch.hourly_values):
                     self.fan_sys_operation_during_unoccupied = (
-                        FanSystemOperationOptions.KEEP_OFF
+                        FanSystemOperationOptions.CYCLING
                     )
 
                 if any(value == -999 for value in fan_sch.hourly_values):
@@ -1532,9 +1532,8 @@ class System(ParentNode):
     def get_doas_occ_sch(self):
         systems_served = [
             obj_inst
-            for obj_inst in self.rmd.bdl_obj_instances
-            if isinstance(obj_inst, System)
-            and obj_inst.get_inp(BDL_SystemKeywords.DOA_SYSTEM) == self.u_name
+            for obj_inst in list(map(self.get_obj, self.rmd.system_names))
+            if obj_inst.get_inp(BDL_SystemKeywords.DOA_SYSTEM) == self.u_name
         ]
         system_fan_schedules = {
             self.get_obj(system.get_inp(BDL_SystemKeywords.FAN_SCHEDULE))

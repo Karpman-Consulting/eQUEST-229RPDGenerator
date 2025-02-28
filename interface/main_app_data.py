@@ -161,15 +161,18 @@ class MainAppData:
             )
 
     def insert_to_rpd(self, mapping, obj_u_name: str = None):
-        # TODO: Make sure to get the object from the correct RMD
-        obj = self.rmds[0].get_obj(obj_u_name)
         enumeration = mapping[0]
         enumerations_map = mapping[1]
+
         # TODO: Improve mapping to object attributes (data elements) from enumeration name
         if enumeration == "LightingSpaceOptions2019ASHRAE901TG37":
-            obj.lighting_space_type = enumerations_map.get(
-                self.lighting_space_type_vars[obj_u_name].get()
-            )
+            for rmd in self.rmds:
+                obj = rmd.get_obj(obj_u_name)
+                if not obj:
+                    print(f"Object {obj_u_name} not found in {rmd.type} RMD")
+                obj.lighting_space_type = enumerations_map.get(
+                    self.lighting_space_type_vars[obj_u_name].get()
+                )
         elif enumeration == "ClimateZoneOptions2019ASHRAE901":
             for rmd in self.rmds:
                 rmd.rpd.weather.setdefault(

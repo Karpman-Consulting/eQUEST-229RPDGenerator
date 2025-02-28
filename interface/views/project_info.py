@@ -139,9 +139,9 @@ class ProjectDetailsView(CTkXYFrame):
 
         # Initialize Widgets
         self.options_frame = ctk.CTkFrame(subview_frame, fg_color="transparent")
-        self.infiltration_frame = ctk.CTkFrame(
-            self.options_frame, fg_color="transparent"
-        )
+        # self.infiltration_frame = ctk.CTkFrame(
+        #     self.options_frame, fg_color="transparent"
+        # )
         self.climate_zone_label = ctk.CTkLabel(
             self.options_frame,
             text="ASHRAE Climate Zone:",
@@ -186,14 +186,18 @@ class ProjectDetailsView(CTkXYFrame):
             anchor=E,
             font=TEXT_FONT,
         )
-        self.open_from_input = ctk.CTkEntry(self.options_frame)
+        self.open_from_input = ctk.CTkComboBox(
+            self.options_frame, values=list(map(str, range(1, 25))), state=READONLY
+        )
         self.open_to_label = ctk.CTkLabel(
             self.options_frame,
-            text="From:",
+            text="To:",
             anchor=E,
             font=TEXT_FONT,
         )
-        self.open_to_input = ctk.CTkEntry(self.options_frame)
+        self.open_to_input = ctk.CTkComboBox(
+            self.options_frame, values=list(map(str, range(1, 25))), state=READONLY
+        )
         self.heating_design_day_label = ctk.CTkLabel(
             self.options_frame,
             text="Heating Design Day Criteria:",
@@ -226,38 +230,38 @@ class ProjectDetailsView(CTkXYFrame):
             ),
         )
         self.cooling_design_day_combo._entry.configure(justify=LEFT)
-        self.measured_infiltration_checkbox = ctk.CTkCheckBox(
-            self.infiltration_frame,
-            text="Measured Infiltration?",
-            font=LABEL_FONT,
-            variable=self.app_data.has_measured_infiltration,
-            command=self.toggle_measured_infiltration,
-        )
-        self.pressure_difference_label = ctk.CTkLabel(
-            self.infiltration_frame,
-            text="Pressure Difference:",
-            anchor=E,
-            font=TEXT_FONT,
-        )
-        self.pressure_difference_input = ctk.CTkEntry(
-            self.infiltration_frame,
-            width=75,
-            textvariable=self.app_data.measured_pressure_difference,
-            validate="all",
-            validatecommand=(validate_double_entry, "%P"),
-        )
-        self.pressure_units_label = ctk.CTkLabel(
-            self.infiltration_frame,
-            text="Pa",
-            anchor=W,
-            font=TEXT_FONT,
-        )
-        self.site_testing_checkbox = ctk.CTkCheckBox(
-            self.infiltration_frame,
-            text="Based on Site Testing?",
-            font=TEXT_FONT,
-            variable=self.app_data.is_based_on_site_testing,
-        )
+        # self.measured_infiltration_checkbox = ctk.CTkCheckBox(
+        #     self.infiltration_frame,
+        #     text="Measured Infiltration?",
+        #     font=LABEL_FONT,
+        #     variable=self.app_data.has_measured_infiltration,
+        #     command=self.toggle_measured_infiltration,
+        # )
+        # self.pressure_difference_label = ctk.CTkLabel(
+        #     self.infiltration_frame,
+        #     text="Pressure Difference:",
+        #     anchor=E,
+        #     font=TEXT_FONT,
+        # )
+        # self.pressure_difference_input = ctk.CTkEntry(
+        #     self.infiltration_frame,
+        #     width=75,
+        #     textvariable=self.app_data.measured_pressure_difference,
+        #     validate="all",
+        #     validatecommand=(validate_double_entry, "%P"),
+        # )
+        # self.pressure_units_label = ctk.CTkLabel(
+        #     self.infiltration_frame,
+        #     text="Pa",
+        #     anchor=W,
+        #     font=TEXT_FONT,
+        # )
+        # self.site_testing_checkbox = ctk.CTkCheckBox(
+        #     self.infiltration_frame,
+        #     text="Based on Site Testing?",
+        #     font=TEXT_FONT,
+        #     variable=self.app_data.is_based_on_site_testing,
+        # )
 
         self.populate_subview()
 
@@ -271,15 +275,17 @@ class ProjectDetailsView(CTkXYFrame):
     def populate_subview(self):
         # Place widgets
         self.climate_zone_label.grid(
-            row=0, column=0, sticky="ew", padx=PAD20START, pady=PAD20START
+            row=0, column=0, sticky="ew", padx=PAD20START, pady=5
         )
         self.climate_zone_combo.grid(
-            row=0, column=1, sticky="ew", padx=5, pady=PAD20START
+            row=0, column=1, columnspan=2, sticky="ew", padx=5, pady=5
         )
         self.lighting_zone_label.grid(
             row=1, column=0, sticky="ew", padx=PAD20START, pady=5
         )
-        self.lighting_zone_combo.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
+        self.lighting_zone_combo.grid(
+            row=1, column=1, columnspan=2, sticky="ew", padx=5, pady=5
+        )
         self.building_open_schedule_label.grid(
             row=2, column=0, sticky="ew", padx=PAD20START, pady=5
         )
@@ -290,41 +296,45 @@ class ProjectDetailsView(CTkXYFrame):
         self.heating_design_day_label.grid(
             row=5, column=0, sticky="ew", padx=PAD20START, pady=5
         )
-        self.heating_design_day_combo.grid(row=5, column=1, sticky="ew", padx=5, pady=5)
+        self.heating_design_day_combo.grid(
+            row=5, column=1, columnspan=2, sticky="ew", padx=5, pady=5
+        )
         self.cooling_design_day_label.grid(
             row=6, column=0, sticky="ew", padx=PAD20START, pady=5
         )
-        self.cooling_design_day_combo.grid(row=6, column=1, sticky="ew", padx=5, pady=5)
+        self.cooling_design_day_combo.grid(
+            row=6, column=1, columnspan=2, sticky="ew", padx=5, pady=5
+        )
 
         self.options_frame.grid(row=0, column=0, sticky=FILL)
 
-        self.infiltration_frame.grid(
-            row=0,
-            column=2,
-            rowspan=3,
-            columnspan=3,
-            sticky=FILL,
-            padx=200,
-            pady=PAD20START,
-        )
-        self.measured_infiltration_checkbox.grid(row=0, column=0, sticky="ew", padx=5)
-        self.measured_infiltration_checkbox.select()
-        self.pressure_difference_label.grid(row=1, column=0, sticky="ew", padx=5)
-        self.pressure_difference_input.grid(row=1, column=1, sticky="ew", padx=5)
-        self.pressure_units_label.grid(row=1, column=2, sticky="ew")
-        self.site_testing_checkbox.grid(
-            row=2, column=0, columnspan=2, sticky="ew", padx=50
-        )
+        # self.infiltration_frame.grid(
+        #     row=0,
+        #     column=2,
+        #     rowspan=3,
+        #     columnspan=3,
+        #     sticky=FILL,
+        #     padx=200,
+        #     pady=PAD20START,
+        # )
+        # self.measured_infiltration_checkbox.grid(row=7, column=1, sticky="ew", padx=5)
+        # self.measured_infiltration_checkbox.select()
+        # self.pressure_difference_label.grid(row=8, column=1, sticky="ew", padx=5)
+        # self.pressure_difference_input.grid(row=8, column=2, sticky="ew", padx=5)
+        # self.pressure_units_label.grid(row=8, column=2, sticky="ew")
+        # self.site_testing_checkbox.grid(
+        #     row=9, column=0, columnspan=2, sticky="ew", padx=50
+        # )
 
-    def toggle_measured_infiltration(self):
-        if self.measured_infiltration_checkbox.get():
-            self.pressure_difference_label.grid()
-            self.pressure_difference_input.grid()
-            self.site_testing_checkbox.grid()
-        else:
-            self.pressure_difference_label.grid_remove()
-            self.pressure_difference_input.grid_remove()
-            self.site_testing_checkbox.grid_remove()
+    # def toggle_measured_infiltration(self):
+    #     if self.measured_infiltration_checkbox.get():
+    #         self.pressure_difference_label.grid()
+    #         self.pressure_difference_input.grid()
+    #         self.site_testing_checkbox.grid()
+    #     else:
+    #         self.pressure_difference_label.grid_remove()
+    #         self.pressure_difference_input.grid_remove()
+    #         self.site_testing_checkbox.grid_remove()
 
 
 class ProjectConfigView(CTkXYFrame):

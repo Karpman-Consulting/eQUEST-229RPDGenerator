@@ -2032,7 +2032,7 @@ class RulesetModelDescription(Base):
                 "chillers": self.chillers,
                 "heat_rejections": self.heat_rejections,
                 "external_fluid_sources": self.external_fluid_sources,
-                # "output": self.output,
+                "output": self.output,
             }.items()
             if value is not None
         }
@@ -2102,7 +2102,7 @@ class RulesetModelDescription(Base):
             {
                 "id": f"{energy_source_type} - Space Cooling",
                 "type": EndUseOptions.SPACE_COOLING,
-                "energy_source": energy_source_type,
+                "energy_source": fuel_type_map.get(energy_source_type),
                 "annual_site_energy_use": source_results["Space Cooling"][
                     "site_energy_use"
                 ],
