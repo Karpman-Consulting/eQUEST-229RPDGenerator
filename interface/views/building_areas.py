@@ -1,9 +1,10 @@
 import customtkinter as ctk
-import interface.custom_widgets as cw
 from PIL import Image
 
+import interface.custom_widgets as cw
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
+from interface.CTkMessagebox import CTkMessagebox
 
 
 LABEL_FONT = ("Arial", 14, "bold")
@@ -18,13 +19,14 @@ SUBVIEW_BUTTON_COLOR = "#FFD966"
 ACTIVE_SUBVIEW_BUTTON_COLOR = "#FFED67"
 
 
-# TODO: Don't allow last row removal for buildings or areas
-# TODO: Save buildings on switching tabs
-# TODO: Update combo values in building areas on adding/removing building
 # TODO: Remove Buildings tab from main frame
 class BuildingAreasView(BaseView):
     def __init__(self, window):
         super().__init__(window)
+
+        self.building_combos = []
+        self.building_widgets_by_row = []
+        self.building_area_widgets_by_row = []
 
         # All subviews will be placed inside this frame.
         # Single row/column allows formatting of subview to be handled by the subview itself
@@ -126,6 +128,8 @@ class BuildingAreasView(BaseView):
         # Clear previous subview
         if self.current_subview is not None:
             self.current_subview.grid_forget()
+            if self.current_subview is self.subviews["Buildings"]:
+                self.current_subview.save_buildings()
 
         # Show new subview
         subview = self.subviews.get(subview_name)
@@ -150,6 +154,14 @@ class BuildingAreasView(BaseView):
                     text_color=BLACK,
                 )
 
+    def remove_widgets(self, widgets):
+        for widget in widgets:
+            widget.grid_remove()
+        if widgets in self.building_widgets_by_row:
+            self.building_widgets_by_row.remove(widgets)
+        if widgets in self.building_area_widgets_by_row:
+            self.building_area_widgets_by_row.remove(widgets)
+
 
 class BuildingSubview(CTkXYFrame):
     def __init__(self, view_frame):
@@ -158,14 +170,14 @@ class BuildingSubview(CTkXYFrame):
         self.app_data = self.building_areas_view.app_data
 
         self.is_view_populated = False
-        self.building_area_count = 0
+        self.building_count = 0
 
         self.add_building_button = ctk.CTkButton(
             self,
             text="Add Building",
             width=200,
             corner_radius=10,
-            command=lambda: self.add_row(self.building_area_count + 1),
+            command=lambda: self.add_row(self.building_count + 1),
         )
 
     def __repr__(self):
@@ -177,7 +189,7 @@ class BuildingSubview(CTkXYFrame):
 
     def populate_subview(self):
         self.add_column_headers()
-        self.add_row(self.building_area_count + 1)
+        self.add_row(self.building_count + 1, is_first_row=True)
         self.is_view_populated = True
 
     def add_column_headers(self):
@@ -192,72 +204,70 @@ class BuildingSubview(CTkXYFrame):
         )
         below_grade_floors_label.grid(row=0, column=2, padx=PAD20END, pady=5)
 
-    def add_row(self, row):
+    def add_row(self, row, is_first_row=False):
         def remove_row():
+            # If building being removed has associated areas, prompt for confirmation
+            building_name = building_name_entry.get()
+            if self.app_data.building_has_areas(building_name):
+                msg = CTkMessagebox(
+                    title="Warning",
+                    message=f"{building_name} has areas assigned to it. This will remove the {building_name} and all associated areas. Would you like to continue?",
+                    icon="warning",
+                    option_1="No",
+                    option_2="Yes",
+                )
+                if msg.get() == "No":
+                    return
+            # Remove building
             self.app_data.remove_building(building_name_entry.get())
-            building_name_entry.grid_remove()
-            above_grade_spinbox.grid_remove()
-            below_grade_spinbox.grid_remove()
-            save_building_button.grid_remove()
+            self.building_areas_view.remove_widgets(row_widgets)
             remove_button.grid_remove()
+            # Remove all building areas. Only clear if first row.
+            rows_to_remove = []
+            first_row = True
+            for (
+                building_area_row
+            ) in self.building_areas_view.building_area_widgets_by_row:
+                building_area_building_name = building_area_row[0].get()
+                if building_area_building_name == building_name:
+                    # TODO: Setup here will change a bit too with different data structures and defaults. Less hardcoded.
+                    if first_row:
+                        building_area_row[0].set("")
+                        building_area_row[1].delete(0, "end")
+                        building_area_row[1].insert(0, "")
+                    else:
+                        rows_to_remove.append(building_area_row)
+                first_row = False
+            for row in rows_to_remove:
+                self.building_areas_view.remove_widgets(row)
 
-        def save_building():
-            self.app_data.add_or_update_building(
-                building_name_entry.get(),
-                above_grade_spinbox.get(),
-                below_grade_spinbox.get(),
-            )
-            save_building_button.grid_remove()
-
-        def entry_updated(entry):
-            if entry != "":
-                save_building_button.grid()
-            return True
-
-        # Registration only required for validatecommand functions
-        val = self.register(entry_updated)
-
-        building_name_entry = ctk.CTkEntry(
-            self,
-            validate="key",
-            validatecommand=(val, "%P"),
-        )
+        building_name_entry = ctk.CTkEntry(self)
         building_name_entry.grid(row=row, column=0, padx=PAD20END, pady=PAD20END)
+        # Default set to "Building 1" here. We need to make a whole pass at setting defaults so this may change
+        if is_first_row:
+            building_name_entry.insert(0, next(iter(self.app_data.areas_by_building)))
         # TODO: Customize spinboxes to allow validation
         above_grade_spinbox = cw.IntSpinbox(self)
         above_grade_spinbox.grid(row=row, column=1, padx=PAD20END, pady=PAD20END)
         below_grade_spinbox = cw.IntSpinbox(self)
         below_grade_spinbox.grid(row=row, column=2, padx=PAD20END, pady=PAD20END)
-        save_image = ctk.CTkImage(
-            light_image=Image.open("interface/static/white_check.png"),
-            dark_image=None,
-            size=(10, 10),
-        )
-        save_building_button = ctk.CTkButton(
-            self,
-            text="",
-            image=save_image,
-            width=28,
-            corner_radius=10,
-            command=save_building,
-        )
-        save_building_button.grid(row=row, column=3, padx=PAD20END, pady=PAD20END)
-        remove_image = ctk.CTkImage(
-            light_image=Image.open("interface/static/white_x.png"),
-            dark_image=None,
-            size=(10, 10),
-        )
-        remove_button = ctk.CTkButton(
-            self,
-            text="",
-            image=remove_image,
-            width=28,
-            corner_radius=10,
-            fg_color="red",
-            hover_color="darkred",
-            command=remove_row,
-        )
-        remove_button.grid(row=row, column=4, padx=PAD20END, pady=PAD20END)
+        if not is_first_row:
+            remove_image = ctk.CTkImage(
+                light_image=Image.open("interface/static/white_x.png"),
+                dark_image=None,
+                size=(10, 10),
+            )
+            remove_button = ctk.CTkButton(
+                self,
+                text="",
+                image=remove_image,
+                width=28,
+                corner_radius=10,
+                fg_color="red",
+                hover_color="darkred",
+                command=remove_row,
+            )
+            remove_button.grid(row=row, column=3, padx=PAD20END, pady=PAD20END)
         self.add_building_button.grid(
             row=(row + 1),
             column=0,
@@ -266,7 +276,24 @@ class BuildingSubview(CTkXYFrame):
             padx=PAD20END,
             pady=PAD20END,
         )
-        self.building_area_count += 1
+        self.building_count += 1
+
+        # Add widgets to the list for later access
+        row_widgets = [building_name_entry, above_grade_spinbox, below_grade_spinbox]
+        self.building_areas_view.building_widgets_by_row.append(row_widgets)
+
+    def save_buildings(self):
+        for row_widgets in self.building_areas_view.building_widgets_by_row:
+            building_name_entry, above_grade_spinbox, below_grade_spinbox = row_widgets
+            if building_name_entry.get():
+                # Add or update building in app_data
+                self.app_data.add_or_update_building(
+                    building_name_entry.get(),
+                    above_grade_spinbox.get(),
+                    below_grade_spinbox.get(),
+                )
+        for combo in self.building_areas_view.building_combos:
+            combo.configure(values=list(self.app_data.areas_by_building.keys()))
 
 
 class BuildingAreasSubview(CTkXYFrame):
@@ -294,7 +321,7 @@ class BuildingAreasSubview(CTkXYFrame):
 
     def populate_subview(self):
         self.add_column_headers()
-        self.add_row(self.building_area_count + 1)
+        self.add_row(self.building_area_count + 1, is_first_row=True)
         self.is_view_populated = True
 
     def add_column_headers(self):
@@ -320,7 +347,7 @@ class BuildingAreasSubview(CTkXYFrame):
         bpf_area_type_label = ctk.CTkLabel(self, text="BPF Area Type", font=LABEL_FONT)
         bpf_area_type_label.grid(row=0, column=6, padx=PAD20END, pady=5)
 
-    def add_row(self, row):
+    def add_row(self, row, is_first_row=False):
         def populate_area_name(value):
             area_name_entry.delete(0, "end")
             area_name_entry.insert(0, self.app_data.get_building_area_name(value))
@@ -330,16 +357,10 @@ class BuildingAreasSubview(CTkXYFrame):
             building_name = building_name_combo.get()
             area_name = area_name_entry.get().split(building_name + " ")[1]
             self.app_data.remove_building_area(building_name, area_name)
-            building_name_combo.grid_remove()
-            area_name_entry.grid_remove()
-            status_checkbox.grid_remove()
-            fenestration_type_combo.grid_remove()
-            lighting_type_combo.grid_remove()
-            hvac_area_combo.grid_remove()
-            bpf_area_combo.grid_remove()
-            remove_button.grid_remove()
+            for widget in row_widgets:
+                widget.grid_remove()
+            self.building_areas_view.building_area_widgets_by_row.remove(row_widgets)
 
-        # TODO: Existing rows do not update with new building options right now. Fix.
         building_name_combo = ctk.CTkComboBox(
             self,
             values=list(self.app_data.areas_by_building.keys()),
@@ -382,22 +403,23 @@ class BuildingAreasSubview(CTkXYFrame):
         )
         bpf_area_combo._entry.configure(justify=LEFT)
         bpf_area_combo.grid(row=row, column=6, padx=PAD20END, pady=PAD20END)
-        remove_image = ctk.CTkImage(
-            light_image=Image.open("interface/static/white_x.png"),
-            dark_image=None,
-            size=(10, 10),
-        )
-        remove_button = ctk.CTkButton(
-            self,
-            text="",
-            image=remove_image,
-            width=28,
-            corner_radius=10,
-            fg_color="red",
-            hover_color="darkred",
-            command=remove_row,
-        )
-        remove_button.grid(row=row, column=7, padx=PAD20END, pady=PAD20END)
+        if not is_first_row:
+            remove_image = ctk.CTkImage(
+                light_image=Image.open("interface/static/white_x.png"),
+                dark_image=None,
+                size=(10, 10),
+            )
+            remove_button = ctk.CTkButton(
+                self,
+                text="",
+                image=remove_image,
+                width=28,
+                corner_radius=10,
+                fg_color="red",
+                hover_color="darkred",
+                command=remove_row,
+            )
+            remove_button.grid(row=row, column=7, padx=PAD20END, pady=PAD20END)
         self.add_area_button.grid(
             row=(row + 1),
             column=0,
@@ -407,4 +429,21 @@ class BuildingAreasSubview(CTkXYFrame):
             pady=PAD20END,
         )
 
+        # Add widgets to the list for later access
+        row_widgets = [
+            building_name_combo,
+            area_name_entry,
+            fenestration_type_combo,
+            lighting_type_combo,
+            hvac_area_combo,
+            bpf_area_combo,
+        ]
+        if not self.app_data.is_all_new_construction.get():
+            row_widgets.append(status_checkbox)
+        if not is_first_row:
+            row_widgets.append(remove_button)
+        self.building_areas_view.building_area_widgets_by_row.append(row_widgets)
+
+        # TODO: This separate building combos list will go away when app data structure is folded in
+        self.building_areas_view.building_combos.append(building_name_combo)
         self.building_area_count += 1

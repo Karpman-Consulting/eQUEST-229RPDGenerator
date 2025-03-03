@@ -52,9 +52,9 @@ class MainAppData:
 
         self.installation_path.set(Config.EQUEST_INSTALL_PATH)
 
-        # TODO: Don't like this, but it works. Jackson, seems like you might have some good ideas here
-        self.areas_by_building = {"Building 1": ["Area 1"]}
-        self.above_grade_floors_by_building = {"Building 1": 2}
+        # TODO: This will change with the save/load JSON file functionality
+        self.areas_by_building = {"Building 1": []}
+        self.above_grade_floors_by_building = {"Building 1": 0}
         self.below_grade_floors_by_building = {"Building 1": 0}
 
     @staticmethod
@@ -214,6 +214,8 @@ class MainAppData:
         else:
             return False
 
+    # TODO: These will be changed to be more generic to support adding and removing data from each view into the
+    # TODO: app's data structure. Please keep for now and "review around" the data structure stuff until later.
     """Generates default building area name in the format "Building 1 Area 1". If you add a second area row and
     select Building 1, the default name will be "Building 1 Area 2". If you were to then delete Building 1 Area 2
     and add a new Building 1 row, the default name will be "Building 1 Area 3". This is to ensure that there isn't a 
@@ -247,10 +249,9 @@ class MainAppData:
         self.below_grade_floors_by_building[building_name] = below_grade_floors
 
     def remove_building(self, building_name):
-        # TODO: Throw warning dialog if building has areas
-        if building_name in self.areas_by_building:
-            del self.areas_by_building[building_name]
-        if building_name in self.above_grade_floors_by_building:
-            del self.above_grade_floors_by_building[building_name]
-        if building_name in self.below_grade_floors_by_building:
-            del self.below_grade_floors_by_building[building_name]
+        self.areas_by_building.pop(building_name, None)
+        self.above_grade_floors_by_building.pop(building_name, None)
+        self.below_grade_floors_by_building.pop(building_name, None)
+
+    def building_has_areas(self, building_name):
+        return len(self.areas_by_building[building_name]) > 0

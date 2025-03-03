@@ -5,7 +5,8 @@ from tkinter import Menu
 from interface.views.spaces import SpacesView
 from interface.views.test import TestView
 from interface.views.project_info import ProjectInfoView
-from interface.views.buildings import BuildingsView
+
+# from interface.views.buildings import BuildingsView
 from interface.views.building_areas import BuildingAreasView
 from interface.views.zones import ZonesView
 from interface.views.surfaces import SurfacesView
@@ -48,7 +49,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         self.views = {
             "Test": TestView(self),
             "Project Info": ProjectInfoView(self),
-            "Buildings": BuildingsView(self),
+            # "Buildings": BuildingsView(self),
             "Building Areas": BuildingAreasView(self),
             "Zones": ZonesView(self),
             "Spaces": SpacesView(self),
@@ -138,7 +139,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         # Define button names
         button_names = [
             "Project Info",
-            "Buildings",
+            # "Buildings",
             "Building Areas",
             "Zones",
             "Spaces",
@@ -152,7 +153,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         # Define button icons
         icon_paths = [
             "menu.png",
-            "buildings.png",
+            # "buildings.png",
             "building_areas.png",
             "square.png",
             "spaces.png",
@@ -164,7 +165,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         ]
         callback_methods = {
             "Project Info": lambda: self.show_view("Project Info"),
-            "Buildings": lambda: self.show_view("Buildings"),
+            # "Buildings": lambda: self.show_view("Buildings"),
             "Building Areas": lambda: self.show_view("Building Areas"),
             "Zones": lambda: self.show_view("Zones"),
             "Spaces": lambda: self.show_view("Spaces"),
@@ -187,7 +188,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             icon_image = ctk.CTkImage(light_image=white_icon, size=ICON_SIZE)
 
             # Create a frame for each button
-            button_frame = ctk.CTkFrame(self, width=144, height=50, corner_radius=0)
+            button_frame = ctk.CTkFrame(self, width=162, height=50, corner_radius=0)
             button_frame.grid(row=0, column=index, sticky="nsew")
 
             # Create the button inside the frame
@@ -196,7 +197,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
                 image=icon_image,
                 text=name,
                 font=("Arial", 12),
-                width=140,
+                width=158,
                 height=46,
                 corner_radius=0,
                 compound="left",
@@ -223,7 +224,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         view = self.views.get(view_name)
         if view:
             self.current_view = view
-            self.current_view.grid(row=1, column=0, columnspan=9, sticky="nsew")
+            self.current_view.grid(row=1, column=0, columnspan=8, sticky="nsew")
             self.current_view.open_view()
 
     def open_disclaimer(self):
