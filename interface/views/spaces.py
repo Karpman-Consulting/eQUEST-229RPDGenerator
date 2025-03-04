@@ -16,8 +16,9 @@ PAD20END = (0, 20)
 class SpacesView(BaseView):
     def __init__(self, window):
         super().__init__(window)
-
+        self.main_window = window
         self.view_frame = ctk.CTkFrame(self)
+        self.current_view = None
 
         # Directions frame holds all directions info and will get 'gridded' within the surfaces view grid
         self.directions_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -32,7 +33,8 @@ class SpacesView(BaseView):
             font=LABEL_FONT,
         )
         self.subviews = {
-            "Spaces": SpacesSubview(self.view_frame),
+            "Baseline Spaces": SpacesSubview(self.view_frame),
+            "Proposed Spaces": SpacesSubview(self.view_frame),
         }
 
     def __repr__(self):
@@ -41,6 +43,7 @@ class SpacesView(BaseView):
     def open_view(self):
         self.toggle_active_button("Spaces")
         self.grid_propagate(False)
+        self.main_window.show_baseline_proposed_toggle(True)
 
         # 2 rows in the main surface view structure.
         # View frame (row 2, index 1) has a weight to make it fill up the empty space in the window
@@ -57,7 +60,12 @@ class SpacesView(BaseView):
         self.view_frame.grid_rowconfigure(0, weight=1)
         self.view_frame.grid_columnconfigure(0, weight=1)
 
-        spaces_view = self.subviews["Spaces"]
+        if self.current_view:
+            self.current_view.grid_forget()
+        spaces_view = self.subviews[
+            f"{self.app_data.baseline_or_proposed.get()} Spaces"
+        ]
+        self.current_view = spaces_view
         spaces_view.grid(row=0, column=0, sticky=FILL)
         spaces_view.open_view()
 
@@ -68,6 +76,7 @@ class SpacesSubview(CTkXYFrame):
         self.spaces_view = view_frame.master
         self.app_data = self.spaces_view.app_data
         self.is_view_populated = False
+        print("SpacesSubview initialized")
 
     def __repr__(self):
         return "SpacesSubview"

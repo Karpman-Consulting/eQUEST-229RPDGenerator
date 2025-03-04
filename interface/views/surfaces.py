@@ -19,19 +19,27 @@ ACTIVE_SUBVIEW_BUTTON_COLOR = "#FFED67"
 class SurfacesView(BaseView):
     def __init__(self, window):
         super().__init__(window)
+        self.main_window = window
 
         # All subviews will be placed inside this frame.
         # Single row/column allows formatting of subview to be handled by the subview itself
         self.subview_frame = ctk.CTkFrame(self)
         self.current_subview = None
+        self.current_subview_name = None
 
         self.subviews = {
-            "Exterior": ExteriorSurfaceView(self.subview_frame),
-            "Interior": InteriorSurfaceView(self.subview_frame),
-            "Underground": UndergroundSurfaceView(self.subview_frame),
-            "Windows": WindowSurfaceView(self.subview_frame),
-            "Skylights": SkylightSurfaceView(self.subview_frame),
-            "Doors": DoorSurfaceView(self.subview_frame),
+            "Baseline Exterior": ExteriorSurfaceView(self.subview_frame),
+            "Proposed Exterior": ExteriorSurfaceView(self.subview_frame),
+            "Baseline Interior": InteriorSurfaceView(self.subview_frame),
+            "Proposed Interior": InteriorSurfaceView(self.subview_frame),
+            "Baseline Underground": UndergroundSurfaceView(self.subview_frame),
+            "Proposed Underground": UndergroundSurfaceView(self.subview_frame),
+            "Baseline Windows": WindowSurfaceView(self.subview_frame),
+            "Proposed Windows": WindowSurfaceView(self.subview_frame),
+            "Baseline Skylights": SkylightSurfaceView(self.subview_frame),
+            "Proposed Skylights": SkylightSurfaceView(self.subview_frame),
+            "Baseline Doors": DoorSurfaceView(self.subview_frame),
+            "Proposed Doors": DoorSurfaceView(self.subview_frame),
         }
         self.subview_buttons = {}
 
@@ -61,6 +69,7 @@ class SurfacesView(BaseView):
     def open_view(self):
         self.toggle_active_button("Surfaces")
         self.grid_propagate(False)
+        self.main_window.show_baseline_proposed_toggle(True)
 
         # 3 rows in the main surface view structure.
         # Subview frame (row 4, index 3) has a weight to make it fill up the empty space in the window
@@ -87,26 +96,44 @@ class SurfacesView(BaseView):
         self.subview_frame.grid_columnconfigure(0, weight=1)
 
         if self.subview_buttons:
+            # If a subview is already open, current is subview is toggled to show baseline/proposed
+            if self.current_subview:
+                self.show_subview(
+                    f"{self.app_data.baseline_or_proposed.get()} {self.current_subview_name}"
+                )
             # Open the first subview available
-            self.show_subview(next(iter(self.subview_buttons)))
+            else:
+                self.show_subview(
+                    f"{self.app_data.baseline_or_proposed.get()} {next(iter(self.subview_buttons))}"
+                )
 
     def create_subbutton_bar(self):
         callback_methods = {}
         if not self.app_data.is_all_new_construction:
             if len(self.app_data.rmds[0].ext_wall_names) > 0:
-                callback_methods["Exterior"] = lambda: self.show_subview("Exterior")
+                callback_methods["Exterior"] = lambda: self.show_subview(
+                    f"{self.app_data.baseline_or_proposed.get()} Exterior"
+                )
             if len(self.app_data.rmds[0].int_wall_names) > 0:
-                callback_methods["Interior"] = lambda: self.show_subview("Interior")
+                callback_methods["Interior"] = lambda: self.show_subview(
+                    f"{self.app_data.baseline_or_proposed.get()} Interior"
+                )
             if len(self.app_data.rmds[0].undg_wall_names) > 0:
                 callback_methods["Underground"] = lambda: self.show_subview(
-                    "Underground"
+                    f"{self.app_data.baseline_or_proposed.get()} Underground"
                 )
         if len(self.app_data.rmds[0].door_names) > 0:
-            callback_methods["Doors"] = lambda: self.show_subview("Doors")
+            callback_methods["Doors"] = lambda: self.show_subview(
+                f"{self.app_data.baseline_or_proposed.get()} Doors"
+            )
         if len(self.app_data.rmds[0].window_names) > 0:
-            callback_methods["Windows"] = lambda: self.show_subview("Windows")
+            callback_methods["Windows"] = lambda: self.show_subview(
+                f"{self.app_data.baseline_or_proposed.get()} Windows"
+            )
         if len(self.app_data.rmds[0].skylight_names) > 0:
-            callback_methods["Skylights"] = lambda: self.show_subview("Skylights")
+            callback_methods["Skylights"] = lambda: self.show_subview(
+                f"{self.app_data.baseline_or_proposed.get()} Skylights"
+            )
 
         for index, name in enumerate(callback_methods):
             # Create the button to go inside this button frame
@@ -130,6 +157,7 @@ class SurfacesView(BaseView):
             self.current_subview.grid_forget()
 
         # Show new subview
+        self.current_subview_name = subview_name.split(" ", 1)[1]
         subview = self.subviews.get(subview_name)
         if subview:
             self.current_subview = subview

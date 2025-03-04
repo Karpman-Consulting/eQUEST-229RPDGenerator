@@ -45,6 +45,23 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         # for i in range(self.grid_size()[0]):
         #     self.grid_columnconfigure(i, weight=1)
 
+        # Setup the baseline/proposed toggle
+        self.baseline_label = ctk.CTkLabel(self, text="Baseline")
+        self.baseline_proposed_switch = ctk.CTkSwitch(
+            self,
+            variable=self.main_app.data.baseline_or_proposed,
+            text="",
+            height=20,
+            width=50,
+            switch_height=20,
+            switch_width=50,
+            command=lambda: self.toggle_baseline_proposed(),
+            onvalue="Proposed",
+            offvalue="Baseline",
+        )
+        self.baseline_proposed_switch.deselect()
+        self.proposed_label = ctk.CTkLabel(self, text="Proposed")
+
         self.views = {
             "Test": TestView(self),
             "Project Info": ProjectInfoView(self),
@@ -112,6 +129,10 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
 
         else:
             self.show_view("Project Info")
+
+    def toggle_baseline_proposed(self):
+        if self.current_view is not None:
+            self.current_view.open_view()
 
     def create_menu_bar(self):
         menubar = Menu(self)
@@ -212,7 +233,20 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         self.warnings_button.grid(row=2, column=0, pady=5)
         self.errors_button.grid(row=2, column=1, pady=5)
         self.continue_button.grid(row=2, column=3, columnspan=3, pady=5)
+        self.baseline_label.grid(row=2, column=5, pady=5, sticky="e")
+        self.baseline_proposed_switch.grid(row=2, column=6, pady=5)
+        self.proposed_label.grid(row=2, column=7, pady=5, sticky="w")
         self.generate_RPD_button.grid(row=2, column=8, pady=5)
+
+    def show_baseline_proposed_toggle(self, show_toggle):
+        if show_toggle:
+            self.baseline_label.grid()
+            self.baseline_proposed_switch.grid()
+            self.proposed_label.grid()
+        else:
+            self.baseline_label.grid_remove()
+            self.baseline_proposed_switch.grid_remove()
+            self.proposed_label.grid_remove()
 
     def show_view(self, view_name):
         # Clear previous view

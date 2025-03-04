@@ -35,6 +35,7 @@ class MainAppData:
         self.selected_ruleset.set("ASHRAE 90.1-2019")
         self.has_rotation_exception = ctk.BooleanVar()
         self.is_all_new_construction = ctk.BooleanVar()
+        self.baseline_or_proposed = ctk.StringVar()
         self.ruleset_model_file_paths = {}
         self.output_directory = ctk.StringVar()
         self.climate_zone = ctk.StringVar()

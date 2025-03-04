@@ -20,15 +20,20 @@ ACTIVE_SUBVIEW_BUTTON_COLOR = "#FFED67"
 class SystemsView(BaseView):
     def __init__(self, window):
         super().__init__(window)
+        self.main_window = window
 
         # All subviews will be placed inside this frame. Single row/column allows formatting of subview to be handled by the subview itself
         self.subview_frame = ctk.CTkFrame(self)
         self.current_subview = None
+        self.current_subview_name = None
 
         self.subviews = {
-            "HVAC Systems": HVACSystemView(self.subview_frame),
-            "Heat Rejection": HeatRejectionView(self.subview_frame),
-            "Zonal Exhaust": ZonalExhaustView(self.subview_frame),
+            "Baseline HVAC Systems": HVACSystemView(self.subview_frame),
+            "Proposed HVAC Systems": HVACSystemView(self.subview_frame),
+            "Baseline Heat Rejection": HeatRejectionView(self.subview_frame),
+            "Proposed Heat Rejection": HeatRejectionView(self.subview_frame),
+            "Baseline Zonal Exhaust": ZonalExhaustView(self.subview_frame),
+            "Proposed Zonal Exhaust": ZonalExhaustView(self.subview_frame),
         }
 
         # Directions frame holds all directions info and will get 'gridded' within the surfaces view grid
@@ -57,6 +62,7 @@ class SystemsView(BaseView):
     def open_view(self):
         self.toggle_active_button("Systems")
         self.grid_propagate(False)
+        self.main_window.show_baseline_proposed_toggle(True)
 
         # 3 rows in the main surface view structure. Subview frame (row 4, index 3) has a weight to make it fill up the empty space in the window
         self.grid_rowconfigure(3, weight=1)
@@ -82,23 +88,33 @@ class SystemsView(BaseView):
         self.subview_frame.grid_columnconfigure(0, weight=1)
 
         if self.subview_buttons:
+            # If a subview is already open, current is subview is toggled to show baseline/proposed
+            if self.current_subview:
+                self.show_subview(
+                    f"{self.app_data.baseline_or_proposed.get()} {self.current_subview_name}"
+                )
             # Open the first subview available
-            self.show_subview(next(iter(self.subview_buttons)))
+            else:
+                self.show_subview(
+                    f"{self.app_data.baseline_or_proposed.get()} {next(iter(self.subview_buttons))}"
+                )
 
     def create_subbutton_bar(self):
         callback_methods = {}
         if len(self.app_data.rmds[0].heat_rejection_names) > 0:
             callback_methods["Heat Rejection"] = lambda: self.show_subview(
-                "Heat Rejection"
+                f"{self.app_data.baseline_or_proposed.get()} Heat Rejection"
             )
         if len(self.app_data.rmds[0].system_names) > 0:
-            callback_methods["HVAC Systems"] = lambda: self.show_subview("HVAC Systems")
+            callback_methods["HVAC Systems"] = lambda: self.show_subview(
+                f"{self.app_data.baseline_or_proposed.get()} HVAC Systems"
+            )
         if (
             len(self.app_data.rmds[0].zonal_exh_fan_names) > 0
             and not self.app_data.is_all_new_construction
         ):
             callback_methods["Zonal Exhaust"] = lambda: self.show_subview(
-                "Zonal Exhaust"
+                f"{self.app_data.baseline_or_proposed.get()} Zonal Exhaust"
             )
 
         for name in callback_methods:
@@ -126,6 +142,7 @@ class SystemsView(BaseView):
         # Show new subview
         subview = self.subviews.get(subview_name)
         if subview:
+            self.current_subview_name = subview_name.split(" ", 1)[1]
             self.current_subview = subview
             self.current_subview.grid(row=0, column=0, sticky=FILL)
             self.current_subview.focus_set()
