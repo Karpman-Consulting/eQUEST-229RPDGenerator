@@ -1,3 +1,5 @@
+import threading
+
 import customtkinter as ctk
 import interface.custom_widgets as cw
 
@@ -156,22 +158,23 @@ class HeatRejectionView(CTkXYFrame):
         super().__init__(subview_frame)
         self.systems_view = subview_frame.master
         self.app_data = self.systems_view.window.main_app.data
-        self.is_subview_populated = False
+        if self.app_data.use_threads:
+            thread = threading.Thread(target=self.populate_subview)
+            thread.start()
+        else:
+            self.populate_subview()
 
     def __repr__(self):
         return "HeatRejectionView"
 
     def open_subview(self):
         self.systems_view.toggle_active_subbutton("Heat Rejection")
-        self.populate_subview() if not self.is_subview_populated else None
 
     def populate_subview(self):
         for i, heat_rejection_name in enumerate(
             self.app_data.rmds[0].heat_rejection_names
         ):
             self.add_row(i, heat_rejection_name)
-
-        self.is_subview_populated = True
 
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
@@ -199,22 +202,23 @@ class HVACSystemView(CTkXYFrame):
         super().__init__(subview_frame)
         self.systems_view = subview_frame.master
         self.app_data = self.systems_view.window.main_app.data
-        self.is_subview_populated = False
+        if self.app_data.use_threads:
+            thread = threading.Thread(target=self.populate_subview)
+            thread.start()
+        else:
+            self.populate_subview()
 
     def __repr__(self):
         return "HVACSystemView"
 
     def open_subview(self):
         self.systems_view.toggle_active_subbutton("HVAC Systems")
-        self.populate_subview() if not self.is_subview_populated else None
 
     def populate_subview(self):
         self.add_column_headers()
 
         for i, hvac_system_name in enumerate(self.app_data.rmds[0].system_names):
             self.add_row(i, hvac_system_name)
-
-        self.is_subview_populated = True
 
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
@@ -270,14 +274,17 @@ class ZonalExhaustView(CTkXYFrame):
         super().__init__(subview_frame)
         self.systems_view = subview_frame.master
         self.app_data = self.systems_view.window.main_app.data
-        self.is_subview_populated = False
+        if self.app_data.use_threads:
+            thread = threading.Thread(target=self.populate_subview)
+            thread.start()
+        else:
+            self.populate_subview()
 
     def __repr__(self):
         return "ZonalExhaustView"
 
     def open_subview(self):
         self.systems_view.toggle_active_subbutton("Zonal Exhaust")
-        self.populate_subview() if not self.is_subview_populated else None
 
     def populate_subview(self):
         zonal_exhaust_fans = self.get_zonal_exhaust_fans()
@@ -286,8 +293,6 @@ class ZonalExhaustView(CTkXYFrame):
 
         for i, exhaust_fan_dict in enumerate(zonal_exhaust_fans):
             self.add_row(i, exhaust_fan_dict)
-
-        self.is_subview_populated = True
 
     def get_zonal_exhaust_fans(self):
         # TODO: Review this approach..may be tough once we are trying to set data back to the rmds

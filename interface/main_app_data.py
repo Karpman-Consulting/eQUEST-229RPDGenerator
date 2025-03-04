@@ -52,6 +52,9 @@ class MainAppData:
 
         self.installation_path.set(Config.EQUEST_INSTALL_PATH)
 
+        # Temporary for demo and brainstorming purposes
+        self.use_threads = True
+
     @staticmethod
     def verify_associated_files(file_path: str) -> bool:
         """

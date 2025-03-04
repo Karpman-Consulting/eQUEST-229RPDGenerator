@@ -1,3 +1,5 @@
+import threading
+
 import customtkinter as ctk
 
 from interface.CTkScrollableDropdown import CTkScrollableDropdown
@@ -61,7 +63,6 @@ class SpacesView(BaseView):
 
         spaces_view = self.subviews["Spaces"]
         spaces_view.grid(row=0, column=0, sticky=FILL)
-        spaces_view.open_view()
 
 
 class SpacesSubview(CTkXYFrame):
@@ -69,13 +70,14 @@ class SpacesSubview(CTkXYFrame):
         super().__init__(view_frame)
         self.spaces_view = view_frame.master
         self.app_data = self.spaces_view.app_data
-        self.is_view_populated = False
+        if self.app_data.use_threads:
+            thread = threading.Thread(target=self.populate_subview)
+            thread.start()
+        else:
+            self.populate_subview()
 
     def __repr__(self):
         return "SpacesSubview"
-
-    def open_view(self):
-        self.populate_subview() if not self.is_view_populated else None
 
     def populate_subview(self):
         self.add_column_headers()
@@ -85,8 +87,6 @@ class SpacesSubview(CTkXYFrame):
             self.app_data.lighting_space_type_vars[space_name] = ctk.StringVar()
             # Add widget row for each space
             self.add_row(i, space_name)
-
-        self.is_view_populated = True
 
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)

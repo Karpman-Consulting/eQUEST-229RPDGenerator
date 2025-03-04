@@ -1,3 +1,5 @@
+import threading
+
 import customtkinter as ctk
 import interface.custom_widgets as cw
 from PIL import Image
@@ -46,6 +48,9 @@ class ZonesView(BaseView):
             anchor=W,
             justify=LEFT,
         )
+        self.subviews = {
+            "Zones": ZonesSubview(self.view_frame),
+        }
 
     def __repr__(self):
         return "ZonesView"
@@ -71,9 +76,8 @@ class ZonesView(BaseView):
         self.view_frame.grid_rowconfigure(0, weight=1)
         self.view_frame.grid_columnconfigure(0, weight=1)
 
-        zones_view = ZonesSubview(self.view_frame)
+        zones_view = self.subviews["Zones"]
         zones_view.grid(row=0, column=0, sticky=FILL)
-        zones_view.open_view()
 
 
 class ZonesSubview(CTkXYFrame):
@@ -81,7 +85,6 @@ class ZonesSubview(CTkXYFrame):
         super().__init__(view_frame)
         self.zones_view = view_frame.master
         self.app_data = self.zones_view.window.main_app.data
-        self.is_view_populated = False
         self.child_space_window = None
         self.zones_by_floor = {}
         self.floor_comboboxes = {}
@@ -90,11 +93,14 @@ class ZonesSubview(CTkXYFrame):
 
         self.get_zones_by_floors()
 
+        if self.app_data.use_threads:
+            thread = threading.Thread(target=self.populate_subview)
+            thread.start()
+        else:
+            self.populate_subview()
+
     def __repr__(self):
         return "ZonesSubview"
-
-    def open_view(self):
-        self.populate_subview() if not self.is_view_populated else None
 
     def populate_subview(self):
         self.add_column_headers()
@@ -106,8 +112,6 @@ class ZonesSubview(CTkXYFrame):
             for zone in zones:
                 self.add_row(main_row, zone)
                 main_row += 1
-
-        self.is_view_populated = True
 
     def add_column_headers(self):
         collapse_expand_label = ctk.CTkLabel(self, text="", font=LABEL_FONT)

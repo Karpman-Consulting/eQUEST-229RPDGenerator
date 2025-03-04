@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import threading
 
 from interface.CTkScrollableDropdown import CTkScrollableDropdown
 from interface.ctk_xyframe import CTkXYFrame
@@ -160,22 +161,23 @@ class ExteriorSurfaceView(CTkXYFrame):
         super().__init__(subview_frame)
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
-        self.is_subview_populated = False
+        if self.app_data.use_threads:
+            thread = threading.Thread(target=self.populate_subview)
+            thread.start()
+        else:
+            self.populate_subview()
 
     def __repr__(self):
         return "ExteriorSurfaceView"
 
     def open_subview(self):
         self.surfaces_view.toggle_active_subbutton("Exterior")
-        self.populate_subview() if not self.is_subview_populated else None
 
     def populate_subview(self):
         self.add_column_headers()
 
         for i, ext_wall_name in enumerate(self.app_data.rmds[0].ext_wall_names):
             self.add_row(i, ext_wall_name)
-
-        self.is_subview_populated = True
 
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
@@ -203,22 +205,23 @@ class InteriorSurfaceView(CTkXYFrame):
         super().__init__(subview_frame)
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
-        self.is_subview_populated = False
+        if self.app_data.use_threads:
+            thread = threading.Thread(target=self.populate_subview)
+            thread.start()
+        else:
+            self.populate_subview()
 
     def __repr__(self):
         return "InteriorSurfaceView"
 
     def open_subview(self):
         self.surfaces_view.toggle_active_subbutton("Interior")
-        self.populate_subview() if not self.is_subview_populated else None
 
     def populate_subview(self):
         self.add_column_headers()
 
         for i, int_wall_name in enumerate(self.app_data.rmds[0].int_wall_names):
             self.add_row(i, int_wall_name)
-
-        self.is_subview_populated = True
 
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
@@ -246,22 +249,23 @@ class UndergroundSurfaceView(CTkXYFrame):
         super().__init__(subview_frame)
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
-        self.is_subview_populated = False
+        if self.app_data.use_threads:
+            thread = threading.Thread(target=self.populate_subview)
+            thread.start()
+        else:
+            self.populate_subview()
 
     def __repr__(self):
         return "UndergroundSurfaceView"
 
     def open_subview(self):
         self.surfaces_view.toggle_active_subbutton("Underground")
-        self.populate_subview() if not self.is_subview_populated else None
 
     def populate_subview(self):
         self.add_column_headers()
 
         for i, undg_wall_name in enumerate(self.app_data.rmds[0].undg_wall_names):
             self.add_row(i, undg_wall_name)
-
-        self.is_subview_populated = True
 
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
@@ -289,22 +293,23 @@ class WindowSurfaceView(CTkXYFrame):
         super().__init__(subview_frame)
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
-        self.is_subview_populated = False
+        if self.app_data.use_threads:
+            thread = threading.Thread(target=self.populate_subview)
+            thread.start()
+        else:
+            self.populate_subview()
 
     def __repr__(self):
         return "WindowSurfaceView"
 
     def open_subview(self):
         self.surfaces_view.toggle_active_subbutton("Windows")
-        self.populate_subview() if not self.is_subview_populated else None
 
     def populate_subview(self):
         self.add_column_headers()
 
         for i, window_name in enumerate(self.app_data.rmds[0].window_names):
             self.add_row(i, window_name)
-
-        self.is_subview_populated = True
 
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
@@ -364,22 +369,23 @@ class SkylightSurfaceView(CTkXYFrame):
         super().__init__(subview_frame)
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
-        self.is_subview_populated = False
+        if self.app_data.use_threads:
+            thread = threading.Thread(target=self.populate_subview)
+            thread.start()
+        else:
+            self.populate_subview()
 
     def __repr__(self):
         return "SkylightSurfaceView"
 
     def open_subview(self):
         self.surfaces_view.toggle_active_subbutton("Skylights")
-        self.populate_subview() if not self.is_subview_populated else None
 
     def populate_subview(self):
         self.add_column_headers()
 
         for i, skylight_name in enumerate(self.app_data.rmds[0].skylight_names):
             self.add_row(i, skylight_name)
-
-        self.is_subview_populated = True
 
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
@@ -439,22 +445,23 @@ class DoorSurfaceView(CTkXYFrame):
         super().__init__(subview_frame)
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
-        self.is_subview_populated = False
+        if self.app_data.use_threads:
+            thread = threading.Thread(target=self.populate_subview)
+            thread.start()
+        else:
+            self.populate_subview()
 
     def __repr__(self):
         return "DoorSurfaceView"
 
     def open_subview(self):
         self.surfaces_view.toggle_active_subbutton("Doors")
-        self.populate_subview() if not self.is_subview_populated else None
 
     def populate_subview(self):
         self.add_column_headers()
 
         for i, door_name in enumerate(self.app_data.rmds[0].door_names):
             self.add_row(i, door_name)
-
-        self.is_subview_populated = True
 
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
