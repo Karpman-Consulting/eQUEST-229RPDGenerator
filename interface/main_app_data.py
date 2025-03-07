@@ -230,10 +230,20 @@ class MainAppData:
         for space_name in rmd.space_map:
             zone = rmd.space_map[space_name]
             surface_summary_by_zone[(space_name, zone.u_name)] = set()
-            for surface in zone.surfaces:
-                surface_summary_by_zone[zone.u_name].add(
-                    (surface["id"], surface.get("classification"), surface.get("area"))
+
+        for surface_name in (
+            rmd.ext_wall_names + rmd.int_wall_names + rmd.undg_wall_names
+        ):
+            surface_obj = rmd.get_obj(surface_name)
+            parent_space = surface_obj.parent
+            zone = rmd.space_map[parent_space.u_name]
+            surface_summary_by_zone[zone.u_name].add(
+                (
+                    surface_obj.u_name,
+                    surface_obj.determine_surface_classification(),
+                    surface_obj.determine_surface_area(),
                 )
+            )
 
         return surface_summary_by_zone
 

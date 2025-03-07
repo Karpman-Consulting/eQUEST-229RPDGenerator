@@ -27,8 +27,6 @@ class Polygon(BaseDefinition):
                 break  # Stop iteration if vertex doesn't exist
             self.coordinates.append(tuple(map(float, map(str.strip, v))))
 
-        self.calculate_area_of_polygon_coords()
-
     def calculate_area_of_polygon_coords(self):
         """Compute and store the area of a polygon using its vertex coordinates."""
 
