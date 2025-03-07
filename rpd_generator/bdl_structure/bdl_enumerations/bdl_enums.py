@@ -645,6 +645,15 @@ class BDLEnums:
                 "INF-METHOD",
                 "INF-FLOW/AREA",
                 "AIR-CHANGES/HR",
+                "ZONE-TYPE",
+                "LTG-SPEC-METHOD",
+            ]
+        ),
+        "LightingSpecMethodOptions": _ListEnum(
+            [
+                "POWER-DEFINITION",
+                "LUMINAIRE-COUNT",
+                "ILLUMINANCE",
             ]
         ),
         "SteamAndChilledWaterMeterKeywords": _ListEnum(
@@ -906,6 +915,22 @@ class BDLEnums:
                 "PREHEAT-SOURCE",
                 "PREHEAT-CAPACITY",
                 "PREHEAT-T",
+                "FURNACE-HIR",
+                "HEATING-EIR",
+                "FURNACE-AUX-KW",
+                "HEAT-EIR-FT",
+                "HEAT-EIR-FPLR",
+                "HEAT-CLOSS-FPLR",
+                "FURNACE-HIR-FPLR",
+                "WASTE-HEAT-USE",
+                "HTREC-DW-HEATER",
+                "COOL-WASTE-HEAT",
+                "RATED-SST",
+                "HT-RATED-SDT",
+                "DES-MIN-SDT",
+                "DES-MAX-SDT",
+                "DES-MIN-SST",
+                "DES-MAX-SST",
                 "SUPPLY-FLOW",
                 "SUPPLY-STATIC",
                 "SUPPLY-MTR-EFF",
@@ -1122,6 +1147,14 @@ class BDLEnums:
                 "INDUCTION-RATIO",
                 "INDUCED-AIR-SRC",
                 "SPACE",
+                "TYPE",
+            ]
+        ),
+        "ZoneTypeOptions": _ListEnum(
+            [
+                "CONDITIONED",
+                "UNCONDITIONED",
+                "PLENUM",
             ]
         ),
         "HPSupplementSourceOptions": _ListEnum(

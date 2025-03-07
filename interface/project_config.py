@@ -138,7 +138,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
     def raise_disclaimer_window(self):
         if self.disclaimer_window is None or not self.disclaimer_window.winfo_exists():
             self.disclaimer_window = DisclaimerWindow(self)
-            self.disclaimer_window.after(100, self.disclaimer_window.lift)
+            self.disclaimer_window.after(100, self.disclaimer_window.lift, None)
         else:
             self.disclaimer_window.focus()  # if window exists, focus it
 
@@ -146,7 +146,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         if not error_text:
             return
         self.error_window = ErrorWindow(self, error_text)
-        self.error_window.after(100, self.error_window.lift)
+        self.error_window.after(100, self.error_window.lift, None)
 
     def place_widgets(self):
         # Place widgets
@@ -193,7 +193,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         )
         self.output_dir_button.grid(row=6, column=6, sticky="ew", padx=5, pady=(15, 5))
 
-    def update_ruleset_model_frame(self, selected_ruleset):
+    def update_ruleset_model_frame(self, *args):
         self.rotation_exception_checkbox.grid_remove()
         self.clear_ruleset_models_frame()
         self.show_ruleset_models()
@@ -354,14 +354,18 @@ class ProjectConfigWindow(ctk.CTkToplevel):
                     f"The '{model_type}' model is missing and is required to evaluate the ASHRAE 90.1-2019 ruleset."
                 )
 
-        # If there are no errors, generate RMDs and open the Main Application Window
+        # If there are no errors, generate RMDs
         if len(self.main_app.data.errors) == 0:
             self.main_app.data.rpd = RulesetProjectDescription(
                 self.main_app.data.project_name.get()
             )
             self.main_app.data.generate_rmd_data(self.main_app.data.rpd)
-            self.main_app.project_config_complete()
-
+            # Run model checks to populate additional errors and warnings
+            self.main_app.data.run_model_checks()
+            if len(self.main_app.data.errors) == 0:
+                self.main_app.project_config_complete()
+            else:
+                self.raise_error_window("\n".join(self.main_app.data.errors))
         else:
             self.raise_error_window("\n".join(self.main_app.data.errors))
 
