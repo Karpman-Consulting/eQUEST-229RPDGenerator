@@ -1257,16 +1257,6 @@ class BDLEnums:
                 "VRF",
             ]
         ),
-        "ModelOptions": _ListEnum(
-            [
-                "USER",
-                "PROPOSED",
-                "BASELINE",
-                "BASELINE_90",
-                "BASELINE_180",
-                "BASELINE_270",
-            ]
-        ),
     }
 
 
