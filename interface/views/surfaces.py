@@ -1,7 +1,9 @@
 import customtkinter as ctk
 
+from interface.CTkMessagebox import CTkMessagebox
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
+from interface.main_app_data import ASHRAE9012019ModelOptions
 
 
 LABEL_FONT = ("Arial", 14, "bold")
@@ -109,7 +111,7 @@ class SurfacesView(BaseView):
 
     def create_subbutton_bar(self):
         callback_methods = {}
-        if not self.app_data.is_all_new_construction:
+        if not self.app_data.is_all_new_construction.get():
             if len(self.app_data.rmds[0].ext_wall_names) > 0:
                 callback_methods["Exterior"] = lambda: self.show_subview(
                     f"{self.app_data.baseline_or_proposed.get()} Exterior"
@@ -198,7 +200,26 @@ class ExteriorSurfaceView(CTkXYFrame):
     def populate_subview(self):
         self.add_column_headers()
 
-        for i, ext_wall_name in enumerate(self.app_data.rmds[0].ext_wall_names):
+        #  Get exterior walls from relevant rmd. Throw error if none found
+        ext_wall_names = None
+        if self.app_data.baseline_or_proposed.get() == "Proposed":
+            ext_wall_names = self.app_data.get_rmd(
+                ASHRAE9012019ModelOptions.PROPOSED
+            ).ext_wall_names
+        elif self.app_data.baseline_or_proposed.get() == "Baseline":
+            ext_wall_names = self.app_data.get_rmd(
+                ASHRAE9012019ModelOptions.BASELINE_0
+            ).ext_wall_names
+        if not ext_wall_names:
+            msg = CTkMessagebox(
+                title="Warning",
+                message="No exterior walls found in this model.",
+                icon="info",
+                option_1="Okay",
+            )
+            if msg.get() == "Okay":
+                return
+        for i, ext_wall_name in enumerate(ext_wall_names):
             self.add_row(i, ext_wall_name)
 
         self.is_subview_populated = True
@@ -240,7 +261,26 @@ class InteriorSurfaceView(CTkXYFrame):
     def populate_subview(self):
         self.add_column_headers()
 
-        for i, int_wall_name in enumerate(self.app_data.rmds[0].int_wall_names):
+        #  Get interior walls from relevant rmd. Throw error if none found
+        int_wall_names = None
+        if self.app_data.baseline_or_proposed.get() == "Proposed":
+            int_wall_names = self.app_data.get_rmd(
+                ASHRAE9012019ModelOptions.PROPOSED
+            ).int_wall_names
+        elif self.app_data.baseline_or_proposed.get() == "Baseline":
+            int_wall_names = self.app_data.get_rmd(
+                ASHRAE9012019ModelOptions.BASELINE_0
+            ).int_wall_names
+        if not int_wall_names:
+            msg = CTkMessagebox(
+                title="Warning",
+                message="No interior walls found in this model.",
+                icon="info",
+                option_1="Okay",
+            )
+            if msg.get() == "Okay":
+                return
+        for i, int_wall_name in enumerate(int_wall_names):
             self.add_row(i, int_wall_name)
 
         self.is_subview_populated = True
@@ -282,7 +322,26 @@ class UndergroundSurfaceView(CTkXYFrame):
     def populate_subview(self):
         self.add_column_headers()
 
-        for i, undg_wall_name in enumerate(self.app_data.rmds[0].undg_wall_names):
+        #  Get underground walls from relevant rmd. Throw error if none found
+        undg_wall_names = None
+        if self.app_data.baseline_or_proposed.get() == "Proposed":
+            undg_wall_names = self.app_data.get_rmd(
+                ASHRAE9012019ModelOptions.PROPOSED
+            ).undg_wall_names
+        elif self.app_data.baseline_or_proposed.get() == "Baseline":
+            undg_wall_names = self.app_data.get_rmd(
+                ASHRAE9012019ModelOptions.BASELINE_0
+            ).undg_wall_names
+        if not undg_wall_names:
+            msg = CTkMessagebox(
+                title="Warning",
+                message="No underground walls found in this model.",
+                icon="info",
+                option_1="Okay",
+            )
+            if msg.get() == "Okay":
+                return
+        for i, undg_wall_name in enumerate(undg_wall_names):
             self.add_row(i, undg_wall_name)
 
         self.is_subview_populated = True
@@ -324,7 +383,26 @@ class WindowSurfaceView(CTkXYFrame):
     def populate_subview(self):
         self.add_column_headers()
 
-        for i, window_name in enumerate(self.app_data.rmds[0].window_names):
+        #  Get windows from relevant rmd. Throw error if none found
+        window_names = None
+        if self.app_data.baseline_or_proposed.get() == "Proposed":
+            window_names = self.app_data.get_rmd(
+                ASHRAE9012019ModelOptions.PROPOSED
+            ).window_names
+        elif self.app_data.baseline_or_proposed.get() == "Baseline":
+            window_names = self.app_data.get_rmd(
+                ASHRAE9012019ModelOptions.BASELINE_0
+            ).window_names
+        if not window_names:
+            msg = CTkMessagebox(
+                title="Warning",
+                message="No windows found in this model.",
+                icon="info",
+                option_1="Okay",
+            )
+            if msg.get() == "Okay":
+                return
+        for i, window_name in enumerate(window_names):
             self.add_row(i, window_name)
 
         self.is_subview_populated = True
@@ -332,7 +410,7 @@ class WindowSurfaceView(CTkXYFrame):
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
         name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
-        if not self.app_data.is_all_new_construction:
+        if not self.app_data.is_all_new_construction.get():
             status_label = ctk.CTkLabel(self, text="Status", font=LABEL_FONT)
             status_label.grid(row=0, column=1, padx=PAD20END, pady=5)
         classification_label = ctk.CTkLabel(
@@ -351,7 +429,7 @@ class WindowSurfaceView(CTkXYFrame):
         surface_label.grid(
             row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
         )
-        if not self.app_data.is_all_new_construction:
+        if not self.app_data.is_all_new_construction.get():
             status_combo = ctk.CTkComboBox(
                 self,
                 values=self.app_data.StatusDescriptions,
@@ -396,7 +474,26 @@ class SkylightSurfaceView(CTkXYFrame):
     def populate_subview(self):
         self.add_column_headers()
 
-        for i, skylight_name in enumerate(self.app_data.rmds[0].skylight_names):
+        #  Get skylights from relevant rmd. Throw error if none found
+        skylight_names = None
+        if self.app_data.baseline_or_proposed.get() == "Proposed":
+            skylight_names = self.app_data.get_rmd(
+                ASHRAE9012019ModelOptions.PROPOSED
+            ).skylight_names
+        elif self.app_data.baseline_or_proposed.get() == "Baseline":
+            skylight_names = self.app_data.get_rmd(
+                ASHRAE9012019ModelOptions.BASELINE_0
+            ).skylight_names
+        if not skylight_names:
+            msg = CTkMessagebox(
+                title="Warning",
+                message="No skylights found in this model.",
+                icon="info",
+                option_1="Okay",
+            )
+            if msg.get() == "Okay":
+                return
+        for i, skylight_name in enumerate(skylight_names):
             self.add_row(i, skylight_name)
 
         self.is_subview_populated = True
@@ -404,7 +501,7 @@ class SkylightSurfaceView(CTkXYFrame):
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
         name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
-        if not self.app_data.is_all_new_construction:
+        if not self.app_data.is_all_new_construction.get():
             status_label = ctk.CTkLabel(self, text="Status", font=LABEL_FONT)
             status_label.grid(row=0, column=1, padx=PAD20END, pady=5)
         classification_label = ctk.CTkLabel(
@@ -423,7 +520,7 @@ class SkylightSurfaceView(CTkXYFrame):
         surface_label.grid(
             row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
         )
-        if not self.app_data.is_all_new_construction:
+        if not self.app_data.is_all_new_construction.get():
             status_combo = ctk.CTkComboBox(
                 self,
                 values=self.app_data.StatusDescriptions,
@@ -468,7 +565,26 @@ class DoorSurfaceView(CTkXYFrame):
     def populate_subview(self):
         self.add_column_headers()
 
-        for i, door_name in enumerate(self.app_data.rmds[0].door_names):
+        #  Get doors from relevant rmd. Throw error if none found
+        door_names = None
+        if self.app_data.baseline_or_proposed.get() == "Proposed":
+            door_names = self.app_data.get_rmd(
+                ASHRAE9012019ModelOptions.PROPOSED
+            ).door_names
+        elif self.app_data.baseline_or_proposed.get() == "Baseline":
+            door_names = self.app_data.get_rmd(
+                ASHRAE9012019ModelOptions.BASELINE_0
+            ).door_names
+        if not door_names:
+            msg = CTkMessagebox(
+                title="Warning",
+                message="No doors found in this model.",
+                icon="info",
+                option_1="Okay",
+            )
+            if msg.get() == "Okay":
+                return
+        for i, door_name in enumerate(door_names):
             self.add_row(i, door_name)
 
         self.is_subview_populated = True

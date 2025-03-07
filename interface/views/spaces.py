@@ -1,8 +1,8 @@
 import customtkinter as ctk
-
+from interface.CTkMessagebox import CTkMessagebox
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
-
+from interface.main_app_data import ASHRAE9012019ModelOptions
 
 LABEL_FONT = ("Arial", 14, "bold")
 READONLY = "readonly"
@@ -87,7 +87,27 @@ class SpacesSubview(CTkXYFrame):
     def populate_subview(self):
         self.add_column_headers()
 
-        for i, space_name in enumerate(self.app_data.rmds[0].space_map.keys()):
+        #  Get spaces from relevant rmd. Throw error if none found
+        space_names = None
+        if self.app_data.baseline_or_proposed.get() == "Proposed":
+            space_names = self.app_data.get_rmd(
+                ASHRAE9012019ModelOptions.PROPOSED
+            ).space_map.keys()
+        elif self.app_data.baseline_or_proposed.get() == "Baseline":
+            space_names = self.app_data.get_rmd(
+                ASHRAE9012019ModelOptions.BASELINE_0
+            ).space_map.keys()
+        if not space_names:
+            msg = CTkMessagebox(
+                title="Warning",
+                message="No spaces found in this model.",
+                icon="info",
+                option_1="Okay",
+            )
+            if msg.get() == "Okay":
+                return
+
+        for i, space_name in enumerate(space_names):
             # Add data vars for each space
             self.app_data.lighting_space_type_vars[space_name] = ctk.StringVar()
             # Add widget row for each space
@@ -98,7 +118,7 @@ class SpacesSubview(CTkXYFrame):
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
         name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
-        if not self.app_data.is_all_new_construction:
+        if not self.app_data.is_all_new_construction.get():
             status_label = ctk.CTkLabel(self, text="Status", font=LABEL_FONT)
             status_label.grid(row=0, column=1, padx=PAD20END, pady=5)
         lighting_space_type_label = ctk.CTkLabel(
@@ -141,7 +161,7 @@ class SpacesSubview(CTkXYFrame):
     def add_row(self, i, space_name):
         name_label = ctk.CTkLabel(self, text=f"{space_name}")
         name_label.grid(row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W)
-        if not self.app_data.is_all_new_construction:
+        if not self.app_data.is_all_new_construction.get():
             status_combo = ctk.CTkComboBox(
                 self,
                 values=self.app_data.StatusDescriptions,

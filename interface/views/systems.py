@@ -1,8 +1,9 @@
 import customtkinter as ctk
 import interface.custom_widgets as cw
-
+from interface.CTkMessagebox import CTkMessagebox
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
+from interface.main_app_data import ASHRAE9012019ModelOptions
 
 
 LABEL_FONT = ("Arial", 14, "bold")
@@ -111,7 +112,7 @@ class SystemsView(BaseView):
             )
         if (
             len(self.app_data.rmds[0].zonal_exh_fan_names) > 0
-            and not self.app_data.is_all_new_construction
+            and not self.app_data.is_all_new_construction.get()
         ):
             callback_methods["Zonal Exhaust"] = lambda: self.show_subview(
                 f"{self.app_data.baseline_or_proposed.get()} Zonal Exhaust"
@@ -181,9 +182,28 @@ class HeatRejectionView(CTkXYFrame):
         self.populate_subview() if not self.is_subview_populated else None
 
     def populate_subview(self):
-        for i, heat_rejection_name in enumerate(
-            self.app_data.rmds[0].heat_rejection_names
-        ):
+        self.add_column_headers()
+
+        #  Get heat rejections from relevant rmd. Throw error if none found
+        heat_rejection_names = None
+        if self.app_data.baseline_or_proposed.get() == "Proposed":
+            heat_rejection_names = self.app_data.get_rmd(
+                ASHRAE9012019ModelOptions.PROPOSED
+            ).heat_rejection_names
+        elif self.app_data.baseline_or_proposed.get() == "Baseline":
+            heat_rejection_names = self.app_data.get_rmd(
+                ASHRAE9012019ModelOptions.BASELINE_0
+            ).heat_rejection_names
+        if not heat_rejection_names:
+            msg = CTkMessagebox(
+                title="Warning",
+                message="No heat rejection systems found in this model.",
+                icon="info",
+                option_1="Okay",
+            )
+            if msg.get() == "Okay":
+                return
+        for i, heat_rejection_name in enumerate(heat_rejection_names):
             self.add_row(i, heat_rejection_name)
 
         self.is_subview_populated = True
@@ -223,7 +243,26 @@ class HVACSystemView(CTkXYFrame):
     def populate_subview(self):
         self.add_column_headers()
 
-        for i, hvac_system_name in enumerate(self.app_data.rmds[0].system_names):
+        #  Get hvac systems from relevant rmd. Throw error if none found
+        hvac_system_names = None
+        if self.app_data.baseline_or_proposed.get() == "Proposed":
+            hvac_system_names = self.app_data.get_rmd(
+                ASHRAE9012019ModelOptions.PROPOSED
+            ).system_names
+        elif self.app_data.baseline_or_proposed.get() == "Baseline":
+            hvac_system_names = self.app_data.get_rmd(
+                ASHRAE9012019ModelOptions.BASELINE_0
+            ).system_names
+        if not hvac_system_names:
+            msg = CTkMessagebox(
+                title="Warning",
+                message="No HVAC systems found in this model.",
+                icon="info",
+                option_1="Okay",
+            )
+            if msg.get() == "Okay":
+                return
+        for i, hvac_system_name in enumerate(hvac_system_names):
             self.add_row(i, hvac_system_name)
 
         self.is_subview_populated = True
@@ -231,7 +270,7 @@ class HVACSystemView(CTkXYFrame):
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
         name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
-        if not self.app_data.is_all_new_construction:
+        if not self.app_data.is_all_new_construction.get():
             status_label = ctk.CTkLabel(self, text="Status", font=LABEL_FONT)
             status_label.grid(row=0, column=1, padx=PAD20END, pady=5)
         dehumidification_type_label = ctk.CTkLabel(
@@ -248,7 +287,7 @@ class HVACSystemView(CTkXYFrame):
     def add_row(self, i, hvac_system_name):
         system_label = ctk.CTkLabel(self, text=f"{hvac_system_name}")
         system_label.grid(row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W)
-        if not self.app_data.is_all_new_construction:
+        if not self.app_data.is_all_new_construction.get():
             status_combo = ctk.CTkComboBox(
                 self,
                 values=self.app_data.StatusDescriptions,
@@ -302,8 +341,18 @@ class ZonalExhaustView(CTkXYFrame):
     def get_zonal_exhaust_fans(self):
         # TODO: Review this approach..may be tough once we are trying to set data back to the rmds
         zonal_exhaust_fans = []
-        for zone_name in self.app_data.rmds[0].zone_names:
-            zone_obj = self.app_data.rmds[0].get_obj(zone_name)
+
+        #  Get relevant rmd
+        rmd = None
+        if self.app_data.baseline_or_proposed.get() == "Proposed":
+            rmd = self.app_data.get_rmd(ASHRAE9012019ModelOptions.PROPOSED)
+        elif self.app_data.baseline_or_proposed.get() == "Baseline":
+            rmd = self.app_data.get_rmd(ASHRAE9012019ModelOptions.BASELINE_0)
+        if not rmd:
+            return
+
+        for zone_name in rmd.zone_names:
+            zone_obj = rmd.get_obj(zone_name)
             if zone_obj.zonal_exhaust_fan:
                 zonal_exhaust_fans.append(zone_obj.zonal_exhaust_fan)
         return zonal_exhaust_fans

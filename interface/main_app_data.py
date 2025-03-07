@@ -179,6 +179,7 @@ class MainAppData:
                 obj = rmd.get_obj(obj_u_name)
                 if not obj:
                     print(f"Object {obj_u_name} not found in {rmd.type} RMD")
+                    continue
                 obj.lighting_space_type = enumerations_map.get(
                     self.lighting_space_type_vars[obj_u_name].get()
                 )
@@ -202,6 +203,12 @@ class MainAppData:
                     "cooling_design_day_type",
                     enumerations_map.get(self.cooling_design_day.get()),
                 )
+
+    def get_rmd(self, rmd_type):
+        for rmd in self.rmds:
+            if rmd.type == rmd_type:
+                return rmd
+        return None
 
     @staticmethod
     def validate_int_entry(entry):
