@@ -208,38 +208,39 @@ class BuildingSubview(CTkXYFrame):
         def remove_row():
             # If building being removed has associated areas, prompt for confirmation
             building_name = building_name_entry.get()
-            if self.app_data.building_has_areas(building_name):
-                msg = CTkMessagebox(
-                    title="Warning",
-                    message=f"{building_name} has areas assigned to it. This will remove the {building_name} and all associated areas. Would you like to continue?",
-                    icon="warning",
-                    option_1="No",
-                    option_2="Yes",
-                )
-                if msg.get() == "No":
-                    return
-            # Remove building
-            self.app_data.remove_building(building_name_entry.get())
+            if building_name:
+                if self.app_data.building_has_areas(building_name):
+                    msg = CTkMessagebox(
+                        title="Warning",
+                        message=f"{building_name} has areas assigned to it. This will remove the {building_name} and all associated areas. Would you like to continue?",
+                        icon="warning",
+                        option_1="No",
+                        option_2="Yes",
+                    )
+                    if msg.get() == "No":
+                        return
+                # Remove building
+                self.app_data.remove_building(building_name_entry.get())
+                # Remove all building areas. Only clear if first row.
+                rows_to_remove = []
+                first_row = True
+                for (
+                    building_area_row
+                ) in self.building_areas_view.building_area_widgets_by_row:
+                    building_area_building_name = building_area_row[0].get()
+                    if building_area_building_name == building_name:
+                        # TODO: Setup here will change a bit too with different data structures and defaults. Less hardcoded.
+                        if first_row:
+                            building_area_row[0].set("")
+                            building_area_row[1].delete(0, "end")
+                            building_area_row[1].insert(0, "")
+                        else:
+                            rows_to_remove.append(building_area_row)
+                    first_row = False
+                for row in rows_to_remove:
+                    self.building_areas_view.remove_widgets(row)
             self.building_areas_view.remove_widgets(row_widgets)
             remove_button.grid_remove()
-            # Remove all building areas. Only clear if first row.
-            rows_to_remove = []
-            first_row = True
-            for (
-                building_area_row
-            ) in self.building_areas_view.building_area_widgets_by_row:
-                building_area_building_name = building_area_row[0].get()
-                if building_area_building_name == building_name:
-                    # TODO: Setup here will change a bit too with different data structures and defaults. Less hardcoded.
-                    if first_row:
-                        building_area_row[0].set("")
-                        building_area_row[1].delete(0, "end")
-                        building_area_row[1].insert(0, "")
-                    else:
-                        rows_to_remove.append(building_area_row)
-                first_row = False
-            for row in rows_to_remove:
-                self.building_areas_view.remove_widgets(row)
 
         building_name_entry = ctk.CTkEntry(self)
         building_name_entry.grid(row=row, column=0, padx=PAD20END, pady=PAD20END)
@@ -355,8 +356,9 @@ class BuildingAreasSubview(CTkXYFrame):
         def remove_row():
             # Remove building area from app_data
             building_name = building_name_combo.get()
-            area_name = area_name_entry.get().split(building_name + " ")[1]
-            self.app_data.remove_building_area(building_name, area_name)
+            if area_name_entry.get():
+                area_name = area_name_entry.get().split(building_name + " ")[1]
+                self.app_data.remove_building_area(building_name, area_name)
             for widget in row_widgets:
                 widget.grid_remove()
             self.building_areas_view.building_area_widgets_by_row.remove(row_widgets)
