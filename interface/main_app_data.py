@@ -237,7 +237,7 @@ class MainAppData:
             surface_obj = rmd.get_obj(surface_name)
             parent_space = surface_obj.parent
             zone = rmd.space_map[parent_space.u_name]
-            surface_summary_by_zone[zone.u_name].add(
+            surface_summary_by_zone[(parent_space.u_name, zone.u_name)].add(
                 (
                     surface_obj.u_name,
                     surface_obj.determine_surface_classification(),
