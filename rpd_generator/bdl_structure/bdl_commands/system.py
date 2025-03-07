@@ -1001,8 +1001,8 @@ class System(ParentNode):
         max_reset_t = self.try_float(self.get_inp(BDL_SystemKeywords.COOL_MAX_RESET_T))
         if (
             cool_control == BDL_CoolControlOptions.WARMEST
-            and min_reset_t
-            and max_reset_t
+            and min_reset_t is not None
+            and max_reset_t is not None
         ):
             self.fan_sys_reset_differential_temperature = max_reset_t - min_reset_t
         supply_fan_airflow = output_data.get("Supply Fan - Airflow")
@@ -1011,16 +1011,16 @@ class System(ParentNode):
         )
         supply_min_fan_ratio = output_data.get("Supply Fan - Min Flow Ratio")
         oa_ratio = output_data.get("Outside Air Ratio")
-        if oa_ratio and supply_fan_airflow:
+        if oa_ratio is not None and supply_fan_airflow is not None:
             self.fan_sys_minimum_outdoor_airflow = oa_ratio * supply_fan_airflow
-        if supply_min_fan_ratio and supply_fan_airflow:
+        if supply_min_fan_ratio is not None and supply_fan_airflow is not None:
             self.fan_sys_minimum_airflow = supply_min_fan_ratio * supply_fan_airflow
         # Set fan control of systems that have a min flow ratio of 1
         if supply_min_flow_ratio == 1:
             self.fan_sys_fan_control = FanSystemSupplyFanControlOptions.CONSTANT
         # Override fan control of systems that have CONSTANT_VOLUME fans with a minimum flow ratio less than 1
         elif (
-            supply_min_fan_ratio
+            supply_min_fan_ratio is not None
             and supply_min_fan_ratio < 1
             and self.fan_sys_fan_control == FanSystemSupplyFanControlOptions.CONSTANT
         ):
@@ -1494,14 +1494,18 @@ class System(ParentNode):
                 )
             if is_all_1:
                 self.fan_sys_operation_during_unoccupied = (
-                    FanSystemOperationOptions.KEEP_OFF
+                    self.occupied_fan_operation_map.get(
+                        self.get_inp(BDL_SystemKeywords.INDOOR_FAN_MODE)
+                    )
                 )
 
             mixed_operation = has_one and has_neg_999
             if mixed_operation:
                 return FanSystemOperationOptions.OTHER
             if has_one:  # and not mixed_operation implied to reach here
-                return FanSystemOperationOptions.CONTINUOUS
+                return self.occupied_fan_operation_map.get(
+                    self.get_inp(BDL_SystemKeywords.INDOOR_FAN_MODE)
+                )
             if has_neg_999:  # and not mixed_operation implied to reach here
                 return FanSystemOperationOptions.CYCLING
 
@@ -1514,7 +1518,7 @@ class System(ParentNode):
                     )
                 if all(value == 1 for value in fan_sch.hourly_values):
                     self.fan_sys_operation_during_unoccupied = (
-                        FanSystemOperationOptions.KEEP_OFF
+                        FanSystemOperationOptions.CONTINUOUS
                     )
 
                 if any(value == -999 for value in fan_sch.hourly_values):
@@ -1532,9 +1536,8 @@ class System(ParentNode):
     def get_doas_occ_sch(self):
         systems_served = [
             obj_inst
-            for obj_inst in self.rmd.bdl_obj_instances
-            if isinstance(obj_inst, System)
-            and obj_inst.get_inp(BDL_SystemKeywords.DOA_SYSTEM) == self.u_name
+            for obj_inst in list(map(self.get_obj, self.rmd.system_names))
+            if obj_inst.get_inp(BDL_SystemKeywords.DOA_SYSTEM) == self.u_name
         ]
         system_fan_schedules = {
             self.get_obj(system.get_inp(BDL_SystemKeywords.FAN_SCHEDULE))

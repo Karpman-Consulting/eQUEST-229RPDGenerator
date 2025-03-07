@@ -64,6 +64,7 @@ class RulesetModelDescription(Base):
         "DAY-SCHEDULE-PD",
         "WEEK-SCHEDULE-PD",
         "SCHEDULE-PD",
+        "POLYGON",  # Polygons must populate before Spaces
         "PUMP",  # Pumps must populate before Boiler, Chiller, Heat-Rejection, Circulation-Loop
         "CIRCULATION-LOOP",  # Circulation loops must populate before Boiler, Chiller, DWHeater, Heat-Rejection
         "BOILER",  # Boilers must populate before systems
@@ -2053,7 +2054,7 @@ class RulesetModelDescription(Base):
             {
                 "id": f"{energy_source_type} - Interior Lighting",
                 "type": EndUseOptions.INTERIOR_LIGHTING,
-                "energy_source": energy_source_type,
+                "energy_source": fuel_type_map.get(energy_source_type),
                 "annual_site_energy_use": source_results["Interior Lighting"][
                     "site_energy_use"
                 ],
@@ -2071,7 +2072,7 @@ class RulesetModelDescription(Base):
             {
                 "id": f"{energy_source_type} - Misc Equipment",
                 "type": EndUseOptions.MISC_EQUIPMENT,
-                "energy_source": energy_source_type,
+                "energy_source": fuel_type_map.get(energy_source_type),
                 "annual_site_energy_use": source_results["Misc Equip"][
                     "site_energy_use"
                 ],
@@ -2089,7 +2090,7 @@ class RulesetModelDescription(Base):
             {
                 "id": f"{energy_source_type} - Space Heating",
                 "type": EndUseOptions.SPACE_HEATING,
-                "energy_source": energy_source_type,
+                "energy_source": fuel_type_map.get(energy_source_type),
                 "annual_site_energy_use": source_results["Space Heating"][
                     "site_energy_use"
                 ],
@@ -2107,7 +2108,7 @@ class RulesetModelDescription(Base):
             {
                 "id": f"{energy_source_type} - Space Cooling",
                 "type": EndUseOptions.SPACE_COOLING,
-                "energy_source": energy_source_type,
+                "energy_source": fuel_type_map.get(energy_source_type),
                 "annual_site_energy_use": source_results["Space Cooling"][
                     "site_energy_use"
                 ],
@@ -2125,7 +2126,7 @@ class RulesetModelDescription(Base):
             {
                 "id": f"{energy_source_type} - Heat Rejection",
                 "type": EndUseOptions.HEAT_REJECTION,
-                "energy_source": energy_source_type,
+                "energy_source": fuel_type_map.get(energy_source_type),
                 "annual_site_energy_use": source_results["Heat Rejection"][
                     "site_energy_use"
                 ],
@@ -2143,7 +2144,7 @@ class RulesetModelDescription(Base):
             {
                 "id": f"{energy_source_type} - Pumps & Aux",
                 "type": EndUseOptions.PUMPS,
-                "energy_source": energy_source_type,
+                "energy_source": fuel_type_map.get(energy_source_type),
                 "annual_site_energy_use": source_results["Pumps & Aux"][
                     "site_energy_use"
                 ],
@@ -2161,7 +2162,7 @@ class RulesetModelDescription(Base):
             {
                 "id": f"{energy_source_type} - Ventilation Fans",
                 "type": EndUseOptions.FANS_INTERIOR_VENTILATION,
-                "energy_source": energy_source_type,
+                "energy_source": fuel_type_map.get(energy_source_type),
                 "annual_site_energy_use": source_results["Ventilation Fans"][
                     "site_energy_use"
                 ],
@@ -2179,7 +2180,7 @@ class RulesetModelDescription(Base):
             {
                 "id": f"{energy_source_type} - Refrigeration Display",
                 "type": EndUseOptions.REFRIGERATION_EQUIPMENT,
-                "energy_source": energy_source_type,
+                "energy_source": fuel_type_map.get(energy_source_type),
                 "annual_site_energy_use": source_results["Refrigeration Display"][
                     "site_energy_use"
                 ],
@@ -2197,7 +2198,7 @@ class RulesetModelDescription(Base):
             {
                 "id": f"{energy_source_type} - Ht Pump Supplemental Heat",
                 "type": EndUseOptions.HEAT_PUMP_SUPPLEMENTAL_HEATING,
-                "energy_source": energy_source_type,
+                "energy_source": fuel_type_map.get(energy_source_type),
                 "annual_site_energy_use": source_results["Heat Pump Supp."][
                     "site_energy_use"
                 ],
@@ -2215,7 +2216,7 @@ class RulesetModelDescription(Base):
             {
                 "id": f"{energy_source_type} - Domestic Hot Water",
                 "type": EndUseOptions.SERVICE_WATER_HEATING,
-                "energy_source": energy_source_type,
+                "energy_source": fuel_type_map.get(energy_source_type),
                 "annual_site_energy_use": source_results["Domestic Hot Water"][
                     "site_energy_use"
                 ],
