@@ -257,23 +257,21 @@ class MainAppData:
             heat_input_ratio = boiler_obj.get_inp("HEAT-INPUT-RATIO")
             if heat_input_ratio and float(heat_input_ratio) <= 1:
                 self.warnings.append(
-                    f"'{rmd.type}' model, boiler '{boiler}' has a heat input ratio of {heat_input_ratio}"
+                    f"'{rmd.type}' model, boiler '{boiler}' has a heat input ratio of {heat_input_ratio} which implies an efficiency greater than 100%"
                 )
         for domestic_water_heater in rmd.domestic_water_heater_names:
             domestic_water_heater_obj = rmd.get_obj(domestic_water_heater)
             heat_input_ratio = domestic_water_heater_obj.get_inp("HEAT-INPUT-RATIO")
             if heat_input_ratio and float(heat_input_ratio) <= 1:
                 self.warnings.append(
-                    f"'{rmd.type}' model, domestic water heater '{domestic_water_heater}' "
-                    f"has a heat input ratio of {heat_input_ratio}"
+                    f"'{rmd.type}' model, domestic water heater '{domestic_water_heater}' has a heat input ratio of {heat_input_ratio} which implies an efficiency greater than 100%"
                 )
         for system in rmd.system_names:
             system_obj = rmd.get_obj(system)
             furnace_hir = system_obj.get_inp("FURNACE-HIR")
             if furnace_hir and float(furnace_hir) <= 1:
                 self.warnings.append(
-                    f"'{rmd.type}' model, domestic water heater '{system}' "
-                    f"has a heat input ratio of {furnace_hir}"
+                    f"'{rmd.type}' model, domestic water heater '{system}' has a heat input ratio of {furnace_hir} which implies an efficiency greater than 100%"
                 )
 
     def check_space_and_zone_data(self, rmd):
@@ -290,13 +288,13 @@ class MainAppData:
                 space_obj.get_inp(BDL_SpaceKeywords.ZONE_TYPE)
                 == BDL_ZoneTypeOptions.PLENUM
             ):
-                self.errors.append(
+                self.warnings.append(
                     f"'{rmd.type}' model, space '{space_name}': Plenum is not accurately supported by 229P. You may see unexpected outcomes."
                 )
 
             # Verify that TYPE keyword is not PLENUM for all zones
             if zone_obj.get_inp(BDL_ZoneKeywords.TYPE) == BDL_ZoneTypeOptions.PLENUM:
-                self.errors.append(
+                self.warnings.append(
                     f"'{rmd.type}' model, zone '{zone_obj.u_name}': Plenum is not accurately supported by 229P. You may see unexpected outcomes."
                 )
 
@@ -306,7 +304,7 @@ class MainAppData:
                 != BDL_LightingSpecMethodOptions.POWER_DEFINITION
             ):
                 self.errors.append(
-                    f"'{rmd.type}' model, does not have a power definition lighting specification method"
+                    f"'{rmd.type}' model, space '{space_name}': The '{space_obj.get_inp(BDL_SpaceKeywords.LTG_SPEC_METHOD)}' lighting specification method is not supported by this application."
                 )
 
     def check_model_data(self, rmd, proposed_surface_summary_by_zone):
