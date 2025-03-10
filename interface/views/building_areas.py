@@ -19,7 +19,6 @@ SUBVIEW_BUTTON_COLOR = "#FFD966"
 ACTIVE_SUBVIEW_BUTTON_COLOR = "#FFED67"
 
 
-# TODO: Remove Buildings tab from main frame
 class BuildingAreasView(BaseView):
     def __init__(self, window):
         super().__init__(window)
@@ -67,6 +66,11 @@ class BuildingAreasView(BaseView):
             self, corner_radius=0, fg_color="transparent"
         )
         self.create_subbutton_bar()
+
+        # Building data structures. These will change as part of the save/load work
+        self.areas_by_building = {"Building 1": []}
+        self.above_grade_floors_by_building = {"Building 1": 0}
+        self.below_grade_floors_by_building = {"Building 1": 0}
 
     def __repr__(self):
         return "BuildingAreasView"
@@ -162,6 +166,43 @@ class BuildingAreasView(BaseView):
         if widgets in self.building_area_widgets_by_row:
             self.building_area_widgets_by_row.remove(widgets)
 
+    # TODO: These will be changed to be more generic to support adding and removing data from each view into the
+    # TODO: app's data structure. Please keep for now and "review around" the data structure stuff until later.
+    def get_building_area_name(self, building_name):
+        building_areas = self.areas_by_building.get(building_name)
+        default_num = len(building_areas) + 1
+        area_name_default = "Area " + str(default_num)
+        while area_name_default in building_areas:
+            default_num += 1
+            area_name_default = "Area " + str(default_num)
+        self.areas_by_building[building_name].append(area_name_default)
+        return building_name + " " + area_name_default
+
+    def remove_building_area(self, building_name, area_name):
+        self.areas_by_building[building_name].remove(area_name)
+        building_areas = self.areas_by_building.get(building_name)
+        if area_name in building_areas:
+            building_areas.remove(area_name)
+
+    def add_building_area(self, building_name, area_name):
+        self.areas_by_building[building_name].append(area_name)
+
+    def add_or_update_building(
+        self, building_name, above_grade_floors, below_grade_floors
+    ):
+        if building_name not in self.areas_by_building:
+            self.areas_by_building[building_name] = []
+        self.above_grade_floors_by_building[building_name] = above_grade_floors
+        self.below_grade_floors_by_building[building_name] = below_grade_floors
+
+    def remove_building(self, building_name):
+        self.areas_by_building.pop(building_name, None)
+        self.above_grade_floors_by_building.pop(building_name, None)
+        self.below_grade_floors_by_building.pop(building_name, None)
+
+    def building_has_areas(self, building_name):
+        return len(self.areas_by_building[building_name]) > 0
+
 
 class BuildingSubview(CTkXYFrame):
     def __init__(self, view_frame):
@@ -209,7 +250,7 @@ class BuildingSubview(CTkXYFrame):
             # If building being removed has associated areas, prompt for confirmation
             building_name = building_name_entry.get()
             if building_name:
-                if self.app_data.building_has_areas(building_name):
+                if self.building_areas_view.building_has_areas(building_name):
                     msg = CTkMessagebox(
                         title="Warning",
                         message=f"{building_name} has areas assigned to it. This will remove the {building_name} and all associated areas. Would you like to continue?",
@@ -220,7 +261,7 @@ class BuildingSubview(CTkXYFrame):
                     if msg.get() == "No":
                         return
                 # Remove building
-                self.app_data.remove_building(building_name_entry.get())
+                self.building_areas_view.remove_building(building_name_entry.get())
                 # Remove all building areas. Only clear if first row.
                 rows_to_remove = []
                 first_row = True
@@ -237,8 +278,8 @@ class BuildingSubview(CTkXYFrame):
                         else:
                             rows_to_remove.append(building_area_row)
                     first_row = False
-                for row in rows_to_remove:
-                    self.building_areas_view.remove_widgets(row)
+                for row_to_remove in rows_to_remove:
+                    self.building_areas_view.remove_widgets(row_to_remove)
             self.building_areas_view.remove_widgets(row_widgets)
             remove_button.grid_remove()
 
@@ -246,7 +287,9 @@ class BuildingSubview(CTkXYFrame):
         building_name_entry.grid(row=row, column=0, padx=PAD20END, pady=PAD20END)
         # Default set to "Building 1" here. We need to make a whole pass at setting defaults so this may change
         if is_first_row:
-            building_name_entry.insert(0, next(iter(self.app_data.areas_by_building)))
+            building_name_entry.insert(
+                0, next(iter(self.building_areas_view.areas_by_building))
+            )
         # TODO: Customize spinboxes to allow validation
         above_grade_spinbox = cw.IntSpinbox(self)
         above_grade_spinbox.grid(row=row, column=1, padx=PAD20END, pady=PAD20END)
@@ -288,13 +331,15 @@ class BuildingSubview(CTkXYFrame):
             building_name_entry, above_grade_spinbox, below_grade_spinbox = row_widgets
             if building_name_entry.get():
                 # Add or update building in app_data
-                self.app_data.add_or_update_building(
+                self.building_areas_view.add_or_update_building(
                     building_name_entry.get(),
                     above_grade_spinbox.get(),
                     below_grade_spinbox.get(),
                 )
         for combo in self.building_areas_view.building_combos:
-            combo.configure(values=list(self.app_data.areas_by_building.keys()))
+            combo.configure(
+                values=list(self.building_areas_view.areas_by_building.keys())
+            )
 
 
 class BuildingAreasSubview(CTkXYFrame):
@@ -351,21 +396,23 @@ class BuildingAreasSubview(CTkXYFrame):
     def add_row(self, row, is_first_row=False):
         def populate_area_name(value):
             area_name_entry.delete(0, "end")
-            area_name_entry.insert(0, self.app_data.get_building_area_name(value))
+            area_name_entry.insert(
+                0, self.building_areas_view.get_building_area_name(value)
+            )
 
         def remove_row():
             # Remove building area from app_data
             building_name = building_name_combo.get()
             if area_name_entry.get():
                 area_name = area_name_entry.get().split(building_name + " ")[1]
-                self.app_data.remove_building_area(building_name, area_name)
+                self.building_areas_view.remove_building_area(building_name, area_name)
             for widget in row_widgets:
                 widget.grid_remove()
             self.building_areas_view.building_area_widgets_by_row.remove(row_widgets)
 
         building_name_combo = ctk.CTkComboBox(
             self,
-            values=list(self.app_data.areas_by_building.keys()),
+            values=list(self.building_areas_view.areas_by_building.keys()),
             command=populate_area_name,
             state=READONLY,
         )
@@ -373,6 +420,7 @@ class BuildingAreasSubview(CTkXYFrame):
         building_name_combo.grid(row=row, column=0, padx=PAD20END, pady=PAD20END)
         area_name_entry = ctk.CTkEntry(self)
         area_name_entry.grid(row=row, column=1, padx=PAD20END, pady=PAD20END)
+        status_checkbox = None
         if not self.app_data.is_all_new_construction.get():
             status_checkbox = ctk.CTkCheckBox(self, text="", width=30)
             status_checkbox.grid(row=row, column=2, padx=(0, 10), pady=PAD20END)
@@ -405,6 +453,7 @@ class BuildingAreasSubview(CTkXYFrame):
         )
         bpf_area_combo._entry.configure(justify=LEFT)
         bpf_area_combo.grid(row=row, column=6, padx=PAD20END, pady=PAD20END)
+        remove_button = None
         if not is_first_row:
             remove_image = ctk.CTkImage(
                 light_image=Image.open("interface/static/white_x.png"),
