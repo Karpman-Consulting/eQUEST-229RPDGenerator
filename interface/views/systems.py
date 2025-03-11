@@ -149,12 +149,12 @@ class SystemsView(BaseView):
             # Set current_subview to the first matching subview, if found
             if filtered_subviews:
                 self.current_subview = filtered_subviews[0]
+                self.current_subview_name = (
+                    self.app_data.baseline_or_proposed.get()
+                    + " "
+                    + self.current_subview.__repr__()
+                )
 
-        self.current_subview_name = (
-            self.app_data.baseline_or_proposed.get()
-            + " "
-            + self.current_subview.__repr__()
-        )
         self.current_subview.grid(row=0, column=0, sticky=FILL)
         self.current_subview.focus_set()
         self.current_subview.open_subview()
