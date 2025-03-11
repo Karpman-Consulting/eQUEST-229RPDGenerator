@@ -43,6 +43,7 @@ class MainAppData:
         self.selected_ruleset.set("ASHRAE 90.1-2019")
         self.has_rotation_exception = ctk.BooleanVar()
         self.is_all_new_construction = ctk.BooleanVar()
+        self.baseline_or_proposed = ctk.StringVar()
         self.ruleset_model_file_paths = {}
         self.output_directory = ctk.StringVar()
         self.climate_zone = ctk.StringVar()
@@ -178,6 +179,7 @@ class MainAppData:
                 obj = rmd.get_obj(obj_u_name)
                 if not obj:
                     print(f"Object {obj_u_name} not found in {rmd.type} RMD")
+                    continue
                 obj.lighting_space_type = enumerations_map.get(
                     self.lighting_space_type_vars[obj_u_name].get()
                 )
@@ -201,6 +203,12 @@ class MainAppData:
                     "cooling_design_day_type",
                     enumerations_map.get(self.cooling_design_day.get()),
                 )
+
+    def get_rmd(self, rmd_type):
+        for rmd in self.rmds:
+            if rmd.type == rmd_type:
+                return rmd
+        return None
 
     @staticmethod
     def validate_int_entry(entry):
