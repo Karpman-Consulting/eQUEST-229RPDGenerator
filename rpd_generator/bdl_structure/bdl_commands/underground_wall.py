@@ -65,20 +65,11 @@ class BelowGradeWall(ChildNode):
     def populate_data_elements(self):
         """Populate data elements for below grade wall object."""
 
-        self.area = self.try_float(self.get_inp(BDL_UndergroundWallKeywords.AREA))
-        if self.area is None:
-            height = self.try_float(self.get_inp(BDL_UndergroundWallKeywords.HEIGHT))
-            width = self.try_float(self.get_inp(BDL_UndergroundWallKeywords.WIDTH))
-            if height is not None and width is not None:
-                self.area = height * width
+        self.area = self.determine_surface_area()
 
         self.tilt = self.try_float(self.get_inp(BDL_UndergroundWallKeywords.TILT))
-        if self.tilt is not None and self.tilt < self.CEILING_TILT_THRESHOLD:
-            self.classification = SurfaceClassificationOptions.CEILING
-        elif self.tilt is not None and self.tilt >= self.FLOOR_TILT_THRESHOLD:
-            self.classification = SurfaceClassificationOptions.FLOOR
-        else:
-            self.classification = SurfaceClassificationOptions.WALL
+
+        self.classification = self.determine_surface_classification()
 
         parent_floor_azimuth = self.parent.parent.try_float(
             self.parent.parent.get_inp(BDL_FloorKeywords.AZIMUTH)
@@ -185,6 +176,31 @@ class BelowGradeWall(ChildNode):
         """Insert below grade wall object into the rpd data structure."""
         zone = self.rmd.space_map.get(self.parent.u_name)
         zone.surfaces.append(self.underground_wall_data_structure)
+
+    def determine_surface_area(self):
+        area = self.try_float(self.get_inp(BDL_UndergroundWallKeywords.AREA))
+        if area is None:
+            height = self.try_float(self.get_inp(BDL_UndergroundWallKeywords.HEIGHT))
+            width = self.try_float(self.get_inp(BDL_UndergroundWallKeywords.WIDTH))
+            if height is not None and width is not None:
+                area = height * width
+        if area is None:
+            polygon = self.get_obj(self.get_inp(BDL_UndergroundWallKeywords.POLYGON))
+            if polygon:
+                polygon.calculate_area_of_polygon_coords()
+                area = polygon.area
+        return area
+
+    def determine_surface_classification(self):
+        """
+        Determine the classification of the surface based on the tilt angle.
+        """
+        if self.tilt is not None and self.tilt < self.CEILING_TILT_THRESHOLD:
+            return SurfaceClassificationOptions.CEILING
+        elif self.tilt is not None and self.tilt >= self.FLOOR_TILT_THRESHOLD:
+            return SurfaceClassificationOptions.FLOOR
+        else:
+            return SurfaceClassificationOptions.WALL
 
     def account_for_air_film_resistance(self):
         """

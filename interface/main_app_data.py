@@ -7,6 +7,14 @@ from rpd_generator import main as rpd_generator
 from rpd_generator.doe2_file_readers.model_input_reader import ModelInputReader
 from rpd_generator.config import Config
 from rpd_generator.schema.schema_enums import SchemaEnums
+from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
+from rpd_generator.bdl_structure.bdl_commands.space import BDL_SpaceKeywords
+from rpd_generator.bdl_structure.bdl_commands.zone import BDL_ZoneKeywords
+
+BDL_ZoneTypeOptions = BDLEnums.bdl_enums["ZoneTypeOptions"]
+BDL_LightingSpecMethodOptions = BDLEnums.bdl_enums["LightingSpecMethodOptions"]
+CommonRulesetModelOptions = SchemaEnums.schema_enums["CommonRulesetModelOptions"]
+ASHRAE9012019ModelOptions = SchemaEnums.schema_enums["RulesetModelOptions2019ASHRAE901"]
 
 
 class MainAppData:
@@ -35,6 +43,7 @@ class MainAppData:
         self.selected_ruleset.set("ASHRAE 90.1-2019")
         self.has_rotation_exception = ctk.BooleanVar()
         self.is_all_new_construction = ctk.BooleanVar()
+        self.baseline_or_proposed = ctk.StringVar()
         self.ruleset_model_file_paths = {}
         self.output_directory = ctk.StringVar()
         self.climate_zone = ctk.StringVar()
@@ -161,15 +170,19 @@ class MainAppData:
             )
 
     def insert_to_rpd(self, mapping, obj_u_name: str = None):
-        # TODO: Make sure to get the object from the correct RMD
-        obj = self.rmds[0].get_obj(obj_u_name)
         enumeration = mapping[0]
         enumerations_map = mapping[1]
+
         # TODO: Improve mapping to object attributes (data elements) from enumeration name
         if enumeration == "LightingSpaceOptions2019ASHRAE901TG37":
-            obj.lighting_space_type = enumerations_map.get(
-                self.lighting_space_type_vars[obj_u_name].get()
-            )
+            for rmd in self.rmds:
+                obj = rmd.get_obj(obj_u_name)
+                if not obj:
+                    print(f"Object {obj_u_name} not found in {rmd.type} RMD")
+                    continue
+                obj.lighting_space_type = enumerations_map.get(
+                    self.lighting_space_type_vars[obj_u_name].get()
+                )
         elif enumeration == "ClimateZoneOptions2019ASHRAE901":
             for rmd in self.rmds:
                 rmd.weather.setdefault(
@@ -191,6 +204,12 @@ class MainAppData:
                     enumerations_map.get(self.cooling_design_day.get()),
                 )
 
+    def get_rmd(self, rmd_type):
+        for rmd in self.rmds:
+            if rmd.type == rmd_type:
+                return rmd
+        return None
+
     @staticmethod
     def validate_int_entry(entry):
         if str.isdigit(entry) or entry == "":
@@ -200,11 +219,158 @@ class MainAppData:
 
     @staticmethod
     def validate_double_entry(entry):
-        if (
+        return (
             all(char in "0123456789.-" for char in entry)
             and "-" not in entry[1:]
             and entry.count(".") <= 1
-        ) or entry == "":
-            return True
-        else:
-            return False
+        ) or entry == ""
+
+    @staticmethod
+    def summarize_rmd_surfaces(rmd):
+        """
+        Returns a data structure like the example shown below to facilitate surface comparisons between models.
+        {
+            ("Space 1", "Zone 1"): {("Surface 1", "Exterior Wall", 1000), ("Surface 2", "Roof", 500)},
+            ("Space 2", "Zone 2"): {("Surface 3", "Exterior Wall", 800), ("Surface 4", "Roof", 200)},
+        }
+        """
+        surface_summary_by_zone = {}
+        for space_name in rmd.space_map:
+            zone = rmd.space_map[space_name]
+            surface_summary_by_zone[(space_name, zone.u_name)] = set()
+
+        for surface_name in (
+            rmd.ext_wall_names + rmd.int_wall_names + rmd.undg_wall_names
+        ):
+            surface_obj = rmd.get_obj(surface_name)
+            parent_space = surface_obj.parent
+            zone = rmd.space_map[parent_space.u_name]
+            surface_summary_by_zone[(parent_space.u_name, zone.u_name)].add(
+                (
+                    surface_obj.u_name,
+                    surface_obj.determine_surface_classification(),
+                    surface_obj.determine_surface_area(),
+                )
+            )
+
+        return surface_summary_by_zone
+
+    def check_input_ratios(self, rmd):
+        """
+        Create a warning message for any/all Boilers, Domestic Water Heaters, and Systems that have
+        values <1 for HEAT-INPUT-RATIO, HEAT-INPUT-RATIO, and FURNACE-HIR respectively
+        """
+        for boiler in rmd.boiler_names:
+            boiler_obj = rmd.get_obj(boiler)
+            heat_input_ratio = boiler_obj.get_inp("HEAT-INPUT-RATIO")
+            if heat_input_ratio is not None and float(heat_input_ratio) <= 1:
+                self.warnings.append(
+                    f"'{rmd.type}' model, boiler '{boiler}' has a heat input ratio of {heat_input_ratio} which implies an efficiency greater than 100%"
+                )
+        for domestic_water_heater in rmd.domestic_water_heater_names:
+            domestic_water_heater_obj = rmd.get_obj(domestic_water_heater)
+            heat_input_ratio = domestic_water_heater_obj.get_inp("HEAT-INPUT-RATIO")
+            if heat_input_ratio is not None and float(heat_input_ratio) <= 1:
+                self.warnings.append(
+                    f"'{rmd.type}' model, domestic water heater '{domestic_water_heater}' has a heat input ratio of {heat_input_ratio} which implies an efficiency greater than 100%"
+                )
+        for system in rmd.system_names:
+            system_obj = rmd.get_obj(system)
+            heat_input_ratio = system_obj.get_inp("FURNACE-HIR")
+            if heat_input_ratio is not None and float(heat_input_ratio) <= 1:
+                self.warnings.append(
+                    f"'{rmd.type}' model, HVAC system '{system}' has a heat input ratio of {heat_input_ratio} which implies an efficiency greater than 100%"
+                )
+
+    def check_space_and_zone_data(self, rmd):
+        """
+        Perform various checks for valid/supported data in the Space and Zone objects.
+        """
+
+        for space_name in rmd.space_map:
+            space_obj = rmd.get_obj(space_name)
+            zone_obj = rmd.space_map.get(space_name)
+
+            # Verify that ZONE-TYPE keyword is not PLENUM for all spaces
+            if (
+                space_obj.get_inp(BDL_SpaceKeywords.ZONE_TYPE)
+                == BDL_ZoneTypeOptions.PLENUM
+            ):
+                self.warnings.append(
+                    f"'{rmd.type}' model, space '{space_name}': Plenum is not accurately supported by 229P. You may see unexpected outcomes."
+                )
+
+            # Verify that TYPE keyword is not PLENUM for all zones
+            if zone_obj.get_inp(BDL_ZoneKeywords.TYPE) == BDL_ZoneTypeOptions.PLENUM:
+                self.warnings.append(
+                    f"'{rmd.type}' model, zone '{zone_obj.u_name}': Plenum is not accurately supported by 229P. You may see unexpected outcomes."
+                )
+
+            # Verify that the LTG-SPEC-METHOD is POWER-DEFINITION for all spaces
+            if (
+                space_obj.get_inp(BDL_SpaceKeywords.LTG_SPEC_METHOD)
+                != BDL_LightingSpecMethodOptions.POWER_DEFINITION
+            ):
+                self.errors.append(
+                    f"'{rmd.type}' model, space '{space_name}': The '{space_obj.get_inp(BDL_SpaceKeywords.LTG_SPEC_METHOD)}' lighting specification method is not supported by this application."
+                )
+
+    def check_model_data(self, rmd, proposed_surface_summary_by_zone):
+
+        # Check for DOE version 2.3 - error
+        if not rmd.doe2_version.startswith("DOE-2.3"):
+            self.errors.append(f"'{rmd.type}' model must use DOE-2.3")
+
+        if rmd.type != "PROPOSED":
+            # Verify that Baseline (0, 90, 180, 270) and Proposed have the same number of zones
+            if len(rmd.zone_names) != len(proposed_surface_summary_by_zone):
+                self.warnings.append(
+                    f"'{rmd.type}' model has a different number of zones than the Proposed model. This may lead to unexpected outcomes."
+                )
+
+            # Verify that the IDs of all zones match between models
+            if set(rmd.zone_names) != set(
+                [
+                    space_name_zone_name[1]
+                    for space_name_zone_name in proposed_surface_summary_by_zone.keys()
+                ]
+            ):
+                self.warnings.append(
+                    f"'{rmd.type}' model has different zone names than the Proposed model. This may lead to unexpected outcomes."
+                )
+
+            # Verify that the IDs of all spaces match between models
+            if set(rmd.space_map.keys()) != set(
+                [
+                    space_name_zone_name[0]
+                    for space_name_zone_name in proposed_surface_summary_by_zone.keys()
+                ]
+            ):
+                self.warnings.append(
+                    f"'{rmd.type}' model has different space names than the Proposed model. This may lead to unexpected outcomes."
+                )
+
+            # Verify that the surface details match between models
+            baseline_surface_summary_by_zone = self.summarize_rmd_surfaces(rmd)
+            for (
+                space_name_zone_name_b,
+                surface_summary_b,
+            ) in baseline_surface_summary_by_zone.items():
+                if (
+                    space_name_zone_name_b in proposed_surface_summary_by_zone
+                    and surface_summary_b
+                    != proposed_surface_summary_by_zone[space_name_zone_name_b]
+                ):
+                    self.warnings.append(
+                        f"'{rmd.type}' model has different surface details than the Proposed model. This may lead to unexpected outcomes."
+                    )
+
+    def run_model_checks(self):
+        # Use the Proposed model as a reference to verify Baseline models have the same # of spaces, zones, and surfaces
+        proposed_rmd = next((rmd for rmd in self.rmds if rmd.type == "PROPOSED"), None)
+        proposed_surface_summary_by_zone = self.summarize_rmd_surfaces(proposed_rmd)
+
+        for rmd in self.rmds:
+            self.check_model_data(rmd, proposed_surface_summary_by_zone)
+            self.check_space_and_zone_data(rmd)
+            self.check_input_ratios(rmd)

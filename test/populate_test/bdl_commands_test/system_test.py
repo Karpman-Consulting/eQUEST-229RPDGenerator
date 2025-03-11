@@ -591,7 +591,7 @@ class TestSystems(unittest.TestCase):
                 "has_fully_ducted_return": False,
                 "maximum_outdoor_airflow": 12,
                 "operation_during_occupied": "CONTINUOUS",
-                "operation_during_unoccupied": "KEEP_OFF",
+                "operation_during_unoccupied": "CONTINUOUS",
                 "return_fans": [],
                 "relief_fans": [],
                 "supply_fans": [

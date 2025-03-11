@@ -5,8 +5,6 @@ from tkinter import Menu
 from interface.views.spaces import SpacesView
 from interface.views.test import TestView
 from interface.views.project_info import ProjectInfoView
-
-# from interface.views.buildings import BuildingsView
 from interface.views.building_areas import BuildingAreasView
 from interface.views.zones import ZonesView
 from interface.views.surfaces import SurfacesView
@@ -46,10 +44,26 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         # for i in range(self.grid_size()[0]):
         #     self.grid_columnconfigure(i, weight=1)
 
+        # Setup the baseline/proposed toggle
+        self.baseline_label = ctk.CTkLabel(self, text="Baseline")
+        self.baseline_proposed_switch = ctk.CTkSwitch(
+            self,
+            variable=self.main_app.data.baseline_or_proposed,
+            text="",
+            height=20,
+            width=50,
+            switch_height=20,
+            switch_width=50,
+            command=self.toggle_baseline_proposed,
+            onvalue="Proposed",
+            offvalue="Baseline",
+        )
+        self.baseline_proposed_switch.deselect()
+        self.proposed_label = ctk.CTkLabel(self, text="Proposed")
+
         self.views = {
             "Test": TestView(self),
             "Project Info": ProjectInfoView(self),
-            # "Buildings": BuildingsView(self),
             "Building Areas": BuildingAreasView(self),
             "Zones": ZonesView(self),
             "Spaces": SpacesView(self),
@@ -114,6 +128,16 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         else:
             self.show_view("Project Info")
 
+    def toggle_baseline_proposed(self):
+        new_state = self.main_app.data.baseline_or_proposed.get()
+        old_state = "Baseline" if new_state == "Proposed" else "Proposed"
+
+        if old_state in self.current_view.current_subview_name:
+            self.current_view.current_subview_name = (
+                self.current_view.current_subview_name.replace(old_state, new_state)
+            )
+        self.current_view.show_subview(self.current_view.current_subview_name)
+
     def create_menu_bar(self):
         menubar = Menu(self)
         file_menu = Menu(menubar, tearoff=0)
@@ -139,7 +163,6 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         # Define button names
         button_names = [
             "Project Info",
-            # "Buildings",
             "Building Areas",
             "Zones",
             "Spaces",
@@ -153,7 +176,6 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         # Define button icons
         icon_paths = [
             "menu.png",
-            # "buildings.png",
             "building_areas.png",
             "square.png",
             "spaces.png",
@@ -165,7 +187,6 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         ]
         callback_methods = {
             "Project Info": lambda: self.show_view("Project Info"),
-            # "Buildings": lambda: self.show_view("Buildings"),
             "Building Areas": lambda: self.show_view("Building Areas"),
             "Zones": lambda: self.show_view("Zones"),
             "Spaces": lambda: self.show_view("Spaces"),
@@ -213,7 +234,20 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         self.warnings_button.grid(row=2, column=0, pady=5)
         self.errors_button.grid(row=2, column=1, pady=5)
         self.continue_button.grid(row=2, column=3, columnspan=3, pady=5)
+        self.baseline_label.grid(row=2, column=5, pady=5, sticky="e")
+        self.baseline_proposed_switch.grid(row=2, column=6, pady=5)
+        self.proposed_label.grid(row=2, column=7, pady=5, sticky="w")
         self.generate_RPD_button.grid(row=2, column=8, pady=5)
+
+    def show_baseline_proposed_toggle(self, show_toggle):
+        if show_toggle:
+            self.baseline_label.grid()
+            self.baseline_proposed_switch.grid()
+            self.proposed_label.grid()
+        else:
+            self.baseline_label.grid_remove()
+            self.baseline_proposed_switch.grid_remove()
+            self.proposed_label.grid_remove()
 
     def show_view(self, view_name):
         # Clear previous view

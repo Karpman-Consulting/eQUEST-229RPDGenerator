@@ -22,6 +22,7 @@ ACTIVE_SUBVIEW_BUTTON_COLOR = "#FFED67"
 class BuildingAreasView(BaseView):
     def __init__(self, window):
         super().__init__(window)
+        self.main_window = window
 
         self.building_combos = []
         self.building_widgets_by_row = []
@@ -78,6 +79,7 @@ class BuildingAreasView(BaseView):
     def open_view(self):
         self.toggle_active_button("Building Areas")
         self.grid_propagate(False)
+        self.main_window.show_baseline_proposed_toggle(False)
 
         # 2 rows in the main surface view structure.
         # View frame (row 2, index 1) has a weight to make it fill up the empty space in the window

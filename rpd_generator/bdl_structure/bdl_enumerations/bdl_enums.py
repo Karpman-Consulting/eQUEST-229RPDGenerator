@@ -50,6 +50,7 @@ class BDLEnums:
                 "DAY-SCHEDULE-PD",
                 "WEEK-SCHEDULE-PD",
                 "SCHEDULE-PD",
+                "POLYGON",
                 "PUMP",
                 "CIRCULATION-LOOP",
                 "BOILER",
@@ -373,6 +374,7 @@ class BDLEnums:
                 "AREA",
                 "HEIGHT",
                 "WIDTH",
+                "POLYGON",
                 "LOCATION",
                 "TILT",
                 "AZIMUTH",
@@ -452,6 +454,7 @@ class BDLEnums:
                 "NEXT-TO",
                 "AREA",
                 "HEIGHT",
+                "POLYGON",
                 "WIDTH",
                 "LOCATION",
                 "TILT",
@@ -557,6 +560,7 @@ class BDLEnums:
                 "HX-FLOW-CTRL",
             ]
         ),
+        "PolygonKeywords": _ListEnum([f"V{i}" for i in range(1, 121)]),
         "PumpCapacityControlOptions": _ListEnum(
             [
                 "ONE-SPEED-PUMP",
@@ -641,6 +645,15 @@ class BDLEnums:
                 "INF-METHOD",
                 "INF-FLOW/AREA",
                 "AIR-CHANGES/HR",
+                "ZONE-TYPE",
+                "LTG-SPEC-METHOD",
+            ]
+        ),
+        "LightingSpecMethodOptions": _ListEnum(
+            [
+                "POWER-DEFINITION",
+                "LUMINAIRE-COUNT",
+                "ILLUMINANCE",
             ]
         ),
         "SteamAndChilledWaterMeterKeywords": _ListEnum(
@@ -902,6 +915,22 @@ class BDLEnums:
                 "PREHEAT-SOURCE",
                 "PREHEAT-CAPACITY",
                 "PREHEAT-T",
+                "FURNACE-HIR",
+                "HEATING-EIR",
+                "FURNACE-AUX-KW",
+                "HEAT-EIR-FT",
+                "HEAT-EIR-FPLR",
+                "HEAT-CLOSS-FPLR",
+                "FURNACE-HIR-FPLR",
+                "WASTE-HEAT-USE",
+                "HTREC-DW-HEATER",
+                "COOL-WASTE-HEAT",
+                "RATED-SST",
+                "HT-RATED-SDT",
+                "DES-MIN-SDT",
+                "DES-MAX-SDT",
+                "DES-MIN-SST",
+                "DES-MAX-SST",
                 "SUPPLY-FLOW",
                 "SUPPLY-STATIC",
                 "SUPPLY-MTR-EFF",
@@ -949,6 +978,7 @@ class BDLEnums:
                 "AREA",
                 "HEIGHT",
                 "WIDTH",
+                "POLYGON",
                 "LOCATION",
                 "TILT",
                 "AZIMUTH",
@@ -1117,6 +1147,14 @@ class BDLEnums:
                 "INDUCTION-RATIO",
                 "INDUCED-AIR-SRC",
                 "SPACE",
+                "TYPE",
+            ]
+        ),
+        "ZoneTypeOptions": _ListEnum(
+            [
+                "CONDITIONED",
+                "UNCONDITIONED",
+                "PLENUM",
             ]
         ),
         "HPSupplementSourceOptions": _ListEnum(
