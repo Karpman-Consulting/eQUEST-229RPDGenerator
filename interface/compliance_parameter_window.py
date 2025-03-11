@@ -5,7 +5,6 @@ from tkinter import Menu
 from interface.views.spaces import SpacesView
 from interface.views.test import TestView
 from interface.views.project_info import ProjectInfoView
-from interface.views.buildings import BuildingsView
 from interface.views.building_areas import BuildingAreasView
 from interface.views.zones import ZonesView
 from interface.views.surfaces import SurfacesView
@@ -55,7 +54,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             width=50,
             switch_height=20,
             switch_width=50,
-            command=lambda: self.toggle_baseline_proposed(),
+            command=self.toggle_baseline_proposed,
             onvalue="Proposed",
             offvalue="Baseline",
         )
@@ -65,7 +64,6 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         self.views = {
             "Test": TestView(self),
             "Project Info": ProjectInfoView(self),
-            "Buildings": BuildingsView(self),
             "Building Areas": BuildingAreasView(self),
             "Zones": ZonesView(self),
             "Spaces": SpacesView(self),
@@ -131,8 +129,14 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             self.show_view("Project Info")
 
     def toggle_baseline_proposed(self):
-        if self.current_view is not None:
-            self.current_view.open_view()
+        new_state = self.main_app.data.baseline_or_proposed.get()
+        old_state = "Baseline" if new_state == "Proposed" else "Proposed"
+
+        if old_state in self.current_view.current_subview_name:
+            self.current_view.current_subview_name = (
+                self.current_view.current_subview_name.replace(old_state, new_state)
+            )
+        self.current_view.show_subview(self.current_view.current_subview_name)
 
     def create_menu_bar(self):
         menubar = Menu(self)

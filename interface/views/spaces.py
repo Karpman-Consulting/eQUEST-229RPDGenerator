@@ -1,4 +1,5 @@
 import customtkinter as ctk
+
 from interface.CTkMessagebox import CTkMessagebox
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
@@ -18,7 +19,8 @@ class SpacesView(BaseView):
         super().__init__(window)
         self.main_window = window
         self.view_frame = ctk.CTkFrame(self)
-        self.current_view = None
+        self.current_subview = None
+        self.current_subview_name = None
 
         # Directions frame holds all directions info and will get 'gridded' within the surfaces view grid
         self.directions_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -33,8 +35,8 @@ class SpacesView(BaseView):
             font=LABEL_FONT,
         )
         self.subviews = {
-            "Baseline Spaces": SpacesSubview(self.view_frame),
-            "Proposed Spaces": SpacesSubview(self.view_frame),
+            "Baseline SpacesSubview": SpacesSubview(self.view_frame),
+            "Proposed SpacesSubview": SpacesSubview(self.view_frame),
         }
 
     def __repr__(self):
@@ -60,14 +62,37 @@ class SpacesView(BaseView):
         self.view_frame.grid_rowconfigure(0, weight=1)
         self.view_frame.grid_columnconfigure(0, weight=1)
 
-        if self.current_view:
-            self.current_view.grid_forget()
-        spaces_view = self.subviews[
-            f"{self.app_data.baseline_or_proposed.get()} Spaces"
-        ]
-        self.current_view = spaces_view
-        spaces_view.grid(row=0, column=0, sticky=FILL)
-        spaces_view.open_view()
+        current_state = self.app_data.baseline_or_proposed.get()
+        self.current_subview_name = current_state + " SpacesSubview"
+        self.show_subview(current_state + " SpacesSubview")
+
+    def show_subview(self, subview_name):
+        # Clear previous subview
+        if self.current_subview is not None:
+            self.current_subview.grid_forget()
+
+        subview = self.subviews.get(subview_name)
+        if subview:
+            self.current_subview_name = subview_name
+            self.current_subview = subview
+        else:
+            current_state = self.app_data.baseline_or_proposed.get()
+            filtered_subviews = [
+                value for key, value in self.subviews.items() if current_state in key
+            ]
+
+            # Set current_subview to the first matching subview, if found
+            if filtered_subviews:
+                self.current_subview = filtered_subviews[0]
+
+        self.current_subview_name = (
+            self.app_data.baseline_or_proposed.get()
+            + " "
+            + self.current_subview.__repr__()
+        )
+        self.current_subview.grid(row=0, column=0, sticky=FILL)
+        self.current_subview.focus_set()
+        self.current_subview.open_subview()
 
 
 class SpacesSubview(CTkXYFrame):
@@ -76,19 +101,18 @@ class SpacesSubview(CTkXYFrame):
         self.spaces_view = view_frame.master
         self.app_data = self.spaces_view.app_data
         self.is_view_populated = False
-        print("SpacesSubview initialized")
 
     def __repr__(self):
         return "SpacesSubview"
 
-    def open_view(self):
+    def open_subview(self):
         self.populate_subview() if not self.is_view_populated else None
 
     def populate_subview(self):
         self.add_column_headers()
 
         #  Get spaces from relevant rmd. Throw error if none found
-        space_names = None
+        space_names = []
         if self.app_data.baseline_or_proposed.get() == "Proposed":
             space_names = self.app_data.get_rmd(
                 ASHRAE9012019ModelOptions.PROPOSED
@@ -97,15 +121,6 @@ class SpacesSubview(CTkXYFrame):
             space_names = self.app_data.get_rmd(
                 ASHRAE9012019ModelOptions.BASELINE_0
             ).space_map.keys()
-        if not space_names:
-            msg = CTkMessagebox(
-                title="Warning",
-                message="No spaces found in this model.",
-                icon="info",
-                option_1="Okay",
-            )
-            if msg.get() == "Okay":
-                return
 
         for i, space_name in enumerate(space_names):
             # Add data vars for each space

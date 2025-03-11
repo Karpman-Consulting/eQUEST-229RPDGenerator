@@ -1,6 +1,5 @@
 import customtkinter as ctk
 
-from interface.CTkMessagebox import CTkMessagebox
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
 from interface.main_app_data import ASHRAE9012019ModelOptions
@@ -30,18 +29,34 @@ class SurfacesView(BaseView):
         self.current_subview_name = None
 
         self.subviews = {
-            "Baseline Exterior": ExteriorSurfaceView(self.subview_frame),
-            "Proposed Exterior": ExteriorSurfaceView(self.subview_frame),
-            "Baseline Interior": InteriorSurfaceView(self.subview_frame),
-            "Proposed Interior": InteriorSurfaceView(self.subview_frame),
-            "Baseline Underground": UndergroundSurfaceView(self.subview_frame),
-            "Proposed Underground": UndergroundSurfaceView(self.subview_frame),
-            "Baseline Windows": WindowSurfaceView(self.subview_frame),
-            "Proposed Windows": WindowSurfaceView(self.subview_frame),
-            "Baseline Skylights": SkylightSurfaceView(self.subview_frame),
-            "Proposed Skylights": SkylightSurfaceView(self.subview_frame),
-            "Baseline Doors": DoorSurfaceView(self.subview_frame),
-            "Proposed Doors": DoorSurfaceView(self.subview_frame),
+            "Baseline ExteriorSurfaceSubview": ExteriorSurfaceSubview(
+                self.subview_frame
+            ),
+            "Proposed ExteriorSurfaceSubview": ExteriorSurfaceSubview(
+                self.subview_frame
+            ),
+            "Baseline InteriorSurfaceSubview": InteriorSurfaceSubview(
+                self.subview_frame
+            ),
+            "Proposed InteriorSurfaceSubview": InteriorSurfaceSubview(
+                self.subview_frame
+            ),
+            "Baseline UndergroundSurfaceSubview": UndergroundSurfaceSubview(
+                self.subview_frame
+            ),
+            "Proposed UndergroundSurfaceSubview": UndergroundSurfaceSubview(
+                self.subview_frame
+            ),
+            "Baseline WindowSurfaceSubview": WindowSurfaceSubview(self.subview_frame),
+            "Proposed WindowSurfaceSubview": WindowSurfaceSubview(self.subview_frame),
+            "Baseline SkylightSurfaceSubview": SkylightSurfaceSubview(
+                self.subview_frame
+            ),
+            "Proposed SkylightSurfaceSubview": SkylightSurfaceSubview(
+                self.subview_frame
+            ),
+            "Baseline DoorSurfaceSubview": DoorSurfaceSubview(self.subview_frame),
+            "Proposed DoorSurfaceSubview": DoorSurfaceSubview(self.subview_frame),
         }
         self.subview_buttons = {}
 
@@ -97,44 +112,40 @@ class SurfacesView(BaseView):
         self.subview_frame.grid_rowconfigure(0, weight=1)
         self.subview_frame.grid_columnconfigure(0, weight=1)
 
-        if self.subview_buttons:
-            # If a subview is already open, current is subview is toggled to show baseline/proposed
-            if self.current_subview:
-                self.show_subview(
-                    f"{self.app_data.baseline_or_proposed.get()} {self.current_subview_name}"
-                )
-            # Open the first subview available
-            else:
-                self.show_subview(
-                    f"{self.app_data.baseline_or_proposed.get()} {next(iter(self.subview_buttons))}"
-                )
+        self.current_subview_name = (
+            f"{self.app_data.baseline_or_proposed.get()} ExteriorSurfaceSubview"
+        )
+        self.show_subview(
+            f"{self.app_data.baseline_or_proposed.get()} ExteriorSurfaceSubview"
+        )
 
     def create_subbutton_bar(self):
         callback_methods = {}
+        current_state = self.app_data.baseline_or_proposed.get()
         if not self.app_data.is_all_new_construction.get():
             if len(self.app_data.rmds[0].ext_wall_names) > 0:
                 callback_methods["Exterior"] = lambda: self.show_subview(
-                    f"{self.app_data.baseline_or_proposed.get()} Exterior"
+                    f"{current_state} ExteriorSurfaceSubview"
                 )
             if len(self.app_data.rmds[0].int_wall_names) > 0:
                 callback_methods["Interior"] = lambda: self.show_subview(
-                    f"{self.app_data.baseline_or_proposed.get()} Interior"
+                    f"{current_state} InteriorSurfaceSubview"
                 )
             if len(self.app_data.rmds[0].undg_wall_names) > 0:
                 callback_methods["Underground"] = lambda: self.show_subview(
-                    f"{self.app_data.baseline_or_proposed.get()} Underground"
+                    f"{current_state} UndergroundSurfaceSubview"
                 )
         if len(self.app_data.rmds[0].door_names) > 0:
             callback_methods["Doors"] = lambda: self.show_subview(
-                f"{self.app_data.baseline_or_proposed.get()} Doors"
+                f"{current_state} DoorSurfaceSubview"
             )
         if len(self.app_data.rmds[0].window_names) > 0:
             callback_methods["Windows"] = lambda: self.show_subview(
-                f"{self.app_data.baseline_or_proposed.get()} Windows"
+                f"{current_state} WindowSurfaceSubview"
             )
         if len(self.app_data.rmds[0].skylight_names) > 0:
             callback_methods["Skylights"] = lambda: self.show_subview(
-                f"{self.app_data.baseline_or_proposed.get()} Skylights"
+                f"{current_state} SkylightSurfaceSubview"
             )
 
         for index, name in enumerate(callback_methods):
@@ -154,18 +165,33 @@ class SurfacesView(BaseView):
             self.subview_buttons[name] = button
 
     def show_subview(self, subview_name):
+        self.current_subview_name = subview_name
         # Clear previous subview
         if self.current_subview is not None:
             self.current_subview.grid_forget()
 
-        # Show new subview
-        self.current_subview_name = subview_name.split(" ", 1)[1]
         subview = self.subviews.get(subview_name)
         if subview:
+            self.current_subview_name = subview_name
             self.current_subview = subview
-            self.current_subview.grid(row=0, column=0, sticky=FILL)
-            self.current_subview.focus_set()
-            self.current_subview.open_subview()
+        else:
+            current_state = self.app_data.baseline_or_proposed.get()
+            filtered_subviews = [
+                value for key, value in self.subviews.items() if current_state in key
+            ]
+
+            # Set current_subview to the first matching subview, if found
+            if filtered_subviews:
+                self.current_subview = filtered_subviews[0]
+
+        self.current_subview_name = (
+            self.app_data.baseline_or_proposed.get()
+            + " "
+            + self.current_subview.__repr__()
+        )
+        self.current_subview.grid(row=0, column=0, sticky=FILL)
+        self.current_subview.focus_set()
+        self.current_subview.open_subview()
 
     def toggle_active_subbutton(self, active_subbutton_name):
         for name, button in self.subview_buttons.items():
@@ -183,7 +209,7 @@ class SurfacesView(BaseView):
                 )
 
 
-class ExteriorSurfaceView(CTkXYFrame):
+class ExteriorSurfaceSubview(CTkXYFrame):
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.surfaces_view = subview_frame.master
@@ -191,7 +217,7 @@ class ExteriorSurfaceView(CTkXYFrame):
         self.is_subview_populated = False
 
     def __repr__(self):
-        return "ExteriorSurfaceView"
+        return "ExteriorSurfaceSubview"
 
     def open_subview(self):
         self.surfaces_view.toggle_active_subbutton("Exterior")
@@ -201,7 +227,7 @@ class ExteriorSurfaceView(CTkXYFrame):
         self.add_column_headers()
 
         #  Get exterior walls from relevant rmd. Throw error if none found
-        ext_wall_names = None
+        ext_wall_names = []
         if self.app_data.baseline_or_proposed.get() == "Proposed":
             ext_wall_names = self.app_data.get_rmd(
                 ASHRAE9012019ModelOptions.PROPOSED
@@ -210,15 +236,7 @@ class ExteriorSurfaceView(CTkXYFrame):
             ext_wall_names = self.app_data.get_rmd(
                 ASHRAE9012019ModelOptions.BASELINE_0
             ).ext_wall_names
-        if not ext_wall_names:
-            msg = CTkMessagebox(
-                title="Warning",
-                message="No exterior walls found in this model.",
-                icon="info",
-                option_1="Okay",
-            )
-            if msg.get() == "Okay":
-                return
+
         for i, ext_wall_name in enumerate(ext_wall_names):
             self.add_row(i, ext_wall_name)
 
@@ -244,7 +262,7 @@ class ExteriorSurfaceView(CTkXYFrame):
         status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
 
 
-class InteriorSurfaceView(CTkXYFrame):
+class InteriorSurfaceSubview(CTkXYFrame):
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.surfaces_view = subview_frame.master
@@ -252,7 +270,7 @@ class InteriorSurfaceView(CTkXYFrame):
         self.is_subview_populated = False
 
     def __repr__(self):
-        return "InteriorSurfaceView"
+        return "InteriorSurfaceSubview"
 
     def open_subview(self):
         self.surfaces_view.toggle_active_subbutton("Interior")
@@ -262,7 +280,7 @@ class InteriorSurfaceView(CTkXYFrame):
         self.add_column_headers()
 
         #  Get interior walls from relevant rmd. Throw error if none found
-        int_wall_names = None
+        int_wall_names = []
         if self.app_data.baseline_or_proposed.get() == "Proposed":
             int_wall_names = self.app_data.get_rmd(
                 ASHRAE9012019ModelOptions.PROPOSED
@@ -271,15 +289,7 @@ class InteriorSurfaceView(CTkXYFrame):
             int_wall_names = self.app_data.get_rmd(
                 ASHRAE9012019ModelOptions.BASELINE_0
             ).int_wall_names
-        if not int_wall_names:
-            msg = CTkMessagebox(
-                title="Warning",
-                message="No interior walls found in this model.",
-                icon="info",
-                option_1="Okay",
-            )
-            if msg.get() == "Okay":
-                return
+
         for i, int_wall_name in enumerate(int_wall_names):
             self.add_row(i, int_wall_name)
 
@@ -305,7 +315,7 @@ class InteriorSurfaceView(CTkXYFrame):
         status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
 
 
-class UndergroundSurfaceView(CTkXYFrame):
+class UndergroundSurfaceSubview(CTkXYFrame):
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.surfaces_view = subview_frame.master
@@ -313,7 +323,7 @@ class UndergroundSurfaceView(CTkXYFrame):
         self.is_subview_populated = False
 
     def __repr__(self):
-        return "UndergroundSurfaceView"
+        return "UndergroundSurfaceSubview"
 
     def open_subview(self):
         self.surfaces_view.toggle_active_subbutton("Underground")
@@ -323,7 +333,7 @@ class UndergroundSurfaceView(CTkXYFrame):
         self.add_column_headers()
 
         #  Get underground walls from relevant rmd. Throw error if none found
-        undg_wall_names = None
+        undg_wall_names = []
         if self.app_data.baseline_or_proposed.get() == "Proposed":
             undg_wall_names = self.app_data.get_rmd(
                 ASHRAE9012019ModelOptions.PROPOSED
@@ -332,15 +342,7 @@ class UndergroundSurfaceView(CTkXYFrame):
             undg_wall_names = self.app_data.get_rmd(
                 ASHRAE9012019ModelOptions.BASELINE_0
             ).undg_wall_names
-        if not undg_wall_names:
-            msg = CTkMessagebox(
-                title="Warning",
-                message="No underground walls found in this model.",
-                icon="info",
-                option_1="Okay",
-            )
-            if msg.get() == "Okay":
-                return
+
         for i, undg_wall_name in enumerate(undg_wall_names):
             self.add_row(i, undg_wall_name)
 
@@ -366,7 +368,7 @@ class UndergroundSurfaceView(CTkXYFrame):
         status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
 
 
-class WindowSurfaceView(CTkXYFrame):
+class WindowSurfaceSubview(CTkXYFrame):
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.surfaces_view = subview_frame.master
@@ -374,7 +376,7 @@ class WindowSurfaceView(CTkXYFrame):
         self.is_subview_populated = False
 
     def __repr__(self):
-        return "WindowSurfaceView"
+        return "WindowSurfaceSubview"
 
     def open_subview(self):
         self.surfaces_view.toggle_active_subbutton("Windows")
@@ -384,7 +386,7 @@ class WindowSurfaceView(CTkXYFrame):
         self.add_column_headers()
 
         #  Get windows from relevant rmd. Throw error if none found
-        window_names = None
+        window_names = []
         if self.app_data.baseline_or_proposed.get() == "Proposed":
             window_names = self.app_data.get_rmd(
                 ASHRAE9012019ModelOptions.PROPOSED
@@ -393,15 +395,7 @@ class WindowSurfaceView(CTkXYFrame):
             window_names = self.app_data.get_rmd(
                 ASHRAE9012019ModelOptions.BASELINE_0
             ).window_names
-        if not window_names:
-            msg = CTkMessagebox(
-                title="Warning",
-                message="No windows found in this model.",
-                icon="info",
-                option_1="Okay",
-            )
-            if msg.get() == "Okay":
-                return
+
         for i, window_name in enumerate(window_names):
             self.add_row(i, window_name)
 
@@ -457,7 +451,7 @@ class WindowSurfaceView(CTkXYFrame):
         open_sensor_checkbox.grid(row=(i + 1), column=5, padx=PAD20END, pady=PAD20END)
 
 
-class SkylightSurfaceView(CTkXYFrame):
+class SkylightSurfaceSubview(CTkXYFrame):
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.surfaces_view = subview_frame.master
@@ -465,7 +459,7 @@ class SkylightSurfaceView(CTkXYFrame):
         self.is_subview_populated = False
 
     def __repr__(self):
-        return "SkylightSurfaceView"
+        return "SkylightSurfaceSubview"
 
     def open_subview(self):
         self.surfaces_view.toggle_active_subbutton("Skylights")
@@ -475,7 +469,7 @@ class SkylightSurfaceView(CTkXYFrame):
         self.add_column_headers()
 
         #  Get skylights from relevant rmd. Throw error if none found
-        skylight_names = None
+        skylight_names = []
         if self.app_data.baseline_or_proposed.get() == "Proposed":
             skylight_names = self.app_data.get_rmd(
                 ASHRAE9012019ModelOptions.PROPOSED
@@ -484,15 +478,7 @@ class SkylightSurfaceView(CTkXYFrame):
             skylight_names = self.app_data.get_rmd(
                 ASHRAE9012019ModelOptions.BASELINE_0
             ).skylight_names
-        if not skylight_names:
-            msg = CTkMessagebox(
-                title="Warning",
-                message="No skylights found in this model.",
-                icon="info",
-                option_1="Okay",
-            )
-            if msg.get() == "Okay":
-                return
+
         for i, skylight_name in enumerate(skylight_names):
             self.add_row(i, skylight_name)
 
@@ -548,7 +534,7 @@ class SkylightSurfaceView(CTkXYFrame):
         open_sensor_checkbox.grid(row=(i + 1), column=5, padx=PAD20END, pady=PAD20END)
 
 
-class DoorSurfaceView(CTkXYFrame):
+class DoorSurfaceSubview(CTkXYFrame):
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.surfaces_view = subview_frame.master
@@ -556,7 +542,7 @@ class DoorSurfaceView(CTkXYFrame):
         self.is_subview_populated = False
 
     def __repr__(self):
-        return "DoorSurfaceView"
+        return "DoorSurfaceSubview"
 
     def open_subview(self):
         self.surfaces_view.toggle_active_subbutton("Doors")
@@ -566,7 +552,7 @@ class DoorSurfaceView(CTkXYFrame):
         self.add_column_headers()
 
         #  Get doors from relevant rmd. Throw error if none found
-        door_names = None
+        door_names = []
         if self.app_data.baseline_or_proposed.get() == "Proposed":
             door_names = self.app_data.get_rmd(
                 ASHRAE9012019ModelOptions.PROPOSED
@@ -575,15 +561,7 @@ class DoorSurfaceView(CTkXYFrame):
             door_names = self.app_data.get_rmd(
                 ASHRAE9012019ModelOptions.BASELINE_0
             ).door_names
-        if not door_names:
-            msg = CTkMessagebox(
-                title="Warning",
-                message="No doors found in this model.",
-                icon="info",
-                option_1="Okay",
-            )
-            if msg.get() == "Okay":
-                return
+
         for i, door_name in enumerate(door_names):
             self.add_row(i, door_name)
 

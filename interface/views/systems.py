@@ -1,6 +1,6 @@
 import customtkinter as ctk
+
 import interface.custom_widgets as cw
-from interface.CTkMessagebox import CTkMessagebox
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
 from interface.main_app_data import ASHRAE9012019ModelOptions
@@ -29,12 +29,12 @@ class SystemsView(BaseView):
         self.current_subview_name = None
 
         self.subviews = {
-            "Baseline HVAC Systems": HVACSystemView(self.subview_frame),
-            "Proposed HVAC Systems": HVACSystemView(self.subview_frame),
-            "Baseline Heat Rejection": HeatRejectionView(self.subview_frame),
-            "Proposed Heat Rejection": HeatRejectionView(self.subview_frame),
-            "Baseline Zonal Exhaust": ZonalExhaustView(self.subview_frame),
-            "Proposed Zonal Exhaust": ZonalExhaustView(self.subview_frame),
+            "Baseline HVACSystemSubview": HVACSystemSubview(self.subview_frame),
+            "Proposed HVACSystemSubview": HVACSystemSubview(self.subview_frame),
+            "Baseline HeatRejectionSubview": HeatRejectionSubview(self.subview_frame),
+            "Proposed HeatRejectionSubview": HeatRejectionSubview(self.subview_frame),
+            "Baseline ZonalExhaustSubview": ZonalExhaustSubview(self.subview_frame),
+            "Proposed ZonalExhaustSubview": ZonalExhaustSubview(self.subview_frame),
         }
 
         # Directions frame holds all directions info and will get 'gridded' within the surfaces view grid
@@ -88,17 +88,12 @@ class SystemsView(BaseView):
         self.subview_frame.grid_rowconfigure(0, weight=1)
         self.subview_frame.grid_columnconfigure(0, weight=1)
 
-        if self.subview_buttons:
-            # If a subview is already open, current is subview is toggled to show baseline/proposed
-            if self.current_subview:
-                self.show_subview(
-                    f"{self.app_data.baseline_or_proposed.get()} {self.current_subview_name}"
-                )
-            # Open the first subview available
-            else:
-                self.show_subview(
-                    f"{self.app_data.baseline_or_proposed.get()} {next(iter(self.subview_buttons))}"
-                )
+        self.current_subview_name = (
+            f"{self.app_data.baseline_or_proposed.get()} HVACSystemSubview"
+        )
+        self.show_subview(
+            f"{self.app_data.baseline_or_proposed.get()} HVACSystemSubview"
+        )
 
     def create_subbutton_bar(self):
         callback_methods = {}
@@ -136,18 +131,33 @@ class SystemsView(BaseView):
             self.subview_buttons[name] = button
 
     def show_subview(self, subview_name):
+        self.current_subview_name = subview_name
         # Clear previous subview
         if self.current_subview is not None:
             self.current_subview.grid_forget()
 
-        # Show new subview
         subview = self.subviews.get(subview_name)
         if subview:
-            self.current_subview_name = subview_name.split(" ", 1)[1]
+            self.current_subview_name = subview_name
             self.current_subview = subview
-            self.current_subview.grid(row=0, column=0, sticky=FILL)
-            self.current_subview.focus_set()
-            self.current_subview.open_subview()
+        else:
+            current_state = self.app_data.baseline_or_proposed.get()
+            filtered_subviews = [
+                value for key, value in self.subviews.items() if current_state in key
+            ]
+
+            # Set current_subview to the first matching subview, if found
+            if filtered_subviews:
+                self.current_subview = filtered_subviews[0]
+
+        self.current_subview_name = (
+            self.app_data.baseline_or_proposed.get()
+            + " "
+            + self.current_subview.__repr__()
+        )
+        self.current_subview.grid(row=0, column=0, sticky=FILL)
+        self.current_subview.focus_set()
+        self.current_subview.open_subview()
 
     def toggle_active_subbutton(self, active_subbutton_name):
         for name, button in self.subview_buttons.items():
@@ -167,7 +177,7 @@ class SystemsView(BaseView):
                 )
 
 
-class HeatRejectionView(CTkXYFrame):
+class HeatRejectionSubview(CTkXYFrame):
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.systems_view = subview_frame.master
@@ -175,7 +185,7 @@ class HeatRejectionView(CTkXYFrame):
         self.is_subview_populated = False
 
     def __repr__(self):
-        return "HeatRejectionView"
+        return "HeatRejectionSubview"
 
     def open_subview(self):
         self.systems_view.toggle_active_subbutton("Heat Rejection")
@@ -185,7 +195,7 @@ class HeatRejectionView(CTkXYFrame):
         self.add_column_headers()
 
         #  Get heat rejections from relevant rmd. Throw error if none found
-        heat_rejection_names = None
+        heat_rejection_names = []
         if self.app_data.baseline_or_proposed.get() == "Proposed":
             heat_rejection_names = self.app_data.get_rmd(
                 ASHRAE9012019ModelOptions.PROPOSED
@@ -194,15 +204,7 @@ class HeatRejectionView(CTkXYFrame):
             heat_rejection_names = self.app_data.get_rmd(
                 ASHRAE9012019ModelOptions.BASELINE_0
             ).heat_rejection_names
-        if not heat_rejection_names:
-            msg = CTkMessagebox(
-                title="Warning",
-                message="No heat rejection systems found in this model.",
-                icon="info",
-                option_1="Okay",
-            )
-            if msg.get() == "Okay":
-                return
+
         for i, heat_rejection_name in enumerate(heat_rejection_names):
             self.add_row(i, heat_rejection_name)
 
@@ -226,7 +228,7 @@ class HeatRejectionView(CTkXYFrame):
         fan_type_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
 
 
-class HVACSystemView(CTkXYFrame):
+class HVACSystemSubview(CTkXYFrame):
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.systems_view = subview_frame.master
@@ -234,7 +236,7 @@ class HVACSystemView(CTkXYFrame):
         self.is_subview_populated = False
 
     def __repr__(self):
-        return "HVACSystemView"
+        return "HVACSystemSubview"
 
     def open_subview(self):
         self.systems_view.toggle_active_subbutton("HVAC Systems")
@@ -244,7 +246,7 @@ class HVACSystemView(CTkXYFrame):
         self.add_column_headers()
 
         #  Get hvac systems from relevant rmd. Throw error if none found
-        hvac_system_names = None
+        hvac_system_names = []
         if self.app_data.baseline_or_proposed.get() == "Proposed":
             hvac_system_names = self.app_data.get_rmd(
                 ASHRAE9012019ModelOptions.PROPOSED
@@ -253,15 +255,7 @@ class HVACSystemView(CTkXYFrame):
             hvac_system_names = self.app_data.get_rmd(
                 ASHRAE9012019ModelOptions.BASELINE_0
             ).system_names
-        if not hvac_system_names:
-            msg = CTkMessagebox(
-                title="Warning",
-                message="No HVAC systems found in this model.",
-                icon="info",
-                option_1="Okay",
-            )
-            if msg.get() == "Okay":
-                return
+
         for i, hvac_system_name in enumerate(hvac_system_names):
             self.add_row(i, hvac_system_name)
 
@@ -314,7 +308,7 @@ class HVACSystemView(CTkXYFrame):
         )
 
 
-class ZonalExhaustView(CTkXYFrame):
+class ZonalExhaustSubview(CTkXYFrame):
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.systems_view = subview_frame.master
@@ -322,7 +316,7 @@ class ZonalExhaustView(CTkXYFrame):
         self.is_subview_populated = False
 
     def __repr__(self):
-        return "ZonalExhaustView"
+        return "ZonalExhaustSubview"
 
     def open_subview(self):
         self.systems_view.toggle_active_subbutton("Zonal Exhaust")
