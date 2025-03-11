@@ -19,6 +19,7 @@ ACTIVE_SUBVIEW_BUTTON_COLOR = "#FFED67"
 class SurfacesView(BaseView):
     def __init__(self, window):
         super().__init__(window)
+        self.view_data = []
 
         # All subviews will be placed inside this frame.
         # Single row/column allows formatting of subview to be handled by the subview itself
