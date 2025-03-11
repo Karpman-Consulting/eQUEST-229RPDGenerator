@@ -131,7 +131,6 @@ class SystemsView(BaseView):
             self.subview_buttons[name] = button
 
     def show_subview(self, subview_name):
-        self.current_subview_name = subview_name
         # Clear previous subview
         if self.current_subview is not None:
             self.current_subview.grid_forget()
