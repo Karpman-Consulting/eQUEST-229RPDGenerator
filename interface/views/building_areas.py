@@ -173,15 +173,15 @@ class BuildingAreasView(BaseView):
     def get_building_area_name(self, building_name):
         building_areas = self.areas_by_building.get(building_name)
         default_num = len(building_areas) + 1
-        area_name_default = "Area " + str(default_num)
+        area_name_default = f"{building_name} Area {str(default_num)}"
         while area_name_default in building_areas:
             default_num += 1
-            area_name_default = "Area " + str(default_num)
-        self.areas_by_building[building_name].append(area_name_default)
-        return building_name + " " + area_name_default
+            area_name_default = f"{building_name} Area {str(default_num)}"
+        return area_name_default
 
     def remove_building_area(self, building_name, area_name):
-        self.areas_by_building[building_name].remove(area_name)
+        if area_name in self.areas_by_building[building_name]:
+            self.areas_by_building[building_name].remove(area_name)
         building_areas = self.areas_by_building.get(building_name)
         if area_name in building_areas:
             building_areas.remove(area_name)
@@ -401,16 +401,29 @@ class BuildingAreasSubview(CTkXYFrame):
                 0, self.building_areas_view.get_building_area_name(value)
             )
 
+        def update_building_area(new_area_name):
+            building_name = building_name_combo.get()
+            current_area_name = area_name_entry.get()
+            if building_name and current_area_name:
+                self.building_areas_view.remove_building_area(
+                    building_name, current_area_name
+                )
+            if building_name and new_area_name:
+                self.building_areas_view.add_building_area(building_name, new_area_name)
+            return True
+
         def remove_row():
             # Remove building area from app_data
             building_name = building_name_combo.get()
             if area_name_entry.get():
-                area_name = area_name_entry.get().split(building_name + " ")[1]
-                self.building_areas_view.remove_building_area(building_name, area_name)
+                self.building_areas_view.remove_building_area(
+                    building_name, area_name_entry.get()
+                )
             for widget in row_widgets:
                 widget.grid_remove()
             self.building_areas_view.building_area_widgets_by_row.remove(row_widgets)
 
+        vcmd = self.register(update_building_area)
         building_name_combo = ctk.CTkComboBox(
             self,
             values=list(self.building_areas_view.areas_by_building.keys()),
@@ -419,7 +432,9 @@ class BuildingAreasSubview(CTkXYFrame):
         )
         building_name_combo._entry.configure(justify=LEFT)
         building_name_combo.grid(row=row, column=0, padx=PAD20END, pady=PAD20END)
-        area_name_entry = ctk.CTkEntry(self)
+        area_name_entry = ctk.CTkEntry(
+            self, validate="key", validatecommand=(vcmd, "%P")
+        )
         area_name_entry.grid(row=row, column=1, padx=PAD20END, pady=PAD20END)
         status_checkbox = None
         if not self.app_data.is_all_new_construction.get():
