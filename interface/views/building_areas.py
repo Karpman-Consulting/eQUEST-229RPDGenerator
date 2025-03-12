@@ -271,14 +271,13 @@ class BuildingSubview(CTkXYFrame):
                     building_area_row
                 ) in self.building_areas_view.building_area_widgets_by_row:
                     building_area_building_name = building_area_row[0].get()
-                    if building_area_building_name == building_name:
+                    if building_area_building_name == building_name and first_row:
                         # TODO: Setup here will change a bit too with different data structures and defaults. Less hardcoded.
-                        if first_row:
-                            building_area_row[0].set("")
-                            building_area_row[1].delete(0, "end")
-                            building_area_row[1].insert(0, "")
-                        else:
-                            rows_to_remove.append(building_area_row)
+                        building_area_row[0].set("")
+                        building_area_row[1].delete(0, "end")
+                        building_area_row[1].insert(0, "")
+                    elif building_area_building_name == building_name:
+                        rows_to_remove.append(building_area_row)
                     first_row = False
                 for row_to_remove in rows_to_remove:
                     self.building_areas_view.remove_widgets(row_to_remove)
