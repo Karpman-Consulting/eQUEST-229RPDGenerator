@@ -182,12 +182,12 @@ class BuildingAreasView(BaseView):
     def remove_building_area(self, building_name, area_name):
         if area_name in self.areas_by_building[building_name]:
             self.areas_by_building[building_name].remove(area_name)
-        building_areas = self.areas_by_building.get(building_name)
-        if area_name in building_areas:
-            building_areas.remove(area_name)
+        if area_name in self.app_data.building_area_options:
+            self.app_data.building_area_options.remove(area_name)
 
     def add_building_area(self, building_name, area_name):
         self.areas_by_building[building_name].append(area_name)
+        self.app_data.building_area_options.append(area_name)
 
     def add_or_update_building(
         self, building_name, above_grade_floors, below_grade_floors

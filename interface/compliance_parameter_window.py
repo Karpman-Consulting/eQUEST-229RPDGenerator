@@ -233,11 +233,11 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
     def create_nav_bar(self):
         self.warnings_button.grid(row=2, column=0, pady=5)
         self.errors_button.grid(row=2, column=1, pady=5)
-        self.continue_button.grid(row=2, column=3, columnspan=3, pady=5)
-        self.baseline_label.grid(row=2, column=5, pady=5, sticky="e")
-        self.baseline_proposed_switch.grid(row=2, column=6, pady=5)
-        self.proposed_label.grid(row=2, column=7, pady=5, sticky="w")
-        self.generate_RPD_button.grid(row=2, column=8, pady=5)
+        self.continue_button.grid(row=2, column=2, columnspan=3, pady=5)
+        self.baseline_label.grid(row=2, column=4, pady=5, sticky="e")
+        self.baseline_proposed_switch.grid(row=2, column=5, pady=5)
+        self.proposed_label.grid(row=2, column=6, pady=5, sticky="w")
+        self.generate_RPD_button.grid(row=2, column=7, pady=5)
 
     def show_baseline_proposed_toggle(self, show_toggle):
         if show_toggle:
