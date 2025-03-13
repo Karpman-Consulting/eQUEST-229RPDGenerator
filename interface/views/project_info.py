@@ -4,19 +4,7 @@ from pathlib import Path
 
 from interface.base_view import BaseView
 from interface.ctk_xyframe import CTkXYFrame
-
-LABEL_FONT = ("Arial", 14, "bold")
-TEXT_FONT = ("Arial", 14)
-READONLY = "readonly"
-W = "w"
-E = "e"
-FILL = "nsew"
-LEFT = "left"
-PAD20END = (0, 20)
-PAD20START = (20, 0)
-BLACK = "black"
-SUBVIEW_BUTTON_COLOR = "#FFD966"
-ACTIVE_SUBVIEW_BUTTON_COLOR = "#FFED67"
+from interface.constants import *
 
 
 class ProjectInfoView(BaseView):

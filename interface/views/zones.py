@@ -4,21 +4,7 @@ from PIL import Image
 
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
-
-
-LABEL_FONT = ("Arial", 14, "bold")
-READONLY = "readonly"
-LEFT = "left"
-FILL = "nsew"
-TOP_HORZ = "new"
-E = "e"
-W = "w"
-PAD20END = (0, 20)
-PAD10SYM = 10
-FLOOR_COMBOBOX_COLOR = "#5B9BD5"
-FLOOR_COMBOBOX_BTN_COLOR = "#3A7EBF"
-LIGHTBLUE = "lightblue"
-GRAY30 = "gray30"
+from interface.constants import *
 
 
 class ZonesView(BaseView):

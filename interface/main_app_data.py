@@ -26,8 +26,6 @@ class MainAppData:
 
         self.bdl_reader = ModelInputReader()
         self.rpd = None
-        # TODO: Set the active RMD based on the Proposed/Baseline toggle
-        self.active_rmd = None
 
         # Config data
         self.installation_path = ctk.StringVar()
@@ -365,8 +363,10 @@ class MainAppData:
                     != proposed_surface_summary_by_zone[space_name_zone_name_b]
                 ):
                     self.warnings.append(
-                        f"'{rmd.type}' model has different surface details than the Proposed model. This may lead to unexpected outcomes."
+                        f"'{rmd.type}' model, space {space_name_zone_name_b[0]} has different surface details than the Proposed model. This may lead to unexpected outcomes."
                     )
+                    # Only provide the first warning for this issue
+                    break
 
     def run_model_checks(self):
         # Use the Proposed model as a reference to verify Baseline models have the same # of spaces, zones, and surfaces

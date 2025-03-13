@@ -5,19 +5,8 @@ import interface.custom_widgets as cw
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
 from interface.CTkMessagebox import CTkMessagebox
+from interface.constants import *
 
-
-LABEL_FONT = ("Arial", 14, "bold")
-READONLY = "readonly"
-LEFT = "left"
-E = "e"
-W = "w"
-FILL = "nsew"
-PAD20END = (0, 20)
-BLACK = "black"
-SUBVIEW_BUTTON_COLOR = "#FFD966"
-ACTIVE_SUBVIEW_BUTTON_COLOR = "#FFED67"
-# TODO: Schema enum? If not, should it live somewhere else?
 BPF_AREA_OPTIONS = [
     "Multifamily",
     "Healthcare/hospital",
@@ -80,7 +69,8 @@ class BuildingAreasView(BaseView):
         )
         self.create_subbutton_bar()
 
-        # Building data structures. These will change as part of the save/load work
+        # TODO - Change as part of the save/load work
+        #  Building data structures
         self.areas_by_building = {"Building 1": []}
         self.above_grade_floors_by_building = {"Building 1": 0}
         self.below_grade_floors_by_building = {"Building 1": 0}
@@ -180,8 +170,7 @@ class BuildingAreasView(BaseView):
         if widgets in self.building_area_widgets_by_row:
             self.building_area_widgets_by_row.remove(widgets)
 
-    # TODO: These will be changed to be more generic to support adding and removing data from each view into the
-    # TODO: app's data structure. Please keep for now and "review around" the data structure stuff until later.
+    # TODO: Change to support adding and removing data from each view into the app's data structure.
     def get_building_area_name(self, building_name):
         building_areas = self.areas_by_building.get(building_name)
         default_num = len(building_areas) + 1
@@ -191,16 +180,19 @@ class BuildingAreasView(BaseView):
             area_name_default = f"{building_name} Area {str(default_num)}"
         return area_name_default
 
+    # TODO: Change to support adding and removing data from each view into the app's data structure.
     def remove_building_area(self, building_name, area_name):
         if area_name in self.areas_by_building[building_name]:
             self.areas_by_building[building_name].remove(area_name)
         if area_name in self.app_data.building_area_options:
             self.app_data.building_area_options.remove(area_name)
 
+    # TODO: Change to support adding and removing data from each view into the app's data structure.
     def add_building_area(self, building_name, area_name):
         self.areas_by_building[building_name].append(area_name)
         self.app_data.building_area_options.append(area_name)
 
+    # TODO: Change to support adding and removing data from each view into the app's data structure.
     def add_or_update_building(
         self, building_name, above_grade_floors, below_grade_floors
     ):
@@ -209,11 +201,31 @@ class BuildingAreasView(BaseView):
         self.above_grade_floors_by_building[building_name] = above_grade_floors
         self.below_grade_floors_by_building[building_name] = below_grade_floors
 
+    # TODO: Change to support adding and removing data from each view into the app's data structure.
     def remove_building(self, building_name):
         self.areas_by_building.pop(building_name, None)
         self.above_grade_floors_by_building.pop(building_name, None)
         self.below_grade_floors_by_building.pop(building_name, None)
 
+        # Remove all building areas from the deleted building.
+        rows_to_remove = []
+        for i, building_area_row in enumerate(self.building_area_widgets_by_row):
+            # Get the building name from the first widget in the row
+            building_area_building_name = building_area_row[0].get()
+
+            if building_area_building_name == building_name and i == 0:
+                # TODO: Setup here will change a bit too with different data structures and defaults. Less hardcoded.
+                building_area_row[0].set("")
+                building_area_row[1].delete(0, "end")
+                building_area_row[1].insert(0, "")
+
+            elif building_area_building_name == building_name:
+                rows_to_remove.append(building_area_row)
+
+        for row_to_remove in rows_to_remove:
+            self.remove_widgets(row_to_remove)
+
+    # TODO: Change to support adding and removing data from each view into the app's data structure.
     def building_has_areas(self, building_name):
         return len(self.areas_by_building[building_name]) > 0
 
@@ -236,7 +248,7 @@ class BuildingSubview(CTkXYFrame):
         )
 
     def __repr__(self):
-        return "BuildingAreasSubview"
+        return "BuildingSubview"
 
     def open_subview(self):
         self.building_areas_view.toggle_active_subbutton("Buildings")
@@ -244,6 +256,7 @@ class BuildingSubview(CTkXYFrame):
 
     def populate_subview(self):
         self.add_column_headers()
+        # Add the first row with the default Building
         self.add_row(self.building_count + 1, is_first_row=True)
         self.is_view_populated = True
 
@@ -260,55 +273,38 @@ class BuildingSubview(CTkXYFrame):
         below_grade_floors_label.grid(row=0, column=2, padx=PAD20END, pady=5)
 
     def add_row(self, row, is_first_row=False):
+
         def remove_row():
-            # If building being removed has associated areas, prompt for confirmation
             building_name = building_name_entry.get()
-            if building_name:
-                if self.building_areas_view.building_has_areas(building_name):
-                    msg = CTkMessagebox(
-                        title="Warning",
-                        message=f"{building_name} has areas assigned to it. This will remove the {building_name} and all associated areas. Would you like to continue?",
-                        icon="warning",
-                        option_1="No",
-                        option_2="Yes",
-                    )
-                    if msg.get() == "No":
-                        return
+
+            if building_name and self.building_areas_view.building_has_areas(
+                building_name
+            ):
+                msg = CTkMessagebox(
+                    title="Warning",
+                    message=f"{building_name} has areas assigned to it. This will remove the {building_name} and all associated areas. Would you like to continue?",
+                    icon="warning",
+                    option_1="No",
+                    option_2="Yes",
+                )
+                if msg.get() == "No":
+                    return
+
                 # Remove building
                 self.building_areas_view.remove_building(building_name_entry.get())
-                # Remove all building areas. Only clear if first row.
-                rows_to_remove = []
-                first_row = True
-                for (
-                    building_area_row
-                ) in self.building_areas_view.building_area_widgets_by_row:
-                    building_area_building_name = building_area_row[0].get()
-                    if building_area_building_name == building_name and first_row:
-                        # TODO: Setup here will change a bit too with different data structures and defaults. Less hardcoded.
-                        building_area_row[0].set("")
-                        building_area_row[1].delete(0, "end")
-                        building_area_row[1].insert(0, "")
-                    elif building_area_building_name == building_name:
-                        rows_to_remove.append(building_area_row)
-                    first_row = False
-                for row_to_remove in rows_to_remove:
-                    self.building_areas_view.remove_widgets(row_to_remove)
+
             self.building_areas_view.remove_widgets(row_widgets)
             remove_button.grid_remove()
 
         building_name_entry = ctk.CTkEntry(self)
         building_name_entry.grid(row=row, column=0, padx=PAD20END, pady=PAD20END)
+
         # Default set to "Building 1" here. We need to make a whole pass at setting defaults so this may change
         if is_first_row:
             building_name_entry.insert(
                 0, next(iter(self.building_areas_view.areas_by_building))
             )
-        # TODO: Customize spinboxes to allow validation
-        above_grade_spinbox = cw.IntSpinbox(self)
-        above_grade_spinbox.grid(row=row, column=1, padx=PAD20END, pady=PAD20END)
-        below_grade_spinbox = cw.IntSpinbox(self)
-        below_grade_spinbox.grid(row=row, column=2, padx=PAD20END, pady=PAD20END)
-        if not is_first_row:
+        else:
             remove_image = ctk.CTkImage(
                 light_image=Image.open("interface/static/white_x.png"),
                 dark_image=None,
@@ -325,6 +321,13 @@ class BuildingSubview(CTkXYFrame):
                 command=remove_row,
             )
             remove_button.grid(row=row, column=3, padx=PAD20END, pady=PAD20END)
+
+        # TODO: Customize spinboxes to allow validation
+        above_grade_spinbox = cw.IntSpinbox(self)
+        above_grade_spinbox.grid(row=row, column=1, padx=PAD20END, pady=PAD20END)
+        below_grade_spinbox = cw.IntSpinbox(self)
+        below_grade_spinbox.grid(row=row, column=2, padx=PAD20END, pady=PAD20END)
+
         self.add_building_button.grid(
             row=(row + 1),
             column=0,
@@ -388,9 +391,11 @@ class BuildingAreasSubview(CTkXYFrame):
         building_name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
         area_name_label = ctk.CTkLabel(self, text="Building Area Name", font=LABEL_FONT)
         area_name_label.grid(row=0, column=1, padx=PAD20END, pady=5)
+
         if not self.app_data.is_all_new_construction.get():
             status_label = ctk.CTkLabel(self, text="All New?", font=LABEL_FONT)
             status_label.grid(row=0, column=2, padx=PAD20END, pady=5)
+
         fenestration_type_label = ctk.CTkLabel(
             self, text="Fenestration Area Type", font=LABEL_FONT
         )
@@ -407,6 +412,7 @@ class BuildingAreasSubview(CTkXYFrame):
         bpf_area_type_label.grid(row=0, column=6, padx=PAD20END, pady=5)
 
     def add_row(self, row, is_first_row=False):
+
         def populate_area_name(value):
             area_name_entry.delete(0, "end")
             area_name_entry.insert(
@@ -422,6 +428,7 @@ class BuildingAreasSubview(CTkXYFrame):
                 )
             if building_name and new_area_name:
                 self.building_areas_view.add_building_area(building_name, new_area_name)
+
             return True
 
         def remove_row():
@@ -449,9 +456,11 @@ class BuildingAreasSubview(CTkXYFrame):
         )
         area_name_entry.grid(row=row, column=1, padx=PAD20END, pady=PAD20END)
         status_checkbox = None
+
         if not self.app_data.is_all_new_construction.get():
             status_checkbox = ctk.CTkCheckBox(self, text="", width=30)
             status_checkbox.grid(row=row, column=2, padx=(0, 10), pady=PAD20END)
+
         fenestration_type_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.VerticalFenestrationBuildingAreaDescriptions2019ASHRAE901,
@@ -481,6 +490,7 @@ class BuildingAreasSubview(CTkXYFrame):
         bpf_area_combo._entry.configure(justify=LEFT)
         bpf_area_combo.grid(row=row, column=6, padx=PAD20END, pady=PAD20END)
         remove_button = None
+
         if not is_first_row:
             remove_image = ctk.CTkImage(
                 light_image=Image.open("interface/static/white_x.png"),
@@ -498,6 +508,7 @@ class BuildingAreasSubview(CTkXYFrame):
                 command=remove_row,
             )
             remove_button.grid(row=row, column=7, padx=PAD20END, pady=PAD20END)
+
         self.add_area_button.grid(
             row=(row + 1),
             column=0,
@@ -516,10 +527,13 @@ class BuildingAreasSubview(CTkXYFrame):
             hvac_area_combo,
             bpf_area_combo,
         ]
+
         if not self.app_data.is_all_new_construction.get():
             row_widgets.append(status_checkbox)
+
         if not is_first_row:
             row_widgets.append(remove_button)
+
         self.building_areas_view.building_area_widgets_by_row.append(row_widgets)
 
         # TODO: This separate building combos list will go away when app data structure is folded in
