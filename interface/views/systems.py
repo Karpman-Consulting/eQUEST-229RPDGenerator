@@ -148,6 +148,12 @@ class SystemsView(BaseView):
                     font=("Arial", 11, "bold"),
                 )
 
+    def get_view_data(self):
+        view_data = {}
+        for subview in self.subviews.values():
+            view_data[subview.json_representation] = subview.get_subview_data()
+        return view_data
+
 
 class HeatRejectionView(CTkXYFrame):
     def __init__(self, subview_frame):
@@ -155,6 +161,8 @@ class HeatRejectionView(CTkXYFrame):
         self.systems_view = subview_frame.master
         self.app_data = self.systems_view.window.main_app.data
         self.is_subview_populated = False
+        self.json_representation = "heat_rejections"
+        self.widget_rows = []
 
     def __repr__(self):
         return "HeatRejectionView"
@@ -188,6 +196,24 @@ class HeatRejectionView(CTkXYFrame):
         fan_type_combo._entry.configure(justify=LEFT)
         fan_type_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
 
+        self.widget_rows.append(
+            [
+                heat_rejection_label,
+                fan_type_combo,
+            ]
+        )
+
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.widget_rows:
+            subview_data.append(
+                {
+                    "Heat Rejection Name": row[0].get(),
+                    "Fan Type": row[1].get(),
+                }
+            )
+        return subview_data
+
 
 class HVACSystemView(CTkXYFrame):
     def __init__(self, subview_frame):
@@ -195,6 +221,8 @@ class HVACSystemView(CTkXYFrame):
         self.systems_view = subview_frame.master
         self.app_data = self.systems_view.window.main_app.data
         self.is_subview_populated = False
+        self.json_representation = "hvac_systems"
+        self.widget_rows = []
 
     def __repr__(self):
         return "HVACSystemView"
@@ -239,6 +267,8 @@ class HVACSystemView(CTkXYFrame):
             )
             status_combo._entry.configure(justify=LEFT)
             status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
+        else:
+            status_combo = None
         dehumidification_type_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.DehumidificationDescriptions,
@@ -257,6 +287,30 @@ class HVACSystemView(CTkXYFrame):
             row=(i + 1), column=4, padx=PAD20END, pady=PAD20END
         )
 
+        self.widget_rows.append(
+            [
+                system_label,
+                status_combo,
+                dehumidification_type_combo,
+                ducted_supply_checkbox,
+                air_filter_merv_rating_spinbox,
+            ]
+        )
+
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.widget_rows:
+            subview_data.append(
+                {
+                    "HVAC System Name": row[0].get(),
+                    "Status": row[1].get(),
+                    "Dehumidification Type": row[2].get(),
+                    "Ducted Supply": row[3].get(),
+                    "Air Filter MERV Rating": row[4].get(),
+                }
+            )
+        return subview_data
+
 
 class ZonalExhaustView(CTkXYFrame):
     def __init__(self, subview_frame):
@@ -264,6 +318,8 @@ class ZonalExhaustView(CTkXYFrame):
         self.systems_view = subview_frame.master
         self.app_data = self.systems_view.window.main_app.data
         self.is_subview_populated = False
+        self.json_representation = "zonal_exhaust_fans"
+        self.widget_rows = []
 
     def __repr__(self):
         return "ZonalExhaustView"
@@ -309,3 +365,21 @@ class ZonalExhaustView(CTkXYFrame):
         )
         status_combo._entry.configure(justify=LEFT)
         status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
+
+        self.widget_rows.append(
+            [
+                zonal_exhaust_fan_label,
+                status_combo,
+            ]
+        )
+
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.widget_rows:
+            subview_data.append(
+                {
+                    "Zonal Exhaust Fan Name": row[0].get(),
+                    "Status": row[1].get(),
+                }
+            )
+        return subview_data

@@ -16,7 +16,6 @@ PAD20END = (0, 20)
 class SpacesView(BaseView):
     def __init__(self, window):
         super().__init__(window)
-        self.view_data = {}
         self.view_frame = ctk.CTkFrame(self)
 
         # Directions frame holds all directions info and will get 'gridded' within the surfaces view grid
@@ -61,11 +60,11 @@ class SpacesView(BaseView):
         spaces_view.grid(row=0, column=0, sticky=FILL)
         spaces_view.open_view()
 
-    def save_view_data(self):
-        """Kicks off subview data saving functions then adds results to view dataset."""
+    def get_view_data(self):
+        view_data = {}
         for subview in self.subviews.values():
-            subview.save_subview_data()
-            self.view_data[subview.json_representation] = subview.subview_data
+            view_data[subview.json_representation] = subview.get_subview_data()
+        return view_data
 
 
 class SpacesSubview(CTkXYFrame):
@@ -75,7 +74,6 @@ class SpacesSubview(CTkXYFrame):
         self.app_data = self.spaces_view.app_data
         self.is_view_populated = False
         self.json_representation = "spaces"
-        self.subview_data = []
         self.widget_rows = []
 
     def __repr__(self):
@@ -230,7 +228,8 @@ class SpacesSubview(CTkXYFrame):
             ]
         )
 
-    def save_subview_data(self):
+    def get_subview_data(self):
+        subview_data = []
         for row in self.widget_rows:
             space_data = {
                 "name": row[0].get(),
@@ -244,4 +243,5 @@ class SpacesSubview(CTkXYFrame):
                 "occ_controls_modeled": row[8].get(),
                 "daylighting_modeled": row[9].get(),
             }
-            self.subview_data.append(space_data)
+            subview_data.append(space_data)
+        return subview_data

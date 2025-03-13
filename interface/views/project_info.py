@@ -22,7 +22,6 @@ ACTIVE_SUBVIEW_BUTTON_COLOR = "#FFED67"
 class ProjectInfoView(BaseView):
     def __init__(self, window):
         super().__init__(window)
-        self.view_data = {}
 
         # All subviews will be placed inside this frame. Single row/column allows formatting of subview to be handled by the subview itself
         self.subview_frame = ctk.CTkFrame(self)
@@ -129,11 +128,11 @@ class ProjectInfoView(BaseView):
     def view_continue(self):
         self.window.show_view("Buildings")
 
-    def save_view_data(self):
-        """Kicks off subview data saving functions then adds results to view dataset."""
+    def get_view_data(self):
+        view_data = {}
         for subview in self.subviews.values():
-            subview.save_subview_data()
-            self.view_data[subview.json_representation] = subview.subview_data
+            view_data[subview.json_representation] = subview.get_subview_data()
+        return view_data
 
 
 class ProjectDetailsView(CTkXYFrame):
@@ -144,7 +143,6 @@ class ProjectDetailsView(CTkXYFrame):
         self.is_subview_populated = False
         validate_double_entry = self.register(self.app_data.validate_double_entry)
 
-        self.subview_data = {}
         # Could be a method like the __repr()__ method. Or could BE the __repr()__ method
         self.json_representation = "project_details"
 
@@ -337,27 +335,18 @@ class ProjectDetailsView(CTkXYFrame):
             self.pressure_difference_input.grid_remove()
             self.site_testing_checkbox.grid_remove()
 
-    def save_subview_data(self):
-        """Saves the current subview data to the main view's data dictionary."""
-        self.subview_data["ASHRAE Climate Zone"] = self.app_data.climate_zone.get()
-        self.subview_data["Exterior Lighting Zone"] = self.app_data.lighting_zone.get()
-        self.subview_data["Building Open From"] = self.open_from_input.get()
-        self.subview_data["Building Open To"] = self.open_to_input.get()
-        self.subview_data["Heating Design Day Criteria"] = (
-            self.app_data.heating_design_day.get()
-        )
-        self.subview_data["Cooling Design Day Criteria"] = (
-            self.app_data.cooling_design_day.get()
-        )
-        self.subview_data["Measured Infiltration"] = (
-            self.app_data.has_measured_infiltration.get()
-        )
-        self.subview_data["Pressure Difference"] = (
-            self.app_data.measured_pressure_difference.get()
-        )
-        self.subview_data["Based on Site Testing"] = (
-            self.app_data.is_based_on_site_testing.get()
-        )
+    def get_subview_data(self):
+        return {
+            "ASHRAE Climate Zone": self.app_data.climate_zone.get(),
+            "Exterior Lighting Zone": self.app_data.lighting_zone.get(),
+            "Building Open From": self.open_from_input.get(),
+            "Building Open To": self.open_to_input.get(),
+            "Heating Design Day Criteria": (self.app_data.heating_design_day.get()),
+            "Cooling Design Day Criteria": (self.app_data.cooling_design_day.get()),
+            "Measured Infiltration": (self.app_data.has_measured_infiltration.get()),
+            "Pressure Difference": (self.app_data.measured_pressure_difference.get()),
+            "Based on Site Testing": (self.app_data.is_based_on_site_testing.get()),
+        }
 
 
 class ProjectConfigView(CTkXYFrame):
@@ -369,7 +358,6 @@ class ProjectConfigView(CTkXYFrame):
 
         self.ruleset_model_row_widgets = {}
 
-        self.subview_data = {}
         # Could be a method like the __repr()__ method. Or could BE the __repr()__ method
         self.json_representation = "project_configuration"
 
@@ -691,19 +679,17 @@ class ProjectConfigView(CTkXYFrame):
             self.output_dir_entry.insert(0, directory)
             self.app_data.output_directory.set(directory)
 
-    def save_subview_data(self):
-        """Saves the current subview data to the main view's data dictionary."""
-        self.subview_data["Project Name"] = self.app_data.project_name.get()
-        self.subview_data["Energy Code/Program"] = self.app_data.selected_ruleset.get()
+    def get_subview_data(self):
+        subview_data = {
+            "Project Name": self.app_data.project_name.get(),
+            "Energy Code/Program": self.app_data.selected_ruleset.get(),
+            "Baseline Rotation Exempt": self.app_data.has_rotation_exception.get(),
+            "All New Construction": self.app_data.is_all_new_construction.get(),
+            "Output Directory": self.app_data.output_directory.get(),
+        }
         for model_type, file_path in self.app_data.ruleset_model_file_paths.items():
-            self.subview_data[model_type] = file_path
-        self.subview_data["Baseline Rotation Exempt"] = (
-            self.app_data.has_rotation_exception.get()
-        )
-        self.subview_data["All New Construction"] = (
-            self.app_data.is_all_new_construction.get()
-        )
-        self.subview_data["Output Directory"] = self.app_data.output_directory.get()
+            subview_data[model_type] = file_path
+        return subview_data
 
     @staticmethod
     def _get_trimmed_path(file_path: str) -> str:

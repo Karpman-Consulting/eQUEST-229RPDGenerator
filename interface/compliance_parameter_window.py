@@ -118,7 +118,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         file_menu = Menu(menubar, tearoff=0)
         file_menu.add_command(label="New", command="donothing")
         file_menu.add_command(label="Open", command="donothing")
-        file_menu.add_command(label="Save", command="donothing")
+        file_menu.add_command(label="Save", command=self.open_disclaimer)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.quit)
         menubar.add_cascade(label="File", menu=file_menu)
@@ -238,3 +238,10 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             return
         self.error_window = ErrorWindow(self, error_text)
         self.error_window.after(100, self.error_window.lift)
+
+    def save_project_data(self):
+        print("Saving project data...")
+        project_data = []
+        for view in self.views.values():
+            project_data.append(view.get_view_data())
+        print(project_data)

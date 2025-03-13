@@ -19,7 +19,6 @@ ACTIVE_SUBVIEW_BUTTON_COLOR = "#FFED67"
 class SurfacesView(BaseView):
     def __init__(self, window):
         super().__init__(window)
-        self.view_data = []
 
         # All subviews will be placed inside this frame.
         # Single row/column allows formatting of subview to be handled by the subview itself
@@ -153,6 +152,12 @@ class SurfacesView(BaseView):
                     text_color=BLACK,
                 )
 
+    def get_view_data(self):
+        view_data = {}
+        for subview in self.subviews.values():
+            view_data[subview.json_representation] = subview.get_subview_data()
+        return view_data
+
 
 class ExteriorSurfaceView(CTkXYFrame):
     def __init__(self, subview_frame):
@@ -160,6 +165,8 @@ class ExteriorSurfaceView(CTkXYFrame):
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
         self.is_subview_populated = False
+        self.json_representation = "exterior_surfaces"
+        self.widget_rows = []
 
     def __repr__(self):
         return "ExteriorSurfaceView"
@@ -195,6 +202,24 @@ class ExteriorSurfaceView(CTkXYFrame):
         status_combo._entry.configure(justify=LEFT)
         status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
 
+        self.widget_rows.append(
+            [
+                surface_label,
+                status_combo,
+            ]
+        )
+
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.widget_rows:
+            subview_data.append(
+                {
+                    "Surface Name": row[0].get(),
+                    "Status": row[1].get(),
+                }
+            )
+        return subview_data
+
 
 class InteriorSurfaceView(CTkXYFrame):
     def __init__(self, subview_frame):
@@ -202,6 +227,8 @@ class InteriorSurfaceView(CTkXYFrame):
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
         self.is_subview_populated = False
+        self.json_representation = "interior_surfaces"
+        self.widget_rows = []
 
     def __repr__(self):
         return "InteriorSurfaceView"
@@ -237,6 +264,24 @@ class InteriorSurfaceView(CTkXYFrame):
         status_combo._entry.configure(justify=LEFT)
         status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
 
+        self.widget_rows.append(
+            [
+                surface_label,
+                status_combo,
+            ]
+        )
+
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.widget_rows:
+            subview_data.append(
+                {
+                    "Surface Name": row[0].get(),
+                    "Status": row[1].get(),
+                }
+            )
+        return subview_data
+
 
 class UndergroundSurfaceView(CTkXYFrame):
     def __init__(self, subview_frame):
@@ -244,6 +289,8 @@ class UndergroundSurfaceView(CTkXYFrame):
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
         self.is_subview_populated = False
+        self.json_representation = "underground_surfaces"
+        self.widget_rows = []
 
     def __repr__(self):
         return "UndergroundSurfaceView"
@@ -279,6 +326,24 @@ class UndergroundSurfaceView(CTkXYFrame):
         status_combo._entry.configure(justify=LEFT)
         status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
 
+        self.widget_rows.append(
+            [
+                surface_label,
+                status_combo,
+            ]
+        )
+
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.widget_rows:
+            subview_data.append(
+                {
+                    "Surface Name": row[0].get(),
+                    "Status": row[1].get(),
+                }
+            )
+        return subview_data
+
 
 class WindowSurfaceView(CTkXYFrame):
     def __init__(self, subview_frame):
@@ -286,6 +351,8 @@ class WindowSurfaceView(CTkXYFrame):
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
         self.is_subview_populated = False
+        self.json_representation = "windows"
+        self.widget_rows = []
 
     def __repr__(self):
         return "WindowSurfaceView"
@@ -332,6 +399,8 @@ class WindowSurfaceView(CTkXYFrame):
             )
             status_combo._entry.configure(justify=LEFT)
             status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
+        else:
+            status_combo = None
         classification_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.SubsurfaceSubclassificationDescriptions2019ASHRAE901,
@@ -351,6 +420,32 @@ class WindowSurfaceView(CTkXYFrame):
         open_sensor_checkbox = ctk.CTkCheckBox(self, text="", width=30)
         open_sensor_checkbox.grid(row=(i + 1), column=5, padx=PAD20END, pady=PAD20END)
 
+        self.widget_rows.append(
+            [
+                surface_label,
+                status_combo,
+                classification_combo,
+                framing_type_combo,
+                operable_checkbox,
+                open_sensor_checkbox,
+            ]
+        )
+
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.widget_rows:
+            subview_data.append(
+                {
+                    "Window Name": row[0].get(),
+                    "Status": row[1].get(),
+                    "Classification": row[2].get(),
+                    "Framing Type": row[3].get(),
+                    "Operable": row[4].get(),
+                    "Open Sensor": row[5].get(),
+                }
+            )
+        return subview_data
+
 
 class SkylightSurfaceView(CTkXYFrame):
     def __init__(self, subview_frame):
@@ -358,6 +453,8 @@ class SkylightSurfaceView(CTkXYFrame):
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
         self.is_subview_populated = False
+        self.json_representation = "skylights"
+        self.widget_rows = []
 
     def __repr__(self):
         return "SkylightSurfaceView"
@@ -404,6 +501,8 @@ class SkylightSurfaceView(CTkXYFrame):
             )
             status_combo._entry.configure(justify=LEFT)
             status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
+        else:
+            status_combo = None
         classification_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.SubsurfaceSubclassificationDescriptions2019ASHRAE901,
@@ -423,6 +522,32 @@ class SkylightSurfaceView(CTkXYFrame):
         open_sensor_checkbox = ctk.CTkCheckBox(self, text="", width=30)
         open_sensor_checkbox.grid(row=(i + 1), column=5, padx=PAD20END, pady=PAD20END)
 
+        self.widget_rows.append(
+            [
+                surface_label,
+                status_combo,
+                classification_combo,
+                framing_type_combo,
+                operable_checkbox,
+                open_sensor_checkbox,
+            ]
+        )
+
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.widget_rows:
+            subview_data.append(
+                {
+                    "Skylight Name": row[0].get(),
+                    "Status": row[1].get(),
+                    "Classification": row[2].get(),
+                    "Framing Type": row[3].get(),
+                    "Operable": row[4].get(),
+                    "Open Sensor": row[5].get(),
+                }
+            )
+        return subview_data
+
 
 class DoorSurfaceView(CTkXYFrame):
     def __init__(self, subview_frame):
@@ -430,6 +555,8 @@ class DoorSurfaceView(CTkXYFrame):
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
         self.is_subview_populated = False
+        self.json_representation = "doors"
+        self.widget_rows = []
 
     def __repr__(self):
         return "DoorSurfaceView"
@@ -475,3 +602,23 @@ class DoorSurfaceView(CTkXYFrame):
         )
         classification_combo._entry.configure(justify=LEFT)
         classification_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=PAD20END)
+
+        self.widget_rows.append(
+            [
+                surface_label,
+                status_combo,
+                classification_combo,
+            ]
+        )
+
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.widget_rows:
+            subview_data.append(
+                {
+                    "Door Name": row[0].get(),
+                    "Status": row[1].get(),
+                    "Classification": row[2].get(),
+                }
+            )
+        return subview_data
