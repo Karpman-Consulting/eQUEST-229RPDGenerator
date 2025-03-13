@@ -17,6 +17,18 @@ PAD20END = (0, 20)
 BLACK = "black"
 SUBVIEW_BUTTON_COLOR = "#FFD966"
 ACTIVE_SUBVIEW_BUTTON_COLOR = "#FFED67"
+# TODO: Schema enum? If not, should it live somewhere else?
+BPF_AREA_OPTIONS = [
+    "Multifamily",
+    "Healthcare/hospital",
+    "Hotel/motel",
+    "Office",
+    "Restaurant",
+    "Retail",
+    "School",
+    "Warehouse",
+    "All others",
+]
 
 
 class BuildingAreasView(BaseView):
@@ -463,8 +475,7 @@ class BuildingAreasSubview(CTkXYFrame):
         hvac_area_combo.grid(row=row, column=5, padx=PAD20END, pady=PAD20END)
         bpf_area_combo = ctk.CTkComboBox(
             self,
-            # TODO: Enumerator for this?
-            values=["BPF Option 1"],
+            values=BPF_AREA_OPTIONS,
             state=READONLY,
         )
         bpf_area_combo._entry.configure(justify=LEFT)

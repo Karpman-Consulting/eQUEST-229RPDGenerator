@@ -368,7 +368,7 @@ class ProjectConfigView(CTkXYFrame):
         self.note_label = ctk.CTkLabel(
             self, text="Note: ", anchor=E, justify=LEFT, font=LABEL_FONT
         )
-        note_text = "When you select an input file, it is expected that the same directory will also include the simulation output files associated with the selected input file. \nThis application will check for the following associated file extensions:\n(*.nhk), (*.lrp), (*.srp), (*.erp)\n\n(*) can be identical to the selected *.inp file or can include the suffix ' - Baseline Design'"
+        note_text = "When you select an input file, it is expected that the same directory will also include the simulation output files associated with the selected input file. \nThis application will check for the following associated file extensions: (*.nhk), (*.lrp), (*.srp), (*.erp)\n\n(*) can be identical to the selected *.inp file or can include the suffix ' - Baseline Design'"
         self.note = ctk.CTkLabel(
             self, text=note_text, anchor=W, justify=LEFT, font=TEXT_FONT
         )
@@ -441,9 +441,9 @@ class ProjectConfigView(CTkXYFrame):
     def populate_subview(self):
         # Place widgets
         # Row 0
-        self.directions_label.grid(row=0, column=0, sticky=E + W, padx=5, pady=(20, 5))
+        self.directions_label.grid(row=0, column=0, sticky=E + W, padx=5, pady=5)
         self.directions.grid(
-            row=0, column=1, columnspan=8, sticky="new", padx=5, pady=(20, 5)
+            row=0, column=1, columnspan=8, sticky="new", padx=5, pady=5
         )
 
         # Row 1
@@ -451,33 +451,31 @@ class ProjectConfigView(CTkXYFrame):
         self.note.grid(row=1, column=1, columnspan=8, sticky=E + W, padx=5, pady=5)
 
         # Row 2
-        self.project_name_label.grid(row=2, column=0, sticky=E, padx=5, pady=(50, 10))
+        self.project_name_label.grid(row=2, column=0, sticky=E, padx=5, pady=(30, 5))
         self.project_name_entry.grid(
-            row=2, column=1, columnspan=3, sticky=E + W, padx=5, pady=(50, 10)
+            row=2, column=1, columnspan=3, sticky=E + W, padx=5, pady=(30, 5)
         )
 
-        # Row 3
-        self.ruleset_label.grid(row=3, column=0, sticky=E, padx=5, pady=5)
+        # Row 3 Project Directory
+        self.output_dir_label.grid(row=3, column=0, sticky=E, padx=(20, 5), pady=5)
+        self.output_dir_entry.grid(
+            row=3, column=1, columnspan=5, sticky=E + W, padx=5, pady=5
+        )
+        self.output_dir_button.grid(row=3, column=6, sticky=E + W, padx=5, pady=5)
+
+        # Row 4
+        self.ruleset_label.grid(row=4, column=0, sticky=E, padx=5, pady=5)
         self.ruleset_dropdown.grid(
-            row=3, column=1, columnspan=2, sticky=E + W, padx=5, pady=5
+            row=4, column=1, columnspan=2, sticky=E + W, padx=5, pady=5
         )
 
-        # Row 4 Placeholder for the rotation exception checkbox
-
-        # Row 5
-        self.ruleset_models_label.grid(row=5, column=0, sticky=E + W, padx=5, pady=5)
-
-        self.show_ruleset_models()
-        self.ruleset_models_frame.grid(row=5, column=1, columnspan=8, sticky=FILL)
+        # Row 5 Placeholder for the rotation exception checkbox
 
         # Row 6
-        self.output_dir_label.grid(
-            row=6, column=0, sticky=E, padx=(20, 5), pady=(15, 5)
-        )
-        self.output_dir_entry.grid(
-            row=6, column=1, columnspan=5, sticky=E + W, padx=5, pady=(15, 5)
-        )
-        self.output_dir_button.grid(row=6, column=6, sticky=E + W, padx=5, pady=(15, 5))
+        self.ruleset_models_label.grid(row=6, column=0, sticky=E + W, padx=5, pady=5)
+
+        self.show_ruleset_models()
+        self.ruleset_models_frame.grid(row=6, column=1, columnspan=8, sticky=FILL)
 
     def update_ruleset_model_frame(self, selected_ruleset):
         self.app_data.selected_ruleset.set(selected_ruleset)
@@ -489,7 +487,7 @@ class ProjectConfigView(CTkXYFrame):
         # Main logic
         if self.app_data.selected_ruleset.get() == "ASHRAE 90.1-2019":
             self.rotation_exception_checkbox.grid(
-                row=4, column=1, columnspan=4, sticky=W, padx=5, pady=(15, 5)
+                row=5, column=1, columnspan=4, sticky=W, padx=5, pady=(15, 5)
             )
             labels = ["Design: ", "Proposed: ", "Baseline: "]
             if not self.rotation_exception_checkbox.get():

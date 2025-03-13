@@ -31,7 +31,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         self.title(
             f"eQUEST 229 RPD Generator - {self.main_app.data.project_name.get()}"
         )
-        self.geometry(f"{1300}x{700}")
+        self.geometry(f"{1300}x{750}")
         self.minsize(1300, 350)
         self.grid_propagate(False)
         self.bg_color = self.cget("fg_color")[0]
