@@ -208,7 +208,7 @@ class HeatRejectionView(CTkXYFrame):
         for row in self.widget_rows:
             subview_data.append(
                 {
-                    "Heat Rejection Name": row[0].get(),
+                    "Heat Rejection Name": row[0].cget("text"),
                     "Fan Type": row[1].get(),
                 }
             )
@@ -302,8 +302,8 @@ class HVACSystemView(CTkXYFrame):
         for row in self.widget_rows:
             subview_data.append(
                 {
-                    "HVAC System Name": row[0].get(),
-                    "Status": row[1].get(),
+                    "HVAC System Name": row[0].cget("text"),
+                    "Status": row[1].get() if row[1] else "",
                     "Dehumidification Type": row[2].get(),
                     "Ducted Supply": row[3].get(),
                     "Air Filter MERV Rating": row[4].get(),
@@ -339,7 +339,6 @@ class ZonalExhaustView(CTkXYFrame):
         self.is_subview_populated = True
 
     def get_zonal_exhaust_fans(self):
-        # TODO: Review this approach..may be tough once we are trying to set data back to the rmds
         zonal_exhaust_fans = []
         for zone_name in self.app_data.rmds[0].zone_names:
             zone_obj = self.app_data.rmds[0].get_obj(zone_name)
@@ -378,7 +377,7 @@ class ZonalExhaustView(CTkXYFrame):
         for row in self.widget_rows:
             subview_data.append(
                 {
-                    "Zonal Exhaust Fan Name": row[0].get(),
+                    "Zonal Exhaust Fan Name": row[0].cget("text"),
                     "Status": row[1].get(),
                 }
             )

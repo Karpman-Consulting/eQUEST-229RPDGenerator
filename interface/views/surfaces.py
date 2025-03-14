@@ -214,7 +214,7 @@ class ExteriorSurfaceView(CTkXYFrame):
         for row in self.widget_rows:
             subview_data.append(
                 {
-                    "Surface Name": row[0].get(),
+                    "Surface Name": row[0].cget("text"),
                     "Status": row[1].get(),
                 }
             )
@@ -276,7 +276,7 @@ class InteriorSurfaceView(CTkXYFrame):
         for row in self.widget_rows:
             subview_data.append(
                 {
-                    "Surface Name": row[0].get(),
+                    "Surface Name": row[0].cget("text"),
                     "Status": row[1].get(),
                 }
             )
@@ -338,7 +338,7 @@ class UndergroundSurfaceView(CTkXYFrame):
         for row in self.widget_rows:
             subview_data.append(
                 {
-                    "Surface Name": row[0].get(),
+                    "Surface Name": row[0].cget("text"),
                     "Status": row[1].get(),
                 }
             )
@@ -436,8 +436,8 @@ class WindowSurfaceView(CTkXYFrame):
         for row in self.widget_rows:
             subview_data.append(
                 {
-                    "Window Name": row[0].get(),
-                    "Status": row[1].get(),
+                    "Window Name": row[0].cget("text"),
+                    "Status": row[1].get() if row[1] else "",
                     "Classification": row[2].get(),
                     "Framing Type": row[3].get(),
                     "Operable": row[4].get(),
@@ -538,8 +538,8 @@ class SkylightSurfaceView(CTkXYFrame):
         for row in self.widget_rows:
             subview_data.append(
                 {
-                    "Skylight Name": row[0].get(),
-                    "Status": row[1].get(),
+                    "Skylight Name": row[0].cget("text"),
+                    "Status": row[1].get() if row[1] else "",
                     "Classification": row[2].get(),
                     "Framing Type": row[3].get(),
                     "Operable": row[4].get(),
@@ -616,7 +616,7 @@ class DoorSurfaceView(CTkXYFrame):
         for row in self.widget_rows:
             subview_data.append(
                 {
-                    "Door Name": row[0].get(),
+                    "Door Name": row[0].cget("text"),
                     "Status": row[1].get(),
                     "Classification": row[2].get(),
                 }

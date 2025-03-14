@@ -119,7 +119,8 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         file_menu = Menu(menubar, tearoff=0)
         file_menu.add_command(label="New", command="donothing")
         file_menu.add_command(label="Open", command="donothing")
-        file_menu.add_command(label="Save", command="donothing")
+        # TODO: I don't think it make sense to save the project here before any meaningful data is entered. Thoughts?
+        # file_menu.add_command(label="Save", command="donothing")
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.quit)
         menubar.add_cascade(label="File", menu=file_menu)

@@ -54,6 +54,8 @@ class MainAppData:
         self.measured_pressure_difference = ctk.StringVar()
         self.lighting_space_type_vars = {}
 
+        self.all_project_data = {}
+
         self.rmds = []
         self.warnings = []
         self.errors = []

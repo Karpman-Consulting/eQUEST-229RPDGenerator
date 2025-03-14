@@ -1,6 +1,10 @@
+import json
+from pathlib import Path
+
 import customtkinter as ctk
 from PIL import Image
 from tkinter import Menu
+from tkinter.filedialog import asksaveasfilename
 
 from interface.views.spaces import SpacesView
 from interface.views.test import TestView
@@ -118,7 +122,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         file_menu = Menu(menubar, tearoff=0)
         file_menu.add_command(label="New", command="donothing")
         file_menu.add_command(label="Open", command="donothing")
-        file_menu.add_command(label="Save", command=self.open_disclaimer)
+        file_menu.add_command(label="Save", command=self.save_project_data)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.quit)
         menubar.add_cascade(label="File", menu=file_menu)
@@ -229,7 +233,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
     def open_disclaimer(self):
         if self.disclaimer_window is None or not self.disclaimer_window.winfo_exists():
             self.disclaimer_window = DisclaimerWindow(self)
-            self.disclaimer_window.after(100, self.disclaimer_window.lift)
+            self.disclaimer_window.after(100, self.disclaimer_window.lift, None)
         else:
             self.disclaimer_window.focus()  # if window exists, focus it
 
@@ -237,11 +241,24 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         if not error_text:
             return
         self.error_window = ErrorWindow(self, error_text)
-        self.error_window.after(100, self.error_window.lift)
+        self.error_window.after(100, self.error_window.lift, None)
 
     def save_project_data(self):
-        print("Saving project data...")
-        project_data = []
+        self.main_app.data.all_project_data.clear()
         for view in self.views.values():
-            project_data.append(view.get_view_data())
-        print(project_data)
+            # Skip incomplete views
+            if not hasattr(view, "get_view_data"):
+                continue
+            self.main_app.data.all_project_data.update(view.get_view_data())
+
+        # Save the project data to a file
+        # file_path = str(Path(self.main_app.data.output_directory.get()) / f"{self.main_app.data.project_name.get()}_data.json")
+        file_path = asksaveasfilename(
+            initialdir=str(Path(self.main_app.data.output_directory.get())),
+            initialfile=f"{self.main_app.data.project_name.get()}_data",
+            title="Save As",
+            filetypes=[("JSON", "*.json")],
+            defaultextension=".json",
+        )
+        with open(file_path, "w") as project_save_file:
+            json.dump(self.main_app.data.all_project_data, project_save_file, indent=4)

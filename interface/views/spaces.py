@@ -232,7 +232,7 @@ class SpacesSubview(CTkXYFrame):
         subview_data = []
         for row in self.widget_rows:
             space_data = {
-                "name": row[0].get(),
+                "name": row[0].cget("text"),
                 "status": row[1].get() if row[1] else "",
                 "lighting_space_type": row[2].get(),
                 "envelope_space_type": row[3].get(),
