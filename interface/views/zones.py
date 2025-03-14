@@ -160,6 +160,7 @@ class ZonesSubview(CTkXYFrame):
                 floor, value
             ),
         )
+        building_area_combo.set(self.app_data.building_area_options[0])
         building_area_combo._entry.configure(justify=LEFT)
         building_area_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=10)
 
@@ -181,6 +182,7 @@ class ZonesSubview(CTkXYFrame):
             values=self.app_data.building_area_options,
             state=READONLY,
         )
+        building_area_combo.set(self.app_data.building_area_options[0])
         building_area_combo._entry.configure(justify=LEFT)
         building_area_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=PAD10SYM)
         self.zones_view.building_areas_combos.append(building_area_combo)

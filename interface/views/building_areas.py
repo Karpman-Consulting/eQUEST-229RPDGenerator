@@ -71,9 +71,10 @@ class BuildingAreasView(BaseView):
 
         # TODO - Change as part of the save/load work
         #  Building data structures
-        self.areas_by_building = {"Building 1": []}
+        self.areas_by_building = {"Building 1": ["Building 1 Area 1"]}
         self.above_grade_floors_by_building = {"Building 1": 0}
         self.below_grade_floors_by_building = {"Building 1": 0}
+        self.app_data.building_area_options = ["Building 1 Area 1"]
 
     def __repr__(self):
         return "BuildingAreasView"
@@ -343,19 +344,53 @@ class BuildingSubview(CTkXYFrame):
         self.building_areas_view.building_widgets_by_row.append(row_widgets)
 
     def save_buildings(self):
+        available_buildings = []
         for row_widgets in self.building_areas_view.building_widgets_by_row:
             building_name_entry, above_grade_spinbox, below_grade_spinbox = row_widgets
             if building_name_entry.get():
                 # Add or update building in app_data
+                available_buildings.append(building_name_entry.get())
                 self.building_areas_view.add_or_update_building(
                     building_name_entry.get(),
                     above_grade_spinbox.get(),
                     below_grade_spinbox.get(),
                 )
+        # Check for duplicate building names
+        if len(available_buildings) != len(set(available_buildings)):
+            CTkMessagebox(
+                title="Error",
+                message="Duplicate building names found. Please ensure all building names are unique.",
+                icon="warning",
+            )
+            return
+        # Remove buildings from app_data that are not in the list of available buildings
+        for building_name in list(self.building_areas_view.areas_by_building.keys()):
+            if building_name not in available_buildings:
+                self.building_areas_view.remove_building(building_name)
+        # Update building combo options in the building areas subview
         for combo in self.building_areas_view.building_combos:
             combo.configure(
                 values=list(self.building_areas_view.areas_by_building.keys())
             )
+        if self.building_areas_view.building_combos:
+            self.building_areas_view.building_combos[0].set(
+                list(self.building_areas_view.areas_by_building.keys())[0]
+            )
+        # Update first building area name, based on the first building in the list
+        if self.building_areas_view.building_area_widgets_by_row:
+            first_building_area_row = (
+                self.building_areas_view.building_area_widgets_by_row[0]
+            )
+            building_name_combo = first_building_area_row[0]
+            area_name_entry = first_building_area_row[1]
+            if building_name_combo.get() and not area_name_entry.get():
+                # Update the area name entry with the new default building area name
+                area_name_entry.insert(
+                    0,
+                    self.building_areas_view.get_building_area_name(
+                        building_name_combo.get()
+                    ),
+                )
 
 
 class BuildingAreasSubview(CTkXYFrame):
@@ -412,12 +447,17 @@ class BuildingAreasSubview(CTkXYFrame):
         bpf_area_type_label.grid(row=0, column=6, padx=PAD20END, pady=5)
 
     def add_row(self, row, is_first_row=False):
-
         def populate_area_name(value):
-            area_name_entry.delete(0, "end")
-            area_name_entry.insert(
-                0, self.building_areas_view.get_building_area_name(value)
-            )
+            if (
+                area_name_entry.get()
+                not in self.building_areas_view.areas_by_building[
+                    building_name_combo.get()
+                ]
+            ):
+                area_name_entry.delete(0, "end")
+                area_name_entry.insert(
+                    0, self.building_areas_view.get_building_area_name(value)
+                )
 
         def update_building_area(new_area_name):
             building_name = building_name_combo.get()
@@ -426,7 +466,12 @@ class BuildingAreasSubview(CTkXYFrame):
                 self.building_areas_view.remove_building_area(
                     building_name, current_area_name
                 )
-            if building_name and new_area_name:
+            if (
+                building_name
+                and new_area_name
+                and new_area_name
+                not in self.building_areas_view.areas_by_building[building_name]
+            ):
                 self.building_areas_view.add_building_area(building_name, new_area_name)
 
             return True
@@ -456,6 +501,12 @@ class BuildingAreasSubview(CTkXYFrame):
         )
         area_name_entry.grid(row=row, column=1, padx=PAD20END, pady=PAD20END)
         status_checkbox = None
+        if is_first_row:
+            default_building = next(iter(self.building_areas_view.areas_by_building))
+            building_name_combo.set(default_building)
+            area_name_entry.insert(
+                0, self.building_areas_view.areas_by_building[default_building][0]
+            )
 
         if not self.app_data.is_all_new_construction.get():
             status_checkbox = ctk.CTkCheckBox(self, text="", width=30)
