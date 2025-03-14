@@ -24,7 +24,7 @@ GRAY30 = "gray30"
 class ZonesView(BaseView):
     def __init__(self, window):
         super().__init__(window)
-
+        self.main_window = window
         self.view_frame = ctk.CTkFrame(self)
 
         # Directions frame holds all directions info and will get 'gridded' within the surfaces view grid
@@ -54,6 +54,7 @@ class ZonesView(BaseView):
     def open_view(self):
         self.toggle_active_button("Zones")
         self.grid_propagate(False)
+        self.main_window.show_baseline_proposed_toggle(False)
 
         # 2 rows in the main surface view structure.
         # View frame (row 2, index 1) has a weight to make it fill up the empty space in the window

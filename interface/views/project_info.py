@@ -22,6 +22,7 @@ ACTIVE_SUBVIEW_BUTTON_COLOR = "#FFED67"
 class ProjectInfoView(BaseView):
     def __init__(self, window):
         super().__init__(window)
+        self.main_window = window
 
         # All subviews will be placed inside this frame. Single row/column allows formatting of subview to be handled by the subview itself
         self.subview_frame = ctk.CTkFrame(self)
@@ -47,6 +48,8 @@ class ProjectInfoView(BaseView):
         self.window.continue_button.configure(command=self.view_continue)
         # Update the errors and warnings button formatting
         self.update_warnings_errors()
+        # Hide baseline/proposed toggle
+        self.main_window.show_baseline_proposed_toggle(False)
 
         self.toggle_active_button("Project Info")
         self.grid_propagate(False)
