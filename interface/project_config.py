@@ -73,7 +73,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         self.ruleset_models_frame = ctk.CTkFrame(self, width=800)
         self.ruleset_dropdown = ctk.CTkOptionMenu(
             self,
-            values=["ASHRAE 90.1-2019", "None"],
+            values=["ASHRAE 90.1-2019 PRM", "None"],
             variable=self.main_app.data.selected_ruleset,
             command=self.update_ruleset_model_frame,
         )
@@ -203,7 +203,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
 
     def show_ruleset_models(self):
         # Main logic
-        if self.main_app.data.selected_ruleset.get() == "ASHRAE 90.1-2019":
+        if self.main_app.data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM":
             self.rotation_exception_checkbox.grid(
                 row=5, column=1, columnspan=4, sticky="w", padx=5, pady=(15, 5)
             )
@@ -365,10 +365,12 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             self.main_app.data.generate_rmd_data(self.main_app.data.rpd)
             # Run model checks to populate additional errors and warnings
             self.main_app.data.run_model_checks()
+
             if len(self.main_app.data.errors) == 0:
                 self.main_app.project_config_complete()
             else:
                 self.raise_error_window("\n".join(self.main_app.data.errors))
+
         else:
             self.raise_error_window("\n".join(self.main_app.data.errors))
 

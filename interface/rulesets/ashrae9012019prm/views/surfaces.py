@@ -7,6 +7,9 @@ from interface.constants import *
 
 
 class SurfacesView(BaseView):
+    button_name = "Surfaces"
+    icon = "surfaces.png"
+
     def __init__(self, window):
         super().__init__(window)
         self.main_window = window

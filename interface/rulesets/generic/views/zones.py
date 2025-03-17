@@ -8,9 +8,13 @@ from interface.constants import *
 
 
 class ZonesView(BaseView):
+    button_name = "Zones"
+    icon = "square.png"
+
     def __init__(self, window):
         super().__init__(window)
         self.main_window = window
+
         self.view_frame = ctk.CTkFrame(self)
         self.building_areas_combos = []
 
@@ -38,7 +42,6 @@ class ZonesView(BaseView):
     def open_view(self):
         self.toggle_active_button("Zones")
         self.grid_propagate(False)
-        self.main_window.show_baseline_proposed_toggle(False)
 
         # 2 rows in the main surface view structure.
         # View frame (row 2, index 1) has a weight to make it fill up the empty space in the window
@@ -198,7 +201,9 @@ class ZonesSubview(CTkXYFrame):
             row=(i + 1), column=4, padx=PAD20END, pady=PAD10SYM
         )
         image = ctk.CTkImage(
-            light_image=Image.open("interface/static/white_plus.png"),
+            light_image=Image.open(
+                f"{self.zones_view.main_window.static_filepath}/white_plus.png"
+            ),
             dark_image=None,
             size=(20, 20),
         )

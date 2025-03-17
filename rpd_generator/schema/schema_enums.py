@@ -103,7 +103,7 @@ def print_schema_enums():
     """
     SchemaEnums.update_schema_enum(
         Ruleset(
-            "ASHRAE 90.1-2019",
+            "ASHRAE 90.1-2019 PRM",
             "Enumerations2019ASHRAE901.schema.json",
             "Output2019ASHRAE901.schema.json",
         )

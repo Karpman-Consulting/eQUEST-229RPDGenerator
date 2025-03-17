@@ -4,6 +4,9 @@ from interface.base_view import BaseView
 
 
 class ExteriorLightingView(BaseView):
+    button_name = "Ext. Lighting"
+    icon = "ext_lighting.png"
+
     def __init__(self, window):
         super().__init__(window)
         self.main_window = window
@@ -14,4 +17,3 @@ class ExteriorLightingView(BaseView):
     def open_view(self):
         self.toggle_active_button("Ext. Lighting")
         self.grid_propagate(False)
-        self.main_window.show_baseline_proposed_toggle(False)

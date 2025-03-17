@@ -8,6 +8,9 @@ from interface.constants import *
 
 
 class ProjectInfoView(BaseView):
+    button_name = "Project Info"
+    icon = "menu.png"
+
     def __init__(self, window):
         super().__init__(window)
         self.main_window = window
@@ -17,8 +20,8 @@ class ProjectInfoView(BaseView):
         self.current_subview = None
 
         self.subviews = {
-            "Project Details": ProjectDetailsView(self.subview_frame),
-            "Project Config.": ProjectConfigView(self.subview_frame),
+            "Project Details": ProjectDetailsSubview(self.subview_frame),
+            "Project Config.": ProjectConfigSubview(self.subview_frame),
         }
         self.subview_buttons = {}
 
@@ -36,8 +39,6 @@ class ProjectInfoView(BaseView):
         self.window.continue_button.configure(command=self.view_continue)
         # Update the errors and warnings button formatting
         self.update_warnings_errors()
-        # Hide baseline/proposed toggle
-        self.main_window.show_baseline_proposed_toggle(False)
 
         self.toggle_active_button("Project Info")
         self.grid_propagate(False)
@@ -120,7 +121,7 @@ class ProjectInfoView(BaseView):
         self.window.show_view("Buildings")
 
 
-class ProjectDetailsView(CTkXYFrame):
+class ProjectDetailsSubview(CTkXYFrame):
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.project_info_view = subview_frame.master
@@ -322,7 +323,7 @@ class ProjectDetailsView(CTkXYFrame):
             self.site_testing_checkbox.grid_remove()
 
 
-class ProjectConfigView(CTkXYFrame):
+class ProjectConfigSubview(CTkXYFrame):
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.project_info_view = subview_frame.master
@@ -375,7 +376,7 @@ class ProjectConfigView(CTkXYFrame):
         self.ruleset_models_frame = ctk.CTkFrame(self, width=800, height=250)
         self.ruleset_dropdown = ctk.CTkOptionMenu(
             self,
-            values=["ASHRAE 90.1-2019", "None"],
+            values=["ASHRAE 90.1-2019 PRM", "None"],
             command=lambda selection: self.update_ruleset_model_frame(selection),
         )
         self.ruleset_dropdown.set(self.app_data.selected_ruleset.get())
@@ -473,7 +474,7 @@ class ProjectConfigView(CTkXYFrame):
 
     def show_ruleset_models(self):
         # Main logic
-        if self.app_data.selected_ruleset.get() == "ASHRAE 90.1-2019":
+        if self.app_data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM":
             self.rotation_exception_checkbox.grid(
                 row=5, column=1, columnspan=4, sticky=W, padx=5, pady=(15, 5)
             )
@@ -582,7 +583,9 @@ class ProjectConfigView(CTkXYFrame):
 
         return label, path_entry, select_button
 
-    # TODO: When options on this view are changed, show warning
+    # TODO: When options on this view are changed,
+    #  show warning
+    #  reload new instance of compliance parameter window if Energy Code/Program is changed
     def validate_project_info(self):
         """Verify that all required file paths have been selected."""
         # Check that at least 1 file path has been selected

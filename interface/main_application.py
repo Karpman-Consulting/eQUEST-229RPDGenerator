@@ -18,10 +18,9 @@ background. It looks like this your_window.protocol("WM_DELETE_WINDOW", self.qui
 
 
 class MainApplication(tk.Tk):
-    def __init__(self, test_mode=False):
+    def __init__(self):
         super().__init__()
         self.data = MainAppData()
-        self.test_mode = test_mode
 
         self.install_config_window = None
         self.project_config_window = None
@@ -42,36 +41,31 @@ class MainApplication(tk.Tk):
         self.start_application()
 
     def start_application(self):
-        """If in test mode, go directly to the ComplianceParameterWindow (formerly "MainApplication Window"). If
-        not in test mode, check for eQUEST installation. If not found, open installation config window
         """
-        if self.test_mode:
-            self.compliance_parameter_window = ComplianceParameterWindow(
-                self, self.test_mode
-            )
-            self.compliance_parameter_window.protocol("WM_DELETE_WINDOW", self.quit)
-
+        Check for eQUEST installation. If not found, open installation config window. Otherwise, open CompParamWindow
+        """
+        validate_configuration.find_equest_installation()
+        if Config.EQUEST_INSTALL_PATH:
+            self.project_config_window = ProjectConfigWindow(self)
+            self.project_config_window.protocol("WM_DELETE_WINDOW", self.quit)
         else:
-            validate_configuration.find_equest_installation()
-            if Config.EQUEST_INSTALL_PATH:
-                self.project_config_window = ProjectConfigWindow(self)
-                self.project_config_window.protocol("WM_DELETE_WINDOW", self.quit)
-            else:
-                self.install_config_window = InstallConfigWindow(self)
-                self.install_config_window.protocol("WM_DELETE_WINDOW", self.quit)
+            self.install_config_window = InstallConfigWindow(self)
+            self.install_config_window.protocol("WM_DELETE_WINDOW", self.quit)
 
     def install_config_complete(self):
-        """Called by InstallConfigWindow when the user has successfully configured the installation path. Closes
-        the InstallConfigWindow and opens the ProjectConfigWindow"""
+        """
+        Called by InstallConfigWindow when the user has successfully configured the installation path. Closes
+        the InstallConfigWindow and opens the ProjectConfigWindow
+        """
         self.install_config_window.destroy()
         self.project_config_window = ProjectConfigWindow(self)
         self.project_config_window.protocol("WM_DELETE_WINDOW", self.quit)
 
     def project_config_complete(self):
-        """Called by ProjectConfigWindow when the user has successfully configured the project. Closes the
-        ProjectConfigWindow and opens the ComplianceParameterWindow"""
+        """
+        Called by ProjectConfigWindow when the user has successfully configured the project. Closes the
+        ProjectConfigWindow and opens the ComplianceParameterWindow
+        """
         self.project_config_window.destroy()
-        self.compliance_parameter_window = ComplianceParameterWindow(
-            self, self.test_mode
-        )
+        self.compliance_parameter_window = ComplianceParameterWindow(self)
         self.compliance_parameter_window.protocol("WM_DELETE_WINDOW", self.quit)

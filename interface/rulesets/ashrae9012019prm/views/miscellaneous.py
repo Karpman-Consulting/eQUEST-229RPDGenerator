@@ -4,6 +4,9 @@ from interface.base_view import BaseView
 
 
 class MiscellaneousView(BaseView):
+    button_name = "Misc."
+    icon = "misc.png"
+
     def __init__(self, window):
         super().__init__(window)
         self.main_window = window

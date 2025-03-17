@@ -21,6 +21,9 @@ BPF_AREA_OPTIONS = [
 
 
 class BuildingAreasView(BaseView):
+    button_name = "Building Areas"
+    icon = "building_areas.png"
+
     def __init__(self, window):
         super().__init__(window)
         self.main_window = window
@@ -307,7 +310,9 @@ class BuildingSubview(CTkXYFrame):
             )
         else:
             remove_image = ctk.CTkImage(
-                light_image=Image.open("interface/static/white_x.png"),
+                light_image=Image.open(
+                    f"{self.building_areas_view.main_window.static_filepath}/white_x.png"
+                ),
                 dark_image=None,
                 size=(10, 10),
             )
@@ -544,7 +549,9 @@ class BuildingAreasSubview(CTkXYFrame):
 
         if not is_first_row:
             remove_image = ctk.CTkImage(
-                light_image=Image.open("interface/static/white_x.png"),
+                light_image=Image.open(
+                    f"{self.building_areas_view.main_window.static_filepath}/white_x.png"
+                ),
                 dark_image=None,
                 size=(10, 10),
             )

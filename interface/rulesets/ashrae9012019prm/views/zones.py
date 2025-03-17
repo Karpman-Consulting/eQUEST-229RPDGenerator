@@ -8,9 +8,13 @@ from interface.constants import *
 
 
 class ZonesView(BaseView):
+    button_name = "Zones"
+    icon = "square.png"
+
     def __init__(self, window):
         super().__init__(window)
         self.main_window = window
+
         self.view_frame = ctk.CTkFrame(self)
         self.building_areas_combos = []
 
@@ -198,7 +202,9 @@ class ZonesSubview(CTkXYFrame):
             row=(i + 1), column=4, padx=PAD20END, pady=PAD10SYM
         )
         image = ctk.CTkImage(
-            light_image=Image.open("interface/static/white_plus.png"),
+            light_image=Image.open(
+                f"{self.zones_view.main_window.static_filepath}/white_plus.png"
+            ),
             dark_image=None,
             size=(20, 20),
         )

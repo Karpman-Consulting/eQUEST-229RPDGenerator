@@ -8,6 +8,9 @@ from interface.constants import *
 
 
 class SystemsView(BaseView):
+    button_name = "Systems"
+    icon = "systems.png"
+
     def __init__(self, window):
         super().__init__(window)
         self.main_window = window

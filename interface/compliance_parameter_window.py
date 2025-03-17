@@ -1,18 +1,9 @@
 import customtkinter as ctk
 from PIL import Image
 from tkinter import Menu
+from functools import partial
 
-from interface.views.spaces import SpacesView
-from interface.views.test import TestView
-from interface.views.project_info import ProjectInfoView
-from interface.views.building_areas import BuildingAreasView
-from interface.views.zones import ZonesView
-from interface.views.surfaces import SurfacesView
-from interface.views.systems import SystemsView
-
-# from interface.views.ext_lighting import ExteriorLightingView
-from interface.views.miscellaneous import MiscellaneousView
-from interface.views.results import ResultsView
+from interface.rulesets import import_views, static_files_path
 from interface.disclaimer_window import DisclaimerWindow
 from interface.error_window import ErrorWindow
 
@@ -24,15 +15,14 @@ ICON_SIZE = (36, 36)
 
 
 class ComplianceParameterWindow(ctk.CTkToplevel):
-    def __init__(self, main_app, test_mode=False):
+    def __init__(self, main_app):
         super().__init__()
         self.main_app = main_app
 
         self.title(
             f"eQUEST 229 RPD Generator - {self.main_app.data.project_name.get()}"
         )
-        self.geometry(f"{1300}x{750}")
-        self.minsize(1300, 350)
+
         self.grid_propagate(False)
         self.bg_color = self.cget("fg_color")[0]
 
@@ -44,35 +34,34 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         # for i in range(self.grid_size()[0]):
         #     self.grid_columnconfigure(i, weight=1)
 
-        # Setup the baseline/proposed toggle
-        self.baseline_label = ctk.CTkLabel(self, text="Baseline")
-        self.baseline_proposed_switch = ctk.CTkSwitch(
-            self,
-            variable=self.main_app.data.baseline_or_proposed,
-            text="",
-            height=20,
-            width=50,
-            switch_height=20,
-            switch_width=50,
-            command=self.toggle_baseline_proposed,
-            onvalue="Proposed",
-            offvalue="Baseline",
-        )
-        self.baseline_proposed_switch.deselect()
-        self.proposed_label = ctk.CTkLabel(self, text="Proposed")
+        if self.main_app.data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM":
+            # Setup the baseline/proposed toggle
+            self.baseline_label = ctk.CTkLabel(self, text="Baseline")
+            self.baseline_proposed_switch = ctk.CTkSwitch(
+                self,
+                variable=self.main_app.data.baseline_or_proposed,
+                text="",
+                height=20,
+                width=50,
+                switch_height=20,
+                switch_width=50,
+                command=self.toggle_baseline_proposed,
+                onvalue="Proposed",
+                offvalue="Baseline",
+            )
+            self.baseline_proposed_switch.deselect()
+            self.proposed_label = ctk.CTkLabel(self, text="Proposed")
 
+        # Set the instance Views based on the selected ruleset
         self.views = {
-            "Test": TestView(self),
-            "Project Info": ProjectInfoView(self),
-            "Building Areas": BuildingAreasView(self),
-            "Zones": ZonesView(self),
-            "Spaces": SpacesView(self),
-            "Surfaces": SurfacesView(self),
-            "Systems": SystemsView(self),
-            # "Ext. Lighting": ExteriorLightingView(self),
-            "Misc.": MiscellaneousView(self),
-            "Results": ResultsView(self),
+            name: cls(self)
+            for name, cls in import_views(
+                self.main_app.data.selected_ruleset.get()
+            ).items()
         }
+        self.static_filepath = static_files_path(
+            self.main_app.data.selected_ruleset.get()
+        )
 
         self.navbar_buttons = {}
 
@@ -122,11 +111,11 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         self.create_button_bar()
         self.create_nav_bar()
 
-        if test_mode:
-            self.show_view("Test")
+        # TODO - let ruleset specify landing page for compliance parameter window
+        self.show_view("ProjectInfoView")
 
-        else:
-            self.show_view("Project Info")
+        self.geometry(f"{162*len(self.views)}x{750}")
+        self.minsize((162 * len(self.views)), 350)
 
     def toggle_baseline_proposed(self):
         new_state = self.main_app.data.baseline_or_proposed.get()
@@ -160,46 +149,35 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         return menubar
 
     def create_button_bar(self):
-        # Define button names
-        button_names = [
-            "Project Info",
-            "Building Areas",
-            "Zones",
-            "Spaces",
-            "Surfaces",
-            "Systems",
-            # "Ext. Lighting",
-            "Misc.",
-            "Results",
+        # Define a custom order
+        custom_order = [
+            "ProjectInfoView",
+            "BuildingAreasView",
+            "ZonesView",
+            "SpacesView",
+            "SurfacesView",
+            "SystemsView",
+            "ExteriorLightingView",
+            "MiscellaneousView",
+            "ResultsView",
         ]
 
-        # Define button icons
-        icon_paths = [
-            "menu.png",
-            "building_areas.png",
-            "square.png",
-            "spaces.png",
-            "surfaces.png",
-            "systems.png",
-            # "ext_lighting.png",
-            "misc.png",
-            "results.png",
-        ]
-        callback_methods = {
-            "Project Info": lambda: self.show_view("Project Info"),
-            "Building Areas": lambda: self.show_view("Building Areas"),
-            "Zones": lambda: self.show_view("Zones"),
-            "Spaces": lambda: self.show_view("Spaces"),
-            "Surfaces": lambda: self.show_view("Surfaces"),
-            "Systems": lambda: self.show_view("Systems"),
-            # "Ext. Lighting": lambda: self.show_view("Ext. Lighting"),
-            "Misc.": lambda: self.show_view("Misc."),
-            "Results": lambda: self.show_view("Results"),
-        }
+        # Create a mapping from key to index
+        order_dict = {name: index for index, name in enumerate(custom_order)}
+        sorted_keys = sorted(
+            self.views.keys(), key=lambda k: order_dict.get(k, float("inf"))
+        )
 
-        for index, (name, icon_path) in enumerate(zip(button_names, icon_paths)):
+        # Iterate through the ruleset's Views and create the associated buttons to access them
+        view_names = [type(self.views[k]).__name__ for k in sorted_keys]
+        button_names = [self.views[k].button_name for k in sorted_keys]
+        icon_paths = [self.views[k].icon for k in sorted_keys]
+
+        for index, (view_name, button_name, icon_path) in enumerate(
+            zip(view_names, button_names, icon_paths)
+        ):
             # Load and resize the icon
-            icon = Image.open(f"interface/static/{icon_path}").convert("RGBA")
+            icon = Image.open(f"{self.static_filepath}/{icon_path}").convert("RGBA")
             icon = icon.resize(ICON_SIZE, Image.LANCZOS)  # Resize icon
 
             r, g, b, alpha = icon.split()
@@ -216,16 +194,18 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             button = ctk.CTkButton(
                 button_frame,
                 image=icon_image,
-                text=name,
+                text=button_name,
                 font=("Arial", 12),
                 width=158,
                 height=46,
                 corner_radius=0,
                 compound="left",
-                command=callback_methods[name],
+                command=partial(
+                    self.show_view, view_name
+                ),  # Use partial to bind view_name
             )
             button.place(relx=0.5, rely=0.5, anchor="center")
-            self.navbar_buttons[name] = button
+            self.navbar_buttons[button_name] = button
 
             # Keep a reference to the image
             button.image = icon_image
@@ -234,9 +214,10 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         self.warnings_button.grid(row=2, column=0, pady=5)
         self.errors_button.grid(row=2, column=1, pady=5)
         self.continue_button.grid(row=2, column=2, columnspan=3, pady=5)
-        self.baseline_label.grid(row=2, column=4, pady=5, sticky="e")
-        self.baseline_proposed_switch.grid(row=2, column=5, pady=5)
-        self.proposed_label.grid(row=2, column=6, pady=5, sticky="w")
+        if self.main_app.data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM":
+            self.baseline_label.grid(row=2, column=4, pady=5, sticky="e")
+            self.baseline_proposed_switch.grid(row=2, column=5, pady=5)
+            self.proposed_label.grid(row=2, column=6, pady=5, sticky="w")
         self.generate_RPD_button.grid(row=2, column=7, pady=5)
 
     def show_baseline_proposed_toggle(self, show_toggle):
@@ -258,7 +239,9 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         view = self.views.get(view_name)
         if view:
             self.current_view = view
-            self.current_view.grid(row=1, column=0, columnspan=8, sticky="nsew")
+            self.current_view.grid(
+                row=1, column=0, columnspan=len(self.views), sticky="nsew"
+            )
             self.current_view.open_view()
 
     def open_disclaimer(self):
