@@ -3,18 +3,7 @@ import customtkinter as ctk
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
 from interface.main_app_data import ASHRAE9012019ModelOptions
-
-
-LABEL_FONT = ("Arial", 14, "bold")
-READONLY = "readonly"
-W = "w"
-E = "e"
-FILL = "nsew"
-LEFT = "left"
-PAD20END = (0, 20)
-BLACK = "black"
-SUBVIEW_BUTTON_COLOR = "#FFD966"
-ACTIVE_SUBVIEW_BUTTON_COLOR = "#FFED67"
+from interface.constants import *
 
 
 class SurfacesView(BaseView):

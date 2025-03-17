@@ -1,17 +1,9 @@
 import customtkinter as ctk
 
-from interface.CTkMessagebox import CTkMessagebox
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
 from interface.main_app_data import ASHRAE9012019ModelOptions
-
-LABEL_FONT = ("Arial", 14, "bold")
-READONLY = "readonly"
-LEFT = "left"
-E = "e"
-W = "w"
-FILL = "nsew"
-PAD20END = (0, 20)
+from interface.constants import *
 
 
 class SpacesView(BaseView):

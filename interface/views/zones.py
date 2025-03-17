@@ -4,21 +4,7 @@ from PIL import Image
 
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
-
-
-LABEL_FONT = ("Arial", 14, "bold")
-READONLY = "readonly"
-LEFT = "left"
-FILL = "nsew"
-TOP_HORZ = "new"
-E = "e"
-W = "w"
-PAD20END = (0, 20)
-PAD10SYM = 10
-FLOOR_COMBOBOX_COLOR = "#5B9BD5"
-FLOOR_COMBOBOX_BTN_COLOR = "#3A7EBF"
-LIGHTBLUE = "lightblue"
-GRAY30 = "gray30"
+from interface.constants import *
 
 
 class ZonesView(BaseView):
@@ -26,6 +12,7 @@ class ZonesView(BaseView):
         super().__init__(window)
         self.main_window = window
         self.view_frame = ctk.CTkFrame(self)
+        self.building_areas_combos = []
 
         # Directions frame holds all directions info and will get 'gridded' within the surfaces view grid
         self.directions_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -161,8 +148,7 @@ class ZonesSubview(CTkXYFrame):
         # Place the Building Area ComboBox in `self` (not inside `main_row_frame`) to align properly
         building_area_combo = ctk.CTkComboBox(
             self,
-            # TODO: Placeholder for Building Areas tab data
-            values=["Building Area 1"],
+            values=self.app_data.building_area_options,
             state=READONLY,
             fg_color=FLOOR_COMBOBOX_COLOR,
             border_color=FLOOR_COMBOBOX_COLOR,
@@ -174,7 +160,7 @@ class ZonesSubview(CTkXYFrame):
                 floor, value
             ),
         )
-        building_area_combo.set("Building Area 1")
+        building_area_combo.set(self.app_data.building_area_options[0])
         building_area_combo._entry.configure(justify=LEFT)
         building_area_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=10)
 
@@ -193,13 +179,13 @@ class ZonesSubview(CTkXYFrame):
         floor_label.grid(row=(i + 1), column=1, padx=20, pady=PAD10SYM, sticky=W)
         building_area_combo = ctk.CTkComboBox(
             self,
-            # TODO: Placeholder for Building Areas tab data
-            values=["Building Area 1"],
+            values=self.app_data.building_area_options,
             state=READONLY,
         )
-        building_area_combo.set("Building Area 1")
+        building_area_combo.set(self.app_data.building_area_options[0])
         building_area_combo._entry.configure(justify=LEFT)
         building_area_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=PAD10SYM)
+        self.zones_view.building_areas_combos.append(building_area_combo)
 
         self.zone_comboboxes[zone_name] = building_area_combo
         # TODO: Apply numerical entry validation

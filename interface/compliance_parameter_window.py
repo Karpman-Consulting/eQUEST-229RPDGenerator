@@ -31,7 +31,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         self.title(
             f"eQUEST 229 RPD Generator - {self.main_app.data.project_name.get()}"
         )
-        self.geometry(f"{1300}x{700}")
+        self.geometry(f"{1300}x{750}")
         self.minsize(1300, 350)
         self.grid_propagate(False)
         self.bg_color = self.cget("fg_color")[0]
@@ -163,7 +163,6 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         # Define button names
         button_names = [
             "Project Info",
-            "Buildings",
             "Building Areas",
             "Zones",
             "Spaces",
@@ -177,7 +176,6 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         # Define button icons
         icon_paths = [
             "menu.png",
-            "buildings.png",
             "building_areas.png",
             "square.png",
             "spaces.png",
@@ -189,7 +187,6 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         ]
         callback_methods = {
             "Project Info": lambda: self.show_view("Project Info"),
-            "Buildings": lambda: self.show_view("Buildings"),
             "Building Areas": lambda: self.show_view("Building Areas"),
             "Zones": lambda: self.show_view("Zones"),
             "Spaces": lambda: self.show_view("Spaces"),
@@ -212,7 +209,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             icon_image = ctk.CTkImage(light_image=white_icon, size=ICON_SIZE)
 
             # Create a frame for each button
-            button_frame = ctk.CTkFrame(self, width=144, height=50, corner_radius=0)
+            button_frame = ctk.CTkFrame(self, width=162, height=50, corner_radius=0)
             button_frame.grid(row=0, column=index, sticky="nsew")
 
             # Create the button inside the frame
@@ -221,7 +218,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
                 image=icon_image,
                 text=name,
                 font=("Arial", 12),
-                width=140,
+                width=158,
                 height=46,
                 corner_radius=0,
                 compound="left",
@@ -236,11 +233,11 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
     def create_nav_bar(self):
         self.warnings_button.grid(row=2, column=0, pady=5)
         self.errors_button.grid(row=2, column=1, pady=5)
-        self.continue_button.grid(row=2, column=3, columnspan=3, pady=5)
-        self.baseline_label.grid(row=2, column=5, pady=5, sticky="e")
-        self.baseline_proposed_switch.grid(row=2, column=6, pady=5)
-        self.proposed_label.grid(row=2, column=7, pady=5, sticky="w")
-        self.generate_RPD_button.grid(row=2, column=8, pady=5)
+        self.continue_button.grid(row=2, column=2, columnspan=3, pady=5)
+        self.baseline_label.grid(row=2, column=4, pady=5, sticky="e")
+        self.baseline_proposed_switch.grid(row=2, column=5, pady=5)
+        self.proposed_label.grid(row=2, column=6, pady=5, sticky="w")
+        self.generate_RPD_button.grid(row=2, column=7, pady=5)
 
     def show_baseline_proposed_toggle(self, show_toggle):
         if show_toggle:
@@ -261,7 +258,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         view = self.views.get(view_name)
         if view:
             self.current_view = view
-            self.current_view.grid(row=1, column=0, columnspan=9, sticky="nsew")
+            self.current_view.grid(row=1, column=0, columnspan=8, sticky="nsew")
             self.current_view.open_view()
 
     def open_disclaimer(self):
