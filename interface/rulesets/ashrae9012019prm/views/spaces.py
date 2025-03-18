@@ -7,9 +7,13 @@ from interface.constants import *
 
 
 class SpacesView(BaseView):
+    button_name = "Spaces"
+    icon = "spaces.png"
+
     def __init__(self, window):
         super().__init__(window)
         self.main_window = window
+
         self.view_frame = ctk.CTkFrame(self)
         self.current_subview = None
         self.current_subview_name = None

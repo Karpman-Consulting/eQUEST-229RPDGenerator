@@ -8,7 +8,7 @@ class Config:
     """
 
     RULESETS = {
-        "ASHRAE 90.1-2019": {
+        "ASHRAE 90.1-2019 PRM": {
             "enum_filename": "Enumerations2019ASHRAE901.schema.json",
             "output_filename": "Output2019ASHRAE901.schema.json",
         }
@@ -17,9 +17,9 @@ class Config:
     EQUEST_INSTALL_PATH = None
     DOE22_DATA_PATH = None
     DOE23_DATA_PATH = None
-    ACTIVE_RULESET_DICT = RULESETS["ASHRAE 90.1-2019"]
+    ACTIVE_RULESET_DICT = RULESETS["ASHRAE 90.1-2019 PRM"]
     ACTIVE_RULESET = Ruleset(
-        name="ASHRAE 90.1-2019",
+        name="ASHRAE 90.1-2019 PRM",
         enum_filename=ACTIVE_RULESET_DICT.get("enum_filename"),
         output_filename=ACTIVE_RULESET_DICT.get("output_filename"),
     )

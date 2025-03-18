@@ -8,6 +8,9 @@ from interface.constants import *
 
 
 class SystemsView(BaseView):
+    button_name = "Systems"
+    icon = "systems.png"
+
     def __init__(self, window):
         super().__init__(window)
         self.main_window = window
@@ -18,12 +21,9 @@ class SystemsView(BaseView):
         self.current_subview_name = None
 
         self.subviews = {
-            "Baseline HVACSystemSubview": HVACSystemSubview(self.subview_frame),
-            "Proposed HVACSystemSubview": HVACSystemSubview(self.subview_frame),
-            "Baseline HeatRejectionSubview": HeatRejectionSubview(self.subview_frame),
-            "Proposed HeatRejectionSubview": HeatRejectionSubview(self.subview_frame),
-            "Baseline ZonalExhaustSubview": ZonalExhaustSubview(self.subview_frame),
-            "Proposed ZonalExhaustSubview": ZonalExhaustSubview(self.subview_frame),
+            "HVACSystemSubview": HVACSystemSubview(self.subview_frame),
+            "HeatRejectionSubview": HeatRejectionSubview(self.subview_frame),
+            "ZonalExhaustSubview": ZonalExhaustSubview(self.subview_frame),
         }
 
         # Directions frame holds all directions info and will get 'gridded' within the surfaces view grid
@@ -52,7 +52,6 @@ class SystemsView(BaseView):
     def open_view(self):
         self.toggle_active_button("Systems")
         self.grid_propagate(False)
-        self.main_window.show_baseline_proposed_toggle(True)
 
         # 3 rows in the main surface view structure. Subview frame (row 4, index 3) has a weight to make it fill up the empty space in the window
         self.grid_rowconfigure(3, weight=1)
@@ -77,12 +76,8 @@ class SystemsView(BaseView):
         self.subview_frame.grid_rowconfigure(0, weight=1)
         self.subview_frame.grid_columnconfigure(0, weight=1)
 
-        self.current_subview_name = (
-            f"{self.app_data.baseline_or_proposed.get()} HVACSystemSubview"
-        )
-        self.show_subview(
-            f"{self.app_data.baseline_or_proposed.get()} HVACSystemSubview"
-        )
+        self.current_subview_name = "HVACSystemSubview"
+        self.show_subview("HVACSystemSubview")
 
     def create_subbutton_bar(self):
         callback_methods = {}
@@ -128,20 +123,6 @@ class SystemsView(BaseView):
         if subview:
             self.current_subview_name = subview_name
             self.current_subview = subview
-        else:
-            current_state = self.app_data.baseline_or_proposed.get()
-            filtered_subviews = [
-                value for key, value in self.subviews.items() if current_state in key
-            ]
-
-            # Set current_subview to the first matching subview, if found
-            if filtered_subviews:
-                self.current_subview = filtered_subviews[0]
-                self.current_subview_name = (
-                    self.app_data.baseline_or_proposed.get()
-                    + " "
-                    + self.current_subview.__repr__()
-                )
 
         self.current_subview.grid(row=0, column=0, sticky=FILL)
         self.current_subview.focus_set()
@@ -182,17 +163,7 @@ class HeatRejectionSubview(CTkXYFrame):
     def populate_subview(self):
         self.add_column_headers()
 
-        #  Get heat rejections from relevant rmd. Throw error if none found
-        heat_rejection_names = []
-        if self.app_data.baseline_or_proposed.get() == "Proposed":
-            heat_rejection_names = self.app_data.get_rmd(
-                ASHRAE9012019ModelOptions.PROPOSED
-            ).heat_rejection_names
-        elif self.app_data.baseline_or_proposed.get() == "Baseline":
-            heat_rejection_names = self.app_data.get_rmd(
-                ASHRAE9012019ModelOptions.BASELINE_0
-            ).heat_rejection_names
-
+        heat_rejection_names = self.app_data.rmds[0].heat_rejection_names
         for i, heat_rejection_name in enumerate(heat_rejection_names):
             self.add_row(i, heat_rejection_name)
 
@@ -233,17 +204,7 @@ class HVACSystemSubview(CTkXYFrame):
     def populate_subview(self):
         self.add_column_headers()
 
-        #  Get hvac systems from relevant rmd. Throw error if none found
-        hvac_system_names = []
-        if self.app_data.baseline_or_proposed.get() == "Proposed":
-            hvac_system_names = self.app_data.get_rmd(
-                ASHRAE9012019ModelOptions.PROPOSED
-            ).system_names
-        elif self.app_data.baseline_or_proposed.get() == "Baseline":
-            hvac_system_names = self.app_data.get_rmd(
-                ASHRAE9012019ModelOptions.BASELINE_0
-            ).system_names
-
+        hvac_system_names = self.app_data.rmds[0].system_names
         for i, hvac_system_name in enumerate(hvac_system_names):
             self.add_row(i, hvac_system_name)
 
@@ -324,15 +285,7 @@ class ZonalExhaustSubview(CTkXYFrame):
         # TODO: Review this approach..may be tough once we are trying to set data back to the rmds
         zonal_exhaust_fans = []
 
-        #  Get relevant rmd
-        rmd = None
-        if self.app_data.baseline_or_proposed.get() == "Proposed":
-            rmd = self.app_data.get_rmd(ASHRAE9012019ModelOptions.PROPOSED)
-        elif self.app_data.baseline_or_proposed.get() == "Baseline":
-            rmd = self.app_data.get_rmd(ASHRAE9012019ModelOptions.BASELINE_0)
-        if not rmd:
-            return
-
+        rmd = self.app_data.rmds[0]
         for zone_name in rmd.zone_names:
             zone_obj = rmd.get_obj(zone_name)
             if zone_obj.zonal_exhaust_fan:

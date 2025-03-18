@@ -32,13 +32,10 @@ class MainAppData:
         self.user_lib_path = ctk.StringVar()
         self.files_verified = False
 
-        # Test data
-        self.test_inp_path = ctk.StringVar()
-
         # Project data
         self.project_name = ctk.StringVar()
         self.selected_ruleset = ctk.StringVar()
-        self.selected_ruleset.set("ASHRAE 90.1-2019")
+        self.selected_ruleset.set("ASHRAE 90.1-2019 PRM")
         self.has_rotation_exception = ctk.BooleanVar()
         self.is_all_new_construction = ctk.BooleanVar()
         self.baseline_or_proposed = ctk.StringVar()
@@ -93,7 +90,10 @@ class MainAppData:
         return True
 
     def generate_rmd_data(self, rpd):
-        for ruleset_model_type, file_path in self.ruleset_model_file_paths.items():
+        active_ruleset = self.selected_ruleset.get()
+        for ruleset_model_type, file_path in self.ruleset_model_file_paths[
+            active_ruleset
+        ].items():
             rmd_type_enum = (
                 ruleset_model_type.upper() + "_0"
                 if ruleset_model_type == "Baseline"
@@ -107,9 +107,6 @@ class MainAppData:
                 rmd.populate_all_child_data_elements()
                 rmd.type = rmd_type_enum
                 self.rmds.append(rmd)
-
-    def call_write_rpd_json_from_inp(self):
-        rpd_generator.write_rpd_json_from_inp(str(self.test_inp_path.get()))
 
     def call_write_rpd_json_from_rmds(self):
         rpd_generator.write_rpd_json_from_rpd(
@@ -316,64 +313,68 @@ class MainAppData:
                     f"'{rmd.type}' model, space '{space_name}': The '{space_obj.get_inp(BDL_SpaceKeywords.LTG_SPEC_METHOD)}' lighting specification method is not supported by this application."
                 )
 
-    def check_model_data(self, rmd, proposed_surface_summary_by_zone):
-
+    def check_model_data(self, rmd, ref_model_surface_summary_by_zone, ref_model_type):
         # Check for DOE version 2.3 - error
         if not rmd.doe2_version.startswith("DOE-2.3"):
             self.errors.append(f"'{rmd.type}' model must use DOE-2.3")
 
-        if rmd.type != "PROPOSED":
-            # Verify that Baseline (0, 90, 180, 270) and Proposed have the same number of zones
-            if len(rmd.zone_names) != len(proposed_surface_summary_by_zone):
-                self.warnings.append(
-                    f"'{rmd.type}' model has a different number of zones than the Proposed model. This may lead to unexpected outcomes."
-                )
+        # Verify that Baseline (0, 90, 180, 270) and Proposed have the same number of zones
+        if len(rmd.zone_names) != len(ref_model_surface_summary_by_zone):
+            self.warnings.append(
+                f"'{rmd.type}' model has a different number of zones than the {ref_model_type} model. This may lead to unexpected outcomes."
+            )
 
-            # Verify that the IDs of all zones match between models
-            if set(rmd.zone_names) != set(
-                [
-                    space_name_zone_name[1]
-                    for space_name_zone_name in proposed_surface_summary_by_zone.keys()
-                ]
+        # Verify that the IDs of all zones match between models
+        if set(rmd.zone_names) != set(
+            [
+                space_name_zone_name[1]
+                for space_name_zone_name in ref_model_surface_summary_by_zone.keys()
+            ]
+        ):
+            self.warnings.append(
+                f"'{rmd.type}' model has different zone names than the {ref_model_type} model. This may lead to unexpected outcomes."
+            )
+
+        # Verify that the IDs of all spaces match between models
+        if set(rmd.space_map.keys()) != set(
+            [
+                space_name_zone_name[0]
+                for space_name_zone_name in ref_model_surface_summary_by_zone.keys()
+            ]
+        ):
+            self.warnings.append(
+                f"'{rmd.type}' model has different space names than the {ref_model_type} model. This may lead to unexpected outcomes."
+            )
+
+        # Verify that the surface details match between models
+        baseline_surface_summary_by_zone = self.summarize_rmd_surfaces(rmd)
+        for (
+            space_name_zone_name_b,
+            surface_summary_b,
+        ) in baseline_surface_summary_by_zone.items():
+            if (
+                space_name_zone_name_b in ref_model_surface_summary_by_zone
+                and surface_summary_b
+                != ref_model_surface_summary_by_zone[space_name_zone_name_b]
             ):
                 self.warnings.append(
-                    f"'{rmd.type}' model has different zone names than the Proposed model. This may lead to unexpected outcomes."
+                    f"'{rmd.type}' model, space {space_name_zone_name_b[0]} has different surface details than the {ref_model_type} model. This may lead to unexpected outcomes."
                 )
-
-            # Verify that the IDs of all spaces match between models
-            if set(rmd.space_map.keys()) != set(
-                [
-                    space_name_zone_name[0]
-                    for space_name_zone_name in proposed_surface_summary_by_zone.keys()
-                ]
-            ):
-                self.warnings.append(
-                    f"'{rmd.type}' model has different space names than the Proposed model. This may lead to unexpected outcomes."
-                )
-
-            # Verify that the surface details match between models
-            baseline_surface_summary_by_zone = self.summarize_rmd_surfaces(rmd)
-            for (
-                space_name_zone_name_b,
-                surface_summary_b,
-            ) in baseline_surface_summary_by_zone.items():
-                if (
-                    space_name_zone_name_b in proposed_surface_summary_by_zone
-                    and surface_summary_b
-                    != proposed_surface_summary_by_zone[space_name_zone_name_b]
-                ):
-                    self.warnings.append(
-                        f"'{rmd.type}' model, space {space_name_zone_name_b[0]} has different surface details than the Proposed model. This may lead to unexpected outcomes."
-                    )
-                    # Only provide the first warning for this issue
-                    break
+                # Only provide the first warning for this issue
+                break
 
     def run_model_checks(self):
-        # Use the Proposed model as a reference to verify Baseline models have the same # of spaces, zones, and surfaces
-        proposed_rmd = next((rmd for rmd in self.rmds if rmd.type == "PROPOSED"), None)
-        proposed_surface_summary_by_zone = self.summarize_rmd_surfaces(proposed_rmd)
+        # Use the first model as a reference to verify the other models have the same qty and IDs for spaces, zones, and surfaces
+        reference_rmd = self.rmds[0]
+        reference_surface_summary_by_zone = self.summarize_rmd_surfaces(reference_rmd)
+        reference_model_type = reference_rmd.type if reference_rmd else None
 
-        for rmd in self.rmds:
-            self.check_model_data(rmd, proposed_surface_summary_by_zone)
-            self.check_space_and_zone_data(rmd)
-            self.check_input_ratios(rmd)
+        self.check_space_and_zone_data(reference_rmd)
+        self.check_input_ratios(reference_rmd)
+        if len(self.rmds) > 1:
+            for rmd in self.rmds[1:]:
+                self.check_model_data(
+                    rmd, reference_surface_summary_by_zone, reference_model_type
+                )
+                self.check_space_and_zone_data(rmd)
+                self.check_input_ratios(rmd)
