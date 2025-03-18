@@ -316,10 +316,12 @@ class ProjectDetailsSubview(CTkXYFrame):
         if self.measured_infiltration_checkbox.get():
             self.pressure_difference_label.grid()
             self.pressure_difference_input.grid()
+            self.pressure_units_label.grid()
             self.site_testing_checkbox.grid()
         else:
             self.pressure_difference_label.grid_remove()
             self.pressure_difference_input.grid_remove()
+            self.pressure_units_label.grid_remove()
             self.site_testing_checkbox.grid_remove()
 
 
