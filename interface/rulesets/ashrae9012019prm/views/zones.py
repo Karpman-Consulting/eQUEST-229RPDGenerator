@@ -27,7 +27,7 @@ class ZonesView(BaseView):
             justify=LEFT,
             font=LABEL_FONT,
         )
-        directions_text = "Assign all Zones in your model to the Building Areas created on the previous tab. This can be done by Floor, or more granularly by Zone. If any zones in the \nmodel represent multiple zones in the design, provide the quantity of aggregated zones. If a zone's infiltration in the Proposed model is based on a \nmeasured infiltration rate declare so here. If a zone contains more than 1 space, define additional spaces as necessary by clicking the quantity in the Child \nSpaces column to open the Child Spaces window. Child Spaces should be created as necessary to represent the entirety of the Zone, e.g. an aggregated \nzone that is in reality 3 zones where each zone has 2 spaces should have 6 Child Spaces total."
+        directions_text = "Assign all Zones in your model to the Building Areas created on the previous tab. This can be done by Floor, or more granularly by Zone. If any zones in the \nmodel represent multiple zones in the design, provide the quantity of aggregated zones. If a zone's infiltration in the Proposed model is based on a \nmeasured infiltration rate declare so here."
         self.directions_widget = ctk.CTkLabel(
             self.directions_frame,
             text=directions_text,
@@ -72,7 +72,6 @@ class ZonesSubview(CTkXYFrame):
         self.zones_view = view_frame.master
         self.app_data = self.zones_view.window.main_app.data
         self.is_view_populated = False
-        self.child_space_window = None
         self.zones_by_floor = {}
         self.floor_comboboxes = {}
         self.zone_comboboxes = {}
@@ -91,11 +90,13 @@ class ZonesSubview(CTkXYFrame):
 
         main_row = 0
         for floor, zones in self.zones_by_floor.items():
-            self.add_floor_row(main_row, floor)
+            collapse_button = self.add_floor_row(main_row, floor)
             main_row += 1
             for zone in zones:
                 self.add_row(main_row, zone)
                 main_row += 1
+            # Hide zones initially
+            self.toggle_zone_visibility(floor, collapse_button)
 
         self.is_view_populated = True
 
@@ -115,8 +116,6 @@ class ZonesSubview(CTkXYFrame):
             self, text="Measured Infiltration Rate?", font=LABEL_FONT
         )
         measured_infiltration_rate_label.grid(row=0, column=4, padx=PAD20END, pady=5)
-        child_spaces_label = ctk.CTkLabel(self, text="Child Spaces", font=LABEL_FONT)
-        child_spaces_label.grid(row=0, column=5, padx=PAD20END, pady=5)
 
     def add_floor_row(self, i, floor_name):
         # Frame spanning all columns with a different background color
@@ -177,6 +176,7 @@ class ZonesSubview(CTkXYFrame):
         ctk.CTkLabel(floor_row_frame, text="").grid(
             row=0, column=4, padx=PAD20END, pady=PAD10SYM
         )
+        return collapse_button
 
     def add_row(self, i, zone_name):
         floor_label = ctk.CTkLabel(self, text=f"{zone_name}")
@@ -201,30 +201,12 @@ class ZonesSubview(CTkXYFrame):
         measured_infiltration_rate_checkbox.grid(
             row=(i + 1), column=4, padx=PAD20END, pady=PAD10SYM
         )
-        image = ctk.CTkImage(
-            light_image=Image.open(
-                f"{self.zones_view.main_window.static_filepath}/white_plus.png"
-            ),
-            dark_image=None,
-            size=(20, 20),
-        )
-        add_child_space_button = ctk.CTkButton(
-            self,
-            text="",
-            image=image,
-            width=30,
-            height=30,
-            corner_radius=10,
-            command=self.open_child_space_window,
-        )
-        add_child_space_button.grid(row=(i + 1), column=5, padx=PAD20END, pady=PAD10SYM)
 
         self.zone_widgets[zone_name] = [
             floor_label,
             building_area_combo,
             aggregated_zone_qty_spinbox,
             measured_infiltration_rate_checkbox,
-            add_child_space_button,
         ]
 
     def get_zones_by_floors(self):
@@ -262,20 +244,3 @@ class ZonesSubview(CTkXYFrame):
 
             # Change button text accordingly
             button.configure(text="+" if new_state == "hide" else "−")
-
-    def open_child_space_window(self):
-        if (
-            self.child_space_window is None
-            or not self.child_space_window.winfo_exists()
-        ):
-            self.child_space_window = ChildSpaceWindow(self)
-            self.child_space_window.after(10, self.child_space_window.lift)
-
-
-# TODO: Implement child spaces window after spaces view
-class ChildSpaceWindow(ctk.CTkToplevel):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.geometry("400x300")
-        self.label = ctk.CTkLabel(self, text="Child Spaces")
-        self.label.pack(padx=20, pady=20)

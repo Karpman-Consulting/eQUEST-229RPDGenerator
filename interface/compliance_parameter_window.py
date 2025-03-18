@@ -34,24 +34,6 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         # for i in range(self.grid_size()[0]):
         #     self.grid_columnconfigure(i, weight=1)
 
-        if self.main_app.data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM":
-            # Setup the baseline/proposed toggle
-            self.baseline_label = ctk.CTkLabel(self, text="Baseline")
-            self.baseline_proposed_switch = ctk.CTkSwitch(
-                self,
-                variable=self.main_app.data.baseline_or_proposed,
-                text="",
-                height=20,
-                width=50,
-                switch_height=20,
-                switch_width=50,
-                command=self.toggle_baseline_proposed,
-                onvalue="Proposed",
-                offvalue="Baseline",
-            )
-            self.baseline_proposed_switch.deselect()
-            self.proposed_label = ctk.CTkLabel(self, text="Proposed")
-
         # Set the instance Views based on the selected ruleset
         self.views = {
             name: cls(self)
@@ -68,39 +50,13 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         # Initialize attributes to hold references to Widgets & Windows
         self.current_view = None
 
-        self.warnings_button = ctk.CTkButton(
-            self,
-            text="Warnings",
-            width=90,
-            fg_color="orange",
-            hover_color="#FF8C00",
-            corner_radius=12,
-            command=lambda: self.raise_error_window(
-                "\n".join(self.main_app.data.warnings)
-            ),
-        )
-        self.errors_button = ctk.CTkButton(
-            self,
-            text="Errors",
-            width=90,
-            fg_color="red",
-            hover_color="#E60000",
-            corner_radius=12,
-            command=lambda: self.raise_error_window(
-                "\n".join(self.main_app.data.errors)
-            ),
-        )
-        self.continue_button = ctk.CTkButton(
-            self, text="Continue", width=100, corner_radius=12
-        )
-        self.generate_RPD_button = ctk.CTkButton(
-            self,
-            text="Generate RPD",
-            width=100,
-            fg_color="green",
-            hover_color="#006400",
-            command=self.main_app.data.call_write_rpd_json_from_rmds,
-        )
+        self.warnings_button = None
+        self.errors_button = None
+        self.continue_button = None
+        self.generate_RPD_button = None
+        self.baseline_label = None
+        self.baseline_proposed_switch = None
+        self.proposed_label = None
 
         self.license_window = None
         self.disclaimer_window = None
@@ -149,7 +105,13 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         return menubar
 
     def create_button_bar(self):
-        # Define a custom order
+        # Create a frame to hold the buttons
+        button_bar = ctk.CTkFrame(self, width=162 * len(self.views), height=50)
+        button_bar.grid(
+            row=0, column=0, columnspan=max(8, len(self.views)), sticky="nsew"
+        )
+
+        # Define a custom order for views to appear
         custom_order = [
             "ProjectInfoView",
             "BuildingAreasView",
@@ -173,9 +135,25 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         button_names = [self.views[k].button_name for k in sorted_keys]
         icon_paths = [self.views[k].icon for k in sorted_keys]
 
+        baseline_rmd = self.main_app.data.get_rmd("BASELINE_0")
+        baseline_rmd_has_doors = (
+            len(self.main_app.data.get_rmd("BASELINE_0").door_names) > 0
+            if baseline_rmd
+            else None
+        )
+
         for index, (view_name, button_name, icon_path) in enumerate(
             zip(view_names, button_names, icon_paths)
         ):
+            # Special handling for ASHRAE 90.1-2019 PRM ruleset to hide the Surfaces view if there are no doors in the baseline model
+            if (
+                self.main_app.data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM"
+                and view_name == "SurfacesView"
+                and not baseline_rmd_has_doors
+            ):
+                self.views.pop("SurfacesView")
+                continue
+
             # Load and resize the icon
             icon = Image.open(f"{self.static_filepath}/{icon_path}").convert("RGBA")
             icon = icon.resize(ICON_SIZE, Image.LANCZOS)  # Resize icon
@@ -187,7 +165,9 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             icon_image = ctk.CTkImage(light_image=white_icon, size=ICON_SIZE)
 
             # Create a frame for each button
-            button_frame = ctk.CTkFrame(self, width=162, height=50, corner_radius=0)
+            button_frame = ctk.CTkFrame(
+                button_bar, width=162, height=50, corner_radius=0
+            )
             button_frame.grid(row=0, column=index, sticky="nsew")
 
             # Create the button inside the frame
@@ -211,14 +191,80 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             button.image = icon_image
 
     def create_nav_bar(self):
-        self.warnings_button.grid(row=2, column=0, pady=5)
-        self.errors_button.grid(row=2, column=1, pady=5)
-        self.continue_button.grid(row=2, column=2, columnspan=3, pady=5)
+        number_of_columns = max(8, len(self.views))
+        # Create a frame to hold the buttons
+        nav_bar = ctk.CTkFrame(self, width=162 * len(self.views), height=50)
+        nav_bar.grid(row=2, column=0, columnspan=number_of_columns, sticky="nsew")
+
+        # Configure the grid for uniform spacing
+        for i in range(number_of_columns):  # Adjust based on the number of columns used
+            nav_bar.grid_columnconfigure(i, weight=1, uniform="nav")
+
+        self.warnings_button = ctk.CTkButton(
+            nav_bar,
+            text="Warnings",
+            width=90,
+            fg_color="orange",
+            hover_color="#FF8C00",
+            command=lambda: self.raise_error_window(
+                "\n".join(self.main_app.data.warnings)
+            ),
+        )
+        self.warnings_button.grid(row=0, column=0, padx=10, pady=5, sticky="ew")
+
+        self.errors_button = ctk.CTkButton(
+            nav_bar,
+            text="Errors",
+            width=90,
+            fg_color="red",
+            hover_color="#E60000",
+            command=lambda: self.raise_error_window(
+                "\n".join(self.main_app.data.errors)
+            ),
+        )
+        self.errors_button.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
+
+        self.continue_button = ctk.CTkButton(
+            nav_bar, text="Continue", width=100, corner_radius=12
+        )
+        self.continue_button.grid(
+            row=0, column=3, columnspan=1, padx=10, pady=5, sticky="ew"
+        )
+
+        self.generate_RPD_button = ctk.CTkButton(
+            nav_bar,
+            text="Generate RPD",
+            width=100,
+            fg_color="green",
+            hover_color="#006400",
+            command=self.main_app.data.call_write_rpd_json_from_rmds,
+        )
+        self.generate_RPD_button.grid(
+            row=0, column=number_of_columns - 1, padx=10, pady=5, sticky="ew"
+        )
+
         if self.main_app.data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM":
-            self.baseline_label.grid(row=2, column=4, pady=5, sticky="e")
-            self.baseline_proposed_switch.grid(row=2, column=5, pady=5)
-            self.proposed_label.grid(row=2, column=6, pady=5, sticky="w")
-        self.generate_RPD_button.grid(row=2, column=7, pady=5)
+            # Setup the baseline/proposed toggle
+            self.baseline_label = ctk.CTkLabel(nav_bar, text="Baseline")
+            self.baseline_label.grid(row=0, column=4, padx=5, pady=5, sticky="e")
+
+            self.baseline_proposed_switch = ctk.CTkSwitch(
+                nav_bar,
+                variable=self.main_app.data.baseline_or_proposed,
+                text="",
+                height=20,
+                width=50,
+                switch_height=20,
+                switch_width=50,
+                command=self.toggle_baseline_proposed,
+                onvalue="Proposed",
+                offvalue="Baseline",
+            )
+            self.baseline_proposed_switch.deselect()
+            self.baseline_proposed_switch.grid(row=0, column=5, padx=5, pady=5)
+
+            self.proposed_label = ctk.CTkLabel(nav_bar, text="Proposed")
+            self.proposed_label.grid(row=0, column=6, padx=5, pady=5, sticky="w")
 
     def show_baseline_proposed_toggle(self, show_toggle):
         if show_toggle:
@@ -240,7 +286,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         if view:
             self.current_view = view
             self.current_view.grid(
-                row=1, column=0, columnspan=len(self.views), sticky="nsew"
+                row=1, column=0, columnspan=max(8, len(self.views)), sticky="nsew"
             )
             self.current_view.open_view()
 

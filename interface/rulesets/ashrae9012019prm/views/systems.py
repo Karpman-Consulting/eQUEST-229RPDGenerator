@@ -25,8 +25,6 @@ class SystemsView(BaseView):
             "Proposed HVACSystemSubview": HVACSystemSubview(self.subview_frame),
             "Baseline HeatRejectionSubview": HeatRejectionSubview(self.subview_frame),
             "Proposed HeatRejectionSubview": HeatRejectionSubview(self.subview_frame),
-            "Baseline ZonalExhaustSubview": ZonalExhaustSubview(self.subview_frame),
-            "Proposed ZonalExhaustSubview": ZonalExhaustSubview(self.subview_frame),
         }
 
         # Directions frame holds all directions info and will get 'gridded' within the surfaces view grid
@@ -96,13 +94,6 @@ class SystemsView(BaseView):
         if len(self.app_data.rmds[0].system_names) > 0:
             callback_methods["HVAC Systems"] = lambda: self.show_subview(
                 f"{self.app_data.baseline_or_proposed.get()} HVAC Systems"
-            )
-        if (
-            len(self.app_data.rmds[0].zonal_exh_fan_names) > 0
-            and not self.app_data.is_all_new_construction.get()
-        ):
-            callback_methods["Zonal Exhaust"] = lambda: self.show_subview(
-                f"{self.app_data.baseline_or_proposed.get()} Zonal Exhaust"
             )
 
         for name in callback_methods:
@@ -297,66 +288,3 @@ class HVACSystemSubview(CTkXYFrame):
         air_filter_merv_rating_spinbox.grid(
             row=(i + 1), column=4, padx=PAD20END, pady=PAD20END
         )
-
-
-class ZonalExhaustSubview(CTkXYFrame):
-    def __init__(self, subview_frame):
-        super().__init__(subview_frame)
-        self.systems_view = subview_frame.master
-        self.app_data = self.systems_view.window.main_app.data
-        self.is_subview_populated = False
-
-    def __repr__(self):
-        return "ZonalExhaustSubview"
-
-    def open_subview(self):
-        self.systems_view.toggle_active_subbutton("Zonal Exhaust")
-        self.populate_subview() if not self.is_subview_populated else None
-
-    def populate_subview(self):
-        zonal_exhaust_fans = self.get_zonal_exhaust_fans()
-
-        self.add_column_headers()
-
-        for i, exhaust_fan_dict in enumerate(zonal_exhaust_fans):
-            self.add_row(i, exhaust_fan_dict)
-
-        self.is_subview_populated = True
-
-    def get_zonal_exhaust_fans(self):
-        # TODO: Review this approach..may be tough once we are trying to set data back to the rmds
-        zonal_exhaust_fans = []
-
-        #  Get relevant rmd
-        rmd = None
-        if self.app_data.baseline_or_proposed.get() == "Proposed":
-            rmd = self.app_data.get_rmd(ASHRAE9012019ModelOptions.PROPOSED)
-        elif self.app_data.baseline_or_proposed.get() == "Baseline":
-            rmd = self.app_data.get_rmd(ASHRAE9012019ModelOptions.BASELINE_0)
-        if not rmd:
-            return
-
-        for zone_name in rmd.zone_names:
-            zone_obj = rmd.get_obj(zone_name)
-            if zone_obj.zonal_exhaust_fan:
-                zonal_exhaust_fans.append(zone_obj.zonal_exhaust_fan)
-        return zonal_exhaust_fans
-
-    def add_column_headers(self):
-        name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
-        name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
-        status_label = ctk.CTkLabel(self, text="Fan Type", font=LABEL_FONT)
-        status_label.grid(row=0, column=1, padx=PAD20END, pady=5)
-
-    def add_row(self, i, exhaust_fan_dict):
-        zonal_exhaust_fan_label = ctk.CTkLabel(self, text=f"{exhaust_fan_dict['id']}")
-        zonal_exhaust_fan_label.grid(
-            row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
-        )
-        status_combo = ctk.CTkComboBox(
-            self,
-            values=self.app_data.StatusDescriptions,
-            state=READONLY,
-        )
-        status_combo._entry.configure(justify=LEFT)
-        status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
