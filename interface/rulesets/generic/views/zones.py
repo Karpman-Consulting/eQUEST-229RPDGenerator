@@ -76,6 +76,7 @@ class ZonesSubview(CTkXYFrame):
         self.floor_comboboxes = {}
         self.zone_comboboxes = {}
         self.zone_widgets = {}
+        self.collapsed_floors = {}
 
         self.get_zones_by_floors()
 
@@ -89,12 +90,18 @@ class ZonesSubview(CTkXYFrame):
         self.add_column_headers()
 
         main_row = 0
+
         for floor, zones in self.zones_by_floor.items():
-            self.add_floor_row(main_row, floor)
+            collapse_button = self.add_floor_row(main_row, floor)
             main_row += 1
+
             for zone in zones:
                 self.add_row(main_row, zone)
                 main_row += 1
+
+            # Collapse zones immediately after adding them
+            self.collapsed_floors[floor] = True
+            self.toggle_zone_visibility(floor, collapse_button)
 
         self.is_view_populated = True
 
@@ -177,6 +184,8 @@ class ZonesSubview(CTkXYFrame):
             row=0, column=4, padx=PAD20END, pady=PAD10SYM
         )
 
+        return collapse_button
+
     def add_row(self, i, zone_name):
         floor_label = ctk.CTkLabel(self, text=f"{zone_name}")
         floor_label.grid(row=(i + 1), column=1, padx=20, pady=PAD10SYM, sticky=W)
@@ -245,22 +254,19 @@ class ZonesSubview(CTkXYFrame):
     def toggle_zone_visibility(self, floor_name, button):
         """Toggles visibility of all zone rows under a given floor"""
         if floor_name in self.zones_by_floor:
-            first_zone = self.zones_by_floor[floor_name][0]
-            is_visible = self.zone_widgets[first_zone][
-                0
-            ].winfo_ismapped()  # Check if first zone widget is visible
-            new_state = "hide" if is_visible else "show"
+            is_collapsed = self.collapsed_floors.get(floor_name, True)
 
             for zone_name in self.zones_by_floor[floor_name]:
                 if zone_name in self.zone_widgets:
                     for widget in self.zone_widgets[zone_name]:
-                        if new_state == "hide":
+                        if is_collapsed:
                             widget.grid_remove()
                         else:
                             widget.grid()
 
-            # Change button text accordingly
-            button.configure(text="+" if new_state == "hide" else "−")
+            button.configure(text="+" if is_collapsed else "−")
+            # Update collapse state
+            self.collapsed_floors[floor_name] = not is_collapsed
 
     def open_child_space_window(self):
         if (
