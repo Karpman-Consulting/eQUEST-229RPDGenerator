@@ -330,7 +330,7 @@ class ProjectConfigSubview(CTkXYFrame):
         self.app_data = self.project_info_view.window.main_app.data
         self.is_subview_populated = False
 
-        self.ruleset_model_row_widgets = {}
+        self.ruleset_model_row_widgets = {ruleset: {} for ruleset in RULESETS}
 
         # Initialize Widgets
         self.new_construction_checkbox = ctk.CTkCheckBox(
@@ -376,7 +376,7 @@ class ProjectConfigSubview(CTkXYFrame):
         self.ruleset_models_frame = ctk.CTkFrame(self, width=800, height=250)
         self.ruleset_dropdown = ctk.CTkOptionMenu(
             self,
-            values=["ASHRAE 90.1-2019 PRM", "None"],
+            values=RULESETS,
             command=lambda selection: self.update_ruleset_model_frame(selection),
         )
         self.ruleset_dropdown.set(self.app_data.selected_ruleset.get())
@@ -508,13 +508,13 @@ class ProjectConfigSubview(CTkXYFrame):
                     self.ruleset_models_frame.grid_rowconfigure(i, weight=0)
 
     def clear_ruleset_models_frame(self):
-        for row_widgets in self.ruleset_model_row_widgets.values():
-            for widget in row_widgets:
-                widget.grid_remove()
+        for widget in self.ruleset_models_frame.winfo_children():
+            widget.grid_remove()
 
     def toggle_baseline_rotations(self):
         """Add or remove Baseline rotation rows based on checkbox state."""
-        for row_widgets in self.ruleset_model_row_widgets.values():
+        active_ruleset = self.app_data.selected_ruleset.get()
+        for row_widgets in self.ruleset_model_row_widgets[active_ruleset].values():
             if row_widgets[0].cget("text") in [
                 "Baseline 90: ",
                 "Baseline 180: ",
@@ -532,9 +532,9 @@ class ProjectConfigSubview(CTkXYFrame):
     def create_file_row(self, label_text):
         """Create a row of widgets without placing them using grid()."""
         model_text = label_text.split(":")[0]
-
-        if model_text in self.ruleset_model_row_widgets:
-            return self.ruleset_model_row_widgets[model_text]
+        active_ruleset = self.app_data.selected_ruleset.get()
+        if model_text in self.ruleset_model_row_widgets[active_ruleset]:
+            return self.ruleset_model_row_widgets[active_ruleset][model_text]
 
         # Create label
         label = ctk.CTkLabel(
@@ -550,9 +550,10 @@ class ProjectConfigSubview(CTkXYFrame):
             self.ruleset_models_frame, width=700, font=("Arial", 12)
         )
         model_type = model_text.replace("Design", "User")
-
         # Model Type may not exist in the dictionary if the user did not select a file for it or the user changed the ruleset after selecting files
-        file_path = self.app_data.ruleset_model_file_paths.get(model_type, "")
+        file_path = self.app_data.ruleset_model_file_paths[active_ruleset].get(
+            model_type, ""
+        )
         if file_path:
             path_entry.insert(0, self._get_trimmed_path(file_path))
 
@@ -562,9 +563,13 @@ class ProjectConfigSubview(CTkXYFrame):
                 filetypes=[("eQUEST Input Files", "*.inp")]
             )
             if selected_path:
+                if active_ruleset not in self.app_data.ruleset_model_file_paths:
+                    self.app_data.ruleset_model_file_paths[active_ruleset] = {}
                 path_entry.delete(0, "end")
                 path_entry.insert(0, self._get_trimmed_path(selected_path))
-                self.app_data.ruleset_model_file_paths[model_type] = selected_path
+                self.app_data.ruleset_model_file_paths[active_ruleset][
+                    model_type
+                ] = selected_path
 
         select_button = ctk.CTkButton(
             self.ruleset_models_frame,
@@ -575,7 +580,7 @@ class ProjectConfigSubview(CTkXYFrame):
         )
 
         # Store created widgets for reuse
-        self.ruleset_model_row_widgets[model_text] = (
+        self.ruleset_model_row_widgets[active_ruleset][model_text] = (
             label,
             path_entry,
             select_button,
@@ -589,7 +594,8 @@ class ProjectConfigSubview(CTkXYFrame):
     def validate_project_info(self):
         """Verify that all required file paths have been selected."""
         # Check that at least 1 file path has been selected
-        if not any(self.app_data.ruleset_model_file_paths.values()):
+        active_ruleset = self.app_data.selected_ruleset.get()
+        if not any(self.app_data.ruleset_model_file_paths[active_ruleset].values()):
             self.app_data.errors = ["At least one file must be selected to continue."]
             self.project_info_view.update_warnings_errors()
             return
@@ -601,7 +607,7 @@ class ProjectConfigSubview(CTkXYFrame):
         for (
             model_type,
             file_path,
-        ) in self.app_data.ruleset_model_file_paths.items():
+        ) in self.app_data.ruleset_model_file_paths[active_ruleset].items():
             if file_path:
                 if not self.app_data.verify_associated_files(file_path):
                     model_type = model_type.replace("User", "Design")
@@ -624,8 +630,10 @@ class ProjectConfigSubview(CTkXYFrame):
         # Check if all required model types have file paths selected
         for model_type in required_models:
             if (
-                model_type not in self.app_data.ruleset_model_file_paths
-                or not self.app_data.ruleset_model_file_paths[model_type]
+                model_type not in self.app_data.ruleset_model_file_paths[active_ruleset]
+                or not self.app_data.ruleset_model_file_paths[active_ruleset][
+                    model_type
+                ]
             ):
                 model_type = model_type.replace("User", "Design")
                 self.app_data.warnings.append(

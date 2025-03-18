@@ -90,7 +90,10 @@ class MainAppData:
         return True
 
     def generate_rmd_data(self, rpd):
-        for ruleset_model_type, file_path in self.ruleset_model_file_paths.items():
+        active_ruleset = self.selected_ruleset.get()
+        for ruleset_model_type, file_path in self.ruleset_model_file_paths[
+            active_ruleset
+        ].items():
             rmd_type_enum = (
                 ruleset_model_type.upper() + "_0"
                 if ruleset_model_type == "Baseline"

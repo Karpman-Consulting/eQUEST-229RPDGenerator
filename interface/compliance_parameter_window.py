@@ -191,13 +191,14 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             button.image = icon_image
 
     def create_nav_bar(self):
-        number_of_columns = max(8, len(self.views))
         # Create a frame to hold the buttons
         nav_bar = ctk.CTkFrame(self, width=162 * len(self.views), height=50)
-        nav_bar.grid(row=2, column=0, columnspan=number_of_columns, sticky="nsew")
+        nav_bar.grid(row=2, column=0, columnspan=max(8, len(self.views)), sticky="nsew")
 
         # Configure the grid for uniform spacing
-        for i in range(number_of_columns):  # Adjust based on the number of columns used
+        for i in range(
+            max(8, len(self.views))
+        ):  # Adjust based on the number of columns used
             nav_bar.grid_columnconfigure(i, weight=1, uniform="nav")
 
         self.warnings_button = ctk.CTkButton(
@@ -240,7 +241,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             command=self.main_app.data.call_write_rpd_json_from_rmds,
         )
         self.generate_RPD_button.grid(
-            row=0, column=number_of_columns - 1, padx=10, pady=5, sticky="ew"
+            row=0, column=max(8, len(self.views)) - 1, padx=10, pady=5, sticky="ew"
         )
 
         if self.main_app.data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM":
