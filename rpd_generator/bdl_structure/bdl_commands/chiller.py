@@ -256,7 +256,11 @@ class Chiller(BaseNode):
         )
         performance_curve_data = self.get_performance_curve_data()
 
-        curve_calcs_unavailable = not performance_curve_data["coefficients"]
+        curve_calcs_unavailable = performance_curve_data["coefficients"] == {
+            "cap_f_t": [],
+            "eff_f_t": [],
+            "eff_f_plr": [],
+        }
         if curve_calcs_unavailable:
             self.notes = "Performance curve INPUT-TYPE of DATA is not currently supported for determining and populating chiller IPLV."
             self.populate_full_load_eff_with_curve_calcs_unavailable()
