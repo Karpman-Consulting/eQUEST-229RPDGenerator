@@ -45,9 +45,23 @@ class TestModelInputReader(unittest.TestCase):
             data["file_commands"]["MATERIAL"]["Carpet & No Pad"],
         )
 
-    def test_special_read_curve_fit_coef(self):
+    def test_raw_read_curve_fit_coef(self):
         data = self.model_input_reader.read_input_bdl_file(self.test_file)
         self.assertEqual(
             ["0", "0.99945700", "0.00054300"],
             data["file_commands"]["CURVE-FIT"]["DW-Gas-Pilotless-HIR-fPLR"]["COEF"],
+        )
+
+    def test_special_read_curve_fit_coef_data(self):
+        data = self.model_input_reader.read_input_bdl_file(self.test_file)
+        self.assertEqual(
+            [
+                "1.91015875",
+                "-0.03367849",
+                "0.00015359",
+                "-0.01582364",
+                "0.00015079",
+                "0.00036306",
+            ],
+            data["file_commands"]["CURVE-FIT"]["Data Curve Fit"]["COEFFICIENT"],
         )

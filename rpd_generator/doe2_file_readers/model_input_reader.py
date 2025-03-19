@@ -124,6 +124,7 @@ class ModelInputReader:
 
             active_command_dict = None
             record_data_for = False
+            raw_read_flag = False
             special_read_flag = False
             special_data = {}
             multiline_key = None
@@ -161,7 +162,7 @@ class ModelInputReader:
 
                         # check if the library entry requires special handling
                         if "CURVE-FIT" in line:
-                            special_read_flag = True
+                            raw_read_flag = True
 
                         command_dict = {"command": command}
                         self._track_current_parents(unique_name, command)
@@ -172,10 +173,21 @@ class ModelInputReader:
 
                 # Flag the start of the data record and set the active command dictionary
                 elif "DATA FOR" in line:
+                    raw_read_flag = False
+                    special_read_flag = False
+
                     obj_u_name = line[32:].rstrip()
                     active_command_dict = file_commands.get(obj_u_name)
                     if active_command_dict:
                         record_data_for = True
+
+                    if active_command_dict and "COEF" in special_data:
+                        active_command_dict["COEF"] = special_data["COEF"]
+
+                    if active_command_dict and "COEFFICIENT" in special_data:
+                        active_command_dict["COEFFICIENT"] = special_data["COEFFICIENT"]
+
+                    special_data = {}
                     continue
 
                 # Parse the definition line and add the keyword and value to the active command dictionary
@@ -196,7 +208,7 @@ class ModelInputReader:
                     else:
                         active_command_dict[keyword] = value
 
-                elif special_read_flag:
+                elif raw_read_flag:
                     active_command_dict = file_commands.get(unique_name)
 
                     # If we're in the middle of accumulating a multiline value, handle that first.
@@ -218,12 +230,20 @@ class ModelInputReader:
                             multiline_value = ""
 
                         if ".." in line:
-                            special_read_flag = False
-                            if active_command_dict and "COEF" in special_data:
-                                active_command_dict["COEF"] = special_data["COEF"]
-                            special_data = {}
+                            special_read_flag = True
 
                         # Skip further processing of this line.
+                        continue
+
+                    if special_read_flag and "COEFFICIENT(" in line:
+                        # Extract the coefficients and add them to the special data.
+                        special_data.setdefault("COEFFICIENT", []).append(
+                            line[30:].strip()
+                        )
+                        continue
+
+                    elif special_read_flag:
+                        # We only care about the COEFFICIENT lines.
                         continue
 
                     # Process a new line from the special block.
@@ -265,10 +285,7 @@ class ModelInputReader:
 
                     # End special read block when ".." is encountered.
                     if ".." in line:
-                        special_read_flag = False
-                        if active_command_dict and "COEF" in special_data:
-                            active_command_dict["COEF"] = special_data["COEF"]
-                        special_data = {}
+                        special_read_flag = True
 
             file_commands = self._group_by_command(file_commands)
             return {"doe2_version": doe2_version, "file_commands": file_commands}
