@@ -70,5 +70,5 @@ class TestModelInputReader(unittest.TestCase):
                 "0.00015079",
                 "0.00036306",
             ],
-            data["file_commands"]["CURVE-FIT"]["Data Curve Fit"]["COEFFICIENT"],
+            data["file_commands"]["CURVE-FIT"]["Data Curve Fit"]["COEF"],
         )
