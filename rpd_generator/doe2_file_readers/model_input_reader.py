@@ -272,7 +272,8 @@ class ModelInputReader:
 
                         # If an opening parenthesis appears without a closing one, start accumulating a multiline value.
                         if "(" in value and ")" not in value:
-                            multiline_key = key
+                            # Store the raw COEFFICIENTS data separate from the rounded DATA-FOR values, in a new key.
+                            multiline_key = key.replace("COEFFICIENTS", "COEFFICIENT")
                             multiline_value = value
 
                         else:
