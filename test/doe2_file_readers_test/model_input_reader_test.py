@@ -56,7 +56,7 @@ class TestModelInputReader(unittest.TestCase):
         data = self.model_input_reader.read_input_bdl_file(self.test_file)
         self.assertEqual(
             ["0.74721", "-0.038874", "0.000313", "0.027638", "-0.000133", "-8e-006"],
-            data["file_commands"]["CURVE-FIT"]["Coef Curve Fit"]["COEFFICIENT"],
+            data["file_commands"]["CURVE-FIT"]["Coef Curve Fit"]["COEF"],
         )
 
     def test_special_read_curve_fit_coef_data(self):
