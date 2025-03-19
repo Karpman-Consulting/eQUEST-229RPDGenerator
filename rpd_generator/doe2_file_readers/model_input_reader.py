@@ -184,9 +184,6 @@ class ModelInputReader:
                     if active_command_dict and "COEF" in special_data:
                         active_command_dict["COEF"] = special_data["COEF"]
 
-                    if active_command_dict and "COEFFICIENT" in special_data:
-                        active_command_dict["COEFFICIENT"] = special_data["COEFFICIENT"]
-
                     special_data = {}
                     continue
 
@@ -237,9 +234,7 @@ class ModelInputReader:
 
                     if special_read_flag and "COEFFICIENT(" in line:
                         # Extract the coefficients and add them to the special data.
-                        special_data.setdefault("COEFFICIENT", []).append(
-                            line[30:].strip()
-                        )
+                        special_data.setdefault("COEF", []).append(line[30:].strip())
                         continue
 
                     elif special_read_flag:

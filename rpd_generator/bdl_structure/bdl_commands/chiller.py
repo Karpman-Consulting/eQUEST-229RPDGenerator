@@ -256,44 +256,38 @@ class Chiller(BaseNode):
         )
         performance_curve_data = self.get_performance_curve_data()
 
-        curve_calcs_unavailable = not performance_curve_data["coefficients"]
+        are_curve_outputs_all_equal_to_one_at_ahri_temperatures = (
+            curve_funcs.are_curve_outputs_all_equal_to_a_value_of_one(
+                performance_curve_data,
+                AHRI_550_590_2023_EVAP_LEAVING_T,
+                ahri_condenser_entering_t,
+                ERROR_MARGIN,
+            )
+        )
+
+        # Checks if the entered rated conditions match AHRI and if the performance curves are normalized to ahri conditions.
+        curve_calcs_unavailable = (
+            not self.are_user_defined_input_ratio_and_cap_at_ahri_rating_conditions()
+            and not are_curve_outputs_all_equal_to_one_at_ahri_temperatures
+        )
         if curve_calcs_unavailable:
-            self.notes = "Performance curve INPUT-TYPE of DATA is not currently supported for determining and populating chiller IPLV."
+            self.notes = "The rated temperatures entered in the model do not align with AHRI conditions."
             self.populate_full_load_eff_with_curve_calcs_unavailable()
+            return
 
+        # Capacity and efficiency are defined at AHRI conditions, so adjustments for rating conditions are not necessary
+        if self.are_user_defined_input_ratio_and_cap_at_ahri_rating_conditions():
+            self.populate_efficiency_when_user_defined_rated_temps_match_ahri(
+                performance_curve_data,
+                output_data,
+                are_curve_outputs_all_equal_to_one_at_ahri_temperatures,
+            )
+
+        # Capacity and efficiency are not defined at AHRI conditions, so adjustments for rating conditions must be made.
         else:
-            are_curve_outputs_all_equal_to_one_at_ahri_temperatures = (
-                curve_funcs.are_curve_outputs_all_equal_to_a_value_of_one(
-                    performance_curve_data,
-                    AHRI_550_590_2023_EVAP_LEAVING_T,
-                    ahri_condenser_entering_t,
-                    ERROR_MARGIN,
-                )
+            self.populate_efficiency_when_user_defined_rated_temps_dont_match_ahri(
+                performance_curve_data, output_data
             )
-
-            # Checks if the entered rated conditions match AHRI and if the performance curves are normalized to ahri conditions.
-            curve_calcs_unavailable = (
-                not self.are_user_defined_input_ratio_and_cap_at_ahri_rating_conditions()
-                and not are_curve_outputs_all_equal_to_one_at_ahri_temperatures
-            )
-            if curve_calcs_unavailable:
-                self.notes = "The rated temperatures entered in the model do not align with AHRI conditions."
-                self.populate_full_load_eff_with_curve_calcs_unavailable()
-                return
-
-            # Capacity and efficiency are defined at AHRI conditions, so adjustments for rating conditions are not necessary
-            if self.are_user_defined_input_ratio_and_cap_at_ahri_rating_conditions():
-                self.populate_efficiency_when_user_defined_rated_temps_match_ahri(
-                    performance_curve_data,
-                    output_data,
-                    are_curve_outputs_all_equal_to_one_at_ahri_temperatures,
-                )
-
-            # Capacity and efficiency are not defined at AHRI conditions, so adjustments for rating conditions must be made.
-            else:
-                self.populate_efficiency_when_user_defined_rated_temps_dont_match_ahri(
-                    performance_curve_data, output_data
-                )
 
     def get_output_requests(self):
         """Get output data requests for chiller object."""
@@ -469,9 +463,7 @@ class Chiller(BaseNode):
 
         For each performance curve object, the method:
           1. Retrieves the object using the internal `get_obj(get_inp(...))` calls.
-          2. Checks the curve's input type. If the input type is set to DATA (i.e., `BDL_CurveFitInputTypes.DATA`), the method returns
-             the dictionary of curve objects immediately, along with empty dictionaries for the coefficients and output ranges.
-          3. Otherwise, extracts the following details:
+          2. Extracts the following details:
              - **Coefficients:** Retrieved via the 'COEF' keyword, converted to a list of floats, and stored in a dictionary
                with keys formatted as "<curve_key>_coeffs".
              - **Minimum Output:** Retrieved via the 'OUTPUT_MIN' keyword, converted to a float, and stored in a dictionary
@@ -496,15 +488,6 @@ class Chiller(BaseNode):
         max_outputs = {}
 
         for curve_name, curve in perf_curves.items():
-            input_type = curve.get_inp(BDL_CurveFitKeywords.INPUT_TYPE)
-            if input_type == BDL_CurveFitInputTypes.DATA:
-                return {
-                    "performance_curves": perf_curves,
-                    "coefficients": {},
-                    "min_outputs": {},
-                    "max_outputs": {},
-                }
-
             coefficients[curve_name] = curve.coefficients
             min_outputs[curve_name] = curve.minimum_output
             max_outputs[curve_name] = curve.maximum_output
