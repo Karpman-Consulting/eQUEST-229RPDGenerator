@@ -33,7 +33,6 @@ def process_input_file(
     init_result = bdlcio32.BDLCIO32_InitByName(bdl_dll_name.encode("utf-8"))
     if init_result == 0:
         raise OSError(f"Failed to initialize with BDL DLL: {bdl_dll_name}")
-    print(f"Initialized with BDL DLL: {bdl_dll_name}")
 
     # Define the prototype for BDLCIO32_ReadInput
     bdlcio32.BDLCIO32_ReadInput.argtypes = [
