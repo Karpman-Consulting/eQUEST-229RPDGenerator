@@ -496,63 +496,6 @@ class TestElectricChillers(unittest.TestCase):
         self.assertEqual(expected_data_structure, self.chiller.chiller_data_structure)
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
-    def test_populate_data_with_centrif_chiller_non_ahri_hard_coded_cap_plr_na(
-        self, mock_get_output_data
-    ):
-        """Tests that all values populate with expected values, given valid inputs"""
-        mock_get_output_data.return_value = {
-            "Design Parameters - Capacity": 151941.078125,
-            "Design Parameters - Condenser Flow": 36.10254669189453,
-            "Design Parameters - Flow": 28.88204002380371,
-            "Normalized (ARI) Capacity at Peak (Btu/hr)": 120092.3359375,
-            "Normalized (ARI) Entering Condenser Water Temperature (°F)": 70.0,
-            "Normalized (ARI) Leaving Chilled Water Temperature (°F)": 44.0,
-            "Primary Equipment (Chillers) - Capacity (Btu/hr)": 151941.078125,
-        }
-        self.chiller.keyword_value_pairs = {
-            BDL_ChillerKeywords.TYPE: BDL_ChillerTypes.ELEC_OPEN_CENT,
-            BDL_ChillerKeywords.CONDENSER_TYPE: BDL_CondenserTypes.WATER_COOLED,
-            BDL_ChillerKeywords.CHW_LOOP: "Chilled Water Loop (Primary)",
-            BDL_ChillerKeywords.CW_LOOP: "Condenser Water Loop",
-            BDL_ChillerKeywords.CAPACITY: "0.3",
-            BDL_ChillerKeywords.EIR_FT: "fT Curve",
-            BDL_ChillerKeywords.EIR_FPLR: "fPLR Curve",
-            BDL_ChillerKeywords.CAPACITY_FT: "CAP-fT Curve",
-            BDL_ChillerKeywords.ELEC_INPUT_RATIO: "0.202",
-            BDL_ChillerKeywords.MIN_RATIO: "0.25",
-            BDL_ChillerKeywords.RATED_CHW_T: "50",
-            BDL_ChillerKeywords.RATED_COND_T: "70",
-        }
-
-        self.rmd.populate_rmd_data(testing=True)
-        expected_data_structure = {
-            "id": "Chiller 1",
-            "compressor_type": "CENTRIFUGAL",
-            "energy_source_type": "ELECTRICITY",
-            "cooling_loop": "Chilled Water Loop (Primary)",
-            "condensing_loop": "Condenser Water Loop",
-            "design_entering_condenser_temperature": 70,
-            "design_leaving_evaporator_temperature": 44,
-            "rated_entering_condenser_temperature": 85.0,
-            "rated_leaving_evaporator_temperature": 44.0,
-            "minimum_load_ratio": 0.25,
-            "rated_capacity": 0.2860773014625675,
-            "design_capacity": 0.151941078125,
-            "design_flow_condenser": 36.10254669189453,
-            "design_flow_evaporator": 28.88204002380371,
-            "is_chilled_water_pump_interlocked": False,
-            "is_condenser_water_pump_interlocked": False,
-            "capacity_validation_points": [],
-            "power_validation_points": [],
-            "efficiency_metric_types": [
-                "FULL_LOAD_EFFICIENCY_RATED",
-                "INTEGRATED_PART_LOAD_VALUE",
-            ],
-            "efficiency_metric_values": [3.226420253293395, 5.57609907354266],
-        }
-        self.assertEqual(expected_data_structure, self.chiller.chiller_data_structure)
-
-    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_data_with_centrif_chiller_non_ahri_auto_sized_plr_na(
         self, mock_get_output_data
     ):
@@ -622,12 +565,8 @@ class TestElectricChillers(unittest.TestCase):
             "Normalized (ARI) Leaving Chilled Water Temperature (°F)": 44.0,
             "Primary Equipment (Chillers) - Capacity (Btu/hr)": 152000,
         }
-        self.f_plr.keyword_value_pairs = {
-            BDL_CurveFitKeywords.TYPE: "BI-QUADRATIC-T",
-            BDL_CurveFitKeywords.INPUT_TYPE: "DATA",
-            BDL_CurveFitKeywords.OUTPUT_MIN: "-1000000.0000",
-            BDL_CurveFitKeywords.OUTPUT_MAX: "1000000.0000",
-        }
+        self.f_plr.keyword_value_pairs[BDL_CurveFitKeywords.INPUT_TYPE] = "DATA"
+
         self.chiller.keyword_value_pairs = {
             BDL_ChillerKeywords.TYPE: BDL_ChillerTypes.ELEC_OPEN_CENT,
             BDL_ChillerKeywords.CONDENSER_TYPE: BDL_CondenserTypes.WATER_COOLED,
@@ -645,15 +584,15 @@ class TestElectricChillers(unittest.TestCase):
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "Chiller 1",
-            "notes": "Performance curve INPUT-TYPE of DATA is not currently supported for determining and populating chiller IPLV.",
             "compressor_type": "CENTRIFUGAL",
             "energy_source_type": "ELECTRICITY",
             "cooling_loop": "Chilled Water Loop (Primary)",
             "condensing_loop": "Condenser Water Loop",
+            "rated_capacity": 0.1444661171908111,
             "design_entering_condenser_temperature": 70.0,
             "design_leaving_evaporator_temperature": 44.0,
-            "rated_entering_condenser_temperature": 75.0,
-            "rated_leaving_evaporator_temperature": 50.0,
+            "rated_entering_condenser_temperature": 85.0,
+            "rated_leaving_evaporator_temperature": 44.0,
             "minimum_load_ratio": 0.25,
             "design_capacity": 0.152,
             "design_flow_condenser": 36.10254669189453,
@@ -662,8 +601,11 @@ class TestElectricChillers(unittest.TestCase):
             "is_condenser_water_pump_interlocked": False,
             "capacity_validation_points": [],
             "power_validation_points": [],
-            "efficiency_metric_types": ["OTHER"],
-            "efficiency_metric_values": [5.688282138794084],
+            "efficiency_metric_types": [
+                "FULL_LOAD_EFFICIENCY_RATED",
+                "INTEGRATED_PART_LOAD_VALUE",
+            ],
+            "efficiency_metric_values": [4.222623076739573, 7.29779841980996],
         }
         self.assertEqual(expected_data_structure, self.chiller.chiller_data_structure)
 

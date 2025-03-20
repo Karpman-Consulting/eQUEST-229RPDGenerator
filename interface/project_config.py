@@ -4,6 +4,7 @@ from pathlib import Path
 
 from interface.disclaimer_window import DisclaimerWindow
 from interface.error_window import ErrorWindow
+from interface.constants import *
 from rpd_generator.artifacts.ruleset_project_description import (
     RulesetProjectDescription,
 )
@@ -19,7 +20,10 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         self.disclaimer_window = None
         self.error_window = None
 
-        self.ruleset_model_row_widgets = {}
+        self.main_app.data.ruleset_model_file_paths = {
+            ruleset: {} for ruleset in RULESETS
+        }
+        self.ruleset_model_row_widgets = {ruleset: {} for ruleset in RULESETS}
 
         # Initialize Widgets
         self.directions_label = ctk.CTkLabel(
@@ -58,6 +62,8 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             text="All New Construction?",
             font=("Arial", 14),
             variable=self.main_app.data.is_all_new_construction,
+            onvalue=True,
+            offvalue=False,
         )
         self.rotation_exception_checkbox = ctk.CTkCheckBox(
             self,
@@ -65,11 +71,13 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             font=("Arial", 14),
             variable=self.main_app.data.has_rotation_exception,
             command=self.toggle_baseline_rotations,
+            onvalue=True,
+            offvalue=False,
         )
         self.ruleset_models_frame = ctk.CTkFrame(self, width=800)
         self.ruleset_dropdown = ctk.CTkOptionMenu(
             self,
-            values=["ASHRAE 90.1-2019", "None"],
+            values=RULESETS,
             variable=self.main_app.data.selected_ruleset,
             command=self.update_ruleset_model_frame,
         )
@@ -156,43 +164,42 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         self.directions.grid(
             row=0, column=1, columnspan=6, sticky="new", padx=5, pady=(20, 5)
         )
+
         # Row 1
         self.note_label.grid(row=1, column=0, sticky="new", padx=5, pady=5)
-        self.note.grid(row=1, column=1, columnspan=8, sticky="ew", padx=5, pady=5)
+        self.note.grid(row=1, column=1, columnspan=8, sticky="ew", padx=(5, 20), pady=5)
+
         # Row 2
-        self.project_name_label.grid(
-            row=2, column=0, sticky="e", padx=(20, 5), pady=(50, 10)
-        )
+        self.project_name_label.grid(row=2, column=0, sticky="e", padx=5, pady=(30, 5))
         self.project_name_entry.grid(
-            row=2, column=1, columnspan=3, sticky="ew", padx=5, pady=(50, 10)
+            row=2, column=1, columnspan=3, sticky="ew", padx=5, pady=(30, 5)
         )
         self.new_construction_checkbox.grid(
-            row=2, column=5, sticky="w", padx=5, pady=(50, 10)
+            row=2, column=5, sticky="w", padx=5, pady=(30, 5)
         )
 
         # Row 3
-        self.ruleset_label.grid(row=3, column=0, sticky="e", padx=(20, 5), pady=5)
+        self.output_dir_label.grid(row=3, column=0, sticky="e", padx=(20, 5), pady=5)
+        self.output_dir_entry.grid(
+            row=3, column=1, columnspan=5, sticky="ew", padx=5, pady=5
+        )
+        self.output_dir_button.grid(row=3, column=6, sticky="ew", padx=5, pady=5)
+
+        # Row 4
+        self.ruleset_label.grid(row=4, column=0, sticky="e", padx=(20, 5), pady=5)
         self.ruleset_dropdown.grid(
-            row=3, column=1, columnspan=2, sticky="ew", padx=5, pady=5
+            row=4, column=1, columnspan=2, sticky="ew", padx=5, pady=5
         )
 
-        # Row 4 Placeholder for the rotation exception checkbox
-        # Row 5
-        self.ruleset_models_label.grid(row=5, column=0, sticky="ew", padx=5, pady=5)
+        # Row 5 Placeholder for the rotation exception checkbox
+
+        # Row 6
+        self.ruleset_models_label.grid(row=6, column=0, sticky="ew", padx=5, pady=5)
 
         self.show_ruleset_models()
         self.ruleset_models_frame.grid(
-            row=5, column=1, columnspan=6, sticky="nsew", padx=5
+            row=6, column=1, columnspan=6, sticky="nsew", padx=5
         )
-
-        # Row 6
-        self.output_dir_label.grid(
-            row=6, column=0, sticky="e", padx=(20, 5), pady=(15, 5)
-        )
-        self.output_dir_entry.grid(
-            row=6, column=1, columnspan=5, sticky="ew", padx=5, pady=(15, 5)
-        )
-        self.output_dir_button.grid(row=6, column=6, sticky="ew", padx=5, pady=(15, 5))
 
     def update_ruleset_model_frame(self, *args):
         self.rotation_exception_checkbox.grid_remove()
@@ -201,15 +208,15 @@ class ProjectConfigWindow(ctk.CTkToplevel):
 
     def show_ruleset_models(self):
         # Main logic
-        if self.main_app.data.selected_ruleset.get() == "ASHRAE 90.1-2019":
+        if self.main_app.data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM":
             self.rotation_exception_checkbox.grid(
-                row=4, column=1, columnspan=4, sticky="w", padx=5, pady=(15, 5)
+                row=5, column=1, columnspan=4, sticky="w", padx=5, pady=(15, 5)
             )
             labels = ["Design: ", "Proposed: ", "Baseline: "]
             if not self.rotation_exception_checkbox.get():
                 labels.extend(["Baseline 90: ", "Baseline 180: ", "Baseline 270: "])
         else:
-            labels = ["Design: "]
+            labels = [""]
 
         # Create and place rows based on the selected ruleset
         self.create_model_rows(labels)
@@ -235,13 +242,13 @@ class ProjectConfigWindow(ctk.CTkToplevel):
                     self.ruleset_models_frame.grid_rowconfigure(i, weight=0)
 
     def clear_ruleset_models_frame(self):
-        for row_widgets in self.ruleset_model_row_widgets.values():
-            for widget in row_widgets:
-                widget.grid_remove()
+        for widget in self.ruleset_models_frame.winfo_children():
+            widget.grid_remove()
 
     def toggle_baseline_rotations(self):
         """Add or remove Baseline rotation rows based on checkbox state."""
-        for row_widgets in self.ruleset_model_row_widgets.values():
+        active_ruleset = self.main_app.data.selected_ruleset.get()
+        for row_widgets in self.ruleset_model_row_widgets[active_ruleset].values():
             if row_widgets[0].cget("text") in [
                 "Baseline 90: ",
                 "Baseline 180: ",
@@ -259,10 +266,10 @@ class ProjectConfigWindow(ctk.CTkToplevel):
     def create_file_row(self, label_text):
         """Create a row of widgets without placing them using grid()."""
         model_text = label_text.split(":")[0]
-
+        active_ruleset = self.main_app.data.selected_ruleset.get()
         # Avoid recreating widgets if they already exist
-        if model_text in self.ruleset_model_row_widgets:
-            return self.ruleset_model_row_widgets[model_text]
+        if model_text in self.ruleset_model_row_widgets[active_ruleset]:
+            return self.ruleset_model_row_widgets[active_ruleset][model_text]
 
         # Create label
         label = ctk.CTkLabel(
@@ -288,7 +295,9 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             if selected_path:
                 path_entry.delete(0, "end")
                 path_entry.insert(0, self._get_trimmed_path(selected_path))
-                self.main_app.data.ruleset_model_file_paths[model_type] = selected_path
+                self.main_app.data.ruleset_model_file_paths[active_ruleset][
+                    model_type
+                ] = selected_path
 
         select_button = ctk.CTkButton(
             self.ruleset_models_frame,
@@ -299,7 +308,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         )
 
         # Store created widgets for reuse
-        self.ruleset_model_row_widgets[model_text] = (
+        self.ruleset_model_row_widgets[active_ruleset][model_text] = (
             label,
             path_entry,
             select_button,
@@ -310,7 +319,10 @@ class ProjectConfigWindow(ctk.CTkToplevel):
     def validate_project_info(self):
         """Verify that all required file paths have been selected."""
         # Check that at least 1 file path has been selected
-        if not any(self.main_app.data.ruleset_model_file_paths.values()):
+        active_ruleset = self.main_app.data.selected_ruleset.get()
+        if not any(
+            self.main_app.data.ruleset_model_file_paths[active_ruleset].values()
+        ):
             self.main_app.data.errors = [
                 "At least one file must be selected to continue."
             ]
@@ -319,12 +331,11 @@ class ProjectConfigWindow(ctk.CTkToplevel):
 
         # If the code reaches this point, at least one file is selected so clear any errors
         self.main_app.data.errors.clear()
-
         # For each file that is selected, make sure that the directory also contains the associated output files
         for (
             model_type,
             file_path,
-        ) in self.main_app.data.ruleset_model_file_paths.items():
+        ) in self.main_app.data.ruleset_model_file_paths[active_ruleset].items():
             if file_path:
                 if not self.verify_associated_files(file_path):
                     model_type = model_type.replace("User", "Design")
@@ -339,21 +350,25 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         # If the code reaches this point, at least one file is selected and all associated files are found so clear any errors
         self.main_app.data.errors.clear()
 
-        # Required model types
-        required_models = ["User", "Proposed", "Baseline"]
-        if not self.rotation_exception_checkbox.get():
-            required_models.extend(["Baseline 90", "Baseline 180", "Baseline 270"])
+        if self.main_app.data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM":
+            # Required model types
+            required_models = ["User", "Proposed", "Baseline"]
+            if not self.rotation_exception_checkbox.get():
+                required_models.extend(["Baseline 90", "Baseline 180", "Baseline 270"])
 
-        # Check if all required model types have file paths selected
-        for model_type in required_models:
-            if (
-                model_type not in self.main_app.data.ruleset_model_file_paths
-                or not self.main_app.data.ruleset_model_file_paths[model_type]
-            ):
-                model_type = model_type.replace("User", "Design")
-                self.main_app.data.warnings.append(
-                    f"The '{model_type}' model is missing and is required to evaluate the ASHRAE 90.1-2019 ruleset."
-                )
+            # Check if all required model types have file paths selected
+            for model_type in required_models:
+                if (
+                    model_type
+                    not in self.main_app.data.ruleset_model_file_paths[active_ruleset]
+                    or not self.main_app.data.ruleset_model_file_paths[active_ruleset][
+                        model_type
+                    ]
+                ):
+                    model_type = model_type.replace("User", "Design")
+                    self.main_app.data.warnings.append(
+                        f"The '{model_type}' model is missing and is required to evaluate the ASHRAE 90.1-2019 ruleset."
+                    )
 
         # If there are no errors, generate RMDs
         if len(self.main_app.data.errors) == 0:
@@ -363,10 +378,12 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             self.main_app.data.generate_rmd_data(self.main_app.data.rpd)
             # Run model checks to populate additional errors and warnings
             self.main_app.data.run_model_checks()
+
             if len(self.main_app.data.errors) == 0:
                 self.main_app.project_config_complete()
             else:
                 self.raise_error_window("\n".join(self.main_app.data.errors))
+
         else:
             self.raise_error_window("\n".join(self.main_app.data.errors))
 

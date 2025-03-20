@@ -4,22 +4,13 @@ from pathlib import Path
 
 from interface.base_view import BaseView
 from interface.ctk_xyframe import CTkXYFrame
-
-LABEL_FONT = ("Arial", 14, "bold")
-TEXT_FONT = ("Arial", 14)
-READONLY = "readonly"
-W = "w"
-E = "e"
-FILL = "nsew"
-LEFT = "left"
-PAD20END = (0, 20)
-PAD20START = (20, 0)
-BLACK = "black"
-SUBVIEW_BUTTON_COLOR = "#FFD966"
-ACTIVE_SUBVIEW_BUTTON_COLOR = "#FFED67"
+from interface.constants import *
 
 
 class ProjectInfoView(BaseView):
+    button_name = "Project Info"
+    icon = "menu.png"
+
     def __init__(self, window):
         super().__init__(window)
         self.main_window = window
@@ -29,8 +20,8 @@ class ProjectInfoView(BaseView):
         self.current_subview = None
 
         self.subviews = {
-            "Project Details": ProjectDetailsView(self.subview_frame),
-            "Project Config.": ProjectConfigView(self.subview_frame),
+            "Project Details": ProjectDetailsSubview(self.subview_frame),
+            "Project Config.": ProjectConfigSubview(self.subview_frame),
         }
         self.subview_buttons = {}
 
@@ -131,23 +122,14 @@ class ProjectInfoView(BaseView):
     def view_continue(self):
         self.window.show_view("Buildings")
 
-    def get_view_data(self):
-        view_data = {}
-        for subview in self.subviews.values():
-            view_data[subview.json_representation] = subview.get_subview_data()
-        return view_data
 
-
-class ProjectDetailsView(CTkXYFrame):
+class ProjectDetailsSubview(CTkXYFrame):
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.project_info_view = subview_frame.master
         self.app_data = self.project_info_view.window.main_app.data
         self.is_subview_populated = False
         validate_double_entry = self.register(self.app_data.validate_double_entry)
-
-        # Could be a method like the __repr()__ method. Or could BE the __repr()__ method
-        self.json_representation = "project_details"
 
         # Initialize Widgets
         self.options_frame = ctk.CTkFrame(subview_frame, fg_color="transparent")
@@ -244,6 +226,8 @@ class ProjectDetailsView(CTkXYFrame):
             font=LABEL_FONT,
             variable=self.app_data.has_measured_infiltration,
             command=self.toggle_measured_infiltration,
+            onvalue=True,
+            offvalue=False,
         )
         self.pressure_difference_label = ctk.CTkLabel(
             self.infiltration_frame,
@@ -269,12 +253,14 @@ class ProjectDetailsView(CTkXYFrame):
             text="Based on Site Testing?",
             font=TEXT_FONT,
             variable=self.app_data.is_based_on_site_testing,
+            onvalue=True,
+            offvalue=False,
         )
 
         self.populate_subview()
 
     def __repr__(self):
-        return "ProjectDetailsView"
+        return "ProjectDetailsSubview"
 
     def open_subview(self):
         self.project_info_view.toggle_active_subbutton("Project Details")
@@ -332,37 +318,23 @@ class ProjectDetailsView(CTkXYFrame):
         if self.measured_infiltration_checkbox.get():
             self.pressure_difference_label.grid()
             self.pressure_difference_input.grid()
+            self.pressure_units_label.grid()
             self.site_testing_checkbox.grid()
         else:
             self.pressure_difference_label.grid_remove()
             self.pressure_difference_input.grid_remove()
+            self.pressure_units_label.grid_remove()
             self.site_testing_checkbox.grid_remove()
 
-    def get_subview_data(self):
-        return {
-            "ASHRAE Climate Zone": self.app_data.climate_zone.get(),
-            "Exterior Lighting Zone": self.app_data.lighting_zone.get(),
-            "Building Open From": self.open_from_input.get(),
-            "Building Open To": self.open_to_input.get(),
-            "Heating Design Day Criteria": (self.app_data.heating_design_day.get()),
-            "Cooling Design Day Criteria": (self.app_data.cooling_design_day.get()),
-            "Measured Infiltration": (self.app_data.has_measured_infiltration.get()),
-            "Pressure Difference": (self.app_data.measured_pressure_difference.get()),
-            "Based on Site Testing": (self.app_data.is_based_on_site_testing.get()),
-        }
 
-
-class ProjectConfigView(CTkXYFrame):
+class ProjectConfigSubview(CTkXYFrame):
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.project_info_view = subview_frame.master
         self.app_data = self.project_info_view.window.main_app.data
         self.is_subview_populated = False
 
-        self.ruleset_model_row_widgets = {}
-
-        # Could be a method like the __repr()__ method. Or could BE the __repr()__ method
-        self.json_representation = "project_configuration"
+        self.ruleset_model_row_widgets = {ruleset: {} for ruleset in RULESETS}
 
         # Initialize Widgets
         self.new_construction_checkbox = ctk.CTkCheckBox(
@@ -389,7 +361,7 @@ class ProjectConfigView(CTkXYFrame):
         self.note_label = ctk.CTkLabel(
             self, text="Note: ", anchor=E, justify=LEFT, font=LABEL_FONT
         )
-        note_text = "When you select an input file, it is expected that the same directory will also include the simulation output files associated with the selected input file. \nThis application will check for the following associated file extensions:\n(*.nhk), (*.lrp), (*.srp), (*.erp)\n\n(*) can be identical to the selected *.inp file or can include the suffix ' - Baseline Design'"
+        note_text = "When you select an input file, it is expected that the same directory will also include the simulation output files associated with the selected input file. \nThis application will check for the following associated file extensions: (*.nhk), (*.lrp), (*.srp), (*.erp)\n\n(*) can be identical to the selected *.inp file or can include the suffix ' - Baseline Design'"
         self.note = ctk.CTkLabel(
             self, text=note_text, anchor=W, justify=LEFT, font=TEXT_FONT
         )
@@ -408,7 +380,7 @@ class ProjectConfigView(CTkXYFrame):
         self.ruleset_models_frame = ctk.CTkFrame(self, width=800, height=250)
         self.ruleset_dropdown = ctk.CTkOptionMenu(
             self,
-            values=["ASHRAE 90.1-2019", "None"],
+            values=RULESETS,
             command=lambda selection: self.update_ruleset_model_frame(selection),
         )
         self.ruleset_dropdown.set(self.app_data.selected_ruleset.get())
@@ -453,7 +425,7 @@ class ProjectConfigView(CTkXYFrame):
         self.populate_subview()
 
     def __repr__(self):
-        return "ProjectConfigView"
+        return "ProjectConfigSubview"
 
     def open_subview(self):
         self.project_info_view.toggle_active_subbutton("Project Config.")
@@ -462,9 +434,9 @@ class ProjectConfigView(CTkXYFrame):
     def populate_subview(self):
         # Place widgets
         # Row 0
-        self.directions_label.grid(row=0, column=0, sticky=E + W, padx=5, pady=(20, 5))
+        self.directions_label.grid(row=0, column=0, sticky=E + W, padx=5, pady=5)
         self.directions.grid(
-            row=0, column=1, columnspan=8, sticky="new", padx=5, pady=(20, 5)
+            row=0, column=1, columnspan=8, sticky="new", padx=5, pady=5
         )
 
         # Row 1
@@ -472,33 +444,31 @@ class ProjectConfigView(CTkXYFrame):
         self.note.grid(row=1, column=1, columnspan=8, sticky=E + W, padx=5, pady=5)
 
         # Row 2
-        self.project_name_label.grid(row=2, column=0, sticky=E, padx=5, pady=(50, 10))
+        self.project_name_label.grid(row=2, column=0, sticky=E, padx=5, pady=(30, 5))
         self.project_name_entry.grid(
-            row=2, column=1, columnspan=3, sticky=E + W, padx=5, pady=(50, 10)
+            row=2, column=1, columnspan=3, sticky=E + W, padx=5, pady=(30, 5)
         )
 
-        # Row 3
-        self.ruleset_label.grid(row=3, column=0, sticky=E, padx=5, pady=5)
+        # Row 3 Project Directory
+        self.output_dir_label.grid(row=3, column=0, sticky=E, padx=(20, 5), pady=5)
+        self.output_dir_entry.grid(
+            row=3, column=1, columnspan=5, sticky=E + W, padx=5, pady=5
+        )
+        self.output_dir_button.grid(row=3, column=6, sticky=E + W, padx=5, pady=5)
+
+        # Row 4
+        self.ruleset_label.grid(row=4, column=0, sticky=E, padx=5, pady=5)
         self.ruleset_dropdown.grid(
-            row=3, column=1, columnspan=2, sticky=E + W, padx=5, pady=5
+            row=4, column=1, columnspan=2, sticky=E + W, padx=5, pady=5
         )
 
-        # Row 4 Placeholder for the rotation exception checkbox
-
-        # Row 5
-        self.ruleset_models_label.grid(row=5, column=0, sticky=E + W, padx=5, pady=5)
-
-        self.show_ruleset_models()
-        self.ruleset_models_frame.grid(row=5, column=1, columnspan=8, sticky=FILL)
+        # Row 5 Placeholder for the rotation exception checkbox
 
         # Row 6
-        self.output_dir_label.grid(
-            row=6, column=0, sticky=E, padx=(20, 5), pady=(15, 5)
-        )
-        self.output_dir_entry.grid(
-            row=6, column=1, columnspan=5, sticky=E + W, padx=5, pady=(15, 5)
-        )
-        self.output_dir_button.grid(row=6, column=6, sticky=E + W, padx=5, pady=(15, 5))
+        self.ruleset_models_label.grid(row=6, column=0, sticky=E + W, padx=5, pady=5)
+
+        self.show_ruleset_models()
+        self.ruleset_models_frame.grid(row=6, column=1, columnspan=8, sticky=FILL)
 
     def update_ruleset_model_frame(self, selected_ruleset):
         self.app_data.selected_ruleset.set(selected_ruleset)
@@ -508,9 +478,9 @@ class ProjectConfigView(CTkXYFrame):
 
     def show_ruleset_models(self):
         # Main logic
-        if self.app_data.selected_ruleset.get() == "ASHRAE 90.1-2019":
+        if self.app_data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM":
             self.rotation_exception_checkbox.grid(
-                row=4, column=1, columnspan=4, sticky=W, padx=5, pady=(15, 5)
+                row=5, column=1, columnspan=4, sticky=W, padx=5, pady=(15, 5)
             )
             labels = ["Design: ", "Proposed: ", "Baseline: "]
             if not self.rotation_exception_checkbox.get():
@@ -542,13 +512,13 @@ class ProjectConfigView(CTkXYFrame):
                     self.ruleset_models_frame.grid_rowconfigure(i, weight=0)
 
     def clear_ruleset_models_frame(self):
-        for row_widgets in self.ruleset_model_row_widgets.values():
-            for widget in row_widgets:
-                widget.grid_remove()
+        for widget in self.ruleset_models_frame.winfo_children():
+            widget.grid_remove()
 
     def toggle_baseline_rotations(self):
         """Add or remove Baseline rotation rows based on checkbox state."""
-        for row_widgets in self.ruleset_model_row_widgets.values():
+        active_ruleset = self.app_data.selected_ruleset.get()
+        for row_widgets in self.ruleset_model_row_widgets[active_ruleset].values():
             if row_widgets[0].cget("text") in [
                 "Baseline 90: ",
                 "Baseline 180: ",
@@ -566,9 +536,9 @@ class ProjectConfigView(CTkXYFrame):
     def create_file_row(self, label_text):
         """Create a row of widgets without placing them using grid()."""
         model_text = label_text.split(":")[0]
-
-        if model_text in self.ruleset_model_row_widgets:
-            return self.ruleset_model_row_widgets[model_text]
+        active_ruleset = self.app_data.selected_ruleset.get()
+        if model_text in self.ruleset_model_row_widgets[active_ruleset]:
+            return self.ruleset_model_row_widgets[active_ruleset][model_text]
 
         # Create label
         label = ctk.CTkLabel(
@@ -586,7 +556,9 @@ class ProjectConfigView(CTkXYFrame):
         model_type = model_text.replace("Design", "User")
 
         # Model Type may not exist in the dictionary if the user did not select a file for it or the user changed the ruleset after selecting files
-        file_path = self.app_data.ruleset_model_file_paths.get(model_type, "")
+        file_path = self.app_data.ruleset_model_file_paths[active_ruleset].get(
+            model_type, ""
+        )
         if file_path:
             path_entry.insert(0, self._get_trimmed_path(file_path))
 
@@ -596,9 +568,13 @@ class ProjectConfigView(CTkXYFrame):
                 filetypes=[("eQUEST Input Files", "*.inp")]
             )
             if selected_path:
+                if active_ruleset not in self.app_data.ruleset_model_file_paths:
+                    self.app_data.ruleset_model_file_paths[active_ruleset] = {}
                 path_entry.delete(0, "end")
                 path_entry.insert(0, self._get_trimmed_path(selected_path))
-                self.app_data.ruleset_model_file_paths[model_type] = selected_path
+                self.app_data.ruleset_model_file_paths[active_ruleset][
+                    model_type
+                ] = selected_path
 
         select_button = ctk.CTkButton(
             self.ruleset_models_frame,
@@ -609,7 +585,7 @@ class ProjectConfigView(CTkXYFrame):
         )
 
         # Store created widgets for reuse
-        self.ruleset_model_row_widgets[model_text] = (
+        self.ruleset_model_row_widgets[active_ruleset][model_text] = (
             label,
             path_entry,
             select_button,
@@ -617,11 +593,14 @@ class ProjectConfigView(CTkXYFrame):
 
         return label, path_entry, select_button
 
-    # TODO: When options on this view are changed, show warning
+    # TODO: When options on this view are changed,
+    #  show warning
+    #  reload new instance of compliance parameter window if Energy Code/Program is changed
     def validate_project_info(self):
         """Verify that all required file paths have been selected."""
         # Check that at least 1 file path has been selected
-        if not any(self.app_data.ruleset_model_file_paths.values()):
+        active_ruleset = self.app_data.selected_ruleset.get()
+        if not any(self.app_data.ruleset_model_file_paths[active_ruleset].values()):
             self.app_data.errors = ["At least one file must be selected to continue."]
             self.project_info_view.update_warnings_errors()
             return
@@ -633,7 +612,7 @@ class ProjectConfigView(CTkXYFrame):
         for (
             model_type,
             file_path,
-        ) in self.app_data.ruleset_model_file_paths.items():
+        ) in self.app_data.ruleset_model_file_paths[active_ruleset].items():
             if file_path:
                 if not self.app_data.verify_associated_files(file_path):
                     model_type = model_type.replace("User", "Design")
@@ -656,8 +635,10 @@ class ProjectConfigView(CTkXYFrame):
         # Check if all required model types have file paths selected
         for model_type in required_models:
             if (
-                model_type not in self.app_data.ruleset_model_file_paths
-                or not self.app_data.ruleset_model_file_paths[model_type]
+                model_type not in self.app_data.ruleset_model_file_paths[active_ruleset]
+                or not self.app_data.ruleset_model_file_paths[active_ruleset][
+                    model_type
+                ]
             ):
                 model_type = model_type.replace("User", "Design")
                 self.app_data.warnings.append(
@@ -681,18 +662,6 @@ class ProjectConfigView(CTkXYFrame):
             self.output_dir_entry.delete(0, "end")
             self.output_dir_entry.insert(0, directory)
             self.app_data.output_directory.set(directory)
-
-    def get_subview_data(self):
-        subview_data = {
-            "Project Name": self.app_data.project_name.get(),
-            "Energy Code/Program": self.app_data.selected_ruleset.get(),
-            "Baseline Rotation Exempt": self.app_data.has_rotation_exception.get(),
-            "All New Construction": self.app_data.is_all_new_construction.get(),
-            "Output Directory": self.app_data.output_directory.get(),
-        }
-        for model_type, file_path in self.app_data.ruleset_model_file_paths.items():
-            subview_data[model_type] = file_path
-        return subview_data
 
     @staticmethod
     def _get_trimmed_path(file_path: str) -> str:

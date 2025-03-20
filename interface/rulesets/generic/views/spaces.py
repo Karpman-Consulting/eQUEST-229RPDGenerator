@@ -1,26 +1,22 @@
 import customtkinter as ctk
 
-from interface.CTkMessagebox import CTkMessagebox
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
 from interface.main_app_data import ASHRAE9012019ModelOptions
-
-LABEL_FONT = ("Arial", 14, "bold")
-READONLY = "readonly"
-LEFT = "left"
-E = "e"
-W = "w"
-FILL = "nsew"
-PAD20END = (0, 20)
+from interface.constants import *
 
 
 class SpacesView(BaseView):
+    button_name = "Spaces"
+    icon = "spaces.png"
+
     def __init__(self, window):
         super().__init__(window)
         self.main_window = window
+
         self.view_frame = ctk.CTkFrame(self)
         self.current_subview = None
-        self.current_subview_name = None
+        self.current_subview_name = "SpacesSubview"
 
         # Directions frame holds all directions info and will get 'gridded' within the surfaces view grid
         self.directions_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -35,8 +31,7 @@ class SpacesView(BaseView):
             font=LABEL_FONT,
         )
         self.subviews = {
-            "Baseline SpacesSubview": SpacesSubview(self.view_frame),
-            "Proposed SpacesSubview": SpacesSubview(self.view_frame),
+            "SpacesSubview": SpacesSubview(self.view_frame),
         }
 
     def __repr__(self):
@@ -45,7 +40,6 @@ class SpacesView(BaseView):
     def open_view(self):
         self.toggle_active_button("Spaces")
         self.grid_propagate(False)
-        self.main_window.show_baseline_proposed_toggle(True)
 
         # 2 rows in the main surface view structure.
         # View frame (row 2, index 1) has a weight to make it fill up the empty space in the window
@@ -62,9 +56,7 @@ class SpacesView(BaseView):
         self.view_frame.grid_rowconfigure(0, weight=1)
         self.view_frame.grid_columnconfigure(0, weight=1)
 
-        current_state = self.app_data.baseline_or_proposed.get()
-        self.current_subview_name = current_state + " SpacesSubview"
-        self.show_subview(current_state + " SpacesSubview")
+        self.show_subview("SpacesSubview")
 
     def show_subview(self, subview_name):
         # Clear previous subview
@@ -75,30 +67,10 @@ class SpacesView(BaseView):
         if subview:
             self.current_subview_name = subview_name
             self.current_subview = subview
-        else:
-            current_state = self.app_data.baseline_or_proposed.get()
-            filtered_subviews = [
-                value for key, value in self.subviews.items() if current_state in key
-            ]
-
-            # Set current_subview to the first matching subview, if found
-            if filtered_subviews:
-                self.current_subview = filtered_subviews[0]
-                self.current_subview_name = (
-                    self.app_data.baseline_or_proposed.get()
-                    + " "
-                    + self.current_subview.__repr__()
-                )
 
         self.current_subview.grid(row=0, column=0, sticky=FILL)
         self.current_subview.focus_set()
         self.current_subview.open_subview()
-
-    def get_view_data(self):
-        view_data = {}
-        for subview in self.subviews.values():
-            view_data[subview.json_representation] = subview.get_subview_data()
-        return view_data
 
 
 class SpacesSubview(CTkXYFrame):
@@ -107,8 +79,6 @@ class SpacesSubview(CTkXYFrame):
         self.spaces_view = view_frame.master
         self.app_data = self.spaces_view.app_data
         self.is_view_populated = False
-        self.json_representation = "spaces"
-        self.widget_rows = []
 
     def __repr__(self):
         return "SpacesSubview"
@@ -120,15 +90,7 @@ class SpacesSubview(CTkXYFrame):
         self.add_column_headers()
 
         #  Get spaces from relevant rmd. Throw error if none found
-        space_names = []
-        if self.app_data.baseline_or_proposed.get() == "Proposed":
-            space_names = self.app_data.get_rmd(
-                ASHRAE9012019ModelOptions.PROPOSED
-            ).space_map.keys()
-        elif self.app_data.baseline_or_proposed.get() == "Baseline":
-            space_names = self.app_data.get_rmd(
-                ASHRAE9012019ModelOptions.BASELINE_0
-            ).space_map.keys()
+        space_names = self.app_data.rmds[0].space_map.keys()
 
         for i, space_name in enumerate(space_names):
             # Add data vars for each space
@@ -184,7 +146,6 @@ class SpacesSubview(CTkXYFrame):
     def add_row(self, i, space_name):
         name_label = ctk.CTkLabel(self, text=f"{space_name}")
         name_label.grid(row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W)
-        status_combo = None
         if not self.app_data.is_all_new_construction.get():
             status_combo = ctk.CTkComboBox(
                 self,
@@ -257,36 +218,3 @@ class SpacesSubview(CTkXYFrame):
         daylighting_modeled_checkbox.grid(
             row=(i + 1), column=9, padx=PAD20END, pady=PAD20END
         )
-
-        self.widget_rows.append(
-            [
-                name_label,
-                status_combo,
-                lighting_space_type_combo,
-                envelope_space_type_combo,
-                ventilation_space_type_combo,
-                swh_space_type_combo,
-                lighting_occ_controls_combo,
-                daylighting_controls_combo,
-                occ_controls_modeled_checkbox,
-                daylighting_modeled_checkbox,
-            ]
-        )
-
-    def get_subview_data(self):
-        subview_data = []
-        for row in self.widget_rows:
-            space_data = {
-                "name": row[0].cget("text"),
-                "status": row[1].get() if row[1] else "",
-                "lighting_space_type": row[2].get(),
-                "envelope_space_type": row[3].get(),
-                "ventilation_space_type": row[4].get(),
-                "swh_space_type": row[5].get(),
-                "lighting_occ_controls": row[6].get(),
-                "daylighting_controls": row[7].get(),
-                "occ_controls_modeled": row[8].get(),
-                "daylighting_modeled": row[9].get(),
-            }
-            subview_data.append(space_data)
-        return subview_data
