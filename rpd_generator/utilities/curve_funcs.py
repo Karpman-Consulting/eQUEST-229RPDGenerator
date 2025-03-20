@@ -290,7 +290,7 @@ def is_within_margin(value: float, target: float, decimal_margin: float) -> bool
 
 
 def adjust_capacity_for_user_defined_plr(
-    plr_rated: float, capacity: float, capft_result: float
+    plr_rated: float, capacity: float, cap_f_t_result: float
 ):
     """
     Adjusts the equipment capacity based on a user-defined part load ratio (PLR)
@@ -303,12 +303,12 @@ def adjust_capacity_for_user_defined_plr(
     Parameters:
         plr_rated (float): The part load ratio defined in the eQuest UI.
         capacity (float): The unadjusted equipment capacity.
-        capft_result (float): The capacity adjustment factor as a function of temperature.
+        cap_f_t_result (float): The capacity adjustment factor as a function of temperature.
 
     Returns:
         float: The adjusted equipment capacity.
     """
 
-    capacity_adj = capacity * (1 / capft_result) * (1 / plr_rated)
+    capacity_adj = capacity * (1 / cap_f_t_result) * (1 / plr_rated)
 
     return capacity_adj
