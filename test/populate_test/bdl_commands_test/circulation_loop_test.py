@@ -156,7 +156,7 @@ class TestCHWLoop(unittest.TestCase):
                 "0.00027167",
                 "-0.01164471",
             ],
-            BDL_CurveFitKeywords.TYPE: "BI-QUADRATIC-RATIO&DT",
+            BDL_CurveFitKeywords.TYPE: "BI-QUADRATIC-T",
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "               -1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "                1000000.0000",
