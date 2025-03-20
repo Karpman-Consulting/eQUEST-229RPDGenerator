@@ -70,7 +70,7 @@ class TestElectricChillers(unittest.TestCase):
                 "0.00027167",
                 "-0.01164471",
             ],
-            BDL_CurveFitKeywords.TYPE: "BI-QUADRATIC-RATIO&DT",
+            BDL_CurveFitKeywords.TYPE: "BI-QUADRATIC-T",
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "               -1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "                1000000.0000",
@@ -261,7 +261,7 @@ class TestElectricChillers(unittest.TestCase):
                 "FULL_LOAD_EFFICIENCY_RATED",
                 "INTEGRATED_PART_LOAD_VALUE",
             ],
-            "efficiency_metric_values": [5.37926770870573, 9.296783224762487],
+            "efficiency_metric_values": [5.847536816555751, 10.106074864866043],
         }
         self.assertEqual(expected_data_structure, self.chiller.chiller_data_structure)
 
@@ -319,7 +319,7 @@ class TestElectricChillers(unittest.TestCase):
                 "FULL_LOAD_EFFICIENCY_RATED",
                 "INTEGRATED_PART_LOAD_VALUE",
             ],
-            "efficiency_metric_values": [5.37926770870573, 9.296783224762487],
+            "efficiency_metric_values": [5.847536816555751, 10.106074864866043],
         }
         self.assertEqual(expected_data_structure, self.chiller.chiller_data_structure)
 
@@ -377,7 +377,7 @@ class TestElectricChillers(unittest.TestCase):
                 "FULL_LOAD_EFFICIENCY_RATED",
                 "INTEGRATED_PART_LOAD_VALUE",
             ],
-            "efficiency_metric_values": [5.648551274727391, 9.762175741896893],
+            "efficiency_metric_values": [5.80438119822902, 10.03149065559442],
         }
         self.assertEqual(expected_data_structure, self.chiller.chiller_data_structure)
 
@@ -434,7 +434,7 @@ class TestElectricChillers(unittest.TestCase):
                 "FULL_LOAD_EFFICIENCY_RATED",
                 "INTEGRATED_PART_LOAD_VALUE",
             ],
-            "efficiency_metric_values": [3.948845003776998, 6.824638217742481],
+            "efficiency_metric_values": [4.057784125496852, 7.012913547056622],
         }
         self.assertEqual(expected_data_structure, self.chiller.chiller_data_structure)
 
@@ -547,7 +547,7 @@ class TestElectricChillers(unittest.TestCase):
                 "FULL_LOAD_EFFICIENCY_RATED",
                 "INTEGRATED_PART_LOAD_VALUE",
             ],
-            "efficiency_metric_values": [4.222623076739573, 7.29779841980996],
+            "efficiency_metric_values": [3.973779987134122, 6.867732398500408],
         }
         self.assertEqual(expected_data_structure, self.chiller.chiller_data_structure)
 
@@ -605,7 +605,7 @@ class TestElectricChillers(unittest.TestCase):
                 "FULL_LOAD_EFFICIENCY_RATED",
                 "INTEGRATED_PART_LOAD_VALUE",
             ],
-            "efficiency_metric_values": [4.222623076739573, 7.29779841980996],
+            "efficiency_metric_values": [3.973779987134122, 6.867732398500408],
         }
         self.assertEqual(expected_data_structure, self.chiller.chiller_data_structure)
 
@@ -654,7 +654,7 @@ class TestEngineChillers(unittest.TestCase):
                 "0.00027167",
                 "-0.01164471",
             ],
-            BDL_CurveFitKeywords.TYPE: "BI-QUADRATIC-RATIO&DT",
+            BDL_CurveFitKeywords.TYPE: "BI-QUADRATIC-T",
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "               -1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "                1000000.0000",
