@@ -274,10 +274,12 @@ class ModelInputReader:
 
                         else:
                             if "(" in value and ")" in value:
+                                key = key.replace("COEFFICIENTS", "COEF")
                                 special_data[key] = self._parse_parentheses_values(
                                     value
                                 )
                             else:
+                                key = key.replace("COEFFICIENTS", "COEF")
                                 special_data[key] = value
 
                     # End special read block when ".." is encountered.
