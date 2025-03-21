@@ -24,6 +24,7 @@ from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_ChillerKeywords = BDLEnums.bdl_enums["ChillerKeywords"]
+BDL_CurveFitTypes = BDLEnums.bdl_enums["CurveFitTypes"]
 EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
 
 
@@ -55,7 +56,7 @@ class TestElectricChillers(unittest.TestCase):
                 "-0.00029211",
                 "0.00043788",
             ],
-            BDL_CurveFitKeywords.TYPE: BDL_CurveFitKeywords.BI_QUADRATIC_RATIO_DT,
+            BDL_CurveFitKeywords.TYPE: BDL_CurveFitTypes.BI_QUADRATIC_RATIO_DT,
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "-1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "1000000.0000",
@@ -70,7 +71,7 @@ class TestElectricChillers(unittest.TestCase):
                 "0.00027167",
                 "-0.01164471",
             ],
-            BDL_CurveFitKeywords.TYPE: BDL_CurveFitKeywords.BI_QUADRATIC_RATIO_DT,
+            BDL_CurveFitKeywords.TYPE: BDL_CurveFitTypes.BI_QUADRATIC_RATIO_DT,
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "               -1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "                1000000.0000",
@@ -85,7 +86,7 @@ class TestElectricChillers(unittest.TestCase):
                 "-0.00053441",
                 "0.00067295",
             ],
-            BDL_CurveFitKeywords.TYPE: BDL_CurveFitKeywords.BI_QUADRATIC_RATIO_DT,
+            BDL_CurveFitKeywords.TYPE: BDL_CurveFitTypes.BI_QUADRATIC_RATIO_DT,
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "               -1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "                1000000.0000",
@@ -702,7 +703,7 @@ class TestEngineChillers(unittest.TestCase):
                 "-0.00053441",
                 "0.00067295",
             ],
-            BDL_CurveFitKeywords.TYPE: BDL_CurveFitKeywords.BI_QUADRATIC_RATIO_DT,
+            BDL_CurveFitKeywords.TYPE: BDL_CurveFitTypes.BI_QUADRATIC_RATIO_DT,
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "-1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "1000000.0000",
@@ -717,7 +718,7 @@ class TestEngineChillers(unittest.TestCase):
                 "0.00027167",
                 "-0.01164471",
             ],
-            BDL_CurveFitKeywords.TYPE: BDL_CurveFitKeywords.BI_QUADRATIC_RATIO_DT,
+            BDL_CurveFitKeywords.TYPE: BDL_CurveFitTypes.BI_QUADRATIC_RATIO_DT,
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "               -1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "                1000000.0000",
@@ -732,7 +733,7 @@ class TestEngineChillers(unittest.TestCase):
                 "-0.00053441",
                 "0.00067295",
             ],
-            BDL_CurveFitKeywords.TYPE: BDL_CurveFitKeywords.BI_QUADRATIC_RATIO_DT,
+            BDL_CurveFitKeywords.TYPE: BDL_CurveFitTypes.BI_QUADRATIC_RATIO_DT,
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "               -1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "                1000000.0000",

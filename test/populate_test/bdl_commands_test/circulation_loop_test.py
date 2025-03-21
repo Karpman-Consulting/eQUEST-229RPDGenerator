@@ -45,6 +45,8 @@ from rpd_generator.artifacts.ruleset_project_description import (
 from rpd_generator.artifacts.ruleset_model_description import RulesetModelDescription
 from rpd_generator.bdl_structure.bdl_commands.circulation_loop import *
 
+BDL_CurveFitTypes = BDLEnums.bdl_enums["CurveFitTypes"]
+
 
 class TestCHWLoop(unittest.TestCase):
     def setUp(self):
@@ -142,7 +144,7 @@ class TestCHWLoop(unittest.TestCase):
                 "-0.00053441",
                 "0.00067295",
             ],
-            BDL_CurveFitKeywords.TYPE: "BI-QUADRATIC-T",
+            BDL_CurveFitKeywords.TYPE: BDL_CurveFitTypes.BI_QUADRATIC_RATIO_DT,
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "-1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "1000000.0000",
@@ -156,7 +158,7 @@ class TestCHWLoop(unittest.TestCase):
                 "0.00027167",
                 "-0.01164471",
             ],
-            BDL_CurveFitKeywords.TYPE: "BI-QUADRATIC-T",
+            BDL_CurveFitKeywords.TYPE: BDL_CurveFitTypes.BI_QUADRATIC_RATIO_DT,
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "               -1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "                1000000.0000",
@@ -170,7 +172,7 @@ class TestCHWLoop(unittest.TestCase):
                 "-0.00053441",
                 "0.00067295",
             ],
-            BDL_CurveFitKeywords.TYPE: "BI-QUADRATIC-T",
+            BDL_CurveFitKeywords.TYPE: BDL_CurveFitTypes.BI_QUADRATIC_RATIO_DT,
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "               -1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "                1000000.0000",
