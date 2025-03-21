@@ -8,6 +8,47 @@ BDL_CurveFitInputTypes = BDLEnums.bdl_enums["CurveFitInputTypes"]
 BDL_CurveFitTypes = BDLEnums.bdl_enums["CurveFitTypes"]
 
 
+def calculate_bi_linear(
+    curve_coeffs: List[float], x: float, y: float, min_val: float, max_val: float
+) -> float:
+    """
+    Computes the output of a bi-linear equation using the given coefficients and two independent variables.
+
+    The function evaluates the equation:
+
+        Z = a + b*x + c*y + d*x*y
+
+    where `curve_coeffs` is a list of four coefficients corresponding to:
+    - `a` (index 0): Constant term
+    - `b` (index 1): Linear term for `x`
+    - `c` (index 2): Linear term for `y`
+    - `d` (index 3): Interaction term (`x*y`)
+
+    The computed value `Z` is then constrained within the range `[min_val, max_val]`.
+
+    Parameters:
+        curve_coeffs (List[float]): A list of four coefficients `[a, b, c, d]` defining the bi-linear equation.
+        x (float): The first independent variable.
+        y (float): The second independent variable.
+        min_val (float): The minimum allowable value for the computed result.
+        max_val (float): The maximum allowable value for the computed result.
+
+    Returns:
+        float: The computed `Z` value, constrained within `[min_val, max_val]`.
+    """
+    z = (
+        curve_coeffs[0]
+        + curve_coeffs[1] * x
+        + curve_coeffs[2] * y
+        + curve_coeffs[3] * x * y
+    )
+
+    # Ensure z is within the range [min_val, max_val]
+    z = max(min_val, min(z, max_val))
+
+    return z
+
+
 def calculate_bi_quadratic(
     curve_coeffs: List[float], x: float, y: float, min_val: float, max_val: float
 ) -> float:
@@ -130,9 +171,20 @@ def calculate_quadratic(
 
 
 CURVE_FUNCTION_MAP = {
+    BDL_CurveFitTypes.LINEAR: calculate_bi_linear,
     BDL_CurveFitTypes.QUADRATIC: calculate_quadratic,
+    BDL_CurveFitTypes.QUADRATIC_T: calculate_quadratic,
+    BDL_CurveFitTypes.QUADRATIC_DT: calculate_quadratic,
     BDL_CurveFitTypes.CUBIC: calculate_cubic,
+    BDL_CurveFitTypes.CUBIC_T: calculate_cubic,
+    BDL_CurveFitTypes.BI_LINEAR: calculate_bi_linear,
+    BDL_CurveFitTypes.BI_LINEAR_T: calculate_bi_linear,
+    BDL_CurveFitTypes.BI_QUADRATIC: calculate_bi_quadratic,
     BDL_CurveFitTypes.BI_QUADRATIC_T: calculate_bi_quadratic,
+    BDL_CurveFitTypes.BI_QUADRATIC_DT_T: calculate_bi_quadratic,
+    BDL_CurveFitTypes.BI_QUADRATIC_T_RATIO: calculate_bi_quadratic,
+    BDL_CurveFitTypes.BI_QUADRATIC_RATIO_T: calculate_bi_quadratic,
+    BDL_CurveFitTypes.BI_QUADRATIC_RATIO_DT: calculate_bi_quadratic,
 }
 
 
@@ -180,25 +232,36 @@ def calculate_results_of_performance_curves(
     min_outputs = performance_curve_data["min_outputs"]
     max_outputs = performance_curve_data["max_outputs"]
 
-    results["cap_f_t"] = calculate_bi_quadratic(
+    cap_f_t_curve_type = performance_curve_data["performance_curves"][
+        "cap_f_t"
+    ].get_inp(BDL_CurveFitKeywords.TYPE)
+    eff_f_t_curve_type = performance_curve_data["performance_curves"][
+        "eff_f_t"
+    ].get_inp(BDL_CurveFitKeywords.TYPE)
+    eff_f_plr_curve_type = performance_curve_data["performance_curves"][
+        "eff_f_plr"
+    ].get_inp(BDL_CurveFitKeywords.TYPE)
+
+    # Capacity adjustment factor as a function of temperature can be Bi-Linear in T or Bi-Quadratic in T
+    results["cap_f_t"] = CURVE_FUNCTION_MAP[cap_f_t_curve_type](
         coefficients["cap_f_t"],
         evap_leaving_temp,
         condenser_entering_temp,
         min_outputs["cap_f_t"],
         max_outputs["cap_f_t"],
     )
-    results["eff_f_t"] = calculate_bi_quadratic(
+    results["part_load_ratio"] = load_ratio / results["cap_f_t"]
+
+    # Efficiency adjustment factor as a function of temperature can be Bi-Linear in T or Bi-Quadratic in T
+    results["eff_f_t"] = CURVE_FUNCTION_MAP[eff_f_t_curve_type](
         coefficients["eff_f_t"],
         evap_leaving_temp,
         condenser_entering_temp,
         min_outputs["eff_f_t"],
         max_outputs["eff_f_t"],
     )
-    results["part_load_ratio"] = load_ratio / results["cap_f_t"]
 
-    eff_f_plr_curve_type = performance_curve_data["performance_curves"][
-        "eff_f_plr"
-    ].get_inp(BDL_CurveFitKeywords.TYPE)
+    # Efficiency adjustment factor as a function of part load can be Quadratic, Cubic, or Bi-Quadratic in Ratio&DeltaT
     if eff_f_plr_curve_type in [BDL_CurveFitTypes.QUADRATIC, BDL_CurveFitTypes.CUBIC]:
         results["eff_f_plr"] = CURVE_FUNCTION_MAP[eff_f_plr_curve_type](
             coefficients["eff_f_plr"],
@@ -206,7 +269,7 @@ def calculate_results_of_performance_curves(
             min_outputs["eff_f_plr"],
             max_outputs["eff_f_plr"],
         )
-    elif eff_f_plr_curve_type == BDL_CurveFitTypes.BI_QUADRATIC_T:
+    elif eff_f_plr_curve_type == BDL_CurveFitTypes.BI_QUADRATIC_RATIO_DT:
         delta_temp = condenser_entering_temp - evap_leaving_temp
         results["eff_f_plr"] = calculate_bi_quadratic(
             coefficients["eff_f_plr"],
