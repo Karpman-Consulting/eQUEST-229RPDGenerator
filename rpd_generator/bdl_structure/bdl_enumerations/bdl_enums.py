@@ -152,7 +152,7 @@ class BDLEnums:
                 "BI-QUADRATIC-T&RATIO",
                 "QUADRATIC-DT",
                 "CUBIC-DT",
-                "BI-QUADRATIC-RATIO&dT",
+                "BI-QUADRATIC-RATIO&DT",
             ]
         ),
         "ChillerTypes": _ListEnum(
