@@ -92,8 +92,9 @@ class SpacesView(BaseView):
 
     def get_view_data(self):
         view_data = {}
-        for subview in self.subviews.values():
-            view_data[subview.json_representation] = subview.get_subview_data()
+        for subview_name, subview in self.subviews.items():
+            subview_name = self.app_data.subview_name_to_json_key(subview_name)
+            view_data[subview_name] = subview.get_subview_data()
         return view_data
 
 
@@ -103,7 +104,6 @@ class SpacesSubview(CTkXYFrame):
         self.spaces_view = view_frame.master
         self.app_data = self.spaces_view.app_data
         self.is_view_populated = False
-        self.json_representation = "spaces"
         self.widget_rows = []
 
     def __repr__(self):

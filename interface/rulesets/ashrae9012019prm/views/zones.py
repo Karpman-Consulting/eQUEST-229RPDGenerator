@@ -35,6 +35,9 @@ class ZonesView(BaseView):
             anchor=W,
             justify=LEFT,
         )
+        self.subviews = {
+            "Zones": ZonesSubview(self.view_frame),
+        }
 
     def __repr__(self):
         return "ZonesView"
@@ -61,9 +64,19 @@ class ZonesView(BaseView):
         self.view_frame.grid_rowconfigure(0, weight=1)
         self.view_frame.grid_columnconfigure(0, weight=1)
 
-        zones_view = ZonesSubview(self.view_frame)
+        zones_view = self.subviews["Zones"]
         zones_view.grid(row=0, column=0, sticky=FILL)
         zones_view.open_view()
+
+        # Update building areas on view open
+        for combo in self.building_areas_combos:
+            combo.configure(values=self.main_window.main_app.data.building_area_options)
+
+    def get_view_data(self):
+        view_data = {}
+        for subview in self.subviews.values():
+            view_data[subview.json_representation] = subview.get_subview_data()
+        return view_data
 
 
 class ZonesSubview(CTkXYFrame):
@@ -72,6 +85,7 @@ class ZonesSubview(CTkXYFrame):
         self.zones_view = view_frame.master
         self.app_data = self.zones_view.window.main_app.data
         self.is_view_populated = False
+        self.json_representation = "zones"
         self.zones_by_floor = {}
         self.floor_comboboxes = {}
         self.zone_comboboxes = {}
@@ -214,6 +228,19 @@ class ZonesSubview(CTkXYFrame):
             measured_infiltration_rate_checkbox,
         ]
 
+    def get_subview_data(self):
+        subview_data = []
+        for zone_name, widgets in self.zone_widgets.items():
+            zone_data = {
+                "Zone Name": zone_name,
+                "Floor": self.get_floor_from_zone(zone_name),
+                "Building Area": widgets[1].get(),
+                "Aggregated Zone Quantity": widgets[2].get(),
+                "Measured Infiltration": widgets[3].get(),
+            }
+            subview_data.append(zone_data)
+        return subview_data
+
     def get_zones_by_floors(self):
         for zone_name in self.app_data.rmds[0].zone_names:
             zone_obj = self.app_data.rmds[0].get_obj(zone_name)
@@ -221,6 +248,10 @@ class ZonesSubview(CTkXYFrame):
                 self.zones_by_floor[zone_obj.floor_name].append(zone_name)
             else:
                 self.zones_by_floor[zone_obj.floor_name] = [zone_name]
+
+    def get_floor_from_zone(self, zone_name):
+        zone_obj = self.app_data.rmds[0].get_obj(zone_name)
+        return zone_obj.floor_name if zone_obj else None
 
     def set_default_value_by_floor(self, floor_name, selected_value):
         """Update all zones under a floor with the selected value from the floor's combobox"""

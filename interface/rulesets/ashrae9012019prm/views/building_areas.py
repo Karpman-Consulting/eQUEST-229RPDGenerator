@@ -233,15 +233,21 @@ class BuildingAreasView(BaseView):
     def building_has_areas(self, building_name):
         return len(self.areas_by_building[building_name]) > 0
 
+    def get_view_data(self):
+        view_data = {}
+        for subview in self.subviews.values():
+            view_data[subview.json_representation] = subview.get_subview_data()
+        return view_data
+
 
 class BuildingSubview(CTkXYFrame):
     def __init__(self, view_frame):
         super().__init__(view_frame)
         self.building_areas_view = view_frame.master
         self.app_data = self.building_areas_view.app_data
-
         self.is_view_populated = False
         self.building_count = 0
+        self.json_representation = "buildings"
 
         self.add_building_button = ctk.CTkButton(
             self,
@@ -397,6 +403,17 @@ class BuildingSubview(CTkXYFrame):
                     ),
                 )
 
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.building_areas_view.building_widgets_by_row:
+            building_data = {
+                "Building Name": row[0].get(),
+                "Floors Above Grade": row[1].get(),
+                "Floors Below Grade": row[2].get(),
+            }
+            subview_data.append(building_data)
+        return subview_data
+
 
 class BuildingAreasSubview(CTkXYFrame):
     def __init__(self, view_frame):
@@ -404,6 +421,7 @@ class BuildingAreasSubview(CTkXYFrame):
         self.building_areas_view = view_frame.master
         self.app_data = self.building_areas_view.app_data
         self.is_view_populated = False
+        self.json_representation = "building_areas"
         self.building_area_count = 0
 
         self.add_area_button = ctk.CTkButton(
@@ -597,3 +615,19 @@ class BuildingAreasSubview(CTkXYFrame):
         # TODO: This separate building combos list will go away when app data structure is folded in
         self.building_areas_view.building_combos.append(building_name_combo)
         self.building_area_count += 1
+
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.building_areas_view.building_area_widgets_by_row:
+            building_data = {
+                "Building Name": row[0].get(),
+                "Building Area Name": row[1].get(),
+                "Fenestration Area Type": row[2].get(),
+                "Lighting Area Type": row[3].get(),
+                "HVAC Area Type": row[4].get(),
+                "BPF Area Type": row[5].get(),
+            }
+            if not self.app_data.is_all_new_construction:
+                building_data["All New"] = row[6].get()
+            subview_data.append(building_data)
+        return subview_data

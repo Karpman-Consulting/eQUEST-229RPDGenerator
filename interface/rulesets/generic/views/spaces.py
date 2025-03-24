@@ -2,7 +2,6 @@ import customtkinter as ctk
 
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
-from interface.main_app_data import ASHRAE9012019ModelOptions
 from interface.constants import *
 
 
@@ -72,6 +71,12 @@ class SpacesView(BaseView):
         self.current_subview.focus_set()
         self.current_subview.open_subview()
 
+    def get_view_data(self):
+        view_data = {}
+        for subview in self.subviews.values():
+            view_data[subview.json_representation] = subview.get_subview_data()
+        return view_data
+
 
 class SpacesSubview(CTkXYFrame):
     def __init__(self, view_frame):
@@ -79,6 +84,8 @@ class SpacesSubview(CTkXYFrame):
         self.spaces_view = view_frame.master
         self.app_data = self.spaces_view.app_data
         self.is_view_populated = False
+        self.json_representation = "spaces"
+        self.widget_rows = []
 
     def __repr__(self):
         return "SpacesSubview"
@@ -146,6 +153,7 @@ class SpacesSubview(CTkXYFrame):
     def add_row(self, i, space_name):
         name_label = ctk.CTkLabel(self, text=f"{space_name}")
         name_label.grid(row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W)
+        status_combo = None
         if not self.app_data.is_all_new_construction.get():
             status_combo = ctk.CTkComboBox(
                 self,
@@ -218,3 +226,36 @@ class SpacesSubview(CTkXYFrame):
         daylighting_modeled_checkbox.grid(
             row=(i + 1), column=9, padx=PAD20END, pady=PAD20END
         )
+
+        self.widget_rows.append(
+            [
+                name_label,
+                status_combo,
+                lighting_space_type_combo,
+                envelope_space_type_combo,
+                ventilation_space_type_combo,
+                swh_space_type_combo,
+                lighting_occ_controls_combo,
+                daylighting_controls_combo,
+                occ_controls_modeled_checkbox,
+                daylighting_modeled_checkbox,
+            ]
+        )
+
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.widget_rows:
+            space_data = {
+                "name": row[0].cget("text"),
+                "status": row[1].get() if row[1] else "",
+                "lighting_space_type": row[2].get(),
+                "envelope_space_type": row[3].get(),
+                "ventilation_space_type": row[4].get(),
+                "swh_space_type": row[5].get(),
+                "lighting_occ_controls": row[6].get(),
+                "daylighting_controls": row[7].get(),
+                "occ_controls_modeled": row[8].get(),
+                "daylighting_modeled": row[9].get(),
+            }
+            subview_data.append(space_data)
+        return subview_data

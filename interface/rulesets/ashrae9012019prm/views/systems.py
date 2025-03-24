@@ -158,6 +158,13 @@ class SystemsView(BaseView):
                     font=("Arial", 11, "bold"),
                 )
 
+    def get_view_data(self):
+        view_data = {}
+        for subview_name, subview in self.subviews.items():
+            subview_name = self.app_data.subview_name_to_json_key(subview_name)
+            view_data[subview_name] = subview.get_subview_data()
+        return view_data
+
 
 class HeatRejectionSubview(CTkXYFrame):
     def __init__(self, subview_frame):
@@ -165,6 +172,7 @@ class HeatRejectionSubview(CTkXYFrame):
         self.systems_view = subview_frame.master
         self.app_data = self.systems_view.window.main_app.data
         self.is_subview_populated = False
+        self.widget_rows = []
 
     def __repr__(self):
         return "HeatRejectionSubview"
@@ -209,6 +217,24 @@ class HeatRejectionSubview(CTkXYFrame):
         fan_type_combo._entry.configure(justify=LEFT)
         fan_type_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
 
+        self.widget_rows.append(
+            [
+                heat_rejection_label,
+                fan_type_combo,
+            ]
+        )
+
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.widget_rows:
+            subview_data.append(
+                {
+                    "Heat Rejection Name": row[0].cget("text"),
+                    "Fan Type": row[1].get(),
+                }
+            )
+        return subview_data
+
 
 class HVACSystemSubview(CTkXYFrame):
     def __init__(self, subview_frame):
@@ -216,6 +242,7 @@ class HVACSystemSubview(CTkXYFrame):
         self.systems_view = subview_frame.master
         self.app_data = self.systems_view.window.main_app.data
         self.is_subview_populated = False
+        self.widget_rows = []
 
     def __repr__(self):
         return "HVACSystemSubview"
@@ -277,3 +304,25 @@ class HVACSystemSubview(CTkXYFrame):
         air_filter_merv_rating_spinbox.grid(
             row=(i + 1), column=4, padx=PAD20END, pady=PAD20END
         )
+
+        self.widget_rows.append(
+            [
+                system_label,
+                dehumidification_type_combo,
+                ducted_supply_checkbox,
+                air_filter_merv_rating_spinbox,
+            ]
+        )
+
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.widget_rows:
+            subview_data.append(
+                {
+                    "HVAC System Name": row[0].cget("text"),
+                    "Dehumidification Type": row[1].get(),
+                    "Ducted Supply": row[2].get(),
+                    "Air Filter MERV Rating": row[3].get(),
+                }
+            )
+        return subview_data

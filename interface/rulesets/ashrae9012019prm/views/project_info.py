@@ -122,6 +122,12 @@ class ProjectInfoView(BaseView):
     def view_continue(self):
         self.window.show_view("Buildings")
 
+    def get_view_data(self):
+        view_data = {}
+        for subview in self.subviews.values():
+            view_data[subview.json_representation] = subview.get_subview_data()
+        return view_data
+
 
 class ProjectDetailsSubview(CTkXYFrame):
     def __init__(self, subview_frame):
@@ -130,6 +136,9 @@ class ProjectDetailsSubview(CTkXYFrame):
         self.app_data = self.project_info_view.window.main_app.data
         self.is_subview_populated = False
         validate_double_entry = self.register(self.app_data.validate_double_entry)
+
+        # Could be a method like the __repr()__ method. Or could BE the __repr()__ method
+        self.json_representation = "project_details"
 
         # Initialize Widgets
         self.options_frame = ctk.CTkFrame(subview_frame, fg_color="transparent")
@@ -326,6 +335,19 @@ class ProjectDetailsSubview(CTkXYFrame):
             self.pressure_units_label.grid_remove()
             self.site_testing_checkbox.grid_remove()
 
+    def get_subview_data(self):
+        return {
+            "ASHRAE Climate Zone": self.app_data.climate_zone.get(),
+            "Exterior Lighting Zone": self.app_data.lighting_zone.get(),
+            "Building Open From": self.open_from_input.get(),
+            "Building Open To": self.open_to_input.get(),
+            "Heating Design Day Criteria": (self.app_data.heating_design_day.get()),
+            "Cooling Design Day Criteria": (self.app_data.cooling_design_day.get()),
+            "Measured Infiltration": (self.app_data.has_measured_infiltration.get()),
+            "Pressure Difference": (self.app_data.measured_pressure_difference.get()),
+            "Based on Site Testing": (self.app_data.is_based_on_site_testing.get()),
+        }
+
 
 class ProjectConfigSubview(CTkXYFrame):
     def __init__(self, subview_frame):
@@ -335,6 +357,9 @@ class ProjectConfigSubview(CTkXYFrame):
         self.is_subview_populated = False
 
         self.ruleset_model_row_widgets = {ruleset: {} for ruleset in RULESETS}
+
+        # Could be a method like the __repr()__ method. Or could BE the __repr()__ method
+        self.json_representation = "project_configuration"
 
         # Initialize Widgets
         self.new_construction_checkbox = ctk.CTkCheckBox(
@@ -662,6 +687,19 @@ class ProjectConfigSubview(CTkXYFrame):
             self.output_dir_entry.delete(0, "end")
             self.output_dir_entry.insert(0, directory)
             self.app_data.output_directory.set(directory)
+
+    def get_subview_data(self):
+        subview_data = {
+            "Project Name": self.app_data.project_name.get(),
+            "Energy Code/Program": self.app_data.selected_ruleset.get(),
+            "Baseline Rotation Exempt": self.app_data.has_rotation_exception.get(),
+            "All New Construction": self.app_data.is_all_new_construction.get(),
+            "Output Directory": self.app_data.output_directory.get(),
+        }
+        for model_type, file_path in self.app_data.ruleset_model_file_paths.items():
+            if model_type != "None":
+                subview_data[model_type] = file_path
+        return subview_data
 
     @staticmethod
     def _get_trimmed_path(file_path: str) -> str:

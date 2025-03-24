@@ -67,6 +67,10 @@ class ZonesView(BaseView):
         zones_view.grid(row=0, column=0, sticky=FILL)
         zones_view.open_view()
 
+        # Update building areas on view open
+        for combo in self.building_areas_combos:
+            combo.configure(values=self.main_window.main_app.data.building_area_options)
+
     def get_view_data(self):
         view_data = {}
         for subview in self.subviews.values():
@@ -87,7 +91,6 @@ class ZonesSubview(CTkXYFrame):
         self.zone_comboboxes = {}
         self.zone_widgets = {}
         self.collapsed_floors = {}
-
         self.get_zones_by_floors()
 
     def __repr__(self):

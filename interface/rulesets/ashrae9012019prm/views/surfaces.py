@@ -52,7 +52,7 @@ class SurfacesView(BaseView):
     def open_view(self):
         self.toggle_active_button("Surfaces")
         self.grid_propagate(False)
-        self.main_window.show_baseline_proposed_toggle(False)
+        self.main_window.show_baseline_proposed_toggle(True)
 
         # 3 rows in the main surface view structure.
         # Subview frame (row 4, index 3) has a weight to make it fill up the empty space in the window
@@ -138,6 +138,13 @@ class SurfacesView(BaseView):
                     text_color=BLACK,
                 )
 
+    def get_view_data(self):
+        view_data = {}
+        for subview_name, subview in self.subviews.items():
+            subview_name = self.app_data.subview_name_to_json_key(subview_name)
+            view_data[subview_name] = subview.get_subview_data()
+            return view_data
+
 
 class DoorSurfaceSubview(CTkXYFrame):
     def __init__(self, subview_frame):
@@ -145,6 +152,8 @@ class DoorSurfaceSubview(CTkXYFrame):
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
         self.is_subview_populated = False
+        current_state = self.app_data.baseline_or_proposed.get()
+        self.widget_rows = []
 
     def __repr__(self):
         return "DoorSurfaceSubview"
@@ -186,3 +195,21 @@ class DoorSurfaceSubview(CTkXYFrame):
         classification_combo.set("Swinging Door")
         classification_combo._entry.configure(justify=LEFT)
         classification_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=PAD20END)
+
+        self.widget_rows.append(
+            [
+                surface_label,
+                classification_combo,
+            ]
+        )
+
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.widget_rows:
+            subview_data.append(
+                {
+                    "Door Name": row[0].cget("text"),
+                    "Classification": row[1].get(),
+                }
+            )
+        return subview_data

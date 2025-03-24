@@ -379,3 +379,7 @@ class MainAppData:
                 )
                 self.check_space_and_zone_data(rmd)
                 self.check_input_ratios(rmd)
+
+    @staticmethod
+    def subview_name_to_json_key(subview_name):
+        return subview_name.replace(" ", "_").lower().split("subview")[0]

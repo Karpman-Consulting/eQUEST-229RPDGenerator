@@ -577,6 +577,7 @@ class ProjectConfigSubview(CTkXYFrame):
             self.ruleset_models_frame, width=700, font=("Arial", 12)
         )
         model_type = model_text.replace("Design", "User")
+
         # Model Type may not exist in the dictionary if the user did not select a file for it or the user changed the ruleset after selecting files
         file_path = self.app_data.ruleset_model_file_paths[active_ruleset].get(
             model_type, ""
