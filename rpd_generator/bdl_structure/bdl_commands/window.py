@@ -15,6 +15,7 @@ SubsurfaceFrameOptions2019ASHRAE901 = SchemaEnums.schema_enums[
 SubsurfaceDynamicGlazingOptions = SchemaEnums.schema_enums[
     "SubsurfaceDynamicGlazingOptions"
 ]
+SurfaceClassificationOptions = SchemaEnums.schema_enums["SurfaceClassificationOptions"]
 StatusOptions = SchemaEnums.schema_enums["StatusOptions"]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_GlassTypeOptions = BDLEnums.bdl_enums["GlassTypeOptions"]
@@ -86,10 +87,7 @@ class Window(ChildNode):
                     frame_width * height + frame_width * width + 2 * frame_width**2
                 )
 
-        if (
-            self.parent.get_inp(BDL_ExteriorWallKeywords.LOCATION)
-            == BDL_WallLocationOptions.TOP
-        ):
+        if self.parent.classification == SurfaceClassificationOptions.CEILING:
             self.classification = SubsurfaceClassificationOptions.SKYLIGHT
             self.rmd.skylight_names.append(self.u_name)
         else:
