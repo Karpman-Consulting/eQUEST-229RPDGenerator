@@ -193,6 +193,7 @@ def calculate_results_of_performance_curves(
     evap_leaving_temp: float,
     condenser_entering_temp: float,
     load_ratio: float,
+    load_ratio_is_plr: bool = False,
 ) -> dict:
     """
     Calculates and returns the results of performance curves for capacity (`cap_f_t`),
@@ -210,6 +211,7 @@ def calculate_results_of_performance_curves(
         evap_leaving_temp (float): The evaporator leaving temperature.
         condenser_entering_temp (float): The condenser entering temperature.
         load_ratio (float): The current load ratio, typically between 0 and 1.
+        load_ratio_is_plr (bool): Whether the load ratio is a part-load ratio (PLR).
 
     Returns:
         Dict[str, Any]: A dictionary containing:
@@ -223,7 +225,6 @@ def calculate_results_of_performance_curves(
     results = {
         "cap_f_t": None,
         "eff_f_t": None,
-        "part_load_ratio": None,
         "eff_f_plr": None,
         "errors": [],
     }
@@ -250,7 +251,6 @@ def calculate_results_of_performance_curves(
         min_outputs["cap_f_t"],
         max_outputs["cap_f_t"],
     )
-    results["part_load_ratio"] = load_ratio / results["cap_f_t"]
 
     # Efficiency adjustment factor as a function of temperature can be Bi-Linear in T or Bi-Quadratic in T
     results["eff_f_t"] = CURVE_FUNCTION_MAP[eff_f_t_curve_type](
@@ -261,11 +261,17 @@ def calculate_results_of_performance_curves(
         max_outputs["eff_f_t"],
     )
 
+    if load_ratio_is_plr:
+        plr = load_ratio
+    else:
+        results["part_load_ratio"] = load_ratio / results["cap_f_t"]
+        plr = results["part_load_ratio"]
+
     # Efficiency adjustment factor as a function of part load can be Quadratic, Cubic, or Bi-Quadratic in Ratio&DeltaT
     if eff_f_plr_curve_type in [BDL_CurveFitTypes.QUADRATIC, BDL_CurveFitTypes.CUBIC]:
         results["eff_f_plr"] = CURVE_FUNCTION_MAP[eff_f_plr_curve_type](
             coefficients["eff_f_plr"],
-            results["part_load_ratio"],
+            plr,
             min_outputs["eff_f_plr"],
             max_outputs["eff_f_plr"],
         )
@@ -273,7 +279,7 @@ def calculate_results_of_performance_curves(
         delta_temp = condenser_entering_temp - evap_leaving_temp
         results["eff_f_plr"] = calculate_bi_quadratic(
             coefficients["eff_f_plr"],
-            results["part_load_ratio"],
+            plr,
             delta_temp,
             min_outputs["eff_f_plr"],
             max_outputs["eff_f_plr"],
