@@ -56,23 +56,21 @@ class TestInteriorWalls(unittest.TestCase):
             BDL_InteriorWallKeywords.INT_WALL_TYPE: BDL_InteriorWallTypes.STANDARD,
             BDL_InteriorWallKeywords.CONSTRUCTION: "Construction 1",
             BDL_InteriorWallKeywords.AREA: "200",
-            BDL_InteriorWallKeywords.TILT: "10",
+            BDL_InteriorWallKeywords.TILT: "0",
             BDL_InteriorWallKeywords.NEXT_TO: "Space 1",
             BDL_InteriorWallKeywords.AZIMUTH: "30",
             BDL_InteriorWallKeywords.SHADING_SURFACE: BDL_ShadingSurfaceOptions.NO,
             BDL_InteriorWallKeywords.INSIDE_SOL_ABS: [1.0, 2.0],
             BDL_InteriorWallKeywords.INSIDE_VIS_REFL: [0.5, 0.6],
         }
-
+        self.interior_wall.populate_data_elements()
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "Interior Wall 1",
             "subsurfaces": [],
             "construction": {
                 "id": "Construction 1",
-                "primary_layers": [
-                    {"id": "Simplified Material", "r_value": 0.6399999999999999}
-                ],
+                "primary_layers": [{"id": "Simplified Material", "r_value": 0.78}],
                 "framing_layers": [],
                 "insulation_locations": [],
                 "r_values": [],
@@ -88,7 +86,7 @@ class TestInteriorWalls(unittest.TestCase):
             "adjacent_to": "INTERIOR",
             "adjacent_zone": "Zone 1",
             "area": 200.0,
-            "tilt": 10.0,
+            "tilt": 0.0,
             "azimuth": 270.0,
             "classification": "CEILING",
             "does_cast_shade": False,
@@ -261,13 +259,13 @@ class TestInteriorWalls(unittest.TestCase):
             BDL_InteriorWallKeywords.INT_WALL_TYPE: BDL_InteriorWallTypes.STANDARD,
             BDL_InteriorWallKeywords.CONSTRUCTION: "Construction 1",
             BDL_InteriorWallKeywords.AREA: "200",
-            BDL_InteriorWallKeywords.TILT: "10",
+            BDL_InteriorWallKeywords.TILT: "90",
             BDL_InteriorWallKeywords.NEXT_TO: "Space 1",
             BDL_InteriorWallKeywords.SHADING_SURFACE: BDL_ShadingSurfaceOptions.NO,
             BDL_InteriorWallKeywords.INSIDE_SOL_ABS: [1.0, 2.0],
             BDL_InteriorWallKeywords.INSIDE_VIS_REFL: [0.5, 0.6],
         }
-
+        self.interior_wall.populate_data_elements()
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "Interior Wall 1",
@@ -292,8 +290,8 @@ class TestInteriorWalls(unittest.TestCase):
             "adjacent_to": "INTERIOR",
             "adjacent_zone": "Zone 1",
             "area": 200.0,
-            "tilt": 10.0,
-            "classification": "CEILING",
+            "tilt": 90.0,
+            "classification": "WALL",
             "does_cast_shade": False,
         }
 

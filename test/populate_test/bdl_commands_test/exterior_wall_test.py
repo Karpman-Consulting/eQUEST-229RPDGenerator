@@ -50,12 +50,12 @@ class TestExteriorWall(unittest.TestCase):
         self.construction.keyword_value_pairs = {
             BDL_ConstructionKeywords.ABSORPTANCE: "5.5",
             BDL_ConstructionKeywords.TYPE: BDL_ConstructionTypes.U_VALUE,
-            BDL_ConstructionKeywords.U_VALUE: "12.5",
+            BDL_ConstructionKeywords.U_VALUE: "0.5",
         }
         self.exterior_wall.keyword_value_pairs = {
             BDL_ExteriorWallKeywords.CONSTRUCTION: "Construction 1",
             BDL_ExteriorWallKeywords.AREA: "300",
-            BDL_ExteriorWallKeywords.TILT: "5",
+            BDL_ExteriorWallKeywords.TILT: "90",
             BDL_ExteriorWallKeywords.AZIMUTH: "132",
             BDL_ExteriorWallKeywords.SHADING_SURFACE: BDL_ShadingSurfaceOptions.NO,
             BDL_ExteriorWallKeywords.OUTSIDE_EMISS: "2.5",
@@ -72,14 +72,14 @@ class TestExteriorWall(unittest.TestCase):
                 "id": "Construction 1",
                 "insulation_locations": [],
                 "primary_layers": [
-                    {"id": "Simplified Material", "r_value": -0.6000000000000001}
+                    {"id": "Simplified Material", "r_value": 1.3199999999999998}
                 ],
                 "r_values": [],
-                "u_factor": 4.0,
+                "u_factor": 0.4608294930875576,
             },
             "area": 300.0,
-            "classification": SurfaceClassificationOptions.CEILING,
-            "tilt": 5.0,
+            "classification": SurfaceClassificationOptions.WALL,
+            "tilt": 90.0,
             "azimuth": 2.0,
             "adjacent_to": SurfaceAdjacencyOptions.EXTERIOR,
             "does_cast_shade": False,

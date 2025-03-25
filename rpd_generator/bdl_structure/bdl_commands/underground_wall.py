@@ -213,11 +213,14 @@ class BelowGradeWall(ChildNode):
         u_factor = self.construction.get("u_factor")
         if u_factor:
             if spec_method == BDL_ConstructionTypes.U_VALUE:
-                location = self.get_inp(BDL_UndergroundWallKeywords.LOCATION)
                 int_air_film_resistance = (
                     0.61
-                    if location == BDL_WallLocationOptions.TOP
-                    else 0.92 if location == BDL_WallLocationOptions.BOTTOM else 0.68
+                    if self.classification == SurfaceClassificationOptions.CEILING
+                    else (
+                        0.92
+                        if self.classification == SurfaceClassificationOptions.FLOOR
+                        else 0.68
+                    )
                 )
                 self.construction["primary_layers"][0]["r_value"] = (
                     1 / u_factor - int_air_film_resistance
