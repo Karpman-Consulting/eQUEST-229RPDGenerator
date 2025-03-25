@@ -735,6 +735,7 @@ class Chiller(BaseNode):
                     self.rated_leaving_evaporator_temperature,
                     self.rated_entering_condenser_temperature,
                     user_defined_rated_plr,
+                    load_ratio_is_plr=True,
                 )
             )
 
@@ -773,6 +774,7 @@ class Chiller(BaseNode):
                     self.rated_leaving_evaporator_temperature,
                     self.rated_entering_condenser_temperature,
                     user_defined_rated_plr,
+                    load_ratio_is_plr=True,
                 )
             )
             cap_f_t_result_design = curve_results_at_design_conditions_and_full_load[
@@ -896,6 +898,7 @@ class Chiller(BaseNode):
                 user_defined_leaving_evaporator_temperature,
                 user_defined_entering_condenser_temperature,
                 user_defined_rated_plr,
+                load_ratio_is_plr=True,
             )
         )
 
