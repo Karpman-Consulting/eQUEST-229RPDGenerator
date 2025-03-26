@@ -181,13 +181,16 @@ class Space(ChildNode, ParentNode):
         int_ltg_power = self.try_float(
             self.try_access_index(self.get_inp(BDL_SpaceKeywords.LIGHTING_KW), i)
         )
-        total_lpd = (
-            int_ltg_lpd + int_ltg_power * 1000 / self.floor_area
-            if int_ltg_lpd is not None
-            and int_ltg_power is not None
-            and self.floor_area is not None
-            else int_ltg_lpd
-        )
+
+        if int_ltg_lpd is not None and int_ltg_power is not None:
+            total_lpd = int_ltg_lpd + int_ltg_power * 1000 / self.floor_area
+        elif int_ltg_lpd is not None:
+            total_lpd = int_ltg_lpd
+        elif int_ltg_power is not None:
+            total_lpd = int_ltg_power * 1000 / self.floor_area
+        else:
+            total_lpd = None
+
         int_ltg_lighting_multiplier_schedule = schedule
 
         if i == 0:
