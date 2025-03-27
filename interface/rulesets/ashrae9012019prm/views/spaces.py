@@ -6,6 +6,7 @@ from interface.main_app_data import ASHRAE9012019ModelOptions
 from interface.constants import *
 from rpd_generator.bdl_structure.bdl_commands.space import BDL_SpaceKeywords, Space
 
+# TODO: Update some of these names to match naming convention in enums from dropdowns
 SPACE_TYPE_LPD = {
     "Auditorium": 0.90,
     "Convention center": 0.70,
@@ -113,7 +114,7 @@ SPACE_TYPE_LPD = {
     "Warehouse--Storage Area Smaller, hand-carried items": 1.40,
 }
 
-SPACE_TYPE_CODES = {
+SPACE_TYPES_MAP = {
     "001": "Auditorium",
     "002": "Convention center",
     "003": "Exercise center",
@@ -312,6 +313,7 @@ class SpacesSubview(CTkXYFrame):
         self.spaces_view = view_frame.master
         self.app_data = self.spaces_view.app_data
         self.is_view_populated = False
+        self.new_spaces = {}
 
     def __repr__(self):
         return "SpacesSubview"
@@ -461,6 +463,8 @@ class SpacesSubview(CTkXYFrame):
             row=(i + 1), column=9, padx=PAD20END, pady=PAD20END
         )
 
+    # TODO: Remove all the debugging prints at the very end, after review complete
+    #           useful to see results without having to dig into debugger
     def predict_space_type(self):
         """Predict the space type based on the specified space C-ACTIVITY-DESC"""
         baseline_rmd = self.app_data.get_rmd(ASHRAE9012019ModelOptions.BASELINE_0)
@@ -473,28 +477,23 @@ class SpacesSubview(CTkXYFrame):
                     BDL_SpaceKeywords.C_ACTIVITY_DESC
                 ).split("-")
             else:
-                # TODO: Throw error window? Just move on?
+                # Assign default activity type to each space
                 print("No C-ACTIVITY-DESC found for space:", space_name)
                 continue
-            if len(space_type_codes) > 1:
-                # Create (n-1) new spaces in all RMDs
-                # TODO: Don't we only need this for n == 2?
-                # TODO: Add this back in
-                # self.add_new_space(space_name)
-                pass
-            if len(space_type_codes) == 2:
+
+            num_space_types = len(space_type_codes)
+            if num_space_types == 2:
                 print("Space type codes:", space_type_codes)
                 # Get area, both LPDs, and lighting power for the space
                 space_area = space.try_float(space.get_inp(BDL_SpaceKeywords.AREA))
                 space_1_lpd = SPACE_TYPE_LPD.get(
-                    SPACE_TYPE_CODES.get(space_type_codes[0]), None
+                    SPACE_TYPES_MAP.get(space_type_codes[0]), None
                 )
                 space_2_lpd = SPACE_TYPE_LPD.get(
-                    SPACE_TYPE_CODES.get(space_type_codes[1]), None
+                    SPACE_TYPES_MAP.get(space_type_codes[1]), None
                 )
-                # TODO: See notes below in calculate_space_areas(). Lighting power is off.
                 space_lighting_power = space_area * space.try_float(
-                    space.get_inp(BDL_SpaceKeywords.LIGHTING_W_AREA)[0]
+                    space.int_ltg_power_per_area[0]
                 )
                 print("Space area:", space_area)
                 print("Space 1 LPD:", space_1_lpd)
@@ -507,15 +506,10 @@ class SpacesSubview(CTkXYFrame):
                 )
                 print("Space 1 area:", space_1_area)
                 print("Space 2 area:", space_2_area)
-                # self.assign_space_areas(space_name, space_1_area, space_2_area) TODO: add this back in
 
-                # Assign lighting power per area for each space
-                # TODO: Add this back in
-                # self.assign_lighting_power_per_area(space_name, space_1_lpd, space_2_lpd)
-
-                # Calculate and assign misc equipment power density
+                # Calculate misc equipment power density
                 space_1_misc_eq_power, space_2_misc_eq_power = (
-                    self.calculate_misc_equipment_power(
+                    self.calculate_value_proportionate_to_lpd(
                         space_1_area,
                         space_2_area,
                         space_1_lpd,
@@ -523,84 +517,143 @@ class SpacesSubview(CTkXYFrame):
                         space.try_float(space.misc_eq_power[0]),
                     )
                 )
-                # TODO: Add this back in
-                # self.assign_misc_eq_power(space_name, space_1_misc_eq_power, space_2_misc_eq_power)
+                print("Misc eq power:", space.misc_eq_power[0])
                 print("Space 1 misc eq power:", space_1_misc_eq_power)
                 print("Space 2 misc eq power:", space_2_misc_eq_power)
+
+                # Calculate number of occupants for each space
+                space_1_occupants, space_2_occupants = (
+                    self.calculate_value_proportionate_to_lpd(
+                        space_1_area,
+                        space_2_area,
+                        space_1_lpd,
+                        space_2_lpd,
+                        space.try_float(space.number_of_occupants),
+                    )
+                )
+                print("Occupants:", space.number_of_occupants)
+                print("Space 1 occupants:", space_1_occupants)
+                print("Space 2 occupants:", space_2_occupants)
                 print("--------------")
 
-    # Sample data. Will remove when done.
-    # "001": 0.39,
-    # "002": 0.48,
-    # "003": 0.60,
-    # "004": 0.61,
-    # "005": 0.23,
-    # "006": 0.27,
-    # 1 - 10596.96
-    # 4 - 2232.0
-    # 5 - 1413.0
-    def calculate_space_areas(self, space_area, lpd_1, lpd_2, lighting_power):
+                space_1_type = SPACE_TYPES_MAP[space_type_codes[0]]
+                space_2_type = SPACE_TYPES_MAP[space_type_codes[1]]
+
+                # Update all original space data (space 1)
+                self.update_original_space_data(
+                    space_name,
+                    space_1_area,
+                    space_1_lpd,
+                    space_1_misc_eq_power,
+                    space_1_occupants,
+                    space_1_type,
+                )
+
+                # Save new space data to temporary dictionary (space 2)
+                self.new_spaces[space_name] = {
+                    "floor_area": space_2_area,
+                    "int_ltg_power_per_area": space_2_lpd,
+                    "misc_eq_power": space_2_misc_eq_power,
+                    "number_of_occupants": space_2_occupants,
+                    "space_type": space_2_type,
+                }
+            elif num_space_types > 2:
+                # Create (n-1) new, default spaces in all RMDs
+                self.add_new_spaces((num_space_types - 1), space_name)
+
+        # Create and insert stored new spaces into all RMDs
+        self.assign_new_space_data()
+
+        # TODO: This is only here for testing to see changed RMD values. Remove when done
+        print("\n\nSpace data in each RMD after prediction:")
+        for rmd in self.app_data.rmds:
+            for name, data in rmd.bdl_obj_instances.items():
+                if type(data) == Space:
+                    print(f"Space name: {name}")
+                    print(f"Floor area: {data.floor_area}")
+                    print(f"Lighting power per area: {data.int_ltg_power_per_area}")
+                    print(f"Misc eq power: {data.misc_eq_power[0]}")
+                    print(f"Occupants: {data.number_of_occupants}")
+                    print(f"Lighting space type: {data.lighting_space_type}")
+                    print(f"Envelope space type: {data.envelope_space_type}")
+                    print(f"Ventilation space type: {data.ventilation_space_type}")
+                    print(f"SWH space type: {data.service_water_heating_space_type}")
+                    print("--------------")
+
+    @staticmethod
+    def calculate_space_areas(space_area, lpd_1, lpd_2, lighting_power):
         # X + Y = Space Area
         # X * LPD_1 + Y * LPD_2 = Lighting Power
-        # TODO: Math is right for solving system of equations but inputs are wrong (or just giving wacky results)
-        """Unless y_1 below and lighting power are very close to one another or lpd_1 and lpd_2 are very far apart
-        the results are outrageous. Let's discuss this.Right now lighting_power is calculated as:
-        lighting_w/area*area. It should be either
-        lighting_kw or lighting_w/area*area*(lighting schedule multiplier)."""
-        # TODO: Need to find the right method to calculate lighting power schedule multiplier.
         y_1 = lpd_1 * space_area
         y_2 = lpd_2 - lpd_1
         space_area_2 = (lighting_power - y_1) / y_2
         space_area_1 = space_area - space_area_2
         return space_area_1, space_area_2
 
-    def calculate_misc_equipment_power(
-        self, space_1_area, space_2_area, lpd_1, lpd_2, misc_eq_power
+    @staticmethod
+    def calculate_value_proportionate_to_lpd(
+        space_1_area, space_2_area, lpd_1, lpd_2, baseline_value
     ):
+        """Calculate the value proportionate to the lighting power density\
+        for any system of equations that follows this pattern:"""
         # b1*X + b2*Y = Baseline Space Misc. Eq. Power
         # a1/a2 = b1/b2
-        i1 = lpd_2 * misc_eq_power / space_1_area
+        i1 = lpd_2 * baseline_value / space_1_area
         i2 = lpd_2 * space_2_area / space_1_area
-        b2 = (i1 / (lpd_1 + i2)) * space_1_area
-        b1 = ((b2 * lpd_1) / lpd_2) * space_2_area
-        return b1, b2
+        b2 = i1 / (lpd_1 + i2)
+        b1 = (b2 * lpd_1) / lpd_2
+        return (b1 * space_1_area), (b2 * space_2_area)
 
-    def assign_space_areas(self, space_name, space_area_1, space_area_2):
-        """Assign the space areas to the respective spaces"""
-        new_space_name = f"{space_name}_2"
-        for rmd in self.app_data.rmds:
-            rmd.get_obj(space_name).keyword_value_pairs[
-                BDL_SpaceKeywords.AREA
-            ] = space_area_1
-            rmd.get_obj(new_space_name).keyword_value_pairs[
-                BDL_SpaceKeywords.AREA
-            ] = space_area_2
+    def add_new_spaces(self, num_spaces, space_name):
+        """Store new spaces so we can later add them to the RMDs"""
+        for i in range(num_spaces):
+            new_space_name = f"{space_name}_{i+2}"
+            self.new_spaces[new_space_name] = space_name
 
-    # TODO: lighting power density is what we should be assigning here?
-    def assign_lighting_power_per_area(self, space_name, lpd_1, lpd_2):
-        """Assign the lighting power per area to the respective spaces"""
-        new_space_name = f"{space_name}_2"
+    def update_original_space_data(
+        self, space_name, area, lpd, misc_eq_power, occupants, space_type
+    ):
+        """Update the original space data for all RMDs"""
         for rmd in self.app_data.rmds:
-            rmd.get_obj(space_name).keyword_value_pairs[
-                BDL_SpaceKeywords.LIGHTING_W_AREA
-            ] = lpd_1
-            rmd.get_obj(new_space_name).keyword_value_pairs[
-                BDL_SpaceKeywords.LIGHTING_W_AREA
-            ] = lpd_2
+            space = rmd.get_obj(space_name)
+            space.floor_area = area
+            space.int_ltg_power_per_area = lpd
+            space.misc_eq_power[0] = misc_eq_power
+            space.number_of_occupants = occupants
+            space.lighting_space_type = space_type
+            space.envelope_space_type = space_type
+            space.ventilation_space_type = space_type
+            space.service_water_heating_space_type = space_type
 
-    def assign_misc_eq_power(self, space_name, misc_eq_power_1, misc_eq_power_2):
-        """Assign the misc eq power to the respective spaces"""
-        new_space_name = f"{space_name}_2"
+    def assign_new_space_data(self):
+        """For every new space we created during the prediction, either add a default new
+        space or a new space with the calculated data values. Do this for every RMD.
+        Explanation: When we have a situation with more than 2 type codes, there are (n-1)
+        new spaces created that already have their '_#' suffixes. What is stored in their
+        'data' field in the new_spaces dictionary is the original space name that we need
+        to copy over the original space data. If we have a situation with only 2 type codes,
+        we create a new space with the original space name and the 'data' is actually
+        a dict of the data we calculated. The new space name w/ suffix is created here
+        """
+        # TODO: copy over original space data we need to populate where necessary
         for rmd in self.app_data.rmds:
-            rmd.get_obj(space_name).misc_eq_power[0] = misc_eq_power_1
-            rmd.get_obj(new_space_name).misc_eq_power[0] = misc_eq_power_2
-
-    def add_new_space(self, space_name):
-        """Add a new space to all RMDs"""
-        # TODO: probably a good spot to copy over original space data where necessary
-        for rmd in self.app_data.rmds:
-            original_space = rmd.get_obj(space_name)
-            new_space_name = f"{space_name}_2"
-            new_space = Space(new_space_name, original_space.parent, rmd)
-            rmd.bdl_obj_instances[new_space_name] = new_space
-            rmd.space_map[new_space_name] = rmd.space_map.get(space_name)
+            for name, data in self.new_spaces.items():
+                if type(data) == str:
+                    original_space = rmd.get_obj(data)
+                    new_space = Space(name, original_space.parent, rmd)
+                    rmd.bdl_obj_instances[name] = new_space
+                    rmd.space_map[name] = rmd.space_map.get(data)
+                elif type(data) == dict:
+                    original_space = rmd.get_obj(name)
+                    new_space_name = f"{name}_2"
+                    new_space = Space(new_space_name, original_space.parent, rmd)
+                    new_space.floor_area = data["floor_area"]
+                    new_space.int_ltg_power_per_area = data["int_ltg_power_per_area"]
+                    new_space.misc_eq_power[0] = data["misc_eq_power"]
+                    new_space.number_of_occupants = data["number_of_occupants"]
+                    new_space.lighting_space_type = data["space_type"]
+                    new_space.envelope_space_type = data["space_type"]
+                    new_space.ventilation_space_type = data["space_type"]
+                    new_space.service_water_heating_space_type = data["space_type"]
+                    rmd.bdl_obj_instances[new_space_name] = new_space
+                    rmd.space_map[new_space_name] = rmd.space_map.get(name)
