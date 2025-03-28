@@ -6,40 +6,39 @@ from interface.main_app_data import ASHRAE9012019ModelOptions
 from interface.constants import *
 from rpd_generator.bdl_structure.bdl_commands.space import BDL_SpaceKeywords, Space
 
-# TODO: Update some of these names to match naming convention in enums from dropdowns
 SPACE_TYPE_LPD = {
-    "Auditorium": 0.90,
-    "Convention center": 0.70,
-    "Exercise center": 0.30,
-    "Gymnasium": 0.40,
-    "Motion picture theater": 1.20,
-    "Penitentiary audience seating": 0.70,
-    "Performing arts theater": 2.60,
-    "Religious facility": 1.70,
-    "Sports arena": 0.40,
-    "Transportation facility": 0.50,
-    "All other audience seating areas": 0.90,
-    "Atrium <= 40 ft": 0.0375,  # per foot in total height. Revisit TODO
-    "Atrium > 40 ft": 0.50,  # + 0.025 per foot in total height. Revisit TODO
+    "Audience Seating Area - Auditorium": 0.90,
+    "Audience Seating Area - Convention center": 0.70,
+    "Audience Seating Area - Exercise center": 0.30,
+    "Audience Seating Area - Gymnasium": 0.40,
+    "Audience Seating Area - Motion picture theater": 1.20,
+    "Audience Seating Area - Penitentiary": 0.70,
+    "Audience Seating Area - Performing arts theater": 2.60,
+    "Audience Seating Area - Religious facility": 1.70,
+    "Audience Seating Area - Sports arena": 0.40,
+    "Audience Seating Area - Transportation facility": 0.50,
+    "Audience Seating Area - All other": 0.90,
+    "Atrium - Low/Medium": 0.0375,  # per foot in total height. Revisit TODO
+    "Atrium - High": 0.50,  # + 0.025 per foot in total height. Revisit TODO
     "Banking activity area": 1.50,
-    "Penitentiary classroom": 1.30,
-    "Preschool through 12th grade, laboratory, and shop classrooms": 1.40,
-    "All other classroom/lecture halls/training room": 1.40,
+    "Classroom/Lecture Hall/Training Room - Penitentiary": 1.30,
+    "Classroom/Lecture Hall/Training Room - School": 1.40,
+    "Classroom/Lecture Hall/Training Room - All other": 1.40,
     "Conference/Meeting/Multipurpose Room": 1.30,
     "Confinement Cells": 0.90,
     "Copy/Print Room": 0.90,
-    "Facility for the visually impaired corridor": 1.15,
-    "Hospital corridor": 1.00,
-    "Manufacturing facility corridor": 0.50,
-    "All other corridors": 0.50,
-    "Courtroom": 1.90,
+    "Corridor - Facility for the visually impaired corridor (and not used primarily by the staff)": 1.15,
+    "Corridor - Hospital": 1.00,
+    "Corridor - Manufacturing facility": 0.50,
+    "Corridor - All others": 0.50,
+    "Court room": 1.90,
     "Computer Room": 2.14,
-    "Penitentiary dining area": 1.30,
-    "Facility for the visually impaired dining room": 3.32,
-    "Bar/lounge or leisure dining": 1.40,
-    "Cafeteria or fast food dining": 0.90,
-    "Family dining": 2.10,
-    "All other dining areas": 0.90,
+    "Dining Area - Penitentiary": 1.30,
+    "Dining Area - Facility for the visually impaired dining room (and not used primarily by staff)": 3.32,
+    "Dining Area - Bar/lounge or leisure dining": 1.40,
+    "Dining Area - Cafeteria or fast food dining": 0.90,
+    "Dining Area - Family dining": 2.10,
+    "Dining Area - All others": 0.90,
     "Electrical/Mechanical Room": 1.50,
     "Emergency Vehicle Garage": 0.80,
     "Food Preparation Area": 1.20,
@@ -50,103 +49,103 @@ SPACE_TYPE_LPD = {
     "All other laboratories": 1.40,
     "Laundry/Washing Area": 0.60,
     "Loading Dock, Interior": 0.59,
-    "Facility for the visually impaired lobby": 2.26,
-    "Elevator lobby": 0.80,
-    "Hotel lobby": 1.10,
-    "Motion picture theater lobby": 1.10,
-    "Performing arts theater lobby": 3.30,
-    "All other lobbies": 1.30,
+    "Lobby - Facility for the visually impaired (and not used primarily by staff)": 2.26,
+    "Lobby - Elevator": 0.80,
+    "Lobby - Hotel": 1.10,
+    "Lobby - Motion picture theater": 1.10,
+    "Lobby - Performing arts theater": 3.30,
+    "Lobby - All others": 1.30,
     "Locker Room": 0.60,
-    "Healthcare facility lounge/breakroom": 0.80,
-    "All other lounges/breakrooms": 1.20,
-    "Enclosed office": 1.10,
-    "Open plan office": 1.10,
+    "Lounge/Breakroom - Healthcare facility": 0.80,
+    "Lounge/Breakroom - All others": 1.20,
+    "Office - Enclosed": 1.10,
+    "Office - Open plan": 1.10,
     "Parking Area, Interior": 0.20,
     "Pharmacy Area": 1.20,
-    "Facility for the visually impaired restroom": 1.52,
-    "All other restrooms": 0.90,
+    "Restroom - Facility for the visually impaired restroom (and not used primarily by staff)": 1.52,
+    "Restroom - All others": 0.90,
     "Sales Area": 1.70,
     "Seating Area, General": 0.68,
     "Stairwell": 0.60,
-    "Storage Room Hospital": 0.90,
-    "Storage Room >= 50 ft2": 0.80,
-    "Storage Room < 50 ft2": 0.80,
+    "Storage Room - Hospital": 0.90,
+    "Storage Room - Small": 0.80,
+    "Storage Room - Large": 0.80,
     "Vehicular Maintenance Area": 0.70,
     "Workshop": 1.90,
-    "Assisted Living Facility Chapel": 2.77,
-    "Assisted Living Facility Recreation room": 3.02,
-    "Convention Center--Exhibit Space": 1.30,
-    "Dormitory--Living Quarters": 1.11,
-    "Fire Station--Sleeping Quarters": 0.30,
-    "Gymnasium/Fitness Center Exercise area": 0.90,
-    "Gymnasium/Fitness Center Playing area": 1.40,
-    "Healthcare Facility Emergency room": 2.70,
-    "Healthcare Facility Exam/treatment room": 1.50,
-    "Healthcare Facility Medical supply room": 1.40,
-    "Healthcare Facility Nursery": 0.60,
-    "Healthcare Facility Nurse's station": 1.00,
-    "Healthcare Facility Operating room": 2.20,
-    "Healthcare Facility Patient room": 0.70,
-    "Healthcare Facility Physical therapy room": 0.90,
-    "Healthcare Facility Recovery room": 0.80,
-    "Library Reading area": 1.20,
-    "Library Stacks": 1.70,
-    "Manufacturing Facility Detailed manufacturing area": 2.10,
-    "Manufacturing Facility Equipment room": 1.20,
-    "Manufacturing Facility Extra high bay area (>50 ft floor-to-ceiling height)": 1.32,
-    "Manufacturing Facility High bay area (25 to 50 ft floor-to-ceiling height)": 1.70,
-    "Manufacturing Facility Low bay area (<25 ft floor-to-ceiling height)": 1.20,
-    "Museum General exhibition area": 1.00,
-    "Museum Restoration room": 1.70,
-    "Post Office--Sorting Area": 1.20,
-    "Religious Facility Fellowship hall": 0.90,
-    "Religious Facility Worship/pulpit/choir area": 2.40,
-    "Retail Facilities Dressing/fitting room": 0.89,
-    "Retail Facilities Mall concourse": 1.70,
-    "Sports Arena--Playing Area Class I facility": 4.61,
-    "Sports Arena--Playing Area Class II facility": 3.01,
-    "Sports Arena--Playing Area Class III facility": 2.26,
-    "Sports Arena--Playing Area Class IV facility": 1.50,
-    "Transportation Facility Baggage/carousel area": 1.00,
-    "Transportation Facility Airport concourse": 0.60,
-    "Transportation Facility Ticket counter": 1.50,
-    "Warehouse--Storage Area Medium to bulky, palletized items": 0.90,
-    "Warehouse--Storage Area Smaller, hand-carried items": 1.40,
+    "Assisted Living Facility - Chapel (used primarily by residents)": 2.77,
+    "Assisted Living Facility - Recreation room/common living room (and not used primarily by staff)": 3.02,
+    "Convention Center - Exhibit Space": 1.30,
+    "Dormitory - Living Quarters": 1.11,
+    "Fire Station - Sleeping Quarters": 0.30,
+    "Gymnasium/Fitness Center - Exercise area": 0.90,
+    "Gymnasium/Fitness Center - Playing area": 1.40,
+    "Healthcare Facility - Emergency room": 2.70,
+    "Healthcare Facility - Exam/treatment room": 1.50,
+    "Healthcare Facility - Medical supply room": 1.40,
+    "Healthcare Facility - Nursery": 0.60,
+    "Healthcare Facility - Nurse's station": 1.00,
+    "Healthcare Facility - Operating room": 2.20,
+    "Healthcare Facility - Patient room": 0.70,
+    "Healthcare Facility - Physical therapy room": 0.90,
+    "Healthcare Facility - Recovery room": 0.80,
+    "Library - Reading area": 1.20,
+    "Library - Stacks": 1.70,
+    "Manufacturing Facility - Detailed manufacturing area": 2.10,
+    "Manufacturing Facility - Equipment room": 1.20,
+    "Manufacturing Facility - Extra high bay area": 1.32,
+    "Manufacturing Facility - High bay area": 1.70,
+    "Manufacturing Facility - Low bay area": 1.20,
+    "Museum - General exhibition area": 1.00,
+    "Museum - Restoration room": 1.70,
+    "Post Office - Sorting Area": 1.20,
+    "Religious Facility - Fellowship hall": 0.90,
+    "Religious Facility - Worship/pulpit/choir area": 2.40,
+    "Retail Facilities - Dressing/fitting room": 0.89,
+    "Retail Facilities - Mall concourse": 1.70,
+    "Sports Arena - Playing Area Class I facility": 4.61,
+    "Sports Arena - Playing Area Class II facility": 3.01,
+    "Sports Arena - Playing Area Class III facility": 2.26,
+    "Sports Arena - Playing Area Class IV facility": 1.50,
+    "Transportation Facility - Baggage/carousel area": 1.00,
+    "Transportation Facility - Airport concourse": 0.60,
+    "Transportation Facility - Ticket counter": 1.50,
+    "Warehouse - Storage Area - Medium to bulky, palletized items": 0.90,
+    "Warehouse - Storage Area - Smaller, hand-carried items": 1.40,
 }
 
 SPACE_TYPES_MAP = {
-    "001": "Auditorium",
-    "002": "Convention center",
-    "003": "Exercise center",
-    "004": "Gymnasium",
-    "005": "Motion picture theater",
-    "006": "Penitentiary audience seating",
-    "007": "Performing arts theater",
-    "008": "Religious facility",
-    "009": "Sports arena",
-    "010": "Transportation facility",
-    "011": "All other audience seating areas",
-    "012": "Atrium <= 40 ft",
-    "013": "Atrium > 40 ft",
+    "001": "Audience Seating Area - Auditorium",
+    "002": "Audience Seating Area - Convention center",
+    "003": "Audience Seating Area - Exercise center",
+    "004": "Audience Seating Area - Gymnasium",
+    "005": "Audience Seating Area - Motion picture theater",
+    "006": "Audience Seating Area - Penitentiary",
+    "007": "Audience Seating Area - Performing arts theater",
+    "008": "Audience Seating Area - Religious facility",
+    "009": "Audience Seating Area - Sports arena",
+    "010": "Audience Seating Area - Transportation facility",
+    "011": "Audience Seating Area - All other",
+    "012": "Atrium - Low/Medium",
+    "013": "Atrium - High",
     "014": "Banking activity area",
-    "015": "Penitentiary classroom",
-    "016": "Preschool through 12th grade, laboratory, and shop classrooms",
-    "017": "All other classroom/lecture halls/training room",
+    "015": "Classroom/Lecture Hall/Training Room - Penitentiary",
+    "016": "Classroom/Lecture Hall/Training Room - School",
+    "017": "Classroom/Lecture Hall/Training Room - All other",
     "018": "Conference/Meeting/Multipurpose Room",
     "019": "Confinement Cells",
     "020": "Copy/Print Room",
-    "021": "Facility for the visually impaired corridor",
-    "022": "Hospital corridor",
-    "023": "Manufacturing facility corridor",
-    "024": "All other corridors",
-    "025": "Courtroom",
+    "021": "Corridor - Facility for the visually impaired (and not used primarily by the staff)",
+    "022": "Corridor - Hospital",
+    "023": "Corridor - Manufacturing facility",
+    "024": "Corridor - All others",
+    "025": "Court room",
     "026": "Computer Room",
-    "027": "Penitentiary dining area",
-    "028": "Facility for the visually impaired dining room",
-    "029": "Bar/lounge or leisure dining",
-    "030": "Cafeteria or fast food dining",
-    "031": "Family dining",
-    "032": "All other dining areas",
+    "027": "Dining Area - Penitentiary",
+    "028": "Dining Area - Facility for the visually impaired dining room (and not used primarily by staff)",
+    "029": "Dining Area - Bar/lounge or leisure dining",
+    "030": "Dining Area - Cafeteria or fast food dining",
+    "031": "Dining Area - Family dining",
+    "032": "Dining Area - All others",
     "033": "Electrical/Mechanical Room",
     "034": "Emergency Vehicle Garage",
     "035": "Food Preparation Area",
@@ -157,68 +156,68 @@ SPACE_TYPES_MAP = {
     "040": "All other laboratories",
     "041": "Laundry/Washing Area",
     "042": "Loading Dock, Interior",
-    "043": "Facility for the visually impaired lobby",
-    "044": "Elevator lobby",
-    "045": "Hotel lobby",
-    "046": "Motion picture theater lobby",
-    "047": "Performing arts theater lobby",
-    "048": "All other lobbies",
+    "043": "Lobby - Facility for the visually impaired lobby (and not used primarily by staff)",
+    "044": "Lobby - Elevator",
+    "045": "Lobby - Hotel",
+    "046": "Lobby - Motion picture theater",
+    "047": "Lobby - Performing arts theater",
+    "048": "Lobby - All others",
     "049": "Locker Room",
-    "050": "Healthcare facility lounge/breakroom",
-    "051": "All other lounges/breakrooms",
-    "052": "Enclosed office",
-    "053": "Open plan office",
+    "050": "Lounge/Breakroom - Healthcare facility",
+    "051": "Lounge/Breakroom - All others",
+    "052": "Office - Enclosed",
+    "053": "Office - Open plan",
     "054": "Parking Area, Interior",
     "055": "Pharmacy Area",
-    "056": "Facility for the visually impaired restroom",
-    "057": "All other restrooms",
+    "056": "Restroom - Facility for the visually impaired (and not used primarily by staff)",
+    "057": "Restroom - All others",
     "058": "Sales Area",
     "059": "Seating Area, General",
     "060": "Stairwell",
-    "061": "Storage Room Hospital",
-    "062": "Storage Room >= 50 ft2",
-    "063": "Storage Room < 50 ft2",
+    "061": "Storage Room - Hospital",
+    "062": "Storage Room - Small",
+    "063": "Storage Room - Large",
     "064": "Vehicular Maintenance Area",
     "065": "Workshop",
-    "066": "Assisted Living Facility Chapel",
-    "067": "Assisted Living Facility Recreation room",
-    "068": "Convention Center--Exhibit Space",
-    "069": "Dormitory--Living Quarters",
-    "070": "Fire Station--Sleeping Quarters",
-    "071": "Gymnasium/Fitness Center Exercise area",
-    "072": "Gymnasium/Fitness Center Playing area",
-    "073": "Healthcare Facility Emergency room",
-    "074": "Healthcare Facility Exam/treatment room",
-    "075": "Healthcare Facility Medical supply room",
-    "076": "Healthcare Facility Nursery",
-    "077": "Healthcare Facility Nurse's station",
-    "078": "Healthcare Facility Operating room",
-    "079": "Healthcare Facility Patient room",
-    "080": "Healthcare Facility Physical therapy room",
-    "081": "Healthcare Facility Recovery room",
-    "082": "Library Reading area",
-    "083": "Library Stacks",
-    "084": "Manufacturing Facility Detailed manufacturing area",
-    "085": "Manufacturing Facility Equipment room",
-    "086": "Manufacturing Facility Extra high bay area (>50 ft floor-to-ceiling height)",
-    "087": "Manufacturing Facility High bay area (25 to 50 ft floor-to-ceiling height)",
-    "088": "Manufacturing Facility Low bay area (<25 ft floor-to-ceiling height)",
-    "089": "Museum General exhibition area",
-    "090": "Museum Restoration room",
-    "091": "Post Office--Sorting Area",
-    "092": "Religious Facility Fellowship hall",
-    "093": "Religious Facility Worship/pulpit/choir area",
-    "094": "Retail Facilities Dressing/fitting room",
-    "095": "Retail Facilities Mall concourse",
-    "096": "Sports Arena--Playing Area Class I facility",
-    "097": "Sports Arena--Playing Area Class II facility",
-    "098": "Sports Arena--Playing Area Class III facility",
-    "099": "Sports Arena--Playing Area Class IV facility",
-    "100": "Transportation Facility Baggage/carousel area",
-    "101": "Transportation Facility Airport concourse",
-    "102": "Transportation Facility Ticket counter",
-    "103": "Warehouse--Storage Area Medium to bulky, palletized items",
-    "104": "Warehouse--Storage Area Smaller, hand-carried items",
+    "066": "Assisted Living Facility - Chapel (used primarily by residents)",
+    "067": "Assisted Living Facility - Recreation room/common living room (and not used primarily by staff)",
+    "068": "Convention Center - Exhibit Space",
+    "069": "Dormitory - Living Quarters",
+    "070": "Fire Station - Sleeping Quarters",
+    "071": "Gymnasium/Fitness Center - Exercise area",
+    "072": "Gymnasium/Fitness Center - Playing area",
+    "073": "Healthcare Facility - Emergency room",
+    "074": "Healthcare Facility - Exam/treatment room",
+    "075": "Healthcare Facility - Medical supply room",
+    "076": "Healthcare Facility - Nursery",
+    "077": "Healthcare Facility - Nurse's station",
+    "078": "Healthcare Facility - Operating room",
+    "079": "Healthcare Facility - Patient room",
+    "080": "Healthcare Facility - Physical therapy room",
+    "081": "Healthcare Facility - Recovery room",
+    "082": "Library - Reading area",
+    "083": "Library - Stacks",
+    "084": "Manufacturing Facility - Detailed manufacturing area",
+    "085": "Manufacturing Facility - Equipment room",
+    "086": "Manufacturing Facility - Extra high bay area",
+    "087": "Manufacturing Facility - High bay area",
+    "088": "Manufacturing Facility - Low bay area",
+    "089": "Museum - General exhibition area",
+    "090": "Museum - Restoration room",
+    "091": "Post Office - Sorting Area",
+    "092": "Religious Facility - Fellowship hall",
+    "093": "Religious Facility - Worship/pulpit/choir area",
+    "094": "Retail Facilities - Dressing/fitting room",
+    "095": "Retail Facilities - Mall concourse",
+    "096": "Sports Arena - Playing Area Class I facility",
+    "097": "Sports Arena - Playing Area Class II facility",
+    "098": "Sports Arena - Playing Area Class III facility",
+    "099": "Sports Arena - Playing Area Class IV facility",
+    "100": "Transportation Facility - Baggage/carousel area",
+    "101": "Transportation Facility - Airport concourse",
+    "102": "Transportation Facility - Ticket counter",
+    "103": "Warehouse - Storage Area - Medium to bulky, palletized items",
+    "104": "Warehouse - Storage Area - Smaller, hand-carried items",
 }
 
 
@@ -463,8 +462,6 @@ class SpacesSubview(CTkXYFrame):
             row=(i + 1), column=9, padx=PAD20END, pady=PAD20END
         )
 
-    # TODO: Remove all the debugging prints at the very end, after review complete
-    #           useful to see results without having to dig into debugger
     def predict_space_type(self):
         """Predict the space type based on the specified space C-ACTIVITY-DESC"""
         baseline_rmd = self.app_data.get_rmd(ASHRAE9012019ModelOptions.BASELINE_0)
@@ -472,18 +469,15 @@ class SpacesSubview(CTkXYFrame):
             space = baseline_rmd.get_obj(space_name)
             space_type_codes = []
             if space.get_inp(BDL_SpaceKeywords.C_ACTIVITY_DESC):
-                print(space.get_inp(BDL_SpaceKeywords.C_ACTIVITY_DESC))
-                space_type_codes = space.get_inp(
-                    BDL_SpaceKeywords.C_ACTIVITY_DESC
-                ).split("-")
+                space_type_codes = self.get_valid_space_codes(space)
             else:
                 # Assign default activity type to each space
                 print("No C-ACTIVITY-DESC found for space:", space_name)
                 continue
 
             num_space_types = len(space_type_codes)
+            #  If exactly 2 valid activity type codes are found
             if num_space_types == 2:
-                print("Space type codes:", space_type_codes)
                 # Get area, both LPDs, and lighting power for the space
                 space_area = space.try_float(space.get_inp(BDL_SpaceKeywords.AREA))
                 space_1_lpd = SPACE_TYPE_LPD.get(
@@ -495,18 +489,10 @@ class SpacesSubview(CTkXYFrame):
                 space_lighting_power = space_area * space.try_float(
                     space.int_ltg_power_per_area[0]
                 )
-                print("Space area:", space_area)
-                print("Space 1 LPD:", space_1_lpd)
-                print("Space 2 LPD:", space_2_lpd)
-                print("Lighting power:", space_lighting_power)
-
                 # Calculate and save the areas of the spaces
                 space_1_area, space_2_area = self.calculate_space_areas(
                     space_area, space_1_lpd, space_2_lpd, space_lighting_power
                 )
-                print("Space 1 area:", space_1_area)
-                print("Space 2 area:", space_2_area)
-
                 # Calculate misc equipment power density
                 space_1_misc_eq_power, space_2_misc_eq_power = (
                     self.calculate_value_proportionate_to_lpd(
@@ -517,10 +503,6 @@ class SpacesSubview(CTkXYFrame):
                         space.try_float(space.misc_eq_power[0]),
                     )
                 )
-                print("Misc eq power:", space.misc_eq_power[0])
-                print("Space 1 misc eq power:", space_1_misc_eq_power)
-                print("Space 2 misc eq power:", space_2_misc_eq_power)
-
                 # Calculate number of occupants for each space
                 space_1_occupants, space_2_occupants = (
                     self.calculate_value_proportionate_to_lpd(
@@ -531,14 +513,9 @@ class SpacesSubview(CTkXYFrame):
                         space.try_float(space.number_of_occupants),
                     )
                 )
-                print("Occupants:", space.number_of_occupants)
-                print("Space 1 occupants:", space_1_occupants)
-                print("Space 2 occupants:", space_2_occupants)
-                print("--------------")
-
+                # Get space types for each space
                 space_1_type = SPACE_TYPES_MAP[space_type_codes[0]]
                 space_2_type = SPACE_TYPES_MAP[space_type_codes[1]]
-
                 # Update all original space data (space 1)
                 self.update_original_space_data(
                     space_name,
@@ -548,7 +525,6 @@ class SpacesSubview(CTkXYFrame):
                     space_1_occupants,
                     space_1_type,
                 )
-
                 # Save new space data to temporary dictionary (space 2)
                 self.new_spaces[space_name] = {
                     "floor_area": space_2_area,
@@ -557,9 +533,49 @@ class SpacesSubview(CTkXYFrame):
                     "number_of_occupants": space_2_occupants,
                     "space_type": space_2_type,
                 }
+
+                # TODO: Debugging prints to see the calculated values. Remove when done
+                print("Space type codes:", space_type_codes)
+                print("Space area:", space_area)
+                print("Space 1 LPD:", space_1_lpd)
+                print("Space 2 LPD:", space_2_lpd)
+                print("Lighting power:", space_lighting_power)
+                print("Space 1 area:", space_1_area)
+                print("Space 2 area:", space_2_area)
+                print("Misc eq power:", space.misc_eq_power[0])
+                print("Space 1 misc eq power:", space_1_misc_eq_power)
+                print("Space 2 misc eq power:", space_2_misc_eq_power)
+                print("Occupants:", space.number_of_occupants)
+                print("Space 1 occupants:", space_1_occupants)
+                print("Space 2 occupants:", space_2_occupants)
+                print("--------------")
+            # If more than 2 valid activity codes are found
             elif num_space_types > 2:
                 # Create (n-1) new, default spaces in all RMDs
                 self.add_new_spaces((num_space_types - 1), space_name)
+            # If only 1 valid activity type code is found, populate original space types
+            elif num_space_types == 1:
+                space.lighting_space_type = SPACE_TYPES_MAP[space_type_codes[0]]
+                space.envelope_space_type = SPACE_TYPES_MAP[space_type_codes[0]]
+                space.ventilation_space_type = SPACE_TYPES_MAP[space_type_codes[0]]
+                space.service_water_heating_space_type = SPACE_TYPES_MAP[
+                    space_type_codes[0]
+                ]
+            # If no valid activity type codes are found
+            else:
+                # Predict space type based on C-ACTIVITY-DESC as a substring of available space types
+                predicted_space_type = self.predict_space_type_from_substring(space)
+                # If space type not predicted, try to predict based on space LPD
+                if not predicted_space_type:
+                    predicted_space_type = self.predict_space_type_from_lpd(space)
+                # If space type is still not predicted, set default
+                if not predicted_space_type:
+                    predicted_space_type = "Office - Enclosed"
+                # Set space type to predicted space type
+                space.lighting_space_type = predicted_space_type
+                space.envelope_space_type = predicted_space_type
+                space.ventilation_space_type = predicted_space_type
+                space.service_water_heating_space_type = predicted_space_type
 
         # Create and insert stored new spaces into all RMDs
         self.assign_new_space_data()
@@ -579,6 +595,15 @@ class SpacesSubview(CTkXYFrame):
                     print(f"Ventilation space type: {data.ventilation_space_type}")
                     print(f"SWH space type: {data.service_water_heating_space_type}")
                     print("--------------")
+
+    @staticmethod
+    def get_valid_space_codes(space):
+        """If every code in the C-ACTIVITY-DESC is valid, return the list of codes. Otherwise return an empty list."""
+        space_type_codes = space.get_inp(BDL_SpaceKeywords.C_ACTIVITY_DESC).split("-")
+        for code in space_type_codes:
+            if code not in SPACE_TYPES_MAP.keys():
+                return []
+        return space_type_codes
 
     @staticmethod
     def calculate_space_areas(space_area, lpd_1, lpd_2, lighting_power):
@@ -603,6 +628,42 @@ class SpacesSubview(CTkXYFrame):
         b2 = i1 / (lpd_1 + i2)
         b1 = (b2 * lpd_1) / lpd_2
         return (b1 * space_1_area), (b2 * space_2_area)
+
+    @staticmethod
+    def predict_space_type_from_substring(space):
+        """If the C-ACTIVITY-DESC for a space is a substring of any space type, return the space type with the
+        lowest code as the predicted space type. Else return None."""
+        activity_desc = space.get_inp(BDL_SpaceKeywords.C_ACTIVITY_DESC)
+        if not activity_desc:
+            return None
+        predicted_space_types = {}
+        for code, space_type in SPACE_TYPES_MAP.items():
+            if activity_desc.lower() in space_type.lower():
+                predicted_space_types[space_type] = code
+        # If any predicted space types are found, keep the one with the lowest code
+        if predicted_space_types:
+            lowest_code = min(predicted_space_types.values())
+            return SPACE_TYPES_MAP[lowest_code]
+        return None
+
+    @staticmethod
+    def predict_space_type_from_lpd(space):
+        """If the LPD for a space matches any of the LPDs in the SPACE_TYPE_LPD dictionary, return the space type
+        with the lowest code as the predicted space type. Else return None."""
+        space_lpd = space.try_float(space.int_ltg_power_per_area[0])
+        if not space_lpd:
+            return None
+        predicted_space_types = {}
+        for space_type, lpd in SPACE_TYPE_LPD.items():
+            if space_lpd == lpd:
+                code = list(SPACE_TYPES_MAP.keys())[
+                    list(SPACE_TYPES_MAP.values()).index(space_type)
+                ]
+                predicted_space_types[code] = lpd
+        # If any predicted space types are found, keep the one with the lowest code
+        if predicted_space_types:
+            lowest_code = min(predicted_space_types.keys())
+            return SPACE_TYPES_MAP[lowest_code]
 
     def add_new_spaces(self, num_spaces, space_name):
         """Store new spaces so we can later add them to the RMDs"""
