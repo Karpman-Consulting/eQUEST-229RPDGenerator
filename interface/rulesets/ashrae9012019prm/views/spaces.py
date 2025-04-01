@@ -5,220 +5,7 @@ from interface.base_view import BaseView
 from interface.main_app_data import ASHRAE9012019ModelOptions
 from interface.constants import *
 from rpd_generator.bdl_structure.bdl_commands.space import BDL_SpaceKeywords, Space
-
-SPACE_TYPE_LPD = {
-    "Audience Seating Area - Auditorium": 0.90,
-    "Audience Seating Area - Convention center": 0.70,
-    "Audience Seating Area - Exercise center": 0.30,
-    "Audience Seating Area - Gymnasium": 0.40,
-    "Audience Seating Area - Motion picture theater": 1.20,
-    "Audience Seating Area - Penitentiary": 0.70,
-    "Audience Seating Area - Performing arts theater": 2.60,
-    "Audience Seating Area - Religious facility": 1.70,
-    "Audience Seating Area - Sports arena": 0.40,
-    "Audience Seating Area - Transportation facility": 0.50,
-    "Audience Seating Area - All other": 0.90,
-    "Atrium - Low/Medium": 0.0375,  # per foot in total height. Revisit TODO
-    "Atrium - High": 0.50,  # + 0.025 per foot in total height. Revisit TODO
-    "Banking activity area": 1.50,
-    "Classroom/Lecture Hall/Training Room - Penitentiary": 1.30,
-    "Classroom/Lecture Hall/Training Room - School": 1.40,
-    "Classroom/Lecture Hall/Training Room - All other": 1.40,
-    "Conference/Meeting/Multipurpose Room": 1.30,
-    "Confinement Cells": 0.90,
-    "Copy/Print Room": 0.90,
-    "Corridor - Facility for the visually impaired corridor (and not used primarily by the staff)": 1.15,
-    "Corridor - Hospital": 1.00,
-    "Corridor - Manufacturing facility": 0.50,
-    "Corridor - All others": 0.50,
-    "Court room": 1.90,
-    "Computer Room": 2.14,
-    "Dining Area - Penitentiary": 1.30,
-    "Dining Area - Facility for the visually impaired dining room (and not used primarily by staff)": 3.32,
-    "Dining Area - Bar/lounge or leisure dining": 1.40,
-    "Dining Area - Cafeteria or fast food dining": 0.90,
-    "Dining Area - Family dining": 2.10,
-    "Dining Area - All others": 0.90,
-    "Electrical/Mechanical Room": 1.50,
-    "Emergency Vehicle Garage": 0.80,
-    "Food Preparation Area": 1.20,
-    "Guest Room": 1.14,
-    "Judges Chambers": 1.30,
-    "Dwelling Unit": 1.07,
-    "Laboratory in or as a classroom": 1.40,
-    "All other laboratories": 1.40,
-    "Laundry/Washing Area": 0.60,
-    "Loading Dock, Interior": 0.59,
-    "Lobby - Facility for the visually impaired (and not used primarily by staff)": 2.26,
-    "Lobby - Elevator": 0.80,
-    "Lobby - Hotel": 1.10,
-    "Lobby - Motion picture theater": 1.10,
-    "Lobby - Performing arts theater": 3.30,
-    "Lobby - All others": 1.30,
-    "Locker Room": 0.60,
-    "Lounge/Breakroom - Healthcare facility": 0.80,
-    "Lounge/Breakroom - All others": 1.20,
-    "Office - Enclosed": 1.10,
-    "Office - Open plan": 1.10,
-    "Parking Area, Interior": 0.20,
-    "Pharmacy Area": 1.20,
-    "Restroom - Facility for the visually impaired restroom (and not used primarily by staff)": 1.52,
-    "Restroom - All others": 0.90,
-    "Sales Area": 1.70,
-    "Seating Area, General": 0.68,
-    "Stairwell": 0.60,
-    "Storage Room - Hospital": 0.90,
-    "Storage Room - Small": 0.80,
-    "Storage Room - Large": 0.80,
-    "Vehicular Maintenance Area": 0.70,
-    "Workshop": 1.90,
-    "Assisted Living Facility - Chapel (used primarily by residents)": 2.77,
-    "Assisted Living Facility - Recreation room/common living room (and not used primarily by staff)": 3.02,
-    "Convention Center - Exhibit Space": 1.30,
-    "Dormitory - Living Quarters": 1.11,
-    "Fire Station - Sleeping Quarters": 0.30,
-    "Gymnasium/Fitness Center - Exercise area": 0.90,
-    "Gymnasium/Fitness Center - Playing area": 1.40,
-    "Healthcare Facility - Emergency room": 2.70,
-    "Healthcare Facility - Exam/treatment room": 1.50,
-    "Healthcare Facility - Medical supply room": 1.40,
-    "Healthcare Facility - Nursery": 0.60,
-    "Healthcare Facility - Nurse's station": 1.00,
-    "Healthcare Facility - Operating room": 2.20,
-    "Healthcare Facility - Patient room": 0.70,
-    "Healthcare Facility - Physical therapy room": 0.90,
-    "Healthcare Facility - Recovery room": 0.80,
-    "Library - Reading area": 1.20,
-    "Library - Stacks": 1.70,
-    "Manufacturing Facility - Detailed manufacturing area": 2.10,
-    "Manufacturing Facility - Equipment room": 1.20,
-    "Manufacturing Facility - Extra high bay area": 1.32,
-    "Manufacturing Facility - High bay area": 1.70,
-    "Manufacturing Facility - Low bay area": 1.20,
-    "Museum - General exhibition area": 1.00,
-    "Museum - Restoration room": 1.70,
-    "Post Office - Sorting Area": 1.20,
-    "Religious Facility - Fellowship hall": 0.90,
-    "Religious Facility - Worship/pulpit/choir area": 2.40,
-    "Retail Facilities - Dressing/fitting room": 0.89,
-    "Retail Facilities - Mall concourse": 1.70,
-    "Sports Arena - Playing Area Class I facility": 4.61,
-    "Sports Arena - Playing Area Class II facility": 3.01,
-    "Sports Arena - Playing Area Class III facility": 2.26,
-    "Sports Arena - Playing Area Class IV facility": 1.50,
-    "Transportation Facility - Baggage/carousel area": 1.00,
-    "Transportation Facility - Airport concourse": 0.60,
-    "Transportation Facility - Ticket counter": 1.50,
-    "Warehouse - Storage Area - Medium to bulky, palletized items": 0.90,
-    "Warehouse - Storage Area - Smaller, hand-carried items": 1.40,
-}
-
-SPACE_TYPES_MAP = {
-    "001": "Audience Seating Area - Auditorium",
-    "002": "Audience Seating Area - Convention center",
-    "003": "Audience Seating Area - Exercise center",
-    "004": "Audience Seating Area - Gymnasium",
-    "005": "Audience Seating Area - Motion picture theater",
-    "006": "Audience Seating Area - Penitentiary",
-    "007": "Audience Seating Area - Performing arts theater",
-    "008": "Audience Seating Area - Religious facility",
-    "009": "Audience Seating Area - Sports arena",
-    "010": "Audience Seating Area - Transportation facility",
-    "011": "Audience Seating Area - All other",
-    "012": "Atrium - Low/Medium",
-    "013": "Atrium - High",
-    "014": "Banking activity area",
-    "015": "Classroom/Lecture Hall/Training Room - Penitentiary",
-    "016": "Classroom/Lecture Hall/Training Room - School",
-    "017": "Classroom/Lecture Hall/Training Room - All other",
-    "018": "Conference/Meeting/Multipurpose Room",
-    "019": "Confinement Cells",
-    "020": "Copy/Print Room",
-    "021": "Corridor - Facility for the visually impaired (and not used primarily by the staff)",
-    "022": "Corridor - Hospital",
-    "023": "Corridor - Manufacturing facility",
-    "024": "Corridor - All others",
-    "025": "Court room",
-    "026": "Computer Room",
-    "027": "Dining Area - Penitentiary",
-    "028": "Dining Area - Facility for the visually impaired dining room (and not used primarily by staff)",
-    "029": "Dining Area - Bar/lounge or leisure dining",
-    "030": "Dining Area - Cafeteria or fast food dining",
-    "031": "Dining Area - Family dining",
-    "032": "Dining Area - All others",
-    "033": "Electrical/Mechanical Room",
-    "034": "Emergency Vehicle Garage",
-    "035": "Food Preparation Area",
-    "036": "Guest Room",
-    "037": "Judges Chambers",
-    "038": "Dwelling Unit",
-    "039": "Laboratory in or as a classroom",
-    "040": "All other laboratories",
-    "041": "Laundry/Washing Area",
-    "042": "Loading Dock, Interior",
-    "043": "Lobby - Facility for the visually impaired lobby (and not used primarily by staff)",
-    "044": "Lobby - Elevator",
-    "045": "Lobby - Hotel",
-    "046": "Lobby - Motion picture theater",
-    "047": "Lobby - Performing arts theater",
-    "048": "Lobby - All others",
-    "049": "Locker Room",
-    "050": "Lounge/Breakroom - Healthcare facility",
-    "051": "Lounge/Breakroom - All others",
-    "052": "Office - Enclosed",
-    "053": "Office - Open plan",
-    "054": "Parking Area, Interior",
-    "055": "Pharmacy Area",
-    "056": "Restroom - Facility for the visually impaired (and not used primarily by staff)",
-    "057": "Restroom - All others",
-    "058": "Sales Area",
-    "059": "Seating Area, General",
-    "060": "Stairwell",
-    "061": "Storage Room - Hospital",
-    "062": "Storage Room - Small",
-    "063": "Storage Room - Large",
-    "064": "Vehicular Maintenance Area",
-    "065": "Workshop",
-    "066": "Assisted Living Facility - Chapel (used primarily by residents)",
-    "067": "Assisted Living Facility - Recreation room/common living room (and not used primarily by staff)",
-    "068": "Convention Center - Exhibit Space",
-    "069": "Dormitory - Living Quarters",
-    "070": "Fire Station - Sleeping Quarters",
-    "071": "Gymnasium/Fitness Center - Exercise area",
-    "072": "Gymnasium/Fitness Center - Playing area",
-    "073": "Healthcare Facility - Emergency room",
-    "074": "Healthcare Facility - Exam/treatment room",
-    "075": "Healthcare Facility - Medical supply room",
-    "076": "Healthcare Facility - Nursery",
-    "077": "Healthcare Facility - Nurse's station",
-    "078": "Healthcare Facility - Operating room",
-    "079": "Healthcare Facility - Patient room",
-    "080": "Healthcare Facility - Physical therapy room",
-    "081": "Healthcare Facility - Recovery room",
-    "082": "Library - Reading area",
-    "083": "Library - Stacks",
-    "084": "Manufacturing Facility - Detailed manufacturing area",
-    "085": "Manufacturing Facility - Equipment room",
-    "086": "Manufacturing Facility - Extra high bay area",
-    "087": "Manufacturing Facility - High bay area",
-    "088": "Manufacturing Facility - Low bay area",
-    "089": "Museum - General exhibition area",
-    "090": "Museum - Restoration room",
-    "091": "Post Office - Sorting Area",
-    "092": "Religious Facility - Fellowship hall",
-    "093": "Religious Facility - Worship/pulpit/choir area",
-    "094": "Retail Facilities - Dressing/fitting room",
-    "095": "Retail Facilities - Mall concourse",
-    "096": "Sports Arena - Playing Area Class I facility",
-    "097": "Sports Arena - Playing Area Class II facility",
-    "098": "Sports Arena - Playing Area Class III facility",
-    "099": "Sports Arena - Playing Area Class IV facility",
-    "100": "Transportation Facility - Baggage/carousel area",
-    "101": "Transportation Facility - Airport concourse",
-    "102": "Transportation Facility - Ticket counter",
-    "103": "Warehouse - Storage Area - Medium to bulky, palletized items",
-    "104": "Warehouse - Storage Area - Smaller, hand-carried items",
-}
+from interface.space_type_prediction_maps import *
 
 
 class SpacesView(BaseView):
@@ -465,15 +252,12 @@ class SpacesSubview(CTkXYFrame):
     def predict_space_type(self):
         """Predict the space type based on the specified space C-ACTIVITY-DESC"""
         baseline_rmd = self.app_data.get_rmd(ASHRAE9012019ModelOptions.BASELINE_0)
+        no_valid_codes = False
         for space_name in baseline_rmd.space_map.keys():
             space = baseline_rmd.get_obj(space_name)
             space_type_codes = []
             if space.get_inp(BDL_SpaceKeywords.C_ACTIVITY_DESC):
                 space_type_codes = self.get_valid_space_codes(space)
-            else:
-                # Assign default activity type to each space
-                print("No C-ACTIVITY-DESC found for space:", space_name)
-                continue
 
             num_space_types = len(space_type_codes)
             #  If exactly 2 valid activity type codes are found
@@ -489,66 +273,70 @@ class SpacesSubview(CTkXYFrame):
                 space_lighting_power = space_area * space.try_float(
                     space.int_ltg_power_per_area[0]
                 )
-                # Calculate and save the areas of the spaces
-                space_1_area, space_2_area = self.calculate_space_areas(
-                    space_area, space_1_lpd, space_2_lpd, space_lighting_power
-                )
-                # Calculate misc equipment power density
-                space_1_misc_eq_power, space_2_misc_eq_power = (
-                    self.calculate_value_proportionate_to_lpd(
-                        space_1_area,
-                        space_2_area,
-                        space_1_lpd,
-                        space_2_lpd,
-                        space.try_float(space.misc_eq_power[0]),
+                # If space LPD values match, we cannot predict the area
+                if space_1_lpd == space_2_lpd:
+                    no_valid_codes = True
+                else:
+                    # Calculate and save the areas of the spaces
+                    space_1_area, space_2_area = self.calculate_space_areas(
+                        space_area, space_1_lpd, space_2_lpd, space_lighting_power
                     )
-                )
-                # Calculate number of occupants for each space
-                space_1_occupants, space_2_occupants = (
-                    self.calculate_value_proportionate_to_lpd(
-                        space_1_area,
-                        space_2_area,
-                        space_1_lpd,
-                        space_2_lpd,
-                        space.try_float(space.number_of_occupants),
+                    # Calculate misc equipment power density
+                    space_1_misc_eq_power, space_2_misc_eq_power = (
+                        self.calculate_value_proportionate_to_lpd(
+                            space_1_area,
+                            space_2_area,
+                            space_1_lpd,
+                            space_2_lpd,
+                            space.try_float(space.misc_eq_power[0]),
+                        )
                     )
-                )
-                # Get space types for each space
-                space_1_type = SPACE_TYPES_MAP[space_type_codes[0]]
-                space_2_type = SPACE_TYPES_MAP[space_type_codes[1]]
-                # Update all original space data (space 1)
-                self.update_original_space_data(
-                    space_name,
-                    space_1_area,
-                    space_1_lpd,
-                    space_1_misc_eq_power,
-                    space_1_occupants,
-                    space_1_type,
-                )
-                # Save new space data to temporary dictionary (space 2)
-                self.new_spaces[space_name] = {
-                    "floor_area": space_2_area,
-                    "int_ltg_power_per_area": space_2_lpd,
-                    "misc_eq_power": space_2_misc_eq_power,
-                    "number_of_occupants": space_2_occupants,
-                    "space_type": space_2_type,
-                }
+                    # Calculate number of occupants for each space
+                    space_1_occupants, space_2_occupants = (
+                        self.calculate_value_proportionate_to_lpd(
+                            space_1_area,
+                            space_2_area,
+                            space_1_lpd,
+                            space_2_lpd,
+                            space.try_float(space.number_of_occupants),
+                        )
+                    )
+                    # Get space types for each space
+                    space_1_type = SPACE_TYPES_MAP[space_type_codes[0]]
+                    space_2_type = SPACE_TYPES_MAP[space_type_codes[1]]
+                    # Update all original space data (space 1)
+                    self.update_original_space_data(
+                        space_name,
+                        space_1_area,
+                        space_1_lpd,
+                        space_1_misc_eq_power,
+                        space_1_occupants,
+                        space_1_type,
+                    )
+                    # Save new space data to temporary dictionary (space 2)
+                    self.new_spaces[space_name] = {
+                        "floor_area": space_2_area,
+                        "int_ltg_power_per_area": space_2_lpd,
+                        "misc_eq_power": space_2_misc_eq_power,
+                        "number_of_occupants": space_2_occupants,
+                        "space_type": space_2_type,
+                    }
 
-                # TODO: Debugging prints to see the calculated values. Remove when done
-                print("Space type codes:", space_type_codes)
-                print("Space area:", space_area)
-                print("Space 1 LPD:", space_1_lpd)
-                print("Space 2 LPD:", space_2_lpd)
-                print("Lighting power:", space_lighting_power)
-                print("Space 1 area:", space_1_area)
-                print("Space 2 area:", space_2_area)
-                print("Misc eq power:", space.misc_eq_power[0])
-                print("Space 1 misc eq power:", space_1_misc_eq_power)
-                print("Space 2 misc eq power:", space_2_misc_eq_power)
-                print("Occupants:", space.number_of_occupants)
-                print("Space 1 occupants:", space_1_occupants)
-                print("Space 2 occupants:", space_2_occupants)
-                print("--------------")
+                    # TODO: Debugging prints to see the calculated values. Remove when done
+                    print("Space type codes:", space_type_codes)
+                    print("Space area:", space_area)
+                    print("Space 1 LPD:", space_1_lpd)
+                    print("Space 2 LPD:", space_2_lpd)
+                    print("Lighting power:", space_lighting_power)
+                    print("Space 1 area:", space_1_area)
+                    print("Space 2 area:", space_2_area)
+                    print("Misc eq power:", space.misc_eq_power[0])
+                    print("Space 1 misc eq power:", space_1_misc_eq_power)
+                    print("Space 2 misc eq power:", space_2_misc_eq_power)
+                    print("Occupants:", space.number_of_occupants)
+                    print("Space 1 occupants:", space_1_occupants)
+                    print("Space 2 occupants:", space_2_occupants)
+                    print("--------------")
             # If more than 2 valid activity codes are found
             elif num_space_types > 2:
                 # Create (n-1) new, default spaces in all RMDs
@@ -563,6 +351,10 @@ class SpacesSubview(CTkXYFrame):
                 ]
             # If no valid activity type codes are found
             else:
+                no_valid_codes = True
+
+            # Fall back to substring and LPD-based prediction or defaults if no valid codes (or invalid codes) found
+            if no_valid_codes:
                 # Predict space type based on C-ACTIVITY-DESC as a substring of available space types
                 predicted_space_type = self.predict_space_type_from_substring(space)
                 # If space type not predicted, try to predict based on space LPD
@@ -595,6 +387,36 @@ class SpacesSubview(CTkXYFrame):
                     print(f"Ventilation space type: {data.ventilation_space_type}")
                     print(f"SWH space type: {data.service_water_heating_space_type}")
                     print("--------------")
+                    print(
+                        f"Misc eq ids: {data.misc_eq_id if hasattr(data, 'misc_eq_id') else 'N/A'}"
+                    )
+                    print(
+                        f"Int lighting IDs: {data.int_ltg_id if hasattr(data, 'int_ltg_id') else 'N/A'}"
+                    )
+                    print(
+                        f"Occupant multiplier schedule: {data.occupant_multiplier_schedule if hasattr(data, 'occupant_multiplier_schedule') else 'N/A'}"
+                    )
+                    print(
+                        f"Occupant sensible heat gain: {data.occupant_sensible_heat_gain if hasattr(data, 'occupant_sensible_heat_gain') else 'N/A'}"
+                    )
+                    print(
+                        f"Occupant latent heat gain: {data.occupant_latent_heat_gain if hasattr(data, 'occupant_latent_heat_gain') else 'N/A'}"
+                    )
+                    print(
+                        f"Status type: {data.status_type if hasattr(data, 'status_type') else 'N/A'}"
+                    )
+                    print(
+                        f"Interior lighting multiplier schedule: {data.int_ltg_lighting_multiplier_schedule if hasattr(data, 'int_ltg_lighting_multiplier_schedule') else 'N/A'}"
+                    )
+                    print(
+                        f"Misc. equipment multiplier schedule: {data.misc_eq_multiplier_schedule if hasattr(data, 'misc_eq_multiplier_schedule') else 'N/A'}"
+                    )
+                    print(
+                        f"Misc. equipment sensible fraction: {data.misc_eq_sensible_fraction if hasattr(data, 'misc_eq_sensible_fraction') else 'N/A'}"
+                    )
+                    print(
+                        f"Misc. equipment latent fraction: {data.misc_eq_latent_fraction if hasattr(data, 'misc_eq_latent_fraction') else 'N/A'}"
+                    )
 
     @staticmethod
     def get_valid_space_codes(space):
@@ -699,6 +521,8 @@ class SpacesSubview(CTkXYFrame):
         # TODO: copy over original space data we need to populate where necessary
         for rmd in self.app_data.rmds:
             for name, data in self.new_spaces.items():
+                original_space = None
+                new_space = None
                 if type(data) == str:
                     original_space = rmd.get_obj(data)
                     new_space = Space(name, original_space.parent, rmd)
@@ -716,5 +540,33 @@ class SpacesSubview(CTkXYFrame):
                     new_space.envelope_space_type = data["space_type"]
                     new_space.ventilation_space_type = data["space_type"]
                     new_space.service_water_heating_space_type = data["space_type"]
+                    # Add new space to bdl_obj_instances
                     rmd.bdl_obj_instances[new_space_name] = new_space
                     rmd.space_map[new_space_name] = rmd.space_map.get(name)
+
+                # Copy over info from original space
+                # TODO: Need to address splitting misc_eq and int_lighting objs if more than 1
+                new_space.misc_eq_id = original_space.misc_eq_id
+                new_space.int_ltg_id = original_space.int_ltg_id
+                new_space.occupant_multiplier_schedule = (
+                    original_space.occupant_multiplier_schedule
+                )
+                new_space.occupant_sensible_heat_gain = (
+                    original_space.occupant_sensible_heat_gain
+                )
+                new_space.occupant_latent_heat_gain = (
+                    original_space.occupant_latent_heat_gain
+                )
+                new_space.status_type = original_space.status_type
+                new_space.int_ltg_lighting_multiplier_schedule = (
+                    original_space.int_ltg_lighting_multiplier_schedule
+                )
+                new_space.misc_eq_multiplier_schedule = (
+                    original_space.misc_eq_multiplier_schedule
+                )
+                new_space.misc_eq_sensible_fraction = (
+                    original_space.misc_eq_sensible_fraction
+                )
+                new_space.misc_eq_latent_fraction = (
+                    original_space.misc_eq_latent_fraction
+                )
