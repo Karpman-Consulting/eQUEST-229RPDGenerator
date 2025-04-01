@@ -21,8 +21,7 @@ class SurfacesView(BaseView):
         self.current_subview_name = None
 
         self.subviews = {
-            "Baseline DoorSurfaceSubview": DoorSurfaceSubview(self.subview_frame),
-            "Proposed DoorSurfaceSubview": DoorSurfaceSubview(self.subview_frame),
+            "DoorSurfaceSubview": DoorSurfaceSubview(self.subview_frame),
         }
         self.subview_buttons = {}
 
@@ -52,7 +51,7 @@ class SurfacesView(BaseView):
     def open_view(self):
         self.toggle_active_button("Surfaces")
         self.grid_propagate(False)
-        self.main_window.show_baseline_proposed_toggle(True)
+        self.main_window.show_baseline_proposed_toggle(False)
 
         # 3 rows in the main surface view structure.
         # Subview frame (row 4, index 3) has a weight to make it fill up the empty space in the window
@@ -140,9 +139,8 @@ class SurfacesView(BaseView):
 
     def get_view_data(self):
         view_data = {}
-        for subview_name, subview in self.subviews.items():
-            subview_name = self.app_data.subview_name_to_json_key(subview_name)
-            view_data[subview_name] = subview.get_subview_data()
+        for subview in self.subviews.values():
+            view_data[subview.json_representation] = subview.get_subview_data()
             return view_data
 
 
@@ -152,7 +150,7 @@ class DoorSurfaceSubview(CTkXYFrame):
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
         self.is_subview_populated = False
-        current_state = self.app_data.baseline_or_proposed.get()
+        self.json_representation = "doors"
         self.widget_rows = []
 
     def __repr__(self):
