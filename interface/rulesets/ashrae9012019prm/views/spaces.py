@@ -7,6 +7,9 @@ from interface.constants import *
 from rpd_generator.bdl_structure.bdl_commands.space import BDL_SpaceKeywords, Space
 from interface.space_type_prediction_maps import *
 
+# TODO: Remove DEBUG flag and associated print statements when we're done with development here
+DEBUG = True
+
 
 class SpacesView(BaseView):
     button_name = "Spaces"
@@ -322,21 +325,21 @@ class SpacesSubview(CTkXYFrame):
                         "space_type": space_2_type,
                     }
 
-                    # TODO: Debugging prints to see the calculated values. Remove when done
-                    print("Space type codes:", space_type_codes)
-                    print("Space area:", space_area)
-                    print("Space 1 LPD:", space_1_lpd)
-                    print("Space 2 LPD:", space_2_lpd)
-                    print("Lighting power:", space_lighting_power)
-                    print("Space 1 area:", space_1_area)
-                    print("Space 2 area:", space_2_area)
-                    print("Misc eq power:", space.misc_eq_power[0])
-                    print("Space 1 misc eq power:", space_1_misc_eq_power)
-                    print("Space 2 misc eq power:", space_2_misc_eq_power)
-                    print("Occupants:", space.number_of_occupants)
-                    print("Space 1 occupants:", space_1_occupants)
-                    print("Space 2 occupants:", space_2_occupants)
-                    print("--------------")
+                    if DEBUG:
+                        print("Space type codes:", space_type_codes)
+                        print("Space area:", space_area)
+                        print("Space 1 LPD:", space_1_lpd)
+                        print("Space 2 LPD:", space_2_lpd)
+                        print("Lighting power:", space_lighting_power)
+                        print("Space 1 area:", space_1_area)
+                        print("Space 2 area:", space_2_area)
+                        print("Misc eq power:", space.misc_eq_power[0])
+                        print("Space 1 misc eq power:", space_1_misc_eq_power)
+                        print("Space 2 misc eq power:", space_2_misc_eq_power)
+                        print("Occupants:", space.number_of_occupants)
+                        print("Space 1 occupants:", space_1_occupants)
+                        print("Space 2 occupants:", space_2_occupants)
+                        print("--------------")
             # If more than 2 valid activity codes are found
             elif num_space_types > 2:
                 # Create (n-1) new, default spaces in all RMDs
@@ -372,51 +375,53 @@ class SpacesSubview(CTkXYFrame):
         # Create and insert stored new spaces into all RMDs
         self.assign_new_space_data()
 
-        # TODO: This is only here for testing to see changed RMD values. Remove when done
-        print("\n\nSpace data in each RMD after prediction:")
-        for rmd in self.app_data.rmds:
-            for name, data in rmd.bdl_obj_instances.items():
-                if type(data) == Space:
-                    print(f"Space name: {name}")
-                    print(f"Floor area: {data.floor_area}")
-                    print(f"Lighting power per area: {data.int_ltg_power_per_area}")
-                    print(f"Misc eq power: {data.misc_eq_power[0]}")
-                    print(f"Occupants: {data.number_of_occupants}")
-                    print(f"Lighting space type: {data.lighting_space_type}")
-                    print(f"Envelope space type: {data.envelope_space_type}")
-                    print(f"Ventilation space type: {data.ventilation_space_type}")
-                    print(f"SWH space type: {data.service_water_heating_space_type}")
-                    print("--------------")
-                    print(
-                        f"Misc eq ids: {data.misc_eq_id if hasattr(data, 'misc_eq_id') else 'N/A'}"
-                    )
-                    print(
-                        f"Int lighting IDs: {data.int_ltg_id if hasattr(data, 'int_ltg_id') else 'N/A'}"
-                    )
-                    print(
-                        f"Occupant multiplier schedule: {data.occupant_multiplier_schedule if hasattr(data, 'occupant_multiplier_schedule') else 'N/A'}"
-                    )
-                    print(
-                        f"Occupant sensible heat gain: {data.occupant_sensible_heat_gain if hasattr(data, 'occupant_sensible_heat_gain') else 'N/A'}"
-                    )
-                    print(
-                        f"Occupant latent heat gain: {data.occupant_latent_heat_gain if hasattr(data, 'occupant_latent_heat_gain') else 'N/A'}"
-                    )
-                    print(
-                        f"Status type: {data.status_type if hasattr(data, 'status_type') else 'N/A'}"
-                    )
-                    print(
-                        f"Interior lighting multiplier schedule: {data.int_ltg_lighting_multiplier_schedule if hasattr(data, 'int_ltg_lighting_multiplier_schedule') else 'N/A'}"
-                    )
-                    print(
-                        f"Misc. equipment multiplier schedule: {data.misc_eq_multiplier_schedule if hasattr(data, 'misc_eq_multiplier_schedule') else 'N/A'}"
-                    )
-                    print(
-                        f"Misc. equipment sensible fraction: {data.misc_eq_sensible_fraction if hasattr(data, 'misc_eq_sensible_fraction') else 'N/A'}"
-                    )
-                    print(
-                        f"Misc. equipment latent fraction: {data.misc_eq_latent_fraction if hasattr(data, 'misc_eq_latent_fraction') else 'N/A'}"
-                    )
+        if DEBUG:
+            print("\n\nSpace data in each RMD after prediction:")
+            for rmd in self.app_data.rmds:
+                for name, data in rmd.bdl_obj_instances.items():
+                    if type(data) == Space:
+                        print(f"Space name: {name}")
+                        print(f"Floor area: {data.floor_area}")
+                        print(f"Lighting power per area: {data.int_ltg_power_per_area}")
+                        print(f"Misc eq power: {data.misc_eq_power[0]}")
+                        print(f"Occupants: {data.number_of_occupants}")
+                        print(f"Lighting space type: {data.lighting_space_type}")
+                        print(f"Envelope space type: {data.envelope_space_type}")
+                        print(f"Ventilation space type: {data.ventilation_space_type}")
+                        print(
+                            f"SWH space type: {data.service_water_heating_space_type}"
+                        )
+                        print("--------------")
+                        print(
+                            f"Misc eq ids: {data.misc_eq_id if hasattr(data, 'misc_eq_id') else 'N/A'}"
+                        )
+                        print(
+                            f"Int lighting IDs: {data.int_ltg_id if hasattr(data, 'int_ltg_id') else 'N/A'}"
+                        )
+                        print(
+                            f"Occupant multiplier schedule: {data.occupant_multiplier_schedule if hasattr(data, 'occupant_multiplier_schedule') else 'N/A'}"
+                        )
+                        print(
+                            f"Occupant sensible heat gain: {data.occupant_sensible_heat_gain if hasattr(data, 'occupant_sensible_heat_gain') else 'N/A'}"
+                        )
+                        print(
+                            f"Occupant latent heat gain: {data.occupant_latent_heat_gain if hasattr(data, 'occupant_latent_heat_gain') else 'N/A'}"
+                        )
+                        print(
+                            f"Status type: {data.status_type if hasattr(data, 'status_type') else 'N/A'}"
+                        )
+                        print(
+                            f"Interior lighting multiplier schedule: {data.int_ltg_lighting_multiplier_schedule if hasattr(data, 'int_ltg_lighting_multiplier_schedule') else 'N/A'}"
+                        )
+                        print(
+                            f"Misc. equipment multiplier schedule: {data.misc_eq_multiplier_schedule if hasattr(data, 'misc_eq_multiplier_schedule') else 'N/A'}"
+                        )
+                        print(
+                            f"Misc. equipment sensible fraction: {data.misc_eq_sensible_fraction if hasattr(data, 'misc_eq_sensible_fraction') else 'N/A'}"
+                        )
+                        print(
+                            f"Misc. equipment latent fraction: {data.misc_eq_latent_fraction if hasattr(data, 'misc_eq_latent_fraction') else 'N/A'}"
+                        )
 
     @staticmethod
     def get_valid_space_codes(space):
@@ -518,7 +523,6 @@ class SpacesSubview(CTkXYFrame):
         we create a new space with the original space name and the 'data' is actually
         a dict of the data we calculated. The new space name w/ suffix is created here
         """
-        # TODO: copy over original space data we need to populate where necessary
         for rmd in self.app_data.rmds:
             for name, data in self.new_spaces.items():
                 original_space = None
@@ -545,7 +549,6 @@ class SpacesSubview(CTkXYFrame):
                     rmd.space_map[new_space_name] = rmd.space_map.get(name)
 
                 # Copy over info from original space
-                # TODO: Need to address splitting misc_eq and int_lighting objs if more than 1
                 new_space.misc_eq_id = original_space.misc_eq_id
                 new_space.int_ltg_id = original_space.int_ltg_id
                 new_space.occupant_multiplier_schedule = (
