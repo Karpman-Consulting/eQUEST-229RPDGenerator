@@ -98,18 +98,6 @@ class ZonesSubview(CTkXYFrame):
         return "ZonesSubview"
 
     def open_view(self):
-        subview_data = self.app_data.all_project_data.get("zones")
-        if subview_data:
-            print("Populating ZonesSubview with pre-existing data...")
-            """
-            If there is pre-existing data, we should populate the widgets with it.
-            This ensures that when the view is opened, it reflects the saved state.
-            """
-            # for zone_data in subview_data:
-            #     zone_name = zone_data["Zone Name"]
-            #     if zone_name in self.zone_widgets:
-            #         widgets = self.zone_widgets[zone_name]
-            #         widgets[1].set(zone_data["Building Area"])
         self.populate_subview() if not self.is_view_populated else None
 
     def populate_subview(self):
@@ -129,6 +117,12 @@ class ZonesSubview(CTkXYFrame):
             self.collapsed_floors[floor] = True
             self.toggle_zone_visibility(floor, collapse_button)
 
+        """Try to populate the subview data after adding all rows. This will ensure that the 
+        values in the widgets are in sync with the project data. This should really only happen
+        if load data is called. There, the subview will be be marked as non-populated and will 
+        call this method again to refresh the data. On initial population (non-load), there should
+        not be any data in the project data to populate the widgets with."""
+        self.set_subview_data()
         self.is_view_populated = True
 
     def add_column_headers(self):
@@ -253,6 +247,32 @@ class ZonesSubview(CTkXYFrame):
             }
             subview_data.append(zone_data)
         return subview_data
+
+    def set_subview_data(self):
+        # TODO: Set floor row data
+        for zone_name, widgets in self.zone_widgets.items():
+            zone_row_data = self.get_zone_from_project_data(zone_name)
+            if not zone_row_data:
+                # If no data found for this zone, skip it
+                continue
+            widgets[1].set(
+                zone_row_data.get(
+                    "Building Area", self.app_data.building_area_options[0]
+                )
+            )
+            widgets[2].set(zone_row_data.get("Aggregated Zone Quantity", 1))
+            uses_measured_infiltration = zone_row_data.get(
+                "Measured Infiltration", False
+            )
+            widgets[3].select() if uses_measured_infiltration else widgets[3].deselect()
+
+    def get_zone_from_project_data(self, zone_name):
+        """Helper method to get zone data from the main application project data."""
+        zone_data = self.app_data.all_project_data.get("zones", [])
+        for zone in zone_data:
+            if zone.get("Zone Name") == zone_name:
+                return zone
+        return None
 
     def get_zones_by_floors(self):
         for zone_name in self.app_data.rmds[0].zone_names:
