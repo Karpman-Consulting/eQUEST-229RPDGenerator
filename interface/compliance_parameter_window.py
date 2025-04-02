@@ -5,7 +5,7 @@ import customtkinter as ctk
 from PIL import Image
 from tkinter import Menu
 from functools import partial
-from tkinter.filedialog import asksaveasfilename
+from tkinter.filedialog import asksaveasfilename, askopenfilename
 
 from interface.rulesets import import_views, static_files_path
 from interface.disclaimer_window import DisclaimerWindow
@@ -91,7 +91,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         menubar = Menu(self)
         file_menu = Menu(menubar, tearoff=0)
         file_menu.add_command(label="New", command="donothing")
-        file_menu.add_command(label="Open", command="donothing")
+        file_menu.add_command(label="Open", command=self.load_project_data)
         file_menu.add_command(label="Save", command=self.save_project_data)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.quit)
@@ -327,3 +327,28 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         )
         with open(file_path, "w") as project_save_file:
             json.dump(self.main_app.data.all_project_data, project_save_file, indent=4)
+
+    def load_project_data(self):
+        # Load the project data from a file
+        file_path = askopenfilename(
+            initialdir=str(Path(self.main_app.data.output_directory.get())),
+            title="Load Project Data",
+            filetypes=[("JSON", "*.json")],
+            defaultextension=".json",
+        )
+        if not file_path:
+            return
+
+        with open(file_path, "r") as project_load_file:
+            loaded_data = json.load(project_load_file)
+
+        # TODO: Check for changes in current data before loading. Throw warning dialog with y/n
+
+        # Clear current project data
+        self.main_app.data.all_project_data.clear()
+
+        # Update the main app's data with loaded data
+        self.main_app.data.all_project_data.update(loaded_data)
+        print(self.main_app.data.all_project_data)
+
+        # TODO: Refresh the views with the loaded data

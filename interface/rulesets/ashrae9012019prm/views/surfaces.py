@@ -145,12 +145,13 @@ class SurfacesView(BaseView):
 
 
 class DoorSurfaceSubview(CTkXYFrame):
+    json_representation = "doors"
+
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
         self.is_subview_populated = False
-        self.json_representation = "doors"
         self.widget_rows = []
 
     def __repr__(self):

@@ -164,12 +164,13 @@ class SurfacesView(BaseView):
 
 
 class ExteriorSurfaceSubview(CTkXYFrame):
+    json_representation = "exterior_surfaces"
+
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
         self.is_subview_populated = False
-        self.json_representation = "exterior_surfaces"
         self.widget_rows = []
 
     def __repr__(self):
@@ -227,12 +228,13 @@ class ExteriorSurfaceSubview(CTkXYFrame):
 
 
 class InteriorSurfaceSubview(CTkXYFrame):
+    json_representation = "interior_surfaces"
+
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
         self.is_subview_populated = False
-        self.json_representation = "interior_surfaces"
         self.widget_rows = []
 
     def __repr__(self):
@@ -290,12 +292,13 @@ class InteriorSurfaceSubview(CTkXYFrame):
 
 
 class UndergroundSurfaceSubview(CTkXYFrame):
+    json_representation = "underground_surfaces"
+
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
         self.is_subview_populated = False
-        self.json_representation = "underground_surfaces"
         self.widget_rows = []
 
     def __repr__(self):
@@ -353,12 +356,13 @@ class UndergroundSurfaceSubview(CTkXYFrame):
 
 
 class WindowSurfaceSubview(CTkXYFrame):
+    json_representation = "windows"
+
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
         self.is_subview_populated = False
-        self.json_representation = "windows"
         self.widget_rows = []
 
     def __repr__(self):
@@ -456,12 +460,13 @@ class WindowSurfaceSubview(CTkXYFrame):
 
 
 class SkylightSurfaceSubview(CTkXYFrame):
+    json_representation = "skylights"
+
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
         self.is_subview_populated = False
-        self.json_representation = "skylights"
         self.widget_rows = []
 
     def __repr__(self):
@@ -559,12 +564,13 @@ class SkylightSurfaceSubview(CTkXYFrame):
 
 
 class DoorSurfaceSubview(CTkXYFrame):
+    json_representation = "doors"
+
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.surfaces_view = subview_frame.master
         self.app_data = self.surfaces_view.window.main_app.data
         self.is_subview_populated = False
-        self.json_representation = "doors"
         self.widget_rows = []
 
     def __repr__(self):

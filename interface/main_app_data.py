@@ -53,6 +53,7 @@ class MainAppData:
         # View data
         self.building_area_options = []
         self.all_project_data = {}
+        self.loaded_project_data = {}
 
         self.rmds = []
         self.warnings = []
@@ -383,3 +384,49 @@ class MainAppData:
     @staticmethod
     def subview_name_to_json_key(subview_name):
         return subview_name.replace(" ", "_").lower().split("subview")[0]
+
+    def populate_project_config_data(self):
+        project_config_data = self.all_project_data.get("project_configuration")
+        if not project_config_data:
+            return
+        self.project_name = ctk.StringVar(
+            value=project_config_data.get("Project Name", "")
+        )
+        self.selected_ruleset = ctk.StringVar(
+            value=project_config_data.get("Energy Code/Program", "ASHRAE 90.1-2019 PRM")
+        )
+        self.has_rotation_exception = ctk.BooleanVar(
+            value=project_config_data.get("Baseline Rotation Exempt", False)
+        )
+        self.is_all_new_construction = ctk.BooleanVar(
+            value=project_config_data.get("All New Construction", False)
+        )
+        self.output_directory = ctk.StringVar(
+            value=project_config_data.get("Output Directory", "")
+        )
+        # Set model paths where they exist in the project config
+        selected_ruleset = self.selected_ruleset.get()
+        user_path = project_config_data.get("User")
+        if user_path:
+            self.ruleset_model_file_paths[selected_ruleset]["User"] = user_path
+        proposed_path = project_config_data.get("Proposed")
+        if proposed_path:
+            self.ruleset_model_file_paths[selected_ruleset]["Proposed"] = proposed_path
+        baseline_path = project_config_data.get("Baseline")
+        if baseline_path:
+            self.ruleset_model_file_paths[selected_ruleset]["Baseline"] = baseline_path
+        baseline_90_path = project_config_data.get("Baseline 90")
+        if baseline_90_path:
+            self.ruleset_model_file_paths[selected_ruleset][
+                "Baseline 90"
+            ] = baseline_90_path
+        baseline_180_path = project_config_data.get("Baseline 180")
+        if baseline_180_path:
+            self.ruleset_model_file_paths[selected_ruleset][
+                "Baseline 180"
+            ] = baseline_180_path
+        baseline_270_path = project_config_data.get("Baseline 270")
+        if baseline_270_path:
+            self.ruleset_model_file_paths[selected_ruleset][
+                "Baseline 270"
+            ] = baseline_270_path

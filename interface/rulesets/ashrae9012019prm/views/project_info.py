@@ -130,15 +130,14 @@ class ProjectInfoView(BaseView):
 
 
 class ProjectDetailsSubview(CTkXYFrame):
+    json_representation = "project_details"
+
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.project_info_view = subview_frame.master
         self.app_data = self.project_info_view.window.main_app.data
         self.is_subview_populated = False
         validate_double_entry = self.register(self.app_data.validate_double_entry)
-
-        # Could be a method like the __repr()__ method. Or could BE the __repr()__ method
-        self.json_representation = "project_details"
 
         # Initialize Widgets
         self.options_frame = ctk.CTkFrame(subview_frame, fg_color="transparent")
@@ -350,6 +349,8 @@ class ProjectDetailsSubview(CTkXYFrame):
 
 
 class ProjectConfigSubview(CTkXYFrame):
+    json_representation = "project_configuration"
+
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.project_info_view = subview_frame.master
@@ -357,9 +358,6 @@ class ProjectConfigSubview(CTkXYFrame):
         self.is_subview_populated = False
 
         self.ruleset_model_row_widgets = {ruleset: {} for ruleset in RULESETS}
-
-        # Could be a method like the __repr()__ method. Or could BE the __repr()__ method
-        self.json_representation = "project_configuration"
 
         # Initialize Widgets
         self.new_construction_checkbox = ctk.CTkCheckBox(

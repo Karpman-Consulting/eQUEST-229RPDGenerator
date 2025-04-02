@@ -241,13 +241,14 @@ class BuildingAreasView(BaseView):
 
 
 class BuildingSubview(CTkXYFrame):
+    json_representation = "buildings"
+
     def __init__(self, view_frame):
         super().__init__(view_frame)
         self.building_areas_view = view_frame.master
         self.app_data = self.building_areas_view.app_data
         self.is_view_populated = False
         self.building_count = 0
-        self.json_representation = "buildings"
 
         self.add_building_button = ctk.CTkButton(
             self,
@@ -404,6 +405,8 @@ class BuildingSubview(CTkXYFrame):
                 )
 
     def get_subview_data(self):
+        print("Getting subview data from BuildingSubview")
+        print("Length winfo_children: ", len(self.winfo_children()))
         subview_data = []
         for row in self.building_areas_view.building_widgets_by_row:
             building_data = {
@@ -416,12 +419,13 @@ class BuildingSubview(CTkXYFrame):
 
 
 class BuildingAreasSubview(CTkXYFrame):
+    json_representation = "building_areas"
+
     def __init__(self, view_frame):
         super().__init__(view_frame)
         self.building_areas_view = view_frame.master
         self.app_data = self.building_areas_view.app_data
         self.is_view_populated = False
-        self.json_representation = "building_areas"
         self.building_area_count = 0
 
         self.add_area_button = ctk.CTkButton(

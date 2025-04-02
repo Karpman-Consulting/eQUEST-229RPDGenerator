@@ -153,12 +153,13 @@ class SystemsView(BaseView):
 
 
 class HeatRejectionSubview(CTkXYFrame):
+    json_representation = "heat_rejections"
+
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.systems_view = subview_frame.master
         self.app_data = self.systems_view.window.main_app.data
         self.is_subview_populated = False
-        self.json_representation = "heat_rejections"
         self.widget_rows = []
 
     def __repr__(self):
@@ -214,12 +215,13 @@ class HeatRejectionSubview(CTkXYFrame):
 
 
 class HVACSystemSubview(CTkXYFrame):
+    json_representation = "hvac_systems"
+
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.systems_view = subview_frame.master
         self.app_data = self.systems_view.window.main_app.data
         self.is_subview_populated = False
-        self.json_representation = "hvac_systems"
         self.widget_rows = []
 
     def __repr__(self):
@@ -312,12 +314,13 @@ class HVACSystemSubview(CTkXYFrame):
 
 
 class ZonalExhaustSubview(CTkXYFrame):
+    json_representation = "zonal_exhaust_fans"
+
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.systems_view = subview_frame.master
         self.app_data = self.systems_view.window.main_app.data
         self.is_subview_populated = False
-        self.json_representation = "zonal_exhaust_fans"
         self.widget_rows = []
 
     def __repr__(self):

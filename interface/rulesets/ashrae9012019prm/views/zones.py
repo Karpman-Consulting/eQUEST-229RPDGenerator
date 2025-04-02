@@ -80,12 +80,13 @@ class ZonesView(BaseView):
 
 
 class ZonesSubview(CTkXYFrame):
+    json_representation = "zones"
+
     def __init__(self, view_frame):
         super().__init__(view_frame)
         self.zones_view = view_frame.master
         self.app_data = self.zones_view.window.main_app.data
         self.is_view_populated = False
-        self.json_representation = "zones"
         self.zones_by_floor = {}
         self.floor_comboboxes = {}
         self.zone_comboboxes = {}
@@ -97,6 +98,18 @@ class ZonesSubview(CTkXYFrame):
         return "ZonesSubview"
 
     def open_view(self):
+        subview_data = self.app_data.all_project_data.get("zones")
+        if subview_data:
+            print("Populating ZonesSubview with pre-existing data...")
+            """
+            If there is pre-existing data, we should populate the widgets with it.
+            This ensures that when the view is opened, it reflects the saved state.
+            """
+            # for zone_data in subview_data:
+            #     zone_name = zone_data["Zone Name"]
+            #     if zone_name in self.zone_widgets:
+            #         widgets = self.zone_widgets[zone_name]
+            #         widgets[1].set(zone_data["Building Area"])
         self.populate_subview() if not self.is_view_populated else None
 
     def populate_subview(self):

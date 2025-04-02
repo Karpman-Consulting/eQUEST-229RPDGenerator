@@ -79,12 +79,13 @@ class SpacesView(BaseView):
 
 
 class SpacesSubview(CTkXYFrame):
+    json_representation = "spaces"
+
     def __init__(self, view_frame):
         super().__init__(view_frame)
         self.spaces_view = view_frame.master
         self.app_data = self.spaces_view.app_data
         self.is_view_populated = False
-        self.json_representation = "spaces"
         self.widget_rows = []
 
     def __repr__(self):

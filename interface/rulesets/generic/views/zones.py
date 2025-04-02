@@ -79,12 +79,13 @@ class ZonesView(BaseView):
 
 
 class ZonesSubview(CTkXYFrame):
+    json_representation = "zones"
+
     def __init__(self, view_frame):
         super().__init__(view_frame)
         self.zones_view = view_frame.master
         self.app_data = self.zones_view.window.main_app.data
         self.is_view_populated = False
-        self.json_representation = "zones"
         self.child_space_window = None
         self.zones_by_floor = {}
         self.floor_comboboxes = {}
