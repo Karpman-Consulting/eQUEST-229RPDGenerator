@@ -77,20 +77,13 @@ class SurfacesView(BaseView):
         self.subview_frame.grid_rowconfigure(0, weight=1)
         self.subview_frame.grid_columnconfigure(0, weight=1)
 
-        self.current_subview_name = (
-            f"{self.app_data.baseline_or_proposed.get()} DoorSurfaceSubview"
-        )
-        self.show_subview(
-            f"{self.app_data.baseline_or_proposed.get()} DoorSurfaceSubview"
-        )
+        self.current_subview_name = "DoorSurfaceSubview"
+        self.show_subview("DoorSurfaceSubview")
 
     def create_subbutton_bar(self):
         callback_methods = {}
-        current_state = self.app_data.baseline_or_proposed.get()
         if len(self.app_data.rmds[0].door_names) > 0:
-            callback_methods["Doors"] = lambda: self.show_subview(
-                f"{current_state} DoorSurfaceSubview"
-            )
+            callback_methods["Doors"] = lambda: self.show_subview("DoorSurfaceSubview")
 
         for index, name in enumerate(callback_methods):
             # Create the button to go inside this button frame
@@ -173,6 +166,9 @@ class DoorSurfaceSubview(CTkXYFrame):
 
         self.is_subview_populated = True
 
+        # Populate with any loaded data if it exists
+        self.set_subview_data()
+
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
         name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
@@ -212,3 +208,20 @@ class DoorSurfaceSubview(CTkXYFrame):
                 }
             )
         return subview_data
+
+    def set_subview_data(self):
+        """Set the subview data from a previously saved state."""
+        for door_name, classification in self.widget_rows:
+            door_classification = self.get_classification_from_door_name(
+                door_name.cget("text")
+            )
+            if door_classification:
+                # Set the classification from the saved data. Else keep as default
+                classification.set(door_classification)
+
+    def get_classification_from_door_name(self, door_name):
+        door_data = self.app_data.all_project_data.get("doors", [])
+        for door in door_data:
+            if door.get("Door Name") == door_name:
+                return door.get("Classification", "Swinging Door")
+        return None

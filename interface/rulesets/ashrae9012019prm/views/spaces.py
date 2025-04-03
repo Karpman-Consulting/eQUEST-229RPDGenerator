@@ -34,6 +34,8 @@ class SpacesView(BaseView):
             "Baseline SpacesSubview": SpacesSubview(self.view_frame),
             "Proposed SpacesSubview": SpacesSubview(self.view_frame),
         }
+        self.subviews["Baseline SpacesSubview"].json_representation = "baseline_spaces"
+        self.subviews["Proposed SpacesSubview"].json_representation = "proposed_spaces"
 
     def __repr__(self):
         return "SpacesView"
@@ -92,13 +94,15 @@ class SpacesView(BaseView):
 
     def get_view_data(self):
         view_data = {}
-        for subview_name, subview in self.subviews.items():
-            subview_name = self.app_data.subview_name_to_json_key(subview_name)
-            view_data[subview_name] = subview.get_subview_data()
+        for subview in self.subviews.values():
+            view_data[subview.json_representation] = subview.get_subview_data()
         return view_data
 
 
 class SpacesSubview(CTkXYFrame):
+    # Set right after subviews are created in the SpacesView
+    json_representation = None
+
     def __init__(self, view_frame):
         super().__init__(view_frame)
         self.spaces_view = view_frame.master
@@ -133,6 +137,9 @@ class SpacesSubview(CTkXYFrame):
             self.add_row(i, space_name)
 
         self.is_view_populated = True
+
+        # Populate with any loaded data if it exists
+        self.set_subview_data()
 
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
@@ -273,16 +280,47 @@ class SpacesSubview(CTkXYFrame):
         subview_data = []
         for row in self.widget_rows:
             space_data = {
-                "name": row[0].cget("text"),
-                "status": row[1].get() if row[1] else "",
-                "lighting_space_type": row[2].get(),
-                "envelope_space_type": row[3].get(),
-                "ventilation_space_type": row[4].get(),
-                "swh_space_type": row[5].get(),
-                "lighting_occ_controls": row[6].get(),
-                "daylighting_controls": row[7].get(),
-                "occ_controls_modeled": row[8].get(),
-                "daylighting_modeled": row[9].get(),
+                "Name": row[0].cget("text"),
+                "Status": row[1].get() if row[1] else "",
+                "Lighting Space Type": row[2].get(),
+                "Envelope Space Type": row[3].get(),
+                "Ventilation Space Type": row[4].get(),
+                "SWH Space Type": row[5].get(),
+                "Lighting Occ. Controls": row[6].get(),
+                "Daylighting Controls": row[7].get(),
+                "Occ. Controls Modeled": row[8].get(),
+                "Daylighting Modeled": row[9].get(),
             }
             subview_data.append(space_data)
         return subview_data
+
+    # TODO: Right now missing data in a space row will default to empty strings for the fields.
+    #           Defaults will change once guessing is complete and the view structure changes.
+    def set_subview_data(self):
+        for row in self.widget_rows:
+            space_row_data = self.get_space_data(row[0].cget("text"))
+            if not space_row_data:
+                # If no data found, skip this row
+                continue
+            if row[1]:
+                # Set the status combo box if it exists
+                row[1].set(space_row_data.get("Status", ""))
+            row[2].set(space_row_data.get("Lighting Space Type", ""))
+            row[3].set(space_row_data.get("Envelope Space Type", ""))
+            row[4].set(space_row_data.get("Ventilation Space Type", ""))
+            row[5].set(space_row_data.get("SWH Space Type", ""))
+            row[6].set(space_row_data.get("Lighting Occ. Controls", ""))
+            row[7].set(space_row_data.get("Daylighting Controls", ""))
+            # Handle the checkboxes for modeled via schedule
+            occ_controls_modeled = space_row_data.get("Occ. Controls Modeled", False)
+            row[8].select() if occ_controls_modeled else row[8].deselect()
+            daylighting_modeled = space_row_data.get("Daylighting Modeled", False)
+            row[9].select() if daylighting_modeled else row[9].deselect()
+
+    def get_space_data(self, space_name):
+        """Helper method to get space data from the app_data for a specific space."""
+        spaces_data = self.app_data.all_project_data.get(self.json_representation, [])
+        for space in spaces_data:
+            if space.get("Name") == space_name:
+                return space
+        return None

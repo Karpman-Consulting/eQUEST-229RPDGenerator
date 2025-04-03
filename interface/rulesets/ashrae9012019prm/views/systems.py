@@ -26,6 +26,18 @@ class SystemsView(BaseView):
             "Baseline HeatRejectionSubview": HeatRejectionSubview(self.subview_frame),
             "Proposed HeatRejectionSubview": HeatRejectionSubview(self.subview_frame),
         }
+        self.subviews["Baseline HVACSystemSubview"].json_representation = (
+            "baseline_hvac_systems"
+        )
+        self.subviews["Proposed HVACSystemSubview"].json_representation = (
+            "proposed_hvac_systems"
+        )
+        self.subviews["Baseline HeatRejectionSubview"].json_representation = (
+            "baseline_heat_rejections"
+        )
+        self.subviews["Proposed HeatRejectionSubview"].json_representation = (
+            "proposed_heat_rejections"
+        )
 
         # Directions frame holds all directions info and will get 'gridded' within the surfaces view grid
         self.directions_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -160,13 +172,15 @@ class SystemsView(BaseView):
 
     def get_view_data(self):
         view_data = {}
-        for subview_name, subview in self.subviews.items():
-            subview_name = self.app_data.subview_name_to_json_key(subview_name)
-            view_data[subview_name] = subview.get_subview_data()
+        for subview in self.subviews.values():
+            view_data[subview.json_representation] = subview.get_subview_data()
         return view_data
 
 
 class HeatRejectionSubview(CTkXYFrame):
+    # Set right after subviews are created in the SystemsView
+    json_representation = None
+
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.systems_view = subview_frame.master
@@ -199,6 +213,9 @@ class HeatRejectionSubview(CTkXYFrame):
             self.add_row(i, heat_rejection_name)
 
         self.is_subview_populated = True
+
+        # Populate with any loaded data if it exists
+        self.set_subview_data()
 
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
@@ -235,8 +252,27 @@ class HeatRejectionSubview(CTkXYFrame):
             )
         return subview_data
 
+    def set_subview_data(self):
+        for heat_rejection_name, fan_type_widget in self.widget_rows:
+            fan_type = self.get_fan_type_from_hr_name(heat_rejection_name.cget("text"))
+            if fan_type:
+                # Set the combo box from the saved data. Else keep as default
+                fan_type_widget.set(fan_type)
+
+    def get_fan_type_from_hr_name(self, heat_rejection_name):
+        heat_rejection_data = self.app_data.all_project_data.get(
+            self.json_representation, []
+        )
+        for heat_rejection in heat_rejection_data:
+            if heat_rejection.get("Heat Rejection Name") == heat_rejection_name:
+                return heat_rejection.get("Fan Type", None)
+        return None
+
 
 class HVACSystemSubview(CTkXYFrame):
+    # Set right after subviews are created in the SystemsView
+    json_representation = None
+
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.systems_view = subview_frame.master
@@ -269,6 +305,9 @@ class HVACSystemSubview(CTkXYFrame):
             self.add_row(i, hvac_system_name)
 
         self.is_subview_populated = True
+
+        # Populate with any loaded data if it exists
+        self.set_subview_data()
 
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
@@ -326,3 +365,27 @@ class HVACSystemSubview(CTkXYFrame):
                 }
             )
         return subview_data
+
+    def set_subview_data(self):
+        # TODO: Better form to do this all over the place instead of row[i]...
+        #           Make cleanup pass
+        # for hvac_system_name, dehumidification_type_widget, ducted_supply_widget, air_filter_merv_rating_widget in self.widget_rows:
+        for row in self.widget_rows:
+            hvac_row_data = self.get_hvac_data(row[0].cget("text"))
+            if not hvac_row_data:
+                # If no data found for this hvac system, skip it
+                continue
+            row[1].set(hvac_row_data.get("Dehumidification Type", ""))
+            ducted_supply = hvac_row_data.get("Ducted Supply", False)
+            row[2].select() if ducted_supply else row[2].deselect()
+            row[3].set(hvac_row_data.get("Air Filter MERV Rating", 8))
+
+    def get_hvac_data(self, hvac_system_name):
+        """Helper method to get HVAC data from the app_data for a specific HVAC System"""
+        hvac_system_data = self.app_data.all_project_data.get(
+            self.json_representation, []
+        )
+        for hvac_system in hvac_system_data:
+            if hvac_system.get("HVAC System Name") == hvac_system_name:
+                return hvac_system
+        return None

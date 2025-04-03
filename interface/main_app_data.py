@@ -389,21 +389,17 @@ class MainAppData:
         project_config_data = self.all_project_data.get("project_configuration")
         if not project_config_data:
             return
-        self.project_name = ctk.StringVar(
-            value=project_config_data.get("Project Name", "")
+        self.project_name.set(project_config_data.get("Project Name", ""))
+        self.selected_ruleset.set(
+            project_config_data.get("Energy Code/Program", "ASHRAE 90.1-2019 PRM")
         )
-        self.selected_ruleset = ctk.StringVar(
-            value=project_config_data.get("Energy Code/Program", "ASHRAE 90.1-2019 PRM")
+        self.has_rotation_exception.set(
+            project_config_data.get("Baseline Rotation Exempt", False)
         )
-        self.has_rotation_exception = ctk.BooleanVar(
-            value=project_config_data.get("Baseline Rotation Exempt", False)
+        self.is_all_new_construction.set(
+            project_config_data.get("All New Construction", False)
         )
-        self.is_all_new_construction = ctk.BooleanVar(
-            value=project_config_data.get("All New Construction", False)
-        )
-        self.output_directory = ctk.StringVar(
-            value=project_config_data.get("Output Directory", "")
-        )
+        self.output_directory.set(project_config_data.get("Output Directory", ""))
         # Set model paths where they exist in the project config
         selected_ruleset = self.selected_ruleset.get()
         user_path = project_config_data.get("User")

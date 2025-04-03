@@ -322,6 +322,8 @@ class ProjectDetailsSubview(CTkXYFrame):
             row=2, column=0, columnspan=2, sticky="ew", padx=50
         )
 
+        self.set_subview_data()
+
     def toggle_measured_infiltration(self):
         if self.measured_infiltration_checkbox.get():
             self.pressure_difference_label.grid()
@@ -340,12 +342,49 @@ class ProjectDetailsSubview(CTkXYFrame):
             "Exterior Lighting Zone": self.app_data.lighting_zone.get(),
             "Building Open From": self.open_from_input.get(),
             "Building Open To": self.open_to_input.get(),
-            "Heating Design Day Criteria": (self.app_data.heating_design_day.get()),
-            "Cooling Design Day Criteria": (self.app_data.cooling_design_day.get()),
-            "Measured Infiltration": (self.app_data.has_measured_infiltration.get()),
-            "Pressure Difference": (self.app_data.measured_pressure_difference.get()),
-            "Based on Site Testing": (self.app_data.is_based_on_site_testing.get()),
+            "Heating Design Day Criteria": self.app_data.heating_design_day.get(),
+            "Cooling Design Day Criteria": self.app_data.cooling_design_day.get(),
+            "Measured Infiltration": self.app_data.has_measured_infiltration.get(),
+            "Pressure Difference": self.app_data.measured_pressure_difference.get(),
+            "Based on Site Testing": self.app_data.is_based_on_site_testing.get(),
         }
+
+    def set_subview_data(self):
+        project_details = self.app_data.all_project_data.get("project_details")
+        if not project_details:
+            return
+        self.app_data.climate_zone.set(project_details.get("ASHRAE Climate Zone", ""))
+        self.app_data.lighting_zone.set(
+            project_details.get("Exterior Lighting Zone", "")
+        )
+        self.open_from_input.delete(0, "end")
+        self.open_from_input.insert(0, project_details.get("Building Open From", ""))
+        self.open_to_input.delete(0, "end")
+        self.open_to_input.insert(0, project_details.get("Building Open To", ""))
+        self.app_data.heating_design_day.set(
+            project_details.get("Heating Design Day Criteria", "")
+        )
+        self.app_data.cooling_design_day.set(
+            project_details.get("Cooling Design Day Criteria", "")
+        )
+        self.app_data.measured_pressure_difference.set(
+            project_details.get("Pressure Difference", "")
+        )
+        self.app_data.has_measured_infiltration.set(
+            project_details.get("Measured Infiltration", False)
+        )
+        self.toggle_measured_infiltration()
+        if self.app_data.has_measured_infiltration.get():
+            self.measured_infiltration_checkbox.select()
+        else:
+            self.measured_infiltration_checkbox.deselect()
+        self.app_data.is_based_on_site_testing.set(
+            project_details.get("Based on Site Testing", False)
+        )
+        if self.app_data.is_based_on_site_testing.get():
+            self.site_testing_checkbox.select()
+        else:
+            self.site_testing_checkbox.deselect()
 
 
 class ProjectConfigSubview(CTkXYFrame):
@@ -694,7 +733,9 @@ class ProjectConfigSubview(CTkXYFrame):
             "All New Construction": self.app_data.is_all_new_construction.get(),
             "Output Directory": self.app_data.output_directory.get(),
         }
-        for model_type, file_path in self.app_data.ruleset_model_file_paths.items():
+        for model_type, file_path in self.app_data.ruleset_model_file_paths[
+            "ASHRAE 90.1-2019 PRM"
+        ].items():
             if model_type != "None":
                 subview_data[model_type] = file_path
         return subview_data
