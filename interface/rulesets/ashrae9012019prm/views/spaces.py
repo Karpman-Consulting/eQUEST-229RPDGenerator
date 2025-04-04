@@ -279,17 +279,29 @@ class SpacesSubview(CTkXYFrame):
     def get_subview_data(self):
         subview_data = []
         for row in self.widget_rows:
+            (
+                name_label,
+                status_combo,
+                lighting_space_type_combo,
+                envelope_space_type_combo,
+                ventilation_space_type_combo,
+                swh_space_type_combo,
+                lighting_occ_controls_combo,
+                daylighting_controls_combo,
+                occ_controls_modeled_checkbox,
+                daylighting_modeled_checkbox,
+            ) = row
             space_data = {
-                "Name": row[0].cget("text"),
-                "Status": row[1].get() if row[1] else "",
-                "Lighting Space Type": row[2].get(),
-                "Envelope Space Type": row[3].get(),
-                "Ventilation Space Type": row[4].get(),
-                "SWH Space Type": row[5].get(),
-                "Lighting Occ. Controls": row[6].get(),
-                "Daylighting Controls": row[7].get(),
-                "Occ. Controls Modeled": row[8].get(),
-                "Daylighting Modeled": row[9].get(),
+                "Name": name_label.cget("text"),
+                "Status": status_combo.get() if status_combo else "",
+                "Lighting Space Type": lighting_space_type_combo.get(),
+                "Envelope Space Type": envelope_space_type_combo.get(),
+                "Ventilation Space Type": ventilation_space_type_combo.get(),
+                "SWH Space Type": swh_space_type_combo.get(),
+                "Lighting Occ. Controls": lighting_occ_controls_combo.get(),
+                "Daylighting Controls": daylighting_controls_combo.get(),
+                "Occ. Controls Modeled": occ_controls_modeled_checkbox.get(),
+                "Daylighting Modeled": daylighting_modeled_checkbox.get(),
             }
             subview_data.append(space_data)
         return subview_data
@@ -298,24 +310,48 @@ class SpacesSubview(CTkXYFrame):
     #           Defaults will change once guessing is complete and the view structure changes.
     def set_subview_data(self):
         for row in self.widget_rows:
-            space_row_data = self.get_space_data(row[0].cget("text"))
+            (
+                name_label,
+                status_combo,
+                lighting_space_type_combo,
+                envelope_space_type_combo,
+                ventilation_space_type_combo,
+                swh_space_type_combo,
+                lighting_occ_controls_combo,
+                daylighting_controls_combo,
+                occ_controls_modeled_checkbox,
+                daylighting_modeled_checkbox,
+            ) = row
+            space_row_data = self.get_space_data(name_label.cget("text"))
             if not space_row_data:
                 # If no data found, skip this row
                 continue
-            if row[1]:
-                # Set the status combo box if it exists
-                row[1].set(space_row_data.get("Status", ""))
-            row[2].set(space_row_data.get("Lighting Space Type", ""))
-            row[3].set(space_row_data.get("Envelope Space Type", ""))
-            row[4].set(space_row_data.get("Ventilation Space Type", ""))
-            row[5].set(space_row_data.get("SWH Space Type", ""))
-            row[6].set(space_row_data.get("Lighting Occ. Controls", ""))
-            row[7].set(space_row_data.get("Daylighting Controls", ""))
+            status_combo.set(space_row_data.get("Status", "")) if status_combo else None
+            lighting_space_type_combo.set(space_row_data.get("Lighting Space Type", ""))
+            envelope_space_type_combo.set(space_row_data.get("Envelope Space Type", ""))
+            ventilation_space_type_combo.set(
+                space_row_data.get("Ventilation Space Type", "")
+            )
+            swh_space_type_combo.set(space_row_data.get("SWH Space Type", ""))
+            lighting_occ_controls_combo.set(
+                space_row_data.get("Lighting Occ. Controls", "")
+            )
+            daylighting_controls_combo.set(
+                space_row_data.get("Daylighting Controls", "")
+            )
             # Handle the checkboxes for modeled via schedule
             occ_controls_modeled = space_row_data.get("Occ. Controls Modeled", False)
-            row[8].select() if occ_controls_modeled else row[8].deselect()
+            (
+                occ_controls_modeled_checkbox.select()
+                if occ_controls_modeled
+                else occ_controls_modeled_checkbox.deselect()
+            )
             daylighting_modeled = space_row_data.get("Daylighting Modeled", False)
-            row[9].select() if daylighting_modeled else row[9].deselect()
+            (
+                daylighting_modeled_checkbox.select()
+                if daylighting_modeled
+                else daylighting_modeled_checkbox.deselect()
+            )
 
     def get_space_data(self, space_name):
         """Helper method to get space data from the app_data for a specific space."""

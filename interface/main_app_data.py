@@ -1,5 +1,8 @@
 import atexit
+import json
 import tempfile
+from tkinter.filedialog import askopenfilename
+
 import customtkinter as ctk
 from pathlib import Path
 
@@ -385,7 +388,28 @@ class MainAppData:
     def subview_name_to_json_key(subview_name):
         return subview_name.replace(" ", "_").lower().split("subview")[0]
 
+    def populate_project_data(self):
+        file_path = askopenfilename(
+            initialdir=str(Path(self.output_directory.get())),
+            title="Load Project Data",
+            filetypes=[("JSON", "*.json")],
+            defaultextension=".json",
+        )
+        if not file_path:
+            return
+
+        with open(file_path, "r") as project_load_file:
+            loaded_data = json.load(project_load_file)
+
+        # Clear current project data and update the main app's data with loaded data
+        self.all_project_data.clear()
+        self.all_project_data.update(loaded_data)
+        # Populate project config data
+        self.populate_project_config_data()
+
     def populate_project_config_data(self):
+        # TODO: Fix bug where trying to populate with "" blank data from
+        #       a loaded project file throws errors
         project_config_data = self.all_project_data.get("project_configuration")
         if not project_config_data:
             return

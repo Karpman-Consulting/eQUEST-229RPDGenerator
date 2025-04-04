@@ -7,6 +7,7 @@ from tkinter import Menu
 from functools import partial
 from tkinter.filedialog import asksaveasfilename, askopenfilename
 
+from interface.CTkMessagebox import CTkMessagebox
 from interface.rulesets import import_views, static_files_path
 from interface.disclaimer_window import DisclaimerWindow
 from interface.error_window import ErrorWindow
@@ -329,26 +330,18 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             json.dump(self.main_app.data.all_project_data, project_save_file, indent=4)
 
     def load_project_data(self):
-        # Load the project data from a file
-        file_path = askopenfilename(
-            initialdir=str(Path(self.main_app.data.output_directory.get())),
-            title="Load Project Data",
-            filetypes=[("JSON", "*.json")],
-            defaultextension=".json",
+        """Load a saved project data file. A saved data file will have already undergone
+        basic validation. Not necessarily true if use has manually edited the file.
+        Further validation will likely happen on RPD generation."""
+        # Throw warning dialog with y/n for replacing existing data
+        msg = CTkMessagebox(
+            title="Warning",
+            message="Loading a new project will overwrite/erase existing data. Would you like to continue?",
+            icon="warning",
+            option_1="No",
+            option_2="Yes",
         )
-        if not file_path:
+        if msg.get() == "No":
             return
-
-        with open(file_path, "r") as project_load_file:
-            loaded_data = json.load(project_load_file)
-
-        # TODO: Check for changes in current data before loading. Throw warning dialog with y/n
-
-        # Clear current project data
-        self.main_app.data.all_project_data.clear()
-
-        # Update the main app's data with loaded data
-        self.main_app.data.all_project_data.update(loaded_data)
-        print(self.main_app.data.all_project_data)
-
-        # TODO: Refresh the views with the loaded data
+        self.main_app.data.populate_project_data()
+        self.main_app.refresh_compliance_parameter_window()

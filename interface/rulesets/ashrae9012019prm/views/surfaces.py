@@ -200,11 +200,11 @@ class DoorSurfaceSubview(CTkXYFrame):
 
     def get_subview_data(self):
         subview_data = []
-        for row in self.widget_rows:
+        for door_name, classification in self.widget_rows:
             subview_data.append(
                 {
-                    "Door Name": row[0].cget("text"),
-                    "Classification": row[1].get(),
+                    "Door Name": door_name.cget("text"),
+                    "Classification": classification.get(),
                 }
             )
         return subview_data

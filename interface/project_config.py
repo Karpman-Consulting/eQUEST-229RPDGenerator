@@ -436,23 +436,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
 
     def load_project_data(self):
         """Load a saved project data file. In this window, we're loading from a blank state.
-        Slightly different flow from loading in compliance parameter window"""
-        file_path = askopenfilename(
-            initialdir=str(Path(self.main_app.data.output_directory.get())),
-            title="Load Project Data",
-            filetypes=[("JSON", "*.json")],
-            defaultextension=".json",
-        )
-        if not file_path:
-            return
-
-        with open(file_path, "r") as project_load_file:
-            loaded_data = json.load(project_load_file)
-
-        # Clear current project data and update the main app's data with loaded data
-        self.main_app.data.all_project_data.clear()
-        self.main_app.data.all_project_data.update(loaded_data)
-        # Populate project config data
-        self.main_app.data.populate_project_config_data()
-        # Validate the loaded project data to ensure it has all required fields, move to main window
+        Slightly different flow from loading in compliance parameter window.
+        Must perform validation checks"""
+        self.main_app.data.populate_project_data()
         self.validate_project_info()

@@ -238,12 +238,17 @@ class ZonesSubview(CTkXYFrame):
     def get_subview_data(self):
         subview_data = []
         for zone_name, widgets in self.zone_widgets.items():
+            (
+                building_area_combo,
+                aggregated_zone_qty_spinbox,
+                measured_infiltration_rate_checkbox,
+            ) = widgets[1:]
             zone_data = {
                 "Zone Name": zone_name,
                 "Floor": self.get_floor_from_zone(zone_name),
-                "Building Area": widgets[1].get(),
-                "Aggregated Zone Quantity": widgets[2].get(),
-                "Measured Infiltration": widgets[3].get(),
+                "Building Area": building_area_combo.get(),
+                "Aggregated Zone Quantity": aggregated_zone_qty_spinbox.get(),
+                "Measured Infiltration": measured_infiltration_rate_checkbox.get(),
             }
             subview_data.append(zone_data)
         return subview_data
@@ -255,16 +260,27 @@ class ZonesSubview(CTkXYFrame):
             if not zone_row_data:
                 # If no data found for this zone, skip it
                 continue
-            widgets[1].set(
+            (
+                building_area_combo,
+                aggregated_zone_qty_spinbox,
+                measured_infiltration_rate_checkbox,
+            ) = widgets[1:]
+            building_area_combo.set(
                 zone_row_data.get(
                     "Building Area", self.app_data.building_area_options[0]
                 )
             )
-            widgets[2].set(zone_row_data.get("Aggregated Zone Quantity", 1))
+            aggregated_zone_qty_spinbox.set(
+                zone_row_data.get("Aggregated Zone Quantity", 1)
+            )
             uses_measured_infiltration = zone_row_data.get(
                 "Measured Infiltration", False
             )
-            widgets[3].select() if uses_measured_infiltration else widgets[3].deselect()
+            (
+                measured_infiltration_rate_checkbox.select()
+                if uses_measured_infiltration
+                else measured_infiltration_rate_checkbox.deselect()
+            )
 
     def get_zone_from_project_data(self, zone_name):
         """Helper method to get zone data from the main application project data."""

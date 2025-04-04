@@ -243,21 +243,21 @@ class HeatRejectionSubview(CTkXYFrame):
 
     def get_subview_data(self):
         subview_data = []
-        for row in self.widget_rows:
+        for heat_rejection_label, fan_type_combo in self.widget_rows:
             subview_data.append(
                 {
-                    "Heat Rejection Name": row[0].cget("text"),
-                    "Fan Type": row[1].get(),
+                    "Heat Rejection Name": heat_rejection_label.cget("text"),
+                    "Fan Type": fan_type_combo.get(),
                 }
             )
         return subview_data
 
     def set_subview_data(self):
-        for heat_rejection_name, fan_type_widget in self.widget_rows:
-            fan_type = self.get_fan_type_from_hr_name(heat_rejection_name.cget("text"))
+        for heat_rejection_label, fan_type_combo in self.widget_rows:
+            fan_type = self.get_fan_type_from_hr_name(heat_rejection_label.cget("text"))
             if fan_type:
                 # Set the combo box from the saved data. Else keep as default
-                fan_type_widget.set(fan_type)
+                fan_type_combo.set(fan_type)
 
     def get_fan_type_from_hr_name(self, heat_rejection_name):
         heat_rejection_data = self.app_data.all_project_data.get(
@@ -356,29 +356,46 @@ class HVACSystemSubview(CTkXYFrame):
     def get_subview_data(self):
         subview_data = []
         for row in self.widget_rows:
+            (
+                system_label,
+                dehumidification_type_combo,
+                ducted_supply_checkbox,
+                air_filter_merv_rating_spinbox,
+            ) = row
             subview_data.append(
                 {
-                    "HVAC System Name": row[0].cget("text"),
-                    "Dehumidification Type": row[1].get(),
-                    "Ducted Supply": row[2].get(),
-                    "Air Filter MERV Rating": row[3].get(),
+                    "HVAC System Name": system_label.cget("text"),
+                    "Dehumidification Type": dehumidification_type_combo.get(),
+                    "Ducted Supply": ducted_supply_checkbox.get(),
+                    "Air Filter MERV Rating": air_filter_merv_rating_spinbox.get(),
                 }
             )
         return subview_data
 
     def set_subview_data(self):
-        # TODO: Better form to do this all over the place instead of row[i]...
-        #           Make cleanup pass
-        # for hvac_system_name, dehumidification_type_widget, ducted_supply_widget, air_filter_merv_rating_widget in self.widget_rows:
         for row in self.widget_rows:
-            hvac_row_data = self.get_hvac_data(row[0].cget("text"))
+            (
+                system_label,
+                dehumidification_type_combo,
+                ducted_supply_checkbox,
+                air_filter_merv_rating_spinbox,
+            ) = row
+            hvac_row_data = self.get_hvac_data(system_label.cget("text"))
             if not hvac_row_data:
                 # If no data found for this hvac system, skip it
                 continue
-            row[1].set(hvac_row_data.get("Dehumidification Type", ""))
+            dehumidification_type_combo.set(
+                hvac_row_data.get("Dehumidification Type", "")
+            )
             ducted_supply = hvac_row_data.get("Ducted Supply", False)
-            row[2].select() if ducted_supply else row[2].deselect()
-            row[3].set(hvac_row_data.get("Air Filter MERV Rating", 8))
+            (
+                ducted_supply_checkbox.select()
+                if ducted_supply
+                else ducted_supply_checkbox.deselect()
+            )
+            air_filter_merv_rating_spinbox.set(
+                hvac_row_data.get("Air Filter MERV Rating", 8)
+            )
 
     def get_hvac_data(self, hvac_system_name):
         """Helper method to get HVAC data from the app_data for a specific HVAC System"""
