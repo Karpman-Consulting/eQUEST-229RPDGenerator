@@ -134,8 +134,7 @@ class SurfacesView(BaseView):
         view_data = {}
         for subview in self.subviews.values():
             view_data[subview.json_representation] = subview.get_subview_data()
-            return view_data
-
+        return view_data
 
 class DoorSurfaceSubview(CTkXYFrame):
     json_representation = "doors"
