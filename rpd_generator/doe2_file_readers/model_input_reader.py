@@ -74,6 +74,7 @@ class ModelInputReader:
         "KW/TON",
         "BTU/LB",
     ]
+    raw_read_commands = ["CURVE-FIT", "CIRCULATION-LOOP"]
 
     def __init__(self):
         ModelInputReader.bdl_command_dict = _get_bdl_commands_for_rpd()
@@ -160,8 +161,8 @@ class ModelInputReader:
                     # check if the command type is one that the RPD Generator uses:
                     if command in self.bdl_command_dict:
 
-                        # check if the library entry requires special handling
-                        if "CURVE-FIT" in line:
+                        # check if the command requires special handling
+                        if command in self.raw_read_commands:
                             raw_read_flag = True
 
                         command_dict = {"command": command}

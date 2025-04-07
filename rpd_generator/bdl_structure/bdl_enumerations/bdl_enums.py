@@ -303,6 +303,9 @@ class BDLEnums:
                 "SUPPLY-LOSS-DT",
                 "LOOP-LOCN",
                 "LOOP-LOSS-ZONE",
+                "PROCESS-FLOW",
+                "PROCESS-SCH",
+                "PROCESS-T",
             ]
         ),
         "ConstructionTypes": _ListEnum(

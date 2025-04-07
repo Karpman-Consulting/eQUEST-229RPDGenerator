@@ -1030,3 +1030,21 @@ class TestCHWLoop(unittest.TestCase):
         self.assertEqual(
             FluidLoopFlowControlOptions.VARIABLE_FLOW, fluid_loop_flow_control
         )
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_populate_swh_use(self, mock_get_output_data):
+        """
+        Tests that circulation_loop is able to correctly populate a SWH use object in the 229 schema:
+        """
+        mock_get_output_data.return_value = {}
+        self.circulation_loop.keyword_value_pairs = {
+            BDL_CirculationLoopKeywords.LOOP_PUMP: "Pump 1",
+            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.DHW,
+            BDL_CirculationLoopKeywords.DESIGN_HEAT_T: "160",
+            BDL_CirculationLoopKeywords.LOOP_DESIGN_DT: "30",
+            BDL_CirculationLoopKeywords.DHW_INLET_T: "68",
+        }
+
+        self.rmd.populate_rmd_data(testing=True)
+        expected_data_structure = {}
+        self.assertEqual(expected_data_structure, self.circulation_loop.data_structure)

@@ -170,6 +170,7 @@ class CirculationLoop(BaseNode):
 
         elif self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":
             self.populate_service_water_heating_distribution_system()
+            self.populate_service_water_heating_uses()
             self.populate_service_water_piping()
 
         elif self.circulation_loop_type == "ServiceWaterPiping":
@@ -711,6 +712,27 @@ class CirculationLoop(BaseNode):
             self.get_inp(BDL_CirculationLoopKeywords.DHW_INLET_T)
             or self.get_inp(BDL_CirculationLoopKeywords.DHW_INLET_T_SCH)
         )
+
+    def populate_service_water_heating_uses(self):
+        process_loads = self.get_inp(BDL_CirculationLoopKeywords.PROCESS_FLOW)
+        process_schedules = self.get_inp(BDL_CirculationLoopKeywords.PROCESS_SCH)
+        process_outlet_temps = self.get_inp(BDL_CirculationLoopKeywords.PROCESS_T)
+
+        if not isinstance(process_loads, list):
+            process_loads = [process_loads]
+        if not isinstance(process_schedules, list):
+            process_schedules = [process_schedules]
+        if not isinstance(process_outlet_temps, list):
+            process_outlet_temps = [process_outlet_temps]
+
+        for process_load in process_loads:
+            print(process_load)
+
+        for process_schedule in process_schedules:
+            print(process_schedule)
+
+        for process_outlet_temp in process_outlet_temps:
+            print(process_outlet_temp)
 
     def populate_service_water_piping(self):
         self.are_thermal_losses_modeled = bool(
