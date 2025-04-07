@@ -353,22 +353,28 @@ class ProjectDetailsSubview(CTkXYFrame):
         project_details = self.app_data.all_project_data.get("project_details")
         if not project_details:
             return
+        """I know these checks look excessive and they are, but this is a workaround for a bug in the way
+                ctk entries deal with StringVars when they are set to empty strings. We can get rid of the checks
+                and set defaults if they don't exist in the saved project file"""
+        if project_details.get("Building Open From"):
+            self.open_from_input.delete(0, "end")
+            self.open_from_input.insert(0, project_details.get("Building Open From"))
+        if project_details.get("Building Open To"):
+            self.open_to_input.delete(0, "end")
+            self.open_to_input.insert(0, project_details.get("Building Open To"))
+        if project_details.get("Pressure Difference"):
+            self.app_data.measured_pressure_difference.set(
+                project_details.get("Pressure Difference")
+            )
         self.app_data.climate_zone.set(project_details.get("ASHRAE Climate Zone", ""))
         self.app_data.lighting_zone.set(
             project_details.get("Exterior Lighting Zone", "")
         )
-        self.open_from_input.delete(0, "end")
-        self.open_from_input.insert(0, project_details.get("Building Open From", ""))
-        self.open_to_input.delete(0, "end")
-        self.open_to_input.insert(0, project_details.get("Building Open To", ""))
         self.app_data.heating_design_day.set(
             project_details.get("Heating Design Day Criteria", "")
         )
         self.app_data.cooling_design_day.set(
             project_details.get("Cooling Design Day Criteria", "")
-        )
-        self.app_data.measured_pressure_difference.set(
-            project_details.get("Pressure Difference", "")
         )
         self.app_data.has_measured_infiltration.set(
             project_details.get("Measured Infiltration", False)
