@@ -18,6 +18,7 @@ class EvaluationCriteriaOptions(Enum):
     VALUE = "VALUE"
     PRESENT = "PRESENT"
     REFERENCE = "REFERENCE"
+    QUANTITY = "QUANTITY"
 
 
 class TestOutcomeOptions(Enum):
@@ -39,6 +40,37 @@ results_data = {
 }
 
 
+# Set evaluation criteria option based off compare_values true/false
+def set_evaluation_criteria_option(specification_test, compare_value):
+    if compare_value:
+        specification_test["evaluation_criteria"] = (
+            EvaluationCriteriaOptions.VALUE.value
+        )
+    else:
+        specification_test["evaluation_criteria"] = (
+            EvaluationCriteriaOptions.PRESENT.value
+        )
+
+
+# Set generation software name and version
+def set_generation_software_info(name, version):
+    results_data["generation_software_name"] = name
+    results_data["generation_software_version"] = version
+
+
+# Set modeling software name and version
+def set_modeling_software_info(name, version):
+    results_data["modeling_software_name"] = name
+    results_data["modeling_software_version"] = version
+
+
+# Set schema and ruleset information
+def set_schema_and_ruleset_info(schema_version, ruleset_name, specification_name):
+    results_data["schema_version"] = schema_version
+    results_data["ruleset_name"] = ruleset_name
+    results_data["ruleset_checking_specification_name"] = specification_name
+
+
 # Test Case Report
 def add_test_case_report(test_id, generated_file_name, files_utilized):
     test_case_report = {
@@ -52,14 +84,11 @@ def add_test_case_report(test_id, generated_file_name, files_utilized):
 
 
 # Specification Test
-def add_specification_test(
-    test_case_report, data_path, evaluation_criteria="", notes=""
-):
+def add_specification_test(test_case_report, data_path, evaluation_criteria=""):
     specification_test = {
         "data_path": data_path,
         "evaluation_criteria": evaluation_criteria,  # EvaluationCriteriaOptions
         "test_results": [],  # List of test result dicts
-        "notes": notes,
     }
     test_case_report["specification_tests"].append(specification_test)
     return specification_test
@@ -70,14 +99,16 @@ def add_test_result(
     specification_test,
     generated_instance_id,
     reference_instance_id,
-    data_element,
     test_outcome,
+    notes="",
 ):
+    data_element = specification_test["data_path"].split(".")[-1]
     test_result = {
         "generated_instance_id": generated_instance_id,
         "reference_instance_id": reference_instance_id,
         "data_element": data_element,
         "test_outcome": test_outcome,  # TestOutcomeOptions
+        "notes": notes,
     }
     specification_test["test_results"].append(test_result)
     return test_result
@@ -110,78 +141,123 @@ def compare_json_values(
             generated_id = i
         generated_value = generated_values[generated_id]
         reference_value = reference_values[generated_id]
+        reference_id = object_id_map.get(generated_id)
 
         if generated_value is None and reference_value is not None:
-            warnings.append(
-                f"Missing value for key '{json_key_path.split('.')[-1]}' at {generated_ids[i]}"
+            if compare_value is False:
+                specification_test["evaluation_criteria"] = (
+                    EvaluationCriteriaOptions.PRESENT.value
+                )
+            else:
+                specification_test["evaluation_criteria"] = (
+                    EvaluationCriteriaOptions.VALUE.value
+                )
+            notes = f"Missing value for key '{json_key_path.split('.')[-1]}' at {generated_ids[i]}"
+            add_test_result(
+                specification_test,
+                generated_id,
+                reference_id,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
             )
+            warnings.append(notes)
             continue
 
         if isinstance(reference_value, dict):
             raise ValueError("json-test-key-path should not result in a dictionary.")
 
         elif isinstance(reference_value, list):
+            # Reference value is a list. Set EvaluationCriteriaOptions to QUANTITY
+            specification_test["evaluation_criteria"] = (
+                EvaluationCriteriaOptions.QUANTITY.value
+            )
 
             if len(generated_value) != len(reference_value):
-                errors.append(
-                    f"List length mismatch at '{generated_ids[i]}' for key '{json_key_path.split('.')[-1]}'. Expected: {len(reference_value)}; got: {len(generated_value)}"
+                notes = f"List length mismatch at '{generated_ids[i]}' for key '{json_key_path.split('.')[-1]}'. Expected: {len(reference_value)}; got: {len(generated_value)}"
+                add_test_result(
+                    specification_test,
+                    generated_id,
+                    reference_id,
+                    TestOutcomeOptions.DIFFER.value,
+                    notes,
                 )
+                errors.append(notes)
                 continue
 
             if compare_value:
+                # Reference value is a list with value comparisons. Combine QUANTITY and VALUE
+                specification_test["evaluation_criteria"] = (
+                    EvaluationCriteriaOptions.QUANTITY.value
+                    + EvaluationCriteriaOptions.VALUE.value
+                )
                 for j, (gen_item, ref_item) in enumerate(
                     zip(generated_value, reference_value)
                 ):
                     if gen_item != ref_item:
-                        errors.append(
-                            f"List element mismatch for {generated_ids[i]} at index [{j}]. Expected: {ref_item}; got: {gen_item}"
+                        notes = f"List element mismatch for {generated_ids[i]} at index [{j}]. Expected: {ref_item}; got: {gen_item}"
+                        add_test_result(
+                            specification_test,
+                            generated_id,
+                            reference_id,
+                            TestOutcomeOptions.DIFFER.value,
+                            notes,
                         )
+                        errors.append(notes)
                 continue
 
         if compare_value is False:
+            specification_test["evaluation_criteria"] = (
+                EvaluationCriteriaOptions.PRESENT.value
+            )
+            add_test_result(
+                specification_test,
+                generated_id,
+                reference_id,
+                TestOutcomeOptions.MATCH.value,
+            )
             continue  # No comparison needed, just check for existence
 
         if reference_value is None and generated_value is None:
             continue  # Both values are None, no need to compare
 
-        if compare_value is True:
-            specification_test["evaluation_criteria"] = (
-                EvaluationCriteriaOptions.VALUE.value
-            )
-        elif compare_value is False:
-            specification_test["evaluation_criteria"] = (
-                EvaluationCriteriaOptions.PRESENT.value
-            )
-        else:
-            # TODO: Wrong? Clarify
-            specification_test["evaluation_criteria"] = (
-                EvaluationCriteriaOptions.REFERENCE.value
-            )
-
-        # TODO: handle NOT_IMPLEMENTED case
+        # Evaluate based on value comparison
+        specification_test["evaluation_criteria"] = (
+            EvaluationCriteriaOptions.VALUE.value
+        )
         test_outcome = TestOutcomeOptions.NOT_IMPLEMENTED.value
+
         # Else: the values are strings, ints, or floats, and we need to compare them
+        notes = ""
         does_match = compare_values(generated_value, reference_value, tolerance)
         if does_match:
             test_outcome = TestOutcomeOptions.MATCH.value
         if not does_match and reference_value is None:
-            warnings.append(
-                f"Extra data provided at '{generated_ids[i]}' for key '{json_key_path.split('.')[-1]}'. Expected: 'None'; got: '{generated_value}'"
-            )
+            notes = f"Extra data provided at '{generated_ids[i]}' for key '{json_key_path.split('.')[-1]}'. Expected: 'None'; got: '{generated_value}'"
+            warnings.append(notes)
             test_outcome = TestOutcomeOptions.DIFFER.value
         elif not does_match:
-            errors.append(
-                f"Value mismatch at '{generated_ids[i]}' for key '{json_key_path.split('.')[-1]}'. Expected: '{reference_value}'; got: '{generated_value}'"
-            )
+            notes = f"Value mismatch at '{generated_ids[i]}' for key '{json_key_path.split('.')[-1]}'. Expected: '{reference_value}'; got: '{generated_value}'"
+            errors.append(notes)
             test_outcome = TestOutcomeOptions.DIFFER.value
 
-        # Populate generated and reference IDs for test case
-        reference_id = object_id_map.get(generated_id)
-        # TODO: clarify here. would this be "buildings" for "$.ruleset_model_descriptions[0].buildings"?
-        data_element = ""
-        test_result = add_test_result(
-            specification_test, generated_id, reference_id, data_element, test_outcome
+        add_test_result(
+            specification_test,
+            generated_id,
+            reference_id,
+            test_outcome,
+            notes,
         )
+
+    if not generated_ids:
+        notes = f"No generated IDs found for key '{json_key_path.split('.')[-1]}'"
+        add_test_result(
+            specification_test,
+            None,
+            None,
+            TestOutcomeOptions.DIFFER.value,
+            notes,
+        )
+        warnings.append(notes)
 
     return warnings, errors
 
@@ -962,12 +1038,16 @@ def map_objects(generated_json, reference_json):
     return object_id_map, warnings, errors
 
 
-def handle_special_cases(path_spec, object_id_map, generated_json, reference_json):
+def handle_special_cases(
+    path_spec, object_id_map, generated_json, reference_json, specification_test
+):
     warnings = []
     errors = []
 
     json_key_path = path_spec["json-key-path"]
     special_case = path_spec["special-case"]
+    compare_value = path_spec.get("compare-value", True)
+    set_evaluation_criteria_option(specification_test, compare_value)
 
     # Handle Special Case for design electric power based on design airflow (which is not a specified value)
     if special_case == "W/cfm":
@@ -1149,7 +1229,22 @@ def handle_special_cases(path_spec, object_id_map, generated_json, reference_jso
                 )
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
+        else:
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.MATCH.value,
+            )
 
     return warnings, errors
 
@@ -1158,6 +1253,7 @@ def handle_ordered_comparisons(
     path_spec, object_id_map, reference_json, generated_json, specification_test
 ):
     json_key_path = path_spec["json-key-path"]
+    compare_value = path_spec.get("compare-value", True)
 
     warnings = []
     errors = []
@@ -1196,7 +1292,16 @@ def handle_ordered_comparisons(
             aligned_reference_values[generated_zone_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            set_evaluation_criteria_option(specification_test, compare_value)
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -1260,7 +1365,16 @@ def handle_ordered_comparisons(
             aligned_reference_values[generated_surface_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            set_evaluation_criteria_option(specification_test, compare_value)
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -1325,7 +1439,16 @@ def handle_ordered_comparisons(
             aligned_reference_values[generated_terminal_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            set_evaluation_criteria_option(specification_test, compare_value)
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -1385,7 +1508,16 @@ def handle_ordered_comparisons(
             aligned_reference_values[generated_hvac_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            set_evaluation_criteria_option(specification_test, compare_value)
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -1435,7 +1567,16 @@ def handle_ordered_comparisons(
             aligned_reference_values[generated_boiler_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            set_evaluation_criteria_option(specification_test, compare_value)
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -1485,7 +1626,16 @@ def handle_ordered_comparisons(
             aligned_reference_values[generated_chiller_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            set_evaluation_criteria_option(specification_test, compare_value)
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -1541,7 +1691,16 @@ def handle_ordered_comparisons(
             )
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            set_evaluation_criteria_option(specification_test, compare_value)
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -1593,7 +1752,16 @@ def handle_ordered_comparisons(
             aligned_reference_values[generated_fluid_loop_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            set_evaluation_criteria_option(specification_test, compare_value)
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -1643,7 +1811,16 @@ def handle_ordered_comparisons(
             aligned_reference_values[generated_pump_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            set_evaluation_criteria_option(specification_test, compare_value)
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -1663,6 +1840,7 @@ def handle_unordered_comparisons(
     path_spec, reference_json, generated_json, specification_test, object_id_map
 ):
     json_key_path = path_spec["json-key-path"]
+    compare_value = path_spec.get("compare-value", True)
 
     warnings = []
     errors = []
@@ -1681,7 +1859,11 @@ def handle_unordered_comparisons(
     reference_values = {index: value for index, value in enumerate(reference_values)}
 
     if all(value is None for value in generated_values):
-        warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+        notes = f"Missing key {json_key_path.split('.')[-1]}"
+        set_evaluation_criteria_option(specification_test, compare_value)
+        add_test_result(
+            specification_test, None, None, TestOutcomeOptions.DIFFER.value, notes
+        )
         return warnings, errors
 
     general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -1729,9 +1911,12 @@ def run_file_comparison(
 
         # Handle any cases that require special logic
         if special_case:
-            # TODO: Add special case handling here
             special_case_warnings, special_case_errors = handle_special_cases(
-                path_spec, object_id_map, generated_json, reference_json
+                path_spec,
+                object_id_map,
+                generated_json,
+                reference_json,
+                specification_test,
             )
             warnings.extend(special_case_warnings)
             errors.extend(special_case_errors)
@@ -1863,4 +2048,8 @@ def save_to_json_file():
 if __name__ == "__main__":
     test_directory = os.path.dirname(os.path.abspath(__file__))
     run_comparison_for_all_tests(test_directory)
+    # TODO: Per discussion, just filled something in for these. Specifically schema and ruleset info.
+    set_generation_software_info("Karpman Consulting RPD Generator", "1.0.0")
+    set_modeling_software_info("eQUEST", "3.65.7175")
+    set_schema_and_ruleset_info("1.0", "Std229P", "Std229P")
     save_to_json_file()
