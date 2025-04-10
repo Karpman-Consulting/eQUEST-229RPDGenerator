@@ -1309,7 +1309,7 @@ def handle_ordered_comparisons(
             generated_value = find_one(
                 # Extract the key path for the surface data (everything after surfaces[]. )
                 json_key_path[
-                    (json_key_path.index("].", json_key_path.index("surfaces"))) + 2 :
+                    json_key_path.index("].", json_key_path.index("surfaces")) + 2 :
                 ],
                 generated_surface,
             )
@@ -1382,7 +1382,7 @@ def handle_ordered_comparisons(
             generated_value = find_one(
                 # Extract the key path for the terminal data (everything after terminals[]. )
                 json_key_path[
-                    (json_key_path.index("].", json_key_path.index("terminals"))) + 2 :
+                    json_key_path.index("].", json_key_path.index("terminals")) + 2 :
                 ],
                 generated_terminal,
             )
@@ -1878,7 +1878,7 @@ def run_file_comparison(
     for path_spec in json_test_key_paths:
         json_key_path = path_spec["json-key-path"]
         special_case = path_spec.get("special-case")
-        print("check")
+
         # Add specification test to the report
         specification_test = add_specification_test(test_case_report, json_key_path)
 
