@@ -12,6 +12,7 @@ class BuildingSegment:
         # data elements with children
         self.zones = []
         self.hvac_systems = []
+        self.service_water_heating_uses = []
 
         # data elements with no children
         self.reporting_name = None
