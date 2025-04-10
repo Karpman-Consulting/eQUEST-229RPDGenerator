@@ -725,14 +725,13 @@ class CirculationLoop(BaseNode):
         if not isinstance(process_outlet_temps, list):
             process_outlet_temps = [process_outlet_temps]
 
-        for process_load in process_loads:
-            print(process_load)
-
-        for process_schedule in process_schedules:
-            print(process_schedule)
-
-        for process_outlet_temp in process_outlet_temps:
-            print(process_outlet_temp)
+        for i, data_trio in enumerate(
+            zip(process_loads, process_schedules, process_outlet_temps)
+        ):
+            swh_use = ServiceWaterHeatingUse(self.u_name + "Load" + str(i), self)
+            swh_use.populate_data_elements()
+            swh_use.populate_data_group()
+            swh_use.insert_to_rpd()
 
     def populate_service_water_piping(self):
         self.are_thermal_losses_modeled = bool(
@@ -1044,3 +1043,50 @@ class CirculationLoop(BaseNode):
             ]
 
         return sequence
+
+
+class ServiceWaterHeatingUse:
+    def __init__(self, name, loop):
+        self.name = name
+        self.loop = loop
+
+        self.data_structure = {}
+
+        self.area_type = None
+        self.water_serves_type = None
+        self.served_by_distribution_system = None
+        self.use = None
+        self.use_units = None
+        self.use_multiplier_schedule = None
+        self.temperature_at_fixture = None
+        self.is_heat_recovered_by_drain = None
+        self.is_recovered_heat_used_by_cold_side_feed = None
+
+    def __repr__(self):
+        return f"ServiceWaterHeatingUse({self.name})"
+
+    def populate_data_elements(self):
+        pass
+
+    def populate_data_group(self):
+
+        self.data_structure["id"] = self.name
+
+        service_water_heating_use_elements = [
+            "area_type",
+            "water_serves_type",
+            "served_by_distribution_system",
+            "use",
+            "use_units",
+            "use_multiplier_schedule",
+            "temperature_at_fixture",
+            "is_heat_recovered_by_drain",
+            "is_recovered_heat_used_by_cold_side_feed",
+        ]
+        for attr in service_water_heating_use_elements:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.data_structure[attr] = value
+
+    def insert_to_rpd(self):
+        pass
