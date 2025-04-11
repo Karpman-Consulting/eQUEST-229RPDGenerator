@@ -76,8 +76,10 @@ def add_test_result(
 ):
     data_element = specification_test["data_path"].split(".")[-1]
     test_result = {
-        "generated_instance_id": generated_instance_id,
-        "reference_instance_id": reference_instance_id,
+        "generated_instance_id": generated_instance_id,  # if generated_instance_id else None,
+        "reference_instance_id": (
+            reference_instance_id if reference_instance_id else None
+        ),
         "data_element": data_element,
         "test_outcome": test_outcome,
         "notes": notes,
@@ -1049,6 +1051,7 @@ def handle_special_cases(
 
         for pump in generated_pumps:
             pump_type = "primary"
+            pump_id = pump.get("id")
             loop_id = pump.get("loop_or_piping")
             loop = find_all_with_field_value(
                 "$.ruleset_model_descriptions[*].fluid_loops[*]",
@@ -1068,7 +1071,7 @@ def handle_special_cases(
 
             if not loop:
                 errors.append(
-                    f"Could not find loop with id '{loop_id}' for pump '{pump['id']}'"
+                    f"Could not find loop with id '{loop_id}' for pump '{pump_id}'"
                 )
                 continue
 
@@ -1087,15 +1090,39 @@ def handle_special_cases(
             compare_pump_power_warnings, compare_pump_power_errors = compare_pump_power(
                 pump, special_case_value
             )
+            # Test mismatch if there are warnings from compare_pump_power
             if compare_pump_power_warnings:
-                warnings.extend(
-                    f"Warning at {json_key_path.split('.')[-1]}: {warn}"
-                    for warn in compare_pump_power_warnings
+                notes = ""
+                for warn in compare_pump_power_warnings:
+                    notes += f"{warn}\n"
+                    warnings.extend(
+                        f"Warning at {json_key_path.split('.')[-1]}: {warn}"
+                    )
+                add_test_result(
+                    specification_test,
+                    pump_id,
+                    None,
+                    TestOutcomeOptions.DIFFER.value,
+                    notes,
                 )
             if compare_pump_power_errors:
                 errors.extend(
                     f"Error at {json_key_path.split('.')[-1]}: {err}"
                     for err in compare_pump_power_errors
+                )
+
+            # TODO: Jackson question:
+            """Here we don't have a reference ID since we are comparing the generated value to a 
+            predetermined special case value. In the JSON this reference value appears as NULL.
+            Do you want to keep it that way, provide some sort of default for the reference ID,
+            or we could remove the reference ID for fields like this."""
+            # If no warnings or errors are produced from comparison, add matching test result
+            if not compare_pump_power_warnings and not compare_pump_power_errors:
+                add_test_result(
+                    specification_test,
+                    pump_id,
+                    None,
+                    TestOutcomeOptions.MATCH.value,
                 )
 
     # Handle Special Case for interior wall azimuths (which may be opposite due to the adjacent zone)
@@ -1213,6 +1240,14 @@ def handle_special_cases(
                 None,
                 TestOutcomeOptions.MATCH.value,
             )
+
+    # TODO: We don't currently handle special case for operation_lower_limit
+    elif special_case == "operation_lower_limit":
+        pass
+
+    # TODO: We don't currently handle special case for operation_lower_limit
+    elif special_case == "operation_upper_limit":
+        pass
 
     return warnings, errors
 
@@ -1878,6 +1913,16 @@ def run_file_comparison(
     for path_spec in json_test_key_paths:
         json_key_path = path_spec["json-key-path"]
         special_case = path_spec.get("special-case")
+
+        # TODO: Here for easy testing. Set breakpoint at print statement to quickly find
+        #       scenario with special case. Remove when done.
+        id = test_case_report.get("test_id")
+        if id == "E-2" and json_key_path.split(".")[-1] == "operation_lower_limit":
+            print("here")
+        if id == "E-2" and json_key_path.split(".")[-1] == "operation_upper_limit":
+            print("here")
+        if id == "E-1" and json_key_path.split(".")[-1] == "building_open_schedule":
+            print("here")
 
         # Add specification test to the report
         specification_test = add_specification_test(test_case_report, json_key_path)
