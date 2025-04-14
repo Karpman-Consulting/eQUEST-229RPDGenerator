@@ -723,21 +723,30 @@ class CirculationLoop(BaseNode):
         )
 
     def populate_service_water_heating_uses(self):
-        process_loads = self.get_inp(BDL_CirculationLoopKeywords.PROCESS_FLOW)
+        process_flows = self.get_inp(BDL_CirculationLoopKeywords.PROCESS_FLOW)
         process_schedules = self.get_inp(BDL_CirculationLoopKeywords.PROCESS_SCH)
         process_outlet_temps = self.get_inp(BDL_CirculationLoopKeywords.PROCESS_T)
 
-        if not isinstance(process_loads, list):
-            process_loads = [process_loads]
+        if not isinstance(process_flows, list):
+            self.keyword_value_pairs[BDL_CirculationLoopKeywords.PROCESS_FLOW] = [
+                process_flows
+            ]
+            process_flows = [process_flows]
         if not isinstance(process_schedules, list):
+            self.keyword_value_pairs[BDL_CirculationLoopKeywords.PROCESS_SCH] = [
+                process_schedules
+            ]
             process_schedules = [process_schedules]
         if not isinstance(process_outlet_temps, list):
+            self.keyword_value_pairs[BDL_CirculationLoopKeywords.PROCESS_T] = [
+                process_outlet_temps
+            ]
             process_outlet_temps = [process_outlet_temps]
 
         for i, data_trio in enumerate(
-            zip(process_loads, process_schedules, process_outlet_temps), 1
+            zip(process_flows, process_schedules, process_outlet_temps), 1
         ):
-            swh_use = ServiceWaterHeatingUse(self.u_name + " Load" + str(i), self)
+            swh_use = ServiceWaterHeatingUse(i, self)
             swh_use.populate_data_elements()
             swh_use.populate_data_group()
             swh_use.insert_to_rpd()
@@ -1055,12 +1064,13 @@ class CirculationLoop(BaseNode):
 
 
 class ServiceWaterHeatingUse:
-    def __init__(self, name, loop):
+    def __init__(self, n, loop):
         self.parent_building_segment = loop.rmd.bdl_obj_instances.get(
             "Default Building Segment"
         )
 
-        self.name = name
+        self.n = n
+        self.name = loop.u_name + " Load" + str(n)
         self.loop = loop
 
         self.data_structure = {}
@@ -1076,15 +1086,17 @@ class ServiceWaterHeatingUse:
         self.is_recovered_heat_used_by_cold_side_feed = None
 
     def __repr__(self):
-        return f"ServiceWaterHeatingUse({self.name})"
+        return f"ServiceWaterHeatingUse({self.n}, {self.loop})"
 
     def populate_data_elements(self):
         self.served_by_distribution_system = self.loop.u_name
-        self.use_multiplier_schedule = self.loop.get_inp(
-            BDL_CirculationLoopKeywords.PROCESS_SCH
+        self.use_multiplier_schedule = self.loop.try_access_index(
+            self.loop.get_inp(BDL_CirculationLoopKeywords.PROCESS_SCH), self.n - 1
         )
         self.temperature_at_fixture = self.loop.try_float(
-            self.loop.get_inp(BDL_CirculationLoopKeywords.PROCESS_T)
+            self.loop.try_access_index(
+                self.loop.get_inp(BDL_CirculationLoopKeywords.PROCESS_T), self.n - 1
+            )
         )
 
         if (
@@ -1103,7 +1115,10 @@ class ServiceWaterHeatingUse:
 
             self.use = (
                 self.loop.try_float(
-                    self.loop.get_inp(BDL_CirculationLoopKeywords.PROCESS_FLOW)
+                    self.loop.try_access_index(
+                        self.loop.get_inp(BDL_CirculationLoopKeywords.PROCESS_FLOW),
+                        self.n - 1,
+                    )
                 )
                 * (
                     self.temperature_at_fixture
@@ -1124,7 +1139,10 @@ class ServiceWaterHeatingUse:
 
         else:
             self.use = self.loop.try_float(
-                self.loop.get_inp(BDL_CirculationLoopKeywords.PROCESS_FLOW)
+                self.loop.try_access_index(
+                    self.loop.get_inp(BDL_CirculationLoopKeywords.PROCESS_FLOW),
+                    self.n - 1,
+                )
             )
             self.use_units = ServiceWaterHeatingUseUnitOptions.VOLUME
 
