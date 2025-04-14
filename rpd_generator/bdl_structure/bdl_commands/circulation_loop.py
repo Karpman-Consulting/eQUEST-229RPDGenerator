@@ -7,11 +7,17 @@ FluidLoopOperationOptions = SchemaEnums.schema_enums["FluidLoopOperationOptions"
 FluidLoopFlowControlOptions = SchemaEnums.schema_enums["FluidLoopFlowControlOptions"]
 TemperatureResetOptions = SchemaEnums.schema_enums["TemperatureResetOptions"]
 ComponentLocationOptions = SchemaEnums.schema_enums["ComponentLocationOptions"]
+ServiceWaterHeatingUseUnitOptions = SchemaEnums.schema_enums[
+    "ServiceWaterHeatingUseUnitOptions"
+]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_CirculationLoopKeywords = BDLEnums.bdl_enums["CirculationLoopKeywords"]
 BDL_CirculationLoopTypes = BDLEnums.bdl_enums["CirculationLoopTypes"]
 BDL_CirculationLoopSubtypes = BDLEnums.bdl_enums["CirculationLoopSubtypes"]
 BDL_CirculationLoopSizingOptions = BDLEnums.bdl_enums["CirculationLoopSizingOptions"]
+BDL_CirculationLoopSetpointControlOptions = BDLEnums.bdl_enums[
+    "CirculationLoopSetpointControlOptions"
+]
 BDL_CirculationLoopOperationOptions = BDLEnums.bdl_enums[
     "CirculationLoopOperationOptions"
 ]
@@ -712,6 +718,9 @@ class CirculationLoop(BaseNode):
             self.get_inp(BDL_CirculationLoopKeywords.DHW_INLET_T)
             or self.get_inp(BDL_CirculationLoopKeywords.DHW_INLET_T_SCH)
         )
+        self.entering_water_mains_temperature_schedule = self.get_inp(
+            BDL_CirculationLoopKeywords.DHW_INLET_T_SCH
+        )
 
     def populate_service_water_heating_uses(self):
         process_loads = self.get_inp(BDL_CirculationLoopKeywords.PROCESS_FLOW)
@@ -726,9 +735,9 @@ class CirculationLoop(BaseNode):
             process_outlet_temps = [process_outlet_temps]
 
         for i, data_trio in enumerate(
-            zip(process_loads, process_schedules, process_outlet_temps)
+            zip(process_loads, process_schedules, process_outlet_temps), 1
         ):
-            swh_use = ServiceWaterHeatingUse(self.u_name + "Load" + str(i), self)
+            swh_use = ServiceWaterHeatingUse(self.u_name + " Load" + str(i), self)
             swh_use.populate_data_elements()
             swh_use.populate_data_group()
             swh_use.insert_to_rpd()
@@ -1047,6 +1056,10 @@ class CirculationLoop(BaseNode):
 
 class ServiceWaterHeatingUse:
     def __init__(self, name, loop):
+        self.parent_building_segment = loop.rmd.bdl_obj_instances.get(
+            "Default Building Segment"
+        )
+
         self.name = name
         self.loop = loop
 
@@ -1066,7 +1079,54 @@ class ServiceWaterHeatingUse:
         return f"ServiceWaterHeatingUse({self.name})"
 
     def populate_data_elements(self):
-        pass
+        self.served_by_distribution_system = self.loop.u_name
+        self.use_multiplier_schedule = self.loop.get_inp(
+            BDL_CirculationLoopKeywords.PROCESS_SCH
+        )
+        self.temperature_at_fixture = self.loop.try_float(
+            self.loop.get_inp(BDL_CirculationLoopKeywords.PROCESS_T)
+        )
+
+        if (
+            self.loop.get_inp(BDL_CirculationLoopKeywords.HEAT_SETPT_CTRL)
+            != BDL_CirculationLoopSetpointControlOptions.FIXED
+        ):
+            # Currently unable to calculate SWH Use when the hot water setpoint is not fixed
+            return
+
+        if self.temperature_at_fixture != self.loop.try_float(
+            self.loop.get_inp(BDL_CirculationLoopKeywords.HEAT_SETPT_T)
+        ):
+            if self.loop.get_inp(BDL_CirculationLoopKeywords.DHW_INLET_T) is None:
+                # Currently unable to calculate SWH Use when inlet temperature is not fixed
+                return
+
+            self.use = (
+                self.loop.try_float(
+                    self.loop.get_inp(BDL_CirculationLoopKeywords.PROCESS_FLOW)
+                )
+                * (
+                    self.temperature_at_fixture
+                    - self.loop.try_float(
+                        self.loop.get_inp(BDL_CirculationLoopKeywords.DHW_INLET_T)
+                    )
+                )
+                / (
+                    self.loop.try_float(
+                        self.loop.get_inp(BDL_CirculationLoopKeywords.HEAT_SETPT_T)
+                    )
+                    - self.loop.try_float(
+                        self.loop.get_inp(BDL_CirculationLoopKeywords.DHW_INLET_T)
+                    )
+                )
+            )
+            self.use_units = ServiceWaterHeatingUseUnitOptions.VOLUME
+
+        else:
+            self.use = self.loop.try_float(
+                self.loop.get_inp(BDL_CirculationLoopKeywords.PROCESS_FLOW)
+            )
+            self.use_units = ServiceWaterHeatingUseUnitOptions.VOLUME
 
     def populate_data_group(self):
 
@@ -1089,4 +1149,6 @@ class ServiceWaterHeatingUse:
                 self.data_structure[attr] = value
 
     def insert_to_rpd(self):
-        pass
+        self.parent_building_segment.service_water_heating_uses.append(
+            self.data_structure
+        )
