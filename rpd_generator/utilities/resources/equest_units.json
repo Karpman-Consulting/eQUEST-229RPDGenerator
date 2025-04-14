@@ -191,7 +191,7 @@
     },
     "ServiceWaterHeatingDistributionSystem": {
         "design_supply_temperature": "F",
-        "design_supply_temperature_difference": "F"
+        "design_supply_temperature_difference": "delta_F"
     },
     "ServiceWaterPiping": {
         "insulation_thickness": "",
@@ -232,7 +232,8 @@
         "exterior_insulation": ""
     },
     "ServiceWaterHeatingUse": {
-        "temperature_at_fixture": ""
+        "temperature_at_fixture": "F",
+        "use": "gpm"
     },
     "ExteriorLighting": {
         "area": "",

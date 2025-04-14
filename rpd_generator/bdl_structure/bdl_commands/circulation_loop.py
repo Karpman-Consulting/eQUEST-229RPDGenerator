@@ -7,11 +7,17 @@ FluidLoopOperationOptions = SchemaEnums.schema_enums["FluidLoopOperationOptions"
 FluidLoopFlowControlOptions = SchemaEnums.schema_enums["FluidLoopFlowControlOptions"]
 TemperatureResetOptions = SchemaEnums.schema_enums["TemperatureResetOptions"]
 ComponentLocationOptions = SchemaEnums.schema_enums["ComponentLocationOptions"]
+ServiceWaterHeatingUseUnitOptions = SchemaEnums.schema_enums[
+    "ServiceWaterHeatingUseUnitOptions"
+]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_CirculationLoopKeywords = BDLEnums.bdl_enums["CirculationLoopKeywords"]
 BDL_CirculationLoopTypes = BDLEnums.bdl_enums["CirculationLoopTypes"]
 BDL_CirculationLoopSubtypes = BDLEnums.bdl_enums["CirculationLoopSubtypes"]
 BDL_CirculationLoopSizingOptions = BDLEnums.bdl_enums["CirculationLoopSizingOptions"]
+BDL_CirculationLoopSetpointControlOptions = BDLEnums.bdl_enums[
+    "CirculationLoopSetpointControlOptions"
+]
 BDL_CirculationLoopOperationOptions = BDLEnums.bdl_enums[
     "CirculationLoopOperationOptions"
 ]
@@ -170,6 +176,7 @@ class CirculationLoop(BaseNode):
 
         elif self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":
             self.populate_service_water_heating_distribution_system()
+            self.populate_service_water_heating_uses()
             self.populate_service_water_piping()
 
         elif self.circulation_loop_type == "ServiceWaterPiping":
@@ -711,6 +718,38 @@ class CirculationLoop(BaseNode):
             self.get_inp(BDL_CirculationLoopKeywords.DHW_INLET_T)
             or self.get_inp(BDL_CirculationLoopKeywords.DHW_INLET_T_SCH)
         )
+        self.entering_water_mains_temperature_schedule = self.get_inp(
+            BDL_CirculationLoopKeywords.DHW_INLET_T_SCH
+        )
+
+    def populate_service_water_heating_uses(self):
+        process_flows = self.get_inp(BDL_CirculationLoopKeywords.PROCESS_FLOW)
+        process_schedules = self.get_inp(BDL_CirculationLoopKeywords.PROCESS_SCH)
+        process_outlet_temps = self.get_inp(BDL_CirculationLoopKeywords.PROCESS_T)
+
+        if not isinstance(process_flows, list):
+            self.keyword_value_pairs[BDL_CirculationLoopKeywords.PROCESS_FLOW] = [
+                process_flows
+            ]
+            process_flows = [process_flows]
+        if not isinstance(process_schedules, list):
+            self.keyword_value_pairs[BDL_CirculationLoopKeywords.PROCESS_SCH] = [
+                process_schedules
+            ]
+            process_schedules = [process_schedules]
+        if not isinstance(process_outlet_temps, list):
+            self.keyword_value_pairs[BDL_CirculationLoopKeywords.PROCESS_T] = [
+                process_outlet_temps
+            ]
+            process_outlet_temps = [process_outlet_temps]
+
+        for i, data_trio in enumerate(
+            zip(process_flows, process_schedules, process_outlet_temps), 1
+        ):
+            swh_use = ServiceWaterHeatingUse(i, self)
+            swh_use.populate_data_elements()
+            swh_use.populate_data_group()
+            swh_use.insert_to_rpd()
 
     def populate_service_water_piping(self):
         self.are_thermal_losses_modeled = bool(
@@ -1022,3 +1061,112 @@ class CirculationLoop(BaseNode):
             ]
 
         return sequence
+
+
+class ServiceWaterHeatingUse:
+    def __init__(self, n, loop):
+        self.parent_building_segment = loop.rmd.bdl_obj_instances.get(
+            "Default Building Segment"
+        )
+
+        self.n = n
+        self.name = loop.u_name + " Load" + str(n)
+        self.loop = loop
+
+        self.data_structure = {}
+
+        self.area_type = None
+        self.water_serves_type = None
+        self.served_by_distribution_system = None
+        self.use = None
+        self.use_units = None
+        self.use_multiplier_schedule = None
+        self.temperature_at_fixture = None
+        self.is_heat_recovered_by_drain = None
+        self.is_recovered_heat_used_by_cold_side_feed = None
+
+    def __repr__(self):
+        return f"ServiceWaterHeatingUse({self.n}, {self.loop})"
+
+    def populate_data_elements(self):
+        self.served_by_distribution_system = self.loop.u_name
+        self.use_multiplier_schedule = self.loop.try_access_index(
+            self.loop.get_inp(BDL_CirculationLoopKeywords.PROCESS_SCH), self.n - 1
+        )
+        self.temperature_at_fixture = self.loop.try_float(
+            self.loop.try_access_index(
+                self.loop.get_inp(BDL_CirculationLoopKeywords.PROCESS_T), self.n - 1
+            )
+        )
+
+        if (
+            self.loop.get_inp(BDL_CirculationLoopKeywords.HEAT_SETPT_CTRL)
+            != BDL_CirculationLoopSetpointControlOptions.FIXED
+        ):
+            # Currently unable to calculate SWH Use when the hot water setpoint is not fixed
+            return
+
+        if self.temperature_at_fixture != self.loop.try_float(
+            self.loop.get_inp(BDL_CirculationLoopKeywords.HEAT_SETPT_T)
+        ):
+            if self.loop.get_inp(BDL_CirculationLoopKeywords.DHW_INLET_T) is None:
+                # Currently unable to calculate SWH Use when inlet temperature is not fixed
+                return
+
+            self.use = (
+                self.loop.try_float(
+                    self.loop.try_access_index(
+                        self.loop.get_inp(BDL_CirculationLoopKeywords.PROCESS_FLOW),
+                        self.n - 1,
+                    )
+                )
+                * (
+                    self.temperature_at_fixture
+                    - self.loop.try_float(
+                        self.loop.get_inp(BDL_CirculationLoopKeywords.DHW_INLET_T)
+                    )
+                )
+                / (
+                    self.loop.try_float(
+                        self.loop.get_inp(BDL_CirculationLoopKeywords.HEAT_SETPT_T)
+                    )
+                    - self.loop.try_float(
+                        self.loop.get_inp(BDL_CirculationLoopKeywords.DHW_INLET_T)
+                    )
+                )
+            )
+            self.use_units = ServiceWaterHeatingUseUnitOptions.VOLUME
+
+        else:
+            self.use = self.loop.try_float(
+                self.loop.try_access_index(
+                    self.loop.get_inp(BDL_CirculationLoopKeywords.PROCESS_FLOW),
+                    self.n - 1,
+                )
+            )
+            self.use_units = ServiceWaterHeatingUseUnitOptions.VOLUME
+
+    def populate_data_group(self):
+
+        self.data_structure["id"] = self.name
+
+        service_water_heating_use_elements = [
+            "area_type",
+            "water_serves_type",
+            "served_by_distribution_system",
+            "use",
+            "use_units",
+            "use_multiplier_schedule",
+            "temperature_at_fixture",
+            "is_heat_recovered_by_drain",
+            "is_recovered_heat_used_by_cold_side_feed",
+        ]
+        for attr in service_water_heating_use_elements:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.data_structure[attr] = value
+
+    def insert_to_rpd(self):
+        self.parent_building_segment.service_water_heating_uses.append(
+            self.data_structure
+        )

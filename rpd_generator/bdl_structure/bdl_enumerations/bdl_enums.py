@@ -252,6 +252,14 @@ class BDLEnums:
                 "SUBHOUR-DEMAND",
             ]
         ),
+        "CirculationLoopSetpointControlOptions": _ListEnum(
+            [
+                "FIXED",
+                "OA-RESET",
+                "SCHEDULED",
+                "LOAD-RESET",
+            ]
+        ),
         "CirculationLoopTemperatureResetOptions": _ListEnum(
             [
                 "FIXED",
@@ -289,7 +297,9 @@ class BDLEnums:
                 "SIZING-OPTION",
                 "LOOP-MIN-FLOW",
                 "LOOP-RECIRC-FLOW",
+                "HEAT-SETPT-T",
                 "HEAT-SETPT-CTRL",
+                "COOL-SETPT-T",
                 "COOL-SETPT-CTRL",
                 "HEAT-RESET-SCH",
                 "COOL-RESET-SCH",
@@ -303,6 +313,9 @@ class BDLEnums:
                 "SUPPLY-LOSS-DT",
                 "LOOP-LOCN",
                 "LOOP-LOSS-ZONE",
+                "PROCESS-FLOW",
+                "PROCESS-SCH",
+                "PROCESS-T",
             ]
         ),
         "ConstructionTypes": _ListEnum(

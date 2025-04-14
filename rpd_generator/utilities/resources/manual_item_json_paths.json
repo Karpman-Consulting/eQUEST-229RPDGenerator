@@ -90,6 +90,7 @@
         "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].spaces[*].miscellaneous_equipment"
     ],
     "ServiceWaterHeatingUse": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].service_water_heating_uses",
         "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].spaces[*].service_water_heating_uses"
     ],
     "Subsurface": [
