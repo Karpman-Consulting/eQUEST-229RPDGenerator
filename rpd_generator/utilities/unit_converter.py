@@ -60,3 +60,24 @@ def convert_to_schema_units(rpd_json):
             matches = [m.value for m in jsonpath_expr.find(rpd_json)]
             unique_matches = [obj for obj in matches if id(obj) not in processed_ids]
             convert_units(data_group, unique_matches, elements_w_units)
+
+
+def try_convert_units(value: any, from_units: str, to_units: str) -> float | None:
+    """
+    Convert a value from one unit to another.
+
+    Parameters:
+    value (any): The value to convert.
+    from_units (str): The units to convert from.
+    to_units (str): The units to convert to.
+
+    Returns:
+    float | None: The converted value or None if not possible to convert.
+    """
+    if isinstance(value, (int, float)):
+        try:
+            return value * ureg(from_units).to(to_units).magnitude
+        except pint.errors.DimensionalityError:
+            return None
+    else:
+        return None

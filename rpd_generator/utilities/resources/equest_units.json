@@ -2,6 +2,15 @@
     "RulesetModelDescription": {
         "measured_infiltration_pressure_difference": ""
     },
+    "SourceResult": {
+        "annual_consumption": "kbtu",
+        "annual_demand": "MMbtu/h"
+    },
+    "EndUseResult": {
+        "annual_site_energy_use": "kbtu",
+        "annual_site_coincident_demand": "MMbtu/h",
+        "annual_site_non_coincident_demand": "MMbtu/h"
+    },
     "Zone": {
         "volume": "ft^3",
         "design_thermostat_cooling_setpoint": "F",

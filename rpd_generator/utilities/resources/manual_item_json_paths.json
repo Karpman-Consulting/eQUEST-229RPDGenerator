@@ -5,6 +5,12 @@
     "RulesetModelDescription": [
         "$.ruleset_model_descriptions"
     ],
+    "SourceResult": [
+        "$.ruleset_model_descriptions[*].output.output_instance.annual_source_results"
+    ],
+    "EndUseResult": [
+        "$.ruleset_model_descriptions[*].output.output_instance.annual_end_use_results"
+    ],
     "Calendar": [
         "$.calendar"
     ],
