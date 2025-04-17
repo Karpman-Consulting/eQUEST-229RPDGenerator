@@ -815,9 +815,19 @@ class System(ParentNode):
 
             match self.preheat_sys_type:
                 case HeatingSystemOptions.FLUID_LOOP:
-                    pass  # placeholder
+                    # Design Preheat - hot water - SYSTEM - capacity, btu/hr
+                    requests["Design Preheat Capacity"] = (
+                        2203269,
+                        self.u_name,
+                        "",
+                    )
                 case HeatingSystemOptions.ELECTRIC_RESISTANCE:
-                    pass  # placeholder
+                    # Design Preheat - electric - SYSTEM - capacity, btu/hr
+                    requests["Design Preheat Capacity"] = (
+                        2203346,
+                        self.u_name,
+                        "",
+                    )
                 case HeatingSystemOptions.FURNACE:
                     # Design Preheat - furnace - SYSTEM - capacity, btu/hr
                     requests["Design Preheat Capacity"] = (
@@ -1121,6 +1131,9 @@ class System(ParentNode):
         )
         self.cool_sys_chilled_water_loop = self.get_inp(BDL_SystemKeywords.CHW_LOOP)
         self.cool_sys_condenser_water_loop = self.get_inp(BDL_SystemKeywords.CW_LOOP)
+        self.cool_sys_turndown_ratio = self.try_float(
+            self.get_inp(BDL_SystemKeywords.MIN_UNLOAD_RATIO)
+        )
         sizing_ratio = self.try_float(self.get_inp(BDL_SystemKeywords.SIZING_RATIO))
         cool_sizing_ratio = self.try_float(
             self.get_inp(BDL_SystemKeywords.COOL_SIZING_RATI)

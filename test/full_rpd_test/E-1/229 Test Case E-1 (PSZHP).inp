@@ -61,6 +61,8 @@ $ ---------------------------------------------------------
 "Site Data" = SITE-PARAMETERS 
    DAYLIGHT-SAVINGS = NO
    GROUND-T         = ( 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 )
+   C-901-CZ-NUMBER  = 5
+   C-901-CZ-LETTER  = 2
    ..
 
 "Building Data" = BUILD-PARAMETERS
@@ -312,7 +314,7 @@ $ ---------------------------------------------------------
 "BL1 Window Type #1 GT" = GLASS-TYPE      
    TYPE             = SHADING-COEF
    SHADING-COEF     = 0.44
-   GLASS-CONDUCT    = {.5271}
+   GLASS-CONDUCT    = 0.579
    VIS-TRANS        = 0.417
    ..
 
@@ -686,6 +688,19 @@ $ **                Performance Curves                   **
 $ **                                                     **
 $ *********************************************************
 
+"Data Curve Fit" = CURVE-FIT       
+   TYPE             = BI-QUADRATIC-T
+   INPUT-TYPE       = DATA
+   INDEPENDENT-1    = ( 44, 44, 44, 44, 44, 44 )
+   INDEPENDENT-2    = ( 85, 75, 65, 65, 65, 65 )
+   DEPENDENT        = ( 1.21, 1.04, 0.9, 0.9, 0.9, 0.9 )
+   ..
+"Coef Curve Fit" = CURVE-FIT       
+   TYPE             = BI-QUADRATIC-T
+   INPUT-TYPE       = COEFFICIENTS
+   COEFFICIENTS     = ( 0.74721, -0.038874, 0.000313, 0.027638, -0.000133, 
+         -8e-006 )
+   ..
 
 $ *********************************************************
 $ **                                                     **
@@ -1241,14 +1256,6 @@ $ **               HVAC Systems / Zones                  **
 $ **                                                     **
 $ *********************************************************
 
-SET-DEFAULT FOR SYSTEM          
-   TYPE = PSZ
-   FAN-CONTROL      = CONSTANT-VOLUME
-   ERV-RECOVER-TYPE = ENTHALPY-HX
-   ERV-RUN-CTRL     = WHEN-MIN-OA
-   ERV-TEMP-CTRL    = FIXED-SETPT
-   ..
-
 SET-DEFAULT FOR ZONE            
    TYPE = CONDITIONED
    OA-FLOW/AREA     = ( 0.12 )
@@ -1279,6 +1286,7 @@ SET-DEFAULT FOR ZONE
    MIN-HP-T         = -10
    HUMIDIFIER-LOC   = IN-AIR-HANDLER
    CONTROL-ZONE     = "Perimeter Zone 1 (South)"
+   ERV-RECOVER-TYPE = ENTHALPY-HX
    ERV-SENSIBLE-EFF = 0.5
    ERV-SEN-FILM-EXP = 1
    ERV-LATENT-EFF   = 0.5
@@ -1323,6 +1331,7 @@ SET-DEFAULT FOR ZONE
    MIN-HP-T         = -10
    HUMIDIFIER-LOC   = IN-AIR-HANDLER
    CONTROL-ZONE     = "Perimeter Zone 2 (East)"
+   ERV-RECOVER-TYPE = ENTHALPY-HX
    ERV-SENSIBLE-EFF = 0.5
    ERV-SEN-FILM-EXP = 1
    ERV-LATENT-EFF   = 0.5
@@ -1367,6 +1376,7 @@ SET-DEFAULT FOR ZONE
    MIN-HP-T         = -10
    HUMIDIFIER-LOC   = IN-AIR-HANDLER
    CONTROL-ZONE     = "Perimeter Zone 3 (North)"
+   ERV-RECOVER-TYPE = ENTHALPY-HX
    ERV-SENSIBLE-EFF = 0.5
    ERV-SEN-FILM-EXP = 1
    ERV-LATENT-EFF   = 0.5
@@ -1411,6 +1421,7 @@ SET-DEFAULT FOR ZONE
    MIN-HP-T         = -10
    HUMIDIFIER-LOC   = IN-AIR-HANDLER
    CONTROL-ZONE     = "Perimeter Zone 4 (West)"
+   ERV-RECOVER-TYPE = ENTHALPY-HX
    ERV-SENSIBLE-EFF = 0.5
    ERV-SEN-FILM-EXP = 1
    ERV-LATENT-EFF   = 0.5
@@ -1455,6 +1466,7 @@ SET-DEFAULT FOR ZONE
    MIN-HP-T         = -10
    HUMIDIFIER-LOC   = IN-AIR-HANDLER
    CONTROL-ZONE     = "Core Zone 1 (Core)"
+   ERV-RECOVER-TYPE = ENTHALPY-HX
    ERV-SENSIBLE-EFF = 0.5
    ERV-SEN-FILM-EXP = 1
    ERV-LATENT-EFF   = 0.5

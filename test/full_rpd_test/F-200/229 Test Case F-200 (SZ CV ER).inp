@@ -62,6 +62,8 @@ $ ---------------------------------------------------------
 "Site Data" = SITE-PARAMETERS 
    DAYLIGHT-SAVINGS = NO
    GROUND-T         = ( 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 )
+   C-901-CZ-NUMBER  = 5
+   C-901-CZ-LETTER  = 2
    ..
 
 "Building Data" = BUILD-PARAMETERS

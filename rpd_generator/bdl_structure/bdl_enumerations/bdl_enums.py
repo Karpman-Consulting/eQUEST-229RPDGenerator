@@ -547,6 +547,8 @@ class BDLEnums:
                 "ALTITUDE",
                 "LATITUDE",
                 "LONGITUDE",
+                "C-901-CZ-NUMBER",
+                "C-901-CZ-LETTER",
             ]
         ),
         "RunPeriodKeywords": _ListEnum(
