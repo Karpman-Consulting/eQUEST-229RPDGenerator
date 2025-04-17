@@ -908,6 +908,7 @@ class BDLEnums:
                 "COOL-SIZING-RATI",
                 "COOL-SH-CAP",
                 "COOLING-CAPACITY",
+                "MIN-UNLOAD-RATIO",
                 "PREHEAT-SOURCE",
                 "PHW-LOOP",
                 "PHW-VALVE-TYPE",
