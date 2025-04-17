@@ -77,7 +77,7 @@ class BaseDefinition:
 
     @staticmethod
     def try_int(value):
-        """Attempt to convert a value to a float, returning None if it fails."""
+        """Attempt to convert a value to an integer, returning None if it fails."""
         if value is None:
             return None
         try:
