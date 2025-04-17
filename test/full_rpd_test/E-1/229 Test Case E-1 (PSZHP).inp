@@ -688,19 +688,7 @@ $ **                Performance Curves                   **
 $ **                                                     **
 $ *********************************************************
 
-"Data Curve Fit" = CURVE-FIT       
-   TYPE             = BI-QUADRATIC-T
-   INPUT-TYPE       = DATA
-   INDEPENDENT-1    = ( 44, 44, 44, 44, 44, 44 )
-   INDEPENDENT-2    = ( 85, 75, 65, 65, 65, 65 )
-   DEPENDENT        = ( 1.21, 1.04, 0.9, 0.9, 0.9, 0.9 )
-   ..
-"Coef Curve Fit" = CURVE-FIT       
-   TYPE             = BI-QUADRATIC-T
-   INPUT-TYPE       = COEFFICIENTS
-   COEFFICIENTS     = ( 0.74721, -0.038874, 0.000313, 0.027638, -0.000133, 
-         -8e-006 )
-   ..
+
 
 $ *********************************************************
 $ **                                                     **
