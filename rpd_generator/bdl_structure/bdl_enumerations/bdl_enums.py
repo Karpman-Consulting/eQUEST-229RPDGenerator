@@ -883,11 +883,20 @@ class BDLEnums:
                 "PLENUM-ZONES",
             ]
         ),
+        "SystemWLHPCategoryOptions": _ListEnum(
+            [
+                "COOLING-ONLY",
+                "WATER-LOOP",
+                "GROUND-WATER",
+                "GROUND-LOOP",
+            ]
+        ),
         "SystemKeywords": _ListEnum(
             [
                 "TYPE",
                 "SIZING-RATIO",
                 "HEAT-SOURCE",
+                "WLHP-CATEGORY",
                 "HW-LOOP",
                 "HW-VALVE-TYPE",
                 "HEAT-CONTROL",

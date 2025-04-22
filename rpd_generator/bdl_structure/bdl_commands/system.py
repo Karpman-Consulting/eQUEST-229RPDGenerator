@@ -59,6 +59,7 @@ BDL_HPSupplementSourceOptions = BDLEnums.bdl_enums["HPSupplementSourceOptions"]
 BDL_OutputCoolingTypes = BDLEnums.bdl_enums["OutputCoolingTypes"]
 BDL_OutputHeatingTypes = BDLEnums.bdl_enums["OutputHeatingTypes"]
 BDL_ReturnAirPathOptions = BDLEnums.bdl_enums["SystemReturnAirPathOptions"]
+BDL_WLHPCategoryOptions = BDLEnums.bdl_enums["SystemWLHPCategoryOptions"]
 
 
 class System(ParentNode):
@@ -492,10 +493,20 @@ class System(ParentNode):
         heat_type = self.heat_type_map.get(self.get_inp(BDL_SystemKeywords.HEAT_SOURCE))
         cool_type = self.cool_type_map.get(self.get_inp(BDL_SystemKeywords.COOL_SOURCE))
 
-        has_heat = heat_type not in [None, HeatingSystemOptions.NONE]
+        has_heat = heat_type not in [None, HeatingSystemOptions.NONE] or (
+            system_type == BDL_SystemTypes.HP
+            and self.get_inp(BDL_SystemKeywords.WLHP_CATEGORY)
+            in [
+                BDL_WLHPCategoryOptions.WATER_LOOP,
+                BDL_WLHPCategoryOptions.GROUND_WATER,
+                BDL_WLHPCategoryOptions.GROUND_LOOP,
+            ]
+        )
         has_cool = self.system_cooling_type_map.get(
             self.get_inp(BDL_SystemKeywords.TYPE)
-        ) not in [None, CoolingSystemOptions.NONE]
+        ) not in [None, CoolingSystemOptions.NONE] or (
+            system_type == BDL_SystemTypes.HP
+        )
         has_preheat = self.get_inp(BDL_SystemKeywords.PREHEAT_SOURCE) and self.get_inp(
             BDL_SystemKeywords.PREHEAT_SOURCE
         ) not in [None, BDL_SystemHeatingTypes.NONE]
