@@ -1013,6 +1013,7 @@ def handle_special_cases(
     json_key_path = path_spec["json-key-path"]
     special_case = path_spec["special-case"]
     compare_value = path_spec.get("compare-value", True)
+    tolerance = path_spec.get("tolerance", 0)
 
     specification_test["evaluation_criteria"] = (
         EvaluationCriteriaOptions.VALUE.value
@@ -1271,7 +1272,7 @@ def handle_special_cases(
                 lower_limit = boiler.get("operation_lower_limit", 0)
                 rated_capacity = boiler.get("rated_capacity", 0)
 
-                if abs(lower_limit - expected_lower_limit) > 1e-6:
+                if not compare_values(lower_limit, expected_lower_limit, tolerance):
                     notes = f"{boiler_id} operation lower limit incorrect for staged operation. Expected: {expected_lower_limit}; got: {lower_limit}"
                     add_test_result(
                         specification_test,
@@ -1335,7 +1336,9 @@ def handle_special_cases(
                 expected_upper_limit += capacity
                 actual_upper_limit = boiler.get("operation_upper_limit", 0)
 
-                if abs(actual_upper_limit - expected_upper_limit) > 1e-6:
+                if not compare_values(
+                    actual_upper_limit, expected_upper_limit, tolerance
+                ):
                     notes = f"{boiler_id} operation upper limit incorrect for staged operation. Expected: {expected_upper_limit}; got: {actual_upper_limit}"
                     add_test_result(
                         specification_test,
