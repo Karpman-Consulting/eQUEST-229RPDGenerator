@@ -471,7 +471,7 @@
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].boilers[*].energy_source_type",
-        "compare-value": false
+        "compare-value": true
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].boilers[*].rated_capacity",
@@ -485,12 +485,18 @@
         {
         "json-key-path": "$.ruleset_model_descriptions[0].boilers[*].operation_lower_limit",
         "special-case": "operation_lower_limit",
+        "special-case-value": {
+            "sequence": "staged"
+        },
         "compare-value": true,
         "tolerance": 1.0
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].boilers[*].operation_upper_limit",
         "special-case": "operation_upper_limit",
+        "special-case-value": {
+            "sequence": "staged"
+        },
         "compare-value": true,
         "tolerance": 1.0
         },
