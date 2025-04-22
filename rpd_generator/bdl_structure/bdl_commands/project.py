@@ -100,10 +100,10 @@ class RunPeriod(BaseDefinition):
         self.rmd.bdl_obj_instances[u_name] = self
 
     def __repr__(self):
-        return f"SitePameters(u_name='{self.u_name}')"
+        return f"RunPeriod(u_name='{self.u_name}')"
 
     def populate_data_elements(self):
-        """Populate schema structure for site parameters object."""
+        """Populate schema structure for run period object."""
         rpd = self.get_obj("ASHRAE 229")
         year = int(float(self.get_inp(BDL_RunPeriodKeywords.END_YEAR)))
         rpd.calendar.setdefault(
