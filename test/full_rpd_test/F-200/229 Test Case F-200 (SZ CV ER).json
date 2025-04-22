@@ -1,17 +1,8 @@
 {
-    "id": "229 Test Case F-200 (SZ CV ER)",
+    "id": "ASHRAE 229",
     "ruleset_model_descriptions": [
         {
             "id": "229 Test Case F-200 (SZ CV ER)",
-            "weather": {
-                "ground_temperature_schedule": "Ground Temperature Schedule",
-                "file_name": "DENVER INTL AP    CO"
-            },
-            "calendar": {
-                "is_leap_year": false,
-                "day_of_week_for_january_1": "FRIDAY",
-                "has_daylight_saving_time": false
-            },
             "altitude": 0,
             "buildings": [
                 {
@@ -1540,6 +1531,16 @@
                                         "rated_total_cool_capacity": 17584.266666666666,
                                         "type": "FLUID_LOOP"
                                     }
+                                }
+                            ],
+                            "service_water_heating_uses": [
+                                {
+                                    "id": "DHW Plant 1 Loop Load1",
+                                    "served_by_distribution_system": "DHW Plant 1 Loop",
+                                    "use": 0.01038351666666667,
+                                    "use_units": "VOLUME",
+                                    "use_multiplier_schedule": "DHW Eqp NRes Sch",
+                                    "temperature_at_fixture": 57.222222222222285
                                 }
                             ]
                         }
@@ -141890,7 +141891,8 @@
                         }
                     ],
                     "design_supply_temperature": 57.222222222222285,
-                    "design_supply_temperature_difference": 26.666666666666686,
+                    "design_supply_temperature_difference": 44.44444444444444,
+                    "entering_water_mains_temperature_schedule": "Ground Temperature Schedule",
                     "is_ground_temperature_used_for_entering_water": true
                 }
             ],
@@ -141975,51 +141977,55 @@
                         {
                             "id": "ELECTRICITY",
                             "energy_source": "ELECTRICITY",
-                            "annual_consumption": 322442.59375,
-                            "annual_demand": 118.11116027832031
+                            "annual_consumption": 340194993191.5,
+                            "annual_demand": 34614968.977389865,
+                            "annual_cost": 22571.0
                         },
                         {
-                            "id": "NATURAL-GAS",
-                            "energy_source": "NATURAL_GAS",
-                            "annual_consumption": 216.92166137695312,
-                            "annual_demand": 8045.49267578125
+                            "id": "NATURAL_GAS",
+                            "energy_source": null,
+                            "annual_consumption": 0.0,
+                            "annual_demand": 2357901477.9275174,
+                            "annual_cost": 108.0
                         }
                     ],
+                    "building_peak_heating_load": -373.72802734375,
+                    "building_peak_cooling_load": 94.76069641113281,
                     "annual_end_use_results": [
                         {
                             "id": "ELECTRICITY - Interior Lighting",
                             "type": "INTERIOR_LIGHTING",
                             "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 45050.78125,
-                            "annual_site_coincident_demand": 17.41742706298828,
-                            "annual_site_non_coincident_demand": 17.41742706298828,
+                            "annual_site_energy_use": 47531097062.5,
+                            "annual_site_coincident_demand": 5104544.702046713,
+                            "annual_site_non_coincident_demand": 5104544.702046713,
                             "is_regulated": true
                         },
                         {
                             "id": "ELECTRICITY - Misc Equipment",
                             "type": "MISC_EQUIPMENT",
                             "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 54307.5234375,
-                            "annual_site_coincident_demand": 11.537089347839355,
-                            "annual_site_non_coincident_demand": 11.537089347839355,
+                            "annual_site_energy_use": 57297478447.875,
+                            "annual_site_coincident_demand": 3381187.5941594443,
+                            "annual_site_non_coincident_demand": 3381187.5941594443,
                             "is_regulated": false
                         },
                         {
                             "id": "ELECTRICITY - Space Heating",
                             "type": "SPACE_HEATING",
                             "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 196019.078125,
-                            "annual_site_coincident_demand": 85.71929931640625,
-                            "annual_site_non_coincident_demand": 87.87532806396484,
+                            "annual_site_energy_use": 206811104490.25,
+                            "annual_site_coincident_demand": 25121850.294325087,
+                            "annual_site_non_coincident_demand": 25753720.03495958,
                             "is_regulated": true
                         },
                         {
                             "id": "ELECTRICITY - Space Cooling",
                             "type": "SPACE_COOLING",
                             "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 5503.9375,
-                            "annual_site_coincident_demand": 0.21214547753334045,
-                            "annual_site_non_coincident_demand": 8.430173873901367,
+                            "annual_site_energy_use": 5806962283.0,
+                            "annual_site_coincident_demand": 62173.71081789335,
+                            "annual_site_non_coincident_demand": 2470640.4240841335,
                             "is_regulated": true
                         },
                         {
@@ -142035,18 +142041,18 @@
                             "id": "ELECTRICITY - Pumps & Aux",
                             "type": "PUMPS",
                             "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 2015.162841796875,
-                            "annual_site_coincident_demand": 0.22271914780139923,
-                            "annual_site_non_coincident_demand": 1.3199999332427979,
+                            "annual_site_energy_use": 2126109647.2148438,
+                            "annual_site_coincident_demand": 65272.548111875854,
+                            "annual_site_non_coincident_demand": 386853.8471020593,
                             "is_regulated": true
                         },
                         {
                             "id": "ELECTRICITY - Ventilation Fans",
                             "type": "FANS_INTERIOR_VENTILATION",
                             "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 19546.12890625,
-                            "annual_site_coincident_demand": 3.0024874210357666,
-                            "annual_site_non_coincident_demand": 3.0024874210357666,
+                            "annual_site_energy_use": 20622260579.3125,
+                            "annual_site_coincident_demand": 879942.3245800866,
+                            "annual_site_non_coincident_demand": 879942.3245800866,
                             "is_regulated": true
                         },
                         {
@@ -142077,93 +142083,93 @@
                             "is_regulated": true
                         },
                         {
-                            "id": "NATURAL-GAS - Interior Lighting",
+                            "id": "NATURAL_GAS - Interior Lighting",
                             "type": "INTERIOR_LIGHTING",
-                            "energy_source": "NATURAL_GAS",
+                            "energy_source": null,
                             "annual_site_energy_use": 0.0,
                             "annual_site_coincident_demand": 0.0,
                             "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": true
                         },
                         {
-                            "id": "NATURAL-GAS - Misc Equipment",
+                            "id": "NATURAL_GAS - Misc Equipment",
                             "type": "MISC_EQUIPMENT",
-                            "energy_source": "NATURAL_GAS",
+                            "energy_source": null,
                             "annual_site_energy_use": 0.0,
                             "annual_site_coincident_demand": 0.0,
                             "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": false
                         },
                         {
-                            "id": "NATURAL-GAS - Space Heating",
+                            "id": "NATURAL_GAS - Space Heating",
                             "type": "SPACE_HEATING",
-                            "energy_source": "NATURAL_GAS",
+                            "energy_source": null,
                             "annual_site_energy_use": 0.0,
                             "annual_site_coincident_demand": 0.0,
                             "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": true
                         },
                         {
-                            "id": "NATURAL-GAS - Space Cooling",
+                            "id": "NATURAL_GAS - Space Cooling",
                             "type": "SPACE_COOLING",
-                            "energy_source": "NATURAL_GAS",
+                            "energy_source": null,
                             "annual_site_energy_use": 0.0,
                             "annual_site_coincident_demand": 0.0,
                             "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": true
                         },
                         {
-                            "id": "NATURAL-GAS - Heat Rejection",
+                            "id": "NATURAL_GAS - Heat Rejection",
                             "type": "HEAT_REJECTION",
-                            "energy_source": "NATURAL_GAS",
+                            "energy_source": null,
                             "annual_site_energy_use": 0.0,
                             "annual_site_coincident_demand": 0.0,
                             "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": true
                         },
                         {
-                            "id": "NATURAL-GAS - Pumps & Aux",
+                            "id": "NATURAL_GAS - Pumps & Aux",
                             "type": "PUMPS",
-                            "energy_source": "NATURAL_GAS",
+                            "energy_source": null,
                             "annual_site_energy_use": 0.0,
                             "annual_site_coincident_demand": 0.0,
                             "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": true
                         },
                         {
-                            "id": "NATURAL-GAS - Ventilation Fans",
+                            "id": "NATURAL_GAS - Ventilation Fans",
                             "type": "FANS_INTERIOR_VENTILATION",
-                            "energy_source": "NATURAL_GAS",
+                            "energy_source": null,
                             "annual_site_energy_use": 0.0,
                             "annual_site_coincident_demand": 0.0,
                             "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": true
                         },
                         {
-                            "id": "NATURAL-GAS - Refrigeration Display",
+                            "id": "NATURAL_GAS - Refrigeration Display",
                             "type": "REFRIGERATION_EQUIPMENT",
-                            "energy_source": "NATURAL_GAS",
+                            "energy_source": null,
                             "annual_site_energy_use": 0.0,
                             "annual_site_coincident_demand": 0.0,
                             "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": true
                         },
                         {
-                            "id": "NATURAL-GAS - Ht Pump Supplemental Heat",
+                            "id": "NATURAL_GAS - Ht Pump Supplemental Heat",
                             "type": "HEAT_PUMP_SUPPLEMENTAL_HEATING",
-                            "energy_source": "NATURAL_GAS",
+                            "energy_source": null,
                             "annual_site_energy_use": 0.0,
                             "annual_site_coincident_demand": 0.0,
                             "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": true
                         },
                         {
-                            "id": "NATURAL-GAS - Domestic Hot Water",
+                            "id": "NATURAL_GAS - Domestic Hot Water",
                             "type": "SERVICE_WATER_HEATING",
-                            "energy_source": "NATURAL_GAS",
-                            "annual_site_energy_use": 216.92166137695312,
-                            "annual_site_coincident_demand": 8045.49267578125,
-                            "annual_site_non_coincident_demand": 8.0,
+                            "energy_source": null,
+                            "annual_site_energy_use": 0.0,
+                            "annual_site_coincident_demand": 2357901477.9275174,
+                            "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": true
                         }
                     ]
@@ -142171,6 +142177,16 @@
             }
         }
     ],
-    "data_timestamp": "2025-04-22T02:40Z",
+    "calendar": {
+        "is_leap_year": false,
+        "day_of_week_for_january_1": "FRIDAY",
+        "has_daylight_saving_time": false
+    },
+    "weather": {
+        "ground_temperature_schedule": "Ground Temperature Schedule",
+        "file_name": "DENVER INTL AP    CO",
+        "climate_zone": "CZ5B"
+    },
+    "data_timestamp": "2025-04-22T14:00Z",
     "data_version": "0.1.0"
 }

@@ -14,6 +14,10 @@ class RulesetProjectDescription:
 
         # data elements with children
         self.ruleset_model_descriptions = []
+        self.calendar = {
+            "is_leap_year": False,  # even if the year is a leap year, eQUEST skips Feb 29
+        }
+        self.weather = {}
         self.ground_temperature_schedule = None
         self.file_name = None
         self.data_source_type = None
@@ -33,6 +37,8 @@ class RulesetProjectDescription:
         self.rpd_data_structure = {
             "id": f"{self.project_name}",
             "ruleset_model_descriptions": self.ruleset_model_descriptions,
+            "calendar": self.calendar,
+            "weather": self.weather,
         }
 
         no_children_attributes = [

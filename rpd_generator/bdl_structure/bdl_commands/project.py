@@ -35,7 +35,8 @@ class SiteParameters(BaseDefinition):
 
     def populate_data_elements(self):
         """Populate schema structure for site parameters object."""
-        self.rmd.calendar.setdefault(
+        rpd = self.get_obj("ASHRAE 229")
+        rpd.calendar.setdefault(
             "has_daylight_saving_time",
             self.boolean_map.get(
                 self.get_inp(BDL_SiteParameterKeywords.DAYLIGHT_SAVINGS)
@@ -43,12 +44,12 @@ class SiteParameters(BaseDefinition):
         )
         monthly_ground_temps = self.get_inp(BDL_SiteParameterKeywords.GROUND_T)
         if monthly_ground_temps:
-            self.rmd.weather.setdefault(
+            rpd.weather.setdefault(
                 "ground_temperature_schedule", "Ground Temperature Schedule"
             )
             self.create_ground_temp_schedule(monthly_ground_temps)
 
-        self.rmd.weather.setdefault("file_name", self.get_single_string_output(1101006))
+        rpd.weather.setdefault("file_name", self.get_single_string_output(1101006))
 
         cz_number = self.get_inp(BDL_SiteParameterKeywords.C_901_CZ_NUMBER)
         cz_letter = self.get_inp(BDL_SiteParameterKeywords.C_901_CZ_LETTER)
@@ -60,7 +61,7 @@ class SiteParameters(BaseDefinition):
             )
 
             if climate_zone in ClimateZoneOptions2019ASHRAE901.get_list():
-                self.rmd.weather.setdefault("climate_zone", climate_zone)
+                rpd.weather.setdefault("climate_zone", climate_zone)
 
     def create_ground_temp_schedule(self, monthly_ground_temps):
         """Create ground temperature schedule."""
@@ -103,14 +104,14 @@ class RunPeriod(BaseDefinition):
 
     def populate_data_elements(self):
         """Populate schema structure for site parameters object."""
+        rpd = self.get_obj("ASHRAE 229")
         year = int(float(self.get_inp(BDL_RunPeriodKeywords.END_YEAR)))
-        jan_1_day = schedule_funcs.get_day_of_week_jan_1(year)
-        self.rmd.calendar.setdefault(
+        rpd.calendar.setdefault(
             "day_of_week_for_january_1",
-            jan_1_day,
+            schedule_funcs.get_day_of_week_jan_1(year),
         )
         Schedule.year = year
-        Schedule.day_of_week_for_january_1 = jan_1_day
+        Schedule.day_of_week_for_january_1 = schedule_funcs.get_day_of_week_jan_1(year)
 
 
 class FixedShade(BaseDefinition):
