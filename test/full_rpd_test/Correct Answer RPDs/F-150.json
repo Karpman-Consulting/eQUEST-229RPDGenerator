@@ -45069,8 +45069,8 @@
                     "rated_capacity": 87921,
                     "design_capacity": 98765,
                     "minimum_load_ratio": 0.25,
-                    "rated_entering_condenser_temperature": 29.4,
-                    "rated_leaving_evaporator_temperature": 10,
+                    "design_entering_condenser_temperature": 29.4,
+                    "design_leaving_evaporator_temperature": 10,
                     "part_load_efficiency": 0.5,
                     "part_load_efficiency_metric": "NONSTANDARD_PART_LOAD_VALUE",
                     "capacity_validation_points": [
@@ -45140,8 +45140,8 @@
         "data_source_type": "OTHER",
         "climate_zone": "CZ5B",
         "ground_temperature_schedule": "Ground Temp Schedule",
-        "cooling_design_day_type": "COOLING_0_4",
-        "heating_design_day_type": "HEATING_99_6"
+        "cooling_design_day_type": "COOLING_1_0",
+        "heating_design_day_type": "HEATING_99_0"
     },
     "calendar": {
         "day_of_week_for_january_1": "FRIDAY",
