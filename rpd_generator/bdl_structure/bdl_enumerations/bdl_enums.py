@@ -547,6 +547,8 @@ class BDLEnums:
                 "ALTITUDE",
                 "LATITUDE",
                 "LONGITUDE",
+                "C-901-CZ-NUMBER",
+                "C-901-CZ-LETTER",
             ]
         ),
         "RunPeriodKeywords": _ListEnum(
@@ -881,11 +883,20 @@ class BDLEnums:
                 "PLENUM-ZONES",
             ]
         ),
+        "SystemWLHPCategoryOptions": _ListEnum(
+            [
+                "COOLING-ONLY",
+                "WATER-LOOP",
+                "GROUND-WATER",
+                "GROUND-LOOP",
+            ]
+        ),
         "SystemKeywords": _ListEnum(
             [
                 "TYPE",
                 "SIZING-RATIO",
                 "HEAT-SOURCE",
+                "WLHP-CATEGORY",
                 "HW-LOOP",
                 "HW-VALVE-TYPE",
                 "HEAT-CONTROL",
@@ -906,6 +917,7 @@ class BDLEnums:
                 "COOL-SIZING-RATI",
                 "COOL-SH-CAP",
                 "COOLING-CAPACITY",
+                "MIN-UNLOAD-RATIO",
                 "PREHEAT-SOURCE",
                 "PHW-LOOP",
                 "PHW-VALVE-TYPE",

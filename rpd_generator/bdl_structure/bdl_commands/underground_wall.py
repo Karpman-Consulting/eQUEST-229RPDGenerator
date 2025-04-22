@@ -111,15 +111,8 @@ class BelowGradeWall(ChildNode):
         if reflectance_visible_interior is not None:
             self.absorptance_visible_interior = 1 - reflectance_visible_interior
 
-    # def get_output_requests(self):
-    #     requests = {}
-    #     if (
-    #         self.area is None
-    #         and self.get_inp(BDL_UndergroundWallKeywords.LOCATION)
-    #         == BDL_WallLocationOptions.TOP
-    #     ):
-    #         requests["Roof Area"] = (1105003, "", self.u_name)
-    #     return requests
+        if self.classification == SurfaceClassificationOptions.WALL:
+            self.populate_c_factor()
 
     def populate_data_group(self):
         """Populate schema structure for below grade wall object."""
@@ -225,3 +218,11 @@ class BelowGradeWall(ChildNode):
                 self.construction["primary_layers"][0]["r_value"] = (
                     1 / u_factor - int_air_film_resistance
                 )
+
+    def populate_c_factor(self):
+        """
+        Populate the C-factor for below-grade vertical walls by removing the interior air film resistance
+        """
+        u_factor = self.construction.get("u_factor")
+        if u_factor:
+            self.construction["c_factor"] = 1 / (1 / u_factor - 0.68)

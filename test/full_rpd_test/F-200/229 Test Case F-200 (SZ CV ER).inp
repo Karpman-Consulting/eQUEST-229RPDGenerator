@@ -62,6 +62,8 @@ $ ---------------------------------------------------------
 "Site Data" = SITE-PARAMETERS 
    DAYLIGHT-SAVINGS = NO
    GROUND-T         = ( 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 )
+   C-901-CZ-NUMBER  = 5
+   C-901-CZ-LETTER  = 2
    ..
 
 "Building Data" = BUILD-PARAMETERS
@@ -365,7 +367,8 @@ $ ---------------------------------------------------------
    ..
 "Fan Sched weekday" = DAY-SCHEDULE-PD
    TYPE             = ON/OFF/FLAG
-   VALUES           = ( 1 )
+   VALUES           = ( 0, &D, &D, &D, &D, &D, &D, 1, &D, &D, &D, &D, &D, &D, 
+         &D, &D, &D, &D, &D, &D, &D, &D, 0 )
    ..
 "Fan Sched Sunday" = DAY-SCHEDULE-PD
    TYPE             = ON/OFF/FLAG
@@ -1220,6 +1223,9 @@ $ ---------------------------------------------------------
    TYPE             = CHW
    LOOP-DESIGN-DT   = 12
    LOOP-MIN-FLOW    = 0.25
+   LOOP-OPERATION   = SCHEDULED
+   COOLING-SCHEDULE = "Schedule ON/OFF"
+   SNAP-T           = 0
    DESIGN-COOL-T    = 44
    COOL-SETPT-CTRL  = OA-RESET
    COOL-RESET-SCH   = "CHW OA Reset"
@@ -1238,9 +1244,9 @@ $ ---------------------------------------------------------
    EIR-FT           = "ScrewAir-EIR-fCHWT&DBT"
    EIR-FPLR         = "ScrewAir-EIR-fPLR&dT-1Comp/Ckt"
    CHW-LOOP         = "Chilled Water Loop (Primary)"
-   RATED-CHW-T      = 50
+   DESIGN-CHW-T     = 50
    CONDENSER-TYPE   = AIR-COOLED
-   RATED-COND-T     = 85
+   DESIGN-COND-T    = 85
    ..
 
 

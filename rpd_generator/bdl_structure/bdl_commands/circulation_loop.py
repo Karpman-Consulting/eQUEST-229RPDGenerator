@@ -1,4 +1,5 @@
 from rpd_generator.bdl_structure.base_node import BaseNode
+from rpd_generator.bdl_structure.bdl_commands.schedule import Schedule
 from rpd_generator.schema.schema_enums import SchemaEnums
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
@@ -33,6 +34,7 @@ BDL_SystemCondenserValveTypes = BDLEnums.bdl_enums["SystemCondenserValveTypes"]
 BDL_SystemHeatingValveTypes = BDLEnums.bdl_enums["SystemHeatingValveTypes"]
 BDL_FlowControlOptions = BDLEnums.bdl_enums["FlowControlOptions"]
 BDL_ZoneCondenserValveOptions = BDLEnums.bdl_enums["ZoneCWValveOptions"]
+BDL_ScheduleTypes = BDLEnums.bdl_enums["ScheduleTypes"]
 BDL_ChillerKeywords = BDLEnums.bdl_enums["ChillerKeywords"]
 BDL_BoilerKeywords = BDLEnums.bdl_enums["BoilerKeywords"]
 BDL_HeatRejectionKeywords = BDLEnums.bdl_enums["HeatRejectionKeywords"]
@@ -721,6 +723,17 @@ class CirculationLoop(BaseNode):
         self.entering_water_mains_temperature_schedule = self.get_inp(
             BDL_CirculationLoopKeywords.DHW_INLET_T_SCH
         )
+        if self.is_ground_temperature_used_for_entering_water:
+            self.entering_water_mains_temperature_schedule = (
+                "Ground Temperature Schedule"
+            )
+        if self.entering_water_mains_temperature_schedule is None:
+            # If the code reaches this point, it is safe to assume the DHW-INLET-T must have been specified.
+            inlet_t_schedule = Schedule("DHW Inlet Temperature Schedule", self.rmd)
+            inlet_t_schedule.type = BDL_ScheduleTypes.TEMPERATURE
+            inlet_t_schedule.hourly_values = 8760 * [
+                self.try_float(self.get_inp(BDL_CirculationLoopKeywords.DHW_INLET_T))
+            ]
 
     def populate_service_water_heating_uses(self):
         process_flows = self.get_inp(BDL_CirculationLoopKeywords.PROCESS_FLOW)
