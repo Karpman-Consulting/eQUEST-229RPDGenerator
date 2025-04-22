@@ -49,7 +49,7 @@
 *********************************************************************************
 
 
-              JJHirsch DOE-2 Version: DOE-2.3-50e (released July 2017)  
+              JJHirsch DOE-2 Version: DOE-2.3-50h (released October 2018)  
 
 
       DOE-2.2 Copyright (c) James J. Hirsch,1996-2017. All Rights Reserved.
@@ -60,11 +60,13 @@
 
 
 
-
-     *   1 * INPUT ..
+
+
+     *   1 * INPUT ..
+
                      B D L   P R O C E S S O R   I N P U T   D A T A
 
-                           12/11/2024     7:52:07  BDL RUN   3
+                            4/21/2025    20:19:44  BDL RUN   3
 
 
 
@@ -7836,7 +7838,8 @@
             floor, a delayed wall and ceiling, or a delayed ceiling and floor
             for custom weighting factors to be calculated. ASHRAE weighting
             factors with floor weight of 70 lb/ft2 (342 kg/m2) will be used for
-            this space.229 Test Case 1 updated                                                                   12/11/2024     7:52:07  BDL  RUN 3
+            this space.
+229 Test Case 1 updated                                                                    4/21/2025    20:19:44  BDL  RUN 3
                                                                                                                         
 REPORT- LV-K  WEIGHTING FACTOR SUMMARY
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -7895,7 +7898,8 @@ G1*         -0.74712         -0.59450         -0.70800         -1.89000         
 G2*          0.32230          0.25474          0.15322          0.08000          0.19522
 G3*         -0.00032         -0.00134         -0.00227          0.00000         -0.00026
 P1          -1.22265         -1.19850         -1.15665         -0.87000         -1.21901
-P2           0.33000          0.30974          0.21474          0.00000          0.32625
+P2           0.33000          0.30974          0.21474          0.00000          0.32625
+
 -CAUTION--------------------------------------------------------------------------------------NO COOLING EQUIPMENT HAS BEEN DEFINED   
      *1543 * COMPUTE ..
      *1544 * STOP ..
