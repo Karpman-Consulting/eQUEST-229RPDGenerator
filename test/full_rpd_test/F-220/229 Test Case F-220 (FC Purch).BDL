@@ -49,7 +49,7 @@
 *********************************************************************************
 
 
-              JJHirsch DOE-2 Version: DOE-2.3-50e (released July 2017)  
+              JJHirsch DOE-2 Version: DOE-2.3-50h (released October 2018)  
 
 
       DOE-2.2 Copyright (c) James J. Hirsch,1996-2017. All Rights Reserved.
@@ -60,11 +60,13 @@
 
 
 
-
-     *   1 * INPUT ..
+
+
+     *   1 * INPUT ..
+
                      B D L   P R O C E S S O R   I N P U T   D A T A
 
-                           12/11/2024     7:52:11  BDL RUN  16
+                            4/21/2025    20:19:48  BDL RUN  16
 
 
 
@@ -1547,14 +1549,14 @@
      * 315 * "BL1 Window Type #1 GT" = GLASS-TYPE
      * 316 *    TYPE             = SHADING-COEF
      * 317 *    SHADING-COEF     = 0.44
-     * 318 *    GLASS-CONDUCT    = {.5271}
+     * 318 *    GLASS-CONDUCT    = 0.579
      * 319 *    VIS-TRANS        = 0.417
      * 320 *    ..
 
 -NOTE- - -         DATA FOR     BL1 Window Type #1 GT
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = SHADING-COEF
 -INPUT - -                                              SHADING-COEF     =                       0.4400
--INPUT - -                                              GLASS-CONDUCT    =                       0.5271 BTU/HR-SQFT-F
+-INPUT - -                                              GLASS-CONDUCT    =                       0.5790 BTU/HR-SQFT-F
 -INPUT - -                                              VIS-TRANS        =                       0.4170
 -DEFAULT -                                              OUTSIDE-EMISS    =                       0.8400
 -DEFAULT -                                              C-PRODUCT-TYPE   =                       0.0000
@@ -2541,16 +2543,48 @@
 -INPUT - -                                              SUPPLY-LO        =                      44.0000 F
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  DAY-HOURS        =                       1.0000
 -DEFAULT -                                              DAY-HOURS        =                      24.0000
-     * 491 *  
-     * 492 * $ ---------------------------------------------------------
-     * 493 * $              Week Schedules
-     * 494 * $ ---------------------------------------------------------
-     * 495 *  
-     * 496 * "DHW Eqp NRes Wk" = WEEK-SCHEDULE-PD
-     * 497 *    TYPE             = FRACTION
-     * 498 *    DAY-SCHEDULES    = ( "DHW Eqp NRes WD", &D, &D, &D, &D, "DHW Eqp NRes WEH",
-     * 499 *          &D, &D, "DHW Eqp NRes HDD" )
-     * 500 *    ..
+     * 491 * "Fan Sch Day" = DAY-SCHEDULE-PD
+     * 492 *    TYPE             = ON/OFF
+     * 493 *    VALUES           = ( 0, &D, &D, &D, &D, &D, 1, &D, &D, &D, &D, &D, &D, &D,
+     * 494 *          &D, &D, &D, &D, &D, &D, &D, &D, 0 )
+     * 495 *    ..
+
+-NOTE- - -         DATA FOR     Fan Sch Day
+-INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = ON/OFF
+-INPUT - -                                              VALUES           =                       0.0000
+-INPUT - -                                              VALUES           =                       0.0000
+-INPUT - -                                              VALUES           =                       0.0000
+-INPUT - -                                              VALUES           =                       0.0000
+-INPUT - -                                              VALUES           =                       0.0000
+-INPUT - -                                              VALUES           =                       0.0000
+-INPUT - -                                              VALUES           =                       1.0000
+-INPUT - -                                              VALUES           =                       1.0000
+-INPUT - -                                              VALUES           =                       1.0000
+-INPUT - -                                              VALUES           =                       1.0000
+-INPUT - -                                              VALUES           =                       1.0000
+-INPUT - -                                              VALUES           =                       1.0000
+-INPUT - -                                              VALUES           =                       1.0000
+-INPUT - -                                              VALUES           =                       1.0000
+-INPUT - -                                              VALUES           =                       1.0000
+-INPUT - -                                              VALUES           =                       1.0000
+-INPUT - -                                              VALUES           =                       1.0000
+-INPUT - -                                              VALUES           =                       1.0000
+-INPUT - -                                              VALUES           =                       1.0000
+-INPUT - -                                              VALUES           =                       1.0000
+-INPUT - -                                              VALUES           =                       1.0000
+-INPUT - -                                              VALUES           =                       1.0000
+-INPUT - -                                              VALUES           =                       0.0000
+-INPUT - -                                              VALUES           =                       0.0000
+     * 496 *  
+     * 497 * $ ---------------------------------------------------------
+     * 498 * $              Week Schedules
+     * 499 * $ ---------------------------------------------------------
+     * 500 *  
+     * 501 * "DHW Eqp NRes Wk" = WEEK-SCHEDULE-PD
+     * 502 *    TYPE             = FRACTION
+     * 503 *    DAY-SCHEDULES    = ( "DHW Eqp NRes WD", &D, &D, &D, &D, "DHW Eqp NRes WEH",
+     * 504 *          &D, &D, "DHW Eqp NRes HDD" )
+     * 505 *    ..
 
 -NOTE- - -         DATA FOR     DHW Eqp NRes Wk
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = FRACTION
@@ -2566,11 +2600,11 @@
 -INPUT - -                                              DAY-SCHEDULES    = DHW Eqp NRes WD
 -INPUT - -                                              DAY-SCHEDULES    = DHW Eqp NRes HDD
 -INPUT - -                                              DAY-SCHEDULES    = DHW Eqp NRes WD
-     * 501 * "ZG0-S1 (PSZ) P-Inf Wk" = WEEK-SCHEDULE-PD
-     * 502 *    TYPE             = MULTIPLIER
-     * 503 *    DAY-SCHEDULES    = ( "ZG0-S1 (PSZ) P-Inf WD", &D, &D, &D, &D,
-     * 504 *          "ZG0-S1 (PSZ) P-Inf WEH", &D, &D, "ZG0-S1 (PSZ) P-Inf HDD" )
-     * 505 *    ..
+     * 506 * "ZG0-S1 (PSZ) P-Inf Wk" = WEEK-SCHEDULE-PD
+     * 507 *    TYPE             = MULTIPLIER
+     * 508 *    DAY-SCHEDULES    = ( "ZG0-S1 (PSZ) P-Inf WD", &D, &D, &D, &D,
+     * 509 *          "ZG0-S1 (PSZ) P-Inf WEH", &D, &D, "ZG0-S1 (PSZ) P-Inf HDD" )
+     * 510 *    ..
 
 -NOTE- - -         DATA FOR     ZG0-S1 (PSZ) P-Inf Wk
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = MULTIPLIER
@@ -2586,11 +2620,11 @@
 -INPUT - -                                              DAY-SCHEDULES    = ZG0-S1 (PSZ) P-Inf WD
 -INPUT - -                                              DAY-SCHEDULES    = ZG0-S1 (PSZ) P-Inf HDD
 -INPUT - -                                              DAY-SCHEDULES    = ZG0-S1 (PSZ) P-Inf WD
-     * 506 * "S1 Sys1 (PSZ) Fan Wk" = WEEK-SCHEDULE-PD
-     * 507 *    TYPE             = ON/OFF/FLAG
-     * 508 *    DAY-SCHEDULES    = ( "S1 Sys1 (PSZ) Fan WD", &D, &D, &D, &D,
-     * 509 *          "S1 Sys1 (PSZ) Fan WEH" )
-     * 510 *    ..
+     * 511 * "S1 Sys1 (PSZ) Fan Wk" = WEEK-SCHEDULE-PD
+     * 512 *    TYPE             = ON/OFF/FLAG
+     * 513 *    DAY-SCHEDULES    = ( "S1 Sys1 (PSZ) Fan WD", &D, &D, &D, &D,
+     * 514 *          "S1 Sys1 (PSZ) Fan WEH" )
+     * 515 *    ..
 
 -NOTE- - -         DATA FOR     S1 Sys1 (PSZ) Fan Wk
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = ON/OFF/FLAG
@@ -2606,11 +2640,11 @@
 -INPUT - -                                              DAY-SCHEDULES    = S1 Sys1 (PSZ) Fan WD
 -INPUT - -                                              DAY-SCHEDULES    = S1 Sys1 (PSZ) Fan WD
 -INPUT - -                                              DAY-SCHEDULES    = S1 Sys1 (PSZ) Fan WD
-     * 511 * "S1 Sys1 (PSZ) MinOA Wk" = WEEK-SCHEDULE-PD
-     * 512 *    TYPE             = FRAC/DESIGN
-     * 513 *    DAY-SCHEDULES    = ( "S1 Sys1 (PSZ) MinOA WD", &D, &D, &D, &D,
-     * 514 *          "S1 Sys1 (PSZ) MinOA WEH" )
-     * 515 *    ..
+     * 516 * "S1 Sys1 (PSZ) MinOA Wk" = WEEK-SCHEDULE-PD
+     * 517 *    TYPE             = FRAC/DESIGN
+     * 518 *    DAY-SCHEDULES    = ( "S1 Sys1 (PSZ) MinOA WD", &D, &D, &D, &D,
+     * 519 *          "S1 Sys1 (PSZ) MinOA WEH" )
+     * 520 *    ..
 
 -NOTE- - -         DATA FOR     S1 Sys1 (PSZ) MinOA Wk
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = FRAC/DESIGN
@@ -2626,12 +2660,12 @@
 -INPUT - -                                              DAY-SCHEDULES    = S1 Sys1 (PSZ) MinOA WD
 -INPUT - -                                              DAY-SCHEDULES    = S1 Sys1 (PSZ) MinOA WD
 -INPUT - -                                              DAY-SCHEDULES    = S1 Sys1 (PSZ) MinOA WD
-     * 516 * "Occupancy Week" = WEEK-SCHEDULE-PD
-     * 517 *    TYPE             = FRACTION
-     * 518 *    DAY-SCHEDULES    = ( "Occupancy Weekday", &D, &D, &D, &D,
-     * 519 *          "Occupancy Saturday", "Occupancy Sunday", "Occupancy Saturday", &D,
-     * 520 *          &D, "Occupancy Saturday", "Occupancy Saturday" )
-     * 521 *    ..
+     * 521 * "Occupancy Week" = WEEK-SCHEDULE-PD
+     * 522 *    TYPE             = FRACTION
+     * 523 *    DAY-SCHEDULES    = ( "Occupancy Weekday", &D, &D, &D, &D,
+     * 524 *          "Occupancy Saturday", "Occupancy Sunday", "Occupancy Saturday", &D,
+     * 525 *          &D, "Occupancy Saturday", "Occupancy Saturday" )
+     * 526 *    ..
 
 -NOTE- - -         DATA FOR     Occupancy Week
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = FRACTION
@@ -2647,12 +2681,12 @@
 -INPUT - -                                              DAY-SCHEDULES    = Occupancy Weekday
 -INPUT - -                                              DAY-SCHEDULES    = Occupancy Saturday
 -INPUT - -                                              DAY-SCHEDULES    = Occupancy Saturday
-     * 522 * "Lighting Week" = WEEK-SCHEDULE-PD
-     * 523 *    TYPE             = FRACTION
-     * 524 *    DAY-SCHEDULES    = ( "Lighting Weekday", &D, &D, &D, &D,
-     * 525 *          "Lighting Saturday", "Lighting Sunday", "Lighting Saturday", &D, &D,
-     * 526 *          "Lighting Saturday", "Lighting Saturday" )
-     * 527 *    ..
+     * 527 * "Lighting Week" = WEEK-SCHEDULE-PD
+     * 528 *    TYPE             = FRACTION
+     * 529 *    DAY-SCHEDULES    = ( "Lighting Weekday", &D, &D, &D, &D,
+     * 530 *          "Lighting Saturday", "Lighting Sunday", "Lighting Saturday", &D, &D,
+     * 531 *          "Lighting Saturday", "Lighting Saturday" )
+     * 532 *    ..
 
 -NOTE- - -         DATA FOR     Lighting Week
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = FRACTION
@@ -2668,12 +2702,12 @@
 -INPUT - -                                              DAY-SCHEDULES    = Lighting Weekday
 -INPUT - -                                              DAY-SCHEDULES    = Lighting Saturday
 -INPUT - -                                              DAY-SCHEDULES    = Lighting Saturday
-     * 528 * "Plug Load Week Schedule" = WEEK-SCHEDULE-PD
-     * 529 *    TYPE             = FRACTION
-     * 530 *    DAY-SCHEDULES    = ( "Plug Load Weekday", &D, &D, &D, &D,
-     * 531 *          "Plug Load Saturday", "Plug Load Sunday", "Plug Load Saturday", &D,
-     * 532 *          &D, "Plug Load Saturday", "Plug Load Saturday" )
-     * 533 *    ..
+     * 533 * "Plug Load Week Schedule" = WEEK-SCHEDULE-PD
+     * 534 *    TYPE             = FRACTION
+     * 535 *    DAY-SCHEDULES    = ( "Plug Load Weekday", &D, &D, &D, &D,
+     * 536 *          "Plug Load Saturday", "Plug Load Sunday", "Plug Load Saturday", &D,
+     * 537 *          &D, "Plug Load Saturday", "Plug Load Saturday" )
+     * 538 *    ..
 
 -NOTE- - -         DATA FOR     Plug Load Week Schedule
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = FRACTION
@@ -2689,12 +2723,12 @@
 -INPUT - -                                              DAY-SCHEDULES    = Plug Load Weekday
 -INPUT - -                                              DAY-SCHEDULES    = Plug Load Saturday
 -INPUT - -                                              DAY-SCHEDULES    = Plug Load Saturday
-     * 534 * "Elevator Week" = WEEK-SCHEDULE-PD
-     * 535 *    TYPE             = FRACTION
-     * 536 *    DAY-SCHEDULES    = ( "Elevator Weekday", &D, &D, &D, &D,
-     * 537 *          "Elevator Saturday", "Elevator Sunday", "Elevator Saturday", &D, &D,
-     * 538 *          "Elevator Saturday", "Elevator Saturday" )
-     * 539 *    ..
+     * 539 * "Elevator Week" = WEEK-SCHEDULE-PD
+     * 540 *    TYPE             = FRACTION
+     * 541 *    DAY-SCHEDULES    = ( "Elevator Weekday", &D, &D, &D, &D,
+     * 542 *          "Elevator Saturday", "Elevator Sunday", "Elevator Saturday", &D, &D,
+     * 543 *          "Elevator Saturday", "Elevator Saturday" )
+     * 544 *    ..
 
 -NOTE- - -         DATA FOR     Elevator Week
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = FRACTION
@@ -2710,13 +2744,13 @@
 -INPUT - -                                              DAY-SCHEDULES    = Elevator Weekday
 -INPUT - -                                              DAY-SCHEDULES    = Elevator Saturday
 -INPUT - -                                              DAY-SCHEDULES    = Elevator Saturday
-     * 540 * "Heating Setpoint Week" = WEEK-SCHEDULE-PD
-     * 541 *    TYPE             = TEMPERATURE
-     * 542 *    DAY-SCHEDULES    = ( "Heating setpoint weekday", &D, &D, &D, &D,
-     * 543 *          "Heating setpoint Saturday", "Heating setpoint Sunday",
-     * 544 *          "Heating setpoint Saturday", &D, &D, "Heating setpoint Saturday",
-     * 545 *          "Heating setpoint Saturday" )
-     * 546 *    ..
+     * 545 * "Heating Setpoint Week" = WEEK-SCHEDULE-PD
+     * 546 *    TYPE             = TEMPERATURE
+     * 547 *    DAY-SCHEDULES    = ( "Heating setpoint weekday", &D, &D, &D, &D,
+     * 548 *          "Heating setpoint Saturday", "Heating setpoint Sunday",
+     * 549 *          "Heating setpoint Saturday", &D, &D, "Heating setpoint Saturday",
+     * 550 *          "Heating setpoint Saturday" )
+     * 551 *    ..
 
 -NOTE- - -         DATA FOR     Heating Setpoint Week
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = TEMPERATURE
@@ -2732,13 +2766,13 @@
 -INPUT - -                                              DAY-SCHEDULES    = Heating setpoint weekday
 -INPUT - -                                              DAY-SCHEDULES    = Heating setpoint Saturday
 -INPUT - -                                              DAY-SCHEDULES    = Heating setpoint Saturday
-     * 547 * "Cooling setpoint week" = WEEK-SCHEDULE-PD
-     * 548 *    TYPE             = TEMPERATURE
-     * 549 *    DAY-SCHEDULES    = ( "Cooling setpoint weekday", &D, &D, &D, &D,
-     * 550 *          "Cooling setpoint saturday", "Cooling Setpoint Sunday",
-     * 551 *          "Cooling setpoint saturday", &D, &D, "Cooling setpoint saturday",
-     * 552 *          "Cooling setpoint saturday" )
-     * 553 *    ..
+     * 552 * "Cooling setpoint week" = WEEK-SCHEDULE-PD
+     * 553 *    TYPE             = TEMPERATURE
+     * 554 *    DAY-SCHEDULES    = ( "Cooling setpoint weekday", &D, &D, &D, &D,
+     * 555 *          "Cooling setpoint saturday", "Cooling Setpoint Sunday",
+     * 556 *          "Cooling setpoint saturday", &D, &D, "Cooling setpoint saturday",
+     * 557 *          "Cooling setpoint saturday" )
+     * 558 *    ..
 
 -NOTE- - -         DATA FOR     Cooling setpoint week
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = TEMPERATURE
@@ -2754,11 +2788,11 @@
 -INPUT - -                                              DAY-SCHEDULES    = Cooling setpoint weekday
 -INPUT - -                                              DAY-SCHEDULES    = Cooling setpoint saturday
 -INPUT - -                                              DAY-SCHEDULES    = Cooling setpoint saturday
-     * 554 * "CHW OA Reset Week" = WEEK-SCHEDULE-PD
-     * 555 *    TYPE             = RESET-TEMP
-     * 556 *    DAY-SCHEDULES    = ( "CHW OA Reset Day", &D, &D, &D, &D,
-     * 557 *          "CHW OA Reset Day" )
-     * 558 *    ..
+     * 559 * "CHW OA Reset Week" = WEEK-SCHEDULE-PD
+     * 560 *    TYPE             = RESET-TEMP
+     * 561 *    DAY-SCHEDULES    = ( "CHW OA Reset Day", &D, &D, &D, &D,
+     * 562 *          "CHW OA Reset Day" )
+     * 563 *    ..
 
 -NOTE- - -         DATA FOR     CHW OA Reset Week
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = RESET-TEMP
@@ -2774,10 +2808,10 @@
 -INPUT - -                                              DAY-SCHEDULES    = CHW OA Reset Day
 -INPUT - -                                              DAY-SCHEDULES    = CHW OA Reset Day
 -INPUT - -                                              DAY-SCHEDULES    = CHW OA Reset Day
-     * 559 * "HW OA Reset Week" = WEEK-SCHEDULE-PD
-     * 560 *    TYPE             = RESET-TEMP
-     * 561 *    DAY-SCHEDULES    = ( "HW OA Reset Day", &D, &D, &D, &D, "HW OA Reset Day" )
-     * 562 *    ..
+     * 564 * "HW OA Reset Week" = WEEK-SCHEDULE-PD
+     * 565 *    TYPE             = RESET-TEMP
+     * 566 *    DAY-SCHEDULES    = ( "HW OA Reset Day", &D, &D, &D, &D, "HW OA Reset Day" )
+     * 567 *    ..
 
 -NOTE- - -         DATA FOR     HW OA Reset Week
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = RESET-TEMP
@@ -2793,10 +2827,10 @@
 -INPUT - -                                              DAY-SCHEDULES    = HW OA Reset Day
 -INPUT - -                                              DAY-SCHEDULES    = HW OA Reset Day
 -INPUT - -                                              DAY-SCHEDULES    = HW OA Reset Day
-     * 563 * "All ON Wk" = WEEK-SCHEDULE-PD
-     * 564 *    TYPE             = ON/OFF
-     * 565 *    DAY-SCHEDULES    = ( "All ON Day", &D, &D, &D, &D, "All ON Day" )
-     * 566 *    ..
+     * 568 * "All ON Wk" = WEEK-SCHEDULE-PD
+     * 569 *    TYPE             = ON/OFF
+     * 570 *    DAY-SCHEDULES    = ( "All ON Day", &D, &D, &D, &D, "All ON Day" )
+     * 571 *    ..
 
 -NOTE- - -         DATA FOR     All ON Wk
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = ON/OFF
@@ -2812,17 +2846,36 @@
 -INPUT - -                                              DAY-SCHEDULES    = All ON Day
 -INPUT - -                                              DAY-SCHEDULES    = All ON Day
 -INPUT - -                                              DAY-SCHEDULES    = All ON Day
-     * 567 *  
-     * 568 * $ ---------------------------------------------------------
-     * 569 * $              Annual Schedules
-     * 570 * $ ---------------------------------------------------------
-     * 571 *  
-     * 572 * "DHW Eqp NRes Sch" = SCHEDULE-PD
-     * 573 *    TYPE             = FRACTION
-     * 574 *    MONTH            = ( 12 )
-     * 575 *    DAY              = ( 31 )
-     * 576 *    WEEK-SCHEDULES   = ( "DHW Eqp NRes Wk" )
-     * 577 *    ..
+     * 572 * "Fan Sch Wk" = WEEK-SCHEDULE-PD
+     * 573 *    TYPE             = ON/OFF
+     * 574 *    DAY-SCHEDULES    = ( "Fan Sch Day", &D, &D, &D, &D, "Fan Sch Day" )
+     * 575 *    ..
+
+-NOTE- - -         DATA FOR     Fan Sch Wk
+-INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = ON/OFF
+-INPUT - -                                              DAY-SCHEDULES    = Fan Sch Day
+-INPUT - -                                              DAY-SCHEDULES    = Fan Sch Day
+-INPUT - -                                              DAY-SCHEDULES    = Fan Sch Day
+-INPUT - -                                              DAY-SCHEDULES    = Fan Sch Day
+-INPUT - -                                              DAY-SCHEDULES    = Fan Sch Day
+-INPUT - -                                              DAY-SCHEDULES    = Fan Sch Day
+-INPUT - -                                              DAY-SCHEDULES    = Fan Sch Day
+-INPUT - -                                              DAY-SCHEDULES    = Fan Sch Day
+-INPUT - -                                              DAY-SCHEDULES    = Fan Sch Day
+-INPUT - -                                              DAY-SCHEDULES    = Fan Sch Day
+-INPUT - -                                              DAY-SCHEDULES    = Fan Sch Day
+-INPUT - -                                              DAY-SCHEDULES    = Fan Sch Day
+     * 576 *  
+     * 577 * $ ---------------------------------------------------------
+     * 578 * $              Annual Schedules
+     * 579 * $ ---------------------------------------------------------
+     * 580 *  
+     * 581 * "DHW Eqp NRes Sch" = SCHEDULE-PD
+     * 582 *    TYPE             = FRACTION
+     * 583 *    MONTH            = ( 12 )
+     * 584 *    DAY              = ( 31 )
+     * 585 *    WEEK-SCHEDULES   = ( "DHW Eqp NRes Wk" )
+     * 586 *    ..
 
 -NOTE- - -         DATA FOR     DHW Eqp NRes Sch
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = FRACTION
@@ -2830,12 +2883,12 @@
 -INPUT - -                                              DAY              =                      31.0000
 -INPUT - -                                              WEEK-SCHEDULES   = DHW Eqp NRes Wk
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  PHOTOCELL-CTRL   = NONE
-     * 578 * "ZG0-S1 (PSZ) P-Inf Sch" = SCHEDULE-PD
-     * 579 *    TYPE             = MULTIPLIER
-     * 580 *    MONTH            = ( 12 )
-     * 581 *    DAY              = ( 31 )
-     * 582 *    WEEK-SCHEDULES   = ( "ZG0-S1 (PSZ) P-Inf Wk" )
-     * 583 *    ..
+     * 587 * "ZG0-S1 (PSZ) P-Inf Sch" = SCHEDULE-PD
+     * 588 *    TYPE             = MULTIPLIER
+     * 589 *    MONTH            = ( 12 )
+     * 590 *    DAY              = ( 31 )
+     * 591 *    WEEK-SCHEDULES   = ( "ZG0-S1 (PSZ) P-Inf Wk" )
+     * 592 *    ..
 
 -NOTE- - -         DATA FOR     ZG0-S1 (PSZ) P-Inf Sch
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = MULTIPLIER
@@ -2843,12 +2896,12 @@
 -INPUT - -                                              DAY              =                      31.0000
 -INPUT - -                                              WEEK-SCHEDULES   = ZG0-S1 (PSZ) P-Inf Wk
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  PHOTOCELL-CTRL   = NONE
-     * 584 * "S1 Sys1 (PSZ) Fan Sch" = SCHEDULE-PD
-     * 585 *    TYPE             = ON/OFF/FLAG
-     * 586 *    MONTH            = ( 12 )
-     * 587 *    DAY              = ( 31 )
-     * 588 *    WEEK-SCHEDULES   = ( "S1 Sys1 (PSZ) Fan Wk" )
-     * 589 *    ..
+     * 593 * "S1 Sys1 (PSZ) Fan Sch" = SCHEDULE-PD
+     * 594 *    TYPE             = ON/OFF/FLAG
+     * 595 *    MONTH            = ( 12 )
+     * 596 *    DAY              = ( 31 )
+     * 597 *    WEEK-SCHEDULES   = ( "S1 Sys1 (PSZ) Fan Wk" )
+     * 598 *    ..
 
 -NOTE- - -         DATA FOR     S1 Sys1 (PSZ) Fan Sch
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = ON/OFF/FLAG
@@ -2856,24 +2909,24 @@
 -INPUT - -                                              DAY              =                      31.0000
 -INPUT - -                                              WEEK-SCHEDULES   = S1 Sys1 (PSZ) Fan Wk
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  PHOTOCELL-CTRL   = NONE
-     * 590 * "S1 Sys1 (PSZ) MinOA Sch" = SCHEDULE-PD
-     * 591 *    TYPE             = FRAC/DESIGN
-     * 592 *    MONTH            = ( 12 )
-     * 593 *    DAY              = ( 31 )
-     * 594 *    WEEK-SCHEDULES   = ( "S1 Sys1 (PSZ) MinOA Wk" )
-     * 595 *    ..
+     * 599 * "S1 Sys1 (PSZ) MinOA Sch" = SCHEDULE-PD
+     * 600 *    TYPE             = FRAC/DESIGN
+     * 601 *    MONTH            = ( 12 )
+     * 602 *    DAY              = ( 31 )
+     * 603 *    WEEK-SCHEDULES   = ( "S1 Sys1 (PSZ) MinOA Wk" )
+     * 604 *    ..
 
 -NOTE- - -         DATA FOR     S1 Sys1 (PSZ) MinOA Sch
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = FRAC/DESIGN
 -INPUT - -                                              MONTH            =                      12.0000
 -INPUT - -                                              DAY              =                      31.0000
 -INPUT - -                                              WEEK-SCHEDULES   = S1 Sys1 (PSZ) MinOA Wk
-     * 596 * "Occupancy Annual" = SCHEDULE-PD
-     * 597 *    TYPE             = FRACTION
-     * 598 *    MONTH            = ( 12 )
-     * 599 *    DAY              = ( 31 )
-     * 600 *    WEEK-SCHEDULES   = ( "Occupancy Week" )
-     * 601 *    ..
+     * 605 * "Occupancy Annual" = SCHEDULE-PD
+     * 606 *    TYPE             = FRACTION
+     * 607 *    MONTH            = ( 12 )
+     * 608 *    DAY              = ( 31 )
+     * 609 *    WEEK-SCHEDULES   = ( "Occupancy Week" )
+     * 610 *    ..
 
 -NOTE- - -         DATA FOR     Occupancy Annual
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = FRACTION
@@ -2881,12 +2934,12 @@
 -INPUT - -                                              DAY              =                      31.0000
 -INPUT - -                                              WEEK-SCHEDULES   = Occupancy Week
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  PHOTOCELL-CTRL   = NONE
-     * 602 * "Lighting Schedule" = SCHEDULE-PD
-     * 603 *    TYPE             = FRACTION
-     * 604 *    MONTH            = ( 12 )
-     * 605 *    DAY              = ( 31 )
-     * 606 *    WEEK-SCHEDULES   = ( "Lighting Week" )
-     * 607 *    ..
+     * 611 * "Lighting Schedule" = SCHEDULE-PD
+     * 612 *    TYPE             = FRACTION
+     * 613 *    MONTH            = ( 12 )
+     * 614 *    DAY              = ( 31 )
+     * 615 *    WEEK-SCHEDULES   = ( "Lighting Week" )
+     * 616 *    ..
 
 -NOTE- - -         DATA FOR     Lighting Schedule
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = FRACTION
@@ -2894,12 +2947,12 @@
 -INPUT - -                                              DAY              =                      31.0000
 -INPUT - -                                              WEEK-SCHEDULES   = Lighting Week
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  PHOTOCELL-CTRL   = NONE
-     * 608 * "Plug Load Annual" = SCHEDULE-PD
-     * 609 *    TYPE             = FRACTION
-     * 610 *    MONTH            = ( 12 )
-     * 611 *    DAY              = ( 31 )
-     * 612 *    WEEK-SCHEDULES   = ( "Plug Load Week Schedule" )
-     * 613 *    ..
+     * 617 * "Plug Load Annual" = SCHEDULE-PD
+     * 618 *    TYPE             = FRACTION
+     * 619 *    MONTH            = ( 12 )
+     * 620 *    DAY              = ( 31 )
+     * 621 *    WEEK-SCHEDULES   = ( "Plug Load Week Schedule" )
+     * 622 *    ..
 
 -NOTE- - -         DATA FOR     Plug Load Annual
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = FRACTION
@@ -2907,12 +2960,12 @@
 -INPUT - -                                              DAY              =                      31.0000
 -INPUT - -                                              WEEK-SCHEDULES   = Plug Load Week Schedule
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  PHOTOCELL-CTRL   = NONE
-     * 614 * "Elevator Annual" = SCHEDULE-PD
-     * 615 *    TYPE             = FRACTION
-     * 616 *    MONTH            = ( 12 )
-     * 617 *    DAY              = ( 31 )
-     * 618 *    WEEK-SCHEDULES   = ( "Elevator Week" )
-     * 619 *    ..
+     * 623 * "Elevator Annual" = SCHEDULE-PD
+     * 624 *    TYPE             = FRACTION
+     * 625 *    MONTH            = ( 12 )
+     * 626 *    DAY              = ( 31 )
+     * 627 *    WEEK-SCHEDULES   = ( "Elevator Week" )
+     * 628 *    ..
 
 -NOTE- - -         DATA FOR     Elevator Annual
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = FRACTION
@@ -2920,32 +2973,32 @@
 -INPUT - -                                              DAY              =                      31.0000
 -INPUT - -                                              WEEK-SCHEDULES   = Elevator Week
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  PHOTOCELL-CTRL   = NONE
-     * 620 * "Heating Setpoint Annual" = SCHEDULE-PD
-     * 621 *    TYPE             = TEMPERATURE
-     * 622 *    MONTH            = ( 12 )
-     * 623 *    DAY              = ( 31 )
-     * 624 *    WEEK-SCHEDULES   = ( "Heating Setpoint Week" )
-     * 625 *    ..
+     * 629 * "Heating Setpoint Annual" = SCHEDULE-PD
+     * 630 *    TYPE             = TEMPERATURE
+     * 631 *    MONTH            = ( 12 )
+     * 632 *    DAY              = ( 31 )
+     * 633 *    WEEK-SCHEDULES   = ( "Heating Setpoint Week" )
+     * 634 *    ..
 
 -NOTE- - -         DATA FOR     Heating Setpoint Annual
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = TEMPERATURE
 -INPUT - -                                              MONTH            =                      12.0000
 -INPUT - -                                              DAY              =                      31.0000
 -INPUT - -                                              WEEK-SCHEDULES   = Heating Setpoint Week
-     * 626 * "Cooling Setpoint Annual" = SCHEDULE-PD
-     * 627 *    TYPE             = TEMPERATURE
-     * 628 *    MONTH            = ( 12 )
-     * 629 *    DAY              = ( 31 )
-     * 630 *    WEEK-SCHEDULES   = ( "Cooling setpoint week" )
-     * 631 *    ..
+     * 635 * "Cooling Setpoint Annual" = SCHEDULE-PD
+     * 636 *    TYPE             = TEMPERATURE
+     * 637 *    MONTH            = ( 12 )
+     * 638 *    DAY              = ( 31 )
+     * 639 *    WEEK-SCHEDULES   = ( "Cooling setpoint week" )
+     * 640 *    ..
 
 -NOTE- - -         DATA FOR     Cooling Setpoint Annual
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = TEMPERATURE
 -INPUT - -                                              MONTH            =                      12.0000
 -INPUT - -                                              DAY              =                      31.0000
 -INPUT - -                                              WEEK-SCHEDULES   = Cooling setpoint week
-     * 632 * "Hourly Report Schedule 23" = SCHEDULE-PD
-     * 633 *    LIBRARY-ENTRY "Hourly Report Schedule"
+     * 641 * "Hourly Report Schedule 23" = SCHEDULE-PD
+     * 642 *    LIBRARY-ENTRY "Hourly Report Schedule"
 -NOTE- - - ------------------ ======================== ---------------------------------------THIS ITEM HAS BEEN FETCHED FROM LIBRARY 
      *   1 * $LIBRARY-ENTRY Hourly Report Schedule          SCHEDULE-PD     Hourly Reports
      *   2 *    TYPE=ON/OFF
@@ -3030,7 +3083,7 @@
 -LIBRARY -                                              DAY-SCHEDULES    = Hourly Report Day Off
 -LIBRARY -                                              DAY-SCHEDULES    = Hourly Report Day Off
 -LIBRARY -                                              DAY-SCHEDULES    = Hourly Report Day Off
-     * 634 *    ..
+     * 643 *    ..
 
 -NOTE- - -         DATA FOR     Hourly Report Schedule 23
 -LIBRARY - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = ON/OFF
@@ -3038,36 +3091,36 @@
 -LIBRARY -                                              DAY              =                      31.0000
 -LIBRARY -                                              WEEK-SCHEDULES   = Hourly Report Week Sched
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  PHOTOCELL-CTRL   = NONE
-     * 635 * "HW OA Reset" = SCHEDULE-PD
-     * 636 *    TYPE             = RESET-TEMP
-     * 637 *    MONTH            = ( 12 )
-     * 638 *    DAY              = ( 31 )
-     * 639 *    WEEK-SCHEDULES   = ( "HW OA Reset Week" )
-     * 640 *    ..
+     * 644 * "HW OA Reset" = SCHEDULE-PD
+     * 645 *    TYPE             = RESET-TEMP
+     * 646 *    MONTH            = ( 12 )
+     * 647 *    DAY              = ( 31 )
+     * 648 *    WEEK-SCHEDULES   = ( "HW OA Reset Week" )
+     * 649 *    ..
 
 -NOTE- - -         DATA FOR     HW OA Reset
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = RESET-TEMP
 -INPUT - -                                              MONTH            =                      12.0000
 -INPUT - -                                              DAY              =                      31.0000
 -INPUT - -                                              WEEK-SCHEDULES   = HW OA Reset Week
-     * 641 * "CHW OA Reset" = SCHEDULE-PD
-     * 642 *    TYPE             = RESET-TEMP
-     * 643 *    MONTH            = ( 12 )
-     * 644 *    DAY              = ( 31 )
-     * 645 *    WEEK-SCHEDULES   = ( "CHW OA Reset Week" )
-     * 646 *    ..
+     * 650 * "CHW OA Reset" = SCHEDULE-PD
+     * 651 *    TYPE             = RESET-TEMP
+     * 652 *    MONTH            = ( 12 )
+     * 653 *    DAY              = ( 31 )
+     * 654 *    WEEK-SCHEDULES   = ( "CHW OA Reset Week" )
+     * 655 *    ..
 
 -NOTE- - -         DATA FOR     CHW OA Reset
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = RESET-TEMP
 -INPUT - -                                              MONTH            =                      12.0000
 -INPUT - -                                              DAY              =                      31.0000
 -INPUT - -                                              WEEK-SCHEDULES   = CHW OA Reset Week
-     * 647 * "All ON Sch" = SCHEDULE-PD
-     * 648 *    TYPE             = ON/OFF
-     * 649 *    MONTH            = ( 12 )
-     * 650 *    DAY              = ( 31 )
-     * 651 *    WEEK-SCHEDULES   = ( "All ON Wk" )
-     * 652 *    ..
+     * 656 * "All ON Sch" = SCHEDULE-PD
+     * 657 *    TYPE             = ON/OFF
+     * 658 *    MONTH            = ( 12 )
+     * 659 *    DAY              = ( 31 )
+     * 660 *    WEEK-SCHEDULES   = ( "All ON Wk" )
+     * 661 *    ..
 
 -NOTE- - -         DATA FOR     All ON Sch
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = ON/OFF
@@ -3075,18 +3128,31 @@
 -INPUT - -                                              DAY              =                      31.0000
 -INPUT - -                                              WEEK-SCHEDULES   = All ON Wk
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  PHOTOCELL-CTRL   = NONE
-     * 653 *  
-     * 654 *  
-     * 655 * $ ---------------------------------------------------------
-     * 656 * $              Polygons
-     * 657 * $ ---------------------------------------------------------
-     * 658 *  
-     * 659 * "BL1 Floor Polygon" = POLYGON
-     * 660 *    V1               = ( 0, 0 )
-     * 661 *    V2               = ( 163.8, 0 )
-     * 662 *    V3               = ( 163.8, 109.2 )
-     * 663 *    V4               = ( 0, 109.2 )
-     * 664 *    ..
+     * 662 * "Fan Sch" = SCHEDULE-PD
+     * 663 *    TYPE             = ON/OFF
+     * 664 *    MONTH            = ( 12 )
+     * 665 *    DAY              = ( 31 )
+     * 666 *    WEEK-SCHEDULES   = ( "Fan Sch Wk" )
+     * 667 *    ..
+
+-NOTE- - -         DATA FOR     Fan Sch
+-INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = ON/OFF
+-INPUT - -                                              MONTH            =                      12.0000
+-INPUT - -                                              DAY              =                      31.0000
+-INPUT - -                                              WEEK-SCHEDULES   = Fan Sch Wk
+-DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  PHOTOCELL-CTRL   = NONE
+     * 668 *  
+     * 669 *  
+     * 670 * $ ---------------------------------------------------------
+     * 671 * $              Polygons
+     * 672 * $ ---------------------------------------------------------
+     * 673 *  
+     * 674 * "BL1 Floor Polygon" = POLYGON
+     * 675 *    V1               = ( 0, 0 )
+     * 676 *    V2               = ( 163.8, 0 )
+     * 677 *    V3               = ( 163.8, 109.2 )
+     * 678 *    V4               = ( 0, 109.2 )
+     * 679 *    ..
 
 -NOTE- - -         DATA FOR     BL1 Floor Polygon
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  V1               =                       0.0000 FT
@@ -3097,12 +3163,12 @@
 -INPUT - -                                              V3               =                     109.2000 FT
 -INPUT - -                                              V4               =                       0.0000 FT
 -INPUT - -                                              V4               =                     109.2000 FT
-     * 665 * "BL1 Space Polygon 1" = POLYGON
-     * 666 *    V1               = ( 0, 0 )
-     * 667 *    V2               = ( 163.8, 0 )
-     * 668 *    V3               = ( 148.8, 15 )
-     * 669 *    V4               = ( 15, 15 )
-     * 670 *    ..
+     * 680 * "BL1 Space Polygon 1" = POLYGON
+     * 681 *    V1               = ( 0, 0 )
+     * 682 *    V2               = ( 163.8, 0 )
+     * 683 *    V3               = ( 148.8, 15 )
+     * 684 *    V4               = ( 15, 15 )
+     * 685 *    ..
 
 -NOTE- - -         DATA FOR     BL1 Space Polygon 1
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  V1               =                       0.0000 FT
@@ -3113,12 +3179,12 @@
 -INPUT - -                                              V3               =                      15.0000 FT
 -INPUT - -                                              V4               =                      15.0000 FT
 -INPUT - -                                              V4               =                      15.0000 FT
-     * 671 * "BL1 Space Polygon 2" = POLYGON
-     * 672 *    V1               = ( 0, 0 )
-     * 673 *    V2               = ( 109.2, -0 )
-     * 674 *    V3               = ( 94.2, 15 )
-     * 675 *    V4               = ( 15, 15 )
-     * 676 *    ..
+     * 686 * "BL1 Space Polygon 2" = POLYGON
+     * 687 *    V1               = ( 0, 0 )
+     * 688 *    V2               = ( 109.2, -0 )
+     * 689 *    V3               = ( 94.2, 15 )
+     * 690 *    V4               = ( 15, 15 )
+     * 691 *    ..
 
 -NOTE- - -         DATA FOR     BL1 Space Polygon 2
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  V1               =                       0.0000 FT
@@ -3129,12 +3195,12 @@
 -INPUT - -                                              V3               =                      15.0000 FT
 -INPUT - -                                              V4               =                      15.0000 FT
 -INPUT - -                                              V4               =                      15.0000 FT
-     * 677 * "BL1 Space Polygon 3" = POLYGON
-     * 678 *    V1               = ( 0, 0 )
-     * 679 *    V2               = ( 163.8, 0 )
-     * 680 *    V3               = ( 148.8, 15 )
-     * 681 *    V4               = ( 15, 15 )
-     * 682 *    ..
+     * 692 * "BL1 Space Polygon 3" = POLYGON
+     * 693 *    V1               = ( 0, 0 )
+     * 694 *    V2               = ( 163.8, 0 )
+     * 695 *    V3               = ( 148.8, 15 )
+     * 696 *    V4               = ( 15, 15 )
+     * 697 *    ..
 
 -NOTE- - -         DATA FOR     BL1 Space Polygon 3
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  V1               =                       0.0000 FT
@@ -3145,12 +3211,12 @@
 -INPUT - -                                              V3               =                      15.0000 FT
 -INPUT - -                                              V4               =                      15.0000 FT
 -INPUT - -                                              V4               =                      15.0000 FT
-     * 683 * "BL1 Space Polygon 4" = POLYGON
-     * 684 *    V1               = ( 0, 0 )
-     * 685 *    V2               = ( 109.2, 0 )
-     * 686 *    V3               = ( 94.2, 15 )
-     * 687 *    V4               = ( 15, 15 )
-     * 688 *    ..
+     * 698 * "BL1 Space Polygon 4" = POLYGON
+     * 699 *    V1               = ( 0, 0 )
+     * 700 *    V2               = ( 109.2, 0 )
+     * 701 *    V3               = ( 94.2, 15 )
+     * 702 *    V4               = ( 15, 15 )
+     * 703 *    ..
 
 -NOTE- - -         DATA FOR     BL1 Space Polygon 4
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  V1               =                       0.0000 FT
@@ -3161,12 +3227,12 @@
 -INPUT - -                                              V3               =                      15.0000 FT
 -INPUT - -                                              V4               =                      15.0000 FT
 -INPUT - -                                              V4               =                      15.0000 FT
-     * 689 * "BL1 Space Polygon 5" = POLYGON
-     * 690 *    V1               = ( 0, 0 )
-     * 691 *    V2               = ( 133.8, 0 )
-     * 692 *    V3               = ( 133.8, 79.2 )
-     * 693 *    V4               = ( 0, 79.2 )
-     * 694 *    ..
+     * 704 * "BL1 Space Polygon 5" = POLYGON
+     * 705 *    V1               = ( 0, 0 )
+     * 706 *    V2               = ( 133.8, 0 )
+     * 707 *    V3               = ( 133.8, 79.2 )
+     * 708 *    V4               = ( 0, 79.2 )
+     * 709 *    ..
 
 -NOTE- - -         DATA FOR     BL1 Space Polygon 5
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  V1               =                       0.0000 FT
@@ -3177,12 +3243,12 @@
 -INPUT - -                                              V3               =                      79.2000 FT
 -INPUT - -                                              V4               =                       0.0000 FT
 -INPUT - -                                              V4               =                      79.2000 FT
-     * 695 * "BL1 Space Polygon 1 - SMirro" = POLYGON
-     * 696 *    V1               = ( 0, 0 )
-     * 697 *    V2               = ( 15, 15 )
-     * 698 *    V3               = ( 15, 148.8 )
-     * 699 *    V4               = ( 0, 163.8 )
-     * 700 *    ..
+     * 710 * "BL1 Space Polygon 1 - SMirro" = POLYGON
+     * 711 *    V1               = ( 0, 0 )
+     * 712 *    V2               = ( 15, 15 )
+     * 713 *    V3               = ( 15, 148.8 )
+     * 714 *    V4               = ( 0, 163.8 )
+     * 715 *    ..
 
 -NOTE- - -         DATA FOR     BL1 Space Polygon 1 - SMirro
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  V1               =                       0.0000 FT
@@ -3193,12 +3259,12 @@
 -INPUT - -                                              V3               =                     148.8000 FT
 -INPUT - -                                              V4               =                       0.0000 FT
 -INPUT - -                                              V4               =                     163.8000 FT
-     * 701 * "BL1 Space Polygon 2 - SMirro" = POLYGON
-     * 702 *    V1               = ( 0, 0 )
-     * 703 *    V2               = ( 15, 15 )
-     * 704 *    V3               = ( 15, 94.2 )
-     * 705 *    V4               = ( -0, 109.2 )
-     * 706 *    ..
+     * 716 * "BL1 Space Polygon 2 - SMirro" = POLYGON
+     * 717 *    V1               = ( 0, 0 )
+     * 718 *    V2               = ( 15, 15 )
+     * 719 *    V3               = ( 15, 94.2 )
+     * 720 *    V4               = ( -0, 109.2 )
+     * 721 *    ..
 
 -NOTE- - -         DATA FOR     BL1 Space Polygon 2 - SMirro
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  V1               =                       0.0000 FT
@@ -3209,12 +3275,12 @@
 -INPUT - -                                              V3               =                      94.2000 FT
 -INPUT - -                                              V4               =                       0.0000 FT
 -INPUT - -                                              V4               =                     109.2000 FT
-     * 707 * "BL1 Space Polygon 5 - SMirro" = POLYGON
-     * 708 *    V1               = ( 0, 0 )
-     * 709 *    V2               = ( 79.2, 0 )
-     * 710 *    V3               = ( 79.2, 133.8 )
-     * 711 *    V4               = ( 0, 133.8 )
-     * 712 *    ..
+     * 722 * "BL1 Space Polygon 5 - SMirro" = POLYGON
+     * 723 *    V1               = ( 0, 0 )
+     * 724 *    V2               = ( 79.2, 0 )
+     * 725 *    V3               = ( 79.2, 133.8 )
+     * 726 *    V4               = ( 0, 133.8 )
+     * 727 *    ..
 
 -NOTE- - -         DATA FOR     BL1 Space Polygon 5 - SMirro
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  V1               =                       0.0000 FT
@@ -3225,29 +3291,29 @@
 -INPUT - -                                              V3               =                     133.8000 FT
 -INPUT - -                                              V4               =                       0.0000 FT
 -INPUT - -                                              V4               =                     133.8000 FT
-     * 713 *  
-     * 714 *  
-     * 715 * $ ---------------------------------------------------------
-     * 716 * $              Wall Parameters
-     * 717 * $ ---------------------------------------------------------
-     * 718 *  
-     * 719 *  
-     * 720 *  
-     * 721 * $ ---------------------------------------------------------
-     * 722 * $              Fixed and Building Shades
-     * 723 * $ ---------------------------------------------------------
-     * 724 *  
-     * 725 *  
-     * 726 *  
-     * 727 *  
-     * 728 * $ ---------------------------------------------------------
-     * 729 * $              Misc Cost Related Objects
+     * 728 *  
+     * 729 *  
      * 730 * $ ---------------------------------------------------------
-     * 731 *  
-     * 732 *  
+     * 731 * $              Wall Parameters
+     * 732 * $ ---------------------------------------------------------
      * 733 *  
-     * 734 * "Baseline Data" = BASELINE
-     * 735 *    ..
+     * 734 *  
+     * 735 *  
+     * 736 * $ ---------------------------------------------------------
+     * 737 * $              Fixed and Building Shades
+     * 738 * $ ---------------------------------------------------------
+     * 739 *  
+     * 740 *  
+     * 741 *  
+     * 742 *  
+     * 743 * $ ---------------------------------------------------------
+     * 744 * $              Misc Cost Related Objects
+     * 745 * $ ---------------------------------------------------------
+     * 746 *  
+     * 747 *  
+     * 748 *  
+     * 749 * "Baseline Data" = BASELINE
+     * 750 *    ..
 
 -NOTE- - -         DATA FOR     Baseline Data
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  FIRST-COST       =                       0.0000 $DOLLARS
@@ -3310,30 +3376,30 @@
 -DEFAULT -                                              PROJECT-LIFE     =                      25.0000 YEARS
 -DEFAULT -                                              LABOR            =                      25.0000 $/HR
 -DEFAULT -                                              SITE-FACTOR      =                       1.0000
-     * 736 *  
-     * 737 *  
-     * 738 * $ *********************************************************
-     * 739 * $ **                                                     **
-     * 740 * $ **                Performance Curves                   **
-     * 741 * $ **                                                     **
-     * 742 * $ *********************************************************
-     * 743 *  
-     * 744 *  
-     * 745 * $ *********************************************************
-     * 746 * $ **                                                     **
-     * 747 * $ **      Floors / Spaces / Walls / Windows / Doors      **
-     * 748 * $ **                                                     **
-     * 749 * $ *********************************************************
-     * 750 *  
-     * 751 * "Floor 1" = FLOOR
-     * 752 *    AZIMUTH          = 360
-     * 753 *    POLYGON          = "BL1 Floor Polygon"
-     * 754 *    SHAPE            = POLYGON
-     * 755 *    FLOOR-HEIGHT     = 13
-     * 756 *    AREA             = 17867
-     * 757 *    SPACE-HEIGHT     = 13
-     * 758 *    C-DIAGRAM-DATA   = *Detailed UI DiagData*
-     * 759 *    ..
+     * 751 *  
+     * 752 *  
+     * 753 * $ *********************************************************
+     * 754 * $ **                                                     **
+     * 755 * $ **                Performance Curves                   **
+     * 756 * $ **                                                     **
+     * 757 * $ *********************************************************
+     * 758 *  
+     * 759 *  
+     * 760 * $ *********************************************************
+     * 761 * $ **                                                     **
+     * 762 * $ **      Floors / Spaces / Walls / Windows / Doors      **
+     * 763 * $ **                                                     **
+     * 764 * $ *********************************************************
+     * 765 *  
+     * 766 * "Floor 1" = FLOOR
+     * 767 *    AZIMUTH          = 360
+     * 768 *    POLYGON          = "BL1 Floor Polygon"
+     * 769 *    SHAPE            = POLYGON
+     * 770 *    FLOOR-HEIGHT     = 13
+     * 771 *    AREA             = 17867
+     * 772 *    SPACE-HEIGHT     = 13
+     * 773 *    C-DIAGRAM-DATA   = *Detailed UI DiagData*
+     * 774 *    ..
 
 -NOTE- - -         DATA FOR     Floor 1
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  AZIMUTH          =                     360.0000 DEGREES
@@ -3350,28 +3416,28 @@
 -DEFAULT -                                              Z                =                       0.0000 FT
 -DEFAULT -                                              VOLUME           =                  232271.0000 CUFT
 -DEFAULT -                                              C-DISPLAY-PERIM  =                       0.0000 FT
-     * 760 * "Prm Space 1 (South)" = SPACE
-     * 761 *    SHAPE            = POLYGON
-     * 762 *    ZONE-TYPE        = CONDITIONED
-     * 763 *    INF-METHOD       = AIR-CHANGE
-     * 764 *    AIR-CHANGES/HR   = 0.5
-     * 765 *    POLYGON          = "BL1 Space Polygon 1"
-     * 766 *    PEOPLE-SCHEDULE  = ( "Occupancy Annual" )
-     * 767 *    AREA/PERSON      = ( 200 )
-     * 768 *    PEOPLE-HEAT-GAIN = ( 409.457 )
-     * 769 *    PEOPLE-HG-LAT    = ( {45%*409.457} )
-     * 770 *    PEOPLE-HG-SENS   = ( {55%*409.457} )
-     * 771 *    LIGHTING-SCHEDUL = ( "Lighting Schedule" )
-     * 772 *    LIGHTING-W/AREA  = ( 1.025 )
-     * 773 *    EQUIP-SCHEDULE   = ( "Plug Load Annual" )
-     * 774 *    EQUIPMENT-W/AREA = ( 0.75 )
-     * 775 *    EQUIP-LATENT     = ( 0 )
-     * 776 *    EQUIP-SENSIBLE   = ( 1 )
-     * 777 *    LOCATION         = FLOOR-V1
-     * 778 *    C-SUB-SRC-BTUH   = ( 0, 0, 0 )
-     * 779 *    C-SUB-SRC-KW     = ( 0, 0, 0 )
-     * 780 *    C-ACTIVITY-DESC  = *Office (Executive/Private)*
-     * 781 *    ..
+     * 775 * "Prm Space 1 (South)" = SPACE
+     * 776 *    SHAPE            = POLYGON
+     * 777 *    ZONE-TYPE        = CONDITIONED
+     * 778 *    INF-METHOD       = AIR-CHANGE
+     * 779 *    AIR-CHANGES/HR   = 0.5
+     * 780 *    POLYGON          = "BL1 Space Polygon 1"
+     * 781 *    PEOPLE-SCHEDULE  = ( "Occupancy Annual" )
+     * 782 *    AREA/PERSON      = ( 200 )
+     * 783 *    PEOPLE-HEAT-GAIN = ( 409.457 )
+     * 784 *    PEOPLE-HG-LAT    = ( {45%*409.457} )
+     * 785 *    PEOPLE-HG-SENS   = ( {55%*409.457} )
+     * 786 *    LIGHTING-SCHEDUL = ( "Lighting Schedule" )
+     * 787 *    LIGHTING-W/AREA  = ( 1.025 )
+     * 788 *    EQUIP-SCHEDULE   = ( "Plug Load Annual" )
+     * 789 *    EQUIPMENT-W/AREA = ( 0.75 )
+     * 790 *    EQUIP-LATENT     = ( 0 )
+     * 791 *    EQUIP-SENSIBLE   = ( 1 )
+     * 792 *    LOCATION         = FLOOR-V1
+     * 793 *    C-SUB-SRC-BTUH   = ( 0, 0, 0 )
+     * 794 *    C-SUB-SRC-KW     = ( 0, 0, 0 )
+     * 795 *    C-ACTIVITY-DESC  = *Office (Executive/Private)*
+     * 796 *    ..
 
 -NOTE- - -         DATA FOR     Prm Space 1 (South)
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  SHAPE            = POLYGON
@@ -3569,13 +3635,13 @@
 -DEFAULT -                                              *DISP-LIGHT-KW   =                       0.7500 KW
 -DEFAULT -                                              *DISP-LIGHT-W/AR =                       0.0000 W/SQFT
 -DEFAULT -                                              *DISP-EQUIP-KW   =                       0.0000 KW
-     * 782 * "Perimeter Space 1 Ext Wall" = EXTERIOR-WALL
-     * 783 *    CONSTRUCTION     = "Exterior Wall Type 1"
-     * 784 *    INSIDE-SOL-ABS   = 0.7
-     * 785 *    INSIDE-VIS-REFL  = 0.3
-     * 786 *    LOCATION         = SPACE-V1
-     * 787 *    INSIDE-EMISS     = 0.9
-     * 788 *    ..
+     * 797 * "Perimeter Space 1 Ext Wall" = EXTERIOR-WALL
+     * 798 *    CONSTRUCTION     = "Exterior Wall Type 1"
+     * 799 *    INSIDE-SOL-ABS   = 0.7
+     * 800 *    INSIDE-VIS-REFL  = 0.3
+     * 801 *    LOCATION         = SPACE-V1
+     * 802 *    INSIDE-EMISS     = 0.9
+     * 803 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Space 1 Ext Wall
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CONSTRUCTION     = Exterior Wall Type 1
@@ -3617,15 +3683,15 @@
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
 -DEFAULT -                                              C-C-CUBIERTA     =                       0.0000
-     * 789 * "South Window 1" = WINDOW
-     * 790 *    GLASS-TYPE       = "BL1 Window Type #1 GT"
-     * 791 *    FRAME-WIDTH      = 0
-     * 792 *    X                = 0
-     * 793 *    Y                = 3.28
-     * 794 *    HEIGHT           = 4.45
-     * 795 *    WIDTH            = 51.9
-     * 796 *    FRAME-CONDUCT    = 2.781
-     * 797 *    ..
+     * 804 * "South Window 1" = WINDOW
+     * 805 *    GLASS-TYPE       = "BL1 Window Type #1 GT"
+     * 806 *    FRAME-WIDTH      = 0
+     * 807 *    X                = 0
+     * 808 *    Y                = 3.28
+     * 809 *    HEIGHT           = 4.45
+     * 810 *    WIDTH            = 51.9
+     * 811 *    FRAME-CONDUCT    = 2.781
+     * 812 *    ..
      *   1 * $LIBRARY-ENTRY Dirt Depre Windows              SCHEDULE-PD     Dirt Dep Schd
      *   2 *  TYPE=FRACTION
      *   3 *    WEEK-SCHEDULES = ("Dirt Win WK")  MONTH=(12) DAY=(31)  ..
@@ -3739,15 +3805,15 @@
 -DEFAULT -                                              C-EXISTING       =                       0.0000
 -DEFAULT -                                              C-EXEMPT         =                       0.0000
 -DEFAULT -                                              C-EXEMPT         =                       0.0000
-     * 798 * "South Window 2" = WINDOW
-     * 799 *    GLASS-TYPE       = "BL1 Window Type #1 GT"
-     * 800 *    FRAME-WIDTH      = 0
-     * 801 *    X                = 55.81
-     * 802 *    Y                = 3.1
-     * 803 *    HEIGHT           = 4.45
-     * 804 *    WIDTH            = 51.9
-     * 805 *    FRAME-CONDUCT    = 2.781
-     * 806 *    ..
+     * 813 * "South Window 2" = WINDOW
+     * 814 *    GLASS-TYPE       = "BL1 Window Type #1 GT"
+     * 815 *    FRAME-WIDTH      = 0
+     * 816 *    X                = 55.81
+     * 817 *    Y                = 3.1
+     * 818 *    HEIGHT           = 4.45
+     * 819 *    WIDTH            = 51.9
+     * 820 *    FRAME-CONDUCT    = 2.781
+     * 821 *    ..
 
 -NOTE- - -         DATA FOR     South Window 2
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  GLASS-TYPE       = BL1 Window Type #1 GT
@@ -3795,15 +3861,15 @@
 -DEFAULT -                                              C-EXISTING       =                       0.0000
 -DEFAULT -                                              C-EXEMPT         =                       0.0000
 -DEFAULT -                                              C-EXEMPT         =                       0.0000
-     * 807 * "South Window 3" = WINDOW
-     * 808 *    GLASS-TYPE       = "BL1 Window Type #1 GT"
-     * 809 *    FRAME-WIDTH      = 0
-     * 810 *    X                = 111.71
-     * 811 *    Y                = 3.1
-     * 812 *    HEIGHT           = 4.45
-     * 813 *    WIDTH            = 51.9
-     * 814 *    FRAME-CONDUCT    = 2.781
-     * 815 *    ..
+     * 822 * "South Window 3" = WINDOW
+     * 823 *    GLASS-TYPE       = "BL1 Window Type #1 GT"
+     * 824 *    FRAME-WIDTH      = 0
+     * 825 *    X                = 111.71
+     * 826 *    Y                = 3.1
+     * 827 *    HEIGHT           = 4.45
+     * 828 *    WIDTH            = 51.9
+     * 829 *    FRAME-CONDUCT    = 2.781
+     * 830 *    ..
 
 -NOTE- - -         DATA FOR     South Window 3
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  GLASS-TYPE       = BL1 Window Type #1 GT
@@ -3851,13 +3917,13 @@
 -DEFAULT -                                              C-EXISTING       =                       0.0000
 -DEFAULT -                                              C-EXEMPT         =                       0.0000
 -DEFAULT -                                              C-EXEMPT         =                       0.0000
-     * 816 * "South Door 1" = DOOR
-     * 817 *    CONSTRUCTION     = "Sgl Lyr Unins Mtl Door"
+     * 831 * "South Door 1" = DOOR
+     * 832 *    CONSTRUCTION     = "Sgl Lyr Unins Mtl Door"
 -NOTE- - - ----------------------- ======================== ----------------------------------THIS ITEM HAS BEEN FETCHED FROM LIBRARY 
-     * 818 *    X                = 52.4
-     * 819 *    HEIGHT           = 7
-     * 820 *    WIDTH            = 3
-     * 821 *    ..
+     * 833 *    X                = 52.4
+     * 834 *    HEIGHT           = 7
+     * 835 *    WIDTH            = 3
+     * 836 *    ..
      *   1 * $LIBRARY-ENTRY Sgl Lyr Unins Mtl Door          CONSTRUCTION    Doors
      *   2 * TYPE = U-VALUE    U-VALUE = 2.08 ..
 
@@ -3891,12 +3957,12 @@
 -DEFAULT -                                              DR-SH-SPEC-REFL  =                       0.1000
 -DEFAULT -                                              DR-SH-REFL-ROUGH =                       0.5000
 -DEFAULT -                                              SHADING-REPORT   = NO
-     * 822 * "South Door 2" = DOOR
-     * 823 *    CONSTRUCTION     = "Sgl Lyr Unins Mtl Door"
-     * 824 *    X                = 108.3
-     * 825 *    HEIGHT           = 7
-     * 826 *    WIDTH            = 3
-     * 827 *    ..
+     * 837 * "South Door 2" = DOOR
+     * 838 *    CONSTRUCTION     = "Sgl Lyr Unins Mtl Door"
+     * 839 *    X                = 108.3
+     * 840 *    HEIGHT           = 7
+     * 841 *    WIDTH            = 3
+     * 842 *    ..
 
 -NOTE- - -         DATA FOR     South Door 2
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CONSTRUCTION     = Sgl Lyr Unins Mtl Door
@@ -3913,16 +3979,16 @@
 -DEFAULT -                                              DR-SH-SPEC-REFL  =                       0.1000
 -DEFAULT -                                              DR-SH-REFL-ROUGH =                       0.5000
 -DEFAULT -                                              SHADING-REPORT   = NO
-     * 828 * "Perimeter Space 1 Roof" = EXTERIOR-WALL
-     * 829 *    CONSTRUCTION     = "Roof Type 1"
-     * 830 *    INSIDE-SOL-ABS   = 0.7
-     * 831 *    INSIDE-VIS-REFL  = 0.3
-     * 832 *    LOCATION         = TOP
-     * 833 *    INSIDE-EMISS     = 0.9
-     * 834 *    INSIDE-RCONV     = 1.41
+     * 843 * "Perimeter Space 1 Roof" = EXTERIOR-WALL
+     * 844 *    CONSTRUCTION     = "Roof Type 1"
+     * 845 *    INSIDE-SOL-ABS   = 0.7
+     * 846 *    INSIDE-VIS-REFL  = 0.3
+     * 847 *    LOCATION         = TOP
+     * 848 *    INSIDE-EMISS     = 0.9
+     * 849 *    INSIDE-RCONV     = 1.41
 -CAUTION-------------------------- ==== ------------------------------------------------------
 -CAUTION--- VALUE GREATER THAN MAXIMUM OF 0.1000E+01
-     * 835 *    ..
+     * 850 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Space 1 Roof
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CONSTRUCTION     = Roof Type 1
@@ -3963,13 +4029,13 @@
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
 -DEFAULT -                                              C-C-CUBIERTA     =                       0.0000
-     * 836 * "Perimeter Space 1 NE Wall" = INTERIOR-WALL
-     * 837 *    NEXT-TO          = "Prm Space 2 (East)"
-     * 838 *    CONSTRUCTION     = "BL1 IWall Construction"
-     * 839 *    INSIDE-SOL-ABS   = ( 0.7 )
-     * 840 *    LOCATION         = SPACE-V2
-     * 841 *    INSIDE-VIS-REFL  = ( 0.3 )
-     * 842 *    ..
+     * 851 * "Perimeter Space 1 NE Wall" = INTERIOR-WALL
+     * 852 *    NEXT-TO          = "Prm Space 2 (East)"
+     * 853 *    CONSTRUCTION     = "BL1 IWall Construction"
+     * 854 *    INSIDE-SOL-ABS   = ( 0.7 )
+     * 855 *    LOCATION         = SPACE-V2
+     * 856 *    INSIDE-VIS-REFL  = ( 0.3 )
+     * 857 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Space 1 NE Wall
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  NEXT-TO          = Prm Space 2 (East)
@@ -3992,13 +4058,13 @@
 -DEFAULT -                                              C-EXISTING       =                       0.0000
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
-     * 843 * "Perimeter Space 1 North Wall" = INTERIOR-WALL
-     * 844 *    NEXT-TO          = "Core Space 1"
-     * 845 *    CONSTRUCTION     = "BL1 IWall Construction"
-     * 846 *    INSIDE-SOL-ABS   = ( 0.7 )
-     * 847 *    LOCATION         = SPACE-V3
-     * 848 *    INSIDE-VIS-REFL  = ( 0.3 )
-     * 849 *    ..
+     * 858 * "Perimeter Space 1 North Wall" = INTERIOR-WALL
+     * 859 *    NEXT-TO          = "Core Space 1"
+     * 860 *    CONSTRUCTION     = "BL1 IWall Construction"
+     * 861 *    INSIDE-SOL-ABS   = ( 0.7 )
+     * 862 *    LOCATION         = SPACE-V3
+     * 863 *    INSIDE-VIS-REFL  = ( 0.3 )
+     * 864 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Space 1 North Wall
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  NEXT-TO          = Core Space 1
@@ -4021,13 +4087,13 @@
 -DEFAULT -                                              C-EXISTING       =                       0.0000
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
-     * 850 * "Perimeter Space 1 NW Wall" = INTERIOR-WALL
-     * 851 *    NEXT-TO          = "Prm Space 4 (West)"
-     * 852 *    CONSTRUCTION     = "BL1 IWall Construction"
-     * 853 *    INSIDE-SOL-ABS   = ( 0.7 )
-     * 854 *    LOCATION         = SPACE-V4
-     * 855 *    INSIDE-VIS-REFL  = ( 0.3 )
-     * 856 *    ..
+     * 865 * "Perimeter Space 1 NW Wall" = INTERIOR-WALL
+     * 866 *    NEXT-TO          = "Prm Space 4 (West)"
+     * 867 *    CONSTRUCTION     = "BL1 IWall Construction"
+     * 868 *    INSIDE-SOL-ABS   = ( 0.7 )
+     * 869 *    LOCATION         = SPACE-V4
+     * 870 *    INSIDE-VIS-REFL  = ( 0.3 )
+     * 871 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Space 1 NW Wall
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  NEXT-TO          = Prm Space 4 (West)
@@ -4050,11 +4116,11 @@
 -DEFAULT -                                              C-EXISTING       =                       0.0000
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
-     * 857 * "Perimeter Space 1 Slab on Grade" = UNDERGROUND-WALL
-     * 858 *    CONSTRUCTION     = "Slab-on-grade Type 1"
-     * 859 *    INSIDE-SOL-ABS   = 0.7
-     * 860 *    LOCATION         = BOTTOM
-     * 861 *    ..
+     * 872 * "Perimeter Space 1 Slab on Grade" = UNDERGROUND-WALL
+     * 873 *    CONSTRUCTION     = "Slab-on-grade Type 1"
+     * 874 *    INSIDE-SOL-ABS   = 0.7
+     * 875 *    LOCATION         = BOTTOM
+     * 876 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Space 1 Slab on Grade
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CONSTRUCTION     = Slab-on-grade Type 1
@@ -4072,28 +4138,28 @@
 -DEFAULT -                                              C-TYPE           =                       0.0000
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
-     * 862 * "Prm Space 2 (East)" = SPACE
-     * 863 *    SHAPE            = POLYGON
-     * 864 *    ZONE-TYPE        = CONDITIONED
-     * 865 *    INF-METHOD       = AIR-CHANGE
-     * 866 *    INF-FLOW/AREA    = 0.1154
-     * 867 *    POLYGON          = "BL1 Space Polygon 2"
-     * 868 *    PEOPLE-SCHEDULE  = ( "Occupancy Annual" )
-     * 869 *    AREA/PERSON      = ( 200 )
-     * 870 *    PEOPLE-HEAT-GAIN = ( 409 )
-     * 871 *    PEOPLE-HG-LAT    = ( {45%*409.457} )
-     * 872 *    PEOPLE-HG-SENS   = ( {55%*409.457} )
-     * 873 *    LIGHTING-SCHEDUL = ( "Lighting Schedule" )
-     * 874 *    LIGHTING-W/AREA  = ( 1.025 )
-     * 875 *    EQUIP-SCHEDULE   = ( "Plug Load Annual" )
-     * 876 *    EQUIPMENT-W/AREA = ( 0.75 )
-     * 877 *    EQUIP-LATENT     = ( 0 )
-     * 878 *    EQUIP-SENSIBLE   = ( 1 )
-     * 879 *    LOCATION         = FLOOR-V2
-     * 880 *    C-SUB-SRC-BTUH   = ( 0, 0, 0 )
-     * 881 *    C-SUB-SRC-KW     = ( 0, 0, 0 )
-     * 882 *    C-ACTIVITY-DESC  = *Office (Executive/Private)*
-     * 883 *    ..
+     * 877 * "Prm Space 2 (East)" = SPACE
+     * 878 *    SHAPE            = POLYGON
+     * 879 *    ZONE-TYPE        = CONDITIONED
+     * 880 *    INF-METHOD       = AIR-CHANGE
+     * 881 *    INF-FLOW/AREA    = 0.1154
+     * 882 *    POLYGON          = "BL1 Space Polygon 2"
+     * 883 *    PEOPLE-SCHEDULE  = ( "Occupancy Annual" )
+     * 884 *    AREA/PERSON      = ( 200 )
+     * 885 *    PEOPLE-HEAT-GAIN = ( 409 )
+     * 886 *    PEOPLE-HG-LAT    = ( {45%*409.457} )
+     * 887 *    PEOPLE-HG-SENS   = ( {55%*409.457} )
+     * 888 *    LIGHTING-SCHEDUL = ( "Lighting Schedule" )
+     * 889 *    LIGHTING-W/AREA  = ( 1.025 )
+     * 890 *    EQUIP-SCHEDULE   = ( "Plug Load Annual" )
+     * 891 *    EQUIPMENT-W/AREA = ( 0.75 )
+     * 892 *    EQUIP-LATENT     = ( 0 )
+     * 893 *    EQUIP-SENSIBLE   = ( 1 )
+     * 894 *    LOCATION         = FLOOR-V2
+     * 895 *    C-SUB-SRC-BTUH   = ( 0, 0, 0 )
+     * 896 *    C-SUB-SRC-KW     = ( 0, 0, 0 )
+     * 897 *    C-ACTIVITY-DESC  = *Office (Executive/Private)*
+     * 898 *    ..
 
 -NOTE- - -         DATA FOR     Prm Space 2 (East)
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  SHAPE            = POLYGON
@@ -4291,14 +4357,14 @@
 -DEFAULT -                                              *DISP-LIGHT-KW   =                       0.7500 KW
 -DEFAULT -                                              *DISP-LIGHT-W/AR =                       0.0000 W/SQFT
 -DEFAULT -                                              *DISP-EQUIP-KW   =                       0.0000 KW
-     * 884 * "Perimeter Space 2 Ext Wall" = EXTERIOR-WALL
-     * 885 *    CONSTRUCTION     = "Exterior Wall Type 2"
-     * 886 *    INSIDE-SOL-ABS   = 0.7
-     * 887 *    INSIDE-VIS-REFL  = 0.3
-     * 888 *    LOCATION         = SPACE-V1
-     * 889 *    SHADING-SURFACE  = YES
-     * 890 *    INSIDE-EMISS     = 0.9
-     * 891 *    ..
+     * 899 * "Perimeter Space 2 Ext Wall" = EXTERIOR-WALL
+     * 900 *    CONSTRUCTION     = "Exterior Wall Type 2"
+     * 901 *    INSIDE-SOL-ABS   = 0.7
+     * 902 *    INSIDE-VIS-REFL  = 0.3
+     * 903 *    LOCATION         = SPACE-V1
+     * 904 *    SHADING-SURFACE  = YES
+     * 905 *    INSIDE-EMISS     = 0.9
+     * 906 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Space 2 Ext Wall
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CONSTRUCTION     = Exterior Wall Type 2
@@ -4340,15 +4406,15 @@
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
 -DEFAULT -                                              C-C-CUBIERTA     =                       0.0000
-     * 892 * "East Window 1" = WINDOW
-     * 893 *    GLASS-TYPE       = "BL1 Window Type #1 GT"
-     * 894 *    FRAME-WIDTH      = 0
-     * 895 *    X                = 0
-     * 896 *    Y                = 3.2
-     * 897 *    HEIGHT           = 4.45
-     * 898 *    WIDTH            = 101.2
-     * 899 *    FRAME-CONDUCT    = 2.781
-     * 900 *    ..
+     * 907 * "East Window 1" = WINDOW
+     * 908 *    GLASS-TYPE       = "BL1 Window Type #1 GT"
+     * 909 *    FRAME-WIDTH      = 0
+     * 910 *    X                = 0
+     * 911 *    Y                = 3.2
+     * 912 *    HEIGHT           = 4.45
+     * 913 *    WIDTH            = 101.2
+     * 914 *    FRAME-CONDUCT    = 2.781
+     * 915 *    ..
 
 -NOTE- - -         DATA FOR     East Window 1
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  GLASS-TYPE       = BL1 Window Type #1 GT
@@ -4396,15 +4462,15 @@
 -DEFAULT -                                              C-EXISTING       =                       0.0000
 -DEFAULT -                                              C-EXEMPT         =                       0.0000
 -DEFAULT -                                              C-EXEMPT         =                       0.0000
-     * 901 * "East Window 2" = WINDOW
-     * 902 *    GLASS-TYPE       = "BL1 Window Type #1 GT"
-     * 903 *    FRAME-WIDTH      = 0
-     * 904 *    X                = 105.2
-     * 905 *    Y                = 3.2
-     * 906 *    HEIGHT           = 4.45
-     * 907 *    WIDTH            = 4
-     * 908 *    FRAME-CONDUCT    = 2.781
-     * 909 *    ..
+     * 916 * "East Window 2" = WINDOW
+     * 917 *    GLASS-TYPE       = "BL1 Window Type #1 GT"
+     * 918 *    FRAME-WIDTH      = 0
+     * 919 *    X                = 105.2
+     * 920 *    Y                = 3.2
+     * 921 *    HEIGHT           = 4.45
+     * 922 *    WIDTH            = 4
+     * 923 *    FRAME-CONDUCT    = 2.781
+     * 924 *    ..
 
 -NOTE- - -         DATA FOR     East Window 2
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  GLASS-TYPE       = BL1 Window Type #1 GT
@@ -4452,12 +4518,12 @@
 -DEFAULT -                                              C-EXISTING       =                       0.0000
 -DEFAULT -                                              C-EXEMPT         =                       0.0000
 -DEFAULT -                                              C-EXEMPT         =                       0.0000
-     * 910 * "East Door 1" = DOOR
-     * 911 *    CONSTRUCTION     = "Sgl Lyr Unins Mtl Door"
-     * 912 *    X                = 101.7
-     * 913 *    HEIGHT           = 7
-     * 914 *    WIDTH            = 3
-     * 915 *    ..
+     * 925 * "East Door 1" = DOOR
+     * 926 *    CONSTRUCTION     = "Sgl Lyr Unins Mtl Door"
+     * 927 *    X                = 101.7
+     * 928 *    HEIGHT           = 7
+     * 929 *    WIDTH            = 3
+     * 930 *    ..
 
 -NOTE- - -         DATA FOR     East Door 1
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CONSTRUCTION     = Sgl Lyr Unins Mtl Door
@@ -4474,16 +4540,16 @@
 -DEFAULT -                                              DR-SH-SPEC-REFL  =                       0.1000
 -DEFAULT -                                              DR-SH-REFL-ROUGH =                       0.5000
 -DEFAULT -                                              SHADING-REPORT   = NO
-     * 916 * "Perimeter Space 2 Roof" = EXTERIOR-WALL
-     * 917 *    CONSTRUCTION     = "Roof Type 1"
-     * 918 *    INSIDE-SOL-ABS   = 0.7
-     * 919 *    INSIDE-VIS-REFL  = 0.3
-     * 920 *    LOCATION         = TOP
-     * 921 *    INSIDE-EMISS     = 0.9
-     * 922 *    INSIDE-RCONV     = 1.41
+     * 931 * "Perimeter Space 2 Roof" = EXTERIOR-WALL
+     * 932 *    CONSTRUCTION     = "Roof Type 1"
+     * 933 *    INSIDE-SOL-ABS   = 0.7
+     * 934 *    INSIDE-VIS-REFL  = 0.3
+     * 935 *    LOCATION         = TOP
+     * 936 *    INSIDE-EMISS     = 0.9
+     * 937 *    INSIDE-RCONV     = 1.41
 -CAUTION-------------------------- ==== ------------------------------------------------------
 -CAUTION--- VALUE GREATER THAN MAXIMUM OF 0.1000E+01
-     * 923 *    ..
+     * 938 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Space 2 Roof
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CONSTRUCTION     = Roof Type 1
@@ -4524,13 +4590,13 @@
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
 -DEFAULT -                                              C-C-CUBIERTA     =                       0.0000
-     * 924 * "Perimeter Space 2 NW Wall" = INTERIOR-WALL
-     * 925 *    NEXT-TO          = "Prm Space 3 (North)"
-     * 926 *    CONSTRUCTION     = "BL1 IWall Construction"
-     * 927 *    INSIDE-SOL-ABS   = ( 0.7 )
-     * 928 *    LOCATION         = SPACE-V2
-     * 929 *    INSIDE-VIS-REFL  = ( 0.3 )
-     * 930 *    ..
+     * 939 * "Perimeter Space 2 NW Wall" = INTERIOR-WALL
+     * 940 *    NEXT-TO          = "Prm Space 3 (North)"
+     * 941 *    CONSTRUCTION     = "BL1 IWall Construction"
+     * 942 *    INSIDE-SOL-ABS   = ( 0.7 )
+     * 943 *    LOCATION         = SPACE-V2
+     * 944 *    INSIDE-VIS-REFL  = ( 0.3 )
+     * 945 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Space 2 NW Wall
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  NEXT-TO          = Prm Space 3 (North)
@@ -4553,13 +4619,13 @@
 -DEFAULT -                                              C-EXISTING       =                       0.0000
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
-     * 931 * "Perimeter Space 2 West Wall" = INTERIOR-WALL
-     * 932 *    NEXT-TO          = "Core Space 1"
-     * 933 *    CONSTRUCTION     = "BL1 IWall Construction"
-     * 934 *    INSIDE-SOL-ABS   = ( 0.7 )
-     * 935 *    LOCATION         = SPACE-V3
-     * 936 *    INSIDE-VIS-REFL  = ( 0.3 )
-     * 937 *    ..
+     * 946 * "Perimeter Space 2 West Wall" = INTERIOR-WALL
+     * 947 *    NEXT-TO          = "Core Space 1"
+     * 948 *    CONSTRUCTION     = "BL1 IWall Construction"
+     * 949 *    INSIDE-SOL-ABS   = ( 0.7 )
+     * 950 *    LOCATION         = SPACE-V3
+     * 951 *    INSIDE-VIS-REFL  = ( 0.3 )
+     * 952 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Space 2 West Wall
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  NEXT-TO          = Core Space 1
@@ -4582,11 +4648,11 @@
 -DEFAULT -                                              C-EXISTING       =                       0.0000
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
-     * 938 * "Perimeter Space 2 Slab on Grade" = UNDERGROUND-WALL
-     * 939 *    CONSTRUCTION     = "Slab-on-grade Type 1"
-     * 940 *    INSIDE-SOL-ABS   = 0.7
-     * 941 *    LOCATION         = BOTTOM
-     * 942 *    ..
+     * 953 * "Perimeter Space 2 Slab on Grade" = UNDERGROUND-WALL
+     * 954 *    CONSTRUCTION     = "Slab-on-grade Type 1"
+     * 955 *    INSIDE-SOL-ABS   = 0.7
+     * 956 *    LOCATION         = BOTTOM
+     * 957 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Space 2 Slab on Grade
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CONSTRUCTION     = Slab-on-grade Type 1
@@ -4604,29 +4670,29 @@
 -DEFAULT -                                              C-TYPE           =                       0.0000
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
-     * 943 * "Prm Space 3 (North)" = SPACE
-     * 944 *    SHAPE            = POLYGON
-     * 945 *    ZONE-TYPE        = CONDITIONED
-     * 946 *    INF-SCHEDULE     = "ZG0-S1 (PSZ) P-Inf Sch"
-     * 947 *    INF-METHOD       = AIR-CHANGE
-     * 948 *    INF-FLOW/AREA    = 0.07646
-     * 949 *    POLYGON          = "BL1 Space Polygon 3"
-     * 950 *    PEOPLE-SCHEDULE  = ( "Occupancy Annual" )
-     * 951 *    AREA/PERSON      = ( 200 )
-     * 952 *    PEOPLE-HEAT-GAIN = ( 409 )
-     * 953 *    PEOPLE-HG-LAT    = ( {45%*409.457} )
-     * 954 *    PEOPLE-HG-SENS   = ( {55%*409.457} )
-     * 955 *    LIGHTING-SCHEDUL = ( "Lighting Schedule" )
-     * 956 *    LIGHTING-W/AREA  = ( 1.025 )
-     * 957 *    EQUIP-SCHEDULE   = ( "Plug Load Annual" )
-     * 958 *    EQUIPMENT-W/AREA = ( 0.75 )
-     * 959 *    EQUIP-LATENT     = ( 0 )
-     * 960 *    EQUIP-SENSIBLE   = ( 1 )
-     * 961 *    LOCATION         = FLOOR-V3
-     * 962 *    C-SUB-SRC-BTUH   = ( 0, 0, 0 )
-     * 963 *    C-SUB-SRC-KW     = ( 0, 0, 0 )
-     * 964 *    C-ACTIVITY-DESC  = *Office (Executive/Private)*
-     * 965 *    ..
+     * 958 * "Prm Space 3 (North)" = SPACE
+     * 959 *    SHAPE            = POLYGON
+     * 960 *    ZONE-TYPE        = CONDITIONED
+     * 961 *    INF-SCHEDULE     = "ZG0-S1 (PSZ) P-Inf Sch"
+     * 962 *    INF-METHOD       = AIR-CHANGE
+     * 963 *    INF-FLOW/AREA    = 0.07646
+     * 964 *    POLYGON          = "BL1 Space Polygon 3"
+     * 965 *    PEOPLE-SCHEDULE  = ( "Occupancy Annual" )
+     * 966 *    AREA/PERSON      = ( 200 )
+     * 967 *    PEOPLE-HEAT-GAIN = ( 409 )
+     * 968 *    PEOPLE-HG-LAT    = ( {45%*409.457} )
+     * 969 *    PEOPLE-HG-SENS   = ( {55%*409.457} )
+     * 970 *    LIGHTING-SCHEDUL = ( "Lighting Schedule" )
+     * 971 *    LIGHTING-W/AREA  = ( 1.025 )
+     * 972 *    EQUIP-SCHEDULE   = ( "Plug Load Annual" )
+     * 973 *    EQUIPMENT-W/AREA = ( 0.75 )
+     * 974 *    EQUIP-LATENT     = ( 0 )
+     * 975 *    EQUIP-SENSIBLE   = ( 1 )
+     * 976 *    LOCATION         = FLOOR-V3
+     * 977 *    C-SUB-SRC-BTUH   = ( 0, 0, 0 )
+     * 978 *    C-SUB-SRC-KW     = ( 0, 0, 0 )
+     * 979 *    C-ACTIVITY-DESC  = *Office (Executive/Private)*
+     * 980 *    ..
 
 -NOTE- - -         DATA FOR     Prm Space 3 (North)
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  SHAPE            = POLYGON
@@ -4825,14 +4891,14 @@
 -DEFAULT -                                              *DISP-LIGHT-KW   =                       0.7500 KW
 -DEFAULT -                                              *DISP-LIGHT-W/AR =                       0.0000 W/SQFT
 -DEFAULT -                                              *DISP-EQUIP-KW   =                       0.0000 KW
-     * 966 * "Perimeter Space 3 Ext Wall" = EXTERIOR-WALL
-     * 967 *    CONSTRUCTION     = "Exterior Wall Type 3"
-     * 968 *    INSIDE-SOL-ABS   = 0.7
-     * 969 *    INSIDE-VIS-REFL  = 0.3
-     * 970 *    LOCATION         = SPACE-V1
-     * 971 *    SHADING-SURFACE  = YES
-     * 972 *    INSIDE-EMISS     = 0.9
-     * 973 *    ..
+     * 981 * "Perimeter Space 3 Ext Wall" = EXTERIOR-WALL
+     * 982 *    CONSTRUCTION     = "Exterior Wall Type 3"
+     * 983 *    INSIDE-SOL-ABS   = 0.7
+     * 984 *    INSIDE-VIS-REFL  = 0.3
+     * 985 *    LOCATION         = SPACE-V1
+     * 986 *    SHADING-SURFACE  = YES
+     * 987 *    INSIDE-EMISS     = 0.9
+     * 988 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Space 3 Ext Wall
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CONSTRUCTION     = Exterior Wall Type 3
@@ -4874,15 +4940,15 @@
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
 -DEFAULT -                                              C-C-CUBIERTA     =                       0.0000
-     * 974 * "North Window 1" = WINDOW
-     * 975 *    GLASS-TYPE       = "BL1 Window Type #1 GT"
-     * 976 *    FRAME-WIDTH      = 0
-     * 977 *    X                = 0
-     * 978 *    Y                = 3.1
-     * 979 *    HEIGHT           = 4.45
-     * 980 *    WIDTH            = 51.9
-     * 981 *    FRAME-CONDUCT    = 2.781
-     * 982 *    ..
+     * 989 * "North Window 1" = WINDOW
+     * 990 *    GLASS-TYPE       = "BL1 Window Type #1 GT"
+     * 991 *    FRAME-WIDTH      = 0
+     * 992 *    X                = 0
+     * 993 *    Y                = 3.1
+     * 994 *    HEIGHT           = 4.45
+     * 995 *    WIDTH            = 51.9
+     * 996 *    FRAME-CONDUCT    = 2.781
+     * 997 *    ..
 
 -NOTE- - -         DATA FOR     North Window 1
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  GLASS-TYPE       = BL1 Window Type #1 GT
@@ -4930,15 +4996,15 @@
 -DEFAULT -                                              C-EXISTING       =                       0.0000
 -DEFAULT -                                              C-EXEMPT         =                       0.0000
 -DEFAULT -                                              C-EXEMPT         =                       0.0000
-     * 983 * "North Window 2" = WINDOW
-     * 984 *    GLASS-TYPE       = "BL1 Window Type #1 GT"
-     * 985 *    FRAME-WIDTH      = 0
-     * 986 *    X                = 55.9
-     * 987 *    Y                = 3.1
-     * 988 *    HEIGHT           = 4.45
-     * 989 *    WIDTH            = 51.9
-     * 990 *    FRAME-CONDUCT    = 2.781
-     * 991 *    ..
+     * 998 * "North Window 2" = WINDOW
+     * 999 *    GLASS-TYPE       = "BL1 Window Type #1 GT"
+     *1000 *    FRAME-WIDTH      = 0
+     *1001 *    X                = 55.9
+     *1002 *    Y                = 3.1
+     *1003 *    HEIGHT           = 4.45
+     *1004 *    WIDTH            = 51.9
+     *1005 *    FRAME-CONDUCT    = 2.781
+     *1006 *    ..
 
 -NOTE- - -         DATA FOR     North Window 2
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  GLASS-TYPE       = BL1 Window Type #1 GT
@@ -4986,15 +5052,15 @@
 -DEFAULT -                                              C-EXISTING       =                       0.0000
 -DEFAULT -                                              C-EXEMPT         =                       0.0000
 -DEFAULT -                                              C-EXEMPT         =                       0.0000
-     * 992 * "North Window 3" = WINDOW
-     * 993 *    GLASS-TYPE       = "BL1 Window Type #1 GT"
-     * 994 *    FRAME-WIDTH      = 0
-     * 995 *    X                = 111.71
-     * 996 *    Y                = 3.1
-     * 997 *    HEIGHT           = 4.45
-     * 998 *    WIDTH            = 51.9
-     * 999 *    FRAME-CONDUCT    = 2.781
-     *1000 *    ..
+     *1007 * "North Window 3" = WINDOW
+     *1008 *    GLASS-TYPE       = "BL1 Window Type #1 GT"
+     *1009 *    FRAME-WIDTH      = 0
+     *1010 *    X                = 111.71
+     *1011 *    Y                = 3.1
+     *1012 *    HEIGHT           = 4.45
+     *1013 *    WIDTH            = 51.9
+     *1014 *    FRAME-CONDUCT    = 2.781
+     *1015 *    ..
 
 -NOTE- - -         DATA FOR     North Window 3
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  GLASS-TYPE       = BL1 Window Type #1 GT
@@ -5042,12 +5108,12 @@
 -DEFAULT -                                              C-EXISTING       =                       0.0000
 -DEFAULT -                                              C-EXEMPT         =                       0.0000
 -DEFAULT -                                              C-EXEMPT         =                       0.0000
-     *1001 * "North Door 1" = DOOR
-     *1002 *    CONSTRUCTION     = "Sgl Lyr Unins Mtl Door"
-     *1003 *    X                = 52.4
-     *1004 *    HEIGHT           = 7
-     *1005 *    WIDTH            = 3
-     *1006 *    ..
+     *1016 * "North Door 1" = DOOR
+     *1017 *    CONSTRUCTION     = "Sgl Lyr Unins Mtl Door"
+     *1018 *    X                = 52.4
+     *1019 *    HEIGHT           = 7
+     *1020 *    WIDTH            = 3
+     *1021 *    ..
 
 -NOTE- - -         DATA FOR     North Door 1
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CONSTRUCTION     = Sgl Lyr Unins Mtl Door
@@ -5064,12 +5130,12 @@
 -DEFAULT -                                              DR-SH-SPEC-REFL  =                       0.1000
 -DEFAULT -                                              DR-SH-REFL-ROUGH =                       0.5000
 -DEFAULT -                                              SHADING-REPORT   = NO
-     *1007 * "North Door 2" = DOOR
-     *1008 *    CONSTRUCTION     = "Sgl Lyr Unins Mtl Door"
-     *1009 *    X                = 108.3
-     *1010 *    HEIGHT           = 7
-     *1011 *    WIDTH            = 3
-     *1012 *    ..
+     *1022 * "North Door 2" = DOOR
+     *1023 *    CONSTRUCTION     = "Sgl Lyr Unins Mtl Door"
+     *1024 *    X                = 108.3
+     *1025 *    HEIGHT           = 7
+     *1026 *    WIDTH            = 3
+     *1027 *    ..
 
 -NOTE- - -         DATA FOR     North Door 2
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CONSTRUCTION     = Sgl Lyr Unins Mtl Door
@@ -5086,16 +5152,16 @@
 -DEFAULT -                                              DR-SH-SPEC-REFL  =                       0.1000
 -DEFAULT -                                              DR-SH-REFL-ROUGH =                       0.5000
 -DEFAULT -                                              SHADING-REPORT   = NO
-     *1013 * "Perimeter Space 3 Roof" = EXTERIOR-WALL
-     *1014 *    CONSTRUCTION     = "Roof Type 2"
-     *1015 *    INSIDE-SOL-ABS   = 0.7
-     *1016 *    INSIDE-VIS-REFL  = 0.3
-     *1017 *    LOCATION         = TOP
-     *1018 *    INSIDE-EMISS     = 0.9
-     *1019 *    INSIDE-RCONV     = 1.41
+     *1028 * "Perimeter Space 3 Roof" = EXTERIOR-WALL
+     *1029 *    CONSTRUCTION     = "Roof Type 2"
+     *1030 *    INSIDE-SOL-ABS   = 0.7
+     *1031 *    INSIDE-VIS-REFL  = 0.3
+     *1032 *    LOCATION         = TOP
+     *1033 *    INSIDE-EMISS     = 0.9
+     *1034 *    INSIDE-RCONV     = 1.41
 -CAUTION-------------------------- ==== ------------------------------------------------------
 -CAUTION--- VALUE GREATER THAN MAXIMUM OF 0.1000E+01
-     *1020 *    ..
+     *1035 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Space 3 Roof
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CONSTRUCTION     = Roof Type 2
@@ -5136,13 +5202,13 @@
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
 -DEFAULT -                                              C-C-CUBIERTA     =                       0.0000
-     *1021 * "Perimeter Space 2 SW Wall" = INTERIOR-WALL
-     *1022 *    NEXT-TO          = "Prm Space 4 (West)"
-     *1023 *    CONSTRUCTION     = "BL1 IWall Construction"
-     *1024 *    INSIDE-SOL-ABS   = ( 0.7, 0.7 )
-     *1025 *    LOCATION         = SPACE-V2
-     *1026 *    INSIDE-VIS-REFL  = ( 0.3, 0.3 )
-     *1027 *    ..
+     *1036 * "Perimeter Space 2 SW Wall" = INTERIOR-WALL
+     *1037 *    NEXT-TO          = "Prm Space 4 (West)"
+     *1038 *    CONSTRUCTION     = "BL1 IWall Construction"
+     *1039 *    INSIDE-SOL-ABS   = ( 0.7, 0.7 )
+     *1040 *    LOCATION         = SPACE-V2
+     *1041 *    INSIDE-VIS-REFL  = ( 0.3, 0.3 )
+     *1042 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Space 2 SW Wall
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  NEXT-TO          = Prm Space 4 (West)
@@ -5165,13 +5231,13 @@
 -DEFAULT -                                              C-EXISTING       =                       0.0000
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
-     *1028 * "Perimeter Space 2 South Wall" = INTERIOR-WALL
-     *1029 *    NEXT-TO          = "Core Space 1"
-     *1030 *    CONSTRUCTION     = "BL1 IWall Construction"
-     *1031 *    INSIDE-SOL-ABS   = ( 0.7, 0.7 )
-     *1032 *    LOCATION         = SPACE-V3
-     *1033 *    INSIDE-VIS-REFL  = ( 0.3, 0.3 )
-     *1034 *    ..
+     *1043 * "Perimeter Space 2 South Wall" = INTERIOR-WALL
+     *1044 *    NEXT-TO          = "Core Space 1"
+     *1045 *    CONSTRUCTION     = "BL1 IWall Construction"
+     *1046 *    INSIDE-SOL-ABS   = ( 0.7, 0.7 )
+     *1047 *    LOCATION         = SPACE-V3
+     *1048 *    INSIDE-VIS-REFL  = ( 0.3, 0.3 )
+     *1049 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Space 2 South Wall
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  NEXT-TO          = Core Space 1
@@ -5194,11 +5260,11 @@
 -DEFAULT -                                              C-EXISTING       =                       0.0000
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
-     *1035 * "Perimeter Space 3 Slab on Grade" = UNDERGROUND-WALL
-     *1036 *    CONSTRUCTION     = "Slab-on-grade Type 2"
-     *1037 *    INSIDE-SOL-ABS   = 0.7
-     *1038 *    LOCATION         = BOTTOM
-     *1039 *    ..
+     *1050 * "Perimeter Space 3 Slab on Grade" = UNDERGROUND-WALL
+     *1051 *    CONSTRUCTION     = "Slab-on-grade Type 2"
+     *1052 *    INSIDE-SOL-ABS   = 0.7
+     *1053 *    LOCATION         = BOTTOM
+     *1054 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Space 3 Slab on Grade
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CONSTRUCTION     = Slab-on-grade Type 2
@@ -5216,29 +5282,29 @@
 -DEFAULT -                                              C-TYPE           =                       0.0000
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
-     *1040 * "Prm Space 4 (West)" = SPACE
-     *1041 *    SHAPE            = POLYGON
-     *1042 *    ZONE-TYPE        = CONDITIONED
-     *1043 *    INF-SCHEDULE     = "ZG0-S1 (PSZ) P-Inf Sch"
-     *1044 *    INF-METHOD       = AIR-CHANGE
-     *1045 *    INF-FLOW/AREA    = 0.08053
-     *1046 *    POLYGON          = "BL1 Space Polygon 4"
-     *1047 *    PEOPLE-SCHEDULE  = ( "Occupancy Annual" )
-     *1048 *    AREA/PERSON      = ( 200 )
-     *1049 *    PEOPLE-HEAT-GAIN = ( 409 )
-     *1050 *    PEOPLE-HG-LAT    = ( {45%*409.457} )
-     *1051 *    PEOPLE-HG-SENS   = ( {55%*409.457} )
-     *1052 *    LIGHTING-SCHEDUL = ( "Lighting Schedule" )
-     *1053 *    LIGHTING-W/AREA  = ( 1.025 )
-     *1054 *    EQUIP-SCHEDULE   = ( "Plug Load Annual" )
-     *1055 *    EQUIPMENT-W/AREA = ( 0.75 )
-     *1056 *    EQUIP-LATENT     = ( 0 )
-     *1057 *    EQUIP-SENSIBLE   = ( 1 )
-     *1058 *    LOCATION         = FLOOR-V4
-     *1059 *    C-SUB-SRC-BTUH   = ( 0, 0, 0 )
-     *1060 *    C-SUB-SRC-KW     = ( 0, 0, 0 )
-     *1061 *    C-ACTIVITY-DESC  = *Office (Executive/Private)*
-     *1062 *    ..
+     *1055 * "Prm Space 4 (West)" = SPACE
+     *1056 *    SHAPE            = POLYGON
+     *1057 *    ZONE-TYPE        = CONDITIONED
+     *1058 *    INF-SCHEDULE     = "ZG0-S1 (PSZ) P-Inf Sch"
+     *1059 *    INF-METHOD       = AIR-CHANGE
+     *1060 *    INF-FLOW/AREA    = 0.08053
+     *1061 *    POLYGON          = "BL1 Space Polygon 4"
+     *1062 *    PEOPLE-SCHEDULE  = ( "Occupancy Annual" )
+     *1063 *    AREA/PERSON      = ( 200 )
+     *1064 *    PEOPLE-HEAT-GAIN = ( 409 )
+     *1065 *    PEOPLE-HG-LAT    = ( {45%*409.457} )
+     *1066 *    PEOPLE-HG-SENS   = ( {55%*409.457} )
+     *1067 *    LIGHTING-SCHEDUL = ( "Lighting Schedule" )
+     *1068 *    LIGHTING-W/AREA  = ( 1.025 )
+     *1069 *    EQUIP-SCHEDULE   = ( "Plug Load Annual" )
+     *1070 *    EQUIPMENT-W/AREA = ( 0.75 )
+     *1071 *    EQUIP-LATENT     = ( 0 )
+     *1072 *    EQUIP-SENSIBLE   = ( 1 )
+     *1073 *    LOCATION         = FLOOR-V4
+     *1074 *    C-SUB-SRC-BTUH   = ( 0, 0, 0 )
+     *1075 *    C-SUB-SRC-KW     = ( 0, 0, 0 )
+     *1076 *    C-ACTIVITY-DESC  = *Office (Executive/Private)*
+     *1077 *    ..
 
 -NOTE- - -         DATA FOR     Prm Space 4 (West)
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  SHAPE            = POLYGON
@@ -5437,14 +5503,14 @@
 -DEFAULT -                                              *DISP-LIGHT-KW   =                       0.7500 KW
 -DEFAULT -                                              *DISP-LIGHT-W/AR =                       0.0000 W/SQFT
 -DEFAULT -                                              *DISP-EQUIP-KW   =                       0.0000 KW
-     *1063 * "Perimeter Space 4 Ext Wall" = EXTERIOR-WALL
-     *1064 *    CONSTRUCTION     = "Exterior Wall Type 3"
-     *1065 *    INSIDE-SOL-ABS   = 0.7
-     *1066 *    INSIDE-VIS-REFL  = 0.3
-     *1067 *    LOCATION         = SPACE-V1
-     *1068 *    SHADING-SURFACE  = YES
-     *1069 *    INSIDE-EMISS     = 0.9
-     *1070 *    ..
+     *1078 * "Perimeter Space 4 Ext Wall" = EXTERIOR-WALL
+     *1079 *    CONSTRUCTION     = "Exterior Wall Type 3"
+     *1080 *    INSIDE-SOL-ABS   = 0.7
+     *1081 *    INSIDE-VIS-REFL  = 0.3
+     *1082 *    LOCATION         = SPACE-V1
+     *1083 *    SHADING-SURFACE  = YES
+     *1084 *    INSIDE-EMISS     = 0.9
+     *1085 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Space 4 Ext Wall
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CONSTRUCTION     = Exterior Wall Type 3
@@ -5486,15 +5552,15 @@
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
 -DEFAULT -                                              C-C-CUBIERTA     =                       0.0000
-     *1071 * "West Window 1" = WINDOW
-     *1072 *    GLASS-TYPE       = "BL1 Window Type #1 GT"
-     *1073 *    FRAME-WIDTH      = 0
-     *1074 *    X                = 0
-     *1075 *    Y                = 3.2
-     *1076 *    HEIGHT           = 4.45
-     *1077 *    WIDTH            = 101.2
-     *1078 *    FRAME-CONDUCT    = 2.781
-     *1079 *    ..
+     *1086 * "West Window 1" = WINDOW
+     *1087 *    GLASS-TYPE       = "BL1 Window Type #1 GT"
+     *1088 *    FRAME-WIDTH      = 0
+     *1089 *    X                = 0
+     *1090 *    Y                = 3.2
+     *1091 *    HEIGHT           = 4.45
+     *1092 *    WIDTH            = 101.2
+     *1093 *    FRAME-CONDUCT    = 2.781
+     *1094 *    ..
 
 -NOTE- - -         DATA FOR     West Window 1
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  GLASS-TYPE       = BL1 Window Type #1 GT
@@ -5542,15 +5608,15 @@
 -DEFAULT -                                              C-EXISTING       =                       0.0000
 -DEFAULT -                                              C-EXEMPT         =                       0.0000
 -DEFAULT -                                              C-EXEMPT         =                       0.0000
-     *1080 * "West Window 2" = WINDOW
-     *1081 *    GLASS-TYPE       = "BL1 Window Type #1 GT"
-     *1082 *    FRAME-WIDTH      = 0
-     *1083 *    X                = 105.2
-     *1084 *    Y                = 3.2
-     *1085 *    HEIGHT           = 4.45
-     *1086 *    WIDTH            = 4
-     *1087 *    FRAME-CONDUCT    = 2.781
-     *1088 *    ..
+     *1095 * "West Window 2" = WINDOW
+     *1096 *    GLASS-TYPE       = "BL1 Window Type #1 GT"
+     *1097 *    FRAME-WIDTH      = 0
+     *1098 *    X                = 105.2
+     *1099 *    Y                = 3.2
+     *1100 *    HEIGHT           = 4.45
+     *1101 *    WIDTH            = 4
+     *1102 *    FRAME-CONDUCT    = 2.781
+     *1103 *    ..
 
 -NOTE- - -         DATA FOR     West Window 2
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  GLASS-TYPE       = BL1 Window Type #1 GT
@@ -5598,12 +5664,12 @@
 -DEFAULT -                                              C-EXISTING       =                       0.0000
 -DEFAULT -                                              C-EXEMPT         =                       0.0000
 -DEFAULT -                                              C-EXEMPT         =                       0.0000
-     *1089 * "West Door 1" = DOOR
-     *1090 *    CONSTRUCTION     = "Sgl Lyr Unins Mtl Door"
-     *1091 *    X                = 101.7
-     *1092 *    HEIGHT           = 7
-     *1093 *    WIDTH            = 3
-     *1094 *    ..
+     *1104 * "West Door 1" = DOOR
+     *1105 *    CONSTRUCTION     = "Sgl Lyr Unins Mtl Door"
+     *1106 *    X                = 101.7
+     *1107 *    HEIGHT           = 7
+     *1108 *    WIDTH            = 3
+     *1109 *    ..
 
 -NOTE- - -         DATA FOR     West Door 1
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CONSTRUCTION     = Sgl Lyr Unins Mtl Door
@@ -5620,16 +5686,16 @@
 -DEFAULT -                                              DR-SH-SPEC-REFL  =                       0.1000
 -DEFAULT -                                              DR-SH-REFL-ROUGH =                       0.5000
 -DEFAULT -                                              SHADING-REPORT   = NO
-     *1095 * "Perimeter Space 4 Roof" = EXTERIOR-WALL
-     *1096 *    CONSTRUCTION     = "Roof Type 3"
-     *1097 *    INSIDE-SOL-ABS   = 0.7
-     *1098 *    INSIDE-VIS-REFL  = 0.3
-     *1099 *    LOCATION         = TOP
-     *1100 *    INSIDE-EMISS     = 0.9
-     *1101 *    INSIDE-RCONV     = 1.41
+     *1110 * "Perimeter Space 4 Roof" = EXTERIOR-WALL
+     *1111 *    CONSTRUCTION     = "Roof Type 3"
+     *1112 *    INSIDE-SOL-ABS   = 0.7
+     *1113 *    INSIDE-VIS-REFL  = 0.3
+     *1114 *    LOCATION         = TOP
+     *1115 *    INSIDE-EMISS     = 0.9
+     *1116 *    INSIDE-RCONV     = 1.41
 -CAUTION-------------------------- ==== ------------------------------------------------------
 -CAUTION--- VALUE GREATER THAN MAXIMUM OF 0.1000E+01
-     *1102 *    ..
+     *1117 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Space 4 Roof
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CONSTRUCTION     = Roof Type 3
@@ -5670,13 +5736,13 @@
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
 -DEFAULT -                                              C-C-CUBIERTA     =                       0.0000
-     *1103 * "Perimeter Space 4 East Wall" = INTERIOR-WALL
-     *1104 *    NEXT-TO          = "Core Space 1"
-     *1105 *    CONSTRUCTION     = "BL1 IWall Construction"
-     *1106 *    INSIDE-SOL-ABS   = ( 0.7, 0.7 )
-     *1107 *    LOCATION         = SPACE-V3
-     *1108 *    INSIDE-VIS-REFL  = ( 0.3, 0.3 )
-     *1109 *    ..
+     *1118 * "Perimeter Space 4 East Wall" = INTERIOR-WALL
+     *1119 *    NEXT-TO          = "Core Space 1"
+     *1120 *    CONSTRUCTION     = "BL1 IWall Construction"
+     *1121 *    INSIDE-SOL-ABS   = ( 0.7, 0.7 )
+     *1122 *    LOCATION         = SPACE-V3
+     *1123 *    INSIDE-VIS-REFL  = ( 0.3, 0.3 )
+     *1124 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Space 4 East Wall
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  NEXT-TO          = Core Space 1
@@ -5699,11 +5765,11 @@
 -DEFAULT -                                              C-EXISTING       =                       0.0000
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
-     *1110 * "Perimeter Space 4 Slab on Grade" = UNDERGROUND-WALL
-     *1111 *    CONSTRUCTION     = "Slab-on-grade Type 2"
-     *1112 *    INSIDE-SOL-ABS   = 0.7
-     *1113 *    LOCATION         = BOTTOM
-     *1114 *    ..
+     *1125 * "Perimeter Space 4 Slab on Grade" = UNDERGROUND-WALL
+     *1126 *    CONSTRUCTION     = "Slab-on-grade Type 2"
+     *1127 *    INSIDE-SOL-ABS   = 0.7
+     *1128 *    LOCATION         = BOTTOM
+     *1129 *    ..
 
 -NOTE- - -         DATA FOR     Perimeter Space 4 Slab on Grade
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CONSTRUCTION     = Slab-on-grade Type 2
@@ -5721,29 +5787,29 @@
 -DEFAULT -                                              C-TYPE           =                       0.0000
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
-     *1115 * "Core Space 1" = SPACE
-     *1116 *    X                = 15
-     *1117 *    Y                = 15
-     *1118 *    SHAPE            = POLYGON
-     *1119 *    ZONE-TYPE        = CONDITIONED
-     *1120 *    INF-METHOD       = AIR-CHANGE
-     *1121 *    AIR-CHANGES/HR   = 0
-     *1122 *    POLYGON          = "BL1 Space Polygon 5"
-     *1123 *    PEOPLE-SCHEDULE  = ( "Occupancy Annual" )
-     *1124 *    AREA/PERSON      = ( 200 )
-     *1125 *    PEOPLE-HEAT-GAIN = ( 409 )
-     *1126 *    PEOPLE-HG-LAT    = ( {45%*409.457} )
-     *1127 *    PEOPLE-HG-SENS   = ( {55%*409.457} )
-     *1128 *    LIGHTING-SCHEDUL = ( "Lighting Schedule" )
-     *1129 *    LIGHTING-W/AREA  = ( 1.025 )
-     *1130 *    EQUIP-SCHEDULE   = ( "Plug Load Annual" )
-     *1131 *    EQUIPMENT-W/AREA = ( 0.75 )
-     *1132 *    EQUIP-LATENT     = ( 0 )
-     *1133 *    EQUIP-SENSIBLE   = ( 1 )
-     *1134 *    C-SUB-SRC-BTUH   = ( 0, 0, 0 )
-     *1135 *    C-SUB-SRC-KW     = ( 0, 0, 0 )
-     *1136 *    C-ACTIVITY-DESC  = *Office (Executive/Private)*
-     *1137 *    ..
+     *1130 * "Core Space 1" = SPACE
+     *1131 *    X                = 15
+     *1132 *    Y                = 15
+     *1133 *    SHAPE            = POLYGON
+     *1134 *    ZONE-TYPE        = CONDITIONED
+     *1135 *    INF-METHOD       = AIR-CHANGE
+     *1136 *    AIR-CHANGES/HR   = 0
+     *1137 *    POLYGON          = "BL1 Space Polygon 5"
+     *1138 *    PEOPLE-SCHEDULE  = ( "Occupancy Annual" )
+     *1139 *    AREA/PERSON      = ( 200 )
+     *1140 *    PEOPLE-HEAT-GAIN = ( 409 )
+     *1141 *    PEOPLE-HG-LAT    = ( {45%*409.457} )
+     *1142 *    PEOPLE-HG-SENS   = ( {55%*409.457} )
+     *1143 *    LIGHTING-SCHEDUL = ( "Lighting Schedule" )
+     *1144 *    LIGHTING-W/AREA  = ( 1.025 )
+     *1145 *    EQUIP-SCHEDULE   = ( "Plug Load Annual" )
+     *1146 *    EQUIPMENT-W/AREA = ( 0.75 )
+     *1147 *    EQUIP-LATENT     = ( 0 )
+     *1148 *    EQUIP-SENSIBLE   = ( 1 )
+     *1149 *    C-SUB-SRC-BTUH   = ( 0, 0, 0 )
+     *1150 *    C-SUB-SRC-KW     = ( 0, 0, 0 )
+     *1151 *    C-ACTIVITY-DESC  = *Office (Executive/Private)*
+     *1152 *    ..
 
 -NOTE- - -         DATA FOR     Core Space 1
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  X                =                      15.0000 FT
@@ -5940,16 +6006,16 @@
 -DEFAULT -                                              *DISP-LIGHT-KW   =                       0.7500 KW
 -DEFAULT -                                              *DISP-LIGHT-W/AR =                       0.0000 W/SQFT
 -DEFAULT -                                              *DISP-EQUIP-KW   =                       0.0000 KW
-     *1138 * "Core Space 1 Roof" = EXTERIOR-WALL
-     *1139 *    CONSTRUCTION     = "Roof Type 1"
-     *1140 *    INSIDE-SOL-ABS   = 0.7
-     *1141 *    INSIDE-VIS-REFL  = 0.3
-     *1142 *    LOCATION         = TOP
-     *1143 *    INSIDE-EMISS     = 0.9
-     *1144 *    INSIDE-RCONV     = 1.41
+     *1153 * "Core Space 1 Roof" = EXTERIOR-WALL
+     *1154 *    CONSTRUCTION     = "Roof Type 1"
+     *1155 *    INSIDE-SOL-ABS   = 0.7
+     *1156 *    INSIDE-VIS-REFL  = 0.3
+     *1157 *    LOCATION         = TOP
+     *1158 *    INSIDE-EMISS     = 0.9
+     *1159 *    INSIDE-RCONV     = 1.41
 -CAUTION-------------------------- ==== ------------------------------------------------------
 -CAUTION--- VALUE GREATER THAN MAXIMUM OF 0.1000E+01
-     *1145 *    ..
+     *1160 *    ..
 
 -NOTE- - -         DATA FOR     Core Space 1 Roof
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CONSTRUCTION     = Roof Type 1
@@ -5990,11 +6056,11 @@
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
 -DEFAULT -                                              C-C-CUBIERTA     =                       0.0000
-     *1146 * "Core Space 1 Slab on Grade" = UNDERGROUND-WALL
-     *1147 *    CONSTRUCTION     = "Slab-on-grade Type 1"
-     *1148 *    INSIDE-SOL-ABS   = 0.7
-     *1149 *    LOCATION         = BOTTOM
-     *1150 *    ..
+     *1161 * "Core Space 1 Slab on Grade" = UNDERGROUND-WALL
+     *1162 *    CONSTRUCTION     = "Slab-on-grade Type 1"
+     *1163 *    INSIDE-SOL-ABS   = 0.7
+     *1164 *    LOCATION         = BOTTOM
+     *1165 *    ..
 
 -NOTE- - -         DATA FOR     Core Space 1 Slab on Grade
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CONSTRUCTION     = Slab-on-grade Type 1
@@ -6012,36 +6078,36 @@
 -DEFAULT -                                              C-TYPE           =                       0.0000
 -DEFAULT -                                              C-C-FORMA        =                       0.0000
 -DEFAULT -                                              C-C-AREA         =                       0.0000 SQFT
-     *1151 *  
-     *1152 *  
-     *1153 * $ *********************************************************
-     *1154 * $ **                                                     **
-     *1155 * $ **              Electric & Fuel Meters                 **
-     *1156 * $ **                                                     **
-     *1157 * $ *********************************************************
-     *1158 *  
-     *1159 * $ ---------------------------------------------------------
-     *1160 * $              Electric Meters
-     *1161 * $ ---------------------------------------------------------
-     *1162 *  
-     *1163 *  
-     *1164 *  
-     *1165 * $ ---------------------------------------------------------
-     *1166 * $              Fuel Meters
-     *1167 * $ ---------------------------------------------------------
-     *1168 *  
-     *1169 *  
-     *1170 *  
-     *1171 * $ ---------------------------------------------------------
-     *1172 * $              Master Meters
-     *1173 * $ ---------------------------------------------------------
-     *1174 *  
-     *1175 * "MASTER-METERS 1" = MASTER-METERS
-     *1176 *    MSTR-ELEC-METER  = "EM1"
+     *1166 *  
+     *1167 *  
+     *1168 * $ *********************************************************
+     *1169 * $ **                                                     **
+     *1170 * $ **              Electric & Fuel Meters                 **
+     *1171 * $ **                                                     **
+     *1172 * $ *********************************************************
+     *1173 *  
+     *1174 * $ ---------------------------------------------------------
+     *1175 * $              Electric Meters
+     *1176 * $ ---------------------------------------------------------
+     *1177 *  
+     *1178 *  
+     *1179 *  
+     *1180 * $ ---------------------------------------------------------
+     *1181 * $              Fuel Meters
+     *1182 * $ ---------------------------------------------------------
+     *1183 *  
+     *1184 *  
+     *1185 *  
+     *1186 * $ ---------------------------------------------------------
+     *1187 * $              Master Meters
+     *1188 * $ ---------------------------------------------------------
+     *1189 *  
+     *1190 * "MASTER-METERS 1" = MASTER-METERS
+     *1191 *    MSTR-ELEC-METER  = "EM1"
 -NOTE- - - ----------------------- ===== -----------------------------------------------------THIS ITEM HAS BEEN FETCHED FROM LIBRARY 
-     *1177 *    MSTR-FUEL-METER  = "FM1"
+     *1192 *    MSTR-FUEL-METER  = "FM1"
 -NOTE- - - ----------------------- ===== -----------------------------------------------------THIS ITEM HAS BEEN FETCHED FROM LIBRARY 
-     *1178 *    ..
+     *1193 *    ..
      *   1 * $LIBRARY-ENTRY EM1                             ELEC-METER      PowerDOE Default
      *   2 *   TYPE = UTILITY  ..
 
@@ -6086,25 +6152,25 @@
 -DEFAULT -                                              SUPP-FUEL-METER  = FM1
 -DEFAULT -                                              DHW-FUEL-METER   = FM1
 -DEFAULT -                                              EXCLUDE-FROM-TDV = EXT-USAGE
-     *1179 *  
-     *1180 *  
-     *1181 * $ *********************************************************
-     *1182 * $ **                                                     **
-     *1183 * $ **      HVAC Circulation Loops / Plant Equipment       **
-     *1184 * $ **                                                     **
-     *1185 * $ *********************************************************
-     *1186 *  
-     *1187 * $ ---------------------------------------------------------
-     *1188 * $              Pumps
-     *1189 * $ ---------------------------------------------------------
-     *1190 *  
-     *1191 * "Hot Water Pumps" = PUMP
-     *1192 *    FLOW             = 20
-     *1193 *    NUMBER           = 1
-     *1194 *    HEAD             = 31
-     *1195 *    PUMP-KW          = 0.38
-     *1196 *    CAP-CTRL         = VAR-SPEED-PUMP
-     *1197 *    ..
+     *1194 *  
+     *1195 *  
+     *1196 * $ *********************************************************
+     *1197 * $ **                                                     **
+     *1198 * $ **      HVAC Circulation Loops / Plant Equipment       **
+     *1199 * $ **                                                     **
+     *1200 * $ *********************************************************
+     *1201 *  
+     *1202 * $ ---------------------------------------------------------
+     *1203 * $              Pumps
+     *1204 * $ ---------------------------------------------------------
+     *1205 *  
+     *1206 * "Hot Water Pumps" = PUMP
+     *1207 *    FLOW             = 20
+     *1208 *    NUMBER           = 1
+     *1209 *    HEAD             = 31
+     *1210 *    PUMP-KW          = 0.38
+     *1211 *    CAP-CTRL         = VAR-SPEED-PUMP
+     *1212 *    ..
      *   1 * $LIBRARY-ENTRY Pump-Head-fFlow                 CURVE-FIT       Pumps
      *   2 *   TYPE=QUADRATIC      COEF=( 1.35348310, 0.01593170,-0.36941440)
      *   3 *   INPUT-TYPE COEFFICIENTS ..
@@ -6163,14 +6229,14 @@
 -DEFAULT -                                              C-DRIVE-EFF      =                       1.0000 FRAC.OR MULT.
 -DEFAULT -                                              C-BHP            =                       0.0000 HP
 -DEFAULT -                                              C-MTR-ENCL-TYPE  =                       0.0000
-     *1198 * "CHW-PUMP" = PUMP
-     *1199 *    FLOW             = 60
-     *1200 *    FLOW-RATIO       = 1.1
-     *1201 *    HEAD             = 30
-     *1202 *    HEAD-RATIO       = 1.1
-     *1203 *    PUMP-KW          = 1.32
-     *1204 *    CAP-CTRL         = VAR-SPEED-PUMP
-     *1205 *    ..
+     *1213 * "CHW-PUMP" = PUMP
+     *1214 *    FLOW             = 60
+     *1215 *    FLOW-RATIO       = 1.1
+     *1216 *    HEAD             = 30
+     *1217 *    HEAD-RATIO       = 1.1
+     *1218 *    PUMP-KW          = 1.32
+     *1219 *    CAP-CTRL         = VAR-SPEED-PUMP
+     *1220 *    ..
 
 -NOTE- - -         DATA FOR     CHW-PUMP
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  FLOW             =                      60.0000 GPM
@@ -6196,25 +6262,25 @@
 -DEFAULT -                                              C-DRIVE-EFF      =                       1.0000 FRAC.OR MULT.
 -DEFAULT -                                              C-BHP            =                       0.0000 HP
 -DEFAULT -                                              C-MTR-ENCL-TYPE  =                       0.0000
-     *1206 *  
-     *1207 *  
-     *1208 * $ ---------------------------------------------------------
-     *1209 * $              Condensing Units
-     *1210 * $ ---------------------------------------------------------
-     *1211 *  
-     *1212 *  
-     *1213 *  
-     *1214 * $ ---------------------------------------------------------
-     *1215 * $              Circulation Loops
-     *1216 * $ ---------------------------------------------------------
-     *1217 *  
-     *1218 * "DHW Plant 1 Loop (1)" = CIRCULATION-LOOP
-     *1219 *    TYPE             = DHW
-     *1220 *    DESIGN-HEAT-T    = 135
-     *1221 *    PROCESS-FLOW     = ( 0.164632 )
-     *1222 *    PROCESS-SCH      = ( "DHW Eqp NRes Sch" )
-     *1223 *    PROCESS-T        = ( 135 )
-     *1224 *    ..
+     *1221 *  
+     *1222 *  
+     *1223 * $ ---------------------------------------------------------
+     *1224 * $              Condensing Units
+     *1225 * $ ---------------------------------------------------------
+     *1226 *  
+     *1227 *  
+     *1228 *  
+     *1229 * $ ---------------------------------------------------------
+     *1230 * $              Circulation Loops
+     *1231 * $ ---------------------------------------------------------
+     *1232 *  
+     *1233 * "DHW Plant 1 Loop (1)" = CIRCULATION-LOOP
+     *1234 *    TYPE             = DHW
+     *1235 *    DESIGN-HEAT-T    = 135
+     *1236 *    PROCESS-FLOW     = ( 0.164632 )
+     *1237 *    PROCESS-SCH      = ( "DHW Eqp NRes Sch" )
+     *1238 *    PROCESS-T        = ( 135 )
+     *1239 *    ..
 
 -NOTE- - -         DATA FOR     DHW Plant 1 Loop (1)
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = DHW
@@ -6313,20 +6379,20 @@
 -DEFAULT -                                              C-C-LOOP-OPER-CD =                       0.0000
 -DEFAULT -                                              C-C-LOOP-OPER-2T =                       0.0000
 -DEFAULT -                                              C-C-LOOP-OPER-BC =                       0.0000
-     *1225 * "Hot Water Loop" = CIRCULATION-LOOP
-     *1226 *    TYPE             = HW
-     *1227 *    LOOP-DESIGN-DT   = 50
-     *1228 *    SIZING-OPTION    = COINCIDENT
-     *1229 *    LOOP-MIN-FLOW    = 0.25
-     *1230 *    LOOP-OPERATION   = SCHEDULED
-     *1231 *    HEATING-SCHEDULE = "All ON Sch"
-     *1232 *    DESIGN-HEAT-T    = 180
-     *1233 *    HEAT-SETPT-CTRL  = OA-RESET
-     *1234 *    HEAT-RESET-SCH   = "HW OA Reset"
-     *1235 *    MAX-RESET-T      = 180
-     *1236 *    MIN-RESET-T      = 150
-     *1237 *    LOOP-PUMP        = "Hot Water Pumps"
-     *1238 *    ..
+     *1240 * "Hot Water Loop" = CIRCULATION-LOOP
+     *1241 *    TYPE             = HW
+     *1242 *    LOOP-DESIGN-DT   = 50
+     *1243 *    SIZING-OPTION    = COINCIDENT
+     *1244 *    LOOP-MIN-FLOW    = 0.25
+     *1245 *    LOOP-OPERATION   = SCHEDULED
+     *1246 *    HEATING-SCHEDULE = "All ON Sch"
+     *1247 *    DESIGN-HEAT-T    = 180
+     *1248 *    HEAT-SETPT-CTRL  = OA-RESET
+     *1249 *    HEAT-RESET-SCH   = "HW OA Reset"
+     *1250 *    MAX-RESET-T      = 180
+     *1251 *    MIN-RESET-T      = 150
+     *1252 *    LOOP-PUMP        = "Hot Water Pumps"
+     *1253 *    ..
 
 -NOTE- - -         DATA FOR     Hot Water Loop
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = HW
@@ -6438,20 +6504,24 @@
 -DEFAULT -                                              C-C-LOOP-OPER-CD =                       0.0000
 -DEFAULT -                                              C-C-LOOP-OPER-2T =                       0.0000
 -DEFAULT -                                              C-C-LOOP-OPER-BC =                       0.0000
-     *1239 * "Chilled Water Loop (Primary)" = CIRCULATION-LOOP
-     *1240 *    TYPE             = CHW
-     *1241 *    LOOP-DESIGN-DT   = 12
-     *1242 *    LOOP-MIN-FLOW    = 0.25
-     *1243 *    DESIGN-COOL-T    = 44
-     *1244 *    COOL-SETPT-CTRL  = OA-RESET
-     *1245 *    COOL-RESET-SCH   = "CHW OA Reset"
-     *1246 *    LOOP-PUMP        = "CHW-PUMP"
-     *1247 *    ..
+     *1254 * "Chilled Water Loop (Primary)" = CIRCULATION-LOOP
+     *1255 *    TYPE             = CHW
+     *1256 *    LOOP-DESIGN-DT   = 12
+     *1257 *    LOOP-MIN-FLOW    = 0.25
+     *1258 *    LOOP-OPERATION   = SCHEDULED
+     *1259 *    COOLING-SCHEDULE = "All ON Sch"
+     *1260 *    DESIGN-COOL-T    = 44
+     *1261 *    COOL-SETPT-CTRL  = OA-RESET
+     *1262 *    COOL-RESET-SCH   = "CHW OA Reset"
+     *1263 *    LOOP-PUMP        = "CHW-PUMP"
+     *1264 *    ..
 
 -NOTE- - -         DATA FOR     Chilled Water Loop (Primary)
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = CHW
 -INPUT - -                                              LOOP-DESIGN-DT   =                      12.0000 F (DELTA)
 -INPUT - -                                              LOOP-MIN-FLOW    =                       0.2500 FRAC.OR MULT.
+-INPUT - -                                              LOOP-OPERATION   = SCHEDULED
+-INPUT - -                                              COOLING-SCHEDULE = All ON Sch
 -INPUT - -                                              DESIGN-COOL-T    =                      44.0000 F
 -INPUT - -                                              COOL-SETPT-CTRL  = OA-RESET
 -INPUT - -                                              COOL-RESET-SCH   = CHW OA Reset
@@ -6467,7 +6537,7 @@
 -DEFAULT -                                              *PRIMARY-TRANSFE = *DIRECT
 -DEFAULT -                                              *PRIMARY-HX-DT   =                      10.0000 F (DELTA)
 -DEFAULT -                                              *PRIMARY-HX-HEAD =                      20.0000  FT
--DEFAULT -                                              LOOP-OPERATION   = STANDBY
+-DEFAULT -                                              SNAP-LOCN        = OUTDOOR
 -DEFAULT -                                              LOOP-SETPT-RNG   =                       0.1000 F (DELTA)
 -DEFAULT -                                              MAX-ALARM-T      =                      95.0000 F
 -DEFAULT -                                              HEAD-SETPT-CTRL  = FIXED
@@ -6555,37 +6625,37 @@
 -DEFAULT -                                              C-C-LOOP-OPER-CD =                       0.0000
 -DEFAULT -                                              C-C-LOOP-OPER-2T =                       0.0000
 -DEFAULT -                                              C-C-LOOP-OPER-BC =                       0.0000
-     *1248 *  
-     *1249 *  
-     *1250 * $ ---------------------------------------------------------
-     *1251 * $              Chillers
-     *1252 * $ ---------------------------------------------------------
-     *1253 *  
-     *1254 *  
-     *1255 *  
-     *1256 * $ ---------------------------------------------------------
-     *1257 * $              Boilers
-     *1258 * $ ---------------------------------------------------------
-     *1259 *  
-     *1260 *  
-     *1261 *  
-     *1262 * $ ---------------------------------------------------------
-     *1263 * $              Domestic Water Heaters
-     *1264 * $ ---------------------------------------------------------
      *1265 *  
-     *1266 * "DHW Plant 1 Wtr Htr (1)" = DW-HEATER
-     *1267 *    TYPE             = GAS
-     *1268 *    TANK-VOLUME      = 44.7174
-     *1269 *    CAPACITY         = 0.0595993
-     *1270 *    HIR-FPLR         = "DW-Gas-Pilotless-HIR-fPLR"
+     *1266 *  
+     *1267 * $ ---------------------------------------------------------
+     *1268 * $              Chillers
+     *1269 * $ ---------------------------------------------------------
+     *1270 *  
+     *1271 *  
+     *1272 *  
+     *1273 * $ ---------------------------------------------------------
+     *1274 * $              Boilers
+     *1275 * $ ---------------------------------------------------------
+     *1276 *  
+     *1277 *  
+     *1278 *  
+     *1279 * $ ---------------------------------------------------------
+     *1280 * $              Domestic Water Heaters
+     *1281 * $ ---------------------------------------------------------
+     *1282 *  
+     *1283 * "DHW Plant 1 Wtr Htr (1)" = DW-HEATER
+     *1284 *    TYPE             = GAS
+     *1285 *    TANK-VOLUME      = 44.7174
+     *1286 *    CAPACITY         = 0.0595993
+     *1287 *    HIR-FPLR         = "DW-Gas-Pilotless-HIR-fPLR"
 -NOTE- - - ----------------------- =========================== -------------------------------THIS ITEM HAS BEEN FETCHED FROM LIBRARY 
-     *1271 *    TANK-UA          = 1.86322
-     *1272 *    LOCATION         = ZONE
-     *1273 *    ZONE-NAME        = "Core Zone 1"
-     *1274 *    DHW-LOOP         = "DHW Plant 1 Loop (1)"
-     *1275 *    C-ENERGY-FACTOR  = 0.535037
-     *1276 *    C-TANK-EXT-RVAL  = 12
-     *1277 *    ..
+     *1288 *    TANK-UA          = 1.86322
+     *1289 *    LOCATION         = ZONE
+     *1290 *    ZONE-NAME        = "Core Zone 1"
+     *1291 *    DHW-LOOP         = "DHW Plant 1 Loop (1)"
+     *1292 *    C-ENERGY-FACTOR  = 0.535037
+     *1293 *    C-TANK-EXT-RVAL  = 12
+     *1294 *    ..
      *   1 * $LIBRARY-ENTRY DW-Gas-Pilotless-HIR-fPLR       CURVE-FIT       Gas DW-Heater
      *   2 *   TYPE=QUADRATIC      COEF=( 0, 0.99945700, 0.00054300)
      *   3 *   INPUT-TYPE COEFFICIENTS ..
@@ -6621,63 +6691,63 @@
 -DEFAULT -                                              C-TANK-INT-RVAL  =                       0.0000 HR-SQFT-F /BTU
 -DEFAULT -                                              C-NUM-OF-UNITS   =                       1.0000
 -DEFAULT -                                              C-C-TANK-UA      =                       0.0000 BTU/HR-F
-     *1278 *  
-     *1279 *  
-     *1280 * $ ---------------------------------------------------------
-     *1281 * $              Heat Rejection
-     *1282 * $ ---------------------------------------------------------
-     *1283 *  
-     *1284 *  
-     *1285 *  
-     *1286 * $ ---------------------------------------------------------
-     *1287 * $              Tower Free Cooling
-     *1288 * $ ---------------------------------------------------------
-     *1289 *  
-     *1290 *  
-     *1291 *  
-     *1292 * $ ---------------------------------------------------------
-     *1293 * $              Photovoltaic Modules
-     *1294 * $ ---------------------------------------------------------
      *1295 *  
      *1296 *  
-     *1297 *  
-     *1298 * $ ---------------------------------------------------------
-     *1299 * $              Electric Generators
-     *1300 * $ ---------------------------------------------------------
+     *1297 * $ ---------------------------------------------------------
+     *1298 * $              Heat Rejection
+     *1299 * $ ---------------------------------------------------------
+     *1300 *  
      *1301 *  
      *1302 *  
-     *1303 *  
-     *1304 * $ ---------------------------------------------------------
-     *1305 * $              Thermal Storage
-     *1306 * $ ---------------------------------------------------------
+     *1303 * $ ---------------------------------------------------------
+     *1304 * $              Tower Free Cooling
+     *1305 * $ ---------------------------------------------------------
+     *1306 *  
      *1307 *  
      *1308 *  
-     *1309 *  
-     *1310 * $ ---------------------------------------------------------
-     *1311 * $              Ground Loop Heat Exchangers
-     *1312 * $ ---------------------------------------------------------
+     *1309 * $ ---------------------------------------------------------
+     *1310 * $              Photovoltaic Modules
+     *1311 * $ ---------------------------------------------------------
+     *1312 *  
      *1313 *  
      *1314 *  
-     *1315 *  
-     *1316 * $ ---------------------------------------------------------
-     *1317 * $              Compliance DHW (residential dwelling units)
-     *1318 * $ ---------------------------------------------------------
+     *1315 * $ ---------------------------------------------------------
+     *1316 * $              Electric Generators
+     *1317 * $ ---------------------------------------------------------
+     *1318 *  
      *1319 *  
      *1320 *  
-     *1321 *  
-     *1322 * $ *********************************************************
-     *1323 * $ **                                                     **
-     *1324 * $ **            Steam & Chilled Water Meters             **
-     *1325 * $ **                                                     **
-     *1326 * $ *********************************************************
-     *1327 *  
-     *1328 * $ ---------------------------------------------------------
-     *1329 * $              Steam Meters
-     *1330 * $ ---------------------------------------------------------
+     *1321 * $ ---------------------------------------------------------
+     *1322 * $              Thermal Storage
+     *1323 * $ ---------------------------------------------------------
+     *1324 *  
+     *1325 *  
+     *1326 *  
+     *1327 * $ ---------------------------------------------------------
+     *1328 * $              Ground Loop Heat Exchangers
+     *1329 * $ ---------------------------------------------------------
+     *1330 *  
      *1331 *  
-     *1332 * "Steam Meter 1" = STEAM-METER
-     *1333 *    CIRCULATION-LOOP = "Hot Water Loop"
-     *1334 *    ..
+     *1332 *  
+     *1333 * $ ---------------------------------------------------------
+     *1334 * $              Compliance DHW (residential dwelling units)
+     *1335 * $ ---------------------------------------------------------
+     *1336 *  
+     *1337 *  
+     *1338 *  
+     *1339 * $ *********************************************************
+     *1340 * $ **                                                     **
+     *1341 * $ **            Steam & Chilled Water Meters             **
+     *1342 * $ **                                                     **
+     *1343 * $ *********************************************************
+     *1344 *  
+     *1345 * $ ---------------------------------------------------------
+     *1346 * $              Steam Meters
+     *1347 * $ ---------------------------------------------------------
+     *1348 *  
+     *1349 * "Steam Meter 1" = STEAM-METER
+     *1350 *    CIRCULATION-LOOP = "Hot Water Loop"
+     *1351 *    ..
 
 -NOTE- - -         DATA FOR     Steam Meter 1
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CIRCULATION-LOOP = Hot Water Loop
@@ -6687,15 +6757,15 @@
 -DEFAULT -                                              SOURCE-SITE-EFF  =                       0.6000 BTU/BTU
 -DEFAULT -                                              HX-HEAD          =                       5.0000  FT
 -DEFAULT -                                              METER-REPORT     = YES
-     *1335 *  
-     *1336 *  
-     *1337 * $ ---------------------------------------------------------
-     *1338 * $              Chilled Water Meters
-     *1339 * $ ---------------------------------------------------------
-     *1340 *  
-     *1341 * "Chilled Water Meter 1" = CHW-METER
-     *1342 *    CIRCULATION-LOOP = "Chilled Water Loop (Primary)"
-     *1343 *    ..
+     *1352 *  
+     *1353 *  
+     *1354 * $ ---------------------------------------------------------
+     *1355 * $              Chilled Water Meters
+     *1356 * $ ---------------------------------------------------------
+     *1357 *  
+     *1358 * "Chilled Water Meter 1" = CHW-METER
+     *1359 *    CIRCULATION-LOOP = "Chilled Water Loop (Primary)"
+     *1360 *    ..
 
 -NOTE- - -         DATA FOR     Chilled Water Meter 1
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  CIRCULATION-LOOP = Chilled Water Loop (Primary)
@@ -6704,31 +6774,31 @@
 -DEFAULT -                                              DEM-UNIT-INDEX   =                      34.0000
 -DEFAULT -                                              SOURCE-SITE-EFF  =                       1.5000 BTU/BTU
 -DEFAULT -                                              METER-REPORT     = YES
-     *1344 *  
-     *1345 *  
-     *1346 * $ *********************************************************
-     *1347 * $ **                                                     **
-     *1348 * $ **               HVAC Systems / Zones                  **
-     *1349 * $ **                                                     **
-     *1350 * $ *********************************************************
-     *1351 *  
-     *1352 * "Fan Coil Units" = SYSTEM
-     *1353 *    TYPE             = FC
-     *1354 *    HEAT-SOURCE      = HOT-WATER
-     *1355 *    MAX-SUPPLY-T     = 90
-     *1356 *    HEAT-SET-T       = 90
-     *1357 *    COOL-SET-T       = 60
-     *1358 *    SUPPLY-FLOW      = 2000
-     *1359 *    FAN-SCHEDULE     = "All ON Sch"
-     *1360 *    SUPPLY-KW/FLOW   = 0.0003
-     *1361 *    HW-VALVE-TYPE    = TWO-WAY
-     *1362 *    HW-LOOP          = "Hot Water Loop"
-     *1363 *    CHW-VALVE-TYPE   = TWO-WAY
-     *1364 *    CHW-LOOP         = "Chilled Water Loop (Primary)"
-     *1365 *    COOLING-CAPACITY = 60000
-     *1366 *    HEATING-CAPACITY = -60000
-     *1367 *    ZONE-OA-METHOD   = SUM-OCC-AND-AREA
-     *1368 *    ..
+     *1361 *  
+     *1362 *  
+     *1363 * $ *********************************************************
+     *1364 * $ **                                                     **
+     *1365 * $ **               HVAC Systems / Zones                  **
+     *1366 * $ **                                                     **
+     *1367 * $ *********************************************************
+     *1368 *  
+     *1369 * "Fan Coil Units" = SYSTEM
+     *1370 *    TYPE             = FC
+     *1371 *    HEAT-SOURCE      = HOT-WATER
+     *1372 *    MAX-SUPPLY-T     = 90
+     *1373 *    HEAT-SET-T       = 90
+     *1374 *    COOL-SET-T       = 60
+     *1375 *    SUPPLY-FLOW      = 2000
+     *1376 *    FAN-SCHEDULE     = "Fan Sch"
+     *1377 *    SUPPLY-KW/FLOW   = 0.0003
+     *1378 *    HW-VALVE-TYPE    = TWO-WAY
+     *1379 *    HW-LOOP          = "Hot Water Loop"
+     *1380 *    CHW-VALVE-TYPE   = TWO-WAY
+     *1381 *    CHW-LOOP         = "Chilled Water Loop (Primary)"
+     *1382 *    COOLING-CAPACITY = 60000
+     *1383 *    HEATING-CAPACITY = -60000
+     *1384 *    ZONE-OA-METHOD   = SUM-OCC-AND-AREA
+     *1385 *    ..
 
 -NOTE- - -         DATA FOR     Fan Coil Units
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = FC
@@ -6737,7 +6807,7 @@
 -INPUT - -                                              HEAT-SET-T       =                      90.0000 F
 -INPUT - -                                              COOL-SET-T       =                      60.0000 F
 -INPUT - -                                              SUPPLY-FLOW      =                    2000.0000 CFM
--INPUT - -                                              FAN-SCHEDULE     = All ON Sch
+-INPUT - -                                              FAN-SCHEDULE     = Fan Sch
 -INPUT - -                                              SUPPLY-KW/FLOW   =                       0.0003 KW/CFM
 -INPUT - -                                              HW-VALVE-TYPE    = TWO-WAY
 -INPUT - -                                              HW-LOOP          = Hot Water Loop
@@ -7054,17 +7124,17 @@
 -DEFAULT -                                              C-C-PROP-SR-1    =                       0.0000
 -DEFAULT -                                              C-C-PROP-SR-2    =                       0.0000
 -DEFAULT -                                              C-C-PROP-SR-3    =                       0.0000
-     *1369 * "Core Zone 1" = ZONE
-     *1370 *    TYPE             = CONDITIONED
-     *1371 *    ASSIGNED-FLOW    = 2000
-     *1372 *    DESIGN-HEAT-T    = 70
-     *1373 *    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
-     *1374 *    DESIGN-COOL-T    = 75
-     *1375 *    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
-     *1376 *    THERMOSTAT-TYPE  = REVERSE-ACTION
-     *1377 *    SPACE            = "Core Space 1"
-     *1378 *    OUTSIDE-AIR-FLOW = ( 200 )
-     *1379 *    ..
+     *1386 * "Core Zone 1" = ZONE
+     *1387 *    TYPE             = CONDITIONED
+     *1388 *    ASSIGNED-FLOW    = 2000
+     *1389 *    DESIGN-HEAT-T    = 70
+     *1390 *    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
+     *1391 *    DESIGN-COOL-T    = 75
+     *1392 *    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
+     *1393 *    THERMOSTAT-TYPE  = REVERSE-ACTION
+     *1394 *    SPACE            = "Core Space 1"
+     *1395 *    OUTSIDE-AIR-FLOW = ( 200 )
+     *1396 *    ..
 
 -NOTE- - -         DATA FOR     Core Zone 1
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = CONDITIONED
@@ -7143,17 +7213,17 @@
 -DEFAULT -                                              C-C-PROP-ZR-1    =                       0.0000
 -DEFAULT -                                              C-C-PROP-ZR-2    =                       0.0000
 -DEFAULT -                                              C-C-PROP-ZR-3    =                       0.0000
-     *1380 * "Prm Zone 1 (South) Zn" = ZONE
-     *1381 *    TYPE             = CONDITIONED
-     *1382 *    ASSIGNED-FLOW    = 2000
-     *1383 *    DESIGN-HEAT-T    = 70
-     *1384 *    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
-     *1385 *    DESIGN-COOL-T    = 75
-     *1386 *    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
-     *1387 *    THERMOSTAT-TYPE  = REVERSE-ACTION
-     *1388 *    SPACE            = "Prm Space 1 (South)"
-     *1389 *    OUTSIDE-AIR-FLOW = ( 200 )
-     *1390 *    ..
+     *1397 * "Prm Zone 1 (South) Zn" = ZONE
+     *1398 *    TYPE             = CONDITIONED
+     *1399 *    ASSIGNED-FLOW    = 2000
+     *1400 *    DESIGN-HEAT-T    = 70
+     *1401 *    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
+     *1402 *    DESIGN-COOL-T    = 75
+     *1403 *    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
+     *1404 *    THERMOSTAT-TYPE  = REVERSE-ACTION
+     *1405 *    SPACE            = "Prm Space 1 (South)"
+     *1406 *    OUTSIDE-AIR-FLOW = ( 200 )
+     *1407 *    ..
 
 -NOTE- - -         DATA FOR     Prm Zone 1 (South) Zn
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = CONDITIONED
@@ -7232,17 +7302,17 @@
 -DEFAULT -                                              C-C-PROP-ZR-1    =                       0.0000
 -DEFAULT -                                              C-C-PROP-ZR-2    =                       0.0000
 -DEFAULT -                                              C-C-PROP-ZR-3    =                       0.0000
-     *1391 * "Prm Zone 2 (East) Zn" = ZONE
-     *1392 *    TYPE             = CONDITIONED
-     *1393 *    ASSIGNED-FLOW    = 2000
-     *1394 *    DESIGN-HEAT-T    = 70
-     *1395 *    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
-     *1396 *    DESIGN-COOL-T    = 75
-     *1397 *    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
-     *1398 *    THERMOSTAT-TYPE  = REVERSE-ACTION
-     *1399 *    SPACE            = "Prm Space 2 (East)"
-     *1400 *    OUTSIDE-AIR-FLOW = ( 200 )
-     *1401 *    ..
+     *1408 * "Prm Zone 2 (East) Zn" = ZONE
+     *1409 *    TYPE             = CONDITIONED
+     *1410 *    ASSIGNED-FLOW    = 2000
+     *1411 *    DESIGN-HEAT-T    = 70
+     *1412 *    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
+     *1413 *    DESIGN-COOL-T    = 75
+     *1414 *    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
+     *1415 *    THERMOSTAT-TYPE  = REVERSE-ACTION
+     *1416 *    SPACE            = "Prm Space 2 (East)"
+     *1417 *    OUTSIDE-AIR-FLOW = ( 200 )
+     *1418 *    ..
 
 -NOTE- - -         DATA FOR     Prm Zone 2 (East) Zn
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = CONDITIONED
@@ -7321,17 +7391,17 @@
 -DEFAULT -                                              C-C-PROP-ZR-1    =                       0.0000
 -DEFAULT -                                              C-C-PROP-ZR-2    =                       0.0000
 -DEFAULT -                                              C-C-PROP-ZR-3    =                       0.0000
-     *1402 * "Prm Zone 3 (North)" = ZONE
-     *1403 *    TYPE             = CONDITIONED
-     *1404 *    ASSIGNED-FLOW    = 2000
-     *1405 *    DESIGN-HEAT-T    = 70
-     *1406 *    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
-     *1407 *    DESIGN-COOL-T    = 75
-     *1408 *    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
-     *1409 *    THERMOSTAT-TYPE  = REVERSE-ACTION
-     *1410 *    SPACE            = "Prm Space 3 (North)"
-     *1411 *    OUTSIDE-AIR-FLOW = ( 200 )
-     *1412 *    ..
+     *1419 * "Prm Zone 3 (North)" = ZONE
+     *1420 *    TYPE             = CONDITIONED
+     *1421 *    ASSIGNED-FLOW    = 2000
+     *1422 *    DESIGN-HEAT-T    = 70
+     *1423 *    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
+     *1424 *    DESIGN-COOL-T    = 75
+     *1425 *    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
+     *1426 *    THERMOSTAT-TYPE  = REVERSE-ACTION
+     *1427 *    SPACE            = "Prm Space 3 (North)"
+     *1428 *    OUTSIDE-AIR-FLOW = ( 200 )
+     *1429 *    ..
 
 -NOTE- - -         DATA FOR     Prm Zone 3 (North)
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = CONDITIONED
@@ -7410,17 +7480,17 @@
 -DEFAULT -                                              C-C-PROP-ZR-1    =                       0.0000
 -DEFAULT -                                              C-C-PROP-ZR-2    =                       0.0000
 -DEFAULT -                                              C-C-PROP-ZR-3    =                       0.0000
-     *1413 * "Prm Zone 4 (West)" = ZONE
-     *1414 *    TYPE             = CONDITIONED
-     *1415 *    ASSIGNED-FLOW    = 2000
-     *1416 *    DESIGN-HEAT-T    = 70
-     *1417 *    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
-     *1418 *    DESIGN-COOL-T    = 75
-     *1419 *    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
-     *1420 *    THERMOSTAT-TYPE  = REVERSE-ACTION
-     *1421 *    SPACE            = "Prm Space 4 (West)"
-     *1422 *    OUTSIDE-AIR-FLOW = ( 200 )
-     *1423 *    ..
+     *1430 * "Prm Zone 4 (West)" = ZONE
+     *1431 *    TYPE             = CONDITIONED
+     *1432 *    ASSIGNED-FLOW    = 2000
+     *1433 *    DESIGN-HEAT-T    = 70
+     *1434 *    HEAT-TEMP-SCH    = "Heating Setpoint Annual"
+     *1435 *    DESIGN-COOL-T    = 75
+     *1436 *    COOL-TEMP-SCH    = "Cooling Setpoint Annual"
+     *1437 *    THERMOSTAT-TYPE  = REVERSE-ACTION
+     *1438 *    SPACE            = "Prm Space 4 (West)"
+     *1439 *    OUTSIDE-AIR-FLOW = ( 200 )
+     *1440 *    ..
 
 -NOTE- - -         DATA FOR     Prm Zone 4 (West)
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = CONDITIONED
@@ -7499,51 +7569,51 @@
 -DEFAULT -                                              C-C-PROP-ZR-1    =                       0.0000
 -DEFAULT -                                              C-C-PROP-ZR-2    =                       0.0000
 -DEFAULT -                                              C-C-PROP-ZR-3    =                       0.0000
-     *1424 *  
-     *1425 *  
-     *1426 * $ *********************************************************
-     *1427 * $ **                                                     **
-     *1428 * $ **                Metering & Misc HVAC                 **
-     *1429 * $ **                                                     **
-     *1430 * $ *********************************************************
-     *1431 *  
-     *1432 * $ ---------------------------------------------------------
-     *1433 * $              Equipment Controls
-     *1434 * $ ---------------------------------------------------------
-     *1435 *  
-     *1436 *  
-     *1437 *  
-     *1438 * $ ---------------------------------------------------------
-     *1439 * $              Load Management
-     *1440 * $ ---------------------------------------------------------
      *1441 *  
      *1442 *  
-     *1443 *  
-     *1444 * $ *********************************************************
-     *1445 * $ **                                                     **
-     *1446 * $ **                    Utility Rates                    **
-     *1447 * $ **                                                     **
-     *1448 * $ *********************************************************
-     *1449 *  
-     *1450 * $ ---------------------------------------------------------
-     *1451 * $              Ratchets
-     *1452 * $ ---------------------------------------------------------
+     *1443 * $ *********************************************************
+     *1444 * $ **                                                     **
+     *1445 * $ **                Metering & Misc HVAC                 **
+     *1446 * $ **                                                     **
+     *1447 * $ *********************************************************
+     *1448 *  
+     *1449 * $ ---------------------------------------------------------
+     *1450 * $              Equipment Controls
+     *1451 * $ ---------------------------------------------------------
+     *1452 *  
      *1453 *  
      *1454 *  
-     *1455 *  
-     *1456 * $ ---------------------------------------------------------
-     *1457 * $              Block Charges
-     *1458 * $ ---------------------------------------------------------
+     *1455 * $ ---------------------------------------------------------
+     *1456 * $              Load Management
+     *1457 * $ ---------------------------------------------------------
+     *1458 *  
      *1459 *  
      *1460 *  
-     *1461 *  
-     *1462 * $ ---------------------------------------------------------
-     *1463 * $              Utility Rates
-     *1464 * $ ---------------------------------------------------------
-     *1465 *  
-     *1466 * "Custom Elec Rate" = UTILITY-RATE
-     *1467 *    TYPE             = ELECTRICITY
-     *1468 *    ..
+     *1461 * $ *********************************************************
+     *1462 * $ **                                                     **
+     *1463 * $ **                    Utility Rates                    **
+     *1464 * $ **                                                     **
+     *1465 * $ *********************************************************
+     *1466 *  
+     *1467 * $ ---------------------------------------------------------
+     *1468 * $              Ratchets
+     *1469 * $ ---------------------------------------------------------
+     *1470 *  
+     *1471 *  
+     *1472 *  
+     *1473 * $ ---------------------------------------------------------
+     *1474 * $              Block Charges
+     *1475 * $ ---------------------------------------------------------
+     *1476 *  
+     *1477 *  
+     *1478 *  
+     *1479 * $ ---------------------------------------------------------
+     *1480 * $              Utility Rates
+     *1481 * $ ---------------------------------------------------------
+     *1482 *  
+     *1483 * "Custom Elec Rate" = UTILITY-RATE
+     *1484 *    TYPE             = ELECTRICITY
+     *1485 *    ..
 
 -NOTE- - -         DATA FOR     Custom Elec Rate
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = ELECTRICITY
@@ -7568,9 +7638,9 @@
 -DEFAULT -                                              PCT-SRCHGS-APPLY = BASE
 -DEFAULT -                                              DEMAND-INTERVAL  =                      15.0000 MINUTES
 -DEFAULT -                                              BUY/SELL-MODE    = BUY/SELL
-     *1469 * "Custom Gas Rate" = UTILITY-RATE
-     *1470 *    TYPE             = NATURAL-GAS
-     *1471 *    ..
+     *1486 * "Custom Gas Rate" = UTILITY-RATE
+     *1487 *    TYPE             = NATURAL-GAS
+     *1488 *    ..
 
 -NOTE- - -         DATA FOR     Custom Gas Rate
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  TYPE             = NATURAL-GAS
@@ -7592,54 +7662,54 @@
 -DEFAULT -                                              PCT-TAXES-APPLY  = BASE
 -DEFAULT -                                              PCT-SRCHGS-APPLY = BASE
 -DEFAULT -                                              DEMAND-INTERVAL  =                      60.0000 MINUTES
-     *1472 *  
-     *1473 *  
-     *1474 * $ *********************************************************
-     *1475 * $ **                                                     **
-     *1476 * $ **                 Output Reporting                    **
-     *1477 * $ **                                                     **
-     *1478 * $ *********************************************************
-     *1479 *  
-     *1480 * $ ---------------------------------------------------------
-     *1481 * $              Loads Non-Hourly Reporting
-     *1482 * $ ---------------------------------------------------------
-     *1483 *  
-     *1484 * LOADS-REPORT
-     *1485 *    VERIFICATION     = ( ALL-VERIFICATION )
-     *1486 *    SUMMARY          = ( ALL-SUMMARY )
-     *1487 *    ..
+     *1489 *  
+     *1490 *  
+     *1491 * $ *********************************************************
+     *1492 * $ **                                                     **
+     *1493 * $ **                 Output Reporting                    **
+     *1494 * $ **                                                     **
+     *1495 * $ *********************************************************
+     *1496 *  
+     *1497 * $ ---------------------------------------------------------
+     *1498 * $              Loads Non-Hourly Reporting
+     *1499 * $ ---------------------------------------------------------
+     *1500 *  
+     *1501 * LOADS-REPORT
+     *1502 *    VERIFICATION     = ( ALL-VERIFICATION )
+     *1503 *    SUMMARY          = ( ALL-SUMMARY )
+     *1504 *    ..
 
 -NOTE- - -         DATA FOR     LOADS-REPORT
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  VERIFICATION     = ALL-VERIFICATION
 -INPUT - -                                              SUMMARY          = ALL-SUMMARY
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  REPORT-FREQUENCY = HOURLY
 -DEFAULT -                                              HOURLY-DATA-SAVE = NO-SAVE
-     *1488 *  
-     *1489 *  
-     *1490 * $ ---------------------------------------------------------
-     *1491 * $              Systems Non-Hourly Reporting
-     *1492 * $ ---------------------------------------------------------
-     *1493 *  
-     *1494 * SYSTEMS-REPORT
-     *1495 *    VERIFICATION     = ( ALL-VERIFICATION )
-     *1496 *    SUMMARY          = ( ALL-SUMMARY )
-     *1497 *    ..
+     *1505 *  
+     *1506 *  
+     *1507 * $ ---------------------------------------------------------
+     *1508 * $              Systems Non-Hourly Reporting
+     *1509 * $ ---------------------------------------------------------
+     *1510 *  
+     *1511 * SYSTEMS-REPORT
+     *1512 *    VERIFICATION     = ( ALL-VERIFICATION )
+     *1513 *    SUMMARY          = ( ALL-SUMMARY )
+     *1514 *    ..
 
 -NOTE- - -         DATA FOR     SYSTEMS-REPORT
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  VERIFICATION     = ALL-VERIFICATION
 -INPUT - -                                              SUMMARY          = ALL-SUMMARY
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  REPORT-FREQUENCY = HOURLY
 -DEFAULT -                                              HOURLY-DATA-SAVE = NO-SAVE
-     *1498 *  
-     *1499 *  
-     *1500 * $ ---------------------------------------------------------
-     *1501 * $              Plant Non-Hourly Reporting
-     *1502 * $ ---------------------------------------------------------
-     *1503 *  
-     *1504 * PLANT-REPORT
-     *1505 *    VERIFICATION     = ( ALL-VERIFICATION )
-     *1506 *    SUMMARY          = ( ALL-SUMMARY )
-     *1507 *    ..
+     *1515 *  
+     *1516 *  
+     *1517 * $ ---------------------------------------------------------
+     *1518 * $              Plant Non-Hourly Reporting
+     *1519 * $ ---------------------------------------------------------
+     *1520 *  
+     *1521 * PLANT-REPORT
+     *1522 *    VERIFICATION     = ( ALL-VERIFICATION )
+     *1523 *    SUMMARY          = ( ALL-SUMMARY )
+     *1524 *    ..
 
 -NOTE- - -         DATA FOR     PLANT-REPORT
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  VERIFICATION     = ALL-VERIFICATION
@@ -7648,16 +7718,16 @@
 -INPUT - -                                              SUMMARY          = BEPS
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  REPORT-FREQUENCY = HOURLY
 -DEFAULT -                                              HOURLY-DATA-SAVE = NO-SAVE
-     *1508 *  
-     *1509 *  
-     *1510 * $ ---------------------------------------------------------
-     *1511 * $              Economics Non-Hourly Reporting
-     *1512 * $ ---------------------------------------------------------
-     *1513 *  
-     *1514 * ECONOMICS-REPORT
-     *1515 *    VERIFICATION     = ( ALL-VERIFICATION )
-     *1516 *    SUMMARY          = ( ALL-SUMMARY )
-     *1517 *    ..
+     *1525 *  
+     *1526 *  
+     *1527 * $ ---------------------------------------------------------
+     *1528 * $              Economics Non-Hourly Reporting
+     *1529 * $ ---------------------------------------------------------
+     *1530 *  
+     *1531 * ECONOMICS-REPORT
+     *1532 *    VERIFICATION     = ( ALL-VERIFICATION )
+     *1533 *    SUMMARY          = ( ALL-SUMMARY )
+     *1534 *    ..
 
 -NOTE- - -         DATA FOR     ECONOMICS-REPORT
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  VERIFICATION     = ALL-VERIFICATION
@@ -7665,23 +7735,23 @@
 -INPUT - -                                              SUMMARY          = ES-D
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  REPORT-FREQUENCY = HOURLY
 -DEFAULT -                                              HOURLY-DATA-SAVE = NO-SAVE
-     *1518 *  
-     *1519 *  
-     *1520 * $ ---------------------------------------------------------
-     *1521 * $              Hourly Reporting
-     *1522 * $ ---------------------------------------------------------
-     *1523 *  
-     *1524 * "Hourly Report Block 3" = REPORT-BLOCK
-     *1525 *    VARIABLE-TYPE    = "Fan Coil Units"
-     *1526 *    VARIABLE-LIST    = ( 1 )
-     *1527 *    ..
+     *1535 *  
+     *1536 *  
+     *1537 * $ ---------------------------------------------------------
+     *1538 * $              Hourly Reporting
+     *1539 * $ ---------------------------------------------------------
+     *1540 *  
+     *1541 * "Hourly Report Block 3" = REPORT-BLOCK
+     *1542 *    VARIABLE-TYPE    = "Fan Coil Units"
+     *1543 *    VARIABLE-LIST    = ( 1 )
+     *1544 *    ..
 
 -NOTE- - -         DATA FOR     Hourly Report Block 3
 -INPUT - - - - - - - - - - - - - - - - - - - - - - - -  VARIABLE-TYPE    = Fan Coil Units
 -INPUT - -                                              VARIABLE-LIST    =                       1.0000
-     *1528 *  
-     *1529 * "Hourly Report" = HOURLY-REPORT
-     *1530 *    LIBRARY-ENTRY "Hourly Report"
+     *1545 *  
+     *1546 * "Hourly Report" = HOURLY-REPORT
+     *1547 *    LIBRARY-ENTRY "Hourly Report"
 -NOTE- - - ------------------ =============== ------------------------------------------------THIS ITEM HAS BEEN FETCHED FROM LIBRARY 
      *   1 * $LIBRARY-ENTRY Hourly Report                   HOURLY-REPORT   Hourly Reports
      *   2 *    REPORT-SCHEDULE = "Hourly Report Schedule"
@@ -7737,7 +7807,7 @@
 -LIBRARY -                                              DAY              =                      31.0000
 -LIBRARY -                                              WEEK-SCHEDULES   = Hourly Report Week Sched
 -DEFAULT - - - - - - - - - - - - - - - - - - - - - - -  PHOTOCELL-CTRL   = NONE
-     *1531 *    ..
+     *1548 *    ..
 
 -NOTE- - -         DATA FOR     Hourly Report
 -LIBRARY - - - - - - - - - - - - - - - - - - - - - - -  REPORT-SCHEDULE  = Hourly Report Schedule
@@ -7756,20 +7826,21 @@
 -DEFAULT -                                              DIVIDE           =                       1.0000 UNITS
 -DEFAULT -                                              DIVIDE           =                       1.0000 UNITS
 -DEFAULT -                                              DIVIDE           =                       1.0000 UNITS
-     *1532 *  
-     *1533 *  
-     *1534 * $ ---------------------------------------------------------
-     *1535 * $              THE END
-     *1536 * $ ---------------------------------------------------------
-     *1537 *  
-     *1538 * END ..
+     *1549 *  
+     *1550 *  
+     *1551 * $ ---------------------------------------------------------
+     *1552 * $              THE END
+     *1553 * $ ---------------------------------------------------------
+     *1554 *  
+     *1555 * END ..
 *WARNING**************************************************************************************
 *WARNING***SPACE Prm Space 4 (West) has 0 delayed walls, 1 delayed floors and
             0 delayed ceilings. There should be at least a delayed wall and
             floor, a delayed wall and ceiling, or a delayed ceiling and floor
             for custom weighting factors to be calculated. ASHRAE weighting
             factors with floor weight of 70 lb/ft2 (342 kg/m2) will be used for
-            this space.229 Test Case 1 updated                                                                   12/11/2024     7:52:11  BDL  RUN16
+            this space.
+229 Test Case 1 updated                                                                    4/21/2025    20:19:48  BDL  RUN16
                                                                                                                         
 REPORT- LV-K  WEIGHTING FACTOR SUMMARY
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -7779,57 +7850,58 @@ SP NAME--   Prm Space 1 (Sou Prm Space 2 (Eas Prm Space 3 (Nor Prm Space 4 (Wes 
 
 SOLAR
 -----
-V0           0.24449          0.27971          0.33000          0.19700          0.22776
-V1          -0.22907         -0.27711         -0.39089         -0.06700         -0.21005
-V2           0.02699          0.04304          0.09715          0.00000          0.02248
-W1           1.25106          1.21995          1.33115          0.87000          1.24522
-W2          -0.34991         -0.32417         -0.37373          0.00000         -0.34447
+V0           0.24406          0.27923          0.32940          0.19700          0.22776
+V1          -0.22866         -0.27664         -0.39026         -0.06700         -0.21005
+V2           0.02694          0.04297          0.09702          0.00000          0.02248
+W1           1.25094          1.21979          1.33119          0.87000          1.24522
+W2          -0.34981         -0.32405         -0.37379          0.00000         -0.34447
 
 GENERAL
 LIGHTING
 --------
-V0           0.38672          0.44695          0.52235          0.53000          0.30516
-V1          -0.37365         -0.44127         -0.51053         -0.40000         -0.28184
-V2           0.05082          0.07181          0.04652          0.00000          0.03084
-W1           1.21847          1.15694          1.04449          0.87000          1.21634
-W2          -0.32859         -0.28674         -0.11208          0.00000         -0.32585
+V0           0.38478          0.44485          0.52003          0.53000          0.30516
+V1          -0.37152         -0.43903         -0.50822         -0.40000         -0.28184
+V2           0.05037          0.07136          0.04629          0.00000          0.03084
+W1           1.21836          1.15674          1.04440          0.87000          1.21634
+W2          -0.32850         -0.28659         -0.11206          0.00000         -0.32585
 
 TASK
 LIGHTING
 --------
-V0           0.38672          0.44695          0.52235          0.50000          0.30516
-V1          -0.37365         -0.44127         -0.51053         -0.37000         -0.28184
-V2           0.05082          0.07181          0.04652          0.00000          0.03084
-W1           1.21847          1.15694          1.04449          0.87000          1.21634
-W2          -0.32859         -0.28674         -0.11208          0.00000         -0.32585
+V0           0.38478          0.44485          0.52003          0.50000          0.30516
+V1          -0.37152         -0.43903         -0.50822         -0.37000         -0.28184
+V2           0.05037          0.07136          0.04629          0.00000          0.03084
+W1           1.21836          1.15674          1.04440          0.87000          1.21634
+W2          -0.32850         -0.28659         -0.11206          0.00000         -0.32585
 
 PEOPLE-
 EQUIPMENT
 ---------
-V0           0.38672          0.44695          0.52235          0.68100          0.30516
-V1          -0.37365         -0.44127         -0.51053         -0.55100         -0.28184
-V2           0.05082          0.07181          0.04652          0.00000          0.03084
-W1           1.21847          1.15694          1.04449          0.87000          1.21634
-W2          -0.32859         -0.28674         -0.11208          0.00000         -0.32585
+V0           0.38478          0.44485          0.52003          0.68100          0.30516
+V1          -0.37152         -0.43903         -0.50822         -0.55100         -0.28184
+V2           0.05037          0.07136          0.04629          0.00000          0.03084
+W1           1.21836          1.15674          1.04440          0.87000          1.21634
+W2          -0.32850         -0.28659         -0.11206          0.00000         -0.32585
 
 CONDUCTION
 ----------
-V0           0.60526          0.64458          0.69256          0.68100          0.54205
-V1          -0.67470         -0.69702         -0.70081         -0.55100         -0.60044
-V2           0.14980          0.14862          0.06988          0.00000          0.13142
-W1           1.21847          1.15695          1.04449          0.87000          1.21634
-W2          -0.32859         -0.28674         -0.11208          0.00000         -0.32585
+V0           0.60401          0.64323          0.69106          0.68100          0.54205
+V1          -0.67329         -0.69551         -0.69929         -0.55100         -0.60044
+V2           0.14948          0.14827          0.06973          0.00000          0.13142
+W1           1.21836          1.15674          1.04440          0.87000          1.21634
+W2          -0.32850         -0.28659         -0.11206          0.00000         -0.32585
 
 AIR
 TEMP     (BTU/HR-SQFT-F   )
 ----
-G0*          0.42514          0.34110          0.55704          1.81000          0.26481
-G1*         -0.74712         -0.59450         -0.70800         -1.89000         -0.45976
-G2*          0.32230          0.25474          0.15322          0.08000          0.19522
-G3*         -0.00032         -0.00134         -0.00227          0.00000         -0.00026
-P1          -1.22265         -1.19850         -1.15665         -0.87000         -1.21901
-P2           0.33000          0.30974          0.21474          0.00000          0.32625
+G0*          0.42379          0.33978          0.55327          1.81000          0.26481
+G1*         -0.74477         -0.59221         -0.70325         -1.89000         -0.45976
+G2*          0.32129          0.25377          0.15224          0.08000          0.19522
+G3*         -0.00032         -0.00134         -0.00226          0.00000         -0.00026
+P1          -1.22253         -1.19835         -1.15653         -0.87000         -1.21901
+P2           0.32990          0.30962          0.21469          0.00000          0.32625
+
 -CAUTION--------------------------------------------------------------------------------------NO HEATING EQUIPMENT HAS BEEN DEFINED   
 -CAUTION--------------------------------------------------------------------------------------NO COOLING EQUIPMENT HAS BEEN DEFINED   
-     *1539 * COMPUTE ..
-     *1540 * STOP ..
+     *1556 * COMPUTE ..
+     *1557 * STOP ..

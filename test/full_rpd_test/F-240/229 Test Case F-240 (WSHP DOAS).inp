@@ -317,7 +317,7 @@ $ ---------------------------------------------------------
 "BL1 Window Type #1 GT" = GLASS-TYPE      
    TYPE             = SHADING-COEF
    SHADING-COEF     = 0.44
-   GLASS-CONDUCT    = {.5271}
+   GLASS-CONDUCT    = 0.579
    VIS-TRANS        = 0.417
    ..
 
@@ -1433,6 +1433,7 @@ $ *********************************************************
    SUPPLY-FLOW      = 1000
    FAN-CONTROL      = CONSTANT-VOLUME
    SUPPLY-KW/FLOW   = 0.001
+   MIN-FAN-RATIO    = 1
    COOLING-CAPACITY = 60000
    HEATING-CAPACITY = -60000
    ..

@@ -367,7 +367,8 @@ $ ---------------------------------------------------------
    ..
 "Fan Sched weekday" = DAY-SCHEDULE-PD
    TYPE             = ON/OFF/FLAG
-   VALUES           = ( 1 )
+   VALUES           = ( 0, &D, &D, &D, &D, &D, &D, 1, &D, &D, &D, &D, &D, &D, 
+         &D, &D, &D, &D, &D, &D, &D, &D, 0 )
    ..
 "Fan Sched Sunday" = DAY-SCHEDULE-PD
    TYPE             = ON/OFF/FLAG
@@ -1234,6 +1235,8 @@ $ ---------------------------------------------------------
    TYPE             = CHW
    LOOP-DESIGN-DT   = 12
    LOOP-MIN-FLOW    = 0.25
+   LOOP-OPERATION   = SCHEDULED
+   COOLING-SCHEDULE = "Schedule ON/OFF"
    DESIGN-COOL-T    = 44
    COOL-SETPT-CTRL  = OA-RESET
    COOL-RESET-SCH   = "CHW OA Reset"
@@ -1243,6 +1246,8 @@ $ ---------------------------------------------------------
    TYPE             = HW
    LOOP-DESIGN-DT   = 50
    LOOP-MIN-FLOW    = 0.25
+   LOOP-OPERATION   = SCHEDULED
+   HEATING-SCHEDULE = "Schedule ON/OFF"
    DESIGN-HEAT-T    = 180
    HEAT-SETPT-CTRL  = OA-RESET
    HEAT-RESET-SCH   = "HW OA Reset"

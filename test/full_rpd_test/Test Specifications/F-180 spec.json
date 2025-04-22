@@ -399,12 +399,12 @@
         "tolerance": 0.01
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].chillers[*].rated_entering_condenser_temperature",
+        "json-key-path": "$.ruleset_model_descriptions[0].chillers[*].design_entering_condenser_temperature",
         "compare-value": true,
         "tolerance": 0.1
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].chillers[*].rated_leaving_evaporator_temperature",
+        "json-key-path": "$.ruleset_model_descriptions[0].chillers[*].design_leaving_evaporator_temperature",
         "compare-value": true,
         "tolerance": 0.1
         },
