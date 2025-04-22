@@ -123,7 +123,7 @@ def compare_json_values(
                 specification_test,
                 generated_id,
                 reference_id,
-                TestOutcomeOptions.DIFFER.value,
+                TestOutcomeOptions.NOT_IMPLEMENTED.value,
                 notes,
             )
             warnings.append(notes)
@@ -1990,6 +1990,7 @@ def handle_unordered_comparisons(
         add_test_result(
             specification_test, None, None, TestOutcomeOptions.DIFFER.value, notes
         )
+        warnings.append(notes)
         return warnings, errors
 
     general_comparison_warnings, general_comparison_errors = compare_json_values(
