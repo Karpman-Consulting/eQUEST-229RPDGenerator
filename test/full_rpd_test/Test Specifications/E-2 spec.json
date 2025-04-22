@@ -471,7 +471,7 @@
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].boilers[*].energy_source_type",
-        "compare-value": false
+        "compare-value": true
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].boilers[*].rated_capacity",

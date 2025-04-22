@@ -175,6 +175,11 @@ def compare_json_values(
                         errors.append(notes)
                 continue
 
+        elif isinstance(reference_value, str) and not compare_value:
+            specification_test["evaluation_criteria"] = (
+                EvaluationCriteriaOptions.REFERENCE.value
+            )
+
         if compare_value is False:
             continue  # No comparison needed, just check for existence
 
@@ -1107,13 +1112,9 @@ def handle_special_cases(
                     for err in compare_pump_power_errors
                 )
 
-            # TODO: Jackson question:
-            """Here we don't have a reference ID since we are comparing the generated value to a 
-            predetermined special case value. In the JSON this reference value appears as NULL.
-            Do you want to keep it that way, provide some sort of default for the reference ID,
-            or we could remove the reference ID for fields like this."""
-            # If no warnings or errors are produced from comparison, add matching test result
+            # If no warnings or errors are produced from comparison, add MATCH test result
             if not compare_pump_power_warnings and not compare_pump_power_errors:
+                # No reference ID since we are comparing the generated value to a predetermined special case value
                 add_test_result(
                     specification_test,
                     pump_id,
@@ -1276,6 +1277,7 @@ def handle_special_cases(
                     warnings.append(notes)
                     is_staged = False
                 else:
+                    # Correct answer is not dependent on a reference value, so there is no reference ID
                     add_test_result(
                         specification_test,
                         boiler_id,
