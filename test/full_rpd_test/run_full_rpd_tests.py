@@ -1,8 +1,9 @@
 import sys
-import os
 import json
 import math
+from pathlib import Path
 from difflib import get_close_matches
+from enum import Enum
 
 from rpd_generator.utilities.jsonpath_utils import (
     find_one,
@@ -13,13 +14,94 @@ from rpd_generator.utilities.jsonpath_utils import (
 )
 
 
+class EvaluationCriteriaOptions(Enum):
+    VALUE = "VALUE"
+    PRESENT = "PRESENT"
+    REFERENCE = "REFERENCE"
+    QUANTITY = "QUANTITY"
+
+
+class TestOutcomeOptions(Enum):
+    MATCH = "MATCH"
+    DIFFER = "DIFFER"
+    NOT_IMPLEMENTED = "NOT_IMPLEMENTED"
+
+
+# RPD Generation Test Report
+results_data = {
+    "generation_software_name": "",
+    "generation_software_version": "",
+    "modeling_software_name": "",
+    "modeling_software_version": "",
+    "schema_version": "",
+    "ruleset_name": "",
+    "ruleset_checking_specification_name": "",
+    "test_case_reports": [],  # List of test case report dicts
+}
+
+
+# Test Case Report
+def add_test_case_report(test_case_dir, generated_file_name):
+    files_utilized = [
+        f.name for f in test_case_dir.iterdir() if f.is_file() and f.suffix != ".json"
+    ]
+    test_case_report = {
+        "test_id": test_case_dir.name,
+        "generated_file_name": generated_file_name,
+        "files_utilized": files_utilized,
+        "specification_tests": [],
+    }
+    results_data["test_case_reports"].append(test_case_report)
+    return test_case_report
+
+
+# Specification Test
+def add_specification_test(test_case_report, data_path, evaluation_criteria=""):
+    specification_test = {
+        "data_path": data_path,
+        "evaluation_criteria": evaluation_criteria,
+        "test_results": [],
+    }
+    test_case_report["specification_tests"].append(specification_test)
+    return specification_test
+
+
+# Test Result
+def add_test_result(
+    specification_test,
+    generated_instance_id,
+    reference_instance_id,
+    test_outcome,
+    notes="",
+):
+    data_element = specification_test["data_path"].split(".")[-1]
+    test_result = {
+        "generated_instance_id": generated_instance_id,  # if generated_instance_id else None,
+        "reference_instance_id": (
+            reference_instance_id if reference_instance_id else None
+        ),
+        "data_element": data_element,
+        "test_outcome": test_outcome,
+        "notes": notes,
+    }
+    specification_test["test_results"].append(test_result)
+    return test_result
+
+
 def load_json_file(file_path):
     """Loads JSON data from a file."""
     with open(file_path, "r") as file:
         return json.load(file)
 
 
-def compare_json_values(spec, generated_values, reference_values, generated_ids):
+def compare_json_values(
+    spec,
+    generated_values,
+    reference_values,
+    generated_ids,
+    specification_test,
+    object_id_map,
+):
     """Compares a list of generated and reference JSON values based on the spec."""
     json_key_path = spec["json-key-path"]
     compare_value = spec.get("compare-value", True)
@@ -33,32 +115,67 @@ def compare_json_values(spec, generated_values, reference_values, generated_ids)
             generated_id = i
         generated_value = generated_values[generated_id]
         reference_value = reference_values[generated_id]
+        reference_id = object_id_map.get(generated_id)
 
         if generated_value is None and reference_value is not None:
-            warnings.append(
-                f"Missing value for key '{json_key_path.split('.')[-1]}' at {generated_ids[i]}"
+            notes = f"Missing value for key '{json_key_path.split('.')[-1]}' at {generated_ids[i]}"
+            add_test_result(
+                specification_test,
+                generated_id,
+                reference_id,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
             )
+            warnings.append(notes)
             continue
 
         if isinstance(reference_value, dict):
             raise ValueError("json-test-key-path should not result in a dictionary.")
 
         elif isinstance(reference_value, list):
+            # Reference value is a list. Set EvaluationCriteriaOptions to QUANTITY
+            specification_test["evaluation_criteria"] = (
+                EvaluationCriteriaOptions.QUANTITY.value
+            )
 
             if len(generated_value) != len(reference_value):
-                errors.append(
-                    f"List length mismatch at '{generated_ids[i]}' for key '{json_key_path.split('.')[-1]}'. Expected: {len(reference_value)}; got: {len(generated_value)}"
+                notes = f"List length mismatch at '{generated_ids[i]}' for key '{json_key_path.split('.')[-1]}'. Expected: {len(reference_value)}; got: {len(generated_value)}"
+                add_test_result(
+                    specification_test,
+                    generated_id,
+                    reference_id,
+                    TestOutcomeOptions.DIFFER.value,
+                    notes,
                 )
+                errors.append(notes)
                 continue
+            else:
+                add_test_result(
+                    specification_test,
+                    generated_id,
+                    reference_id,
+                    TestOutcomeOptions.MATCH.value,
+                )
 
             if compare_value:
+                # Reference value is a list with value comparisons. Combine QUANTITY and VALUE
+                specification_test["evaluation_criteria"] = (
+                    EvaluationCriteriaOptions.VALUE.value
+                )
+
                 for j, (gen_item, ref_item) in enumerate(
                     zip(generated_value, reference_value)
                 ):
                     if gen_item != ref_item:
-                        errors.append(
-                            f"List element mismatch for {generated_ids[i]} at index [{j}]. Expected: {ref_item}; got: {gen_item}"
+                        notes = f"List element mismatch for {generated_ids[i]} at index [{j}]. Expected: {ref_item}; got: {gen_item}"
+                        add_test_result(
+                            specification_test,
+                            generated_id,
+                            reference_id,
+                            TestOutcomeOptions.DIFFER.value,
+                            notes,
                         )
+                        errors.append(notes)
                 continue
 
         if compare_value is False:
@@ -67,16 +184,46 @@ def compare_json_values(spec, generated_values, reference_values, generated_ids)
         if reference_value is None and generated_value is None:
             continue  # Both values are None, no need to compare
 
+        # Evaluate based on value comparison
+        specification_test["evaluation_criteria"] = (
+            EvaluationCriteriaOptions.VALUE.value
+        )
+        test_outcome = TestOutcomeOptions.NOT_IMPLEMENTED.value
+
         # Else: the values are strings, ints, or floats, and we need to compare them
+        notes = ""
         does_match = compare_values(generated_value, reference_value, tolerance)
+        if does_match:
+            test_outcome = TestOutcomeOptions.MATCH.value
         if not does_match and reference_value is None:
             warnings.append(
                 f"Extra data provided at '{generated_ids[i]}' for key '{json_key_path.split('.')[-1]}'. Expected: 'None'; got: '{generated_value}'"
             )
+            # Avoid adding a test result when extra data is provided
+            continue
         elif not does_match:
-            errors.append(
-                f"Value mismatch at '{generated_ids[i]}' for key '{json_key_path.split('.')[-1]}'. Expected: '{reference_value}'; got: '{generated_value}'"
-            )
+            notes = f"Value mismatch at '{generated_ids[i]}' for key '{json_key_path.split('.')[-1]}'. Expected: '{reference_value}'; got: '{generated_value}'"
+            errors.append(notes)
+            test_outcome = TestOutcomeOptions.DIFFER.value
+
+        add_test_result(
+            specification_test,
+            generated_id,
+            reference_id,
+            test_outcome,
+            notes,
+        )
+
+    if not generated_ids:
+        notes = f"No generated IDs found for key '{json_key_path.split('.')[-1]}'"
+        add_test_result(
+            specification_test,
+            None,
+            None,
+            TestOutcomeOptions.DIFFER.value,
+            notes,
+        )
+        warnings.append(notes)
 
     return warnings, errors
 
@@ -857,12 +1004,22 @@ def map_objects(generated_json, reference_json):
     return object_id_map, warnings, errors
 
 
-def handle_special_cases(path_spec, object_id_map, generated_json, reference_json):
+def handle_special_cases(
+    path_spec, object_id_map, generated_json, reference_json, specification_test
+):
     warnings = []
     errors = []
 
     json_key_path = path_spec["json-key-path"]
     special_case = path_spec["special-case"]
+    compare_value = path_spec.get("compare-value", True)
+    tolerance = path_spec.get("tolerance", 0)
+
+    specification_test["evaluation_criteria"] = (
+        EvaluationCriteriaOptions.VALUE.value
+        if compare_value
+        else EvaluationCriteriaOptions.PRESENT.value
+    )
 
     # Handle Special Case for design electric power based on design airflow (which is not a specified value)
     if special_case == "W/cfm":
@@ -896,6 +1053,7 @@ def handle_special_cases(path_spec, object_id_map, generated_json, reference_jso
 
         for pump in generated_pumps:
             pump_type = "primary"
+            pump_id = pump.get("id")
             loop_id = pump.get("loop_or_piping")
             loop = find_all_with_field_value(
                 "$.ruleset_model_descriptions[*].fluid_loops[*]",
@@ -915,7 +1073,7 @@ def handle_special_cases(path_spec, object_id_map, generated_json, reference_jso
 
             if not loop:
                 errors.append(
-                    f"Could not find loop with id '{loop_id}' for pump '{pump['id']}'"
+                    f"Could not find loop with id '{loop_id}' for pump '{pump_id}'"
                 )
                 continue
 
@@ -934,15 +1092,39 @@ def handle_special_cases(path_spec, object_id_map, generated_json, reference_jso
             compare_pump_power_warnings, compare_pump_power_errors = compare_pump_power(
                 pump, special_case_value
             )
+            # Test mismatch if there are warnings from compare_pump_power
             if compare_pump_power_warnings:
-                warnings.extend(
-                    f"Warning at {json_key_path.split('.')[-1]}: {warn}"
-                    for warn in compare_pump_power_warnings
+                notes = ""
+                for warn in compare_pump_power_warnings:
+                    notes += f"{warn}\n"
+                    warnings.extend(
+                        f"Warning at {json_key_path.split('.')[-1]}: {warn}"
+                    )
+                add_test_result(
+                    specification_test,
+                    pump_id,
+                    None,
+                    TestOutcomeOptions.DIFFER.value,
+                    notes,
                 )
             if compare_pump_power_errors:
                 errors.extend(
                     f"Error at {json_key_path.split('.')[-1]}: {err}"
                     for err in compare_pump_power_errors
+                )
+
+            # TODO: Jackson question:
+            """Here we don't have a reference ID since we are comparing the generated value to a 
+            predetermined special case value. In the JSON this reference value appears as NULL.
+            Do you want to keep it that way, provide some sort of default for the reference ID,
+            or we could remove the reference ID for fields like this."""
+            # If no warnings or errors are produced from comparison, add matching test result
+            if not compare_pump_power_warnings and not compare_pump_power_errors:
+                add_test_result(
+                    specification_test,
+                    pump_id,
+                    None,
+                    TestOutcomeOptions.MATCH.value,
                 )
 
     # Handle Special Case for interior wall azimuths (which may be opposite due to the adjacent zone)
@@ -1044,15 +1226,161 @@ def handle_special_cases(path_spec, object_id_map, generated_json, reference_jso
                 )
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
+        else:
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.MATCH.value,
+            )
+
+    elif special_case == "operation_lower_limit":
+        sequence = path_spec.get("special-case-value", {}).get("sequence")
+
+        if not sequence:
+            raise ValueError(
+                "Special case value for operation upper limit must include a controls sequence."
+            )
+
+        if sequence == "staged":
+            generated_boilers = find_all(
+                json_key_path[
+                    : json_key_path.index("].", json_key_path.index("boilers")) + 1
+                ],
+                generated_json,
+            )
+            is_staged = True
+            expected_lower_limit = 0.0
+
+            # Sort by operation_lower_limit
+            sorted_boilers = sorted(
+                generated_boilers,
+                key=lambda b: b.get("operation_lower_limit", float("inf")),
+            )
+
+            for boiler in sorted_boilers:
+                boiler_id = boiler.get("id")
+                lower_limit = boiler.get("operation_lower_limit", 0)
+                rated_capacity = boiler.get("rated_capacity", 0)
+
+                if not compare_values(lower_limit, expected_lower_limit, tolerance):
+                    notes = f"{boiler_id} operation lower limit incorrect for staged operation. Expected: {expected_lower_limit}; got: {lower_limit}"
+                    add_test_result(
+                        specification_test,
+                        boiler_id,
+                        None,
+                        TestOutcomeOptions.DIFFER.value,
+                        notes,
+                    )
+                    warnings.append(notes)
+                    is_staged = False
+                else:
+                    add_test_result(
+                        specification_test,
+                        boiler_id,
+                        None,
+                        TestOutcomeOptions.MATCH.value,
+                    )
+
+                expected_lower_limit += rated_capacity
+
+            if not is_staged:
+                warnings.append(
+                    "Boilers are not staged based on operation lower limits."
+                )
+
+        else:
+            raise ValueError(
+                f"Logic for operation lower limit special case is not implemented for the '{sequence}' sequence."
+            )
+
+    elif special_case == "operation_upper_limit":
+        sequence = path_spec.get("special-case-value", {}).get("sequence")
+
+        if not sequence:
+            raise ValueError(
+                "Special case value for operation upper limit must include a controls sequence."
+            )
+
+        if sequence == "staged":
+            generated_boilers = find_all(
+                json_key_path[
+                    : json_key_path.index("].", json_key_path.index("boilers")) + 1
+                ],
+                generated_json,
+            )
+            is_staged = True
+
+            # Create list of (boiler, capacity) and sort by operation_upper_limit
+            boilers_with_capacity = [
+                (boiler, boiler.get("rated_capacity", 0))
+                for boiler in generated_boilers
+            ]
+            sorted_boilers = sorted(
+                boilers_with_capacity,
+                key=lambda pair: pair[0].get("operation_upper_limit", float("inf")),
+            )
+
+            expected_upper_limit = 0.0
+            for boiler, capacity in sorted_boilers:
+                boiler_id = boiler.get("id")
+                expected_upper_limit += capacity
+                actual_upper_limit = boiler.get("operation_upper_limit", 0)
+
+                if not compare_values(
+                    actual_upper_limit, expected_upper_limit, tolerance
+                ):
+                    notes = f"{boiler_id} operation upper limit incorrect for staged operation. Expected: {expected_upper_limit}; got: {actual_upper_limit}"
+                    add_test_result(
+                        specification_test,
+                        boiler_id,
+                        None,
+                        TestOutcomeOptions.DIFFER.value,
+                        notes,
+                    )
+                    warnings.append(notes)
+                    is_staged = False
+                else:
+                    add_test_result(
+                        specification_test,
+                        boiler_id,
+                        None,
+                        TestOutcomeOptions.MATCH.value,
+                    )
+
+            if not is_staged:
+                warnings.append(
+                    "Boilers are not staged based on operation upper limits."
+                )
+
+        else:
+            raise ValueError(
+                f"Logic for operation lower limit special case is not implemented for the '{sequence}' sequence."
+            )
 
     return warnings, errors
 
 
 def handle_ordered_comparisons(
-    path_spec, object_id_map, reference_json, generated_json
+    path_spec, object_id_map, reference_json, generated_json, specification_test
 ):
     json_key_path = path_spec["json-key-path"]
+    compare_value = path_spec.get("compare-value", True)
+
+    specification_test["evaluation_criteria"] = (
+        EvaluationCriteriaOptions.VALUE.value
+        if compare_value
+        else EvaluationCriteriaOptions.PRESENT.value
+    )
 
     warnings = []
     errors = []
@@ -1091,7 +1419,15 @@ def handle_ordered_comparisons(
             aligned_reference_values[generated_zone_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -1099,6 +1435,8 @@ def handle_ordered_comparisons(
             aligned_generated_values,
             aligned_reference_values,
             generated_zone_ids,
+            specification_test,
+            object_id_map,
         )
         errors.extend(general_comparison_errors)
 
@@ -1121,10 +1459,10 @@ def handle_ordered_comparisons(
             generated_surface_id = generated_surface["id"]
             reference_surface_id = object_id_map.get(generated_surface_id)
 
+            # Extract the key path for the surface data (everything after surfaces[]. )
             generated_value = find_one(
-                # Extract the key path for the surface data (everything after surfaces[]. )
                 json_key_path[
-                    (json_key_path.index("].", json_key_path.index("surfaces"))) + 2 :
+                    json_key_path.index("].", json_key_path.index("surfaces")) + 2 :
                 ],
                 generated_surface,
             )
@@ -1153,7 +1491,15 @@ def handle_ordered_comparisons(
             aligned_reference_values[generated_surface_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -1161,6 +1507,8 @@ def handle_ordered_comparisons(
             aligned_generated_values,
             aligned_reference_values,
             generated_surface_ids,
+            specification_test,
+            object_id_map,
         )
         warnings.extend(general_comparison_warnings)
         errors.extend(general_comparison_errors)
@@ -1184,10 +1532,10 @@ def handle_ordered_comparisons(
             generated_terminal_id = generated_terminal["id"]
             reference_terminal_id = object_id_map.get(generated_terminal_id)
 
+            # Extract the key path for the terminal data (everything after terminals[]. )
             generated_value = find_one(
-                # Extract the key path for the terminal data (everything after terminals[]. )
                 json_key_path[
-                    (json_key_path.index("].", json_key_path.index("terminals"))) + 2 :
+                    json_key_path.index("].", json_key_path.index("terminals")) + 2 :
                 ],
                 generated_terminal,
             )
@@ -1216,7 +1564,15 @@ def handle_ordered_comparisons(
             aligned_reference_values[generated_terminal_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -1224,6 +1580,8 @@ def handle_ordered_comparisons(
             aligned_generated_values,
             aligned_reference_values,
             generated_terminal_ids,
+            specification_test,
+            object_id_map,
         )
         warnings.extend(general_comparison_warnings)
         errors.extend(general_comparison_errors)
@@ -1274,7 +1632,15 @@ def handle_ordered_comparisons(
             aligned_reference_values[generated_hvac_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -1282,6 +1648,8 @@ def handle_ordered_comparisons(
             aligned_generated_values,
             aligned_reference_values,
             generated_hvac_ids,
+            specification_test,
+            object_id_map,
         )
         errors.extend(general_comparison_errors)
 
@@ -1322,7 +1690,15 @@ def handle_ordered_comparisons(
             aligned_reference_values[generated_boiler_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -1330,6 +1706,8 @@ def handle_ordered_comparisons(
             aligned_generated_values,
             aligned_reference_values,
             generated_boiler_ids,
+            specification_test,
+            object_id_map,
         )
         errors.extend(general_comparison_errors)
 
@@ -1370,7 +1748,15 @@ def handle_ordered_comparisons(
             aligned_reference_values[generated_chiller_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -1378,6 +1764,8 @@ def handle_ordered_comparisons(
             aligned_generated_values,
             aligned_reference_values,
             generated_chiller_ids,
+            specification_test,
+            object_id_map,
         )
         errors.extend(general_comparison_errors)
 
@@ -1424,7 +1812,15 @@ def handle_ordered_comparisons(
             )
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -1432,6 +1828,8 @@ def handle_ordered_comparisons(
             aligned_generated_values,
             aligned_reference_values,
             generated_heat_rejection_ids,
+            specification_test,
+            object_id_map,
         )
         errors.extend(general_comparison_errors)
 
@@ -1474,7 +1872,15 @@ def handle_ordered_comparisons(
             aligned_reference_values[generated_fluid_loop_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -1482,6 +1888,8 @@ def handle_ordered_comparisons(
             aligned_generated_values,
             aligned_reference_values,
             generated_fluid_loop_ids,
+            specification_test,
+            object_id_map,
         )
         errors.extend(general_comparison_errors)
 
@@ -1522,7 +1930,15 @@ def handle_ordered_comparisons(
             aligned_reference_values[generated_pump_id] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
-            warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
             return warnings, errors
 
         general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -1530,21 +1946,35 @@ def handle_ordered_comparisons(
             aligned_generated_values,
             aligned_reference_values,
             generated_pump_ids,
+            specification_test,
+            object_id_map,
         )
         errors.extend(general_comparison_errors)
 
     return warnings, errors
 
 
-def handle_unordered_comparisons(path_spec, reference_json, generated_json):
+def handle_unordered_comparisons(
+    path_spec, reference_json, generated_json, specification_test, object_id_map
+):
     json_key_path = path_spec["json-key-path"]
+    compare_value = path_spec.get("compare-value", True)
+
+    specification_test["evaluation_criteria"] = (
+        EvaluationCriteriaOptions.VALUE.value
+        if compare_value
+        else EvaluationCriteriaOptions.PRESENT.value
+    )
 
     warnings = []
     errors = []
     # The order will be the same for the generated and reference values, or the order does not matter in the tests
-    generated_value_parents = find_all(
-        ".".join(json_key_path.split(".")[:-1]), generated_json
-    )
+    if ".".join(json_key_path.split(".")[:-1]) == "$":
+        generated_value_parents = [generated_json]
+    else:
+        generated_value_parents = find_all(
+            ".".join(json_key_path.split(".")[:-1]), generated_json
+        )
     generated_value_parent_ids = [
         # Important to use get() here to avoid key errors where objects have no ID such as weather
         value.get("id")
@@ -1556,7 +1986,10 @@ def handle_unordered_comparisons(path_spec, reference_json, generated_json):
     reference_values = {index: value for index, value in enumerate(reference_values)}
 
     if all(value is None for value in generated_values):
-        warnings.append(f"Missing key {json_key_path.split('.')[-1]}")
+        notes = f"Missing key {json_key_path.split('.')[-1]}"
+        add_test_result(
+            specification_test, None, None, TestOutcomeOptions.DIFFER.value, notes
+        )
         return warnings, errors
 
     general_comparison_warnings, general_comparison_errors = compare_json_values(
@@ -1564,6 +1997,8 @@ def handle_unordered_comparisons(path_spec, reference_json, generated_json):
         generated_values,
         reference_values,
         generated_value_parent_ids,
+        specification_test,
+        object_id_map,
     )
     warnings.extend(general_comparison_warnings)
     errors.extend(general_comparison_errors)
@@ -1571,7 +2006,9 @@ def handle_unordered_comparisons(path_spec, reference_json, generated_json):
     return warnings, errors
 
 
-def run_file_comparison(spec_file, generated_json_file, reference_json_file):
+def run_file_comparison(
+    spec_file, generated_json_file, reference_json_file, test_case_report
+):
     """Compares generated and reference JSON files according to the spec."""
     spec = load_json_file(spec_file)
     json_test_key_paths = spec.get("json-test-key-paths", [])
@@ -1595,10 +2032,17 @@ def run_file_comparison(spec_file, generated_json_file, reference_json_file):
         json_key_path = path_spec["json-key-path"]
         special_case = path_spec.get("special-case")
 
+        # Add specification test to the report
+        specification_test = add_specification_test(test_case_report, json_key_path)
+
         # Handle any cases that require special logic
         if special_case:
             special_case_warnings, special_case_errors = handle_special_cases(
-                path_spec, object_id_map, generated_json, reference_json
+                path_spec,
+                object_id_map,
+                generated_json,
+                reference_json,
+                specification_test,
             )
             warnings.extend(special_case_warnings)
             errors.extend(special_case_errors)
@@ -1625,7 +2069,11 @@ def run_file_comparison(spec_file, generated_json_file, reference_json_file):
                     ordered_comparison_warnings,
                     ordered_comparison_errors,
                 ) = handle_ordered_comparisons(
-                    path_spec, object_id_map, reference_json, generated_json
+                    path_spec,
+                    object_id_map,
+                    reference_json,
+                    generated_json,
+                    specification_test,
                 )
                 warnings.extend(ordered_comparison_warnings)
                 errors.extend(ordered_comparison_errors)
@@ -1636,7 +2084,11 @@ def run_file_comparison(spec_file, generated_json_file, reference_json_file):
                     unordered_comparison_warnings,
                     unordered_comparison_errors,
                 ) = handle_unordered_comparisons(
-                    path_spec, reference_json, generated_json
+                    path_spec,
+                    reference_json,
+                    generated_json,
+                    specification_test,
+                    object_id_map,
                 )
                 warnings.extend(unordered_comparison_warnings)
                 errors.extend(unordered_comparison_errors)
@@ -1644,43 +2096,52 @@ def run_file_comparison(spec_file, generated_json_file, reference_json_file):
     return warnings, errors
 
 
-def run_comparison_for_all_tests(test_dir):
+def run_comparison_for_all_tests(test_dir: Path):
     """Runs JSON comparison for all test cases in the test directory."""
-
-    reference_dir = os.path.join(test_dir, "Correct Answer RPDs")
-    spec_dir = os.path.join(test_dir, "Test Specifications")
+    reference_dir = test_dir / "Correct Answer RPDs"
+    spec_dir = test_dir / "Test Specifications"
 
     total_errors = 0
 
-    for test in os.listdir(test_dir):
+    for test_case_dir in test_dir.iterdir():
+        test = test_case_dir.name
         # Only recognize directories starting with "E-" or "F-" as test cases
-        if os.path.isdir(test_dir) and (test.startswith("E-") or test.startswith("F-")):
+        if test_case_dir.is_dir() and (test.startswith("E-") or test.startswith("F-")):
             # if os.path.isdir(test_dir) and (test == "E-1"):
 
-            test_case_dir = os.path.join(test_dir, test)
             generated_json_file = next(
-                (
-                    os.path.join(test_case_dir, f)
-                    for f in os.listdir(test_case_dir)
-                    if f.endswith(".json")
-                ),
-                None,
+                (f for f in test_case_dir.iterdir() if f.suffix == ".json"), None
             )
-            spec_file = os.path.join(spec_dir, f"{test} spec.json")
-            reference_json_file = os.path.join(reference_dir, f"{test}.json")
+            spec_file = spec_dir / f"{test} spec.json"
+            reference_json_file = reference_dir / f"{test}.json"
 
             if (
-                generated_json_file
-                and os.path.isfile(spec_file)
-                and os.path.isfile(generated_json_file)
-                and os.path.isfile(reference_json_file)
+                generated_json_file.is_file()
+                and spec_file.is_file()
+                and generated_json_file.is_file()
+                and reference_json_file.is_file()
             ):
+
+                test_case_report = add_test_case_report(
+                    test_case_dir, generated_json_file.name
+                )
                 print(f"Running comparison for {test}...")
                 warnings, errors = run_file_comparison(
-                    spec_file, generated_json_file, reference_json_file
+                    spec_file,
+                    generated_json_file,
+                    reference_json_file,
+                    test_case_report,
                 )
                 print_results(test, warnings, errors)
                 total_errors += len(errors)
+
+            else:
+                print(
+                    f"Skipping {test} because it does not contain the required files."
+                )
+                continue
+
+    save_to_json_file()
 
     if total_errors > 0:
         sys.exit(1)
@@ -1706,6 +2167,25 @@ def print_results(test, warnings, errors):
             print(f"{error}")
 
 
+def save_to_json_file():
+    file_path = "rpd_tests.json"
+
+    print(f"\nSaving results to {file_path}...")
+    with open(file_path, "w") as test_output_file:
+        json.dump(results_data, test_output_file, indent=4)
+
+
 if __name__ == "__main__":
-    test_directory = os.path.dirname(os.path.abspath(__file__))
+    test_directory = Path(__file__).resolve().parent
+
+    CONFIG_DATA = {
+        "generation_software_name": "Karpman Consulting RPD Generator",
+        "generation_software_version": "1.0.0",
+        "modeling_software_name": "eQUEST/DOE2.3",
+        "modeling_software_version": "3.65.7175",
+        "schema_version": "0.1.4",
+        "ruleset_name": "ASHRAE Standard 90.1-2019, Performance Rating Method",
+        "ruleset_checking_specification_name": "ASHRAE Standard 90.1-2019, Performance Rating Method",
+    }
+    results_data.update(CONFIG_DATA)
     run_comparison_for_all_tests(test_directory)
