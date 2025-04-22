@@ -32,6 +32,10 @@ class BuildingAreasView(BaseView):
         self.building_widgets_by_row = []
         self.building_area_widgets_by_row = []
 
+        # Header frame for subviews
+        self.subview_header_frame = ctk.CTkFrame(self, fg_color="transparent")
+        self.current_subview_header = None
+
         # All subviews will be placed inside this frame.
         # Single row/column allows formatting of subview to be handled by the subview itself
         self.subview_frame = ctk.CTkFrame(self)
@@ -88,8 +92,8 @@ class BuildingAreasView(BaseView):
         self.main_window.show_baseline_proposed_toggle(False)
 
         # 2 rows in the main surface view structure.
-        # View frame (row 2, index 1) has a weight to make it fill up the empty space in the window
-        self.grid_rowconfigure(3, weight=1)
+        # View frame (row 4, index 0) has a weight to make it fill up the empty space in the window
+        self.grid_rowconfigure(4, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
         # Directions
@@ -106,8 +110,11 @@ class BuildingAreasView(BaseView):
 
         self.border_line.grid(row=2, column=0, columnspan=5, sticky=E + W, padx=20)
 
+        # Subview header row
+        self.subview_header_frame.grid(row=3, column=0, sticky=FILL, padx=20)
+
         # Subview frame
-        self.subview_frame.grid(row=3, column=0, sticky=FILL, padx=20, pady=PAD20END)
+        self.subview_frame.grid(row=4, column=0, sticky=FILL, padx=20, pady=PAD20END)
         self.subview_frame.grid_rowconfigure(0, weight=1)
         self.subview_frame.grid_columnconfigure(0, weight=1)
 
@@ -143,9 +150,14 @@ class BuildingAreasView(BaseView):
             if self.current_subview is self.subviews["Buildings"]:
                 self.current_subview.save_buildings()
 
+        if self.current_subview_header is not None:
+            self.current_subview_header.grid_forget()
+
         # Show new subview
         subview = self.subviews.get(subview_name)
         if subview:
+            self.current_subview_header = subview.header_frame
+            self.current_subview_header.grid(row=0, column=0, sticky=FILL)
             self.current_subview = subview
             self.current_subview.grid(row=0, column=0, sticky=FILL)
             self.current_subview.focus_set()
@@ -239,7 +251,7 @@ class BuildingSubview(CTkXYFrame):
         super().__init__(view_frame)
         self.building_areas_view = view_frame.master
         self.app_data = self.building_areas_view.app_data
-
+        self.header_frame = ctk.CTkFrame(self.building_areas_view.subview_header_frame)
         self.is_view_populated = False
         self.building_count = 0
 
@@ -260,19 +272,20 @@ class BuildingSubview(CTkXYFrame):
 
     def populate_subview(self):
         self.add_column_headers()
-        # Add the first row with the default Building
-        self.add_row(self.building_count + 1, is_first_row=True)
+        self.add_row(self.building_count, is_first_row=True)
         self.is_view_populated = True
 
     def add_column_headers(self):
-        building_name_label = ctk.CTkLabel(self, text="Building Name", font=LABEL_FONT)
+        building_name_label = ctk.CTkLabel(
+            self.header_frame, text="Building Name", font=LABEL_FONT
+        )
         building_name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
         above_grade_floors_label = ctk.CTkLabel(
-            self, text="# Floors Above Grade", font=LABEL_FONT
+            self.header_frame, text="# Floors Above Grade", font=LABEL_FONT
         )
         above_grade_floors_label.grid(row=0, column=1, padx=PAD20END, pady=5)
         below_grade_floors_label = ctk.CTkLabel(
-            self, text="# Floors Below Grade", font=LABEL_FONT
+            self.header_frame, text="# Floors Below Grade", font=LABEL_FONT
         )
         below_grade_floors_label.grid(row=0, column=2, padx=PAD20END, pady=5)
 
@@ -403,6 +416,7 @@ class BuildingAreasSubview(CTkXYFrame):
         super().__init__(view_frame)
         self.building_areas_view = view_frame.master
         self.app_data = self.building_areas_view.app_data
+        self.header_frame = ctk.CTkFrame(self.building_areas_view.subview_header_frame)
         self.is_view_populated = False
         self.building_area_count = 0
 
@@ -423,32 +437,40 @@ class BuildingAreasSubview(CTkXYFrame):
 
     def populate_subview(self):
         self.add_column_headers()
-        self.add_row(self.building_area_count + 1, is_first_row=True)
+        self.add_row(self.building_area_count, is_first_row=True)
         self.is_view_populated = True
 
     def add_column_headers(self):
-        building_name_label = ctk.CTkLabel(self, text="Building Name", font=LABEL_FONT)
+        building_name_label = ctk.CTkLabel(
+            self.header_frame, text="Building Name", font=LABEL_FONT
+        )
         building_name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
-        area_name_label = ctk.CTkLabel(self, text="Building Area Name", font=LABEL_FONT)
+        area_name_label = ctk.CTkLabel(
+            self.header_frame, text="Building Area Name", font=LABEL_FONT
+        )
         area_name_label.grid(row=0, column=1, padx=PAD20END, pady=5)
 
         if not self.app_data.is_all_new_construction.get():
-            status_label = ctk.CTkLabel(self, text="All New?", font=LABEL_FONT)
+            status_label = ctk.CTkLabel(
+                self.header_frame, text="All New?", font=LABEL_FONT
+            )
             status_label.grid(row=0, column=2, padx=PAD20END, pady=5)
 
         fenestration_type_label = ctk.CTkLabel(
-            self, text="Fenestration Area Type", font=LABEL_FONT
+            self.header_frame, text="Fenestration Area Type", font=LABEL_FONT
         )
         fenestration_type_label.grid(row=0, column=3, padx=PAD20END, pady=5)
         lighting_type_label = ctk.CTkLabel(
-            self, text="Lighting Area Type", font=LABEL_FONT
+            self.header_frame, text="Lighting Area Type", font=LABEL_FONT
         )
         lighting_type_label.grid(row=0, column=4, padx=PAD20END, pady=5)
         hvac_area_type_label = ctk.CTkLabel(
-            self, text="HVAC Area Type", font=LABEL_FONT
+            self.header_frame, text="HVAC Area Type", font=LABEL_FONT
         )
         hvac_area_type_label.grid(row=0, column=5, padx=PAD20END, pady=5)
-        bpf_area_type_label = ctk.CTkLabel(self, text="BPF Area Type", font=LABEL_FONT)
+        bpf_area_type_label = ctk.CTkLabel(
+            self.header_frame, text="BPF Area Type", font=LABEL_FONT
+        )
         bpf_area_type_label.grid(row=0, column=6, padx=PAD20END, pady=5)
 
     def add_row(self, row, is_first_row=False):
