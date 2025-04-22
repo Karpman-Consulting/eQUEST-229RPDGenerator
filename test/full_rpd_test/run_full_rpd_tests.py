@@ -1241,13 +1241,133 @@ def handle_special_cases(
                 TestOutcomeOptions.MATCH.value,
             )
 
-    # TODO: We don't currently handle special case for operation_lower_limit
     elif special_case == "operation_lower_limit":
-        pass
+        generated_boilers = find_all(
+            json_key_path[
+                : json_key_path.index("].", json_key_path.index("boilers")) + 1
+            ],
+            generated_json,
+        )
+        boiler_1 = next(
+            boiler for boiler in generated_boilers if boiler.get("id") == "Boiler 1"
+        )
+        boiler_2 = next(
+            boiler for boiler in generated_boilers if boiler.get("id") == "Boiler 2"
+        )
+        boiler_1_capacity = boiler_1.get("design_capacity")
+        boiler_1_operation_lower_limit = boiler_1.get("operation_lower_limit")
+        boiler_2_operation_lower_limit = boiler_2.get("operation_lower_limit")
 
-    # TODO: We don't currently handle special case for operation_lower_limit
+        if (
+            boiler_1_operation_lower_limit == 0
+            and boiler_2_operation_lower_limit == boiler_1_capacity
+        ):
+            notes = f"Operation lower limit for boiler meets criteria"
+            add_test_result(
+                specification_test,
+                boiler_1.get("id"),
+                None,
+                TestOutcomeOptions.MATCH.value,
+                notes,
+            )
+            add_test_result(
+                specification_test,
+                boiler_2.get("id"),
+                None,
+                TestOutcomeOptions.MATCH.value,
+                notes,
+            )
+        if boiler_1_operation_lower_limit > 0:
+            notes = (
+                f"Boiler 1 operation lower limit not 0. "
+                f"Expected: 0.0; got: {boiler_1_operation_lower_limit}"
+            )
+            add_test_result(
+                specification_test,
+                boiler_1.get("id"),
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
+        if boiler_2_operation_lower_limit != boiler_1_capacity:
+            notes = (
+                f"Boiler 2 operation lower limit not equal to boiler 1 design capacity. "
+                f"Expected: {boiler_1_capacity}; got: {boiler_2_operation_lower_limit}"
+            )
+            add_test_result(
+                specification_test,
+                boiler_2.get("id"),
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
+
     elif special_case == "operation_upper_limit":
-        pass
+        generated_boilers = find_all(
+            json_key_path[
+                : json_key_path.index("].", json_key_path.index("boilers")) + 1
+            ],
+            generated_json,
+        )
+        boiler_1 = next(
+            boiler for boiler in generated_boilers if boiler.get("id") == "Boiler 1"
+        )
+        boiler_2 = next(
+            boiler for boiler in generated_boilers if boiler.get("id") == "Boiler 2"
+        )
+        boiler_1_capacity = boiler_1.get("design_capacity")
+        boiler_2_capacity = boiler_2.get("design_capacity")
+        boiler_1_operation_upper_limit = boiler_1.get("operation_upper_limit")
+        boiler_2_operation_upper_limit = boiler_2.get("operation_upper_limit")
+
+        if (
+            boiler_1_operation_upper_limit == boiler_1_capacity
+            and boiler_2_operation_upper_limit
+            == (boiler_1_capacity + boiler_2_capacity)
+        ):
+            notes = f"Operation upper limit for boiler meets criteria"
+            add_test_result(
+                specification_test,
+                boiler_1.get("id"),
+                None,
+                TestOutcomeOptions.MATCH.value,
+                notes,
+            )
+            add_test_result(
+                specification_test,
+                boiler_2.get("id"),
+                None,
+                TestOutcomeOptions.MATCH.value,
+                notes,
+            )
+        if boiler_1_operation_upper_limit != boiler_1_capacity:
+            notes = (
+                f"Boiler 1 operation upper limit miscalculated. "
+                f"Expected: {boiler_1_capacity}; got: {boiler_1_operation_upper_limit}"
+            )
+            add_test_result(
+                specification_test,
+                boiler_1.get("id"),
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
+        if boiler_2_operation_upper_limit != (boiler_1_capacity + boiler_2_capacity):
+            notes = (
+                f"Boiler 2 operation upper limit miscalculated. "
+                f"Expected: {boiler_1_capacity + boiler_2_capacity}; got: {boiler_2_operation_upper_limit}"
+            )
+            add_test_result(
+                specification_test,
+                boiler_2.get("id"),
+                None,
+                TestOutcomeOptions.DIFFER.value,
+                notes,
+            )
+            warnings.append(notes)
 
     return warnings, errors
 
@@ -1920,8 +2040,6 @@ def run_file_comparison(
         if id == "E-2" and json_key_path.split(".")[-1] == "operation_lower_limit":
             print("here")
         if id == "E-2" and json_key_path.split(".")[-1] == "operation_upper_limit":
-            print("here")
-        if id == "E-1" and json_key_path.split(".")[-1] == "building_open_schedule":
             print("here")
 
         # Add specification test to the report
