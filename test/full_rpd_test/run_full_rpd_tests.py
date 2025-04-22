@@ -155,7 +155,6 @@ def compare_json_values(
                     generated_id,
                     reference_id,
                     TestOutcomeOptions.MATCH.value,
-                    notes="",
                 )
 
             if compare_value:
@@ -197,9 +196,11 @@ def compare_json_values(
         if does_match:
             test_outcome = TestOutcomeOptions.MATCH.value
         if not does_match and reference_value is None:
-            notes = f"Extra data provided at '{generated_ids[i]}' for key '{json_key_path.split('.')[-1]}'. Expected: 'None'; got: '{generated_value}'"
-            warnings.append(notes)
-            test_outcome = TestOutcomeOptions.DIFFER.value
+            warnings.append(
+                f"Extra data provided at '{generated_ids[i]}' for key '{json_key_path.split('.')[-1]}'. Expected: 'None'; got: '{generated_value}'"
+            )
+            # Avoid adding a test result when extra data is provided
+            continue
         elif not does_match:
             notes = f"Value mismatch at '{generated_ids[i]}' for key '{json_key_path.split('.')[-1]}'. Expected: '{reference_value}'; got: '{generated_value}'"
             errors.append(notes)
@@ -1242,132 +1243,126 @@ def handle_special_cases(
             )
 
     elif special_case == "operation_lower_limit":
-        generated_boilers = find_all(
-            json_key_path[
-                : json_key_path.index("].", json_key_path.index("boilers")) + 1
-            ],
-            generated_json,
-        )
-        boiler_1 = next(
-            boiler for boiler in generated_boilers if boiler.get("id") == "Boiler 1"
-        )
-        boiler_2 = next(
-            boiler for boiler in generated_boilers if boiler.get("id") == "Boiler 2"
-        )
-        boiler_1_capacity = boiler_1.get("design_capacity")
-        boiler_1_operation_lower_limit = boiler_1.get("operation_lower_limit")
-        boiler_2_operation_lower_limit = boiler_2.get("operation_lower_limit")
+        sequence = path_spec.get("special-case-value", {}).get("sequence")
 
-        if (
-            boiler_1_operation_lower_limit == 0
-            and boiler_2_operation_lower_limit == boiler_1_capacity
-        ):
-            notes = f"Operation lower limit for boiler meets criteria"
-            add_test_result(
-                specification_test,
-                boiler_1.get("id"),
-                None,
-                TestOutcomeOptions.MATCH.value,
-                notes,
+        if not sequence:
+            raise ValueError(
+                "Special case value for operation upper limit must include a controls sequence."
             )
-            add_test_result(
-                specification_test,
-                boiler_2.get("id"),
-                None,
-                TestOutcomeOptions.MATCH.value,
-                notes,
+
+        if sequence == "staged":
+            generated_boilers = find_all(
+                json_key_path[
+                    : json_key_path.index("].", json_key_path.index("boilers")) + 1
+                ],
+                generated_json,
             )
-        if boiler_1_operation_lower_limit > 0:
-            notes = (
-                f"Boiler 1 operation lower limit not 0. "
-                f"Expected: 0.0; got: {boiler_1_operation_lower_limit}"
+            is_staged = True
+            expected_lower_limit = 0.0
+
+            # Sort by operation_lower_limit
+            sorted_boilers = sorted(
+                generated_boilers,
+                key=lambda b: b.get("operation_lower_limit", float("inf")),
             )
-            add_test_result(
-                specification_test,
-                boiler_1.get("id"),
-                None,
-                TestOutcomeOptions.DIFFER.value,
-                notes,
+
+            for boiler in sorted_boilers:
+                boiler_id = boiler.get("id")
+                lower_limit = boiler.get("operation_lower_limit", 0)
+                rated_capacity = boiler.get("rated_capacity", 0)
+
+                if abs(lower_limit - expected_lower_limit) > 1e-6:
+                    notes = f"{boiler_id} operation lower limit incorrect for staged operation. Expected: {expected_lower_limit}; got: {lower_limit}"
+                    add_test_result(
+                        specification_test,
+                        boiler_id,
+                        None,
+                        TestOutcomeOptions.DIFFER.value,
+                        notes,
+                    )
+                    warnings.append(notes)
+                    is_staged = False
+                else:
+                    add_test_result(
+                        specification_test,
+                        boiler_id,
+                        None,
+                        TestOutcomeOptions.MATCH.value,
+                    )
+
+                expected_lower_limit += rated_capacity
+
+            if not is_staged:
+                warnings.append(
+                    "Boilers are not staged based on operation lower limits."
+                )
+
+        else:
+            raise ValueError(
+                f"Logic for operation lower limit special case is not implemented for the '{sequence}' sequence."
             )
-            warnings.append(notes)
-        if boiler_2_operation_lower_limit != boiler_1_capacity:
-            notes = (
-                f"Boiler 2 operation lower limit not equal to boiler 1 design capacity. "
-                f"Expected: {boiler_1_capacity}; got: {boiler_2_operation_lower_limit}"
-            )
-            add_test_result(
-                specification_test,
-                boiler_2.get("id"),
-                None,
-                TestOutcomeOptions.DIFFER.value,
-                notes,
-            )
-            warnings.append(notes)
 
     elif special_case == "operation_upper_limit":
-        generated_boilers = find_all(
-            json_key_path[
-                : json_key_path.index("].", json_key_path.index("boilers")) + 1
-            ],
-            generated_json,
-        )
-        boiler_1 = next(
-            boiler for boiler in generated_boilers if boiler.get("id") == "Boiler 1"
-        )
-        boiler_2 = next(
-            boiler for boiler in generated_boilers if boiler.get("id") == "Boiler 2"
-        )
-        boiler_1_capacity = boiler_1.get("design_capacity")
-        boiler_2_capacity = boiler_2.get("design_capacity")
-        boiler_1_operation_upper_limit = boiler_1.get("operation_upper_limit")
-        boiler_2_operation_upper_limit = boiler_2.get("operation_upper_limit")
+        sequence = path_spec.get("special-case-value", {}).get("sequence")
 
-        if (
-            boiler_1_operation_upper_limit == boiler_1_capacity
-            and boiler_2_operation_upper_limit
-            == (boiler_1_capacity + boiler_2_capacity)
-        ):
-            notes = f"Operation upper limit for boiler meets criteria"
-            add_test_result(
-                specification_test,
-                boiler_1.get("id"),
-                None,
-                TestOutcomeOptions.MATCH.value,
-                notes,
+        if not sequence:
+            raise ValueError(
+                "Special case value for operation upper limit must include a controls sequence."
             )
-            add_test_result(
-                specification_test,
-                boiler_2.get("id"),
-                None,
-                TestOutcomeOptions.MATCH.value,
-                notes,
+
+        if sequence == "staged":
+            generated_boilers = find_all(
+                json_key_path[
+                    : json_key_path.index("].", json_key_path.index("boilers")) + 1
+                ],
+                generated_json,
             )
-        if boiler_1_operation_upper_limit != boiler_1_capacity:
-            notes = (
-                f"Boiler 1 operation upper limit miscalculated. "
-                f"Expected: {boiler_1_capacity}; got: {boiler_1_operation_upper_limit}"
+            is_staged = True
+
+            # Create list of (boiler, capacity) and sort by operation_upper_limit
+            boilers_with_capacity = [
+                (boiler, boiler.get("rated_capacity", 0))
+                for boiler in generated_boilers
+            ]
+            sorted_boilers = sorted(
+                boilers_with_capacity,
+                key=lambda pair: pair[0].get("operation_upper_limit", float("inf")),
             )
-            add_test_result(
-                specification_test,
-                boiler_1.get("id"),
-                None,
-                TestOutcomeOptions.DIFFER.value,
-                notes,
+
+            expected_upper_limit = 0.0
+            for boiler, capacity in sorted_boilers:
+                boiler_id = boiler.get("id")
+                expected_upper_limit += capacity
+                actual_upper_limit = boiler.get("operation_upper_limit", 0)
+
+                if abs(actual_upper_limit - expected_upper_limit) > 1e-6:
+                    notes = f"{boiler_id} operation upper limit incorrect for staged operation. Expected: {expected_upper_limit}; got: {actual_upper_limit}"
+                    add_test_result(
+                        specification_test,
+                        boiler_id,
+                        None,
+                        TestOutcomeOptions.DIFFER.value,
+                        notes,
+                    )
+                    warnings.append(notes)
+                    is_staged = False
+                else:
+                    add_test_result(
+                        specification_test,
+                        boiler_id,
+                        None,
+                        TestOutcomeOptions.MATCH.value,
+                    )
+
+            if not is_staged:
+                warnings.append(
+                    "Boilers are not staged based on operation upper limits."
+                )
+
+        else:
+            raise ValueError(
+                f"Logic for operation lower limit special case is not implemented for the '{sequence}' sequence."
             )
-            warnings.append(notes)
-        if boiler_2_operation_upper_limit != (boiler_1_capacity + boiler_2_capacity):
-            notes = (
-                f"Boiler 2 operation upper limit miscalculated. "
-                f"Expected: {boiler_1_capacity + boiler_2_capacity}; got: {boiler_2_operation_upper_limit}"
-            )
-            add_test_result(
-                specification_test,
-                boiler_2.get("id"),
-                None,
-                TestOutcomeOptions.DIFFER.value,
-                notes,
-            )
-            warnings.append(notes)
 
     return warnings, errors
 
@@ -1461,8 +1456,8 @@ def handle_ordered_comparisons(
             generated_surface_id = generated_surface["id"]
             reference_surface_id = object_id_map.get(generated_surface_id)
 
+            # Extract the key path for the surface data (everything after surfaces[]. )
             generated_value = find_one(
-                # Extract the key path for the surface data (everything after surfaces[]. )
                 json_key_path[
                     json_key_path.index("].", json_key_path.index("surfaces")) + 2 :
                 ],
@@ -1534,8 +1529,8 @@ def handle_ordered_comparisons(
             generated_terminal_id = generated_terminal["id"]
             reference_terminal_id = object_id_map.get(generated_terminal_id)
 
+            # Extract the key path for the terminal data (everything after terminals[]. )
             generated_value = find_one(
-                # Extract the key path for the terminal data (everything after terminals[]. )
                 json_key_path[
                     json_key_path.index("].", json_key_path.index("terminals")) + 2 :
                 ],
@@ -2033,14 +2028,6 @@ def run_file_comparison(
     for path_spec in json_test_key_paths:
         json_key_path = path_spec["json-key-path"]
         special_case = path_spec.get("special-case")
-
-        # TODO: Here for easy testing. Set breakpoint at print statement to quickly find
-        #       scenario with special case. Remove when done.
-        id = test_case_report.get("test_id")
-        if id == "E-2" and json_key_path.split(".")[-1] == "operation_lower_limit":
-            print("here")
-        if id == "E-2" and json_key_path.split(".")[-1] == "operation_upper_limit":
-            print("here")
 
         # Add specification test to the report
         specification_test = add_specification_test(test_case_report, json_key_path)
