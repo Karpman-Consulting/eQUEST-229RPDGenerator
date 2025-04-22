@@ -45267,8 +45267,8 @@
         "data_source_type": "OTHER",
         "climate_zone": "CZ5B",
         "ground_temperature_schedule": "Ground Temp Schedule",
-        "cooling_design_day_type": "COOLING_0_4",
-        "heating_design_day_type": "HEATING_99_6"
+        "cooling_design_day_type": "COOLING_1_0",
+        "heating_design_day_type": "HEATING_99_0"
     },
     "calendar": {
         "day_of_week_for_january_1": "FRIDAY",
