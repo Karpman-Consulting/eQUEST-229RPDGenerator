@@ -519,6 +519,12 @@ class Zone(ChildNode):
             self.terminals_served_by_heating_ventilating_air_conditioning_system[2] = (
                 doas_system.u_name
             )
+            self.terminals_supply_design_heating_setpoint_temperature[2] = (
+                self.try_float(doas_system.get_inp(BDL_SystemKeywords.MAX_SUPPLY_T))
+            )
+            self.terminals_supply_design_cooling_setpoint_temperature[2] = (
+                self.try_float(doas_system.get_inp(BDL_SystemKeywords.MIN_SUPPLY_T))
+            )
             self.terminals_cooling_capacity[2] = 0.0
             self.terminals_heating_capacity[2] = 0.0
             self.terminals_minimum_outdoor_airflow[2] = minimum_outdoor_airflow
@@ -528,8 +534,7 @@ class Zone(ChildNode):
             self.terminals_primary_airflow[2] = minimum_outdoor_airflow
             self.terminals_minimum_airflow[2] = minimum_outdoor_airflow
             if (
-                doas_system
-                and doas_system.fan_sys_fan_control
+                doas_system.fan_sys_fan_control
                 == FanSystemSupplyFanControlOptions.CONSTANT
                 or self.get_inp(BDL_ZoneKeywords.MIN_FLOW_RATIO) == 1
             ):
