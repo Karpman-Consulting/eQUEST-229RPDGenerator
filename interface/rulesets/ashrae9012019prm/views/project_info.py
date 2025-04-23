@@ -350,7 +350,7 @@ class ProjectConfigSubview(CTkXYFrame):
             font=LABEL_FONT,
         )
 
-        directions_text = "Select the Energy Code or Above-Code Program for your project, then browse and select the eQUEST model input files (*.inp) associated with each of the \napplicable models expected by the ruleset."
+        directions_text = "Select the Energy Code or Above-Code Program for your project, then browse and select the eQUEST model input files (*.inp)\nassociated with each of the applicable models expected by the ruleset."
         self.directions = ctk.CTkLabel(
             self,
             text=directions_text,
@@ -361,7 +361,7 @@ class ProjectConfigSubview(CTkXYFrame):
         self.note_label = ctk.CTkLabel(
             self, text="Note: ", anchor=E, justify=LEFT, font=LABEL_FONT
         )
-        note_text = "When you select an input file, it is expected that the same directory will also include the simulation output files associated with the selected input file. \nThis application will check for the following associated file extensions: (*.nhk), (*.lrp), (*.srp), (*.erp)\n\n(*) can be identical to the selected *.inp file or can include the suffix ' - Baseline Design'"
+        note_text = "When you select an input file, it is expected that the same directory will also include the simulation output files associated with the\nselected input file. This application will check for the following associated file extensions: (*.nhk), (*.lrp), (*.srp), (*.erp)\n\n(*) can be identical to the selected *.inp file or can include the suffix ' - Baseline Design'"
         self.note = ctk.CTkLabel(
             self, text=note_text, anchor=W, justify=LEFT, font=TEXT_FONT
         )
@@ -384,6 +384,13 @@ class ProjectConfigSubview(CTkXYFrame):
             command=lambda selection: self.update_ruleset_model_frame(selection),
         )
         self.ruleset_dropdown.set(self.app_data.selected_ruleset.get())
+        self.proposed_reflects_design_checkbox = ctk.CTkCheckBox(
+            self,
+            text="Proposed Design model reflects design documents",
+            font=TEXT_FONT,
+            variable=self.app_data.proposed_reflects_design,
+            command=self.toggle_design,
+        )
         self.rotation_exception_checkbox = ctk.CTkCheckBox(
             self,
             text="Baseline Rotation Exempt? (90.1-2019 Table G3.1(5) Baseline Building Performance (a))",
@@ -436,12 +443,12 @@ class ProjectConfigSubview(CTkXYFrame):
         # Row 0
         self.directions_label.grid(row=0, column=0, sticky=E + W, padx=5, pady=5)
         self.directions.grid(
-            row=0, column=1, columnspan=8, sticky="new", padx=5, pady=5
+            row=0, column=1, columnspan=7, sticky="new", padx=5, pady=5
         )
 
         # Row 1
         self.note_label.grid(row=1, column=0, sticky="new", padx=5, pady=5)
-        self.note.grid(row=1, column=1, columnspan=8, sticky=E + W, padx=5, pady=5)
+        self.note.grid(row=1, column=1, columnspan=7, sticky=E + W, padx=5, pady=5)
 
         # Row 2
         self.project_name_label.grid(row=2, column=0, sticky=E, padx=5, pady=(30, 5))
@@ -472,6 +479,7 @@ class ProjectConfigSubview(CTkXYFrame):
 
     def update_ruleset_model_frame(self, selected_ruleset):
         self.app_data.selected_ruleset.set(selected_ruleset)
+        self.proposed_reflects_design_checkbox.grid_remove()
         self.rotation_exception_checkbox.grid_remove()
         self.clear_ruleset_models_frame()
         self.show_ruleset_models()
@@ -479,10 +487,16 @@ class ProjectConfigSubview(CTkXYFrame):
     def show_ruleset_models(self):
         # Main logic
         if self.app_data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM":
+            self.proposed_reflects_design_checkbox.grid(
+                row=4, column=4, columnspan=4, sticky=W, padx=5, pady=(15, 5)
+            )
             self.rotation_exception_checkbox.grid(
                 row=5, column=1, columnspan=4, sticky=W, padx=5, pady=(15, 5)
             )
-            labels = ["Design: ", "Proposed: ", "Baseline: "]
+            if not self.proposed_reflects_design_checkbox.get():
+                labels = ["Design: ", "Proposed: ", "Baseline: "]
+            else:
+                labels = ["Proposed: ", "Baseline: "]
             if not self.rotation_exception_checkbox.get():
                 labels.extend(["Baseline 90: ", "Baseline 180: ", "Baseline 270: "])
         else:
@@ -514,6 +528,20 @@ class ProjectConfigSubview(CTkXYFrame):
     def clear_ruleset_models_frame(self):
         for widget in self.ruleset_models_frame.winfo_children():
             widget.grid_remove()
+
+    def toggle_design(self):
+        """Add or remove Design based on checkbox state."""
+        active_ruleset = self.app_data.selected_ruleset.get()
+        for row_widgets in self.ruleset_model_row_widgets[active_ruleset].values():
+            if row_widgets[0].cget("text") == "Design: ":
+                if row_widgets[0].winfo_ismapped():
+                    # If visible, hide them
+                    for widget in row_widgets:
+                        widget.grid_remove()
+                else:
+                    # If hidden, show them
+                    for widget in row_widgets:
+                        widget.grid()
 
     def toggle_baseline_rotations(self):
         """Add or remove Baseline rotation rows based on checkbox state."""
