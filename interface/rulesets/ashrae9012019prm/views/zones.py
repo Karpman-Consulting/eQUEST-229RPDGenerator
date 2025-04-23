@@ -18,6 +18,9 @@ class ZonesView(BaseView):
         self.view_frame = ctk.CTkFrame(self)
         self.building_areas_combos = []
 
+        # Header frame for subviews
+        self.subview_header_frame = ctk.CTkFrame(self, fg_color="transparent")
+
         # Directions frame holds all directions info and will get 'gridded' within the surfaces view grid
         self.directions_frame = ctk.CTkFrame(self, fg_color="transparent")
         self.directions_label = ctk.CTkLabel(
@@ -46,7 +49,7 @@ class ZonesView(BaseView):
 
         # 2 rows in the main surface view structure.
         # View frame (row 2, index 1) has a weight to make it fill up the empty space in the window
-        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(2, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
         # Directions
@@ -56,8 +59,11 @@ class ZonesView(BaseView):
             row=0, column=1, columnspan=8, sticky="new", padx=5, pady=20
         )
 
+        # Subview header
+        self.subview_header_frame.grid(row=1, column=0, sticky=FILL, padx=20)
+
         # Subview frame
-        self.view_frame.grid(row=1, column=0, sticky=FILL, padx=20, pady=PAD20END)
+        self.view_frame.grid(row=2, column=0, sticky=FILL, padx=20, pady=PAD20END)
         self.view_frame.grid_rowconfigure(0, weight=1)
         self.view_frame.grid_columnconfigure(0, weight=1)
 
@@ -71,6 +77,8 @@ class ZonesSubview(CTkXYFrame):
         super().__init__(view_frame)
         self.zones_view = view_frame.master
         self.app_data = self.zones_view.window.main_app.data
+        self.header_frame = self.zones_view.subview_header_frame
+        self.column_widths = [100, 250, 250, 250, 250]
         self.is_view_populated = False
         self.zones_by_floor = {}
         self.floor_comboboxes = {}
@@ -87,6 +95,7 @@ class ZonesSubview(CTkXYFrame):
 
     def populate_subview(self):
         self.add_column_headers()
+        self.set_column_widths()
 
         main_row = 0
 
@@ -104,22 +113,33 @@ class ZonesSubview(CTkXYFrame):
 
         self.is_view_populated = True
 
+    def set_column_widths(self):
+        for i, width in enumerate(self.column_widths):
+            self.grid_columnconfigure(i, minsize=width)
+            self.header_frame.grid_columnconfigure(i, minsize=width)
+
     def add_column_headers(self):
-        collapse_expand_label = ctk.CTkLabel(self, text="", font=LABEL_FONT)
+        collapse_expand_label = ctk.CTkLabel(
+            self.header_frame, text="", font=LABEL_FONT
+        )
         collapse_expand_label.grid(row=0, column=0, padx=PAD20END, pady=5)
 
-        zone_floor_label = ctk.CTkLabel(self, text="Floor/Zone", font=LABEL_FONT)
-        zone_floor_label.grid(row=0, column=1, padx=PAD20END, pady=5)
-        building_area_label = ctk.CTkLabel(self, text="Building Area", font=LABEL_FONT)
-        building_area_label.grid(row=0, column=2, padx=PAD20END, pady=5)
+        zone_floor_label = ctk.CTkLabel(
+            self.header_frame, text="Floor/Zone", font=LABEL_FONT
+        )
+        zone_floor_label.grid(row=0, column=1, pady=5)
+        building_area_label = ctk.CTkLabel(
+            self.header_frame, text="Building Area", font=LABEL_FONT
+        )
+        building_area_label.grid(row=0, column=2, pady=5)
         aggregated_zone_quantity_label = ctk.CTkLabel(
-            self, text="Aggregated Zone Qty", font=LABEL_FONT
+            self.header_frame, text="Aggregated Zone Qty", font=LABEL_FONT
         )
-        aggregated_zone_quantity_label.grid(row=0, column=3, padx=PAD20END, pady=5)
+        aggregated_zone_quantity_label.grid(row=0, column=3, pady=5)
         measured_infiltration_rate_label = ctk.CTkLabel(
-            self, text="Measured Infiltration Rate?", font=LABEL_FONT
+            self.header_frame, text="Measured\nInfiltration Rate?", font=LABEL_FONT
         )
-        measured_infiltration_rate_label.grid(row=0, column=4, padx=PAD20END, pady=5)
+        measured_infiltration_rate_label.grid(row=0, column=4, pady=5)
 
     def add_floor_row(self, i, floor_name):
         # Frame spanning all columns with a different background color

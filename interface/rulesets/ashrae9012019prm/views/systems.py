@@ -15,6 +15,10 @@ class SystemsView(BaseView):
         super().__init__(window)
         self.main_window = window
 
+        # Header frame for subviews
+        self.subview_header_frame = ctk.CTkFrame(self, fg_color="transparent")
+        self.current_subview_header = None
+
         # All subviews will be placed inside this frame. Single row/column allows formatting of subview to be handled by the subview itself
         self.subview_frame = ctk.CTkFrame(self)
         self.current_subview = None
@@ -55,8 +59,8 @@ class SystemsView(BaseView):
         self.grid_propagate(False)
         self.main_window.show_baseline_proposed_toggle(True)
 
-        # 3 rows in the main surface view structure. Subview frame (row 4, index 3) has a weight to make it fill up the empty space in the window
-        self.grid_rowconfigure(3, weight=1)
+        # 4 rows in the main surface view structure. Subview frame (row 4, index 3) has a weight to make it fill up the empty space in the window
+        self.grid_rowconfigure(4, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
         # Directions
@@ -73,8 +77,12 @@ class SystemsView(BaseView):
 
         self.border_line.grid(row=2, column=0, columnspan=5, sticky=E + W, padx=20)
 
+        # Subview header row
+        self.subview_header_frame.grid(row=3, column=0, sticky=FILL, padx=20)
+        self.subview_header_frame.grid_columnconfigure(0, weight=1)
+
         # Subview frame
-        self.subview_frame.grid(row=3, column=0, sticky=FILL, padx=20, pady=PAD20END)
+        self.subview_frame.grid(row=4, column=0, sticky=FILL, padx=20, pady=PAD20END)
         self.subview_frame.grid_rowconfigure(0, weight=1)
         self.subview_frame.grid_columnconfigure(0, weight=1)
 
@@ -118,6 +126,9 @@ class SystemsView(BaseView):
         if self.current_subview is not None:
             self.current_subview.grid_forget()
 
+        if self.current_subview_header is not None:
+            self.current_subview_header.grid_forget()
+
         subview = self.subviews.get(subview_name)
         if subview:
             self.current_subview_name = subview_name
@@ -137,6 +148,8 @@ class SystemsView(BaseView):
                     + self.current_subview.__repr__()
                 )
 
+        self.current_subview_header = self.current_subview.header_frame
+        self.current_subview_header.grid(row=0, column=0, sticky=FILL)
         self.current_subview.grid(row=0, column=0, sticky=FILL)
         self.current_subview.focus_set()
         self.current_subview.open_subview()
@@ -164,6 +177,8 @@ class HeatRejectionSubview(CTkXYFrame):
         super().__init__(subview_frame)
         self.systems_view = subview_frame.master
         self.app_data = self.systems_view.window.main_app.data
+        self.header_frame = ctk.CTkFrame(self.systems_view.subview_header_frame)
+        self.column_widths = [100, 250]
         self.is_subview_populated = False
 
     def __repr__(self):
@@ -174,6 +189,7 @@ class HeatRejectionSubview(CTkXYFrame):
         self.populate_subview() if not self.is_subview_populated else None
 
     def populate_subview(self):
+        self.set_column_widths()
         self.add_column_headers()
 
         #  Get heat rejections from relevant rmd. Throw error if none found
@@ -192,10 +208,17 @@ class HeatRejectionSubview(CTkXYFrame):
 
         self.is_subview_populated = True
 
+    def set_column_widths(self):
+        for i, width in enumerate(self.column_widths):
+            self.grid_columnconfigure(i, minsize=width)
+            self.header_frame.grid_columnconfigure(i, minsize=width)
+
     def add_column_headers(self):
-        name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
+        name_label = ctk.CTkLabel(self.header_frame, text="Name", font=LABEL_FONT)
         name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
-        fan_type_label = ctk.CTkLabel(self, text="Fan Type", font=LABEL_FONT)
+        fan_type_label = ctk.CTkLabel(
+            self.header_frame, text="Fan Type", font=LABEL_FONT
+        )
         fan_type_label.grid(row=0, column=1, padx=PAD20END, pady=5)
 
     def add_row(self, i, heat_rejection_name):
@@ -215,6 +238,8 @@ class HVACSystemSubview(CTkXYFrame):
         super().__init__(subview_frame)
         self.systems_view = subview_frame.master
         self.app_data = self.systems_view.window.main_app.data
+        self.header_frame = ctk.CTkFrame(self.systems_view.subview_header_frame)
+        self.column_widths = [100, 250, 250, 250]
         self.is_subview_populated = False
 
     def __repr__(self):
@@ -225,6 +250,7 @@ class HVACSystemSubview(CTkXYFrame):
         self.populate_subview() if not self.is_subview_populated else None
 
     def populate_subview(self):
+        self.set_column_widths()
         self.add_column_headers()
 
         #  Get hvac systems from relevant rmd. Throw error if none found
@@ -243,17 +269,24 @@ class HVACSystemSubview(CTkXYFrame):
 
         self.is_subview_populated = True
 
+    def set_column_widths(self):
+        for i, width in enumerate(self.column_widths):
+            self.grid_columnconfigure(i, minsize=width)
+            self.header_frame.grid_columnconfigure(i, minsize=width)
+
     def add_column_headers(self):
-        name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
+        name_label = ctk.CTkLabel(self.header_frame, text="Name", font=LABEL_FONT)
         name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
         dehumidification_type_label = ctk.CTkLabel(
-            self, text="Dehumidification Type", font=LABEL_FONT
+            self.header_frame, text="Dehumidification Type", font=LABEL_FONT
         )
         dehumidification_type_label.grid(row=0, column=2, padx=PAD20END, pady=5)
-        ducted_supply_label = ctk.CTkLabel(self, text="Ducted Supply?", font=LABEL_FONT)
+        ducted_supply_label = ctk.CTkLabel(
+            self.header_frame, text="Ducted Supply?", font=LABEL_FONT
+        )
         ducted_supply_label.grid(row=0, column=3, padx=PAD20END, pady=5)
         air_filter_merv_rating_label = ctk.CTkLabel(
-            self, text="Air Filter MERV Rating", font=LABEL_FONT
+            self.header_frame, text="Air Filter MERV Rating", font=LABEL_FONT
         )
         air_filter_merv_rating_label.grid(row=0, column=4, padx=PAD20END, pady=5)
 

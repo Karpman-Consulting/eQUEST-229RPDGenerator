@@ -112,6 +112,7 @@ class BuildingAreasView(BaseView):
 
         # Subview header row
         self.subview_header_frame.grid(row=3, column=0, sticky=FILL, padx=20)
+        self.subview_header_frame.grid_columnconfigure(0, weight=1)
 
         # Subview frame
         self.subview_frame.grid(row=4, column=0, sticky=FILL, padx=20, pady=PAD20END)
@@ -252,6 +253,7 @@ class BuildingSubview(CTkXYFrame):
         self.building_areas_view = view_frame.master
         self.app_data = self.building_areas_view.app_data
         self.header_frame = ctk.CTkFrame(self.building_areas_view.subview_header_frame)
+        self.column_widths = [250, 250, 250]
         self.is_view_populated = False
         self.building_count = 0
 
@@ -271,9 +273,15 @@ class BuildingSubview(CTkXYFrame):
         self.populate_subview() if not self.is_view_populated else None
 
     def populate_subview(self):
+        self.set_column_widths()
         self.add_column_headers()
         self.add_row(self.building_count, is_first_row=True)
         self.is_view_populated = True
+
+    def set_column_widths(self):
+        for i, width in enumerate(self.column_widths):
+            self.grid_columnconfigure(i, minsize=width)
+            self.header_frame.grid_columnconfigure(i, minsize=width)
 
     def add_column_headers(self):
         building_name_label = ctk.CTkLabel(
@@ -417,6 +425,7 @@ class BuildingAreasSubview(CTkXYFrame):
         self.building_areas_view = view_frame.master
         self.app_data = self.building_areas_view.app_data
         self.header_frame = ctk.CTkFrame(self.building_areas_view.subview_header_frame)
+        self.column_widths = [250, 250, 100, 240, 240, 240, 240]
         self.is_view_populated = False
         self.building_area_count = 0
 
@@ -436,15 +445,21 @@ class BuildingAreasSubview(CTkXYFrame):
         self.populate_subview() if not self.is_view_populated else None
 
     def populate_subview(self):
+        self.set_column_widths()
         self.add_column_headers()
         self.add_row(self.building_area_count, is_first_row=True)
         self.is_view_populated = True
+
+    def set_column_widths(self):
+        for i, width in enumerate(self.column_widths):
+            self.grid_columnconfigure(i, minsize=width)
+            self.header_frame.grid_columnconfigure(i, minsize=width)
 
     def add_column_headers(self):
         building_name_label = ctk.CTkLabel(
             self.header_frame, text="Building Name", font=LABEL_FONT
         )
-        building_name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
+        building_name_label.grid(row=0, column=0, padx=20, pady=5)
         area_name_label = ctk.CTkLabel(
             self.header_frame, text="Building Area Name", font=LABEL_FONT
         )
@@ -463,15 +478,15 @@ class BuildingAreasSubview(CTkXYFrame):
         lighting_type_label = ctk.CTkLabel(
             self.header_frame, text="Lighting Area Type", font=LABEL_FONT
         )
-        lighting_type_label.grid(row=0, column=4, padx=PAD20END, pady=5)
+        lighting_type_label.grid(row=0, column=4, padx=(10, 20), pady=5)
         hvac_area_type_label = ctk.CTkLabel(
             self.header_frame, text="HVAC Area Type", font=LABEL_FONT
         )
-        hvac_area_type_label.grid(row=0, column=5, padx=PAD20END, pady=5)
+        hvac_area_type_label.grid(row=0, column=5, padx=40, pady=5)
         bpf_area_type_label = ctk.CTkLabel(
             self.header_frame, text="BPF Area Type", font=LABEL_FONT
         )
-        bpf_area_type_label.grid(row=0, column=6, padx=PAD20END, pady=5)
+        bpf_area_type_label.grid(row=0, column=6, padx=(30, 40), pady=5)
 
     def add_row(self, row, is_first_row=False):
         def populate_area_name(value):
@@ -545,28 +560,28 @@ class BuildingAreasSubview(CTkXYFrame):
             state=READONLY,
         )
         fenestration_type_combo._entry.configure(justify=LEFT)
-        fenestration_type_combo.grid(row=row, column=3, padx=PAD20END, pady=PAD20END)
+        fenestration_type_combo.grid(row=row, column=3, padx=(10, 20), pady=PAD20END)
         lighting_type_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.LightingBuildingAreaDescriptions2019ASHRAE901T951TG38,
             state=READONLY,
         )
         lighting_type_combo._entry.configure(justify=LEFT)
-        lighting_type_combo.grid(row=row, column=4, padx=PAD20END, pady=PAD20END)
+        lighting_type_combo.grid(row=row, column=4, padx=20, pady=PAD20END)
         hvac_area_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.HeatingVentilatingAirConditioningBuildingAreaDescriptions2019ASHRAE901,
             state=READONLY,
         )
         hvac_area_combo._entry.configure(justify=LEFT)
-        hvac_area_combo.grid(row=row, column=5, padx=PAD20END, pady=PAD20END)
+        hvac_area_combo.grid(row=row, column=5, padx=20, pady=PAD20END)
         bpf_area_combo = ctk.CTkComboBox(
             self,
             values=BPF_AREA_OPTIONS,
             state=READONLY,
         )
         bpf_area_combo._entry.configure(justify=LEFT)
-        bpf_area_combo.grid(row=row, column=6, padx=PAD20END, pady=PAD20END)
+        bpf_area_combo.grid(row=row, column=6, padx=20, pady=PAD20END)
         remove_button = None
 
         if not is_first_row:

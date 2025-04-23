@@ -35,6 +35,8 @@ class SpacesView(BaseView):
             "Proposed SpacesSubview": SpacesSubview(self.view_frame),
         }
 
+        # TODO: Sticky headers in whatever final form the spaces view takes
+
     def __repr__(self):
         return "SpacesView"
 
