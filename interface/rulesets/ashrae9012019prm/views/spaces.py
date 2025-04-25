@@ -255,8 +255,9 @@ class SpacesSubview(CTkXYFrame):
     def predict_space_type(self):
         """Predict the space type based on the specified space C-ACTIVITY-DESC"""
         baseline_rmd = self.app_data.get_rmd(ASHRAE9012019ModelOptions.BASELINE_0)
-        no_valid_codes = False
+
         for space_name in baseline_rmd.space_map.keys():
+            no_valid_codes = False
             space = baseline_rmd.get_obj(space_name)
             space_type_codes = []
             if space.get_inp(BDL_SpaceKeywords.C_ACTIVITY_DESC):
