@@ -3,7 +3,7 @@ from tkinter import ttk, filedialog
 
 import rpd_generator.utilities.validate_configuration as validate_configuration
 from interface.disclaimer_window import DisclaimerWindow
-from interface.error_window import ErrorWindow
+from interface.CTkMessagebox import CTkMessagebox
 
 
 class InstallConfigWindow(ctk.CTkToplevel):
@@ -14,7 +14,6 @@ class InstallConfigWindow(ctk.CTkToplevel):
         self.title("eQUEST Installation Configuration")
         self.license_window = None
         self.disclaimer_window = None
-        self.error_window = None
 
         self.installation_path = ctk.StringVar()
         self.user_lib_path = ctk.StringVar()
@@ -150,8 +149,13 @@ class InstallConfigWindow(ctk.CTkToplevel):
             self.disclaimer_window.focus()  # if window exists, focus it
 
     def raise_error_window(self, error_text):
-        self.error_window = ErrorWindow(self, error_text)
-        self.error_window.after(100, self.error_window.lift)
+        if not error_text:
+            return
+        CTkMessagebox(
+            title="Error",
+            message=error_text,
+            icon="warning",
+        )
 
     def save_configuration_data(self):
         self.main_app.data.installation_path = self.installation_path.get()

@@ -5,7 +5,7 @@ from functools import partial
 
 from interface.rulesets import import_views, static_files_path
 from interface.disclaimer_window import DisclaimerWindow
-from interface.error_window import ErrorWindow
+from interface.CTkMessagebox import CTkMessagebox
 
 ctk.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
 ctk.set_default_color_theme(
@@ -60,7 +60,6 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
 
         self.license_window = None
         self.disclaimer_window = None
-        self.error_window = None
 
         # Create main application widgets
         self.menubar = self.create_menu_bar()
@@ -301,5 +300,8 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
     def raise_error_window(self, error_text):
         if not error_text:
             return
-        self.error_window = ErrorWindow(self, error_text)
-        self.error_window.after(100, self.error_window.lift)
+        CTkMessagebox(
+            title="Error",
+            message=error_text,
+            icon="warning",
+        )

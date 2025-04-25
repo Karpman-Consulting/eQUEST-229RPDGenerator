@@ -3,7 +3,7 @@ from tkinter import Menu, filedialog
 from pathlib import Path
 
 from interface.disclaimer_window import DisclaimerWindow
-from interface.error_window import ErrorWindow
+from interface.CTkMessagebox import CTkMessagebox
 from interface.constants import *
 from rpd_generator.artifacts.ruleset_project_description import (
     RulesetProjectDescription,
@@ -18,7 +18,6 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         self.title("Project Configuration")
         self.license_window = None
         self.disclaimer_window = None
-        self.error_window = None
 
         self.main_app.data.ruleset_model_file_paths = {
             ruleset: {} for ruleset in RULESETS
@@ -153,8 +152,11 @@ class ProjectConfigWindow(ctk.CTkToplevel):
     def raise_error_window(self, error_text):
         if not error_text:
             return
-        self.error_window = ErrorWindow(self, error_text)
-        self.error_window.after(100, self.error_window.lift, None)
+        CTkMessagebox(
+            title="Error",
+            message=error_text,
+            icon="warning",
+        )
 
     def place_widgets(self):
         # Place widgets
