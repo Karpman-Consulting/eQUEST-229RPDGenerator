@@ -43,7 +43,10 @@ from rpd_generator.artifacts.ruleset_project_description import (
     RulesetProjectDescription,
 )
 from rpd_generator.artifacts.ruleset_model_description import RulesetModelDescription
+from rpd_generator.artifacts.building_segment import BuildingSegment
 from rpd_generator.bdl_structure.bdl_commands.circulation_loop import *
+
+BDL_CurveFitTypes = BDLEnums.bdl_enums["CurveFitTypes"]
 
 
 class TestCHWLoop(unittest.TestCase):
@@ -64,6 +67,9 @@ class TestCHWLoop(unittest.TestCase):
         self.eir_f_t = CurveFit("EIR-fT Curve", self.rmd)
         self.eir_f_plr = CurveFit("EIR-fPLR Curve", self.rmd)
         self.cap_f_t = CurveFit("CAP-fT Curve", self.rmd)
+
+        building_segment = BuildingSegment("Default Building Segment", self.rmd)
+        self.rmd.bdl_obj_instances["Default Building Segment"] = building_segment
 
         # Create Chilled Water/Hot Water Temperature Reset Schedules
         self.temp_reset_day_schedule = DaySchedulePD(
@@ -142,7 +148,7 @@ class TestCHWLoop(unittest.TestCase):
                 "-0.00053441",
                 "0.00067295",
             ],
-            BDL_CurveFitKeywords.TYPE: "BI-QUADRATIC-T",
+            BDL_CurveFitKeywords.TYPE: BDL_CurveFitTypes.BI_QUADRATIC_RATIO_DT,
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "-1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "1000000.0000",
@@ -156,7 +162,7 @@ class TestCHWLoop(unittest.TestCase):
                 "0.00027167",
                 "-0.01164471",
             ],
-            BDL_CurveFitKeywords.TYPE: "BI-QUADRATIC-RATIO&DT",
+            BDL_CurveFitKeywords.TYPE: BDL_CurveFitTypes.BI_QUADRATIC_RATIO_DT,
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "               -1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "                1000000.0000",
@@ -170,7 +176,7 @@ class TestCHWLoop(unittest.TestCase):
                 "-0.00053441",
                 "0.00067295",
             ],
-            BDL_CurveFitKeywords.TYPE: "BI-QUADRATIC-T",
+            BDL_CurveFitKeywords.TYPE: BDL_CurveFitTypes.BI_QUADRATIC_RATIO_DT,
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "               -1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "                1000000.0000",
@@ -1027,4 +1033,114 @@ class TestCHWLoop(unittest.TestCase):
         fluid_loop_flow_control = self.circulation_loop.determine_loop_flow_control()
         self.assertEqual(
             FluidLoopFlowControlOptions.VARIABLE_FLOW, fluid_loop_flow_control
+        )
+
+    def test_populate_swh_use(self):
+        """
+        Tests that circulation_loop is able to correctly populate a SWH use object in the 229 schema:
+        """
+        self.circulation_loop.keyword_value_pairs = {
+            BDL_CirculationLoopKeywords.LOOP_PUMP: "Pump 1",
+            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.DHW,
+            BDL_CirculationLoopKeywords.DESIGN_HEAT_T: "135",
+            BDL_CirculationLoopKeywords.LOOP_DESIGN_DT: "30",
+            BDL_CirculationLoopKeywords.DHW_INLET_T: "68",
+            BDL_CirculationLoopKeywords.PROCESS_SCH: "Load1",
+            BDL_CirculationLoopKeywords.PROCESS_T: "135",
+            BDL_CirculationLoopKeywords.HEAT_SETPT_CTRL: BDL_CirculationLoopSetpointControlOptions.FIXED,
+            BDL_CirculationLoopKeywords.HEAT_SETPT_T: "135",
+            BDL_CirculationLoopKeywords.PROCESS_FLOW: "10.0",
+        }
+        self.circulation_loop.populate_service_water_heating_uses()
+        expected_data_structure = [
+            {
+                "id": "Circulation Loop 1 Load1",
+                "served_by_distribution_system": "Circulation Loop 1",
+                "temperature_at_fixture": 135,
+                "use": 10,
+                "use_units": "VOLUME",
+                "use_multiplier_schedule": "Load1",
+            }
+        ]
+        self.assertEqual(
+            expected_data_structure,
+            self.circulation_loop.get_obj(
+                "Default Building Segment"
+            ).service_water_heating_uses,
+        )
+
+    def test_populate_mixed_water_swh_use(self):
+        """
+        Tests that circulation_loop is able to correctly populate a SWH use object in the 229 schema:
+        """
+        self.circulation_loop.keyword_value_pairs = {
+            BDL_CirculationLoopKeywords.LOOP_PUMP: "Pump 1",
+            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.DHW,
+            BDL_CirculationLoopKeywords.DESIGN_HEAT_T: "140",
+            BDL_CirculationLoopKeywords.LOOP_DESIGN_DT: "30",
+            BDL_CirculationLoopKeywords.DHW_INLET_T: "60",
+            BDL_CirculationLoopKeywords.PROCESS_T: "100",
+            BDL_CirculationLoopKeywords.HEAT_SETPT_CTRL: BDL_CirculationLoopSetpointControlOptions.FIXED,
+            BDL_CirculationLoopKeywords.HEAT_SETPT_T: "140",
+            BDL_CirculationLoopKeywords.PROCESS_FLOW: "10.0",
+            BDL_CirculationLoopKeywords.PROCESS_SCH: "Load1",
+        }
+        self.circulation_loop.populate_service_water_heating_uses()
+        expected_data_structure = [
+            {
+                "id": "Circulation Loop 1 Load1",
+                "served_by_distribution_system": "Circulation Loop 1",
+                "temperature_at_fixture": 100,
+                "use": 5,
+                "use_units": "VOLUME",
+                "use_multiplier_schedule": "Load1",
+            }
+        ]
+        self.assertEqual(
+            expected_data_structure,
+            self.circulation_loop.get_obj(
+                "Default Building Segment"
+            ).service_water_heating_uses,
+        )
+
+    def test_populate_swh_uses(self):
+        """
+        Tests that circulation_loop is able to correctly populate a SWH use object in the 229 schema:
+        """
+        self.circulation_loop.keyword_value_pairs = {
+            BDL_CirculationLoopKeywords.LOOP_PUMP: "Pump 1",
+            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.DHW,
+            BDL_CirculationLoopKeywords.DESIGN_HEAT_T: "135",
+            BDL_CirculationLoopKeywords.LOOP_DESIGN_DT: "30",
+            BDL_CirculationLoopKeywords.DHW_INLET_T: "68",
+            BDL_CirculationLoopKeywords.PROCESS_T: ["135", "135"],
+            BDL_CirculationLoopKeywords.HEAT_SETPT_CTRL: BDL_CirculationLoopSetpointControlOptions.FIXED,
+            BDL_CirculationLoopKeywords.HEAT_SETPT_T: "135",
+            BDL_CirculationLoopKeywords.PROCESS_FLOW: ["10.0", "5.0"],
+            BDL_CirculationLoopKeywords.PROCESS_SCH: ["Load1", "Load2"],
+        }
+        self.circulation_loop.populate_service_water_heating_uses()
+        expected_data_structure = [
+            {
+                "id": "Circulation Loop 1 Load1",
+                "served_by_distribution_system": "Circulation Loop 1",
+                "temperature_at_fixture": 135,
+                "use": 10,
+                "use_units": "VOLUME",
+                "use_multiplier_schedule": "Load1",
+            },
+            {
+                "id": "Circulation Loop 1 Load2",
+                "served_by_distribution_system": "Circulation Loop 1",
+                "temperature_at_fixture": 135,
+                "use": 5,
+                "use_units": "VOLUME",
+                "use_multiplier_schedule": "Load2",
+            },
+        ]
+        self.assertEqual(
+            expected_data_structure,
+            self.circulation_loop.get_obj(
+                "Default Building Segment"
+            ).service_water_heating_uses,
         )

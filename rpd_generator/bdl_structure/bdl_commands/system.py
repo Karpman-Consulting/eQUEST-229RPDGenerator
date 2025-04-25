@@ -59,6 +59,7 @@ BDL_HPSupplementSourceOptions = BDLEnums.bdl_enums["HPSupplementSourceOptions"]
 BDL_OutputCoolingTypes = BDLEnums.bdl_enums["OutputCoolingTypes"]
 BDL_OutputHeatingTypes = BDLEnums.bdl_enums["OutputHeatingTypes"]
 BDL_ReturnAirPathOptions = BDLEnums.bdl_enums["SystemReturnAirPathOptions"]
+BDL_WLHPCategoryOptions = BDLEnums.bdl_enums["SystemWLHPCategoryOptions"]
 
 
 class System(ParentNode):
@@ -492,10 +493,20 @@ class System(ParentNode):
         heat_type = self.heat_type_map.get(self.get_inp(BDL_SystemKeywords.HEAT_SOURCE))
         cool_type = self.cool_type_map.get(self.get_inp(BDL_SystemKeywords.COOL_SOURCE))
 
-        has_heat = heat_type not in [None, HeatingSystemOptions.NONE]
+        has_heat = heat_type not in [None, HeatingSystemOptions.NONE] or (
+            system_type == BDL_SystemTypes.HP
+            and self.get_inp(BDL_SystemKeywords.WLHP_CATEGORY)
+            in [
+                BDL_WLHPCategoryOptions.WATER_LOOP,
+                BDL_WLHPCategoryOptions.GROUND_WATER,
+                BDL_WLHPCategoryOptions.GROUND_LOOP,
+            ]
+        )
         has_cool = self.system_cooling_type_map.get(
             self.get_inp(BDL_SystemKeywords.TYPE)
-        ) not in [None, CoolingSystemOptions.NONE]
+        ) not in [None, CoolingSystemOptions.NONE] or (
+            system_type == BDL_SystemTypes.HP
+        )
         has_preheat = self.get_inp(BDL_SystemKeywords.PREHEAT_SOURCE) and self.get_inp(
             BDL_SystemKeywords.PREHEAT_SOURCE
         ) not in [None, BDL_SystemHeatingTypes.NONE]
@@ -815,9 +826,19 @@ class System(ParentNode):
 
             match self.preheat_sys_type:
                 case HeatingSystemOptions.FLUID_LOOP:
-                    pass  # placeholder
+                    # Design Preheat - hot water - SYSTEM - capacity, btu/hr
+                    requests["Design Preheat Capacity"] = (
+                        2203269,
+                        self.u_name,
+                        "",
+                    )
                 case HeatingSystemOptions.ELECTRIC_RESISTANCE:
-                    pass  # placeholder
+                    # Design Preheat - electric - SYSTEM - capacity, btu/hr
+                    requests["Design Preheat Capacity"] = (
+                        2203346,
+                        self.u_name,
+                        "",
+                    )
                 case HeatingSystemOptions.FURNACE:
                     # Design Preheat - furnace - SYSTEM - capacity, btu/hr
                     requests["Design Preheat Capacity"] = (
@@ -1121,6 +1142,9 @@ class System(ParentNode):
         )
         self.cool_sys_chilled_water_loop = self.get_inp(BDL_SystemKeywords.CHW_LOOP)
         self.cool_sys_condenser_water_loop = self.get_inp(BDL_SystemKeywords.CW_LOOP)
+        self.cool_sys_turndown_ratio = self.try_float(
+            self.get_inp(BDL_SystemKeywords.MIN_UNLOAD_RATIO)
+        )
         sizing_ratio = self.try_float(self.get_inp(BDL_SystemKeywords.SIZING_RATIO))
         cool_sizing_ratio = self.try_float(
             self.get_inp(BDL_SystemKeywords.COOL_SIZING_RATI)

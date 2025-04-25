@@ -2,6 +2,15 @@
     "RulesetModelDescription": {
         "measured_infiltration_pressure_difference": ""
     },
+    "SourceResult": {
+        "annual_consumption": "kbtu",
+        "annual_demand": "MMbtu/h"
+    },
+    "EndUseResult": {
+        "annual_site_energy_use": "kbtu",
+        "annual_site_coincident_demand": "MMbtu/h",
+        "annual_site_non_coincident_demand": "MMbtu/h"
+    },
     "Zone": {
         "volume": "ft^3",
         "design_thermostat_cooling_setpoint": "F",
@@ -191,7 +200,7 @@
     },
     "ServiceWaterHeatingDistributionSystem": {
         "design_supply_temperature": "F",
-        "design_supply_temperature_difference": "F"
+        "design_supply_temperature_difference": "delta_F"
     },
     "ServiceWaterPiping": {
         "insulation_thickness": "",
@@ -232,7 +241,8 @@
         "exterior_insulation": ""
     },
     "ServiceWaterHeatingUse": {
-        "temperature_at_fixture": ""
+        "temperature_at_fixture": "F",
+        "use": "gpm"
     },
     "ExteriorLighting": {
         "area": "",

@@ -115,7 +115,9 @@ class TestWindows(unittest.TestCase):
         self.exterior_wall.keyword_value_pairs = {
             BDL_ExteriorWallKeywords.CONSTRUCTION: "Construction 1",
             BDL_ExteriorWallKeywords.LOCATION: BDL_WallLocationOptions.TOP,
+            BDL_ExteriorWallKeywords.TILT: "0",
         }
+        self.exterior_wall.populate_data_elements()
         self.window.keyword_value_pairs = {
             BDL_WindowKeywords.WINDOW_TYPE: BDL_WindowTypes.SKYLIGHT_FLAT,
             BDL_WindowKeywords.GLASS_TYPE: "Test glass type",
@@ -151,7 +153,9 @@ class TestWindows(unittest.TestCase):
         self.exterior_wall.keyword_value_pairs = {
             BDL_ExteriorWallKeywords.CONSTRUCTION: "Construction 1",
             BDL_ExteriorWallKeywords.LOCATION: BDL_WallLocationOptions.TOP,
+            BDL_ExteriorWallKeywords.TILT: "0",
         }
+        self.exterior_wall.populate_data_elements()
         self.window.keyword_value_pairs = {
             BDL_WindowKeywords.WINDOW_TYPE: BDL_WindowTypes.SKYLIGHT_FLAT,
             BDL_WindowKeywords.GLASS_TYPE: "Test glass type",

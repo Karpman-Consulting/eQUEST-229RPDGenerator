@@ -271,6 +271,26 @@ class BaseNode(Base):
 
 def _chunked_dict(d, n):
     """Yield successive n-sized chunks from dictionary d."""
-    it = iter(d)
-    for i in range(0, len(d), n):
-        yield {k: d[k] for k in islice(it, n)}
+    it = iter(d.items())
+    current_chunk = {}
+    current_report_prefix = None
+
+    for k, v in it:
+
+        prefix = str(v[0])[:4]
+
+        if current_report_prefix is None:
+            current_report_prefix = prefix
+
+        # Trigger yield if prefix changed or chunk size limit reached
+        if (prefix != current_report_prefix and current_chunk) or len(
+            current_chunk
+        ) >= n:
+            yield current_chunk
+            current_chunk = {}
+            current_report_prefix = prefix
+
+        current_chunk[k] = v
+
+    if current_chunk:
+        yield current_chunk

@@ -51,12 +51,12 @@ class TestUndergroundWalls(unittest.TestCase):
         self.construction.keyword_value_pairs = {
             BDL_ConstructionKeywords.ABSORPTANCE: "5.5",
             BDL_ConstructionKeywords.TYPE: BDL_ConstructionTypes.U_VALUE,
-            BDL_ConstructionKeywords.U_VALUE: "12.5",
+            BDL_ConstructionKeywords.U_VALUE: "0.5",
         }
         self.underground_wall.keyword_value_pairs = {
             BDL_UndergroundWallKeywords.CONSTRUCTION: "Construction 1",
             BDL_UndergroundWallKeywords.AREA: "400",
-            BDL_UndergroundWallKeywords.TILT: "10",
+            BDL_UndergroundWallKeywords.TILT: "90",
             BDL_UndergroundWallKeywords.AZIMUTH: "110",
             BDL_UndergroundWallKeywords.SHADING_SURFACE: BDL_ShadingSurfaceOptions.YES,
             BDL_UndergroundWallKeywords.INSIDE_SOL_ABS: 2.0,
@@ -67,8 +67,8 @@ class TestUndergroundWalls(unittest.TestCase):
         expected_data_structure = {
             "id": "Below Grade Wall 1",
             "area": 400.0,
-            "tilt": 10.0,
-            "classification": "CEILING",
+            "tilt": 90.0,
+            "classification": "WALL",
             "optical_properties": {
                 "id": "Below Grade Wall 1 OpticalProps",
                 "absorptance_solar_interior": 2.0,
@@ -79,10 +79,11 @@ class TestUndergroundWalls(unittest.TestCase):
                 "id": "Construction 1",
                 "insulation_locations": [],
                 "primary_layers": [
-                    {"id": "Simplified Material", "r_value": -0.6000000000000001}
+                    {"id": "Simplified Material", "r_value": 1.3199999999999998}
                 ],
                 "r_values": [],
-                "u_factor": 12.5,
+                "u_factor": 0.5,
+                "c_factor": 0.7575757575757577,
             },
             "adjacent_to": "GROUND",
             "azimuth": 350.0,

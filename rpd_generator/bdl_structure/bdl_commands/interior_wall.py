@@ -252,11 +252,14 @@ class InteriorWall(
             BDL_InteriorWallTypes.STANDARD,
             BDL_InteriorWallTypes.INTERNAL,
         ]:
-            location = self.get_inp(BDL_InteriorWallKeywords.LOCATION)
             int_air_film_resistance = (
                 0.61
-                if location == BDL_WallLocationOptions.TOP
-                else 0.92 if location == BDL_WallLocationOptions.BOTTOM else 0.68
+                if self.classification == SurfaceClassificationOptions.CEILING
+                else (
+                    0.92
+                    if self.classification == SurfaceClassificationOptions.FLOOR
+                    else 0.68
+                )
             )
         if u_factor and spec_method == BDL_ConstructionTypes.U_VALUE:
             self.construction["primary_layers"][0]["r_value"] = (

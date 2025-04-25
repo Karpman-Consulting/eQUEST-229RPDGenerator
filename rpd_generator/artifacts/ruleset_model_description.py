@@ -32,6 +32,19 @@ fuel_type_map = {
     EnergySourceOptions.PURCHASED_CHILLED_WATER: EnergySourceOptions.PURCHASED_CHILLED_WATER,
     EnergySourceOptions.ON_SITE_RENEWABLES: EnergySourceOptions.ON_SITE_RENEWABLES,
 }
+utility_rate_service_map = {
+    BDL_UtilityRateTypes.ELECTRICITY: EnergySourceOptions.ELECTRICITY,
+    BDL_UtilityRateTypes.NATURAL_GAS: EnergySourceOptions.NATURAL_GAS,
+    BDL_UtilityRateTypes.STEAM: EnergySourceOptions.PURCHASED_HOT_WATER,
+    BDL_UtilityRateTypes.CHILLED_WATER: EnergySourceOptions.PURCHASED_CHILLED_WATER,
+    BDL_UtilityRateTypes.ELECTRIC_SALE: EnergySourceOptions.ON_SITE_RENEWABLES,
+    BDL_UtilityRateTypes.LPG: EnergySourceOptions.PROPANE,
+    BDL_UtilityRateTypes.FUEL_OIL: EnergySourceOptions.FUEL_OIL,
+    BDL_UtilityRateTypes.DIESEL_OIL: EnergySourceOptions.OTHER,
+    BDL_UtilityRateTypes.COAL: EnergySourceOptions.OTHER,
+    BDL_UtilityRateTypes.METHANOL: EnergySourceOptions.OTHER,
+    BDL_UtilityRateTypes.OTHER_FUEL: EnergySourceOptions.OTHER,
+}
 
 
 class RulesetModelDescription(Base):
@@ -84,7 +97,6 @@ class RulesetModelDescription(Base):
         "EQUIP-CTRL",
         "LOAD-MANAGEMENT",
         "ELEC-GENERATOR",
-        "UTILITY-RATE",
     ]
 
     def __init__(self, obj_id, rpd):
@@ -286,6 +298,7 @@ class RulesetModelDescription(Base):
             "Consumption": {
                 "site_energy_use": 0,
                 "peak_demand": 0,
+                "cost": 0,
             },
             "Interior Lighting": {
                 "site_energy_use": 0,
@@ -345,7 +358,9 @@ class RulesetModelDescription(Base):
         for fuel_meter_name in self.fuel_meter_names:
             fuel_meter = self.bdl_obj_instances.get(fuel_meter_name)
             if fuel_meter:
-                energy_source_types.add(fuel_meter.get_inp(BDL_FuelMeterKeywords.TYPE))
+                energy_source_types.add(
+                    fuel_type_map.get(fuel_meter.get_inp(BDL_FuelMeterKeywords.TYPE))
+                )
         if self.steam_meter_names:
             energy_source_types.add(EnergySourceOptions.PURCHASED_HOT_WATER)
         if self.chilled_water_meter_names:
@@ -371,6 +386,14 @@ class RulesetModelDescription(Base):
                 )
                 source_results["Consumption"]["peak_demand"] = output_data.get(
                     "Elec (all meters) - Peak Demand"
+                )
+                source_results["Consumption"]["cost"] = sum(
+                    output_data.get(f"{utility_rate_name} - Total Charges")
+                    for utility_rate_name in self.utility_rate_names
+                    if self.bdl_obj_instances.get(utility_rate_name).get_inp(
+                        BDL_UtilityRateKeywords.TYPE
+                    )
+                    == BDL_UtilityRateTypes.ELECTRICITY
                 )
 
                 source_results["Interior Lighting"]["site_energy_use"] = (
@@ -492,6 +515,14 @@ class RulesetModelDescription(Base):
                 source_results["Consumption"]["peak_demand"] = output_data.get(
                     "Steam (all meters) - Peak Demand"
                 )
+                source_results["Consumption"]["cost"] = sum(
+                    output_data.get(f"{utility_rate_name} - Total Charges")
+                    for utility_rate_name in self.utility_rate_names
+                    if self.bdl_obj_instances.get(utility_rate_name).get_inp(
+                        BDL_UtilityRateKeywords.TYPE
+                    )
+                    == BDL_UtilityRateTypes.STEAM
+                )
 
                 source_results["Interior Lighting"]["site_energy_use"] = (
                     output_data.get("Steam (all meters) - Energy - Lights")
@@ -611,6 +642,14 @@ class RulesetModelDescription(Base):
                 )
                 source_results["Consumption"]["peak_demand"] = output_data.get(
                     "Chilled Water (all meters) - Peak Demand"
+                )
+                source_results["Consumption"]["cost"] = sum(
+                    output_data.get(f"{utility_rate_name} - Total Charges")
+                    for utility_rate_name in self.utility_rate_names
+                    if self.bdl_obj_instances.get(utility_rate_name).get_inp(
+                        BDL_UtilityRateKeywords.TYPE
+                    )
+                    == BDL_UtilityRateTypes.CHILLED_WATER
                 )
 
                 source_results["Interior Lighting"]["site_energy_use"] = (
@@ -746,12 +785,31 @@ class RulesetModelDescription(Base):
                     )
                     == BDL_ElecGeneratorTypes.PV_ARRAY
                 )
+                source_results["Consumption"]["cost"] = sum(
+                    output_data.get(f"{utility_rate_name} - Total Charges")
+                    for utility_rate_name in self.utility_rate_names
+                    if self.bdl_obj_instances.get(utility_rate_name).get_inp(
+                        BDL_UtilityRateKeywords.TYPE
+                    )
+                    == BDL_UtilityRateTypes.ELECTRIC_SALE
+                )
                 if len(self.elec_generator_names) == 1:
                     source_results["Consumption"]["peak_demand"] = output_data.get(
                         f"Elec (meter {self.elec_generator_names[0]}) - Peak Demand"
                     )
 
             else:
+                # Sum results from utility rates that have the same energy source type
+                source_results["Consumption"]["cost"] += sum(
+                    output_data.get(f"{utility_rate_name} - Total Charges")
+                    for utility_rate_name in self.utility_rate_names
+                    if utility_rate_service_map.get(
+                        self.bdl_obj_instances.get(utility_rate_name).get_inp(
+                            BDL_UtilityRateKeywords.TYPE
+                        )
+                    )
+                    == energy_source
+                )
                 # Sum results from fuel meters that have the same type
                 for fuel_meter_name in self.fuel_meter_names:
                     fuel_meter = self.bdl_obj_instances.get(fuel_meter_name)
@@ -948,7 +1006,7 @@ class RulesetModelDescription(Base):
                         "site_energy_use"
                     ],
                     "annual_demand": source_results["Consumption"]["peak_demand"],
-                    # "annual_cost": None,
+                    "annual_cost": source_results["Consumption"]["cost"],
                 }
             )
 
@@ -1972,8 +2030,11 @@ class RulesetModelDescription(Base):
                 )
 
         for utility_rate_name in self.utility_rate_names:
-            # TODO diagnose why Utility Rate output requests are not being fulfilled
-            pass
+            requests[f"{utility_rate_name} - Total Charges"] = (
+                3005013,
+                utility_rate_name,
+                "",
+            )
 
         return requests, string_requests
 

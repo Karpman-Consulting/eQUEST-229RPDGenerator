@@ -24,6 +24,7 @@ from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_ChillerKeywords = BDLEnums.bdl_enums["ChillerKeywords"]
+BDL_CurveFitTypes = BDLEnums.bdl_enums["CurveFitTypes"]
 EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
 
 
@@ -55,7 +56,7 @@ class TestElectricChillers(unittest.TestCase):
                 "-0.00029211",
                 "0.00043788",
             ],
-            BDL_CurveFitKeywords.TYPE: "BI-QUADRATIC-T",
+            BDL_CurveFitKeywords.TYPE: BDL_CurveFitTypes.BI_QUADRATIC_RATIO_DT,
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "-1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "1000000.0000",
@@ -70,7 +71,7 @@ class TestElectricChillers(unittest.TestCase):
                 "0.00027167",
                 "-0.01164471",
             ],
-            BDL_CurveFitKeywords.TYPE: "BI-QUADRATIC-RATIO&DT",
+            BDL_CurveFitKeywords.TYPE: BDL_CurveFitTypes.BI_QUADRATIC_RATIO_DT,
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "               -1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "                1000000.0000",
@@ -85,7 +86,7 @@ class TestElectricChillers(unittest.TestCase):
                 "-0.00053441",
                 "0.00067295",
             ],
-            BDL_CurveFitKeywords.TYPE: "BI-QUADRATIC-T",
+            BDL_CurveFitKeywords.TYPE: BDL_CurveFitTypes.BI_QUADRATIC_RATIO_DT,
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "               -1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "                1000000.0000",
@@ -609,6 +610,69 @@ class TestElectricChillers(unittest.TestCase):
         }
         self.assertEqual(expected_data_structure, self.chiller.chiller_data_structure)
 
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_populate_data_with_quadratic_f_plr(self, mock_get_output_data):
+        """Tests that all values populate with expected values, given valid inputs"""
+        mock_get_output_data.return_value = {
+            "Design Parameters - Capacity": 152000,
+            "Design Parameters - Condenser Flow": 36.10254669189453,
+            "Design Parameters - Flow": 28.88204002380371,
+            "Normalized (ARI) Capacity at Peak (Btu/hr)": 120092.3359375,
+            "Normalized (ARI) Entering Condenser Water Temperature (°F)": 70.0,
+            "Normalized (ARI) Leaving Chilled Water Temperature (°F)": 44.0,
+            "Primary Equipment (Chillers) - Capacity (Btu/hr)": 152000,
+        }
+        self.f_plr.keyword_value_pairs = {
+            BDL_CurveFitKeywords.COEF: [
+                "0.14703037",
+                "-0.00349667",
+                "1.01161313",
+            ],
+            BDL_CurveFitKeywords.TYPE: "QUADRATIC",
+            BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
+            BDL_CurveFitKeywords.OUTPUT_MIN: "               -1000000.0000",
+            BDL_CurveFitKeywords.OUTPUT_MAX: "                1000000.0000",
+        }
+
+        self.chiller.keyword_value_pairs = {
+            BDL_ChillerKeywords.TYPE: BDL_ChillerTypes.ELEC_OPEN_CENT,
+            BDL_ChillerKeywords.CONDENSER_TYPE: BDL_CondenserTypes.WATER_COOLED,
+            BDL_ChillerKeywords.CHW_LOOP: "Chilled Water Loop (Primary)",
+            BDL_ChillerKeywords.CW_LOOP: "Condenser Water Loop",
+            BDL_ChillerKeywords.EIR_FT: "fT Curve",
+            BDL_ChillerKeywords.EIR_FPLR: "fPLR Curve",
+            BDL_ChillerKeywords.CAPACITY_FT: "CAP-fT Curve",
+            BDL_ChillerKeywords.ELEC_INPUT_RATIO: "0.1758",
+            BDL_ChillerKeywords.MIN_RATIO: "0.25",
+            BDL_ChillerKeywords.RATED_CHW_T: "44",
+            BDL_ChillerKeywords.RATED_COND_T: "85",
+        }
+
+        self.rmd.populate_rmd_data(testing=True)
+        expected_data_structure = {
+            "id": "Chiller 1",
+            "compressor_type": "CENTRIFUGAL",
+            "energy_source_type": "ELECTRICITY",
+            "cooling_loop": "Chilled Water Loop (Primary)",
+            "condensing_loop": "Condenser Water Loop",
+            "rated_capacity": 0.1444661171908111,
+            "design_entering_condenser_temperature": 70.0,
+            "design_leaving_evaporator_temperature": 44.0,
+            "rated_entering_condenser_temperature": 85.0,
+            "rated_leaving_evaporator_temperature": 44.0,
+            "minimum_load_ratio": 0.25,
+            "design_capacity": 0.152,
+            "design_flow_condenser": 36.10254669189453,
+            "design_flow_evaporator": 28.88204002380371,
+            "is_chilled_water_pump_interlocked": False,
+            "is_condenser_water_pump_interlocked": False,
+            "capacity_validation_points": [],
+            "power_validation_points": [],
+            "efficiency_metric_types": ["FULL_LOAD_EFFICIENCY_RATED"],
+            "efficiency_metric_values": [5.688282138794084],
+        }
+        self.assertEqual(expected_data_structure, self.chiller.chiller_data_structure)
+
 
 class TestEngineChillers(unittest.TestCase):
     def setUp(self):
@@ -639,7 +703,7 @@ class TestEngineChillers(unittest.TestCase):
                 "-0.00053441",
                 "0.00067295",
             ],
-            BDL_CurveFitKeywords.TYPE: "BI-QUADRATIC-T",
+            BDL_CurveFitKeywords.TYPE: BDL_CurveFitTypes.BI_QUADRATIC_RATIO_DT,
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "-1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "1000000.0000",
@@ -654,7 +718,7 @@ class TestEngineChillers(unittest.TestCase):
                 "0.00027167",
                 "-0.01164471",
             ],
-            BDL_CurveFitKeywords.TYPE: "BI-QUADRATIC-RATIO&DT",
+            BDL_CurveFitKeywords.TYPE: BDL_CurveFitTypes.BI_QUADRATIC_RATIO_DT,
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "               -1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "                1000000.0000",
@@ -669,7 +733,7 @@ class TestEngineChillers(unittest.TestCase):
                 "-0.00053441",
                 "0.00067295",
             ],
-            BDL_CurveFitKeywords.TYPE: "BI-QUADRATIC-T",
+            BDL_CurveFitKeywords.TYPE: BDL_CurveFitTypes.BI_QUADRATIC_RATIO_DT,
             BDL_CurveFitKeywords.INPUT_TYPE: "COEFFICIENTS",
             BDL_CurveFitKeywords.OUTPUT_MIN: "               -1000000.0000",
             BDL_CurveFitKeywords.OUTPUT_MAX: "                1000000.0000",
