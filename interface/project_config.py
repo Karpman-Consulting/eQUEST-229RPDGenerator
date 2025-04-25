@@ -229,7 +229,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             if not self.proposed_reflects_design_checkbox.get():
                 labels = ["Design: ", "Proposed: ", "Baseline: "]
             else:
-                labels = ["Proposed: ", "Baseline: "]
+                labels = ["Design: ", "Baseline: "]
             if not self.rotation_exception_checkbox.get():
                 labels.extend(["Baseline 90: ", "Baseline 180: ", "Baseline 270: "])
         else:
@@ -266,7 +266,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         """Add or remove Design based on checkbox state."""
         active_ruleset = self.main_app.data.selected_ruleset.get()
         for row_widgets in self.ruleset_model_row_widgets[active_ruleset].values():
-            if row_widgets[0].cget("text") == "Design: ":
+            if row_widgets[0].cget("text") == "Proposed: ":
                 if row_widgets[0].winfo_ismapped():
                     # If visible, hide them
                     for widget in row_widgets:
@@ -387,7 +387,11 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             if not self.rotation_exception_checkbox.get():
                 required_models.extend(["Baseline 90", "Baseline 180", "Baseline 270"])
             if self.proposed_reflects_design_checkbox.get():
-                required_models.remove("User")
+                self.main_app.data.ruleset_model_file_paths[active_ruleset][
+                    "Proposed"
+                ] = self.main_app.data.ruleset_model_file_paths[active_ruleset].get(
+                    "User"
+                )
 
             # Check if all required model types have file paths selected
             for model_type in required_models:

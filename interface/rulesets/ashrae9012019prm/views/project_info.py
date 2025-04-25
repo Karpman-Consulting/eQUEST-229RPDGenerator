@@ -496,7 +496,7 @@ class ProjectConfigSubview(CTkXYFrame):
             if not self.proposed_reflects_design_checkbox.get():
                 labels = ["Design: ", "Proposed: ", "Baseline: "]
             else:
-                labels = ["Proposed: ", "Baseline: "]
+                labels = ["Design: ", "Baseline: "]
             if not self.rotation_exception_checkbox.get():
                 labels.extend(["Baseline 90: ", "Baseline 180: ", "Baseline 270: "])
         else:
@@ -533,7 +533,7 @@ class ProjectConfigSubview(CTkXYFrame):
         """Add or remove Design based on checkbox state."""
         active_ruleset = self.app_data.selected_ruleset.get()
         for row_widgets in self.ruleset_model_row_widgets[active_ruleset].values():
-            if row_widgets[0].cget("text") == "Design: ":
+            if row_widgets[0].cget("text") == "Proposed: ":
                 if row_widgets[0].winfo_ismapped():
                     # If visible, hide them
                     for widget in row_widgets:
