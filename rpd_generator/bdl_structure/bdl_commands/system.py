@@ -28,6 +28,10 @@ DemandControlVentilationControlOptions = SchemaEnums.schema_enums[
 ]
 HumidificationOptions = SchemaEnums.schema_enums["HumidificationOptions"]
 HeatpumpAuxiliaryHeatOptions = SchemaEnums.schema_enums["HeatpumpAuxiliaryHeatOptions"]
+CoolingMetricOptions = SchemaEnums.schema_enums["CoolingMetricOptions"]
+HeatingMetricOptions = SchemaEnums.schema_enums["HeatingMetricOptions"]
+
+
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_SystemKeywords = BDLEnums.bdl_enums["SystemKeywords"]
 BDL_ZoneKeywords = BDLEnums.bdl_enums["ZoneKeywords"]
@@ -383,6 +387,7 @@ class System(ParentNode):
         self.cool_sys_is_sized_based_on_design_day = None
         self.cool_sys_chilled_water_loop = None
         self.cool_sys_condenser_water_loop = None
+        self.vrf_sys_condenser = None
         self.cool_sys_efficiency_metric_values = None
         self.cool_sys_efficiency_metric_types = None
         self.cool_sys_dehumidification_type = None
@@ -1142,6 +1147,9 @@ class System(ParentNode):
         )
         self.cool_sys_chilled_water_loop = self.get_inp(BDL_SystemKeywords.CHW_LOOP)
         self.cool_sys_condenser_water_loop = self.get_inp(BDL_SystemKeywords.CW_LOOP)
+        self.vrf_sys_condenser = self.get_obj(
+            self.get_inp(BDL_SystemKeywords.CONDENSING_UNIT)
+        )
         self.cool_sys_turndown_ratio = self.try_float(
             self.get_inp(BDL_SystemKeywords.MIN_UNLOAD_RATIO)
         )

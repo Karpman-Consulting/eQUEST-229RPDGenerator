@@ -29,6 +29,7 @@ from rpd_generator.bdl_structure.bdl_commands.utility_and_economics import (
     BDL_FuelTypes,
 )
 from rpd_generator.bdl_structure.bdl_commands.zone import Zone
+from rpd_generator.bdl_structure.bdl_commands.condenser import Condenser
 from rpd_generator.bdl_structure.bdl_commands.circulation_loop import (
     CirculationLoop,
     BDL_CirculationLoopKeywords,
@@ -43,6 +44,7 @@ from rpd_generator.bdl_structure.bdl_commands.system import *
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 BDL_SystemEconoLockoutOptions = BDLEnums.bdl_enums["SystemEconoLockoutOptions"]
+BDL_CondenserKeywords = BDLEnums.bdl_enums["CondenserKeywords"]
 
 
 class TestSystems(unittest.TestCase):
@@ -690,3 +692,24 @@ class TestSystems(unittest.TestCase):
             }
 
             self.rmd.populate_rmd_data(testing=True)
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_populate_vrf(self, mock_get_output_data):
+        """
+        Verify that no errors arise from populating vrf efficiency.
+        """
+        mock_get_output_data.return_value = {}
+        self.condenser = Condenser("Condensing Unit 1", self.rmd)
+
+        self.system.keyword_value_pairs = {
+            BDL_SystemKeywords.TYPE: BDL_SystemTypes.PVVT,
+            BDL_SystemKeywords.HEAT_SOURCE: BDL_SystemHeatingTypes.CONDENSING_UNIT,
+            BDL_SystemKeywords.COOL_SOURCE: BDL_SystemCoolingTypes.NONE,
+            BDL_SystemKeywords.CONDENSING_UNIT: "Condensing Unit 1",
+        }
+
+        self.condenser.keyword_value_pairs = {BDL_CondenserKeywords.COOLING_EIR: 0.25}
+
+        self.rmd.populate_rmd_data(testing=True)
+        expected_data_structure = {}
+        self.assertEqual(expected_data_structure, self.system.system_data_structure)

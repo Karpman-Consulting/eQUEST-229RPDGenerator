@@ -996,6 +996,13 @@ class BDLEnums:
                 "MAX-SUPPLY-T",
                 "MIN-SUPPLY-T",
                 "HEAT-FUEL-METER",
+                "CONDENSING-UNIT",
+            ]
+        ),
+        "CondenserKeywords": _ListEnum(
+            [
+                "TYPE",
+                "COOLING-EIR",
             ]
         ),
         "UndergroundWallKeywords": _ListEnum(
