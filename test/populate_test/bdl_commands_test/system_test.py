@@ -713,3 +713,24 @@ class TestSystems(unittest.TestCase):
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {}
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_efficiency_population(self, mock_get_output_data):
+        """
+        Verify that no errors arise from populating vrf efficiency.
+        """
+        mock_get_output_data.return_value = {}
+        self.condenser = Condenser("Condensing Unit 1", self.rmd)
+
+        self.system.keyword_value_pairs = {
+            BDL_SystemKeywords.TYPE: BDL_SystemTypes.PVVT,
+            BDL_SystemKeywords.RATED_ECT: 95,
+            BDL_SystemKeywords.COOLING_EIR: 0.32,
+            BDL_SystemKeywords.CONDENSING_UNIT: "Condensing Unit 1",
+        }
+
+        self.condenser.keyword_value_pairs = {BDL_CondenserKeywords.COOLING_EIR: 0.25}
+
+        self.rmd.populate_rmd_data(testing=True)
+        expected_data_structure = {}
+        self.assertEqual(expected_data_structure, self.system.system_data_structure)

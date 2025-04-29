@@ -574,6 +574,8 @@ class System(ParentNode):
         if has_energy_recovery:
             self.populate_air_energy_recovery()
 
+        self.populate_cooling_eff_metric_and_value()
+        y = 1
     def get_output_requests(self):
         """Get the output requests for the system dependent on various system component types."""
         requests = {
@@ -1682,3 +1684,33 @@ class System(ParentNode):
                 )
                 if heat_fuel_meter:
                     return heat_fuel_meter.fuel_type
+
+    def populate_cooling_eff_metric_and_value(self):
+        """
+        Populate the cooling system efficiency metric and the efficiency value.
+        """
+        # This function assumes that bdl_output_cool_type will be revised to capture water-cooled options for PVVT, PSZ, and PVAVS.
+        cop = 1 / self.get_inp(BDL_SystemKeywords.COOLING_EIR)
+        entering_condenser_temperature = self.get_inp(BDL_SystemKeywords.RATED_ECT)
+
+        cooling_type_mapping = {
+            BDL_OutputCoolingTypes.CHILLED_WATER: (CoolingMetricOptions.NONE, None),
+            BDL_OutputCoolingTypes.DX_AIR_COOLED: (
+                CoolingMetricOptions.FULL_LOAD_COEFFICIENT_OF_PERFORMANCE_NO_FAN if entering_condenser_temperature == 95 else CoolingMetricOptions.OTHER,
+                cop
+            ),
+            BDL_OutputCoolingTypes.DX_WATER_COOLED: {
+                86: CoolingMetricOptions.COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN,
+                59: CoolingMetricOptions.COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_GROUND_WATER_NO_FAN,
+                77: CoolingMetricOptions.COEFFICIENT_OF_PERFORMANCE_BRINE_TO_AIR_GROUND_LOOP_NO_FAN
+            }.get(entering_condenser_temperature, CoolingMetricOptions.OTHER)
+        }
+
+        if self.bdl_output_cool_type in cooling_type_mapping:
+            metric_type, metric_value = cooling_type_mapping[self.bdl_output_cool_type]
+            self.cool_sys_efficiency_metric_types[0] = metric_type
+            self.cool_sys_efficiency_metric_values[0] = metric_value
+        else:
+            # Placeholder for developing later cases such as VRF systems.
+            pass
+
