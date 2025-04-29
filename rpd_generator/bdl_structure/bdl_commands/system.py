@@ -367,8 +367,8 @@ class System(ParentNode):
         self.heat_sys_oversizing_factor = None
         self.heat_sys_is_sized_based_on_design_day = None
         self.heat_sys_heating_coil_setpoint = None
-        self.heat_sys_efficiency_metric_values = None
-        self.heat_sys_efficiency_metric_types = None
+        self.heat_sys_efficiency_metric_values = [None]
+        self.heat_sys_efficiency_metric_types = [None]
         self.heat_sys_heatpump_auxiliary_heat_type = None
         self.heat_sys_heatpump_auxiliary_heat_high_shutoff_temperature = None
         self.heat_sys_heatpump_low_shutoff_temperature = None
@@ -388,8 +388,8 @@ class System(ParentNode):
         self.cool_sys_chilled_water_loop = None
         self.cool_sys_condenser_water_loop = None
         self.vrf_sys_condenser = None
-        self.cool_sys_efficiency_metric_values = None
-        self.cool_sys_efficiency_metric_types = None
+        self.cool_sys_efficiency_metric_values = [None]
+        self.cool_sys_efficiency_metric_types = [None]
         self.cool_sys_dehumidification_type = None
         self.cool_sys_turndown_ratio = None
 
@@ -406,8 +406,8 @@ class System(ParentNode):
         self.preheat_sys_oversizing_factor = None
         self.preheat_sys_is_sized_based_on_design_day = None
         self.preheat_sys_heating_coil_setpoint = None
-        self.preheat_sys_efficiency_metric_values = None
-        self.preheat_sys_efficiency_metric_types = None
+        self.preheat_sys_efficiency_metric_values = [None]
+        self.preheat_sys_efficiency_metric_types = [None]
         self.preheat_sys_heatpump_auxiliary_heat_type = None
         self.preheat_sys_heatpump_auxiliary_heat_high_shutoff_temperature = None
         self.preheat_sys_heatpump_low_shutoff_temperature = None
@@ -575,7 +575,7 @@ class System(ParentNode):
             self.populate_air_energy_recovery()
 
         self.populate_cooling_eff_metric_and_value()
-        y = 1
+
     def get_output_requests(self):
         """Get the output requests for the system dependent on various system component types."""
         requests = {
@@ -1690,20 +1690,32 @@ class System(ParentNode):
         Populate the cooling system efficiency metric and the efficiency value.
         """
         # This function assumes that bdl_output_cool_type will be revised to capture water-cooled options for PVVT, PSZ, and PVAVS.
-        cop = 1 / self.get_inp(BDL_SystemKeywords.COOLING_EIR)
-        entering_condenser_temperature = self.get_inp(BDL_SystemKeywords.RATED_ECT)
+        cooling_eir = self.get_inp(BDL_SystemKeywords.COOLING_EIR)
+        if cooling_eir is not None:
+            cop = 1 / cooling_eir
+
+        rated_ect = self.get_inp(BDL_SystemKeywords.RATED_ECT)
+        if rated_ect is not None:
+            entering_condenser_temperature = rated_ect
 
         cooling_type_mapping = {
             BDL_OutputCoolingTypes.CHILLED_WATER: (CoolingMetricOptions.NONE, None),
             BDL_OutputCoolingTypes.DX_AIR_COOLED: (
-                CoolingMetricOptions.FULL_LOAD_COEFFICIENT_OF_PERFORMANCE_NO_FAN if entering_condenser_temperature == 95 else CoolingMetricOptions.OTHER,
-                cop
+                (
+                    CoolingMetricOptions.FULL_LOAD_COEFFICIENT_OF_PERFORMANCE_NO_FAN
+                    if entering_condenser_temperature == 95
+                    else CoolingMetricOptions.OTHER
+                ),
+                cop,
             ),
-            BDL_OutputCoolingTypes.DX_WATER_COOLED: {
-                86: CoolingMetricOptions.COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN,
-                59: CoolingMetricOptions.COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_GROUND_WATER_NO_FAN,
-                77: CoolingMetricOptions.COEFFICIENT_OF_PERFORMANCE_BRINE_TO_AIR_GROUND_LOOP_NO_FAN
-            }.get(entering_condenser_temperature, CoolingMetricOptions.OTHER)
+            BDL_OutputCoolingTypes.DX_WATER_COOLED: (
+                {
+                    86: CoolingMetricOptions.COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN,
+                    59: CoolingMetricOptions.COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_GROUND_WATER_NO_FAN,
+                    77: CoolingMetricOptions.COEFFICIENT_OF_PERFORMANCE_BRINE_TO_AIR_GROUND_LOOP_NO_FAN,
+                }.get(entering_condenser_temperature, CoolingMetricOptions.OTHER),
+                cop,
+            ),
         }
 
         if self.bdl_output_cool_type in cooling_type_mapping:
@@ -1714,3 +1726,75 @@ class System(ParentNode):
             # Placeholder for developing later cases such as VRF systems.
             pass
 
+    def populate_heating_eff_metric_and_value(self):
+        """
+        Populate the heating system efficiency metric and the efficiency value.
+        """
+        # Todo need to account for heating coil and preheat coil. Preheat cannot be a heatpump so rated temps do not matter.
+
+        heating_eir = self.get_inp(BDL_SystemKeywords.HEATING_EIR)
+        if heating_eir is not None:
+            eff_cop = 1 / heating_eir
+
+        furnace_hir = self.get_inp(BDL_SystemKeywords.FURNACE_HIR)
+        if furnace_hir is not None:
+            eff_et = 1 / furnace_hir
+
+        rated_ect = self.get_inp(BDL_SystemKeywords.HT_RATED_ECT)
+        if rated_ect is not None:
+            entering_condenser_temperature = rated_ect
+
+        match self.bdl_output_heat_type:
+            case BDL_OutputHeatingTypes.FURNACE:
+                self.heat_sys_efficiency_metric_types[0] = (
+                    HeatingMetricOptions.THERMAL_EFFICIENCY
+                )
+                self.heat_sys_efficiency_metric_values[0] = eff_et
+            case BDL_OutputHeatingTypes.HEAT_PUMP_AIR_COOLED:
+                if entering_condenser_temperature == 47:
+                    self.heat_sys_efficiency_metric_types[0] = (
+                        HeatingMetricOptions.HEAT_PUMP_COEFFICIENT_OF_PERFORMANCE_HIGH_TEMPERATURE_NO_FAN
+                    )
+                    self.heat_sys_efficiency_metric_values[0] = eff_cop
+                elif entering_condenser_temperature == 17:
+                    self.heat_sys_efficiency_metric_types[0] = (
+                        HeatingMetricOptions.HEAT_PUMP_COEFFICIENT_OF_PERFORMANCE_LOW_TEMPERATURE_NO_FAN
+                    )
+                    self.heat_sys_efficiency_metric_values[0] = eff_cop
+                else:
+                    self.heat_sys_efficiency_metric_types[0] = (
+                        HeatingMetricOptions.OTHER
+                    )
+                    self.heat_sys_efficiency_metric_values[0] = eff_cop
+            case BDL_OutputHeatingTypes.HEAT_PUMP_WATER_COOLED:
+                if entering_condenser_temperature == 68:
+                    self.heat_sys_efficiency_metric_types[0] = (
+                        HeatingMetricOptions.COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN
+                    )
+                    self.heat_sys_efficiency_metric_values[0] = eff_cop
+                elif entering_condenser_temperature == 50:
+                    self.heat_sys_efficiency_metric_types[0] = (
+                        HeatingMetricOptions.COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_GROUND_WATER_NO_FAN
+                    )
+                    self.heat_sys_efficiency_metric_values[0] = eff_cop
+                elif entering_condenser_temperature == 32:
+                    self.heat_sys_efficiency_metric_types[0] = (
+                        HeatingMetricOptions.COEFFICIENT_OF_PERFORMANCE_BRINE_TO_AIR_GROUND_LOOP_NO_FAN
+                    )
+                    self.heat_sys_efficiency_metric_values[0] = eff_cop
+                else:
+                    self.heat_sys_efficiency_metric_types[0] = (
+                        HeatingMetricOptions.OTHER
+                    )
+                    self.heat_sys_efficiency_metric_values[0] = eff_cop
+            case BDL_OutputHeatingTypes.ELECTRIC:
+                self.heat_sys_efficiency_metric_types[0] = (
+                    HeatingMetricOptions.THERMAL_EFFICIENCY
+                )
+                self.heat_sys_efficiency_metric_values[0] = 1
+            case BDL_OutputHeatingTypes.VRF:
+                # Handle VRF in future
+                pass
+            case _:
+                # Handle all other cases by doing nothing
+                pass

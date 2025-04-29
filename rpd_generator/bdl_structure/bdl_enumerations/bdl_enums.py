@@ -954,6 +954,8 @@ class BDLEnums:
                 "RATED-SST",
                 "RATED-ECT",
                 "HT-RATED-SDT",
+                "HT-RATED-ECT",
+                "HT-RATED-EDB",
                 "DES-MIN-SDT",
                 "DES-MAX-SDT",
                 "DES-MIN-SST",

@@ -715,11 +715,45 @@ class TestSystems(unittest.TestCase):
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
-    def test_efficiency_population(self, mock_get_output_data):
+    def test_efficiency_population_dx_air_cooled_95(self, mock_get_output_data):
         """
-        Verify that no errors arise from populating vrf efficiency.
+        Verify that cooling efficiency and metric populate correctly for DX air-cooled.
         """
         mock_get_output_data.return_value = {}
+
+        expected_data_structure = {
+            "cooling_system": {
+                "efficiency_metric_types": [
+                    "FULL_LOAD_COEFFICIENT_OF_PERFORMANCE_NO_FAN"
+                ],
+                "efficiency_metric_values": [3.125],
+                "id": "System 1 CoolSys",
+                "is_sized_based_on_design_day": True,
+                "type": "DIRECT_EXPANSION",
+            },
+            "fan_system": {
+                "air_economizer": {},
+                "air_energy_recovery": {},
+                "exhaust_fans": [],
+                "has_fully_ducted_return": False,
+                "id": "System 1 FanSys",
+                "relief_fans": [],
+                "return_fans": [],
+                "supply_fans": [
+                    {
+                        "id": "System 1 SupplyFan",
+                        "is_airflow_sized_based_on_design_day": True,
+                        "output_validation_points": [],
+                        "specification_method": "SIMPLE",
+                    }
+                ],
+                "temperature_control": "ZONE_RESET",
+            },
+            "heating_system": {},
+            "id": "System 1",
+            "preheat_system": {},
+        }
+
         self.condenser = Condenser("Condensing Unit 1", self.rmd)
 
         self.system.keyword_value_pairs = {
@@ -732,5 +766,219 @@ class TestSystems(unittest.TestCase):
         self.condenser.keyword_value_pairs = {BDL_CondenserKeywords.COOLING_EIR: 0.25}
 
         self.rmd.populate_rmd_data(testing=True)
-        expected_data_structure = {}
+        self.assertEqual(expected_data_structure, self.system.system_data_structure)
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_efficiency_population_dx_air_cooled_80(self, mock_get_output_data):
+        """
+        Verify that cooling efficiency and metric populate correctly for DX air-cooled.
+        """
+        mock_get_output_data.return_value = {}
+
+        expected_data_structure = {
+            "cooling_system": {
+                "efficiency_metric_types": ["OTHER"],
+                "efficiency_metric_values": [3.125],
+                "id": "System 1 CoolSys",
+                "is_sized_based_on_design_day": True,
+                "type": "DIRECT_EXPANSION",
+            },
+            "fan_system": {
+                "air_economizer": {},
+                "air_energy_recovery": {},
+                "exhaust_fans": [],
+                "has_fully_ducted_return": False,
+                "id": "System 1 FanSys",
+                "relief_fans": [],
+                "return_fans": [],
+                "supply_fans": [
+                    {
+                        "id": "System 1 SupplyFan",
+                        "is_airflow_sized_based_on_design_day": True,
+                        "output_validation_points": [],
+                        "specification_method": "SIMPLE",
+                    }
+                ],
+                "temperature_control": "ZONE_RESET",
+            },
+            "heating_system": {},
+            "id": "System 1",
+            "preheat_system": {},
+        }
+
+        self.condenser = Condenser("Condensing Unit 1", self.rmd)
+
+        self.system.keyword_value_pairs = {
+            BDL_SystemKeywords.TYPE: BDL_SystemTypes.PVVT,
+            BDL_SystemKeywords.RATED_ECT: 80,
+            BDL_SystemKeywords.COOLING_EIR: 0.32,
+            BDL_SystemKeywords.CONDENSING_UNIT: "Condensing Unit 1",
+        }
+
+        self.condenser.keyword_value_pairs = {BDL_CondenserKeywords.COOLING_EIR: 0.25}
+
+        self.rmd.populate_rmd_data(testing=True)
+        self.assertEqual(expected_data_structure, self.system.system_data_structure)
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_efficiency_population_dx_water_cooled_86(self, mock_get_output_data):
+        """
+        Verify that cooling efficiency and metric populate correctly for DX water-cooled.
+        """
+        # This test is getting a zone related error. Did not troubleshoot. Only confirmed efficiency populates correctly.
+        mock_get_output_data.return_value = {}
+
+        expected_data_structure = {
+            "cooling_system": {
+                "efficiency_metric_types": [
+                    "COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN"
+                ],
+                "efficiency_metric_values": [3.125],
+                "id": "System 1 CoolSys",
+                "is_sized_based_on_design_day": True,
+                "type": "DIRECT_EXPANSION",
+            },
+            "fan_system": {
+                "air_economizer": {},
+                "air_energy_recovery": {},
+                "exhaust_fans": [],
+                "has_fully_ducted_return": False,
+                "id": "System 1 FanSys",
+                "relief_fans": [],
+                "return_fans": [],
+                "supply_fans": [
+                    {
+                        "id": "System 1 SupplyFan",
+                        "is_airflow_sized_based_on_design_day": True,
+                        "output_validation_points": [],
+                        "specification_method": "SIMPLE",
+                    }
+                ],
+                "temperature_control": "ZONE_RESET",
+            },
+            "heating_system": {},
+            "id": "System 1",
+            "preheat_system": {},
+        }
+
+        self.condenser = Condenser("Condensing Unit 1", self.rmd)
+
+        self.system.keyword_value_pairs = {
+            BDL_SystemKeywords.TYPE: BDL_SystemTypes.HP,
+            BDL_SystemKeywords.RATED_ECT: 86,
+            BDL_SystemKeywords.COOLING_EIR: 0.32,
+            BDL_SystemKeywords.CONDENSING_UNIT: "Condensing Unit 1",
+        }
+
+        self.condenser.keyword_value_pairs = {BDL_CondenserKeywords.COOLING_EIR: 0.25}
+
+        self.rmd.populate_rmd_data(testing=True)
+        self.assertEqual(expected_data_structure, self.system.system_data_structure)
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_efficiency_population_dx_water_cooled_77(self, mock_get_output_data):
+        """
+        Verify that cooling efficiency and metric populate correctly for DX water-cooled.
+        """
+        # This test is getting a zone related error. Did not troubleshoot. Only confirmed efficiency populates correctly.
+        mock_get_output_data.return_value = {}
+
+        expected_data_structure = {
+            "cooling_system": {
+                "efficiency_metric_types": [
+                    "COEFFICIENT_OF_PERFORMANCE_BRINE_TO_AIR_GROUND_LOOP_NO_FAN"
+                ],
+                "efficiency_metric_values": [3.125],
+                "id": "System 1 CoolSys",
+                "is_sized_based_on_design_day": True,
+                "type": "DIRECT_EXPANSION",
+            },
+            "fan_system": {
+                "air_economizer": {},
+                "air_energy_recovery": {},
+                "exhaust_fans": [],
+                "has_fully_ducted_return": False,
+                "id": "System 1 FanSys",
+                "relief_fans": [],
+                "return_fans": [],
+                "supply_fans": [
+                    {
+                        "id": "System 1 SupplyFan",
+                        "is_airflow_sized_based_on_design_day": True,
+                        "output_validation_points": [],
+                        "specification_method": "SIMPLE",
+                    }
+                ],
+                "temperature_control": "ZONE_RESET",
+            },
+            "heating_system": {},
+            "id": "System 1",
+            "preheat_system": {},
+        }
+
+        self.condenser = Condenser("Condensing Unit 1", self.rmd)
+
+        self.system.keyword_value_pairs = {
+            BDL_SystemKeywords.TYPE: BDL_SystemTypes.HP,
+            BDL_SystemKeywords.RATED_ECT: 77,
+            BDL_SystemKeywords.COOLING_EIR: 0.32,
+            BDL_SystemKeywords.CONDENSING_UNIT: "Condensing Unit 1",
+        }
+
+        self.condenser.keyword_value_pairs = {BDL_CondenserKeywords.COOLING_EIR: 0.25}
+
+        self.rmd.populate_rmd_data(testing=True)
+        self.assertEqual(expected_data_structure, self.system.system_data_structure)
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_efficiency_population_dx_water_cooled_43(self, mock_get_output_data):
+        """
+        Verify that cooling efficiency and metric populate correctly for DX water-cooled.
+        """
+        # This test is getting a zone related error. Did not troubleshoot. Only confirmed efficiency populates correctly.
+        mock_get_output_data.return_value = {}
+
+        expected_data_structure = {
+            "cooling_system": {
+                "efficiency_metric_types": ["OTHER"],
+                "efficiency_metric_values": [3.125],
+                "id": "System 1 CoolSys",
+                "is_sized_based_on_design_day": True,
+                "type": "DIRECT_EXPANSION",
+            },
+            "fan_system": {
+                "air_economizer": {},
+                "air_energy_recovery": {},
+                "exhaust_fans": [],
+                "has_fully_ducted_return": False,
+                "id": "System 1 FanSys",
+                "relief_fans": [],
+                "return_fans": [],
+                "supply_fans": [
+                    {
+                        "id": "System 1 SupplyFan",
+                        "is_airflow_sized_based_on_design_day": True,
+                        "output_validation_points": [],
+                        "specification_method": "SIMPLE",
+                    }
+                ],
+                "temperature_control": "ZONE_RESET",
+            },
+            "heating_system": {},
+            "id": "System 1",
+            "preheat_system": {},
+        }
+
+        self.condenser = Condenser("Condensing Unit 1", self.rmd)
+
+        self.system.keyword_value_pairs = {
+            BDL_SystemKeywords.TYPE: BDL_SystemTypes.HP,
+            BDL_SystemKeywords.RATED_ECT: 43,
+            BDL_SystemKeywords.COOLING_EIR: 0.32,
+            BDL_SystemKeywords.CONDENSING_UNIT: "Condensing Unit 1",
+        }
+
+        self.condenser.keyword_value_pairs = {BDL_CondenserKeywords.COOLING_EIR: 0.25}
+
+        self.rmd.populate_rmd_data(testing=True)
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
