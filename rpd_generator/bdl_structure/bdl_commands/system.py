@@ -575,6 +575,7 @@ class System(ParentNode):
             self.populate_air_energy_recovery()
 
         self.populate_cooling_eff_metric_and_value()
+        self.populate_heating_eff_metric_and_value()
 
     def get_output_requests(self):
         """Get the output requests for the system dependent on various system component types."""
@@ -1690,13 +1691,17 @@ class System(ParentNode):
         Populate the cooling system efficiency metric and the efficiency value.
         """
         # This function assumes that bdl_output_cool_type will be revised to capture water-cooled options for PVVT, PSZ, and PVAVS.
+        cop = None
+        entering_condenser_temperature = None
         cooling_eir = self.get_inp(BDL_SystemKeywords.COOLING_EIR)
         if cooling_eir is not None:
-            cop = 1 / cooling_eir
+            cop = 1 / self.try_float(cooling_eir)
 
         rated_ect = self.get_inp(BDL_SystemKeywords.RATED_ECT)
         if rated_ect is not None:
-            entering_condenser_temperature = rated_ect
+            entering_condenser_temperature = self.try_float(rated_ect)
+        #else:
+        #    entering_condenser_temperature = -999
 
         cooling_type_mapping = {
             BDL_OutputCoolingTypes.CHILLED_WATER: (CoolingMetricOptions.NONE, None),
@@ -1731,18 +1736,22 @@ class System(ParentNode):
         Populate the heating system efficiency metric and the efficiency value.
         """
         # Todo need to account for heating coil and preheat coil. Preheat cannot be a heatpump so rated temps do not matter.
+        # Todo this is working except the population of self.bdl_output_heat_type needs refinement for this to work properly.
 
+        eff_cop = None
+        eff_et = None
+        rated_ect = None
         heating_eir = self.get_inp(BDL_SystemKeywords.HEATING_EIR)
         if heating_eir is not None:
-            eff_cop = 1 / heating_eir
+            eff_cop = 1 / self.try_float(heating_eir)
 
         furnace_hir = self.get_inp(BDL_SystemKeywords.FURNACE_HIR)
         if furnace_hir is not None:
-            eff_et = 1 / furnace_hir
+            eff_et = 1 / self.try_float(furnace_hir)
 
         rated_ect = self.get_inp(BDL_SystemKeywords.HT_RATED_ECT)
         if rated_ect is not None:
-            entering_condenser_temperature = rated_ect
+            entering_condenser_temperature = self.try_float(rated_ect)
 
         match self.bdl_output_heat_type:
             case BDL_OutputHeatingTypes.FURNACE:
@@ -1796,5 +1805,5 @@ class System(ParentNode):
                 # Handle VRF in future
                 pass
             case _:
-                # Handle all other cases by doing nothing
-                pass
+                self.heat_sys_efficiency_metric_types[0] = None
+                self.heat_sys_efficiency_metric_values[0] = None
