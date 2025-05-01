@@ -160,6 +160,7 @@ class System(ParentNode):
         BDL_SystemHeatingTypes.FURNACE: BDL_OutputHeatingTypes.FURNACE,
         BDL_SystemHeatingTypes.ELECTRIC: BDL_OutputHeatingTypes.ELECTRIC,
         BDL_SystemHeatingTypes.HOT_WATER: BDL_OutputHeatingTypes.HOT_WATER,
+        BDL_SystemHeatingTypes.CONDENSING_UNIT: BDL_OutputHeatingTypes.VRF,
     }
     cool_type_map = {
         BDL_SystemCoolingTypes.ELEC_DX: CoolingSystemOptions.DIRECT_EXPANSION,
@@ -1023,7 +1024,7 @@ class System(ParentNode):
             }
         )
 
-        self.bdl_output_heat_type = self.BDL_output_system_cooling_type_map.get(
+        self.bdl_output_heat_type = self.BDL_output_system_heating_type_map.get(
             self.get_inp(BDL_SystemKeywords.TYPE)
         )
         self.bdl_output_cool_type = self.BDL_output_system_cooling_type_map.get(
