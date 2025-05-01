@@ -725,6 +725,14 @@ class BDLEnums:
                 "THREE-WAY",
             ]
         ),
+        "SystemCondenserTypes": _ListEnum(
+            [
+                "AIR-COOLED",
+                "WATER-COOLED",
+                "EVAP-PRECOOLED",
+                "EVAP-COOLED",
+            ]
+        ),
         "SystemCondenserValveTypes": _ListEnum(
             [
                 "YES",
