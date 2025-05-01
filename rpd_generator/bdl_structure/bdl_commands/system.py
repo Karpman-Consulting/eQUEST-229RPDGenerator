@@ -310,7 +310,9 @@ class System(ParentNode):
             self.rmd.system_names.append(u_name)
             self.rmd.bdl_obj_instances[u_name] = self
 
-        self.sys_id = None  # used to store the implicit system id for zonal systems
+        # used to store the unique 229 schema ID for zonal systems, so that the original BDL u_name may be preserved
+        self.sys_id = None
+
         self.system_data_structure = {}
 
         self.omit = False
@@ -1066,6 +1068,14 @@ class System(ParentNode):
     def populate_heating_system(self, output_data, heat_source):
         self.heat_sys_id = self.u_name + " HeatSys"
         self.heat_sys_type = self.heat_type_map.get(heat_source)
+        if self.get_inp(BDL_SystemKeywords.TYPE) == BDL_SystemTypes.HP and self.get_inp(
+            BDL_SystemKeywords.WLHP_CATEGORY
+        ) in [
+            BDL_WLHPCategoryOptions.WATER_LOOP,
+            BDL_WLHPCategoryOptions.GROUND_WATER,
+            BDL_WLHPCategoryOptions.GROUND_LOOP,
+        ]:
+            self.heat_sys_type = HeatingSystemOptions.HEAT_PUMP
         self.heat_sys_hot_water_loop = self.get_inp(BDL_SystemKeywords.HW_LOOP)
         self.heat_sys_water_source_heat_pump_loop = self.get_inp(
             BDL_SystemKeywords.CW_LOOP
