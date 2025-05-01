@@ -65,6 +65,7 @@ BDL_OutputHeatingTypes = BDLEnums.bdl_enums["OutputHeatingTypes"]
 BDL_ReturnAirPathOptions = BDLEnums.bdl_enums["SystemReturnAirPathOptions"]
 BDL_WLHPCategoryOptions = BDLEnums.bdl_enums["SystemWLHPCategoryOptions"]
 BDL_SystemCondenserTypes = BDLEnums.bdl_enums["SystemCondenserTypes"]
+BDL_CondenserKeywords = BDLEnums.bdl_enums["CondenserKeywords"]
 
 
 class System(ParentNode):
@@ -1726,6 +1727,7 @@ class System(ParentNode):
         Populate the cooling system efficiency metric and the efficiency value.
         """
         # This function assumes that bdl_output_cool_type will be revised to capture water-cooled options for PVVT, PSZ, and PVAVS.
+        eff = None
         cop = None
         entering_condenser_temperature = None
         cooling_eir = self.get_inp(BDL_SystemKeywords.COOLING_EIR)
@@ -1735,8 +1737,6 @@ class System(ParentNode):
         rated_ect = self.get_inp(BDL_SystemKeywords.RATED_ECT)
         if rated_ect is not None:
             entering_condenser_temperature = self.try_float(rated_ect)
-        #else:
-        #    entering_condenser_temperature = -999
 
         cooling_type_mapping = {
             BDL_OutputCoolingTypes.CHILLED_WATER: (CoolingMetricOptions.NONE, None),
@@ -1762,9 +1762,22 @@ class System(ParentNode):
             metric_type, metric_value = cooling_type_mapping[self.bdl_output_cool_type]
             self.cool_sys_efficiency_metric_types[0] = metric_type
             self.cool_sys_efficiency_metric_values[0] = metric_value
+        elif self.bdl_output_heat_type == BDL_OutputHeatingTypes.VRF:
+            # Covers VRF, takes the efficiency from the condensing unit
+            rated_odb = self.vrf_sys_condenser.get_inp(BDL_CondenserKeywords.COOL_RATED_ODB)
+            eff = self.vrf_sys_condenser.get_inp(BDL_CondenserKeywords.COOLING_EIR)
+            if eff is not None:
+                cop = 1 / self.try_float(eff)
+            if rated_odb == 95:
+                self.cool_sys_efficiency_metric_types[0] = CoolingMetricOptions.FULL_LOAD_COEFFICIENT_OF_PERFORMANCE_NO_FAN
+                self.cool_sys_efficiency_metric_values[0] = cop
+            else:
+                self.cool_sys_efficiency_metric_types[0] = CoolingMetricOptions.OTHER
+                self.cool_sys_efficiency_metric_values[0] = cop
         else:
-            # Placeholder for developing later cases such as VRF systems.
-            pass
+            self.cool_sys_efficiency_metric_types[0] = CoolingMetricOptions.OTHER
+            self.cool_sys_efficiency_metric_values[0] = cop
+
 
     def populate_heating_eff_metric_and_value(self):
         """
