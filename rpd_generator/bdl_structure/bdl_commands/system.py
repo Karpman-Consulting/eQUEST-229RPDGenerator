@@ -144,8 +144,8 @@ class System(ParentNode):
         BDL_SystemHeatingTypes.STEAM: HeatingSystemOptions.OTHER,
     }
     BDL_condenser_output_cool_type_map = {
-        BDL_SystemCondenserTypes.AIR_COOLED: BDL_OutputHeatingTypes.BDL_OutputCoolingTypes.DX_AIR_COOLED,
-        BDL_SystemCondenserTypes.WATER_COOLED: BDL_OutputHeatingTypes.BDL_OutputCoolingTypes.DX_WATER_COOLED,
+        BDL_SystemCondenserTypes.AIR_COOLED: BDL_OutputCoolingTypes.DX_AIR_COOLED,
+        BDL_SystemCondenserTypes.WATER_COOLED: BDL_OutputCoolingTypes.DX_WATER_COOLED,
         BDL_SystemCondenserTypes.EVAP_PRECOOLED: None,
         BDL_SystemCondenserTypes.EVAP_COOLED: None,
     }
@@ -965,12 +965,14 @@ class System(ParentNode):
 
     def update_system_mapping(self):
         """Update various system mapping based on the system component types."""
-        cool_source = self.get_inp(BDL_SystemKeywords.COOL_SOURCE)
-        cool_type = self.cool_type_map.get(cool_source)
         self.system_cooling_type_map.update(
             {
-                BDL_SystemTypes.PIU: cool_type,
-                BDL_SystemTypes.DOAS: cool_type,
+                BDL_SystemTypes.PIU: self.cool_type_map.get(
+                    self.get_inp(BDL_SystemKeywords.COOL_SOURCE)
+                ),
+                BDL_SystemTypes.DOAS: self.cool_type_map.get(
+                    self.get_inp(BDL_SystemKeywords.COOL_SOURCE)
+                ),
             }
         )
         self.BDL_output_heat_type_map.update(
@@ -980,12 +982,14 @@ class System(ParentNode):
                 )
             }
         )
+
         self.bdl_output_heat_type = self.BDL_output_heat_type_map.get(
             self.get_inp(BDL_SystemKeywords.HEAT_SOURCE)
         )
         self.bdl_output_cool_type = self.BDL_condenser_output_cool_type_map.get(
             self.get_inp(BDL_SystemKeywords.CONDENSER_TYPE)
         )
+
         self.BDL_output_system_heating_type_map.update(
             {
                 BDL_SystemTypes.PTAC: self.bdl_output_heat_type,
@@ -1017,6 +1021,10 @@ class System(ParentNode):
                 BDL_SystemTypes.PVVT: self.bdl_output_cool_type,
                 BDL_SystemTypes.RESYS2: self.bdl_output_cool_type,
             }
+        )
+
+        self.bdl_output_heat_type = self.BDL_output_system_cooling_type_map.get(
+            self.get_inp(BDL_SystemKeywords.TYPE)
         )
         self.bdl_output_cool_type = self.BDL_output_system_cooling_type_map.get(
             self.get_inp(BDL_SystemKeywords.TYPE)

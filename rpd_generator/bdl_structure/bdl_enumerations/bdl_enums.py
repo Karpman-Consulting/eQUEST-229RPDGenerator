@@ -914,6 +914,7 @@ class BDLEnums:
                 "HEAT-SIZING-RATI",
                 "HEATING-CAPACITY",
                 "COOL-SOURCE",
+                "CONDENSER-TYPE",
                 "CHW-LOOP",
                 "CW-LOOP",
                 "CHW-VALVE-TYPE",
