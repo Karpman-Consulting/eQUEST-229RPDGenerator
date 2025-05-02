@@ -1735,7 +1735,6 @@ class System(ParentNode):
             entering_condenser_temperature = self.try_float(rated_ect)
 
         cooling_type_mapping = {
-            BDL_OutputCoolingTypes.CHILLED_WATER: (CoolingMetricOptions.NONE, None),
             BDL_OutputCoolingTypes.DX_AIR_COOLED: (
                 (
                     CoolingMetricOptions.FULL_LOAD_COEFFICIENT_OF_PERFORMANCE_NO_FAN
@@ -1754,14 +1753,17 @@ class System(ParentNode):
             ),
         }
 
-        if self.bdl_output_cool_type in cooling_type_mapping and self.bdl_output_heat_type != BDL_OutputHeatingTypes.VRF:
+        if (
+            self.bdl_output_cool_type in cooling_type_mapping
+            and self.bdl_output_heat_type != BDL_OutputHeatingTypes.VRF
+        ):
             metric_type, metric_value = cooling_type_mapping[self.bdl_output_cool_type]
             self.cool_sys_efficiency_metric_types.append(metric_type)
             self.cool_sys_efficiency_metric_values.append(metric_value)
         elif self.bdl_output_heat_type == BDL_OutputHeatingTypes.VRF:
             # Covers VRF, takes the efficiency from the condensing unit
-            rated_odb = self.try_float(self.vrf_sys_condenser.get_inp(
-                BDL_CondenserKeywords.COOL_RATED_ODB)
+            rated_odb = self.try_float(
+                self.vrf_sys_condenser.get_inp(BDL_CondenserKeywords.COOL_RATED_ODB)
             )
             eff = self.vrf_sys_condenser.get_inp(BDL_CondenserKeywords.COOLING_EIR)
             if eff is not None:
@@ -1846,7 +1848,7 @@ class System(ParentNode):
             self.heat_sys_efficiency_metric_values.append(1)
 
         elif self.bdl_output_heat_type == BDL_OutputHeatingTypes.VRF:
-            pass #efficiency is not defined for VRF in eQuest
+            pass  # efficiency is not defined for VRF in eQuest
         else:
             pass
 

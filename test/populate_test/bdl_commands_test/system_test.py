@@ -908,7 +908,9 @@ class TestSystems(unittest.TestCase):
 
         expected_data_structure = {
             "cooling_system": {
-                "efficiency_metric_types": ["COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN"],
+                "efficiency_metric_types": [
+                    "COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN"
+                ],
                 "efficiency_metric_values": [3.125],
                 "id": "System 1 CoolSys",
                 "is_sized_based_on_design_day": True,
