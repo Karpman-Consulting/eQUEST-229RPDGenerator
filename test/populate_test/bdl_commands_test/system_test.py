@@ -611,8 +611,8 @@ class TestSystems(unittest.TestCase):
         expected_data_structure = {
             "id": "System 1",
             "cooling_system": {
-                'efficiency_metric_types': [],
-                'efficiency_metric_values': [],
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
                 "id": "System 1 CoolSys",
                 "is_sized_based_on_design_day": True,
                 "type": "FLUID_LOOP",
@@ -667,15 +667,18 @@ class TestSystems(unittest.TestCase):
                 "temperature_control": "OTHER",
             },
             "heating_system": {
-                'efficiency_metric_types': [],
-                'efficiency_metric_values': [],
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
                 "id": "System 1 HeatSys",
                 "is_sized_based_on_design_day": True,
                 "type": "FLUID_LOOP",
             },
-            'id': 'System 1',
-            'preheat_system': {'efficiency_metric_types': [],
-                               'efficiency_metric_values': []}}
+            "id": "System 1",
+            "preheat_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
+            },
+        }
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
