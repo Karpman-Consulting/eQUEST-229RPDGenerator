@@ -716,7 +716,9 @@ class TestSystems(unittest.TestCase):
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "cooling_system": {
-                "efficiency_metric_types": ["OTHER"],
+                "efficiency_metric_types": [
+                    "FULL_LOAD_COEFFICIENT_OF_PERFORMANCE_NO_FAN"
+                ],
                 "efficiency_metric_values": [4.0],
                 "id": "System 1 CoolSys",
                 "is_sized_based_on_design_day": True,
@@ -831,7 +833,7 @@ class TestSystems(unittest.TestCase):
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_efficiency_population_dx_air_cooled_80(self, mock_get_output_data):
         """
-        Verify that cooling efficiency and metric populate correctly for DX air-cooled.
+        Verify that cooling efficiency and metric populate correctly for DX air-cooled with a rated temp that does not match rated conditions.
         """
         mock_get_output_data.return_value = {}
 
@@ -862,7 +864,9 @@ class TestSystems(unittest.TestCase):
                 "temperature_control": "ZONE_RESET",
             },
             "heating_system": {
-                "efficiency_metric_types": ["HEAT_PUMP_COEFFICIENT_OF_PERFORMANCE_HIGH_TEMPERATURE_NO_FAN"],
+                "efficiency_metric_types": [
+                    "HEAT_PUMP_COEFFICIENT_OF_PERFORMANCE_HIGH_TEMPERATURE_NO_FAN"
+                ],
                 "efficiency_metric_values": [3.4482758620689657],
                 "energy_source_type": "ELECTRICITY",
                 "id": "System 1 HeatSys",

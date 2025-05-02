@@ -1015,7 +1015,7 @@ class BDLEnums:
         "CondenserKeywords": _ListEnum(
             [
                 "TYPE",
-                "COOLING-EIR"
+                "COOLING-EIR",
                 "COOL-RATED-ODB",
             ]
         ),
