@@ -2,6 +2,7 @@ import customtkinter as ctk
 from PIL import Image
 
 import interface.custom_widgets as cw
+from interface.CTkToolTip import CTkToolTip
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
 from interface.CTkMessagebox import CTkMessagebox
@@ -301,6 +302,10 @@ class BuildingSubview(CTkXYFrame):
             remove_button.grid_remove()
 
         building_name_entry = ctk.CTkEntry(self)
+        building_name_tooltip = CTkToolTip(
+            building_name_entry,
+            message="Enter name for the building",
+        )
         building_name_entry.grid(row=row, column=0, padx=PAD20END, pady=PAD20END)
 
         # Default set to "Building 1" here. We need to make a whole pass at setting defaults so this may change
@@ -329,9 +334,18 @@ class BuildingSubview(CTkXYFrame):
             remove_button.grid(row=row, column=3, padx=PAD20END, pady=PAD20END)
 
         # TODO: Customize spinboxes to allow validation
+        # TODO: Customize spinboxes to support tooltips
         above_grade_spinbox = cw.IntSpinbox(self)
+        above_grade_tooltip = CTkToolTip(
+            above_grade_spinbox,
+            message="Enter number of floors above grade for the building",
+        )
         above_grade_spinbox.grid(row=row, column=1, padx=PAD20END, pady=PAD20END)
         below_grade_spinbox = cw.IntSpinbox(self)
+        below_grade_tooltip = CTkToolTip(
+            below_grade_spinbox,
+            message="Enter number of floors below grade for the building",
+        )
         below_grade_spinbox.grid(row=row, column=2, padx=PAD20END, pady=PAD20END)
 
         self.add_building_button.grid(
@@ -426,9 +440,14 @@ class BuildingAreasSubview(CTkXYFrame):
         self.add_row(self.building_area_count + 1, is_first_row=True)
         self.is_view_populated = True
 
+    # TODO: I think on these big, busy views we should just use the tooltips on the header labels like here
     def add_column_headers(self):
         building_name_label = ctk.CTkLabel(self, text="Building Name", font=LABEL_FONT)
         building_name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
+        building_name_tooltip = CTkToolTip(
+            building_name_label,
+            message="Select the building associated with this area",
+        )
         area_name_label = ctk.CTkLabel(self, text="Building Area Name", font=LABEL_FONT)
         area_name_label.grid(row=0, column=1, padx=PAD20END, pady=5)
 
@@ -500,9 +519,17 @@ class BuildingAreasSubview(CTkXYFrame):
             state=READONLY,
         )
         building_name_combo._entry.configure(justify=LEFT)
+        building_name_tooltip = CTkToolTip(
+            building_name_combo,
+            message="Select the building associated with this area",
+        )
         building_name_combo.grid(row=row, column=0, padx=PAD20END, pady=PAD20END)
         area_name_entry = ctk.CTkEntry(
             self, validate="key", validatecommand=(vcmd, "%P")
+        )
+        area_name_tooltip = CTkToolTip(
+            area_name_entry,
+            message="Enter name for the building area",
         )
         area_name_entry.grid(row=row, column=1, padx=PAD20END, pady=PAD20END)
         status_checkbox = None
@@ -516,11 +543,19 @@ class BuildingAreasSubview(CTkXYFrame):
         if not self.app_data.is_all_new_construction.get():
             status_checkbox = ctk.CTkCheckBox(self, text="", width=30)
             status_checkbox.grid(row=row, column=2, padx=(0, 10), pady=PAD20END)
+            status_checkbox_tooltip = CTkToolTip(
+                status_checkbox,
+                message="Check if this building area is all new construction",
+            )
 
         fenestration_type_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.VerticalFenestrationBuildingAreaDescriptions2019ASHRAE901,
             state=READONLY,
+        )
+        fenestration_type_tooltip = CTkToolTip(
+            fenestration_type_combo,
+            message="Select the fenestration area type for this building area",
         )
         fenestration_type_combo._entry.configure(justify=LEFT)
         fenestration_type_combo.grid(row=row, column=3, padx=PAD20END, pady=PAD20END)
@@ -529,6 +564,10 @@ class BuildingAreasSubview(CTkXYFrame):
             values=self.app_data.LightingBuildingAreaDescriptions2019ASHRAE901T951TG38,
             state=READONLY,
         )
+        lighting_type_tooltip = CTkToolTip(
+            lighting_type_combo,
+            message="Select the lighting area type for this building area",
+        )
         lighting_type_combo._entry.configure(justify=LEFT)
         lighting_type_combo.grid(row=row, column=4, padx=PAD20END, pady=PAD20END)
         hvac_area_combo = ctk.CTkComboBox(
@@ -536,12 +575,20 @@ class BuildingAreasSubview(CTkXYFrame):
             values=self.app_data.HeatingVentilatingAirConditioningBuildingAreaDescriptions2019ASHRAE901,
             state=READONLY,
         )
+        hvac_area_tooltip = CTkToolTip(
+            hvac_area_combo,
+            message="Select the HVAC area type for this building area",
+        )
         hvac_area_combo._entry.configure(justify=LEFT)
         hvac_area_combo.grid(row=row, column=5, padx=PAD20END, pady=PAD20END)
         bpf_area_combo = ctk.CTkComboBox(
             self,
             values=BPF_AREA_OPTIONS,
             state=READONLY,
+        )
+        bpf_area_tooltip = CTkToolTip(
+            bpf_area_combo,
+            message="Select the BPF area type for this building area",
         )
         bpf_area_combo._entry.configure(justify=LEFT)
         bpf_area_combo.grid(row=row, column=6, padx=PAD20END, pady=PAD20END)
