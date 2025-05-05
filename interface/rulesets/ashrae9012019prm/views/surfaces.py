@@ -136,6 +136,7 @@ class SurfacesView(BaseView):
             view_data[subview.json_representation] = subview.get_subview_data()
         return view_data
 
+
 class DoorSurfaceSubview(CTkXYFrame):
     json_representation = "doors"
 
@@ -156,7 +157,7 @@ class DoorSurfaceSubview(CTkXYFrame):
     def populate_subview(self):
         self.add_column_headers()
 
-        #  Get doors from relevant rmd
+        # Get doors from relevant rmd
         door_names = self.app_data.get_rmd(
             ASHRAE9012019ModelOptions.BASELINE_0
         ).door_names
