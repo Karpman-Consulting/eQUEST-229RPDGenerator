@@ -1900,9 +1900,9 @@
                 "COOLING_2_0"
             ],
             "descriptions": [
-                "0.4% annual cumulative frequency of occurance",
-                "1.0% annual cumulative frequency of occurance",
-                "2.0% annual cumulative frequency of occurance"
+                "0.4% annual cumulative frequency of occurrence",
+                "1.0% annual cumulative frequency of occurrence",
+                "2.0% annual cumulative frequency of occurrence"
             ]
         },
         "HeatingDesignDayOptions": {
@@ -1912,8 +1912,8 @@
                 "HEATING_99_0"
             ],
             "descriptions": [
-                "99.6% annual cumulative frequency of occurance",
-                "99.0% annual cumulative frequency of occurance"
+                "99.6% annual cumulative frequency of occurrence",
+                "99.0% annual cumulative frequency of occurrence"
             ]
         },
         "Elevator": {

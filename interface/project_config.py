@@ -1,3 +1,6 @@
+import json
+from tkinter.filedialog import askopenfilename
+
 import customtkinter as ctk
 from tkinter import Menu, filedialog
 from pathlib import Path
@@ -65,9 +68,18 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             onvalue=True,
             offvalue=False,
         )
+        self.proposed_reflects_design_checkbox = ctk.CTkCheckBox(
+            self,
+            text="Proposed Design model reflects design documents?",
+            font=("Arial", 14),
+            variable=self.main_app.data.proposed_reflects_design,
+            command=self.toggle_design,
+            onvalue=True,
+            offvalue=False,
+        )
         self.rotation_exception_checkbox = ctk.CTkCheckBox(
             self,
-            text="Baseline Rotation Exempt? (90.1-2019 Table G3.1(5) Baseline Building Performance (a))",
+            text="Was it demonstrated to the satisfaction of the rating authority that the building orientation is dictated by site considerations?",
             font=("Arial", 14),
             variable=self.main_app.data.has_rotation_exception,
             command=self.toggle_baseline_rotations,
@@ -120,14 +132,13 @@ class ProjectConfigWindow(ctk.CTkToplevel):
 
     def create_nav_bar(self):
         # Create the button to continue to the Buildings page
-        self.continue_button.grid(row=7, column=0, columnspan=9, pady=15)
+        self.continue_button.grid(row=8, column=0, columnspan=9, pady=15)
 
     def create_menu_bar(self):
         menubar = Menu(self)
         file_menu = Menu(menubar, tearoff=0)
         file_menu.add_command(label="New", command="donothing")
-        file_menu.add_command(label="Open", command="donothing")
-        file_menu.add_command(label="Save", command="donothing")
+        file_menu.add_command(label="Open", command=self.load_project_data)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.quit)
         menubar.add_cascade(label="File", menu=file_menu)
@@ -190,17 +201,20 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             row=4, column=1, columnspan=2, sticky="ew", padx=5, pady=5
         )
 
-        # Row 5 Placeholder for the rotation exception checkbox
+        # Row 5 Placeholder for proposed reflects design checkbox
 
-        # Row 6
-        self.ruleset_models_label.grid(row=6, column=0, sticky="ew", padx=5, pady=5)
+        # Row 6 Placeholder for the rotation exception checkbox
+
+        # Row 7
+        self.ruleset_models_label.grid(row=7, column=0, sticky="ew", padx=5, pady=5)
 
         self.show_ruleset_models()
         self.ruleset_models_frame.grid(
-            row=6, column=1, columnspan=6, sticky="nsew", padx=5
+            row=7, column=1, columnspan=6, sticky="nsew", padx=5
         )
 
     def update_ruleset_model_frame(self, *args):
+        self.proposed_reflects_design_checkbox.grid_remove()
         self.rotation_exception_checkbox.grid_remove()
         self.clear_ruleset_models_frame()
         self.show_ruleset_models()
@@ -208,10 +222,16 @@ class ProjectConfigWindow(ctk.CTkToplevel):
     def show_ruleset_models(self):
         # Main logic
         if self.main_app.data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM":
-            self.rotation_exception_checkbox.grid(
+            self.proposed_reflects_design_checkbox.grid(
                 row=5, column=1, columnspan=4, sticky="w", padx=5, pady=(15, 5)
             )
-            labels = ["Design: ", "Proposed: ", "Baseline: "]
+            self.rotation_exception_checkbox.grid(
+                row=6, column=1, columnspan=4, sticky="w", padx=5, pady=(15, 5)
+            )
+            if not self.proposed_reflects_design_checkbox.get():
+                labels = ["Design: ", "Proposed: ", "Baseline: "]
+            else:
+                labels = ["Design: ", "Baseline: "]
             if not self.rotation_exception_checkbox.get():
                 labels.extend(["Baseline 90: ", "Baseline 180: ", "Baseline 270: "])
         else:
@@ -243,6 +263,20 @@ class ProjectConfigWindow(ctk.CTkToplevel):
     def clear_ruleset_models_frame(self):
         for widget in self.ruleset_models_frame.winfo_children():
             widget.grid_remove()
+
+    def toggle_design(self):
+        """Add or remove Design based on checkbox state."""
+        active_ruleset = self.main_app.data.selected_ruleset.get()
+        for row_widgets in self.ruleset_model_row_widgets[active_ruleset].values():
+            if row_widgets[0].cget("text") == "Proposed: ":
+                if row_widgets[0].winfo_ismapped():
+                    # If visible, hide them
+                    for widget in row_widgets:
+                        widget.grid_remove()
+                else:
+                    # If hidden, show them
+                    for widget in row_widgets:
+                        widget.grid()
 
     def toggle_baseline_rotations(self):
         """Add or remove Baseline rotation rows based on checkbox state."""
@@ -354,6 +388,12 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             required_models = ["User", "Proposed", "Baseline"]
             if not self.rotation_exception_checkbox.get():
                 required_models.extend(["Baseline 90", "Baseline 180", "Baseline 270"])
+            if self.proposed_reflects_design_checkbox.get():
+                self.main_app.data.ruleset_model_file_paths[active_ruleset][
+                    "Proposed"
+                ] = self.main_app.data.ruleset_model_file_paths[active_ruleset].get(
+                    "User"
+                )
 
             # Check if all required model types have file paths selected
             for model_type in required_models:
@@ -365,7 +405,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
                     ]
                 ):
                     model_type = model_type.replace("User", "Design")
-                    self.main_app.data.warnings.append(
+                    self.main_app.data.errors.append(
                         f"The '{model_type}' model is missing and is required to evaluate the ASHRAE 90.1-2019 ruleset."
                     )
 
@@ -431,3 +471,10 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         if path.parent:
             return f"{path.parent.name}/{path.name}"
         return path.name
+
+    def load_project_data(self):
+        """Load a saved project data file. In this window, we're loading from a blank state.
+        Slightly different flow from loading in compliance parameter window.
+        Must perform validation checks"""
+        self.main_app.data.populate_project_data()
+        self.validate_project_info()
