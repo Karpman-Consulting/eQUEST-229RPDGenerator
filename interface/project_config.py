@@ -67,7 +67,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         )
         self.proposed_reflects_design_checkbox = ctk.CTkCheckBox(
             self,
-            text="Proposed Design model reflects design documents",
+            text="Proposed Design model reflects design documents?",
             font=("Arial", 14),
             variable=self.main_app.data.proposed_reflects_design,
             command=self.toggle_design,
@@ -76,7 +76,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         )
         self.rotation_exception_checkbox = ctk.CTkCheckBox(
             self,
-            text="Baseline Rotation Exempt? (90.1-2019 Table G3.1(5) Baseline Building Performance (a))",
+            text="Was it demonstrated to the satisfaction of the rating authority that the building orientation is dictated by site considerations?",
             font=("Arial", 14),
             variable=self.main_app.data.has_rotation_exception,
             command=self.toggle_baseline_rotations,
