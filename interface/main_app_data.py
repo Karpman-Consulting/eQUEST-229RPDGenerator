@@ -39,6 +39,7 @@ class MainAppData:
         self.project_name = ctk.StringVar()
         self.selected_ruleset = ctk.StringVar()
         self.selected_ruleset.set("ASHRAE 90.1-2019 PRM")
+        self.proposed_reflects_design = ctk.BooleanVar()
         self.has_rotation_exception = ctk.BooleanVar()
         self.is_all_new_construction = ctk.BooleanVar()
         self.baseline_or_proposed = ctk.StringVar()

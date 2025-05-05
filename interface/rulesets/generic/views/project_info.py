@@ -405,13 +405,6 @@ class ProjectConfigSubview(CTkXYFrame):
             command=lambda selection: self.update_ruleset_model_frame(selection),
         )
         self.ruleset_dropdown.set(self.app_data.selected_ruleset.get())
-        self.rotation_exception_checkbox = ctk.CTkCheckBox(
-            self,
-            text="Baseline Rotation Exempt? (90.1-2019 Table G3.1(5) Baseline Building Performance (a))",
-            font=TEXT_FONT,
-            variable=self.app_data.has_rotation_exception,
-            command=self.toggle_baseline_rotations,
-        )
         self.ruleset_models_label = ctk.CTkLabel(
             self,
             text="Models: ",
@@ -493,21 +486,12 @@ class ProjectConfigSubview(CTkXYFrame):
 
     def update_ruleset_model_frame(self, selected_ruleset):
         self.app_data.selected_ruleset.set(selected_ruleset)
-        self.rotation_exception_checkbox.grid_remove()
         self.clear_ruleset_models_frame()
         self.show_ruleset_models()
 
     def show_ruleset_models(self):
         # Main logic
-        if self.app_data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM":
-            self.rotation_exception_checkbox.grid(
-                row=5, column=1, columnspan=4, sticky=W, padx=5, pady=(15, 5)
-            )
-            labels = ["Design: ", "Proposed: ", "Baseline: "]
-            if not self.rotation_exception_checkbox.get():
-                labels.extend(["Baseline 90: ", "Baseline 180: ", "Baseline 270: "])
-        else:
-            labels = ["Design: "]
+        labels = ["Design: "]
 
         # Create and place rows based on the selected ruleset
         self.create_model_rows(labels)
@@ -649,9 +633,7 @@ class ProjectConfigSubview(CTkXYFrame):
         self.app_data.errors.clear()
 
         # Required model types
-        required_models = ["User", "Proposed", "Baseline"]
-        if not self.rotation_exception_checkbox.get():
-            required_models.extend(["Baseline 90", "Baseline 180", "Baseline 270"])
+        required_models = ["User"]
 
         # Check if all required model types have file paths selected
         for model_type in required_models:
@@ -667,11 +649,6 @@ class ProjectConfigSubview(CTkXYFrame):
                 )
 
         self.project_info_view.update_warnings_errors()
-        # If there are no errors, reload the model files and refresh the GUI data
-        # self.reload_model_files()
-
-    # def reload_model_files(self):
-    #     self.app_data.generate_rmds()
 
     def view_continue(self):
         self.project_info_view.window.show_view("Buildings")
