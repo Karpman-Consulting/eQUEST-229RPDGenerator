@@ -359,7 +359,6 @@ class TestSystems(unittest.TestCase):
                 "heating_coil_setpoint": 75.0,
                 "is_sized_based_on_design_day": True,
             },
-            "id": "System 1",
             "preheat_system": {
                 "efficiency_metric_types": [],
                 "efficiency_metric_values": [],
@@ -446,7 +445,6 @@ class TestSystems(unittest.TestCase):
                 "is_sized_based_on_design_day": True,
                 "type": "HEAT_PUMP",
             },
-            "id": "System 1",
             "preheat_system": {
                 "efficiency_metric_types": [],
                 "efficiency_metric_values": [],
@@ -511,7 +509,6 @@ class TestSystems(unittest.TestCase):
                 "is_sized_based_on_design_day": True,
                 "type": "FLUID_LOOP",
             },
-            "id": "System 1",
             "preheat_system": {
                 "efficiency_metric_types": [],
                 "efficiency_metric_values": [],
@@ -560,7 +557,6 @@ class TestSystems(unittest.TestCase):
                 "efficiency_metric_types": [],
                 "efficiency_metric_values": [],
             },
-            "id": "System 1",
             "preheat_system": {
                 "efficiency_metric_types": [],
                 "efficiency_metric_values": [],
@@ -673,7 +669,6 @@ class TestSystems(unittest.TestCase):
                 "is_sized_based_on_design_day": True,
                 "type": "FLUID_LOOP",
             },
-            "id": "System 1",
             "preheat_system": {
                 "efficiency_metric_types": [],
                 "efficiency_metric_values": [],
