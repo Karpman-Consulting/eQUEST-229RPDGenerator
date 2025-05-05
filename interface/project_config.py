@@ -153,8 +153,11 @@ class ProjectConfigWindow(ctk.CTkToplevel):
     def raise_error_window(self, error_text):
         if not error_text:
             return
-        self.error_window = ErrorWindow(self, error_text)
-        self.error_window.after(100, self.error_window.lift, None)
+        if self.error_window is None or not self.error_window.winfo_exists():
+            self.error_window = ErrorWindow(self, error_text)
+            self.error_window.after(100, self.error_window.lift, None)
+        else:
+            self.error_window.focus()  # if window exists, focus it
 
     def place_widgets(self):
         # Place widgets
@@ -289,7 +292,8 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         # File select button
         def select_file():
             selected_path = filedialog.askopenfilename(
-                filetypes=[("eQUEST Input Files", "*.inp")]
+                parent=self,
+                filetypes=[("eQUEST Input Files", "*.inp")],
             )
             if selected_path:
                 path_entry.delete(0, "end")
@@ -418,7 +422,9 @@ class ProjectConfigWindow(ctk.CTkToplevel):
 
     def select_output_directory(self):
         """Opens a directory selection dialog and updates the entry field."""
-        directory = filedialog.askdirectory()
+        directory = filedialog.askdirectory(
+            parent=self, title="Select Output Directory"
+        )
         if directory:
             self.output_dir_entry.delete(0, "end")
             self.output_dir_entry.insert(0, directory)

@@ -83,7 +83,16 @@ class ZonesSubview(CTkXYFrame):
         return "ZonesSubview"
 
     def open_view(self):
+        self.zones_view.main_window.next_button.configure(command=self.view_next)
+        self.zones_view.main_window.back_button.configure(command=self.view_back)
+        self.zones_view.main_window.show_back_next_buttons_toggle()
         self.populate_subview() if not self.is_view_populated else None
+
+    def view_next(self):
+        self.zones_view.main_window.show_view("SpacesView")
+
+    def view_back(self):
+        self.zones_view.main_window.show_view("BuildingAreasView")
 
     def populate_subview(self):
         self.add_column_headers()

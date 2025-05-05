@@ -170,8 +170,20 @@ class HeatRejectionSubview(CTkXYFrame):
         return "HeatRejectionSubview"
 
     def open_subview(self):
+        self.systems_view.main_window.next_button.configure(command=self.view_next)
+        self.systems_view.main_window.back_button.configure(command=self.view_back)
+        self.systems_view.main_window.show_back_next_buttons_toggle()
         self.systems_view.toggle_active_subbutton("Heat Rejection")
         self.populate_subview() if not self.is_subview_populated else None
+
+    def view_next(self):
+        if len(self.app_data.rmds[0].system_names) > 0:
+            self.systems_view.show_subview("HVACSystemSubview")
+        else:
+            self.systems_view.main_window.show_view("MiscellaneousView")
+
+    def view_back(self):
+        self.systems_view.main_window.show_view("SurfacesView")
 
     def populate_subview(self):
         self.add_column_headers()
@@ -221,8 +233,20 @@ class HVACSystemSubview(CTkXYFrame):
         return "HVACSystemSubview"
 
     def open_subview(self):
+        self.systems_view.main_window.next_button.configure(command=self.view_next)
+        self.systems_view.main_window.back_button.configure(command=self.view_back)
+        self.systems_view.main_window.show_back_next_buttons_toggle()
         self.systems_view.toggle_active_subbutton("HVAC Systems")
         self.populate_subview() if not self.is_subview_populated else None
+
+    def view_next(self):
+        self.systems_view.main_window.show_view("MiscellaneousView")
+
+    def view_back(self):
+        if len(self.app_data.rmds[0].heat_rejection_names) > 0:
+            self.systems_view.show_subview("HeatRejectionSubview")
+        else:
+            self.systems_view.main_window.show_view("SurfacesView")
 
     def populate_subview(self):
         self.add_column_headers()

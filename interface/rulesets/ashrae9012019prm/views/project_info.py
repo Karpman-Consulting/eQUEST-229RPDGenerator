@@ -2,6 +2,8 @@ import customtkinter as ctk
 from tkinter import filedialog
 from pathlib import Path
 
+from click import command
+
 from interface.base_view import BaseView
 from interface.ctk_xyframe import CTkXYFrame
 from interface.constants import *
@@ -35,8 +37,6 @@ class ProjectInfoView(BaseView):
         return "ProjectInfoView"
 
     def open_view(self):
-        # Overwrite behavior of the continue button
-        self.window.continue_button.configure(command=self.view_continue)
         # Update the errors and warnings button formatting
         self.update_warnings_errors()
         # Hide baseline/proposed toggle
@@ -118,9 +118,6 @@ class ProjectInfoView(BaseView):
                     text_color=BLACK,
                     font=("Arial", 12, "bold"),
                 )
-
-    def view_continue(self):
-        self.window.show_view("Buildings")
 
 
 class ProjectDetailsSubview(CTkXYFrame):
@@ -263,6 +260,9 @@ class ProjectDetailsSubview(CTkXYFrame):
         return "ProjectDetailsSubview"
 
     def open_subview(self):
+        # Overwrite behavior of the back/next buttons
+        self.project_info_view.main_window.next_button.configure(command=self.view_next)
+        self.project_info_view.main_window.show_back_next_buttons_toggle(False, True)
         self.project_info_view.toggle_active_subbutton("Project Details")
         self.populate_subview() if not self.is_subview_populated else None
 
@@ -325,6 +325,9 @@ class ProjectDetailsSubview(CTkXYFrame):
             self.pressure_difference_input.grid_remove()
             self.pressure_units_label.grid_remove()
             self.site_testing_checkbox.grid_remove()
+
+    def view_next(self):
+        self.project_info_view.show_subview("Project Config.")
 
 
 class ProjectConfigSubview(CTkXYFrame):
@@ -428,8 +431,18 @@ class ProjectConfigSubview(CTkXYFrame):
         return "ProjectConfigSubview"
 
     def open_subview(self):
+        # Overwrite behavior of the back/next buttons
+        self.project_info_view.main_window.next_button.configure(command=self.view_next)
+        self.project_info_view.main_window.back_button.configure(command=self.view_back)
+        self.project_info_view.main_window.show_back_next_buttons_toggle()
         self.project_info_view.toggle_active_subbutton("Project Config.")
         self.populate_subview() if not self.is_subview_populated else None
+
+    def view_next(self):
+        self.project_info_view.main_window.show_view("BuildingAreasView")
+
+    def view_back(self):
+        self.project_info_view.show_subview("Project Details")
 
     def populate_subview(self):
         # Place widgets
@@ -565,7 +578,8 @@ class ProjectConfigSubview(CTkXYFrame):
         # File select button
         def select_file():
             selected_path = filedialog.askopenfilename(
-                filetypes=[("eQUEST Input Files", "*.inp")]
+                parent=self,
+                filetypes=[("eQUEST Input Files", "*.inp")],
             )
             if selected_path:
                 if active_ruleset not in self.app_data.ruleset_model_file_paths:
@@ -652,12 +666,11 @@ class ProjectConfigSubview(CTkXYFrame):
     # def reload_model_files(self):
     #     self.app_data.generate_rmds()
 
-    def view_continue(self):
-        self.project_info_view.window.show_view("Buildings")
-
     def select_output_directory(self):
         """Opens a directory selection dialog and updates the entry field."""
-        directory = filedialog.askdirectory()
+        directory = filedialog.askdirectory(
+            parent=self, title="Select Output Directory"
+        )
         if directory:
             self.output_dir_entry.delete(0, "end")
             self.output_dir_entry.insert(0, directory)

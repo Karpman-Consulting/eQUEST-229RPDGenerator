@@ -15,6 +15,12 @@ class ResultsView(BaseView):
         return "ResultsView"
 
     def open_view(self):
+        self.main_window.next_button.configure(command=None)
+        self.main_window.back_button.configure(command=self.view_back)
+        self.main_window.show_back_next_buttons_toggle(True, False)
         self.toggle_active_button("Results")
         self.grid_propagate(False)
         self.main_window.show_baseline_proposed_toggle(False)
+
+    def view_back(self):
+        self.main_window.show_view("MiscellaneousView")

@@ -255,8 +255,21 @@ class BuildingSubview(CTkXYFrame):
         return "BuildingSubview"
 
     def open_subview(self):
+        self.building_areas_view.main_window.next_button.configure(
+            command=self.view_next
+        )
+        self.building_areas_view.main_window.back_button.configure(
+            command=self.view_back
+        )
+        self.building_areas_view.main_window.show_back_next_buttons_toggle()
         self.building_areas_view.toggle_active_subbutton("Buildings")
         self.populate_subview() if not self.is_view_populated else None
+
+    def view_next(self):
+        self.building_areas_view.show_subview("Building Areas")
+
+    def view_back(self):
+        self.building_areas_view.main_window.show_view("ProjectInfoView")
 
     def populate_subview(self):
         self.add_column_headers()
@@ -418,8 +431,21 @@ class BuildingAreasSubview(CTkXYFrame):
         return "BuildingAreasSubview"
 
     def open_subview(self):
+        self.building_areas_view.main_window.next_button.configure(
+            command=self.view_next
+        )
+        self.building_areas_view.main_window.back_button.configure(
+            command=self.view_back
+        )
+        self.building_areas_view.main_window.show_back_next_buttons_toggle()
         self.building_areas_view.toggle_active_subbutton("Building Areas")
         self.populate_subview() if not self.is_view_populated else None
+
+    def view_next(self):
+        self.building_areas_view.main_window.show_view("ZonesView")
+
+    def view_back(self):
+        self.building_areas_view.show_subview("Buildings")
 
     def populate_subview(self):
         self.add_column_headers()
