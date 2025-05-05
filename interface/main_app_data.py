@@ -1,5 +1,8 @@
 import atexit
+import json
 import tempfile
+from tkinter.filedialog import askopenfilename
+
 import customtkinter as ctk
 from pathlib import Path
 
@@ -52,6 +55,8 @@ class MainAppData:
 
         # View data
         self.building_area_options = []
+        self.all_project_data = {}
+        self.loaded_project_data = {}
 
         self.rmds = []
         self.warnings = []
@@ -378,3 +383,73 @@ class MainAppData:
                 )
                 self.check_space_and_zone_data(rmd)
                 self.check_input_ratios(rmd)
+
+    @staticmethod
+    def subview_name_to_json_key(subview_name):
+        return subview_name.replace(" ", "_").lower().split("subview")[0]
+
+    def populate_project_data(self):
+        file_path = askopenfilename(
+            initialdir=str(Path(self.output_directory.get())),
+            title="Load Project Data",
+            filetypes=[("JSON", "*.json")],
+            defaultextension=".json",
+        )
+        if not file_path:
+            return
+
+        with open(file_path, "r") as project_load_file:
+            loaded_data = json.load(project_load_file)
+
+        # Clear current project data and update the main app's data with loaded data
+        self.all_project_data.clear()
+        self.all_project_data.update(loaded_data)
+        # Populate project config data
+        self.populate_project_config_data()
+
+    def populate_project_config_data(self):
+        project_config_data = self.all_project_data.get("project_configuration")
+        if not project_config_data:
+            return
+        """I know these checks look excessive and they are, but this is a workaround for a bug in the way
+                ctk entries deal with StringVars when they are set to empty strings. We can get rid of the checks
+                and set defaults if they don't exist in the saved project file"""
+        if project_config_data.get("Project Name"):
+            self.project_name.set(project_config_data.get("Project Name"))
+        if project_config_data.get("Output Directory"):
+            self.output_directory.set(project_config_data.get("Output Directory"))
+        self.selected_ruleset.set(
+            project_config_data.get("Energy Code/Program", "ASHRAE 90.1-2019 PRM")
+        )
+        self.has_rotation_exception.set(
+            project_config_data.get("Baseline Rotation Exempt", False)
+        )
+        self.is_all_new_construction.set(
+            project_config_data.get("All New Construction", False)
+        )
+        # Set model paths where they exist in the project config
+        selected_ruleset = self.selected_ruleset.get()
+        user_path = project_config_data.get("User")
+        if user_path:
+            self.ruleset_model_file_paths[selected_ruleset]["User"] = user_path
+        proposed_path = project_config_data.get("Proposed")
+        if proposed_path:
+            self.ruleset_model_file_paths[selected_ruleset]["Proposed"] = proposed_path
+        baseline_path = project_config_data.get("Baseline")
+        if baseline_path:
+            self.ruleset_model_file_paths[selected_ruleset]["Baseline"] = baseline_path
+        baseline_90_path = project_config_data.get("Baseline 90")
+        if baseline_90_path:
+            self.ruleset_model_file_paths[selected_ruleset][
+                "Baseline 90"
+            ] = baseline_90_path
+        baseline_180_path = project_config_data.get("Baseline 180")
+        if baseline_180_path:
+            self.ruleset_model_file_paths[selected_ruleset][
+                "Baseline 180"
+            ] = baseline_180_path
+        baseline_270_path = project_config_data.get("Baseline 270")
+        if baseline_270_path:
+            self.ruleset_model_file_paths[selected_ruleset][
+                "Baseline 270"
+            ] = baseline_270_path

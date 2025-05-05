@@ -1,3 +1,6 @@
+import json
+from tkinter.filedialog import askopenfilename
+
 import customtkinter as ctk
 from tkinter import Menu, filedialog
 from pathlib import Path
@@ -126,8 +129,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         menubar = Menu(self)
         file_menu = Menu(menubar, tearoff=0)
         file_menu.add_command(label="New", command="donothing")
-        file_menu.add_command(label="Open", command="donothing")
-        file_menu.add_command(label="Save", command="donothing")
+        file_menu.add_command(label="Open", command=self.load_project_data)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.quit)
         menubar.add_cascade(label="File", menu=file_menu)
@@ -431,3 +433,10 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         if path.parent:
             return f"{path.parent.name}/{path.name}"
         return path.name
+
+    def load_project_data(self):
+        """Load a saved project data file. In this window, we're loading from a blank state.
+        Slightly different flow from loading in compliance parameter window.
+        Must perform validation checks"""
+        self.main_app.data.populate_project_data()
+        self.validate_project_info()
