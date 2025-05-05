@@ -386,14 +386,14 @@ class ProjectConfigSubview(CTkXYFrame):
         self.ruleset_dropdown.set(self.app_data.selected_ruleset.get())
         self.proposed_reflects_design_checkbox = ctk.CTkCheckBox(
             self,
-            text="Proposed Design model reflects design documents",
+            text="Proposed Design model reflects design documents?",
             font=TEXT_FONT,
             variable=self.app_data.proposed_reflects_design,
             command=self.toggle_design,
         )
         self.rotation_exception_checkbox = ctk.CTkCheckBox(
             self,
-            text="Baseline Rotation Exempt? (90.1-2019 Table G3.1(5) Baseline Building Performance (a))",
+            text="Was it demonstrated to the satisfaction of the rating authority that the building orientation is dictated by site considerations?",
             font=TEXT_FONT,
             variable=self.app_data.has_rotation_exception,
             command=self.toggle_baseline_rotations,
@@ -674,11 +674,6 @@ class ProjectConfigSubview(CTkXYFrame):
                 )
 
         self.project_info_view.update_warnings_errors()
-        # If there are no errors, reload the model files and refresh the GUI data
-        # self.reload_model_files()
-
-    # def reload_model_files(self):
-    #     self.app_data.generate_rmds()
 
     def view_continue(self):
         self.project_info_view.window.show_view("Buildings")
