@@ -120,8 +120,16 @@ class ProjectInfoView(BaseView):
     def view_continue(self):
         self.window.show_view("Buildings")
 
+    def get_view_data(self):
+        view_data = {}
+        for subview in self.subviews.values():
+            view_data[subview.json_representation] = subview.get_subview_data()
+        return view_data
+
 
 class ProjectDetailsSubview(CTkXYFrame):
+    json_representation = "project_details"
+
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.project_info_view = subview_frame.master
@@ -324,8 +332,23 @@ class ProjectDetailsSubview(CTkXYFrame):
             self.pressure_units_label.grid_remove()
             self.site_testing_checkbox.grid_remove()
 
+    def get_subview_data(self):
+        return {
+            "ASHRAE Climate Zone": self.app_data.climate_zone.get(),
+            "Exterior Lighting Zone": self.app_data.lighting_zone.get(),
+            "Building Open From": self.open_from_input.get(),
+            "Building Open To": self.open_to_input.get(),
+            "Heating Design Day Criteria": (self.app_data.heating_design_day.get()),
+            "Cooling Design Day Criteria": (self.app_data.cooling_design_day.get()),
+            "Measured Infiltration": (self.app_data.has_measured_infiltration.get()),
+            "Pressure Difference": (self.app_data.measured_pressure_difference.get()),
+            "Based on Site Testing": (self.app_data.is_based_on_site_testing.get()),
+        }
+
 
 class ProjectConfigSubview(CTkXYFrame):
+    json_representation = "project_configuration"
+
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.project_info_view = subview_frame.master
@@ -382,13 +405,6 @@ class ProjectConfigSubview(CTkXYFrame):
             command=lambda selection: self.update_ruleset_model_frame(selection),
         )
         self.ruleset_dropdown.set(self.app_data.selected_ruleset.get())
-        self.rotation_exception_checkbox = ctk.CTkCheckBox(
-            self,
-            text="Baseline Rotation Exempt? (90.1-2019 Table G3.1(5) Baseline Building Performance (a))",
-            font=TEXT_FONT,
-            variable=self.app_data.has_rotation_exception,
-            command=self.toggle_baseline_rotations,
-        )
         self.ruleset_models_label = ctk.CTkLabel(
             self,
             text="Models: ",
@@ -470,21 +486,12 @@ class ProjectConfigSubview(CTkXYFrame):
 
     def update_ruleset_model_frame(self, selected_ruleset):
         self.app_data.selected_ruleset.set(selected_ruleset)
-        self.rotation_exception_checkbox.grid_remove()
         self.clear_ruleset_models_frame()
         self.show_ruleset_models()
 
     def show_ruleset_models(self):
         # Main logic
-        if self.app_data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM":
-            self.rotation_exception_checkbox.grid(
-                row=5, column=1, columnspan=4, sticky=W, padx=5, pady=(15, 5)
-            )
-            labels = ["Design: ", "Proposed: ", "Baseline: "]
-            if not self.rotation_exception_checkbox.get():
-                labels.extend(["Baseline 90: ", "Baseline 180: ", "Baseline 270: "])
-        else:
-            labels = ["Design: "]
+        labels = ["Design: "]
 
         # Create and place rows based on the selected ruleset
         self.create_model_rows(labels)
@@ -552,6 +559,7 @@ class ProjectConfigSubview(CTkXYFrame):
             self.ruleset_models_frame, width=700, font=("Arial", 12)
         )
         model_type = model_text.replace("Design", "User")
+
         # Model Type may not exist in the dictionary if the user did not select a file for it or the user changed the ruleset after selecting files
         file_path = self.app_data.ruleset_model_file_paths[active_ruleset].get(
             model_type, ""
@@ -625,9 +633,7 @@ class ProjectConfigSubview(CTkXYFrame):
         self.app_data.errors.clear()
 
         # Required model types
-        required_models = ["User", "Proposed", "Baseline"]
-        if not self.rotation_exception_checkbox.get():
-            required_models.extend(["Baseline 90", "Baseline 180", "Baseline 270"])
+        required_models = ["User"]
 
         # Check if all required model types have file paths selected
         for model_type in required_models:
@@ -643,11 +649,6 @@ class ProjectConfigSubview(CTkXYFrame):
                 )
 
         self.project_info_view.update_warnings_errors()
-        # If there are no errors, reload the model files and refresh the GUI data
-        # self.reload_model_files()
-
-    # def reload_model_files(self):
-    #     self.app_data.generate_rmds()
 
     def view_continue(self):
         self.project_info_view.window.show_view("Buildings")
@@ -659,6 +660,18 @@ class ProjectConfigSubview(CTkXYFrame):
             self.output_dir_entry.delete(0, "end")
             self.output_dir_entry.insert(0, directory)
             self.app_data.output_directory.set(directory)
+
+    def get_subview_data(self):
+        subview_data = {
+            "Project Name": self.app_data.project_name.get(),
+            "Energy Code/Program": self.app_data.selected_ruleset.get(),
+            "Baseline Rotation Exempt": self.app_data.has_rotation_exception.get(),
+            "All New Construction": self.app_data.is_all_new_construction.get(),
+            "Output Directory": self.app_data.output_directory.get(),
+        }
+        for model_type, file_path in self.app_data.ruleset_model_file_paths.items():
+            subview_data[model_type] = file_path
+        return subview_data
 
     @staticmethod
     def _get_trimmed_path(file_path: str) -> str:
