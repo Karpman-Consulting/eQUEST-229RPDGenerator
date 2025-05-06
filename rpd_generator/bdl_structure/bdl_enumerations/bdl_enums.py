@@ -252,6 +252,14 @@ class BDLEnums:
                 "SUBHOUR-DEMAND",
             ]
         ),
+        "CirculationLoopSetpointControlOptions": _ListEnum(
+            [
+                "FIXED",
+                "OA-RESET",
+                "SCHEDULED",
+                "LOAD-RESET",
+            ]
+        ),
         "CirculationLoopTemperatureResetOptions": _ListEnum(
             [
                 "FIXED",
@@ -289,7 +297,9 @@ class BDLEnums:
                 "SIZING-OPTION",
                 "LOOP-MIN-FLOW",
                 "LOOP-RECIRC-FLOW",
+                "HEAT-SETPT-T",
                 "HEAT-SETPT-CTRL",
+                "COOL-SETPT-T",
                 "COOL-SETPT-CTRL",
                 "HEAT-RESET-SCH",
                 "COOL-RESET-SCH",
@@ -303,6 +313,9 @@ class BDLEnums:
                 "SUPPLY-LOSS-DT",
                 "LOOP-LOCN",
                 "LOOP-LOSS-ZONE",
+                "PROCESS-FLOW",
+                "PROCESS-SCH",
+                "PROCESS-T",
             ]
         ),
         "ConstructionTypes": _ListEnum(
@@ -534,6 +547,8 @@ class BDLEnums:
                 "ALTITUDE",
                 "LATITUDE",
                 "LONGITUDE",
+                "C-901-CZ-NUMBER",
+                "C-901-CZ-LETTER",
             ]
         ),
         "RunPeriodKeywords": _ListEnum(
@@ -711,6 +726,14 @@ class BDLEnums:
                 "THREE-WAY",
             ]
         ),
+        "SystemCondenserTypes": _ListEnum(
+            [
+                "AIR-COOLED",
+                "WATER-COOLED",
+                "EVAP-PRECOOLED",
+                "EVAP-COOLED",
+            ]
+        ),
         "SystemCondenserValveTypes": _ListEnum(
             [
                 "YES",
@@ -869,11 +892,20 @@ class BDLEnums:
                 "PLENUM-ZONES",
             ]
         ),
+        "SystemWLHPCategoryOptions": _ListEnum(
+            [
+                "COOLING-ONLY",
+                "WATER-LOOP",
+                "GROUND-WATER",
+                "GROUND-LOOP",
+            ]
+        ),
         "SystemKeywords": _ListEnum(
             [
                 "TYPE",
                 "SIZING-RATIO",
                 "HEAT-SOURCE",
+                "WLHP-CATEGORY",
                 "HW-LOOP",
                 "HW-VALVE-TYPE",
                 "HEAT-CONTROL",
@@ -883,6 +915,7 @@ class BDLEnums:
                 "HEAT-SIZING-RATI",
                 "HEATING-CAPACITY",
                 "COOL-SOURCE",
+                "CONDENSER-TYPE",
                 "CHW-LOOP",
                 "CW-LOOP",
                 "CHW-VALVE-TYPE",
@@ -894,6 +927,7 @@ class BDLEnums:
                 "COOL-SIZING-RATI",
                 "COOL-SH-CAP",
                 "COOLING-CAPACITY",
+                "MIN-UNLOAD-RATIO",
                 "PREHEAT-SOURCE",
                 "PHW-LOOP",
                 "PHW-VALVE-TYPE",

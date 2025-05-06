@@ -262,7 +262,7 @@ class TestElectricChillers(unittest.TestCase):
                 "FULL_LOAD_EFFICIENCY_RATED",
                 "INTEGRATED_PART_LOAD_VALUE",
             ],
-            "efficiency_metric_values": [5.847536816555751, 10.106074864866043],
+            "efficiency_metric_values": [5.37926770870573, 9.296783224762487],
         }
         self.assertEqual(expected_data_structure, self.chiller.chiller_data_structure)
 
@@ -320,7 +320,7 @@ class TestElectricChillers(unittest.TestCase):
                 "FULL_LOAD_EFFICIENCY_RATED",
                 "INTEGRATED_PART_LOAD_VALUE",
             ],
-            "efficiency_metric_values": [5.847536816555751, 10.106074864866043],
+            "efficiency_metric_values": [5.37926770870573, 9.296783224762487],
         }
         self.assertEqual(expected_data_structure, self.chiller.chiller_data_structure)
 
@@ -378,7 +378,7 @@ class TestElectricChillers(unittest.TestCase):
                 "FULL_LOAD_EFFICIENCY_RATED",
                 "INTEGRATED_PART_LOAD_VALUE",
             ],
-            "efficiency_metric_values": [5.80438119822902, 10.03149065559442],
+            "efficiency_metric_values": [5.648551274727391, 9.762175741896893],
         }
         self.assertEqual(expected_data_structure, self.chiller.chiller_data_structure)
 
@@ -435,7 +435,7 @@ class TestElectricChillers(unittest.TestCase):
                 "FULL_LOAD_EFFICIENCY_RATED",
                 "INTEGRATED_PART_LOAD_VALUE",
             ],
-            "efficiency_metric_values": [4.057784125496852, 7.012913547056622],
+            "efficiency_metric_values": [3.948845003776998, 6.824638217742481],
         }
         self.assertEqual(expected_data_structure, self.chiller.chiller_data_structure)
 
@@ -548,7 +548,7 @@ class TestElectricChillers(unittest.TestCase):
                 "FULL_LOAD_EFFICIENCY_RATED",
                 "INTEGRATED_PART_LOAD_VALUE",
             ],
-            "efficiency_metric_values": [3.973779987134122, 6.867732398500408],
+            "efficiency_metric_values": [4.222623076739573, 7.29779841980996],
         }
         self.assertEqual(expected_data_structure, self.chiller.chiller_data_structure)
 
@@ -606,7 +606,7 @@ class TestElectricChillers(unittest.TestCase):
                 "FULL_LOAD_EFFICIENCY_RATED",
                 "INTEGRATED_PART_LOAD_VALUE",
             ],
-            "efficiency_metric_values": [3.973779987134122, 6.867732398500408],
+            "efficiency_metric_values": [4.222623076739573, 7.29779841980996],
         }
         self.assertEqual(expected_data_structure, self.chiller.chiller_data_structure)
 

@@ -64,6 +64,8 @@ $ ---------------------------------------------------------
 "Site Data" = SITE-PARAMETERS 
    DAYLIGHT-SAVINGS = NO
    GROUND-T         = ( 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50 )
+   C-901-CZ-NUMBER  = 5
+   C-901-CZ-LETTER  = 2
    ..
 
 "Building Data" = BUILD-PARAMETERS
@@ -315,7 +317,7 @@ $ ---------------------------------------------------------
 "BL1 Window Type #1 GT" = GLASS-TYPE      
    TYPE             = SHADING-COEF
    SHADING-COEF     = 0.44
-   GLASS-CONDUCT    = {.5271}
+   GLASS-CONDUCT    = 0.579
    VIS-TRANS        = 0.417
    ..
 
@@ -488,6 +490,11 @@ $ ---------------------------------------------------------
    SUPPLY-HI        = 54
    SUPPLY-LO        = 44
    ..
+"Fan Sch Day" = DAY-SCHEDULE-PD
+   TYPE             = ON/OFF
+   VALUES           = ( 0, &D, &D, &D, &D, &D, 1, &D, &D, &D, &D, &D, &D, &D, 
+         &D, &D, &D, &D, &D, &D, &D, &D, 0 )
+   ..
 
 $ ---------------------------------------------------------
 $              Week Schedules
@@ -563,6 +570,10 @@ $ ---------------------------------------------------------
 "All ON Wk" = WEEK-SCHEDULE-PD
    TYPE             = ON/OFF
    DAY-SCHEDULES    = ( "All ON Day", &D, &D, &D, &D, "All ON Day" )
+   ..
+"Fan Sch Wk" = WEEK-SCHEDULE-PD
+   TYPE             = ON/OFF
+   DAY-SCHEDULES    = ( "Fan Sch Day", &D, &D, &D, &D, "Fan Sch Day" )
    ..
 
 $ ---------------------------------------------------------
@@ -649,6 +660,12 @@ $ ---------------------------------------------------------
    MONTH            = ( 12 )
    DAY              = ( 31 )
    WEEK-SCHEDULES   = ( "All ON Wk" )
+   ..
+"Fan Sch" = SCHEDULE-PD
+   TYPE             = ON/OFF
+   MONTH            = ( 12 )
+   DAY              = ( 31 )
+   WEEK-SCHEDULES   = ( "Fan Sch Wk" )
    ..
 
 
@@ -1240,6 +1257,8 @@ $ ---------------------------------------------------------
    TYPE             = CHW
    LOOP-DESIGN-DT   = 12
    LOOP-MIN-FLOW    = 0.25
+   LOOP-OPERATION   = SCHEDULED
+   COOLING-SCHEDULE = "All ON Sch"
    DESIGN-COOL-T    = 44
    COOL-SETPT-CTRL  = OA-RESET
    COOL-RESET-SCH   = "CHW OA Reset"
@@ -1356,7 +1375,7 @@ $ *********************************************************
    HEAT-SET-T       = 90
    COOL-SET-T       = 60
    SUPPLY-FLOW      = 2000
-   FAN-SCHEDULE     = "All ON Sch"
+   FAN-SCHEDULE     = "Fan Sch"
    SUPPLY-KW/FLOW   = 0.0003
    HW-VALVE-TYPE    = TWO-WAY
    HW-LOOP          = "Hot Water Loop"

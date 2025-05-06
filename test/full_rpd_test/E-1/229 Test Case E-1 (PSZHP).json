@@ -1,8 +1,18 @@
 {
-    "id": "ASHRAE 229",
+    "id": "229 Test Case E-1 (PSZHP)",
     "ruleset_model_descriptions": [
         {
             "id": "229 Test Case E-1 (PSZHP)",
+            "weather": {
+                "ground_temperature_schedule": "Ground Temperature Schedule",
+                "file_name": "DENVER INTL AP    CO",
+                "climate_zone": "CZ5B"
+            },
+            "calendar": {
+                "is_leap_year": false,
+                "day_of_week_for_january_1": "FRIDAY",
+                "has_daylight_saving_time": false
+            },
             "altitude": 0,
             "buildings": [
                 {
@@ -18,7 +28,7 @@
                                             "id": "Perimeter Space 1 (South)",
                                             "interior_lighting": [
                                                 {
-                                                    "id": "Perimeter Space 1 (South) IntLtg0",
+                                                    "id": "Perimeter Space 1 (South) IntLtg1",
                                                     "lighting_multiplier_schedule": "Lighting Schedule",
                                                     "power_per_area": 11.033008177127465
                                                 }
@@ -50,27 +60,36 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 21.4564216032,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.2032916173641275,
+                                                    "u_factor": 2.358949382776455,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
-                                                    "visible_transmittance": 0.417
+                                                    "visible_transmittance": 0.417,
+                                                    "has_shading_overhang": false,
+                                                    "has_shading_sidefins": false,
+                                                    "has_manual_interior_shades": false
                                                 },
                                                 {
                                                     "id": "South Window 2",
                                                     "classification": "WINDOW",
                                                     "glazed_area": 21.4564216032,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.2032916173641275,
+                                                    "u_factor": 2.358949382776455,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
-                                                    "visible_transmittance": 0.417
+                                                    "visible_transmittance": 0.417,
+                                                    "has_shading_overhang": false,
+                                                    "has_shading_sidefins": false,
+                                                    "has_manual_interior_shades": false
                                                 },
                                                 {
                                                     "id": "South Window 3",
                                                     "classification": "WINDOW",
                                                     "glazed_area": 21.4564216032,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.2032916173641275,
+                                                    "u_factor": 2.358949382776455,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
-                                                    "visible_transmittance": 0.417
+                                                    "visible_transmittance": 0.417,
+                                                    "has_shading_overhang": false,
+                                                    "has_shading_sidefins": false,
+                                                    "has_manual_interior_shades": false
                                                 },
                                                 {
                                                     "id": "South Door 1",
@@ -122,7 +141,6 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "LAYERS",
                                                 "u_factor": 0.4785360618245472
                                             },
                                             "optical_properties": {
@@ -170,7 +188,6 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "LAYERS",
                                                 "u_factor": 0.365608802525771
                                             },
                                             "optical_properties": {
@@ -181,6 +198,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "CEILING",
+                                            "area": 207.35958527999998,
                                             "tilt": 0.0,
                                             "azimuth": 180.0,
                                             "adjacent_to": "EXTERIOR",
@@ -200,10 +218,10 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "SIMPLIFIED",
                                                 "u_factor": 1.6949618440903549
                                             },
                                             "optical_properties": {
+                                                "id": "Perimeter Space 1 NE Wall OpticalProps",
                                                 "absorptance_solar_exterior": 0.5,
                                                 "absorptance_visible_exterior": 0.5,
                                                 "absorptance_solar_interior": 0.7,
@@ -230,10 +248,10 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "SIMPLIFIED",
                                                 "u_factor": 1.6949618440903549
                                             },
                                             "optical_properties": {
+                                                "id": "Perimeter Space 1 North Wall OpticalProps",
                                                 "absorptance_solar_exterior": 0.5,
                                                 "absorptance_visible_exterior": 0.5,
                                                 "absorptance_solar_interior": 0.7,
@@ -260,10 +278,10 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "SIMPLIFIED",
                                                 "u_factor": 1.6949618440903549
                                             },
                                             "optical_properties": {
+                                                "id": "Perimeter Space 1 NW Wall OpticalProps",
                                                 "absorptance_solar_exterior": 0.5,
                                                 "absorptance_visible_exterior": 0.5,
                                                 "absorptance_solar_interior": 0.7,
@@ -292,10 +310,10 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "LAYERS",
                                                 "u_factor": 4.8554836612451
                                             },
                                             "optical_properties": {
+                                                "id": "Perimeter Space 1 Slab on Grade OpticalProps",
                                                 "absorptance_solar_interior": 0.8,
                                                 "absorptance_visible_interior": 0.8
                                             },
@@ -328,6 +346,7 @@
                                         "id": "Perimeter Space 1 (South) Infil",
                                         "modeling_method": "WEATHER_DRIVEN"
                                     },
+                                    "floor_name": "Floor 1",
                                     "volume": 821.6416207134719,
                                     "design_thermostat_cooling_setpoint": 23.888888888888914,
                                     "thermostat_cooling_setpoint_schedule": "Cooling Setpoint Annual",
@@ -341,7 +360,7 @@
                                             "id": "Perimeter Space 2 (East)",
                                             "interior_lighting": [
                                                 {
-                                                    "id": "Perimeter Space 2 (East) IntLtg0",
+                                                    "id": "Perimeter Space 2 (East) IntLtg1",
                                                     "lighting_multiplier_schedule": "Lighting Schedule",
                                                     "power_per_area": 11.033008177127465
                                                 }
@@ -373,18 +392,24 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 41.8379550336,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.2032916173641275,
+                                                    "u_factor": 2.358949382776455,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
-                                                    "visible_transmittance": 0.417
+                                                    "visible_transmittance": 0.417,
+                                                    "has_shading_overhang": false,
+                                                    "has_shading_sidefins": false,
+                                                    "has_manual_interior_shades": false
                                                 },
                                                 {
                                                     "id": "East Window 2",
                                                     "classification": "WINDOW",
                                                     "glazed_area": 1.653674112,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.203291617364128,
+                                                    "u_factor": 2.358949382776455,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
-                                                    "visible_transmittance": 0.417
+                                                    "visible_transmittance": 0.417,
+                                                    "has_shading_overhang": false,
+                                                    "has_shading_sidefins": false,
+                                                    "has_manual_interior_shades": false
                                                 },
                                                 {
                                                     "id": "East Door 1",
@@ -423,7 +448,6 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "LAYERS",
                                                 "u_factor": 0.18802180423859668
                                             },
                                             "optical_properties": {
@@ -471,7 +495,6 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "LAYERS",
                                                 "u_factor": 0.365608802525771
                                             },
                                             "optical_properties": {
@@ -482,6 +505,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "CEILING",
+                                            "area": 131.27199552,
                                             "tilt": 0.0,
                                             "azimuth": 90.0,
                                             "adjacent_to": "EXTERIOR",
@@ -501,10 +525,10 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "SIMPLIFIED",
                                                 "u_factor": 1.6949618440903549
                                             },
                                             "optical_properties": {
+                                                "id": "Perimeter Space 2 NW Wall OpticalProps",
                                                 "absorptance_solar_exterior": 0.5,
                                                 "absorptance_visible_exterior": 0.5,
                                                 "absorptance_solar_interior": 0.7,
@@ -531,10 +555,10 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "SIMPLIFIED",
                                                 "u_factor": 1.6949618440903549
                                             },
                                             "optical_properties": {
+                                                "id": "Perimeter Space 2 West Wall OpticalProps",
                                                 "absorptance_solar_exterior": 0.5,
                                                 "absorptance_visible_exterior": 0.5,
                                                 "absorptance_solar_interior": 0.7,
@@ -563,10 +587,10 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "LAYERS",
                                                 "u_factor": 4.8554836612451
                                             },
                                             "optical_properties": {
+                                                "id": "Perimeter Space 2 Slab on Grade OpticalProps",
                                                 "absorptance_solar_interior": 0.8,
                                                 "absorptance_visible_interior": 0.8
                                             },
@@ -599,6 +623,7 @@
                                         "id": "Perimeter Space 2 (East) Infil",
                                         "modeling_method": "CONSTANT"
                                     },
+                                    "floor_name": "Floor 1",
                                     "volume": 520.1521550484479,
                                     "design_thermostat_cooling_setpoint": 23.888888888888914,
                                     "thermostat_cooling_setpoint_schedule": "Cooling Setpoint Annual",
@@ -612,7 +637,7 @@
                                             "id": "Perimeter Space 3 (North)",
                                             "interior_lighting": [
                                                 {
-                                                    "id": "Perimeter Space 3 (North) IntLtg0",
+                                                    "id": "Perimeter Space 3 (North) IntLtg1",
                                                     "lighting_multiplier_schedule": "Lighting Schedule",
                                                     "power_per_area": 11.033008177127465
                                                 }
@@ -644,27 +669,36 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 21.4564216032,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.2032916173641275,
+                                                    "u_factor": 2.358949382776455,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
-                                                    "visible_transmittance": 0.417
+                                                    "visible_transmittance": 0.417,
+                                                    "has_shading_overhang": false,
+                                                    "has_shading_sidefins": false,
+                                                    "has_manual_interior_shades": false
                                                 },
                                                 {
                                                     "id": "North Window 2",
                                                     "classification": "WINDOW",
                                                     "glazed_area": 21.4564216032,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.2032916173641275,
+                                                    "u_factor": 2.358949382776455,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
-                                                    "visible_transmittance": 0.417
+                                                    "visible_transmittance": 0.417,
+                                                    "has_shading_overhang": false,
+                                                    "has_shading_sidefins": false,
+                                                    "has_manual_interior_shades": false
                                                 },
                                                 {
                                                     "id": "North Window 3",
                                                     "classification": "WINDOW",
                                                     "glazed_area": 21.4564216032,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.2032916173641275,
+                                                    "u_factor": 2.358949382776455,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
-                                                    "visible_transmittance": 0.417
+                                                    "visible_transmittance": 0.417,
+                                                    "has_shading_overhang": false,
+                                                    "has_shading_sidefins": false,
+                                                    "has_manual_interior_shades": false
                                                 },
                                                 {
                                                     "id": "North Door 1",
@@ -692,7 +726,6 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "SIMPLIFIED",
                                                 "u_factor": 0.47688096041226397
                                             },
                                             "optical_properties": {
@@ -737,7 +770,6 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "LAYERS",
                                                 "u_factor": 0.18970607381902888
                                             },
                                             "optical_properties": {
@@ -748,6 +780,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "CEILING",
+                                            "area": 207.35958527999998,
                                             "tilt": 0.0,
                                             "azimuth": 0.0,
                                             "adjacent_to": "EXTERIOR",
@@ -767,10 +800,10 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "SIMPLIFIED",
                                                 "u_factor": 1.6949618440903549
                                             },
                                             "optical_properties": {
+                                                "id": "Perimeter Space 3 SW Wall OpticalProps",
                                                 "absorptance_solar_exterior": 0.5,
                                                 "absorptance_visible_exterior": 0.5,
                                                 "absorptance_solar_interior": 0.7,
@@ -797,10 +830,10 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "SIMPLIFIED",
                                                 "u_factor": 1.6949618440903549
                                             },
                                             "optical_properties": {
+                                                "id": "Perimeter Space 3 South Wall OpticalProps",
                                                 "absorptance_solar_exterior": 0.5,
                                                 "absorptance_visible_exterior": 0.5,
                                                 "absorptance_solar_interior": 0.7,
@@ -836,10 +869,10 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "LAYERS",
                                                 "u_factor": 0.3509167235001137
                                             },
                                             "optical_properties": {
+                                                "id": "Perimeter Space 3 Slab on Grade OpticalProps",
                                                 "absorptance_solar_interior": 0.8,
                                                 "absorptance_visible_interior": 0.8
                                             },
@@ -873,6 +906,7 @@
                                         "modeling_method": "CONSTANT_SCHEDULED",
                                         "multiplier_schedule": "ZG0-S1 (PSZ) P-Inf Sch"
                                     },
+                                    "floor_name": "Floor 1",
                                     "volume": 821.6416207134719,
                                     "design_thermostat_cooling_setpoint": 23.888888888888914,
                                     "thermostat_cooling_setpoint_schedule": "Cooling Setpoint Annual",
@@ -886,7 +920,7 @@
                                             "id": "Perimeter Space 4 (West)",
                                             "interior_lighting": [
                                                 {
-                                                    "id": "Perimeter Space 4 (West) IntLtg0",
+                                                    "id": "Perimeter Space 4 (West) IntLtg1",
                                                     "lighting_multiplier_schedule": "Lighting Schedule",
                                                     "power_per_area": 11.033008177127465
                                                 }
@@ -918,18 +952,24 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 41.8379550336,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.2032916173641275,
+                                                    "u_factor": 2.358949382776455,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
-                                                    "visible_transmittance": 0.417
+                                                    "visible_transmittance": 0.417,
+                                                    "has_shading_overhang": false,
+                                                    "has_shading_sidefins": false,
+                                                    "has_manual_interior_shades": false
                                                 },
                                                 {
                                                     "id": "West Window 2",
                                                     "classification": "WINDOW",
                                                     "glazed_area": 1.653674112,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.203291617364128,
+                                                    "u_factor": 2.358949382776455,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
-                                                    "visible_transmittance": 0.417
+                                                    "visible_transmittance": 0.417,
+                                                    "has_shading_overhang": false,
+                                                    "has_shading_sidefins": false,
+                                                    "has_manual_interior_shades": false
                                                 },
                                                 {
                                                     "id": "West Door 1",
@@ -950,7 +990,6 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "SIMPLIFIED",
                                                 "u_factor": 0.47688096041226397
                                             },
                                             "optical_properties": {
@@ -981,7 +1020,6 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "SIMPLIFIED",
                                                 "u_factor": 0.35783047909715215
                                             },
                                             "optical_properties": {
@@ -992,6 +1030,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "CEILING",
+                                            "area": 131.27199552,
                                             "tilt": 0.0,
                                             "azimuth": 270.0,
                                             "adjacent_to": "EXTERIOR",
@@ -1011,10 +1050,10 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "SIMPLIFIED",
                                                 "u_factor": 1.6949618440903549
                                             },
                                             "optical_properties": {
+                                                "id": "Perimeter Space 4 East Wall OpticalProps",
                                                 "absorptance_solar_exterior": 0.5,
                                                 "absorptance_visible_exterior": 0.5,
                                                 "absorptance_solar_interior": 0.7,
@@ -1050,10 +1089,10 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "LAYERS",
                                                 "u_factor": 0.3509167235001137
                                             },
                                             "optical_properties": {
+                                                "id": "Perimeter Space 4 Slab on Grade OpticalProps",
                                                 "absorptance_solar_interior": 0.8,
                                                 "absorptance_visible_interior": 0.8
                                             },
@@ -1087,6 +1126,7 @@
                                         "modeling_method": "CONSTANT_SCHEDULED",
                                         "multiplier_schedule": "ZG0-S1 (PSZ) P-Inf Sch"
                                     },
+                                    "floor_name": "Floor 1",
                                     "volume": 520.1521550484479,
                                     "design_thermostat_cooling_setpoint": 23.888888888888914,
                                     "thermostat_cooling_setpoint_schedule": "Cooling Setpoint Annual",
@@ -1100,7 +1140,7 @@
                                             "id": "Core Space 1 (Core)",
                                             "interior_lighting": [
                                                 {
-                                                    "id": "Core Space 1 (Core) IntLtg0",
+                                                    "id": "Core Space 1 (Core) IntLtg1",
                                                     "lighting_multiplier_schedule": "Lighting Schedule",
                                                     "power_per_area": 11.033008177127465
                                                 }
@@ -1155,7 +1195,6 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "LAYERS",
                                                 "u_factor": 0.365608802525771
                                             },
                                             "optical_properties": {
@@ -1166,6 +1205,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "CEILING",
+                                            "area": 984.4897987584,
                                             "tilt": 0.0,
                                             "azimuth": 180.0,
                                             "adjacent_to": "EXTERIOR",
@@ -1187,10 +1227,10 @@
                                                 "framing_layers": [],
                                                 "insulation_locations": [],
                                                 "r_values": [],
-                                                "surface_construction_input_option": "LAYERS",
                                                 "u_factor": 4.8554836612451
                                             },
                                             "optical_properties": {
+                                                "id": "Core Space 1 Slab on Grade OpticalProps",
                                                 "absorptance_solar_interior": 0.8,
                                                 "absorptance_visible_interior": 0.8
                                             },
@@ -1219,8 +1259,11 @@
                                     ],
                                     "infiltration": {
                                         "algorithm_name": "Air Change Method",
-                                        "id": "Core Space 1 (Core) Infil"
+                                        "flow_rate": 0.0,
+                                        "id": "Core Space 1 (Core) Infil",
+                                        "modeling_method": "WEATHER_DRIVEN"
                                     },
+                                    "floor_name": "Floor 1",
                                     "volume": 3900.942503194408,
                                     "design_thermostat_cooling_setpoint": 23.888888888888914,
                                     "thermostat_cooling_setpoint_schedule": "Cooling Setpoint Annual",
@@ -1288,13 +1331,12 @@
                                     "cooling_system": {
                                         "design_sensible_cool_capacity": 71067.03363501048,
                                         "design_total_cool_capacity": 95778.99111194444,
-                                        "efficiency_metric_types": [],
-                                        "efficiency_metric_values": [],
                                         "id": "Baseline System 4 (South) CoolSys",
                                         "is_sized_based_on_design_day": true,
                                         "oversizing_factor": 0.1499999999999999,
                                         "rated_sensible_cool_capacity": 77385.80231569022,
                                         "rated_total_cool_capacity": 104294.96903236111,
+                                        "turndown_ratio": 0.5,
                                         "type": "DIRECT_EXPANSION"
                                     }
                                 },
@@ -1357,13 +1399,12 @@
                                     "cooling_system": {
                                         "design_sensible_cool_capacity": 43522.06721651923,
                                         "design_total_cool_capacity": 58655.88411236111,
-                                        "efficiency_metric_types": [],
-                                        "efficiency_metric_values": [],
                                         "id": "Baseline System 4 (East) CoolSys",
                                         "is_sized_based_on_design_day": true,
                                         "oversizing_factor": 0.1499999999999999,
                                         "rated_sensible_cool_capacity": 47391.73686058185,
                                         "rated_total_cool_capacity": 63871.14406465278,
+                                        "turndown_ratio": 0.5,
                                         "type": "DIRECT_EXPANSION"
                                     }
                                 },
@@ -1426,13 +1467,12 @@
                                     "cooling_system": {
                                         "design_sensible_cool_capacity": 47750.78012536418,
                                         "design_total_cool_capacity": 64355.03652375,
-                                        "efficiency_metric_types": [],
-                                        "efficiency_metric_values": [],
                                         "id": "Baseline System 4 (North) CoolSys",
                                         "is_sized_based_on_design_day": true,
                                         "oversizing_factor": 0.1499999999999999,
                                         "rated_sensible_cool_capacity": 51996.437595739444,
                                         "rated_total_cool_capacity": 70077.025585625,
+                                        "turndown_ratio": 0.5,
                                         "type": "DIRECT_EXPANSION"
                                     }
                                 },
@@ -1495,13 +1535,12 @@
                                     "cooling_system": {
                                         "design_sensible_cool_capacity": 45690.59734028987,
                                         "design_total_cool_capacity": 61578.47165861111,
-                                        "efficiency_metric_types": [],
-                                        "efficiency_metric_values": [],
                                         "id": "Baseline System 4 (West) CoolSys",
                                         "is_sized_based_on_design_day": true,
                                         "oversizing_factor": 0.1499999999999999,
                                         "rated_sensible_cool_capacity": 49753.0789019704,
                                         "rated_total_cool_capacity": 67053.5895225,
+                                        "turndown_ratio": 0.5,
                                         "type": "DIRECT_EXPANSION"
                                     }
                                 },
@@ -1564,15 +1603,24 @@
                                     "cooling_system": {
                                         "design_sensible_cool_capacity": 243455.54586359928,
                                         "design_total_cool_capacity": 328111.7189044444,
-                                        "efficiency_metric_types": [],
-                                        "efficiency_metric_values": [],
                                         "id": "Baseline System 4 (Core) CoolSys",
                                         "is_sized_based_on_design_day": true,
                                         "oversizing_factor": 0.1499999999999999,
                                         "rated_sensible_cool_capacity": 171259.3459474087,
                                         "rated_total_cool_capacity": 230810.91941416668,
+                                        "turndown_ratio": 0.5,
                                         "type": "DIRECT_EXPANSION"
                                     }
+                                }
+                            ],
+                            "service_water_heating_uses": [
+                                {
+                                    "id": "DHW Plant 1 Loop Load1",
+                                    "served_by_distribution_system": "DHW Plant 1 Loop",
+                                    "use": 0.01038351666666667,
+                                    "use_units": "VOLUME",
+                                    "use_multiplier_schedule": "DHW Eqp NRes Sch",
+                                    "temperature_at_fixture": 57.222222222222285
                                 }
                             ]
                         }
@@ -1586,6 +1634,7 @@
             "schedules": [
                 {
                     "id": "DHW Eqp NRes Sch",
+                    "sequence_type": "HOURLY",
                     "hourly_values": [
                         0.05,
                         0.05,
@@ -10347,10 +10396,13 @@
                         0.05,
                         0.05,
                         0.05
-                    ]
+                    ],
+                    "type": "MULTIPLIER_DIMENSIONLESS",
+                    "prescribed_type": "NOT_APPLICABLE"
                 },
                 {
                     "id": "ZG0-S1 (PSZ) P-Inf Sch",
+                    "sequence_type": "HOURLY",
                     "hourly_values": [
                         1.0,
                         1.0,
@@ -19112,10 +19164,13 @@
                         1.049,
                         1.049,
                         1.0
-                    ]
+                    ],
+                    "type": "MULTIPLIER_DIMENSIONLESS",
+                    "prescribed_type": "NOT_APPLICABLE"
                 },
                 {
                     "id": "S1 Sys1 (PSZ) Fan Sch",
+                    "sequence_type": "HOURLY",
                     "hourly_values": [
                         0.0,
                         0.0,
@@ -27877,10 +27932,13 @@
                         0.0,
                         0.0,
                         0.0
-                    ]
+                    ],
+                    "type": "MULTIPLIER_DIMENSIONLESS",
+                    "prescribed_type": "NOT_APPLICABLE"
                 },
                 {
                     "id": "S1 Sys1 (PSZ) MinOA Sch",
+                    "sequence_type": "HOURLY",
                     "hourly_values": [
                         0.0,
                         0.0,
@@ -36642,10 +36700,13 @@
                         0.0,
                         0.0,
                         0.0
-                    ]
+                    ],
+                    "type": "MULTIPLIER_DIMENSIONLESS",
+                    "prescribed_type": "NOT_APPLICABLE"
                 },
                 {
                     "id": "Occupancy Annual",
+                    "sequence_type": "HOURLY",
                     "hourly_values": [
                         0.0,
                         0.0,
@@ -45407,10 +45468,13 @@
                         0.1,
                         0.05,
                         0.05
-                    ]
+                    ],
+                    "type": "MULTIPLIER_DIMENSIONLESS",
+                    "prescribed_type": "NOT_APPLICABLE"
                 },
                 {
                     "id": "Lighting Schedule",
+                    "sequence_type": "HOURLY",
                     "hourly_values": [
                         0.0,
                         0.0,
@@ -54172,10 +54236,13 @@
                         0.1,
                         0.05,
                         0.05
-                    ]
+                    ],
+                    "type": "MULTIPLIER_DIMENSIONLESS",
+                    "prescribed_type": "NOT_APPLICABLE"
                 },
                 {
                     "id": "Plug Load Annual",
+                    "sequence_type": "HOURLY",
                     "hourly_values": [
                         0.31,
                         0.31,
@@ -62937,10 +63004,13 @@
                         0.38,
                         0.38,
                         0.38
-                    ]
+                    ],
+                    "type": "MULTIPLIER_DIMENSIONLESS",
+                    "prescribed_type": "NOT_APPLICABLE"
                 },
                 {
                     "id": "Elevator Annual",
+                    "sequence_type": "HOURLY",
                     "hourly_values": [
                         0.0,
                         0.0,
@@ -71702,10 +71772,13 @@
                         0.0,
                         0.0,
                         0.0
-                    ]
+                    ],
+                    "type": "MULTIPLIER_DIMENSIONLESS",
+                    "prescribed_type": "NOT_APPLICABLE"
                 },
                 {
                     "id": "Heating Setpoint Annual",
+                    "sequence_type": "HOURLY",
                     "hourly_values": [
                         59.0,
                         59.0,
@@ -80467,10 +80540,13 @@
                         68.18,
                         59.0,
                         59.0
-                    ]
+                    ],
+                    "type": "TEMPERATURE",
+                    "prescribed_type": "NOT_APPLICABLE"
                 },
                 {
                     "id": "Cooling Setpoint Annual",
+                    "sequence_type": "HOURLY",
                     "hourly_values": [
                         80.06,
                         80.06,
@@ -89232,10 +89308,13 @@
                         75.2,
                         80.06,
                         80.06
-                    ]
+                    ],
+                    "type": "TEMPERATURE",
+                    "prescribed_type": "NOT_APPLICABLE"
                 },
                 {
                     "id": "Dirt Depre Windows",
+                    "sequence_type": "HOURLY",
                     "hourly_values": [
                         1.0,
                         1.0,
@@ -97997,10 +98076,13 @@
                         1.0,
                         1.0,
                         1.0
-                    ]
+                    ],
+                    "type": "MULTIPLIER_DIMENSIONLESS",
+                    "prescribed_type": "NOT_APPLICABLE"
                 },
                 {
                     "id": "Hourly Report Schedule",
+                    "sequence_type": "HOURLY",
                     "hourly_values": [
                         1.0,
                         1.0,
@@ -106762,7 +106844,9 @@
                         1.0,
                         1.0,
                         1.0
-                    ]
+                    ],
+                    "type": "MULTIPLIER_DIMENSIONLESS",
+                    "prescribed_type": "NOT_APPLICABLE"
                 },
                 {
                     "id": "Ground Temperature Schedule",
@@ -115528,15 +115612,31 @@
                         50.0,
                         50.0
                     ],
-                    "type": "TEMPERATURE"
+                    "type": "TEMPERATURE",
+                    "prescribed_type": "NOT_APPLICABLE"
                 }
             ],
             "fluid_loops": [],
             "service_water_heating_distribution_systems": [
                 {
                     "id": "DHW Plant 1 Loop",
+                    "tanks": [],
+                    "service_water_piping": [
+                        {
+                            "id": "DHW Plant 1 Loop ServiceWaterPiping",
+                            "child": [],
+                            "service_water_heating_design_and_control": {
+                                "id": "DHW Plant 1 Loop Design/Control",
+                                "design_supply_temperature": 135.0,
+                                "temperature_reset_type": "NO_RESET"
+                            },
+                            "is_recirculation_loop": false,
+                            "are_thermal_losses_modeled": false
+                        }
+                    ],
                     "design_supply_temperature": 57.222222222222285,
-                    "design_supply_temperature_difference": 26.666666666666686,
+                    "design_supply_temperature_difference": 44.44444444444444,
+                    "entering_water_mains_temperature_schedule": "Ground Temperature Schedule",
                     "is_ground_temperature_used_for_entering_water": true
                 }
             ],
@@ -115549,9 +115649,14 @@
                     "compressor_power_validation_points": [],
                     "heater_fuel_type": "NATURAL_GAS",
                     "distribution_system": "DHW Plant 1 Loop",
-                    "thermal_efficiency": 0.8,
+                    "efficiency_metric_types": [
+                        "THERMAL_EFFICIENCY"
+                    ],
+                    "efficiency_metric_values": [
+                        0.8
+                    ],
                     "rated_capacity": 17466.834446215278,
-                    "heater_type": "CONVENTIONAL"
+                    "setpoint_temperature": 57.222222222222285
                 }
             ],
             "pumps": [],
@@ -115569,51 +115674,55 @@
                         {
                             "id": "ELECTRICITY",
                             "energy_source": "ELECTRICITY",
-                            "annual_consumption": 373220.71875,
-                            "annual_demand": 124.0731201171875
+                            "annual_consumption": 393768758641.5,
+                            "annual_demand": 36362247.1717665,
+                            "annual_cost": 26125.0
                         },
                         {
-                            "id": "NATURAL-GAS",
-                            "energy_source": "NATURAL_GAS",
-                            "annual_consumption": 335.6202392578125,
-                            "annual_demand": 10184.0244140625
+                            "id": "NATURAL_GAS",
+                            "energy_source": null,
+                            "annual_consumption": 0.0,
+                            "annual_demand": 2984643350.6119795,
+                            "annual_cost": 168.0
                         }
                     ],
+                    "building_peak_heating_load": -373.7311096191406,
+                    "building_peak_cooling_load": 101.11782836914062,
                     "annual_end_use_results": [
                         {
                             "id": "ELECTRICITY - Interior Lighting",
                             "type": "INTERIOR_LIGHTING",
                             "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 45050.78125,
-                            "annual_site_coincident_demand": 17.41742706298828,
-                            "annual_site_non_coincident_demand": 17.41742706298828,
+                            "annual_site_energy_use": 47531097062.5,
+                            "annual_site_coincident_demand": 5104544.702046713,
+                            "annual_site_non_coincident_demand": 5104544.702046713,
                             "is_regulated": true
                         },
                         {
                             "id": "ELECTRICITY - Misc Equipment",
                             "type": "MISC_EQUIPMENT",
                             "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 54307.5234375,
-                            "annual_site_coincident_demand": 11.537089347839355,
-                            "annual_site_non_coincident_demand": 11.537089347839355,
+                            "annual_site_energy_use": 57297478447.875,
+                            "annual_site_coincident_demand": 3381187.5941594443,
+                            "annual_site_non_coincident_demand": 3381187.5941594443,
                             "is_regulated": false
                         },
                         {
                             "id": "ELECTRICITY - Space Heating",
                             "type": "SPACE_HEATING",
                             "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 92552.1484375,
-                            "annual_site_coincident_demand": 37.25546646118164,
-                            "annual_site_non_coincident_demand": 72.9189453125,
+                            "annual_site_energy_use": 97647699521.875,
+                            "annual_site_coincident_demand": 10918500.950741239,
+                            "annual_site_non_coincident_demand": 21370436.323784724,
                             "is_regulated": true
                         },
                         {
                             "id": "ELECTRICITY - Space Cooling",
                             "type": "SPACE_COOLING",
                             "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 11771.26953125,
+                            "annual_site_energy_use": 12419348546.5625,
                             "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 26.136367797851562,
+                            "annual_site_non_coincident_demand": 7659814.350925022,
                             "is_regulated": true
                         },
                         {
@@ -115629,18 +115738,18 @@
                             "id": "ELECTRICITY - Pumps & Aux",
                             "type": "PUMPS",
                             "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 2.1978726387023926,
+                            "annual_site_energy_use": 2318878.7146987915,
                             "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.8827791213989258,
+                            "annual_site_non_coincident_demand": 258717.05797407363,
                             "is_regulated": true
                         },
                         {
                             "id": "ELECTRICITY - Ventilation Fans",
                             "type": "FANS_INTERIOR_VENTILATION",
                             "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 169488.515625,
-                            "annual_site_coincident_demand": 57.863136291503906,
-                            "annual_site_non_coincident_demand": 57.863136291503906,
+                            "annual_site_energy_use": 178819875341.25,
+                            "annual_site_coincident_demand": 16958013.645324707,
+                            "annual_site_non_coincident_demand": 16958013.645324707,
                             "is_regulated": true
                         },
                         {
@@ -115656,9 +115765,9 @@
                             "id": "ELECTRICITY - Ht Pump Supplemental Heat",
                             "type": "HEAT_PUMP_SUPPLEMENTAL_HEATING",
                             "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 48.46649169921875,
+                            "annual_site_energy_use": 51134862.86621094,
                             "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.9308745265007019,
+                            "annual_site_non_coincident_demand": 272812.43178659014,
                             "is_regulated": true
                         },
                         {
@@ -115671,93 +115780,93 @@
                             "is_regulated": true
                         },
                         {
-                            "id": "NATURAL-GAS - Interior Lighting",
+                            "id": "NATURAL_GAS - Interior Lighting",
                             "type": "INTERIOR_LIGHTING",
-                            "energy_source": "NATURAL-GAS",
+                            "energy_source": null,
                             "annual_site_energy_use": 0.0,
                             "annual_site_coincident_demand": 0.0,
                             "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": true
                         },
                         {
-                            "id": "NATURAL-GAS - Misc Equipment",
+                            "id": "NATURAL_GAS - Misc Equipment",
                             "type": "MISC_EQUIPMENT",
-                            "energy_source": "NATURAL-GAS",
+                            "energy_source": null,
                             "annual_site_energy_use": 0.0,
                             "annual_site_coincident_demand": 0.0,
                             "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": false
                         },
                         {
-                            "id": "NATURAL-GAS - Space Heating",
+                            "id": "NATURAL_GAS - Space Heating",
                             "type": "SPACE_HEATING",
-                            "energy_source": "NATURAL-GAS",
+                            "energy_source": null,
                             "annual_site_energy_use": 0.0,
                             "annual_site_coincident_demand": 0.0,
                             "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": true
                         },
                         {
-                            "id": "NATURAL-GAS - Space Cooling",
+                            "id": "NATURAL_GAS - Space Cooling",
                             "type": "SPACE_COOLING",
-                            "energy_source": "NATURAL-GAS",
+                            "energy_source": null,
                             "annual_site_energy_use": 0.0,
                             "annual_site_coincident_demand": 0.0,
                             "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": true
                         },
                         {
-                            "id": "NATURAL-GAS - Heat Rejection",
+                            "id": "NATURAL_GAS - Heat Rejection",
                             "type": "HEAT_REJECTION",
-                            "energy_source": "NATURAL-GAS",
+                            "energy_source": null,
                             "annual_site_energy_use": 0.0,
                             "annual_site_coincident_demand": 0.0,
                             "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": true
                         },
                         {
-                            "id": "NATURAL-GAS - Pumps & Aux",
+                            "id": "NATURAL_GAS - Pumps & Aux",
                             "type": "PUMPS",
-                            "energy_source": "NATURAL-GAS",
+                            "energy_source": null,
                             "annual_site_energy_use": 0.0,
                             "annual_site_coincident_demand": 0.0,
                             "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": true
                         },
                         {
-                            "id": "NATURAL-GAS - Ventilation Fans",
+                            "id": "NATURAL_GAS - Ventilation Fans",
                             "type": "FANS_INTERIOR_VENTILATION",
-                            "energy_source": "NATURAL-GAS",
+                            "energy_source": null,
                             "annual_site_energy_use": 0.0,
                             "annual_site_coincident_demand": 0.0,
                             "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": true
                         },
                         {
-                            "id": "NATURAL-GAS - Refrigeration Display",
+                            "id": "NATURAL_GAS - Refrigeration Display",
                             "type": "REFRIGERATION_EQUIPMENT",
-                            "energy_source": "NATURAL-GAS",
+                            "energy_source": null,
                             "annual_site_energy_use": 0.0,
                             "annual_site_coincident_demand": 0.0,
                             "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": true
                         },
                         {
-                            "id": "NATURAL-GAS - Ht Pump Supplemental Heat",
+                            "id": "NATURAL_GAS - Ht Pump Supplemental Heat",
                             "type": "HEAT_PUMP_SUPPLEMENTAL_HEATING",
-                            "energy_source": "NATURAL-GAS",
+                            "energy_source": null,
                             "annual_site_energy_use": 0.0,
                             "annual_site_coincident_demand": 0.0,
                             "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": true
                         },
                         {
-                            "id": "NATURAL-GAS - Domestic Hot Water",
+                            "id": "NATURAL_GAS - Domestic Hot Water",
                             "type": "SERVICE_WATER_HEATING",
-                            "energy_source": "NATURAL-GAS",
-                            "annual_site_energy_use": 335.6202392578125,
-                            "annual_site_coincident_demand": 10184.0244140625,
-                            "annual_site_non_coincident_demand": 8.0,
+                            "energy_source": null,
+                            "annual_site_energy_use": 0.0,
+                            "annual_site_coincident_demand": 2984643350.6119795,
+                            "annual_site_non_coincident_demand": 0.0,
                             "is_regulated": true
                         }
                     ]
@@ -115765,15 +115874,6 @@
             }
         }
     ],
-    "calendar": {
-        "is_leap_year": false,
-        "day_of_week_for_january_1": "FRIDAY",
-        "has_daylight_saving_time": false
-    },
-    "weather": {
-        "ground_temperature_schedule": "Ground Temperature Schedule",
-        "file_name": "DENVER INTL AP    CO"
-    },
-    "data_timestamp": "2024-12-11T20:44Z",
+    "data_timestamp": "2025-04-22T16:00Z",
     "data_version": "0.1.0"
 }

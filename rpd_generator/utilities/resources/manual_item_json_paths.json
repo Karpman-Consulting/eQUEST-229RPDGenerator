@@ -5,6 +5,12 @@
     "RulesetModelDescription": [
         "$.ruleset_model_descriptions"
     ],
+    "SourceResult": [
+        "$.ruleset_model_descriptions[*].output.output_instance.annual_source_results"
+    ],
+    "EndUseResult": [
+        "$.ruleset_model_descriptions[*].output.output_instance.annual_end_use_results"
+    ],
     "Calendar": [
         "$.calendar"
     ],
@@ -90,6 +96,7 @@
         "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].spaces[*].miscellaneous_equipment"
     ],
     "ServiceWaterHeatingUse": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].service_water_heating_uses",
         "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].spaces[*].service_water_heating_uses"
     ],
     "Subsurface": [

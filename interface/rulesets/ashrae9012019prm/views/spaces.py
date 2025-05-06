@@ -95,14 +95,22 @@ class SpacesView(BaseView):
         self.current_subview.focus_set()
         self.current_subview.open_subview()
 
+    def get_view_data(self):
+        view_data = {}
+        for subview in self.subviews.values():
+            view_data[subview.json_representation] = subview.get_subview_data()
+        return view_data
+
 
 class SpacesSubview(CTkXYFrame):
+    # Set right after subviews are created in the SpacesView
+    json_representation = None
+
     def __init__(self, view_frame):
         super().__init__(view_frame)
         self.spaces_view = view_frame.master
         self.app_data = self.spaces_view.app_data
         self.is_view_populated = False
-        self.new_spaces = {}
 
     def __repr__(self):
         return "SpacesSubview"
@@ -132,6 +140,9 @@ class SpacesSubview(CTkXYFrame):
 
         self.is_view_populated = True
         self.predict_space_type()
+
+        # Populate with any loaded data if it exists
+        self.set_subview_data()
 
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self, text="Name", font=LABEL_FONT)
@@ -179,6 +190,7 @@ class SpacesSubview(CTkXYFrame):
     def add_row(self, i, space_name):
         name_label = ctk.CTkLabel(self, text=f"{space_name}")
         name_label.grid(row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W)
+        status_combo = None
         if not self.app_data.is_all_new_construction.get():
             status_combo = ctk.CTkComboBox(
                 self,
@@ -251,6 +263,106 @@ class SpacesSubview(CTkXYFrame):
         daylighting_modeled_checkbox.grid(
             row=(i + 1), column=9, padx=PAD20END, pady=PAD20END
         )
+
+        self.widget_rows.append(
+            [
+                name_label,
+                status_combo,
+                lighting_space_type_combo,
+                envelope_space_type_combo,
+                ventilation_space_type_combo,
+                swh_space_type_combo,
+                lighting_occ_controls_combo,
+                daylighting_controls_combo,
+                occ_controls_modeled_checkbox,
+                daylighting_modeled_checkbox,
+            ]
+        )
+
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.widget_rows:
+            (
+                name_label,
+                status_combo,
+                lighting_space_type_combo,
+                envelope_space_type_combo,
+                ventilation_space_type_combo,
+                swh_space_type_combo,
+                lighting_occ_controls_combo,
+                daylighting_controls_combo,
+                occ_controls_modeled_checkbox,
+                daylighting_modeled_checkbox,
+            ) = row
+            space_data = {
+                "Name": name_label.cget("text"),
+                "Status": status_combo.get() if status_combo else "",
+                "Lighting Space Type": lighting_space_type_combo.get(),
+                "Envelope Space Type": envelope_space_type_combo.get(),
+                "Ventilation Space Type": ventilation_space_type_combo.get(),
+                "SWH Space Type": swh_space_type_combo.get(),
+                "Lighting Occ. Controls": lighting_occ_controls_combo.get(),
+                "Daylighting Controls": daylighting_controls_combo.get(),
+                "Occ. Controls Modeled": occ_controls_modeled_checkbox.get(),
+                "Daylighting Modeled": daylighting_modeled_checkbox.get(),
+            }
+            subview_data.append(space_data)
+        return subview_data
+
+    # TODO: Right now missing data in a space row will default to empty strings for the fields.
+    #           Defaults will change once guessing is complete and the view structure changes.
+    def set_subview_data(self):
+        for row in self.widget_rows:
+            (
+                name_label,
+                status_combo,
+                lighting_space_type_combo,
+                envelope_space_type_combo,
+                ventilation_space_type_combo,
+                swh_space_type_combo,
+                lighting_occ_controls_combo,
+                daylighting_controls_combo,
+                occ_controls_modeled_checkbox,
+                daylighting_modeled_checkbox,
+            ) = row
+            space_row_data = self.get_space_data(name_label.cget("text"))
+            if not space_row_data:
+                # If no data found, skip this row
+                continue
+            status_combo.set(space_row_data.get("Status", "")) if status_combo else None
+            lighting_space_type_combo.set(space_row_data.get("Lighting Space Type", ""))
+            envelope_space_type_combo.set(space_row_data.get("Envelope Space Type", ""))
+            ventilation_space_type_combo.set(
+                space_row_data.get("Ventilation Space Type", "")
+            )
+            swh_space_type_combo.set(space_row_data.get("SWH Space Type", ""))
+            lighting_occ_controls_combo.set(
+                space_row_data.get("Lighting Occ. Controls", "")
+            )
+            daylighting_controls_combo.set(
+                space_row_data.get("Daylighting Controls", "")
+            )
+            # Handle the checkboxes for modeled via schedule
+            occ_controls_modeled = space_row_data.get("Occ. Controls Modeled", False)
+            (
+                occ_controls_modeled_checkbox.select()
+                if occ_controls_modeled
+                else occ_controls_modeled_checkbox.deselect()
+            )
+            daylighting_modeled = space_row_data.get("Daylighting Modeled", False)
+            (
+                daylighting_modeled_checkbox.select()
+                if daylighting_modeled
+                else daylighting_modeled_checkbox.deselect()
+            )
+
+    def get_space_data(self, space_name):
+        """Helper method to get space data from the app_data for a specific space."""
+        spaces_data = self.app_data.all_project_data.get(self.json_representation, [])
+        for space in spaces_data:
+            if space.get("Name") == space_name:
+                return space
+        return None
 
     def predict_space_type(self):
         """Predict the space type based on the specified space C-ACTIVITY-DESC"""
