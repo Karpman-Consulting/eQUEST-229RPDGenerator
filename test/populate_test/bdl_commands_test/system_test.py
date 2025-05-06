@@ -29,6 +29,7 @@ from rpd_generator.bdl_structure.bdl_commands.utility_and_economics import (
     BDL_FuelTypes,
 )
 from rpd_generator.bdl_structure.bdl_commands.zone import Zone
+from rpd_generator.bdl_structure.bdl_commands.condenser import Condenser
 from rpd_generator.bdl_structure.bdl_commands.circulation_loop import (
     CirculationLoop,
     BDL_CirculationLoopKeywords,
@@ -43,6 +44,7 @@ from rpd_generator.bdl_structure.bdl_commands.system import *
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 BDL_SystemEconoLockoutOptions = BDLEnums.bdl_enums["SystemEconoLockoutOptions"]
+BDL_CondenserKeywords = BDLEnums.bdl_enums["CondenserKeywords"]
 
 
 class TestSystems(unittest.TestCase):
@@ -151,6 +153,8 @@ class TestSystems(unittest.TestCase):
         expected_data_structure = {
             "id": "System 1",
             "cooling_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
                 "id": "System 1 CoolSys",
                 "design_total_cool_capacity": 120000.0,
                 "rated_sensible_cool_capacity": 86800.0,
@@ -209,11 +213,16 @@ class TestSystems(unittest.TestCase):
                 ],
                 "temperature_control": "ZONE_RESET",
             },
-            "heating_system": {},
+            "heating_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
+            },
             "preheat_system": {
                 "id": "System 1 PreheatSys",
                 "rated_capacity": 48000.0,
                 "design_capacity": 100000.0,
+                "efficiency_metric_types": ["THERMAL_EFFICIENCY"],
+                "efficiency_metric_values": [None],
                 "heating_coil_setpoint": 60.0,
                 "energy_source_type": "PROPANE",
                 "is_sized_based_on_design_day": False,
@@ -284,6 +293,8 @@ class TestSystems(unittest.TestCase):
         expected_data_structure = {
             "id": "System 1",
             "cooling_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
                 "id": "System 1 CoolSys",
                 "is_sized_based_on_design_day": True,
                 "type": "FLUID_LOOP",
@@ -341,13 +352,19 @@ class TestSystems(unittest.TestCase):
             "heating_system": {
                 "id": "System 1 HeatSys",
                 "type": "FLUID_LOOP",
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
                 "energy_source_type": "FUEL_OIL",
                 "hot_water_loop": "Circulation Loop",
                 "heating_coil_setpoint": 75.0,
                 "is_sized_based_on_design_day": True,
             },
-            "preheat_system": {},
+            "preheat_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
+            },
         }
+
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
@@ -385,6 +402,8 @@ class TestSystems(unittest.TestCase):
         expected_data_structure = {
             "id": "System 1",
             "cooling_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
                 "id": "System 1 CoolSys",
                 "is_sized_based_on_design_day": True,
                 "type": "FLUID_LOOP",
@@ -420,11 +439,16 @@ class TestSystems(unittest.TestCase):
             "heating_system": {
                 "id": "System 1 HeatSys",
                 "energy_source_type": "ELECTRICITY",
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
                 "heating_coil_setpoint": 70.0,
                 "is_sized_based_on_design_day": True,
                 "type": "HEAT_PUMP",
             },
-            "preheat_system": {},
+            "preheat_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
+            },
         }
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
 
@@ -454,6 +478,8 @@ class TestSystems(unittest.TestCase):
         expected_data_structure = {
             "id": "System 1",
             "cooling_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
                 "id": "System 1 CoolSys",
                 "is_sized_based_on_design_day": True,
                 "type": "DIRECT_EXPANSION",
@@ -477,11 +503,16 @@ class TestSystems(unittest.TestCase):
                 ],
             },
             "heating_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
                 "id": "System 1 HeatSys",
                 "is_sized_based_on_design_day": True,
                 "type": "FLUID_LOOP",
             },
-            "preheat_system": {},
+            "preheat_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
+            },
         }
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
 
@@ -500,7 +531,10 @@ class TestSystems(unittest.TestCase):
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "System 1",
-            "cooling_system": {},
+            "cooling_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
+            },
             "fan_system": {
                 "id": "System 1 FanSys",
                 "air_economizer": {},
@@ -519,8 +553,14 @@ class TestSystems(unittest.TestCase):
                     }
                 ],
             },
-            "heating_system": {},
-            "preheat_system": {},
+            "heating_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
+            },
+            "preheat_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
+            },
         }
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
 
@@ -567,6 +607,8 @@ class TestSystems(unittest.TestCase):
         expected_data_structure = {
             "id": "System 1",
             "cooling_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
                 "id": "System 1 CoolSys",
                 "is_sized_based_on_design_day": True,
                 "type": "FLUID_LOOP",
@@ -621,11 +663,16 @@ class TestSystems(unittest.TestCase):
                 "temperature_control": "OTHER",
             },
             "heating_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
                 "id": "System 1 HeatSys",
                 "is_sized_based_on_design_day": True,
                 "type": "FLUID_LOOP",
             },
-            "preheat_system": {},
+            "preheat_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
+            },
         }
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
 
@@ -690,3 +737,280 @@ class TestSystems(unittest.TestCase):
             }
 
             self.rmd.populate_rmd_data(testing=True)
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_populate_vrf(self, mock_get_output_data):
+        """
+        Verify that no errors arise from populating vrf efficiency.
+        """
+        mock_get_output_data.return_value = {}
+        self.condenser = Condenser("Condensing Unit 1", self.rmd)
+
+        self.system.keyword_value_pairs = {
+            BDL_SystemKeywords.TYPE: BDL_SystemTypes.PVVT,
+            BDL_SystemKeywords.HEAT_SOURCE: BDL_SystemHeatingTypes.CONDENSING_UNIT,
+            BDL_SystemKeywords.COOL_SOURCE: BDL_SystemCoolingTypes.NONE,
+            BDL_SystemKeywords.CONDENSING_UNIT: "Condensing Unit 1",
+        }
+
+        self.condenser.keyword_value_pairs = {
+            BDL_CondenserKeywords.COOLING_EIR: 0.25,
+            BDL_CondenserKeywords.COOL_RATED_ODB: 95,
+        }
+
+        self.rmd.populate_rmd_data(testing=True)
+        expected_data_structure = {
+            "cooling_system": {
+                "efficiency_metric_types": [
+                    "FULL_LOAD_COEFFICIENT_OF_PERFORMANCE_NO_FAN"
+                ],
+                "efficiency_metric_values": [4.0],
+                "id": "System 1 CoolSys",
+                "is_sized_based_on_design_day": True,
+                "type": "DIRECT_EXPANSION",
+            },
+            "fan_system": {
+                "air_economizer": {},
+                "air_energy_recovery": {},
+                "exhaust_fans": [],
+                "has_fully_ducted_return": False,
+                "id": "System 1 FanSys",
+                "relief_fans": [],
+                "return_fans": [],
+                "supply_fans": [
+                    {
+                        "id": "System 1 SupplyFan",
+                        "is_airflow_sized_based_on_design_day": True,
+                        "output_validation_points": [],
+                        "specification_method": "SIMPLE",
+                    }
+                ],
+                "temperature_control": "ZONE_RESET",
+            },
+            "heating_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
+                "energy_source_type": "ELECTRICITY",
+                "id": "System 1 HeatSys",
+                "is_sized_based_on_design_day": True,
+                "type": "HEAT_PUMP",
+            },
+            "id": "System 1",
+            "preheat_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
+            },
+        }
+        self.assertEqual(expected_data_structure, self.system.system_data_structure)
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_efficiency_population_dx_air_cooled_95(self, mock_get_output_data):
+        """
+        Verify that cooling efficiency and metric populate correctly for DX air-cooled heat pump with
+        95/47 rated temps.
+        """
+        mock_get_output_data.return_value = {}
+
+        expected_data_structure = {
+            "cooling_system": {
+                "efficiency_metric_types": [
+                    "FULL_LOAD_COEFFICIENT_OF_PERFORMANCE_NO_FAN"
+                ],
+                "efficiency_metric_values": [3.125],
+                "id": "System 1 CoolSys",
+                "is_sized_based_on_design_day": True,
+                "type": "DIRECT_EXPANSION",
+            },
+            "fan_system": {
+                "air_economizer": {},
+                "air_energy_recovery": {},
+                "exhaust_fans": [],
+                "has_fully_ducted_return": False,
+                "id": "System 1 FanSys",
+                "relief_fans": [],
+                "return_fans": [],
+                "supply_fans": [
+                    {
+                        "id": "System 1 SupplyFan",
+                        "is_airflow_sized_based_on_design_day": True,
+                        "output_validation_points": [],
+                        "specification_method": "SIMPLE",
+                    }
+                ],
+                "temperature_control": "ZONE_RESET",
+            },
+            "heating_system": {
+                "efficiency_metric_types": [
+                    "HEAT_PUMP_COEFFICIENT_OF_PERFORMANCE_HIGH_TEMPERATURE_NO_FAN"
+                ],
+                "efficiency_metric_values": [4.0],
+                "energy_source_type": "ELECTRICITY",
+                "id": "System 1 HeatSys",
+                "is_sized_based_on_design_day": True,
+                "type": "HEAT_PUMP",
+            },
+            "id": "System 1",
+            "preheat_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
+            },
+        }
+
+        self.condenser = Condenser("Condensing Unit 1", self.rmd)
+
+        self.system.keyword_value_pairs = {
+            BDL_SystemKeywords.TYPE: BDL_SystemTypes.PVVT,
+            BDL_SystemKeywords.HEAT_SOURCE: BDL_SystemHeatingTypes.HEAT_PUMP,
+            BDL_SystemKeywords.COOL_SOURCE: BDL_SystemCoolingTypes.NONE,
+            BDL_SystemKeywords.CONDENSER_TYPE: BDL_SystemCondenserTypes.AIR_COOLED,
+            BDL_SystemKeywords.RATED_ECT: 95,
+            BDL_SystemKeywords.COOLING_EIR: 0.32,
+            BDL_SystemKeywords.HT_RATED_ECT: 47,
+            BDL_SystemKeywords.HEATING_EIR: 0.25,
+            BDL_SystemKeywords.CONDENSING_UNIT: "Condensing Unit 1",
+        }
+
+        self.condenser.keyword_value_pairs = {BDL_CondenserKeywords.COOLING_EIR: 0.25}
+
+        self.rmd.populate_rmd_data(testing=True)
+        self.assertEqual(expected_data_structure, self.system.system_data_structure)
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_efficiency_population_dx_air_cooled_80(self, mock_get_output_data):
+        """
+        Verify that cooling efficiency and metric populate correctly for DX air-cooled with a rated temp that does not match rated conditions.
+        """
+        mock_get_output_data.return_value = {}
+
+        expected_data_structure = {
+            "cooling_system": {
+                "efficiency_metric_types": ["OTHER"],
+                "efficiency_metric_values": [3.125],
+                "id": "System 1 CoolSys",
+                "is_sized_based_on_design_day": True,
+                "type": "DIRECT_EXPANSION",
+            },
+            "fan_system": {
+                "air_economizer": {},
+                "air_energy_recovery": {},
+                "exhaust_fans": [],
+                "has_fully_ducted_return": False,
+                "id": "System 1 FanSys",
+                "relief_fans": [],
+                "return_fans": [],
+                "supply_fans": [
+                    {
+                        "id": "System 1 SupplyFan",
+                        "is_airflow_sized_based_on_design_day": True,
+                        "output_validation_points": [],
+                        "specification_method": "SIMPLE",
+                    }
+                ],
+                "temperature_control": "ZONE_RESET",
+            },
+            "heating_system": {
+                "efficiency_metric_types": [
+                    "HEAT_PUMP_COEFFICIENT_OF_PERFORMANCE_HIGH_TEMPERATURE_NO_FAN"
+                ],
+                "efficiency_metric_values": [3.4482758620689657],
+                "energy_source_type": "ELECTRICITY",
+                "id": "System 1 HeatSys",
+                "is_sized_based_on_design_day": True,
+                "type": "HEAT_PUMP",
+            },
+            "id": "System 1",
+            "preheat_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
+            },
+        }
+
+        self.condenser = Condenser("Condensing Unit 1", self.rmd)
+
+        self.system.keyword_value_pairs = {
+            BDL_SystemKeywords.TYPE: BDL_SystemTypes.PVVT,
+            BDL_SystemKeywords.HEAT_SOURCE: BDL_SystemHeatingTypes.HEAT_PUMP,
+            BDL_SystemKeywords.COOL_SOURCE: BDL_SystemCoolingTypes.NONE,
+            BDL_SystemKeywords.CONDENSER_TYPE: BDL_SystemCondenserTypes.AIR_COOLED,
+            BDL_SystemKeywords.RATED_ECT: 80,
+            BDL_SystemKeywords.COOLING_EIR: 0.32,
+            BDL_SystemKeywords.CONDENSING_UNIT: "Condensing Unit 1",
+            BDL_SystemKeywords.HT_RATED_ECT: 47,
+            BDL_SystemKeywords.HEATING_EIR: 0.29,
+        }
+
+        self.condenser.keyword_value_pairs = {BDL_CondenserKeywords.COOLING_EIR: 0.25}
+
+        self.rmd.populate_rmd_data(testing=True)
+        self.assertEqual(expected_data_structure, self.system.system_data_structure)
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_efficiency_population_dx_water_cooled_86(self, mock_get_output_data):
+        """
+        Verify that cooling efficiency and metric populate correctly for DX water_cooled with a rated temp of 86.
+        """
+        mock_get_output_data.return_value = {}
+
+        expected_data_structure = {
+            "cooling_system": {
+                "efficiency_metric_types": [
+                    "COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN"
+                ],
+                "efficiency_metric_values": [3.125],
+                "id": "System 1 CoolSys",
+                "is_sized_based_on_design_day": True,
+                "type": "DIRECT_EXPANSION",
+            },
+            "fan_system": {
+                "air_economizer": {},
+                "air_energy_recovery": {},
+                "exhaust_fans": [],
+                "has_fully_ducted_return": False,
+                "id": "System 1 FanSys",
+                "relief_fans": [],
+                "return_fans": [],
+                "supply_fans": [
+                    {
+                        "id": "System 1 SupplyFan",
+                        "is_airflow_sized_based_on_design_day": True,
+                        "output_validation_points": [],
+                        "specification_method": "SIMPLE",
+                    }
+                ],
+                "temperature_control": "ZONE_RESET",
+            },
+            "heating_system": {
+                "efficiency_metric_types": [
+                    "COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN"
+                ],
+                "efficiency_metric_values": [3.4482758620689657],
+                "energy_source_type": "ELECTRICITY",
+                "id": "System 1 HeatSys",
+                "is_sized_based_on_design_day": True,
+                "type": "HEAT_PUMP",
+            },
+            "id": "System 1",
+            "preheat_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
+            },
+        }
+
+        self.condenser = Condenser("Condensing Unit 1", self.rmd)
+
+        self.system.keyword_value_pairs = {
+            BDL_SystemKeywords.TYPE: BDL_SystemTypes.PVVT,
+            BDL_SystemKeywords.HEAT_SOURCE: BDL_SystemHeatingTypes.HEAT_PUMP,
+            BDL_SystemKeywords.COOL_SOURCE: BDL_SystemCoolingTypes.NONE,
+            BDL_SystemKeywords.CONDENSER_TYPE: BDL_SystemCondenserTypes.WATER_COOLED,
+            BDL_SystemKeywords.RATED_ECT: 86,
+            BDL_SystemKeywords.COOLING_EIR: 0.32,
+            BDL_SystemKeywords.CONDENSING_UNIT: "Condensing Unit 1",
+            BDL_SystemKeywords.HT_RATED_ECT: 68,
+            BDL_SystemKeywords.HEATING_EIR: 0.29,
+        }
+
+        self.condenser.keyword_value_pairs = {BDL_CondenserKeywords.COOLING_EIR: 0.25}
+
+        self.rmd.populate_rmd_data(testing=True)
+        self.assertEqual(expected_data_structure, self.system.system_data_structure)

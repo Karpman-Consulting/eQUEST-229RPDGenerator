@@ -78,6 +78,7 @@ class RulesetModelDescription(Base):
         "WEEK-SCHEDULE-PD",
         "SCHEDULE-PD",
         "POLYGON",  # Polygons must populate before Spaces
+        "CONDENSING-UNIT",
         "PUMP",  # Pumps must populate before Boiler, Chiller, Heat-Rejection, Circulation-Loop
         "CIRCULATION-LOOP",  # Circulation loops must populate before Boiler, Chiller, DWHeater, Heat-Rejection
         "BOILER",  # Boilers must populate before systems
