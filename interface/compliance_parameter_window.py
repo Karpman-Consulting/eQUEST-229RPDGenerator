@@ -1,8 +1,13 @@
+import json
+from pathlib import Path
+
 import customtkinter as ctk
 from PIL import Image
 from tkinter import Menu
 from functools import partial
+from tkinter.filedialog import asksaveasfilename, askopenfilename
 
+from interface.CTkMessagebox import CTkMessagebox
 from interface.rulesets import import_views, static_files_path
 from interface.disclaimer_window import DisclaimerWindow
 from interface.CTkMessagebox import CTkMessagebox
@@ -60,6 +65,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
 
         self.license_window = None
         self.disclaimer_window = None
+        self.error_window = None
 
         # Create main application widgets
         self.menubar = self.create_menu_bar()
@@ -86,8 +92,8 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         menubar = Menu(self)
         file_menu = Menu(menubar, tearoff=0)
         file_menu.add_command(label="New", command="donothing")
-        file_menu.add_command(label="Open", command="donothing")
-        file_menu.add_command(label="Save", command="donothing")
+        file_menu.add_command(label="Open", command=self.load_project_data)
+        file_menu.add_command(label="Save", command=self.save_project_data)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.quit)
         menubar.add_cascade(label="File", menu=file_menu)
@@ -293,7 +299,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
     def open_disclaimer(self):
         if self.disclaimer_window is None or not self.disclaimer_window.winfo_exists():
             self.disclaimer_window = DisclaimerWindow(self)
-            self.disclaimer_window.after(100, self.disclaimer_window.lift)
+            self.disclaimer_window.after(100, self.disclaimer_window.lift, None)
         else:
             self.disclaimer_window.focus()  # if window exists, focus it
 
@@ -305,3 +311,40 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             message=error_text,
             icon="warning",
         )
+
+    def save_project_data(self):
+        self.main_app.data.all_project_data.clear()
+        for view in self.views.values():
+            # Skip incomplete views
+            if not hasattr(view, "get_view_data"):
+                continue
+            self.main_app.data.all_project_data.update(view.get_view_data())
+
+        # Save the project data to a file
+        # file_path = str(Path(self.main_app.data.output_directory.get()) / f"{self.main_app.data.project_name.get()}_data.json")
+        file_path = asksaveasfilename(
+            initialdir=str(Path(self.main_app.data.output_directory.get())),
+            initialfile=f"{self.main_app.data.project_name.get()}_data",
+            title="Save As",
+            filetypes=[("JSON", "*.json")],
+            defaultextension=".json",
+        )
+        with open(file_path, "w") as project_save_file:
+            json.dump(self.main_app.data.all_project_data, project_save_file, indent=4)
+
+    def load_project_data(self):
+        """Load a saved project data file. A saved data file will have already undergone
+        basic validation. Not necessarily true if use has manually edited the file.
+        Further validation will likely happen on RPD generation."""
+        # Throw warning dialog with y/n for replacing existing data
+        msg = CTkMessagebox(
+            title="Warning",
+            message="Loading a new project will overwrite/erase existing data. Would you like to continue?",
+            icon="warning",
+            option_1="No",
+            option_2="Yes",
+        )
+        if msg.get() == "No":
+            return
+        self.main_app.data.populate_project_data()
+        self.main_app.refresh_compliance_parameter_window()
