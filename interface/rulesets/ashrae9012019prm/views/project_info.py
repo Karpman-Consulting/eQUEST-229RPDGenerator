@@ -544,13 +544,13 @@ class ProjectConfigSubview(CTkXYFrame):
             row=4, column=1, columnspan=2, sticky=E + W, padx=5, pady=5
         )
 
-        # Row 5 Placeholder for the rotation exception checkbox
+        # Row 5/6 Placeholder for the design==proposed and rotation exception checkboxs
 
-        # Row 6
-        self.ruleset_models_label.grid(row=6, column=0, sticky=E + W, padx=5, pady=5)
+        # Row 7
+        self.ruleset_models_label.grid(row=7, column=0, sticky=E + W, padx=5, pady=5)
 
         self.show_ruleset_models()
-        self.ruleset_models_frame.grid(row=6, column=1, columnspan=8, sticky=FILL)
+        self.ruleset_models_frame.grid(row=7, column=1, columnspan=8, sticky=FILL)
 
     def update_ruleset_model_frame(self, selected_ruleset):
         self.app_data.selected_ruleset.set(selected_ruleset)
@@ -563,10 +563,10 @@ class ProjectConfigSubview(CTkXYFrame):
         # Main logic
         if self.app_data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM":
             self.proposed_reflects_design_checkbox.grid(
-                row=4, column=4, columnspan=4, sticky=W, padx=5, pady=(15, 5)
+                row=5, column=1, columnspan=4, sticky=W, padx=5, pady=5
             )
             self.rotation_exception_checkbox.grid(
-                row=5, column=1, columnspan=4, sticky=W, padx=5, pady=(15, 5)
+                row=6, column=1, columnspan=4, sticky=W, padx=5, pady=5
             )
             if not self.proposed_reflects_design_checkbox.get():
                 labels = ["Design: ", "Proposed: ", "Baseline: "]

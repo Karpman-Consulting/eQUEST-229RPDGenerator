@@ -86,7 +86,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             onvalue=True,
             offvalue=False,
         )
-        self.ruleset_models_frame = ctk.CTkFrame(self, width=800)
+        self.ruleset_models_frame = ctk.CTkFrame(self)
         self.ruleset_dropdown = ctk.CTkOptionMenu(
             self,
             values=RULESETS,
@@ -188,15 +188,15 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             row=2, column=1, columnspan=3, sticky="ew", padx=5, pady=(30, 5)
         )
         self.new_construction_checkbox.grid(
-            row=2, column=5, sticky="w", padx=5, pady=(30, 5)
+            row=2, column=4, sticky="e", padx=5, pady=(30, 5)
         )
 
         # Row 3
         self.output_dir_label.grid(row=3, column=0, sticky="e", padx=(20, 5), pady=5)
         self.output_dir_entry.grid(
-            row=3, column=1, columnspan=5, sticky="ew", padx=5, pady=5
+            row=3, column=1, columnspan=4, sticky="ew", padx=5, pady=5
         )
-        self.output_dir_button.grid(row=3, column=6, sticky="ew", padx=5, pady=5)
+        self.output_dir_button.grid(row=3, column=5, sticky="w", padx=5, pady=5)
 
         # Row 4
         self.ruleset_label.grid(row=4, column=0, sticky="e", padx=(20, 5), pady=5)
@@ -226,10 +226,10 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         # Main logic
         if self.main_app.data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM":
             self.proposed_reflects_design_checkbox.grid(
-                row=5, column=1, columnspan=4, sticky="w", padx=5, pady=(15, 5)
+                row=5, column=1, columnspan=4, sticky="w", padx=5, pady=5
             )
             self.rotation_exception_checkbox.grid(
-                row=6, column=1, columnspan=4, sticky="w", padx=5, pady=(15, 5)
+                row=6, column=1, columnspan=4, sticky="w", padx=5, pady=(5, 10)
             )
             if not self.proposed_reflects_design_checkbox.get():
                 labels = ["Design: ", "Proposed: ", "Baseline: "]
