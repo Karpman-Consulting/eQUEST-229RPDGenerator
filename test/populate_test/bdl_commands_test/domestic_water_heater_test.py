@@ -60,6 +60,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "DWH 1",
+            "input_power": 86.4197523,
             "output_validation_points": [],
             "tank": {
                 "id": "DWH 1 Tank",
@@ -75,7 +76,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "rated_capacity": 123.456789,
             "setpoint_temperature": 70.2,
             "efficiency_metric_types": ["THERMAL_EFFICIENCY"],
-            "efficiency_metric_values": [10.0],
+            "efficiency_metric_values": [1.4285714285714286],
         }
         self.assertEqual(
             expected_data_structure, self.domestic_water_heater.data_structure
@@ -110,6 +111,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "DWH 1",
+            "input_power": 86.4197523,
             "output_validation_points": [],
             "tank": {
                 "id": "DWH 1 Tank",
@@ -124,7 +126,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "rated_capacity": 123.456789,
             "setpoint_temperature": 70.2,
             "efficiency_metric_types": ["THERMAL_EFFICIENCY"],
-            "efficiency_metric_values": [10.0],
+            "efficiency_metric_values": [1.4285714285714286],
         }
         self.assertEqual(
             expected_data_structure, self.domestic_water_heater.data_structure
@@ -161,6 +163,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "DWH 1",
+            "input_power": 86.4197523,
             "output_validation_points": [],
             "tank": {
                 "id": "DWH 1 Tank",
@@ -175,7 +178,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "rated_capacity": 123.456789,
             "setpoint_temperature": 70.2,
             "efficiency_metric_types": ["THERMAL_EFFICIENCY"],
-            "efficiency_metric_values": [10.0],
+            "efficiency_metric_values": [1.4285714285714286],
         }
         self.assertEqual(
             expected_data_structure, self.domestic_water_heater.data_structure
@@ -203,11 +206,14 @@ class TestDomesticWaterHeater(unittest.TestCase):
             BDL_DWHeaterKeywords.AQUASTAT_SETPT_T: "70.2",
             BDL_DWHeaterKeywords.TANK_VOLUME: "250",
             BDL_DWHeaterKeywords.LOCATION: BDL_DWHeaterLocationOptions.OUTDOOR,
+            BDL_DWHeaterKeywords.HEAT_INPUT_RATIO: "1",
+            BDL_DWHeaterKeywords.ELEC_INPUT_RATIO: "0",
         }
 
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "DWH 1",
+            "input_power": 123.456789,
             "output_validation_points": [],
             "tank": {
                 "id": "DWH 1 Tank",
@@ -256,6 +262,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "DWH 1",
+            "input_power": 154.32098625,
             "output_validation_points": [],
             "tank": {
                 "id": "DWH 1 Tank",
@@ -304,6 +311,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "DWH 1",
+            "input_power": 123.456789,
             "output_validation_points": [],
             "tank": {
                 "id": "DWH 1 Tank",
@@ -352,6 +360,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "DWH 1",
+            "input_power": 277.77777525,
             "output_validation_points": [],
             "tank": {
                 "id": "DWH 1 Tank",
@@ -366,7 +375,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "rated_capacity": 123.456789,
             "setpoint_temperature": 65.0,
             "efficiency_metric_types": ["THERMAL_EFFICIENCY"],
-            "efficiency_metric_values": [0.80],
+            "efficiency_metric_values": [0.4444444444444445],
         }
         self.assertEqual(
             expected_data_structure, self.domestic_water_heater.data_structure
@@ -401,6 +410,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "DWH 1",
+            "input_power": 271.6049358,
             "output_validation_points": [],
             "tank": {
                 "id": "DWH 1 Tank",
@@ -415,7 +425,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "rated_capacity": 123.456789,
             "setpoint_temperature": 70.2,
             "efficiency_metric_types": ["THERMAL_EFFICIENCY"],
-            "efficiency_metric_values": [0.8333333333333334],
+            "efficiency_metric_values": [0.45454545454545453],
         }
         self.assertEqual(
             expected_data_structure, self.domestic_water_heater.data_structure
@@ -450,6 +460,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "DWH 1",
+            "input_power": 61.7283945,
             "output_validation_points": [],
             "tank": {
                 "id": "DWH 1 Tank",

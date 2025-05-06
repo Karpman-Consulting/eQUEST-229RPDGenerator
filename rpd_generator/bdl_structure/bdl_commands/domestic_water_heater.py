@@ -135,29 +135,36 @@ class DomesticWaterHeater(BaseNode):
         )
         self.location_zone = self.get_inp(BDL_DWHeaterKeywords.ZONE_NAME)
 
-        self.efficiency_metric_values.append(
-            1
-            / (
-                (
-                    self.try_float(self.get_inp(BDL_DWHeaterKeywords.HEAT_INPUT_RATIO))
-                    or 1.0
-                )
-                * (
-                    self.try_float(self.get_inp(BDL_DWHeaterKeywords.ELEC_INPUT_RATIO))
-                    or 1.0
-                )
+        heat_ratio = self.try_float(self.get_inp(BDL_DWHeaterKeywords.HEAT_INPUT_RATIO))
+        elec_ratio = self.try_float(self.get_inp(BDL_DWHeaterKeywords.ELEC_INPUT_RATIO))
+
+        # Compute inverses only for valid, nonzero values
+        heat_thermal_eff = 1 / heat_ratio if heat_ratio else 0
+        elec_thermal_eff = 1 / elec_ratio if elec_ratio else 0
+
+        # Append based on available values
+        if heat_thermal_eff and elec_thermal_eff:
+            self.efficiency_metric_values.append(
+                (heat_thermal_eff * elec_thermal_eff)
+                / (heat_thermal_eff + elec_thermal_eff)
             )
-        )
+        else:
+            self.efficiency_metric_values.append(heat_thermal_eff or elec_thermal_eff)
+
         self.efficiency_metric_types.append(
             ServiceWaterHeatingEfficiencyMetricOptions.THERMAL_EFFICIENCY
         )
 
         try:
             thermal_eff_index = self.efficiency_metric_types.index(
-                ServiceWaterHeatingEfficiencyMetricOptions.THERMAL_EFFICIENCY)
-            self.input_power = self.rated_capacity / self.efficiency_metric_values[thermal_eff_index]
+                ServiceWaterHeatingEfficiencyMetricOptions.THERMAL_EFFICIENCY
+            )
+            self.input_power = (
+                self.rated_capacity / self.efficiency_metric_values[thermal_eff_index]
+            )
         except ValueError:
             pass  # Handles cases where the index isn’t found
+
     def get_output_requests(self):
         """Get the output requests for the domestic water heater object."""
         requests = {
