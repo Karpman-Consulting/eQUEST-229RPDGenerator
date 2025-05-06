@@ -83,6 +83,7 @@ class TestUndergroundWalls(unittest.TestCase):
                 ],
                 "r_values": [],
                 "u_factor": 0.5,
+                "c_factor": 0.7575757575757577,
             },
             "adjacent_to": "GROUND",
             "azimuth": 350.0,

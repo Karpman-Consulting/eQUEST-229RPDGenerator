@@ -75,6 +75,17 @@ class BaseDefinition:
             # TODO log error for future GUI error window
             return None
 
+    @staticmethod
+    def try_int(value):
+        """Attempt to convert a value to an integer, returning None if it fails."""
+        if value is None:
+            return None
+        try:
+            return int(float(value))
+        except (ValueError, TypeError):
+            # TODO log error for future GUI error window
+            return None
+
 
 def _chunked_dict(d, n):
     """Yield successive n-sized chunks from dictionary d."""

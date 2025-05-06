@@ -59,6 +59,8 @@ BDL_HPSupplementSourceOptions = BDLEnums.bdl_enums["HPSupplementSourceOptions"]
 BDL_OutputCoolingTypes = BDLEnums.bdl_enums["OutputCoolingTypes"]
 BDL_OutputHeatingTypes = BDLEnums.bdl_enums["OutputHeatingTypes"]
 BDL_ReturnAirPathOptions = BDLEnums.bdl_enums["SystemReturnAirPathOptions"]
+BDL_WLHPCategoryOptions = BDLEnums.bdl_enums["SystemWLHPCategoryOptions"]
+BDL_SystemCondenserTypes = BDLEnums.bdl_enums["SystemCondenserTypes"]
 
 
 class System(ParentNode):
@@ -141,21 +143,29 @@ class System(ParentNode):
         BDL_SystemHeatingTypes.DHW_LOOP: HeatingSystemOptions.OTHER,
         BDL_SystemHeatingTypes.STEAM: HeatingSystemOptions.OTHER,
     }
+    BDL_condenser_output_cool_type_map = {
+        BDL_SystemCondenserTypes.AIR_COOLED: BDL_OutputCoolingTypes.DX_AIR_COOLED,
+        BDL_SystemCondenserTypes.WATER_COOLED: BDL_OutputCoolingTypes.DX_WATER_COOLED,
+        BDL_SystemCondenserTypes.EVAP_PRECOOLED: None,
+        BDL_SystemCondenserTypes.EVAP_COOLED: None,
+    }
+    BDL_condenser_output_heat_type_map = {
+        BDL_SystemCondenserTypes.AIR_COOLED: BDL_OutputHeatingTypes.HEAT_PUMP_AIR_COOLED,
+        BDL_SystemCondenserTypes.WATER_COOLED: BDL_OutputHeatingTypes.HEAT_PUMP_WATER_COOLED,
+        BDL_SystemCondenserTypes.EVAP_PRECOOLED: None,
+        BDL_SystemCondenserTypes.EVAP_COOLED: None,
+    }
     BDL_output_heat_type_map = {
-        BDL_SystemHeatingTypes.HEAT_PUMP: BDL_OutputHeatingTypes.HEAT_PUMP_WATER_COOLED,
+        BDL_SystemHeatingTypes.HEAT_PUMP: None,  # Mapping updated based on condenser type
         BDL_SystemHeatingTypes.FURNACE: BDL_OutputHeatingTypes.FURNACE,
         BDL_SystemHeatingTypes.ELECTRIC: BDL_OutputHeatingTypes.ELECTRIC,
         BDL_SystemHeatingTypes.HOT_WATER: BDL_OutputHeatingTypes.HOT_WATER,
+        BDL_SystemHeatingTypes.CONDENSING_UNIT: BDL_OutputHeatingTypes.VRF,
     }
     cool_type_map = {
         BDL_SystemCoolingTypes.ELEC_DX: CoolingSystemOptions.DIRECT_EXPANSION,
         BDL_SystemCoolingTypes.CHILLED_WATER: CoolingSystemOptions.FLUID_LOOP,
         BDL_SystemCoolingTypes.NONE: CoolingSystemOptions.NONE,
-    }
-    BDL_output_cool_type_map = {
-        BDL_SystemCoolingTypes.ELEC_DX: BDL_OutputCoolingTypes.DX_AIR_COOLED,
-        BDL_SystemCoolingTypes.CHILLED_WATER: BDL_OutputCoolingTypes.CHILLED_WATER,
-        BDL_SystemCoolingTypes.NONE: None,
     }
     supply_fan_control_map = {
         BDL_SystemFanControlOptions.CONSTANT_VOLUME: FanSystemSupplyFanControlOptions.CONSTANT,
@@ -222,10 +232,10 @@ class System(ParentNode):
     }
     BDL_output_system_cooling_type_map = {
         BDL_SystemTypes.PTAC: BDL_OutputCoolingTypes.DX_AIR_COOLED,  # Unavailable in DOE 2.3
-        BDL_SystemTypes.PSZ: BDL_OutputCoolingTypes.DX_AIR_COOLED,
-        BDL_SystemTypes.PMZS: BDL_OutputCoolingTypes.DX_AIR_COOLED,
-        BDL_SystemTypes.PVAVS: BDL_OutputCoolingTypes.DX_AIR_COOLED,
-        BDL_SystemTypes.PVVT: BDL_OutputCoolingTypes.DX_AIR_COOLED,
+        BDL_SystemTypes.PSZ: None,  # Mapping updated based on condenser type
+        BDL_SystemTypes.PMZS: None,  # Mapping updated based on condenser type
+        BDL_SystemTypes.PVAVS: None,  # Mapping updated based on condenser type
+        BDL_SystemTypes.PVVT: None,  # Mapping updated based on condenser type
         BDL_SystemTypes.HP: BDL_OutputCoolingTypes.DX_WATER_COOLED,
         BDL_SystemTypes.SZRH: BDL_OutputCoolingTypes.CHILLED_WATER,
         BDL_SystemTypes.VAVS: BDL_OutputCoolingTypes.CHILLED_WATER,
@@ -237,7 +247,7 @@ class System(ParentNode):
         BDL_SystemTypes.IU: BDL_OutputCoolingTypes.CHILLED_WATER,
         BDL_SystemTypes.UVT: CoolingSystemOptions.NONE,
         BDL_SystemTypes.UHT: CoolingSystemOptions.NONE,
-        BDL_SystemTypes.RESYS2: BDL_OutputCoolingTypes.DX_AIR_COOLED,
+        BDL_SystemTypes.RESYS2: None,  # Mapping updated based on condenser type
         BDL_SystemTypes.CBVAV: BDL_OutputCoolingTypes.CHILLED_WATER,
         BDL_SystemTypes.SUM: None,
         BDL_SystemTypes.DOAS: None,  # Mapping updated in populate_data_elements method
@@ -305,7 +315,9 @@ class System(ParentNode):
             self.rmd.system_names.append(u_name)
             self.rmd.bdl_obj_instances[u_name] = self
 
-        self.sys_id = None  # used to store the implicit system id for zonal systems
+        # used to store the unique 229 schema ID for zonal systems, so that the original BDL u_name may be preserved
+        self.sys_id = None
+
         self.system_data_structure = {}
 
         self.omit = False
@@ -492,10 +504,20 @@ class System(ParentNode):
         heat_type = self.heat_type_map.get(self.get_inp(BDL_SystemKeywords.HEAT_SOURCE))
         cool_type = self.cool_type_map.get(self.get_inp(BDL_SystemKeywords.COOL_SOURCE))
 
-        has_heat = heat_type not in [None, HeatingSystemOptions.NONE]
+        has_heat = heat_type not in [None, HeatingSystemOptions.NONE] or (
+            system_type == BDL_SystemTypes.HP
+            and self.get_inp(BDL_SystemKeywords.WLHP_CATEGORY)
+            in [
+                BDL_WLHPCategoryOptions.WATER_LOOP,
+                BDL_WLHPCategoryOptions.GROUND_WATER,
+                BDL_WLHPCategoryOptions.GROUND_LOOP,
+            ]
+        )
         has_cool = self.system_cooling_type_map.get(
             self.get_inp(BDL_SystemKeywords.TYPE)
-        ) not in [None, CoolingSystemOptions.NONE]
+        ) not in [None, CoolingSystemOptions.NONE] or (
+            system_type == BDL_SystemTypes.HP
+        )
         has_preheat = self.get_inp(BDL_SystemKeywords.PREHEAT_SOURCE) and self.get_inp(
             BDL_SystemKeywords.PREHEAT_SOURCE
         ) not in [None, BDL_SystemHeatingTypes.NONE]
@@ -815,9 +837,19 @@ class System(ParentNode):
 
             match self.preheat_sys_type:
                 case HeatingSystemOptions.FLUID_LOOP:
-                    pass  # placeholder
+                    # Design Preheat - hot water - SYSTEM - capacity, btu/hr
+                    requests["Design Preheat Capacity"] = (
+                        2203269,
+                        self.u_name,
+                        "",
+                    )
                 case HeatingSystemOptions.ELECTRIC_RESISTANCE:
-                    pass  # placeholder
+                    # Design Preheat - electric - SYSTEM - capacity, btu/hr
+                    requests["Design Preheat Capacity"] = (
+                        2203346,
+                        self.u_name,
+                        "",
+                    )
                 case HeatingSystemOptions.FURNACE:
                     # Design Preheat - furnace - SYSTEM - capacity, btu/hr
                     requests["Design Preheat Capacity"] = (
@@ -934,18 +966,31 @@ class System(ParentNode):
 
     def update_system_mapping(self):
         """Update various system mapping based on the system component types."""
-        cool_source = self.get_inp(BDL_SystemKeywords.COOL_SOURCE)
-        cool_type = self.cool_type_map.get(cool_source)
         self.system_cooling_type_map.update(
             {
-                BDL_SystemTypes.PIU: cool_type,
-                BDL_SystemTypes.DOAS: cool_type,
+                BDL_SystemTypes.PIU: self.cool_type_map.get(
+                    self.get_inp(BDL_SystemKeywords.COOL_SOURCE)
+                ),
+                BDL_SystemTypes.DOAS: self.cool_type_map.get(
+                    self.get_inp(BDL_SystemKeywords.COOL_SOURCE)
+                ),
+            }
+        )
+        self.BDL_output_heat_type_map.update(
+            {
+                BDL_SystemHeatingTypes.HEAT_PUMP: self.BDL_condenser_output_heat_type_map.get(
+                    self.get_inp(BDL_SystemKeywords.CONDENSER_TYPE)
+                )
             }
         )
 
         self.bdl_output_heat_type = self.BDL_output_heat_type_map.get(
             self.get_inp(BDL_SystemKeywords.HEAT_SOURCE)
         )
+        self.bdl_output_cool_type = self.BDL_condenser_output_cool_type_map.get(
+            self.get_inp(BDL_SystemKeywords.CONDENSER_TYPE)
+        )
+
         self.BDL_output_system_heating_type_map.update(
             {
                 BDL_SystemTypes.PTAC: self.bdl_output_heat_type,
@@ -968,16 +1013,19 @@ class System(ParentNode):
                 BDL_SystemTypes.DOAS: self.bdl_output_heat_type,
             }
         )
-
         self.BDL_output_system_cooling_type_map.update(
             {
-                BDL_SystemTypes.PIU: self.BDL_output_cool_type_map.get(
-                    self.get_inp(BDL_SystemKeywords.TYPE)
-                ),
-                BDL_SystemTypes.DOAS: self.BDL_output_cool_type_map.get(
-                    self.get_inp(BDL_SystemKeywords.TYPE)
-                ),
+                BDL_SystemTypes.PIU: self.bdl_output_cool_type,
+                BDL_SystemTypes.DOAS: self.bdl_output_cool_type,
+                BDL_SystemTypes.PSZ: self.bdl_output_cool_type,
+                BDL_SystemTypes.PMZS: self.bdl_output_cool_type,
+                BDL_SystemTypes.PVVT: self.bdl_output_cool_type,
+                BDL_SystemTypes.RESYS2: self.bdl_output_cool_type,
             }
+        )
+
+        self.bdl_output_heat_type = self.BDL_output_system_heating_type_map.get(
+            self.get_inp(BDL_SystemKeywords.TYPE)
         )
         self.bdl_output_cool_type = self.BDL_output_system_cooling_type_map.get(
             self.get_inp(BDL_SystemKeywords.TYPE)
@@ -1037,6 +1085,14 @@ class System(ParentNode):
     def populate_heating_system(self, output_data, heat_source):
         self.heat_sys_id = self.u_name + " HeatSys"
         self.heat_sys_type = self.heat_type_map.get(heat_source)
+        if self.get_inp(BDL_SystemKeywords.TYPE) == BDL_SystemTypes.HP and self.get_inp(
+            BDL_SystemKeywords.WLHP_CATEGORY
+        ) in [
+            BDL_WLHPCategoryOptions.WATER_LOOP,
+            BDL_WLHPCategoryOptions.GROUND_WATER,
+            BDL_WLHPCategoryOptions.GROUND_LOOP,
+        ]:
+            self.heat_sys_type = HeatingSystemOptions.HEAT_PUMP
         self.heat_sys_hot_water_loop = self.get_inp(BDL_SystemKeywords.HW_LOOP)
         self.heat_sys_water_source_heat_pump_loop = self.get_inp(
             BDL_SystemKeywords.CW_LOOP
@@ -1121,6 +1177,9 @@ class System(ParentNode):
         )
         self.cool_sys_chilled_water_loop = self.get_inp(BDL_SystemKeywords.CHW_LOOP)
         self.cool_sys_condenser_water_loop = self.get_inp(BDL_SystemKeywords.CW_LOOP)
+        self.cool_sys_turndown_ratio = self.try_float(
+            self.get_inp(BDL_SystemKeywords.MIN_UNLOAD_RATIO)
+        )
         sizing_ratio = self.try_float(self.get_inp(BDL_SystemKeywords.SIZING_RATIO))
         cool_sizing_ratio = self.try_float(
             self.get_inp(BDL_SystemKeywords.COOL_SIZING_RATI)

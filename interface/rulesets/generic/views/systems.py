@@ -145,13 +145,22 @@ class SystemsView(BaseView):
                     font=("Arial", 11, "bold"),
                 )
 
+    def get_view_data(self):
+        view_data = {}
+        for subview in self.subviews.values():
+            view_data[subview.json_representation] = subview.get_subview_data()
+        return view_data
+
 
 class HeatRejectionSubview(CTkXYFrame):
+    json_representation = "heat_rejections"
+
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.systems_view = subview_frame.master
         self.app_data = self.systems_view.window.main_app.data
         self.is_subview_populated = False
+        self.widget_rows = []
 
     def __repr__(self):
         return "HeatRejectionSubview"
@@ -186,13 +195,34 @@ class HeatRejectionSubview(CTkXYFrame):
         fan_type_combo._entry.configure(justify=LEFT)
         fan_type_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
 
+        self.widget_rows.append(
+            [
+                heat_rejection_label,
+                fan_type_combo,
+            ]
+        )
+
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.widget_rows:
+            subview_data.append(
+                {
+                    "Heat Rejection Name": row[0].cget("text"),
+                    "Fan Type": row[1].get(),
+                }
+            )
+        return subview_data
+
 
 class HVACSystemSubview(CTkXYFrame):
+    json_representation = "hvac_systems"
+
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.systems_view = subview_frame.master
         self.app_data = self.systems_view.window.main_app.data
         self.is_subview_populated = False
+        self.widget_rows = []
 
     def __repr__(self):
         return "HVACSystemSubview"
@@ -238,6 +268,8 @@ class HVACSystemSubview(CTkXYFrame):
             )
             status_combo._entry.configure(justify=LEFT)
             status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
+        else:
+            status_combo = None
         dehumidification_type_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.DehumidificationDescriptions,
@@ -256,13 +288,40 @@ class HVACSystemSubview(CTkXYFrame):
             row=(i + 1), column=4, padx=PAD20END, pady=PAD20END
         )
 
+        self.widget_rows.append(
+            [
+                system_label,
+                status_combo,
+                dehumidification_type_combo,
+                ducted_supply_checkbox,
+                air_filter_merv_rating_spinbox,
+            ]
+        )
+
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.widget_rows:
+            subview_data.append(
+                {
+                    "HVAC System Name": row[0].cget("text"),
+                    "Status": row[1].get() if row[1] else "",
+                    "Dehumidification Type": row[2].get(),
+                    "Ducted Supply": row[3].get(),
+                    "Air Filter MERV Rating": row[4].get(),
+                }
+            )
+        return subview_data
+
 
 class ZonalExhaustSubview(CTkXYFrame):
+    json_representation = "zonal_exhaust_fans"
+
     def __init__(self, subview_frame):
         super().__init__(subview_frame)
         self.systems_view = subview_frame.master
         self.app_data = self.systems_view.window.main_app.data
         self.is_subview_populated = False
+        self.widget_rows = []
 
     def __repr__(self):
         return "ZonalExhaustSubview"
@@ -282,7 +341,6 @@ class ZonalExhaustSubview(CTkXYFrame):
         self.is_subview_populated = True
 
     def get_zonal_exhaust_fans(self):
-        # TODO: Review this approach..may be tough once we are trying to set data back to the rmds
         zonal_exhaust_fans = []
 
         rmd = self.app_data.rmds[0]
@@ -310,3 +368,21 @@ class ZonalExhaustSubview(CTkXYFrame):
         )
         status_combo._entry.configure(justify=LEFT)
         status_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
+
+        self.widget_rows.append(
+            [
+                zonal_exhaust_fan_label,
+                status_combo,
+            ]
+        )
+
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.widget_rows:
+            subview_data.append(
+                {
+                    "Zonal Exhaust Fan Name": row[0].cget("text"),
+                    "Status": row[1].get(),
+                }
+            )
+        return subview_data

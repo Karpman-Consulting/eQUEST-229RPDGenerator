@@ -246,8 +246,16 @@ class BuildingAreasView(BaseView):
     def building_has_areas(self, building_name):
         return len(self.areas_by_building[building_name]) > 0
 
+    def get_view_data(self):
+        view_data = {}
+        for subview in self.subviews.values():
+            view_data[subview.json_representation] = subview.get_subview_data()
+        return view_data
+
 
 class BuildingSubview(CTkXYFrame):
+    json_representation = "buildings"
+
     def __init__(self, view_frame):
         super().__init__(view_frame)
         self.building_areas_view = view_frame.master
@@ -275,7 +283,13 @@ class BuildingSubview(CTkXYFrame):
     def populate_subview(self):
         self.set_column_widths()
         self.add_column_headers()
-        self.add_row(self.building_count, is_first_row=True)
+        self.add_row(self.building_count + 1, is_first_row=True)
+        # If there is more than one building in the loaded data, add them to the view and load saved data
+        loaded_buildings = self.app_data.all_project_data.get("buildings", [])
+        if len(loaded_buildings) > 1:
+            for _ in range(1, len(loaded_buildings)):
+                self.add_row(self.building_count + 1)
+        self.set_subview_data()
         self.is_view_populated = True
 
     def set_column_widths(self):
@@ -418,8 +432,37 @@ class BuildingSubview(CTkXYFrame):
                     ),
                 )
 
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.building_areas_view.building_widgets_by_row:
+            building_name_entry, above_grade_spinbox, below_grade_spinbox = row
+            building_data = {
+                "Building Name": building_name_entry.get(),
+                "Floors Above Grade": above_grade_spinbox.get(),
+                "Floors Below Grade": below_grade_spinbox.get(),
+            }
+            subview_data.append(building_data)
+        return subview_data
+
+    def set_subview_data(self):
+        # Check that number of rows in the view matches the number of buildings in the app_data
+        building_data = self.app_data.all_project_data.get("buildings", [])
+        if not len(building_data) == len(
+            self.building_areas_view.building_widgets_by_row
+        ):
+            # Mismatch in the number of buildings and rows, cannot set subview data
+            return
+        for index, row in enumerate(self.building_areas_view.building_widgets_by_row):
+            building_name_entry, above_grade_spinbox, below_grade_spinbox = row
+            building_name_entry.delete(0, "end")
+            building_name_entry.insert(0, building_data[index].get("Building Name", ""))
+            above_grade_spinbox.set(building_data[index].get("Floors Above Grade", 0))
+            below_grade_spinbox.set(building_data[index].get("Floors Below Grade", 0))
+
 
 class BuildingAreasSubview(CTkXYFrame):
+    json_representation = "building_areas"
+
     def __init__(self, view_frame):
         super().__init__(view_frame)
         self.building_areas_view = view_frame.master
@@ -447,7 +490,13 @@ class BuildingAreasSubview(CTkXYFrame):
     def populate_subview(self):
         self.set_column_widths()
         self.add_column_headers()
-        self.add_row(self.building_area_count, is_first_row=True)
+        self.add_row(self.building_area_count + 1, is_first_row=True)
+        # If there is more than one building area in the loaded data, add them to the view
+        loaded_building_areas = self.app_data.all_project_data.get("building_areas", [])
+        if len(loaded_building_areas) > 1:
+            for _ in range(1, len(loaded_building_areas)):
+                self.add_row(self.building_area_count + 1)
+        self.set_subview_data()
         self.is_view_populated = True
 
     def set_column_widths(self):
@@ -634,3 +683,61 @@ class BuildingAreasSubview(CTkXYFrame):
         # TODO: This separate building combos list will go away when app data structure is folded in
         self.building_areas_view.building_combos.append(building_name_combo)
         self.building_area_count += 1
+
+    def get_subview_data(self):
+        subview_data = []
+        for row in self.building_areas_view.building_area_widgets_by_row:
+            (
+                building_name_combo,
+                area_name_entry,
+                fenestration_type_combo,
+                lighting_type_combo,
+                hvac_area_combo,
+                bpf_area_combo,
+            ) = row[:6]
+            building_data = {
+                "Building Name": building_name_combo.get(),
+                "Building Area Name": area_name_entry.get(),
+                "Fenestration Area Type": fenestration_type_combo.get(),
+                "Lighting Area Type": lighting_type_combo.get(),
+                "HVAC Area Type": hvac_area_combo.get(),
+                "BPF Area Type": bpf_area_combo.get(),
+            }
+            if not self.app_data.is_all_new_construction:
+                building_data["All New"] = row[6].get()
+            subview_data.append(building_data)
+        return subview_data
+
+    def set_subview_data(self):
+        # Check that number of rows in the view matches the number of building areas in the app_data
+        building_area_data = self.app_data.all_project_data.get("building_areas", [])
+        if not len(building_area_data) == len(
+            self.building_areas_view.building_area_widgets_by_row
+        ):
+            # Mismatch in the number of building areas and rows, cannot set subview data
+            return
+        for index, row in enumerate(
+            self.building_areas_view.building_area_widgets_by_row
+        ):
+            (
+                building_name_combo,
+                area_name_entry,
+                fenestration_type_combo,
+                lighting_type_combo,
+                hvac_area_combo,
+                bpf_area_combo,
+            ) = row[:6]
+            if not self.app_data.is_all_new_construction:
+                status_checkbox = row[6]
+            else:
+                status_checkbox = None
+            area_data = building_area_data[index]
+            building_name_combo.set(area_data.get("Building Name", ""))
+            area_name_entry.delete(0, "end")
+            area_name_entry.insert(0, area_data.get("Building Area Name", ""))
+            fenestration_type_combo.set(area_data.get("Fenestration Area Type", ""))
+            lighting_type_combo.set(area_data.get("Lighting Area Type", ""))
+            hvac_area_combo.set(area_data.get("HVAC Area Type", ""))
+            bpf_area_combo.set(area_data.get("BPF Area Type", ""))
+            if status_checkbox:
+                status_checkbox.set(area_data.get("All New", False))

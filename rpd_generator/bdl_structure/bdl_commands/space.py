@@ -409,6 +409,12 @@ class Space(ChildNode, ParentNode):
                 self.zone.infil_modeling_method = (
                     InfiltrationMethodOptions.WEATHER_DRIVEN
                 )
+            elif flow_per_area == 0 and air_changes_per_hour == 0:
+                self.zone.infil_flow_rate = 0
+                self.zone.infil_modeling_method = (
+                    InfiltrationMethodOptions.WEATHER_DRIVEN
+                )
+
         else:
             # infil_flow_rate will not populate if the infiltration method is not AIR-CHANGE
             self.zone.infil_modeling_method = InfiltrationMethodOptions.WEATHER_DRIVEN
