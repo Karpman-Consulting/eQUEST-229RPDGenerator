@@ -1834,7 +1834,12 @@ class System(ParentNode):
             return
 
         eff_cop = 1 / self.try_float(heating_eir) if heating_eir is not None else None
-        eff_et = 1 / self.try_float(furnace_hir) if furnace_hir is not None else None
+        eff_et = (
+            1
+            if self.bdl_output_heat_type == BDL_OutputHeatingTypes.ELECTRIC
+            else 1 / self.try_float(furnace_hir) if furnace_hir is not None else None
+        )
+
         if metric_type == HeatingMetricOptions.THERMAL_EFFICIENCY:
             self.heat_sys_efficiency_metric_values.append(eff_et)
         else:
