@@ -134,6 +134,7 @@ class DomesticWaterHeater(BaseNode):
             self.get_inp(BDL_DWHeaterKeywords.LOCATION)
         )
         self.location_zone = self.get_inp(BDL_DWHeaterKeywords.ZONE_NAME)
+
         self.efficiency_metric_values.append(
             1
             / (
@@ -154,7 +155,7 @@ class DomesticWaterHeater(BaseNode):
         try:
             thermal_eff_index = self.efficiency_metric_types.index(
                 ServiceWaterHeatingEfficiencyMetricOptions.THERMAL_EFFICIENCY)
-            self.input_power = self.try_float(self.rated_capacity / self.efficiency_metric_values[thermal_eff_index])
+            self.input_power = self.rated_capacity / self.efficiency_metric_values[thermal_eff_index]
         except ValueError:
             pass  # Handles cases where the index isn’t found
     def get_output_requests(self):
