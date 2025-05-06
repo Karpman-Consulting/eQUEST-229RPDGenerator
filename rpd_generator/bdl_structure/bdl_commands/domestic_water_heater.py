@@ -151,6 +151,12 @@ class DomesticWaterHeater(BaseNode):
             ServiceWaterHeatingEfficiencyMetricOptions.THERMAL_EFFICIENCY
         )
 
+        try:
+            thermal_eff_index = self.efficiency_metric_types.index(
+                ServiceWaterHeatingEfficiencyMetricOptions.THERMAL_EFFICIENCY)
+            self.input_power = self.try_float(self.rated_capacity / self.efficiency_metric_values[thermal_eff_index])
+        except ValueError:
+            pass  # Handles cases where the index isn’t found
     def get_output_requests(self):
         """Get the output requests for the domestic water heater object."""
         requests = {
