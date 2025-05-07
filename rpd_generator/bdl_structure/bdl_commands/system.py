@@ -404,8 +404,8 @@ class System(ParentNode):
         self.heat_sys_oversizing_factor = None
         self.heat_sys_is_sized_based_on_design_day = None
         self.heat_sys_heating_coil_setpoint = None
-        self.heat_sys_efficiency_metric_values = []
-        self.heat_sys_efficiency_metric_types = []
+        self.heat_sys_efficiency_metric_values = None
+        self.heat_sys_efficiency_metric_types = None
         self.heat_sys_heatpump_auxiliary_heat_type = None
         self.heat_sys_heatpump_auxiliary_heat_high_shutoff_temperature = None
         self.heat_sys_heatpump_low_shutoff_temperature = None
@@ -425,10 +425,10 @@ class System(ParentNode):
         self.cool_sys_chilled_water_loop = None
         self.cool_sys_condenser_water_loop = None
         self.vrf_sys_condenser = None
-        self.cool_sys_efficiency_metric_values = []
-        self.cool_sys_efficiency_metric_types = []
+        self.cool_sys_efficiency_metric_values = None
+        self.cool_sys_efficiency_metric_types = None
         self.cool_sys_dehumidification_type = None
-        self.cool_sys_turndown_ratio = None
+        self.cool_sys_cooling_turndown_ratio = None
 
         # preheat system data elements
         self.preheat_sys_id = None
@@ -443,8 +443,8 @@ class System(ParentNode):
         self.preheat_sys_oversizing_factor = None
         self.preheat_sys_is_sized_based_on_design_day = None
         self.preheat_sys_heating_coil_setpoint = None
-        self.preheat_sys_efficiency_metric_values = []
-        self.preheat_sys_efficiency_metric_types = []
+        self.preheat_sys_efficiency_metric_values = None
+        self.preheat_sys_efficiency_metric_types = None
         self.preheat_sys_heatpump_auxiliary_heat_type = None
         self.preheat_sys_heatpump_auxiliary_heat_high_shutoff_temperature = None
         self.preheat_sys_heatpump_low_shutoff_temperature = None
@@ -610,10 +610,6 @@ class System(ParentNode):
             self.fan_sys_maximum_outdoor_airflow = self.fan_sys_minimum_outdoor_airflow
         if has_energy_recovery:
             self.populate_air_energy_recovery()
-
-        self.populate_cooling_eff_metric_and_value()
-        self.populate_heating_eff_metric_and_value()
-        self.populate_preheat_eff_metric_and_value()
 
     def get_output_requests(self):
         """Get the output requests for the system dependent on various system component types."""
@@ -1206,6 +1202,10 @@ class System(ParentNode):
         elif self.heat_sys_type == HeatingSystemOptions.NONE:
             self.heat_sys_energy_source_type = EnergySourceOptions.NONE
 
+        self.heat_sys_efficiency_metric_values = []
+        self.heat_sys_efficiency_metric_types = []
+        self.populate_heating_eff_metric_and_value()
+
     def populate_cooling_system(self, output_data):
         self.cool_sys_id = self.u_name + " CoolSys"
         self.cool_sys_type = self.system_cooling_type_map.get(
@@ -1215,7 +1215,7 @@ class System(ParentNode):
         self.cool_sys_condenser_water_loop = self.get_inp(BDL_SystemKeywords.CW_LOOP)
         condensing_unit = self.get_inp(BDL_SystemKeywords.CONDENSING_UNIT)
         self.vrf_sys_condenser = self.get_obj(condensing_unit)
-        self.cool_sys_turndown_ratio = self.try_float(
+        self.cool_sys_cooling_turndown_ratio = self.try_float(
             self.get_inp(BDL_SystemKeywords.MIN_UNLOAD_RATIO)
         )
         sizing_ratio = self.try_float(self.get_inp(BDL_SystemKeywords.SIZING_RATIO))
@@ -1281,6 +1281,10 @@ class System(ParentNode):
                 BDL_SystemKeywords.COOLING_CAPACITY
             )
 
+        self.cool_sys_efficiency_metric_values = []
+        self.cool_sys_efficiency_metric_types = []
+        self.populate_cooling_eff_metric_and_value()
+
     def populate_preheat_system(self, output_data):
         self.preheat_sys_id = self.u_name + " PreheatSys"
         self.preheat_sys_type = self.heat_type_map.get(
@@ -1315,6 +1319,10 @@ class System(ParentNode):
             self.preheat_sys_energy_source_type = self.get_furnace_energy_source()
         elif self.preheat_sys_type == HeatingSystemOptions.NONE:
             self.preheat_sys_energy_source_type = EnergySourceOptions.NONE
+
+        self.preheat_sys_efficiency_metric_types = []
+        self.preheat_sys_efficiency_metric_values = []
+        self.populate_preheat_eff_metric_and_value()
 
     def populate_fans(self, output_data):
         # There is always a supply fan for a fan system in eQUEST, so it is always populated
