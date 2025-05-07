@@ -209,7 +209,7 @@
     },
     "ServiceWaterHeatingEquipment": {
         "first_hour_rating": "",
-        "input_power": "",
+        "input_power": "MMbtu_h",
         "rated_capacity": "MMbtu_h",
         "minimum_capacity": "",
         "setpoint_temperature": "F",
