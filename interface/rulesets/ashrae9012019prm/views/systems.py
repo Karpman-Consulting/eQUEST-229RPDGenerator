@@ -205,7 +205,10 @@ class HeatRejectionSubview(CTkXYFrame):
             self.systems_view.main_window.show_view("MiscellaneousView")
 
     def view_back(self):
-        self.systems_view.main_window.show_view("SurfacesView")
+        if "SurfacesView" in self.systems_view.main_window.views:
+            self.systems_view.main_window.show_view("SurfacesView")
+        else:
+            self.systems_view.main_window.show_view("SpacesView")
 
     def populate_subview(self):
         self.add_column_headers()
@@ -308,8 +311,10 @@ class HVACSystemSubview(CTkXYFrame):
     def view_back(self):
         if len(self.app_data.rmds[0].heat_rejection_names) > 0:
             self.systems_view.show_subview("HeatRejectionSubview")
-        else:
+        elif "SurfacesView" in self.systems_view.main_window.views:
             self.systems_view.main_window.show_view("SurfacesView")
+        else:
+            self.systems_view.main_window.show_view("SpacesView")
 
     def populate_subview(self):
         self.add_column_headers()

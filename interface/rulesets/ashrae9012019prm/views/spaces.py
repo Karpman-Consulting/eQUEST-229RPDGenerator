@@ -120,7 +120,10 @@ class SpacesSubview(CTkXYFrame):
         self.populate_subview() if not self.is_view_populated else None
 
     def view_next(self):
-        self.spaces_view.main_window.show_view("SurfacesView")
+        if "SurfacesView" in self.spaces_view.main_window.views:
+            self.spaces_view.main_window.show_view("SurfacesView")
+        else:
+            self.spaces_view.main_window.show_view("SystemsView")
 
     def view_back(self):
         self.spaces_view.main_window.show_view("ZonesView")
