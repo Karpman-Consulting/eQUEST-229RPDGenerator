@@ -142,8 +142,12 @@ class DomesticWaterHeater(BaseNode):
         heat_thermal_eff = 1 / heat_ratio if heat_ratio else 0
         elec_thermal_eff = 1 / elec_ratio if elec_ratio else 0
 
-        # Append based on available values
-        if heat_thermal_eff and elec_thermal_eff:
+        if (
+            elec_thermal_eff
+            and self.heater_fuel_type == EnergySourceOptions.ELECTRICITY
+        ):
+            self.efficiency_metric_values.append(elec_thermal_eff)
+        elif heat_thermal_eff and elec_thermal_eff:
             self.efficiency_metric_values.append(
                 (heat_thermal_eff * elec_thermal_eff)
                 / (heat_thermal_eff + elec_thermal_eff)
@@ -155,15 +159,16 @@ class DomesticWaterHeater(BaseNode):
             ServiceWaterHeatingEfficiencyMetricOptions.THERMAL_EFFICIENCY
         )
 
-        try:
+        if (
+            ServiceWaterHeatingEfficiencyMetricOptions.THERMAL_EFFICIENCY
+            in self.efficiency_metric_types
+        ):
             thermal_eff_index = self.efficiency_metric_types.index(
                 ServiceWaterHeatingEfficiencyMetricOptions.THERMAL_EFFICIENCY
             )
-            self.input_power = (
-                self.rated_capacity / self.efficiency_metric_values[thermal_eff_index]
-            )
-        except ValueError:
-            pass  # Handles cases where the index isn’t found
+            efficiency = self.efficiency_metric_values[thermal_eff_index]
+            if efficiency:  # Avoid division by zero or None
+                self.input_power = self.rated_capacity / efficiency
 
     def get_output_requests(self):
         """Get the output requests for the domestic water heater object."""
