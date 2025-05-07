@@ -155,20 +155,11 @@ class DomesticWaterHeater(BaseNode):
         else:
             self.efficiency_metric_values.append(heat_thermal_eff or elec_thermal_eff)
 
+        # Water heaters will always have 1 efficiency value with a metric of THERMAL_EFFICIENCY
         self.efficiency_metric_types.append(
             ServiceWaterHeatingEfficiencyMetricOptions.THERMAL_EFFICIENCY
         )
-
-        if (
-            ServiceWaterHeatingEfficiencyMetricOptions.THERMAL_EFFICIENCY
-            in self.efficiency_metric_types
-        ):
-            thermal_eff_index = self.efficiency_metric_types.index(
-                ServiceWaterHeatingEfficiencyMetricOptions.THERMAL_EFFICIENCY
-            )
-            efficiency = self.efficiency_metric_values[thermal_eff_index]
-            if efficiency:  # Avoid division by zero or None
-                self.input_power = self.rated_capacity / efficiency
+        self.input_power = self.rated_capacity / self.efficiency_metric_values[0]
 
     def get_output_requests(self):
         """Get the output requests for the domestic water heater object."""
