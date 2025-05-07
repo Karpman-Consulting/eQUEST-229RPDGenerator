@@ -428,7 +428,7 @@ class System(ParentNode):
         self.cool_sys_efficiency_metric_values = None
         self.cool_sys_efficiency_metric_types = None
         self.cool_sys_dehumidification_type = None
-        self.cool_sys_cooling_turndown_ratio = None
+        self.cool_sys_turndown_ratio = None
 
         # preheat system data elements
         self.preheat_sys_id = None
@@ -1215,7 +1215,7 @@ class System(ParentNode):
         self.cool_sys_condenser_water_loop = self.get_inp(BDL_SystemKeywords.CW_LOOP)
         condensing_unit = self.get_inp(BDL_SystemKeywords.CONDENSING_UNIT)
         self.vrf_sys_condenser = self.get_obj(condensing_unit)
-        self.cool_sys_cooling_turndown_ratio = self.try_float(
+        self.cool_sys_turndown_ratio = self.try_float(
             self.get_inp(BDL_SystemKeywords.MIN_UNLOAD_RATIO)
         )
         sizing_ratio = self.try_float(self.get_inp(BDL_SystemKeywords.SIZING_RATIO))
