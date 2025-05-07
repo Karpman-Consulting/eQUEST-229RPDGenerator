@@ -91,7 +91,7 @@ class SystemsView(BaseView):
 
         # Subview header row
         self.subview_header_frame.grid(row=3, column=0, sticky=FILL, padx=20)
-        self.subview_header_frame.grid_columnconfigure(0, weight=1)
+        # self.subview_header_frame.grid_columnconfigure(0, weight=1)
 
         # Subview frame
         self.subview_frame.grid(row=4, column=0, sticky=FILL, padx=20, pady=PAD20END)
@@ -199,7 +199,7 @@ class HeatRejectionSubview(CTkXYFrame):
         self.systems_view = subview_frame.master
         self.app_data = self.systems_view.window.main_app.data
         self.header_frame = ctk.CTkFrame(self.systems_view.subview_header_frame)
-        self.column_widths = [100, 250]
+        self.column_widths = [300, 250]
         self.is_subview_populated = False
         self.widget_rows = []
 
@@ -211,8 +211,8 @@ class HeatRejectionSubview(CTkXYFrame):
         self.populate_subview() if not self.is_subview_populated else None
 
     def populate_subview(self):
-        self.set_column_widths()
         self.add_column_headers()
+        self.set_column_widths()
 
         #  Get heat rejections from relevant rmd. Throw error if none found
         heat_rejection_names = []
@@ -240,22 +240,22 @@ class HeatRejectionSubview(CTkXYFrame):
 
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self.header_frame, text="Name", font=LABEL_FONT)
-        name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
+        name_label.grid(row=0, column=0, pady=5)
         fan_type_label = ctk.CTkLabel(
             self.header_frame, text="Fan Type", font=LABEL_FONT
         )
-        fan_type_label.grid(row=0, column=1, padx=PAD20END, pady=5)
+        fan_type_label.grid(row=0, column=1, pady=5)
 
     def add_row(self, i, heat_rejection_name):
-        heat_rejection_label = ctk.CTkLabel(self, text=f"{heat_rejection_name}")
-        heat_rejection_label.grid(
-            row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W
+        heat_rejection_label = ctk.CTkLabel(
+            self, text=f"{heat_rejection_name}", wraplength=280
         )
+        heat_rejection_label.grid(row=(i + 1), column=0, pady=PAD20END, sticky=W)
         fan_type_combo = ctk.CTkComboBox(
             self, values=self.app_data.HeatRejectionFanDescriptions, state=READONLY
         )
         fan_type_combo._entry.configure(justify=LEFT)
-        fan_type_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
+        fan_type_combo.grid(row=(i + 1), column=1, pady=PAD20END)
 
         self.widget_rows.append(
             [
@@ -301,7 +301,7 @@ class HVACSystemSubview(CTkXYFrame):
         self.systems_view = subview_frame.master
         self.app_data = self.systems_view.window.main_app.data
         self.header_frame = ctk.CTkFrame(self.systems_view.subview_header_frame)
-        self.column_widths = [100, 250, 250, 250]
+        self.column_widths = [300, 200, 250, 250]
         self.is_subview_populated = False
         self.widget_rows = []
 
@@ -313,8 +313,8 @@ class HVACSystemSubview(CTkXYFrame):
         self.populate_subview() if not self.is_subview_populated else None
 
     def populate_subview(self):
-        self.set_column_widths()
         self.add_column_headers()
+        self.set_column_widths()
 
         #  Get hvac systems from relevant rmd. Throw error if none found
         hvac_system_names = []
@@ -342,40 +342,36 @@ class HVACSystemSubview(CTkXYFrame):
 
     def add_column_headers(self):
         name_label = ctk.CTkLabel(self.header_frame, text="Name", font=LABEL_FONT)
-        name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
+        name_label.grid(row=0, column=0, pady=5)
         dehumidification_type_label = ctk.CTkLabel(
             self.header_frame, text="Dehumidification Type", font=LABEL_FONT
         )
-        dehumidification_type_label.grid(row=0, column=2, padx=PAD20END, pady=5)
+        dehumidification_type_label.grid(row=0, column=1, pady=5)
         ducted_supply_label = ctk.CTkLabel(
             self.header_frame, text="Ducted Supply?", font=LABEL_FONT
         )
-        ducted_supply_label.grid(row=0, column=3, padx=PAD20END, pady=5)
+        ducted_supply_label.grid(row=0, column=2, pady=5)
         air_filter_merv_rating_label = ctk.CTkLabel(
             self.header_frame, text="Air Filter MERV Rating", font=LABEL_FONT
         )
-        air_filter_merv_rating_label.grid(row=0, column=4, padx=PAD20END, pady=5)
+        air_filter_merv_rating_label.grid(row=0, column=3, pady=5)
 
     def add_row(self, i, hvac_system_name):
-        system_label = ctk.CTkLabel(self, text=f"{hvac_system_name}")
-        system_label.grid(row=(i + 1), column=0, padx=PAD20END, pady=PAD20END, sticky=W)
+        system_label = ctk.CTkLabel(self, text=f"{hvac_system_name}", wraplength=280)
+        system_label.grid(row=(i + 1), column=0, pady=PAD20END, sticky=W)
         dehumidification_type_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.DehumidificationDescriptions,
             state=READONLY,
         )
         dehumidification_type_combo._entry.configure(justify=LEFT)
-        dehumidification_type_combo.grid(
-            row=(i + 1), column=2, padx=PAD20END, pady=PAD20END
-        )
+        dehumidification_type_combo.grid(row=(i + 1), column=1, pady=PAD20END)
         ducted_supply_checkbox = ctk.CTkCheckBox(self, text="", width=30)
-        ducted_supply_checkbox.grid(row=(i + 1), column=3, padx=PAD20END, pady=PAD20END)
+        ducted_supply_checkbox.grid(row=(i + 1), column=2, pady=PAD20END)
         air_filter_merv_rating_spinbox = cw.IntSpinbox(
             self, width=125, minimum_value=1, maximum_value=16, default_value=8
         )
-        air_filter_merv_rating_spinbox.grid(
-            row=(i + 1), column=4, padx=PAD20END, pady=PAD20END
-        )
+        air_filter_merv_rating_spinbox.grid(row=(i + 1), column=3, pady=PAD20END)
 
         self.widget_rows.append(
             [

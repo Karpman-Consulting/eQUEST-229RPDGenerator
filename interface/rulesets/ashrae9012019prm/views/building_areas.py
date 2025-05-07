@@ -112,7 +112,6 @@ class BuildingAreasView(BaseView):
 
         # Subview header row
         self.subview_header_frame.grid(row=3, column=0, sticky=FILL, padx=20)
-        self.subview_header_frame.grid_columnconfigure(0, weight=1)
 
         # Subview frame
         self.subview_frame.grid(row=4, column=0, sticky=FILL, padx=20, pady=PAD20END)
@@ -281,8 +280,8 @@ class BuildingSubview(CTkXYFrame):
         self.populate_subview() if not self.is_view_populated else None
 
     def populate_subview(self):
-        self.set_column_widths()
         self.add_column_headers()
+        self.set_column_widths()
         self.add_row(self.building_count + 1, is_first_row=True)
         # If there is more than one building in the loaded data, add them to the view and load saved data
         loaded_buildings = self.app_data.all_project_data.get("buildings", [])
@@ -301,15 +300,15 @@ class BuildingSubview(CTkXYFrame):
         building_name_label = ctk.CTkLabel(
             self.header_frame, text="Building Name", font=LABEL_FONT
         )
-        building_name_label.grid(row=0, column=0, padx=PAD20END, pady=5)
+        building_name_label.grid(row=0, column=0, pady=5)
         above_grade_floors_label = ctk.CTkLabel(
             self.header_frame, text="# Floors Above Grade", font=LABEL_FONT
         )
-        above_grade_floors_label.grid(row=0, column=1, padx=PAD20END, pady=5)
+        above_grade_floors_label.grid(row=0, column=1, pady=5)
         below_grade_floors_label = ctk.CTkLabel(
             self.header_frame, text="# Floors Below Grade", font=LABEL_FONT
         )
-        below_grade_floors_label.grid(row=0, column=2, padx=PAD20END, pady=5)
+        below_grade_floors_label.grid(row=0, column=2, pady=5)
 
     def add_row(self, row, is_first_row=False):
 
@@ -336,7 +335,7 @@ class BuildingSubview(CTkXYFrame):
             remove_button.grid_remove()
 
         building_name_entry = ctk.CTkEntry(self)
-        building_name_entry.grid(row=row, column=0, padx=PAD20END, pady=PAD20END)
+        building_name_entry.grid(row=row, column=0, pady=PAD20END, sticky="ew")
 
         # Default set to "Building 1" here. We need to make a whole pass at setting defaults so this may change
         if is_first_row:
@@ -361,20 +360,19 @@ class BuildingSubview(CTkXYFrame):
                 hover_color="darkred",
                 command=remove_row,
             )
-            remove_button.grid(row=row, column=3, padx=PAD20END, pady=PAD20END)
+            remove_button.grid(row=row, column=3, padx=PAD20START, pady=PAD20END)
 
         # TODO: Customize spinboxes to allow validation
         above_grade_spinbox = cw.IntSpinbox(self)
-        above_grade_spinbox.grid(row=row, column=1, padx=PAD20END, pady=PAD20END)
+        above_grade_spinbox.grid(row=row, column=1, pady=PAD20END)
         below_grade_spinbox = cw.IntSpinbox(self)
-        below_grade_spinbox.grid(row=row, column=2, padx=PAD20END, pady=PAD20END)
+        below_grade_spinbox.grid(row=row, column=2, pady=PAD20END)
 
         self.add_building_button.grid(
             row=(row + 1),
             column=0,
             columnspan=2,
             sticky=FILL,
-            padx=PAD20END,
             pady=PAD20END,
         )
         self.building_count += 1
@@ -468,7 +466,7 @@ class BuildingAreasSubview(CTkXYFrame):
         self.building_areas_view = view_frame.master
         self.app_data = self.building_areas_view.app_data
         self.header_frame = ctk.CTkFrame(self.building_areas_view.subview_header_frame)
-        self.column_widths = [250, 250, 100, 240, 240, 240, 240]
+        self.column_widths = [240, 240, 150, 240, 240, 240, 240]
         self.is_view_populated = False
         self.building_area_count = 0
 
@@ -488,8 +486,8 @@ class BuildingAreasSubview(CTkXYFrame):
         self.populate_subview() if not self.is_view_populated else None
 
     def populate_subview(self):
-        self.set_column_widths()
         self.add_column_headers()
+        self.set_column_widths()
         self.add_row(self.building_area_count + 1, is_first_row=True)
         # If there is more than one building area in the loaded data, add them to the view
         loaded_building_areas = self.app_data.all_project_data.get("building_areas", [])
@@ -508,34 +506,34 @@ class BuildingAreasSubview(CTkXYFrame):
         building_name_label = ctk.CTkLabel(
             self.header_frame, text="Building Name", font=LABEL_FONT
         )
-        building_name_label.grid(row=0, column=0, padx=20, pady=5)
+        building_name_label.grid(row=0, column=0, pady=5)
         area_name_label = ctk.CTkLabel(
             self.header_frame, text="Building Area Name", font=LABEL_FONT
         )
-        area_name_label.grid(row=0, column=1, padx=PAD20END, pady=5)
+        area_name_label.grid(row=0, column=1, pady=5)
 
         if not self.app_data.is_all_new_construction.get():
             status_label = ctk.CTkLabel(
                 self.header_frame, text="All New?", font=LABEL_FONT
             )
-            status_label.grid(row=0, column=2, padx=PAD20END, pady=5)
+            status_label.grid(row=0, column=2, pady=5)
 
         fenestration_type_label = ctk.CTkLabel(
             self.header_frame, text="Fenestration Area Type", font=LABEL_FONT
         )
-        fenestration_type_label.grid(row=0, column=3, padx=PAD20END, pady=5)
+        fenestration_type_label.grid(row=0, column=3, pady=5)
         lighting_type_label = ctk.CTkLabel(
             self.header_frame, text="Lighting Area Type", font=LABEL_FONT
         )
-        lighting_type_label.grid(row=0, column=4, padx=(10, 20), pady=5)
+        lighting_type_label.grid(row=0, column=4, pady=5)
         hvac_area_type_label = ctk.CTkLabel(
             self.header_frame, text="HVAC Area Type", font=LABEL_FONT
         )
-        hvac_area_type_label.grid(row=0, column=5, padx=40, pady=5)
+        hvac_area_type_label.grid(row=0, column=5, pady=5)
         bpf_area_type_label = ctk.CTkLabel(
             self.header_frame, text="BPF Area Type", font=LABEL_FONT
         )
-        bpf_area_type_label.grid(row=0, column=6, padx=(30, 40), pady=5)
+        bpf_area_type_label.grid(row=0, column=6, pady=5)
 
     def add_row(self, row, is_first_row=False):
         def populate_area_name(value):
@@ -586,11 +584,11 @@ class BuildingAreasSubview(CTkXYFrame):
             state=READONLY,
         )
         building_name_combo._entry.configure(justify=LEFT)
-        building_name_combo.grid(row=row, column=0, padx=PAD20END, pady=PAD20END)
+        building_name_combo.grid(row=row, column=0, pady=PAD20END)
         area_name_entry = ctk.CTkEntry(
             self, validate="key", validatecommand=(vcmd, "%P")
         )
-        area_name_entry.grid(row=row, column=1, padx=PAD20END, pady=PAD20END)
+        area_name_entry.grid(row=row, column=1, pady=PAD20END)
         status_checkbox = None
         if is_first_row:
             default_building = next(iter(self.building_areas_view.areas_by_building))
@@ -601,7 +599,7 @@ class BuildingAreasSubview(CTkXYFrame):
 
         if not self.app_data.is_all_new_construction.get():
             status_checkbox = ctk.CTkCheckBox(self, text="", width=30)
-            status_checkbox.grid(row=row, column=2, padx=(0, 10), pady=PAD20END)
+            status_checkbox.grid(row=row, column=2, pady=PAD20END)
 
         fenestration_type_combo = ctk.CTkComboBox(
             self,
@@ -609,28 +607,28 @@ class BuildingAreasSubview(CTkXYFrame):
             state=READONLY,
         )
         fenestration_type_combo._entry.configure(justify=LEFT)
-        fenestration_type_combo.grid(row=row, column=3, padx=(10, 20), pady=PAD20END)
+        fenestration_type_combo.grid(row=row, column=3, pady=PAD20END)
         lighting_type_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.LightingBuildingAreaDescriptions2019ASHRAE901T951TG38,
             state=READONLY,
         )
         lighting_type_combo._entry.configure(justify=LEFT)
-        lighting_type_combo.grid(row=row, column=4, padx=20, pady=PAD20END)
+        lighting_type_combo.grid(row=row, column=4, pady=PAD20END)
         hvac_area_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.HeatingVentilatingAirConditioningBuildingAreaDescriptions2019ASHRAE901,
             state=READONLY,
         )
         hvac_area_combo._entry.configure(justify=LEFT)
-        hvac_area_combo.grid(row=row, column=5, padx=20, pady=PAD20END)
+        hvac_area_combo.grid(row=row, column=5, pady=PAD20END)
         bpf_area_combo = ctk.CTkComboBox(
             self,
             values=BPF_AREA_OPTIONS,
             state=READONLY,
         )
         bpf_area_combo._entry.configure(justify=LEFT)
-        bpf_area_combo.grid(row=row, column=6, padx=20, pady=PAD20END)
+        bpf_area_combo.grid(row=row, column=6, pady=PAD20END)
         remove_button = None
 
         if not is_first_row:
@@ -651,14 +649,13 @@ class BuildingAreasSubview(CTkXYFrame):
                 hover_color="darkred",
                 command=remove_row,
             )
-            remove_button.grid(row=row, column=7, padx=PAD20END, pady=PAD20END)
+            remove_button.grid(row=row, column=7, padx=PAD20START, pady=PAD20END)
 
         self.add_area_button.grid(
             row=(row + 1),
             column=0,
             columnspan=2,
             sticky=FILL,
-            padx=PAD20END,
             pady=PAD20END,
         )
 

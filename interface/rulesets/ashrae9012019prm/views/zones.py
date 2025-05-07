@@ -93,7 +93,7 @@ class ZonesSubview(CTkXYFrame):
         self.zones_view = view_frame.master
         self.app_data = self.zones_view.window.main_app.data
         self.header_frame = self.zones_view.subview_header_frame
-        self.column_widths = [100, 250, 250, 250, 250]
+        self.column_widths = [100, 300, 250, 250, 250]
         self.is_view_populated = False
         self.zones_by_floor = {}
         self.floor_comboboxes = {}
@@ -143,7 +143,7 @@ class ZonesSubview(CTkXYFrame):
         collapse_expand_label = ctk.CTkLabel(
             self.header_frame, text="", font=LABEL_FONT
         )
-        collapse_expand_label.grid(row=0, column=0, padx=PAD20END, pady=5)
+        collapse_expand_label.grid(row=0, column=0, pady=5)
 
         zone_floor_label = ctk.CTkLabel(
             self.header_frame, text="Floor/Zone", font=LABEL_FONT
@@ -190,8 +190,9 @@ class ZonesSubview(CTkXYFrame):
             font=LABEL_FONT,
             text_color="white",
             bg_color=GRAY30,  # Same color as the frame
+            wraplength=280,
         )
-        floor_label.grid(row=(i + 1), column=1, padx=20, pady=10, sticky=W)
+        floor_label.grid(row=(i + 1), column=1, pady=10, sticky=W)
 
         # Place the Building Area ComboBox in `self` (not inside `main_row_frame`) to align properly
         building_area_combo = ctk.CTkComboBox(
@@ -210,23 +211,19 @@ class ZonesSubview(CTkXYFrame):
         )
         building_area_combo.set(self.app_data.building_area_options[0])
         building_area_combo._entry.configure(justify=LEFT)
-        building_area_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=10)
+        building_area_combo.grid(row=(i + 1), column=2, pady=10)
 
         self.floor_comboboxes[floor_name] = building_area_combo
 
         # Add empty labels in `main_row_frame` for spacing
-        ctk.CTkLabel(floor_row_frame, text="").grid(
-            row=0, column=3, padx=PAD20END, pady=PAD10SYM
-        )
-        ctk.CTkLabel(floor_row_frame, text="").grid(
-            row=0, column=4, padx=PAD20END, pady=PAD10SYM
-        )
+        ctk.CTkLabel(floor_row_frame, text="").grid(row=0, column=3, pady=PAD10SYM)
+        ctk.CTkLabel(floor_row_frame, text="").grid(row=0, column=4, pady=PAD10SYM)
 
         return collapse_button
 
     def add_row(self, i, zone_name):
-        floor_label = ctk.CTkLabel(self, text=f"{zone_name}")
-        floor_label.grid(row=(i + 1), column=1, padx=20, pady=PAD10SYM, sticky=W)
+        floor_label = ctk.CTkLabel(self, text=f"{zone_name}", wraplength=280)
+        floor_label.grid(row=(i + 1), column=1, pady=PAD10SYM, sticky=W)
         building_area_combo = ctk.CTkComboBox(
             self,
             values=self.app_data.building_area_options,
@@ -234,19 +231,15 @@ class ZonesSubview(CTkXYFrame):
         )
         building_area_combo.set(self.app_data.building_area_options[0])
         building_area_combo._entry.configure(justify=LEFT)
-        building_area_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=PAD10SYM)
+        building_area_combo.grid(row=(i + 1), column=2, pady=PAD10SYM)
         self.zones_view.building_areas_combos.append(building_area_combo)
 
         self.zone_comboboxes[zone_name] = building_area_combo
         # TODO: Apply numerical entry validation
         aggregated_zone_qty_spinbox = cw.IntSpinbox(self, width=125, default_value=1)
-        aggregated_zone_qty_spinbox.grid(
-            row=(i + 1), column=3, padx=PAD20END, pady=PAD10SYM, sticky=FILL
-        )
+        aggregated_zone_qty_spinbox.grid(row=(i + 1), column=3, pady=PAD10SYM)
         measured_infiltration_rate_checkbox = ctk.CTkCheckBox(self, text="", width=30)
-        measured_infiltration_rate_checkbox.grid(
-            row=(i + 1), column=4, padx=PAD20END, pady=PAD10SYM
-        )
+        measured_infiltration_rate_checkbox.grid(row=(i + 1), column=4, pady=PAD10SYM)
 
         self.zone_widgets[zone_name] = [
             floor_label,
