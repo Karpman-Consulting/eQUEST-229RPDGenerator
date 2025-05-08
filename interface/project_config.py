@@ -5,6 +5,7 @@ import customtkinter as ctk
 from tkinter import Menu, filedialog
 from pathlib import Path
 
+from interface.CTkToolTip import CTkToolTip
 from interface.disclaimer_window import DisclaimerWindow
 from interface.error_window import ErrorWindow
 from interface.constants import *
@@ -57,6 +58,9 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         self.project_name_entry = ctk.CTkEntry(
             self, font=("Arial", 14), textvariable=self.main_app.data.project_name
         )
+        project_entry_tooltip = CTkToolTip(
+            self.project_name_entry, message="Name of the project"
+        )
         self.ruleset_label = ctk.CTkLabel(
             self, text="Energy Code/Program:", font=("Arial", 14, "bold"), anchor="e"
         )
@@ -67,6 +71,10 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             variable=self.main_app.data.is_all_new_construction,
             onvalue=True,
             offvalue=False,
+        )
+        new_construction_checkbox_tooltip = CTkToolTip(
+            self.new_construction_checkbox,
+            message="Check this box if the buildings in this project are all new construction.",
         )
         self.proposed_reflects_design_checkbox = ctk.CTkCheckBox(
             self,
@@ -86,7 +94,11 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             onvalue=True,
             offvalue=False,
         )
-        self.ruleset_models_frame = ctk.CTkFrame(self)
+        rotation_exception_checkbox_tooltip = CTkToolTip(
+            self.rotation_exception_checkbox,
+            message="Check this box if the building is exempt from the Baseline Rotation requirement.",
+        )
+        self.ruleset_models_frame = ctk.CTkFrame(self, width=800)
         self.ruleset_dropdown = ctk.CTkOptionMenu(
             self,
             values=RULESETS,
@@ -108,6 +120,10 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             font=("Arial", 14),
             width=500,
             textvariable=self.main_app.data.output_directory,
+        )
+        output_dir_entry_tooltip = CTkToolTip(
+            self.output_dir_entry,
+            message="Directory where the RPD output files are stored after generation",
         )
         self.output_dir_button = ctk.CTkButton(
             self,

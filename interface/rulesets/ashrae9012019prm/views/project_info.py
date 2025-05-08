@@ -1,9 +1,9 @@
 import customtkinter as ctk
 from tkinter import filedialog
 from pathlib import Path
-
 from click import command
 
+from interface.CTkToolTip import CTkToolTip
 from interface.base_view import BaseView
 from interface.ctk_xyframe import CTkXYFrame
 from interface.constants import *
@@ -151,6 +151,10 @@ class ProjectDetailsSubview(CTkXYFrame):
             ),
         )
         self.climate_zone_combo._entry.configure(justify=LEFT)
+        climate_zone_tooltip = CTkToolTip(
+            self.climate_zone_combo,
+            message="Select the climate zone for the project",
+        )
         self.lighting_zone_label = ctk.CTkLabel(
             self.options_frame,
             text="Exterior Lighting Zone:",
@@ -167,6 +171,10 @@ class ProjectDetailsSubview(CTkXYFrame):
             ),
         )
         self.lighting_zone_combo._entry.configure(justify=LEFT)
+        lighting_zone_tooltip = CTkToolTip(
+            self.lighting_zone_combo,
+            message="Select the exterior lighting zone for the project",
+        )
         self.building_open_schedule_label = ctk.CTkLabel(
             self.options_frame,
             text="Building Open Schedule:",
@@ -180,6 +188,10 @@ class ProjectDetailsSubview(CTkXYFrame):
             font=TEXT_FONT,
         )
         self.open_from_input = ctk.CTkEntry(self.options_frame)
+        open_from_tooltip = CTkToolTip(
+            self.open_from_input,
+            message="Enter the time that the building opens in HH:MM AM/PM format",
+        )
         self.open_to_label = ctk.CTkLabel(
             self.options_frame,
             text="From:",
@@ -187,6 +199,10 @@ class ProjectDetailsSubview(CTkXYFrame):
             font=TEXT_FONT,
         )
         self.open_to_input = ctk.CTkEntry(self.options_frame)
+        open_to_tooltip = CTkToolTip(
+            self.open_to_input,
+            message="Enter the time that the building closes in HH:MM AM/PM format",
+        )
         self.heating_design_day_label = ctk.CTkLabel(
             self.options_frame,
             text="Heating Design Day Criteria:",
@@ -203,6 +219,10 @@ class ProjectDetailsSubview(CTkXYFrame):
             ),
         )
         self.heating_design_day_combo._entry.configure(justify=LEFT)
+        heating_design_day_tooltip = CTkToolTip(
+            self.heating_design_day_combo,
+            message="Select the heating design day criteria for the project",
+        )
         self.cooling_design_day_label = ctk.CTkLabel(
             self.options_frame,
             text="Cooling Design Day Criteria:",
@@ -219,6 +239,10 @@ class ProjectDetailsSubview(CTkXYFrame):
             ),
         )
         self.cooling_design_day_combo._entry.configure(justify=LEFT)
+        cooling_design_day_tooltip = CTkToolTip(
+            self.cooling_design_day_combo,
+            message="Select the cooling design day criteria for the project",
+        )
         self.measured_infiltration_checkbox = ctk.CTkCheckBox(
             self.infiltration_frame,
             text="Measured Infiltration?",
@@ -227,6 +251,10 @@ class ProjectDetailsSubview(CTkXYFrame):
             command=self.toggle_measured_infiltration,
             onvalue=True,
             offvalue=False,
+        )
+        measured_infiltration_tooltip = CTkToolTip(
+            self.measured_infiltration_checkbox,
+            message="Check this box if the project has a measured infiltration rate",
         )
         self.pressure_difference_label = ctk.CTkLabel(
             self.infiltration_frame,
@@ -241,6 +269,10 @@ class ProjectDetailsSubview(CTkXYFrame):
             validate="all",
             validatecommand=(validate_double_entry, "%P"),
         )
+        pressure_difference_tooltip = CTkToolTip(
+            self.pressure_difference_input,
+            message="Enter the measured pressure difference in Pascals",
+        )
         self.pressure_units_label = ctk.CTkLabel(
             self.infiltration_frame,
             text="Pa",
@@ -254,6 +286,10 @@ class ProjectDetailsSubview(CTkXYFrame):
             variable=self.app_data.is_based_on_site_testing,
             onvalue=True,
             offvalue=False,
+        )
+        site_testing_tooltip = CTkToolTip(
+            self.site_testing_checkbox,
+            message="Check this box if the project is based on site testing",
         )
 
         self.populate_subview()

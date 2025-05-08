@@ -2,6 +2,7 @@ import customtkinter as ctk
 import interface.custom_widgets as cw
 from PIL import Image
 
+from interface.CTkToolTip import CTkToolTip
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
 from interface.constants import *
@@ -165,6 +166,10 @@ class ZonesSubview(CTkXYFrame):
             command=lambda: self.toggle_zone_visibility(floor_name, collapse_button),
             bg_color=GRAY30,  # Same color as the frame
         )
+        collapse_button_tooltip = CTkToolTip(
+            collapse_button,
+            message="Show/hide zones on this floor",
+        )
         collapse_button.grid(row=(i + 1), column=0, padx=(5, 0))
 
         # Ensure the frame stretches across all columns
@@ -198,6 +203,10 @@ class ZonesSubview(CTkXYFrame):
             ),
         )
         building_area_combo.set(self.app_data.building_area_options[0])
+        building_area_tooltip = CTkToolTip(
+            building_area_combo,
+            message="Select the building area for all zones on this floor",
+        )
         building_area_combo._entry.configure(justify=LEFT)
         building_area_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=10)
 
@@ -222,17 +231,30 @@ class ZonesSubview(CTkXYFrame):
             state=READONLY,
         )
         building_area_combo.set(self.app_data.building_area_options[0])
+        building_area_tooltip = CTkToolTip(
+            building_area_combo,
+            message="Select the building area for this zone",
+        )
         building_area_combo._entry.configure(justify=LEFT)
         building_area_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=PAD10SYM)
         self.zones_view.building_areas_combos.append(building_area_combo)
 
         self.zone_comboboxes[zone_name] = building_area_combo
         # TODO: Apply numerical entry validation
+        # TODO: Add tooltip support
         aggregated_zone_qty_spinbox = cw.IntSpinbox(self, width=125, default_value=1)
+        aggregated_zone_tooltip = CTkToolTip(
+            aggregated_zone_qty_spinbox,
+            message="Enter the number of zones comprising this zone",
+        )
         aggregated_zone_qty_spinbox.grid(
             row=(i + 1), column=3, padx=PAD20END, pady=PAD10SYM, sticky=FILL
         )
         measured_infiltration_rate_checkbox = ctk.CTkCheckBox(self, text="", width=30)
+        measured_infiltration_rate_tooltip = CTkToolTip(
+            measured_infiltration_rate_checkbox,
+            message="Check if the zone's infiltration is based on a measured rate",
+        )
         measured_infiltration_rate_checkbox.grid(
             row=(i + 1), column=4, padx=PAD20END, pady=PAD10SYM
         )

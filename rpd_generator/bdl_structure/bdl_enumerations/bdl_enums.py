@@ -662,6 +662,7 @@ class BDLEnums:
                 "AIR-CHANGES/HR",
                 "ZONE-TYPE",
                 "LTG-SPEC-METHOD",
+                "C-ACTIVITY-DESC",
             ]
         ),
         "LightingSpecMethodOptions": _ListEnum(
@@ -945,6 +946,7 @@ class BDLEnums:
                 "COOL-SIZING-RATI",
                 "HEATING-CAPACITY",
                 "COOLING-CAPACITY",
+                "COOLING-EIR",
                 "HUMIDIFIER-TYPE",
                 "PREHEAT-SOURCE",
                 "PREHEAT-CAPACITY",
@@ -960,7 +962,10 @@ class BDLEnums:
                 "HTREC-DW-HEATER",
                 "COOL-WASTE-HEAT",
                 "RATED-SST",
+                "RATED-ECT",
                 "HT-RATED-SDT",
+                "HT-RATED-ECT",
+                "HT-RATED-EDB",
                 "DES-MIN-SDT",
                 "DES-MAX-SDT",
                 "DES-MIN-SST",
@@ -1005,6 +1010,14 @@ class BDLEnums:
                 "MAX-SUPPLY-T",
                 "MIN-SUPPLY-T",
                 "HEAT-FUEL-METER",
+                "CONDENSING-UNIT",
+            ]
+        ),
+        "CondenserKeywords": _ListEnum(
+            [
+                "TYPE",
+                "COOLING-EIR",
+                "COOL-RATED-ODB",
             ]
         ),
         "UndergroundWallKeywords": _ListEnum(
