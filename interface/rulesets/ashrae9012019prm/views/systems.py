@@ -1,6 +1,7 @@
 import customtkinter as ctk
 
 import interface.custom_widgets as cw
+from interface.CTkToolTip import CTkToolTip
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
 from interface.main_app_data import ASHRAE9012019ModelOptions
@@ -192,8 +193,23 @@ class HeatRejectionSubview(CTkXYFrame):
         return "HeatRejectionSubview"
 
     def open_subview(self):
+        self.systems_view.main_window.next_button.configure(command=self.view_next)
+        self.systems_view.main_window.back_button.configure(command=self.view_back)
+        self.systems_view.main_window.show_back_next_buttons_toggle()
         self.systems_view.toggle_active_subbutton("Heat Rejection")
         self.populate_subview() if not self.is_subview_populated else None
+
+    def view_next(self):
+        if len(self.app_data.rmds[0].system_names) > 0:
+            self.systems_view.show_subview("HVACSystemSubview")
+        else:
+            self.systems_view.main_window.show_view("MiscellaneousView")
+
+    def view_back(self):
+        if "SurfacesView" in self.systems_view.main_window.views:
+            self.systems_view.main_window.show_view("SurfacesView")
+        else:
+            self.systems_view.main_window.show_view("SpacesView")
 
     def populate_subview(self):
         self.add_column_headers()
@@ -230,6 +246,10 @@ class HeatRejectionSubview(CTkXYFrame):
         )
         fan_type_combo = ctk.CTkComboBox(
             self, values=self.app_data.HeatRejectionFanDescriptions, state=READONLY
+        )
+        fan_type_tooltip = CTkToolTip(
+            fan_type_combo,
+            message="Select the fan type for this heat rejection system.",
         )
         fan_type_combo._entry.configure(justify=LEFT)
         fan_type_combo.grid(row=(i + 1), column=1, padx=PAD20END, pady=PAD20END)
@@ -284,8 +304,22 @@ class HVACSystemSubview(CTkXYFrame):
         return "HVACSystemSubview"
 
     def open_subview(self):
+        self.systems_view.main_window.next_button.configure(command=self.view_next)
+        self.systems_view.main_window.back_button.configure(command=self.view_back)
+        self.systems_view.main_window.show_back_next_buttons_toggle()
         self.systems_view.toggle_active_subbutton("HVAC Systems")
         self.populate_subview() if not self.is_subview_populated else None
+
+    def view_next(self):
+        self.systems_view.main_window.show_view("MiscellaneousView")
+
+    def view_back(self):
+        if len(self.app_data.rmds[0].heat_rejection_names) > 0:
+            self.systems_view.show_subview("HeatRejectionSubview")
+        elif "SurfacesView" in self.systems_view.main_window.views:
+            self.systems_view.main_window.show_view("SurfacesView")
+        else:
+            self.systems_view.main_window.show_view("SpacesView")
 
     def populate_subview(self):
         self.add_column_headers()
@@ -331,14 +365,26 @@ class HVACSystemSubview(CTkXYFrame):
             values=self.app_data.DehumidificationDescriptions,
             state=READONLY,
         )
+        dehumidification_type_tooltip = CTkToolTip(
+            dehumidification_type_combo,
+            message="Select the dehumidification type for this system.",
+        )
         dehumidification_type_combo._entry.configure(justify=LEFT)
         dehumidification_type_combo.grid(
             row=(i + 1), column=2, padx=PAD20END, pady=PAD20END
         )
         ducted_supply_checkbox = ctk.CTkCheckBox(self, text="", width=30)
+        ducted_supply_tooltip = CTkToolTip(
+            ducted_supply_checkbox,
+            message="Check if this system has a ducted supply.",
+        )
         ducted_supply_checkbox.grid(row=(i + 1), column=3, padx=PAD20END, pady=PAD20END)
         air_filter_merv_rating_spinbox = cw.IntSpinbox(
             self, width=125, minimum_value=1, maximum_value=16, default_value=8
+        )
+        air_filter_merv_rating_tooltip = CTkToolTip(
+            air_filter_merv_rating_spinbox,
+            message="Select the MERV rating for this system's air filter.",
         )
         air_filter_merv_rating_spinbox.grid(
             row=(i + 1), column=4, padx=PAD20END, pady=PAD20END

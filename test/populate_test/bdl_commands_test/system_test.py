@@ -213,10 +213,7 @@ class TestSystems(unittest.TestCase):
                 ],
                 "temperature_control": "ZONE_RESET",
             },
-            "heating_system": {
-                "efficiency_metric_types": [],
-                "efficiency_metric_values": [],
-            },
+            "heating_system": {},
             "preheat_system": {
                 "id": "System 1 PreheatSys",
                 "rated_capacity": 48000.0,
@@ -359,10 +356,7 @@ class TestSystems(unittest.TestCase):
                 "heating_coil_setpoint": 75.0,
                 "is_sized_based_on_design_day": True,
             },
-            "preheat_system": {
-                "efficiency_metric_types": [],
-                "efficiency_metric_values": [],
-            },
+            "preheat_system": {},
         }
 
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
@@ -445,10 +439,7 @@ class TestSystems(unittest.TestCase):
                 "is_sized_based_on_design_day": True,
                 "type": "HEAT_PUMP",
             },
-            "preheat_system": {
-                "efficiency_metric_types": [],
-                "efficiency_metric_values": [],
-            },
+            "preheat_system": {},
         }
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
 
@@ -509,10 +500,7 @@ class TestSystems(unittest.TestCase):
                 "is_sized_based_on_design_day": True,
                 "type": "FLUID_LOOP",
             },
-            "preheat_system": {
-                "efficiency_metric_types": [],
-                "efficiency_metric_values": [],
-            },
+            "preheat_system": {},
         }
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
 
@@ -531,10 +519,7 @@ class TestSystems(unittest.TestCase):
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "System 1",
-            "cooling_system": {
-                "efficiency_metric_types": [],
-                "efficiency_metric_values": [],
-            },
+            "cooling_system": {},
             "fan_system": {
                 "id": "System 1 FanSys",
                 "air_economizer": {},
@@ -553,14 +538,8 @@ class TestSystems(unittest.TestCase):
                     }
                 ],
             },
-            "heating_system": {
-                "efficiency_metric_types": [],
-                "efficiency_metric_values": [],
-            },
-            "preheat_system": {
-                "efficiency_metric_types": [],
-                "efficiency_metric_values": [],
-            },
+            "heating_system": {},
+            "preheat_system": {},
         }
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
 
@@ -669,10 +648,7 @@ class TestSystems(unittest.TestCase):
                 "is_sized_based_on_design_day": True,
                 "type": "FLUID_LOOP",
             },
-            "preheat_system": {
-                "efficiency_metric_types": [],
-                "efficiency_metric_values": [],
-            },
+            "preheat_system": {},
         }
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
 
@@ -796,10 +772,7 @@ class TestSystems(unittest.TestCase):
                 "type": "HEAT_PUMP",
             },
             "id": "System 1",
-            "preheat_system": {
-                "efficiency_metric_types": [],
-                "efficiency_metric_values": [],
-            },
+            "preheat_system": {},
         }
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
 
@@ -850,10 +823,7 @@ class TestSystems(unittest.TestCase):
                 "type": "HEAT_PUMP",
             },
             "id": "System 1",
-            "preheat_system": {
-                "efficiency_metric_types": [],
-                "efficiency_metric_values": [],
-            },
+            "preheat_system": {},
         }
 
         self.condenser = Condenser("Condensing Unit 1", self.rmd)
@@ -919,10 +889,7 @@ class TestSystems(unittest.TestCase):
                 "type": "HEAT_PUMP",
             },
             "id": "System 1",
-            "preheat_system": {
-                "efficiency_metric_types": [],
-                "efficiency_metric_values": [],
-            },
+            "preheat_system": {},
         }
 
         self.condenser = Condenser("Condensing Unit 1", self.rmd)
@@ -990,10 +957,7 @@ class TestSystems(unittest.TestCase):
                 "type": "HEAT_PUMP",
             },
             "id": "System 1",
-            "preheat_system": {
-                "efficiency_metric_types": [],
-                "efficiency_metric_values": [],
-            },
+            "preheat_system": {},
         }
 
         self.condenser = Condenser("Condensing Unit 1", self.rmd)

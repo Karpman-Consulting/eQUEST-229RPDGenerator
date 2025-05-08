@@ -1,7 +1,9 @@
 import customtkinter as ctk
 from tkinter import filedialog
 from pathlib import Path
+from click import command
 
+from interface.CTkToolTip import CTkToolTip
 from interface.base_view import BaseView
 from interface.ctk_xyframe import CTkXYFrame
 from interface.constants import *
@@ -35,8 +37,6 @@ class ProjectInfoView(BaseView):
         return "ProjectInfoView"
 
     def open_view(self):
-        # Overwrite behavior of the continue button
-        self.window.continue_button.configure(command=self.view_continue)
         # Update the errors and warnings button formatting
         self.update_warnings_errors()
         # Hide baseline/proposed toggle
@@ -119,15 +119,6 @@ class ProjectInfoView(BaseView):
                     font=("Arial", 12, "bold"),
                 )
 
-    def view_continue(self):
-        self.window.show_view("Buildings")
-
-    def get_view_data(self):
-        view_data = {}
-        for subview in self.subviews.values():
-            view_data[subview.json_representation] = subview.get_subview_data()
-        return view_data
-
 
 class ProjectDetailsSubview(CTkXYFrame):
     json_representation = "project_details"
@@ -160,6 +151,10 @@ class ProjectDetailsSubview(CTkXYFrame):
             ),
         )
         self.climate_zone_combo._entry.configure(justify=LEFT)
+        climate_zone_tooltip = CTkToolTip(
+            self.climate_zone_combo,
+            message="Select the climate zone for the project",
+        )
         self.lighting_zone_label = ctk.CTkLabel(
             self.options_frame,
             text="Exterior Lighting Zone:",
@@ -176,6 +171,10 @@ class ProjectDetailsSubview(CTkXYFrame):
             ),
         )
         self.lighting_zone_combo._entry.configure(justify=LEFT)
+        lighting_zone_tooltip = CTkToolTip(
+            self.lighting_zone_combo,
+            message="Select the exterior lighting zone for the project",
+        )
         self.building_open_schedule_label = ctk.CTkLabel(
             self.options_frame,
             text="Building Open Schedule:",
@@ -189,6 +188,10 @@ class ProjectDetailsSubview(CTkXYFrame):
             font=TEXT_FONT,
         )
         self.open_from_input = ctk.CTkEntry(self.options_frame)
+        open_from_tooltip = CTkToolTip(
+            self.open_from_input,
+            message="Enter the time that the building opens in HH:MM AM/PM format",
+        )
         self.open_to_label = ctk.CTkLabel(
             self.options_frame,
             text="From:",
@@ -196,6 +199,10 @@ class ProjectDetailsSubview(CTkXYFrame):
             font=TEXT_FONT,
         )
         self.open_to_input = ctk.CTkEntry(self.options_frame)
+        open_to_tooltip = CTkToolTip(
+            self.open_to_input,
+            message="Enter the time that the building closes in HH:MM AM/PM format",
+        )
         self.heating_design_day_label = ctk.CTkLabel(
             self.options_frame,
             text="Heating Design Day Criteria:",
@@ -212,6 +219,10 @@ class ProjectDetailsSubview(CTkXYFrame):
             ),
         )
         self.heating_design_day_combo._entry.configure(justify=LEFT)
+        heating_design_day_tooltip = CTkToolTip(
+            self.heating_design_day_combo,
+            message="Select the heating design day criteria for the project",
+        )
         self.cooling_design_day_label = ctk.CTkLabel(
             self.options_frame,
             text="Cooling Design Day Criteria:",
@@ -228,6 +239,10 @@ class ProjectDetailsSubview(CTkXYFrame):
             ),
         )
         self.cooling_design_day_combo._entry.configure(justify=LEFT)
+        cooling_design_day_tooltip = CTkToolTip(
+            self.cooling_design_day_combo,
+            message="Select the cooling design day criteria for the project",
+        )
         self.measured_infiltration_checkbox = ctk.CTkCheckBox(
             self.infiltration_frame,
             text="Measured Infiltration?",
@@ -236,6 +251,10 @@ class ProjectDetailsSubview(CTkXYFrame):
             command=self.toggle_measured_infiltration,
             onvalue=True,
             offvalue=False,
+        )
+        measured_infiltration_tooltip = CTkToolTip(
+            self.measured_infiltration_checkbox,
+            message="Check this box if the project has a measured infiltration rate",
         )
         self.pressure_difference_label = ctk.CTkLabel(
             self.infiltration_frame,
@@ -249,6 +268,10 @@ class ProjectDetailsSubview(CTkXYFrame):
             textvariable=self.app_data.measured_pressure_difference,
             validate="all",
             validatecommand=(validate_double_entry, "%P"),
+        )
+        pressure_difference_tooltip = CTkToolTip(
+            self.pressure_difference_input,
+            message="Enter the measured pressure difference in Pascals",
         )
         self.pressure_units_label = ctk.CTkLabel(
             self.infiltration_frame,
@@ -264,6 +287,10 @@ class ProjectDetailsSubview(CTkXYFrame):
             onvalue=True,
             offvalue=False,
         )
+        site_testing_tooltip = CTkToolTip(
+            self.site_testing_checkbox,
+            message="Check this box if the project is based on site testing",
+        )
 
         self.populate_subview()
 
@@ -271,6 +298,9 @@ class ProjectDetailsSubview(CTkXYFrame):
         return "ProjectDetailsSubview"
 
     def open_subview(self):
+        # Overwrite behavior of the back/next buttons
+        self.project_info_view.main_window.next_button.configure(command=self.view_next)
+        self.project_info_view.main_window.show_back_next_buttons_toggle(False, True)
         self.project_info_view.toggle_active_subbutton("Project Details")
         self.populate_subview() if not self.is_subview_populated else None
 
@@ -335,6 +365,9 @@ class ProjectDetailsSubview(CTkXYFrame):
             self.pressure_difference_input.grid_remove()
             self.pressure_units_label.grid_remove()
             self.site_testing_checkbox.grid_remove()
+
+    def view_next(self):
+        self.project_info_view.show_subview("Project Config.")
 
     def get_subview_data(self):
         return {
@@ -503,8 +536,18 @@ class ProjectConfigSubview(CTkXYFrame):
         return "ProjectConfigSubview"
 
     def open_subview(self):
+        # Overwrite behavior of the back/next buttons
+        self.project_info_view.main_window.next_button.configure(command=self.view_next)
+        self.project_info_view.main_window.back_button.configure(command=self.view_back)
+        self.project_info_view.main_window.show_back_next_buttons_toggle()
         self.project_info_view.toggle_active_subbutton("Project Config.")
         self.populate_subview() if not self.is_subview_populated else None
+
+    def view_next(self):
+        self.project_info_view.main_window.show_view("BuildingAreasView")
+
+    def view_back(self):
+        self.project_info_view.show_subview("Project Details")
 
     def populate_subview(self):
         # Place widgets
@@ -537,13 +580,13 @@ class ProjectConfigSubview(CTkXYFrame):
             row=4, column=1, columnspan=2, sticky=E + W, padx=5, pady=5
         )
 
-        # Row 5 Placeholder for the rotation exception checkbox
+        # Row 5/6 Placeholder for the design==proposed and rotation exception checkboxs
 
-        # Row 6
-        self.ruleset_models_label.grid(row=6, column=0, sticky=E + W, padx=5, pady=5)
+        # Row 7
+        self.ruleset_models_label.grid(row=7, column=0, sticky=E + W, padx=5, pady=5)
 
         self.show_ruleset_models()
-        self.ruleset_models_frame.grid(row=6, column=1, columnspan=8, sticky=FILL)
+        self.ruleset_models_frame.grid(row=7, column=1, columnspan=8, sticky=FILL)
 
     def update_ruleset_model_frame(self, selected_ruleset):
         self.app_data.selected_ruleset.set(selected_ruleset)
@@ -556,10 +599,10 @@ class ProjectConfigSubview(CTkXYFrame):
         # Main logic
         if self.app_data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM":
             self.proposed_reflects_design_checkbox.grid(
-                row=4, column=4, columnspan=4, sticky=W, padx=5, pady=(15, 5)
+                row=5, column=1, columnspan=4, sticky=W, padx=5, pady=5
             )
             self.rotation_exception_checkbox.grid(
-                row=5, column=1, columnspan=4, sticky=W, padx=5, pady=(15, 5)
+                row=6, column=1, columnspan=4, sticky=W, padx=5, pady=5
             )
             if not self.proposed_reflects_design_checkbox.get():
                 labels = ["Design: ", "Proposed: ", "Baseline: "]
@@ -661,7 +704,8 @@ class ProjectConfigSubview(CTkXYFrame):
         # File select button
         def select_file():
             selected_path = filedialog.askopenfilename(
-                filetypes=[("eQUEST Input Files", "*.inp")]
+                parent=self,
+                filetypes=[("eQUEST Input Files", "*.inp")],
             )
             if selected_path:
                 if active_ruleset not in self.app_data.ruleset_model_file_paths:
@@ -743,12 +787,11 @@ class ProjectConfigSubview(CTkXYFrame):
 
         self.project_info_view.update_warnings_errors()
 
-    def view_continue(self):
-        self.project_info_view.window.show_view("Buildings")
-
     def select_output_directory(self):
         """Opens a directory selection dialog and updates the entry field."""
-        directory = filedialog.askdirectory()
+        directory = filedialog.askdirectory(
+            parent=self, title="Select Output Directory"
+        )
         if directory:
             self.output_dir_entry.delete(0, "end")
             self.output_dir_entry.insert(0, directory)

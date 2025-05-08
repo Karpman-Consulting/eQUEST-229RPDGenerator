@@ -5,6 +5,7 @@ import customtkinter as ctk
 from tkinter import Menu, filedialog
 from pathlib import Path
 
+from interface.CTkToolTip import CTkToolTip
 from interface.disclaimer_window import DisclaimerWindow
 from interface.error_window import ErrorWindow
 from interface.constants import *
@@ -57,6 +58,9 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         self.project_name_entry = ctk.CTkEntry(
             self, font=("Arial", 14), textvariable=self.main_app.data.project_name
         )
+        project_entry_tooltip = CTkToolTip(
+            self.project_name_entry, message="Name of the project"
+        )
         self.ruleset_label = ctk.CTkLabel(
             self, text="Energy Code/Program:", font=("Arial", 14, "bold"), anchor="e"
         )
@@ -67,6 +71,10 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             variable=self.main_app.data.is_all_new_construction,
             onvalue=True,
             offvalue=False,
+        )
+        new_construction_checkbox_tooltip = CTkToolTip(
+            self.new_construction_checkbox,
+            message="Check this box if the buildings in this project are all new construction.",
         )
         self.proposed_reflects_design_checkbox = ctk.CTkCheckBox(
             self,
@@ -85,6 +93,10 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             command=self.toggle_baseline_rotations,
             onvalue=True,
             offvalue=False,
+        )
+        rotation_exception_checkbox_tooltip = CTkToolTip(
+            self.rotation_exception_checkbox,
+            message="Check this box if the building is exempt from the Baseline Rotation requirement.",
         )
         self.ruleset_models_frame = ctk.CTkFrame(self, width=800)
         self.ruleset_dropdown = ctk.CTkOptionMenu(
@@ -108,6 +120,10 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             font=("Arial", 14),
             width=500,
             textvariable=self.main_app.data.output_directory,
+        )
+        output_dir_entry_tooltip = CTkToolTip(
+            self.output_dir_entry,
+            message="Directory where the RPD output files are stored after generation",
         )
         self.output_dir_button = ctk.CTkButton(
             self,
@@ -164,8 +180,11 @@ class ProjectConfigWindow(ctk.CTkToplevel):
     def raise_error_window(self, error_text):
         if not error_text:
             return
-        self.error_window = ErrorWindow(self, error_text)
-        self.error_window.after(100, self.error_window.lift, None)
+        if self.error_window is None or not self.error_window.winfo_exists():
+            self.error_window = ErrorWindow(self, error_text)
+            self.error_window.after(100, self.error_window.lift, None)
+        else:
+            self.error_window.focus()  # if window exists, focus it
 
     def place_widgets(self):
         # Place widgets
@@ -185,15 +204,15 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             row=2, column=1, columnspan=3, sticky="ew", padx=5, pady=(30, 5)
         )
         self.new_construction_checkbox.grid(
-            row=2, column=5, sticky="w", padx=5, pady=(30, 5)
+            row=2, column=4, sticky="e", padx=5, pady=(30, 5)
         )
 
         # Row 3
         self.output_dir_label.grid(row=3, column=0, sticky="e", padx=(20, 5), pady=5)
         self.output_dir_entry.grid(
-            row=3, column=1, columnspan=5, sticky="ew", padx=5, pady=5
+            row=3, column=1, columnspan=4, sticky="ew", padx=5, pady=5
         )
-        self.output_dir_button.grid(row=3, column=6, sticky="ew", padx=5, pady=5)
+        self.output_dir_button.grid(row=3, column=5, sticky="w", padx=5, pady=5)
 
         # Row 4
         self.ruleset_label.grid(row=4, column=0, sticky="e", padx=(20, 5), pady=5)
@@ -223,10 +242,10 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         # Main logic
         if self.main_app.data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM":
             self.proposed_reflects_design_checkbox.grid(
-                row=5, column=1, columnspan=4, sticky="w", padx=5, pady=(15, 5)
+                row=5, column=1, columnspan=4, sticky="w", padx=5, pady=5
             )
             self.rotation_exception_checkbox.grid(
-                row=6, column=1, columnspan=4, sticky="w", padx=5, pady=(15, 5)
+                row=6, column=1, columnspan=4, sticky="w", padx=5, pady=(5, 10)
             )
             if not self.proposed_reflects_design_checkbox.get():
                 labels = ["Design: ", "Proposed: ", "Baseline: "]
@@ -323,7 +342,8 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         # File select button
         def select_file():
             selected_path = filedialog.askopenfilename(
-                filetypes=[("eQUEST Input Files", "*.inp")]
+                parent=self,
+                filetypes=[("eQUEST Input Files", "*.inp")],
             )
             if selected_path:
                 path_entry.delete(0, "end")
@@ -458,7 +478,9 @@ class ProjectConfigWindow(ctk.CTkToplevel):
 
     def select_output_directory(self):
         """Opens a directory selection dialog and updates the entry field."""
-        directory = filedialog.askdirectory()
+        directory = filedialog.askdirectory(
+            parent=self, title="Select Output Directory"
+        )
         if directory:
             self.output_dir_entry.delete(0, "end")
             self.output_dir_entry.insert(0, directory)

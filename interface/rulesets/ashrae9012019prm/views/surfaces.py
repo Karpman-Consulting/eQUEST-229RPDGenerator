@@ -1,5 +1,6 @@
 import customtkinter as ctk
 
+from interface.CTkToolTip import CTkToolTip
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
 from interface.main_app_data import ASHRAE9012019ModelOptions
@@ -151,8 +152,17 @@ class DoorSurfaceSubview(CTkXYFrame):
         return "DoorSurfaceSubview"
 
     def open_subview(self):
+        self.surfaces_view.main_window.next_button.configure(command=self.view_next)
+        self.surfaces_view.main_window.back_button.configure(command=self.view_back)
+        self.surfaces_view.main_window.show_back_next_buttons_toggle()
         self.surfaces_view.toggle_active_subbutton("Doors")
         self.populate_subview() if not self.is_subview_populated else None
+
+    def view_next(self):
+        self.surfaces_view.main_window.show_view("SystemsView")
+
+    def view_back(self):
+        self.surfaces_view.main_window.show_view("SpacesView")
 
     def populate_subview(self):
         self.add_column_headers()
@@ -186,6 +196,10 @@ class DoorSurfaceSubview(CTkXYFrame):
             self,
             values=self.app_data.SubsurfaceSubclassificationDescriptions2019ASHRAE901,
             state=READONLY,
+        )
+        classification_tooltip = CTkToolTip(
+            classification_combo,
+            message="Select the classification for this door.",
         )
         classification_combo.set("Swinging Door")
         classification_combo._entry.configure(justify=LEFT)

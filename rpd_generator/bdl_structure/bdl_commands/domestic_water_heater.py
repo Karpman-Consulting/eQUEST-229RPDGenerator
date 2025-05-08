@@ -134,22 +134,32 @@ class DomesticWaterHeater(BaseNode):
             self.get_inp(BDL_DWHeaterKeywords.LOCATION)
         )
         self.location_zone = self.get_inp(BDL_DWHeaterKeywords.ZONE_NAME)
-        self.efficiency_metric_values.append(
-            1
-            / (
-                (
-                    self.try_float(self.get_inp(BDL_DWHeaterKeywords.HEAT_INPUT_RATIO))
-                    or 1.0
-                )
-                * (
-                    self.try_float(self.get_inp(BDL_DWHeaterKeywords.ELEC_INPUT_RATIO))
-                    or 1.0
-                )
+
+        heat_ratio = self.try_float(self.get_inp(BDL_DWHeaterKeywords.HEAT_INPUT_RATIO))
+        elec_ratio = self.try_float(self.get_inp(BDL_DWHeaterKeywords.ELEC_INPUT_RATIO))
+
+        # Compute inverses only for valid, nonzero values
+        heat_thermal_eff = 1 / heat_ratio if heat_ratio else 0
+        elec_thermal_eff = 1 / elec_ratio if elec_ratio else 0
+
+        if (
+            elec_thermal_eff
+            and self.heater_fuel_type == EnergySourceOptions.ELECTRICITY
+        ):
+            self.efficiency_metric_values.append(elec_thermal_eff)
+        elif heat_thermal_eff and elec_thermal_eff:
+            self.efficiency_metric_values.append(
+                (heat_thermal_eff * elec_thermal_eff)
+                / (heat_thermal_eff + elec_thermal_eff)
             )
-        )
+        else:
+            self.efficiency_metric_values.append(heat_thermal_eff or elec_thermal_eff)
+
+        # Water heaters will always have 1 efficiency value with a metric of THERMAL_EFFICIENCY
         self.efficiency_metric_types.append(
             ServiceWaterHeatingEfficiencyMetricOptions.THERMAL_EFFICIENCY
         )
+        self.input_power = self.rated_capacity / self.efficiency_metric_values[0]
 
     def get_output_requests(self):
         """Get the output requests for the domestic water heater object."""
