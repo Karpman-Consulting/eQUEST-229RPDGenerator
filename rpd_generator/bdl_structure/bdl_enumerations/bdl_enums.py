@@ -662,6 +662,7 @@ class BDLEnums:
                 "AIR-CHANGES/HR",
                 "ZONE-TYPE",
                 "LTG-SPEC-METHOD",
+                "C-ACTIVITY-DESC",
             ]
         ),
         "LightingSpecMethodOptions": _ListEnum(
