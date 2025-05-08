@@ -57,7 +57,8 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
 
         self.warnings_button = None
         self.errors_button = None
-        self.continue_button = None
+        self.back_button = None
+        self.next_button = None
         self.generate_RPD_button = None
         self.baseline_label = None
         self.baseline_proposed_switch = None
@@ -200,6 +201,14 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         nav_bar = ctk.CTkFrame(self, width=162 * len(self.views), height=50)
         nav_bar.grid(row=2, column=0, columnspan=max(8, len(self.views)), sticky="nsew")
 
+        # Create frame to hold baseline/proposed toggle
+        baseline_proposed_frame = ctk.CTkFrame(
+            nav_bar, height=50, fg_color="transparent"
+        )
+        baseline_proposed_frame.grid(
+            row=0, column=5, columnspan=2, padx=10, sticky="ew"
+        )
+
         # Configure the grid for uniform spacing
         for i in range(
             max(8, len(self.views))
@@ -216,7 +225,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
                 "\n".join(self.main_app.data.warnings)
             ),
         )
-        self.warnings_button.grid(row=0, column=0, padx=10, pady=5, sticky="ew")
+        self.warnings_button.grid(row=0, column=0, padx=10, pady=(5, 10), sticky="ew")
 
         self.errors_button = ctk.CTkButton(
             nav_bar,
@@ -228,14 +237,16 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
                 "\n".join(self.main_app.data.errors)
             ),
         )
-        self.errors_button.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
+        self.errors_button.grid(row=0, column=1, padx=10, pady=(5, 10), sticky="ew")
 
-        self.continue_button = ctk.CTkButton(
-            nav_bar, text="Continue", width=100, corner_radius=12
+        self.back_button = ctk.CTkButton(
+            nav_bar, text="Back", width=100, corner_radius=12
         )
-        self.continue_button.grid(
-            row=0, column=3, columnspan=1, padx=10, pady=5, sticky="ew"
+        self.back_button.grid(row=0, column=3, padx=10, pady=(5, 10), sticky="ew")
+        self.next_button = ctk.CTkButton(
+            nav_bar, text="Next", width=100, corner_radius=12
         )
+        self.next_button.grid(row=0, column=4, padx=10, pady=(5, 10), sticky="ew")
 
         self.generate_RPD_button = ctk.CTkButton(
             nav_bar,
@@ -246,16 +257,20 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             command=self.main_app.data.call_write_rpd_json_from_rmds,
         )
         self.generate_RPD_button.grid(
-            row=0, column=max(8, len(self.views)) - 1, padx=10, pady=5, sticky="ew"
+            row=0,
+            column=max(8, len(self.views)) - 1,
+            padx=10,
+            pady=(5, 10),
+            sticky="ew",
         )
 
         if self.main_app.data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM":
             # Setup the baseline/proposed toggle
-            self.baseline_label = ctk.CTkLabel(nav_bar, text="Baseline")
-            self.baseline_label.grid(row=0, column=4, padx=5, pady=5, sticky="e")
+            self.baseline_label = ctk.CTkLabel(baseline_proposed_frame, text="Baseline")
+            self.baseline_label.grid(row=0, column=0, padx=5, pady=(5, 10), sticky="e")
 
             self.baseline_proposed_switch = ctk.CTkSwitch(
-                nav_bar,
+                baseline_proposed_frame,
                 variable=self.main_app.data.baseline_or_proposed,
                 text="",
                 height=20,
@@ -267,10 +282,10 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
                 offvalue="Baseline",
             )
             self.baseline_proposed_switch.deselect()
-            self.baseline_proposed_switch.grid(row=0, column=5, padx=5, pady=5)
+            self.baseline_proposed_switch.grid(row=0, column=1, padx=10)
 
-            self.proposed_label = ctk.CTkLabel(nav_bar, text="Proposed")
-            self.proposed_label.grid(row=0, column=6, padx=5, pady=5, sticky="w")
+            self.proposed_label = ctk.CTkLabel(baseline_proposed_frame, text="Proposed")
+            self.proposed_label.grid(row=0, column=2, padx=5, sticky="w")
 
     def show_baseline_proposed_toggle(self, show_toggle):
         if show_toggle:
@@ -281,6 +296,19 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             self.baseline_label.grid_remove()
             self.baseline_proposed_switch.grid_remove()
             self.proposed_label.grid_remove()
+
+    def show_back_next_buttons_toggle(
+        self, show_back_button=True, show_next_button=True
+    ):
+        if show_back_button:
+            self.back_button.configure(state="normal")
+        else:
+            self.back_button.configure(state="disabled")
+
+        if show_next_button:
+            self.next_button.configure(state="normal")
+        else:
+            self.next_button.configure(state="disabled")
 
     def show_view(self, view_name):
         # Clear previous view
@@ -306,8 +334,12 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
     def raise_error_window(self, error_text):
         if not error_text:
             return
-        self.error_window = ErrorWindow(self, error_text)
-        self.error_window.after(100, self.error_window.lift, None)
+
+        if self.error_window is None or not self.error_window.winfo_exists():
+            self.error_window = ErrorWindow(self, error_text)
+            self.error_window.after(100, self.error_window.lift)
+        else:
+            self.error_window.focus()  # if window exists, focus it
 
     def save_project_data(self):
         self.main_app.data.all_project_data.clear()

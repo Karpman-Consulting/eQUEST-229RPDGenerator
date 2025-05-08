@@ -116,7 +116,19 @@ class SpacesSubview(CTkXYFrame):
         return "SpacesSubview"
 
     def open_subview(self):
+        self.spaces_view.main_window.next_button.configure(command=self.view_next)
+        self.spaces_view.main_window.back_button.configure(command=self.view_back)
+        self.spaces_view.main_window.show_back_next_buttons_toggle()
         self.populate_subview() if not self.is_view_populated else None
+
+    def view_next(self):
+        if "SurfacesView" in self.spaces_view.main_window.views:
+            self.spaces_view.main_window.show_view("SurfacesView")
+        else:
+            self.spaces_view.main_window.show_view("SystemsView")
+
+    def view_back(self):
+        self.spaces_view.main_window.show_view("ZonesView")
 
     def populate_subview(self):
         self.add_column_headers()
