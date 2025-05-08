@@ -1,5 +1,6 @@
 import customtkinter as ctk
 
+from interface.CTkToolTip import CTkToolTip
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
 from interface.main_app_data import ASHRAE9012019ModelOptions
@@ -186,6 +187,10 @@ class DoorSurfaceSubview(CTkXYFrame):
             self,
             values=self.app_data.SubsurfaceSubclassificationDescriptions2019ASHRAE901,
             state=READONLY,
+        )
+        classification_tooltip = CTkToolTip(
+            classification_combo,
+            message="Select the classification for this door.",
         )
         classification_combo.set("Swinging Door")
         classification_combo._entry.configure(justify=LEFT)
