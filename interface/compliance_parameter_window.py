@@ -126,7 +126,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             "SurfacesView",
             "SystemsView",
             "ExteriorLightingView",
-            "MiscellaneousView",
+            "ServiceWaterHeatingView",
             "ResultsView",
         ]
 
