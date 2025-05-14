@@ -1,5 +1,4 @@
 import unittest
-from unittest.mock import patch
 
 from rpd_generator.config import Config
 from rpd_generator.artifacts.ruleset_project_description import (

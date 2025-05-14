@@ -67,7 +67,6 @@ class ElecMeter(BaseDefinition):
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
-        self.u_name = u_name
         self.rmd.electric_meter_names.append(u_name)
         self.rmd.bdl_obj_instances[u_name] = self
 
@@ -215,7 +214,7 @@ class Transformer:
 
         self.data_structure = {}
 
-        self.type = None
+        self.transformer_type = None
         self.phase = None
         self.efficiency = None
         self.capacity = None
@@ -235,17 +234,12 @@ class Transformer:
         self.efficiency = 1 - self.meter.try_float(transformer_loss)
 
     def populate_data_group(self):
-
         self.data_structure["id"] = self.name
 
-        transformer_elements = [
-            "type",
-            "phase",
-            "efficiency",
-            "capacity",
-            "peak_load",
-        ]
-        for attr in transformer_elements:
+        if self.transformer_type is not None:
+            self.data_structure["type"] = self.transformer_type
+
+        for attr in ("phase", "efficiency", "capacity", "peak_load"):
             value = getattr(self, attr, None)
             if value is not None:
                 self.data_structure[attr] = value
