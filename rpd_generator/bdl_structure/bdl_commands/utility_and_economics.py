@@ -7,6 +7,7 @@ from rpd_generator.schema.schema_enums import SchemaEnums
 EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_FuelMeterKeywords = BDLEnums.bdl_enums["FuelMeterKeywords"]
+BDL_ElecMeterKeywords = BDLEnums.bdl_enums["ElecMeterKeywords"]
 BDL_FuelTypes = BDLEnums.bdl_enums["FuelTypes"]
 BDL_SteamAndCHWaterMeterKeywords = BDLEnums.bdl_enums[
     "SteamAndChilledWaterMeterKeywords"
@@ -66,11 +67,20 @@ class ElecMeter(BaseDefinition):
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
+        self.u_name = u_name
         self.rmd.electric_meter_names.append(u_name)
         self.rmd.bdl_obj_instances[u_name] = self
 
     def __repr__(self):
         return f"ElecMeter(u_name='{self.u_name}')"
+
+    def populate_data_elements(self):
+        transformer_size = self.get_inp(BDL_ElecMeterKeywords.TRANSFORMER_SIZE)
+        if transformer_size:
+            transformer = Transformer(self)
+            transformer.populate_data_elements()
+            transformer.populate_data_group()
+            transformer.insert_to_rpd()
 
 
 class UtilityRate(BaseDefinition):
@@ -194,3 +204,51 @@ class CHWMeter(BaseNode):
 
     def insert_to_rpd(self):
         self.rmd.external_fluid_sources.append(self.data_structure)
+
+
+class Transformer:
+
+    def __init__(self, meter):
+        self.meter = meter
+        self.name = meter.u_name + " Transformer"
+        self.meter.rmd.bdl_obj_instances[self.name] = self
+
+        self.data_structure = {}
+
+        self.type = None
+        self.phase = None
+        self.efficiency = None
+        self.capacity = None
+        self.peak_load = None
+
+    def populate_data_elements(self):
+        """Populate data elements for Transformer object."""
+        self.capacity = (
+            self.meter.try_float(
+                self.meter.get_inp(BDL_ElecMeterKeywords.TRANSFORMER_SIZE)
+            )
+            * 1000
+        )
+        transformer_loss = (
+            self.meter.get_inp(BDL_ElecMeterKeywords.TRANSFORMER_LOSS) or 0
+        )
+        self.efficiency = 1 - self.meter.try_float(transformer_loss)
+
+    def populate_data_group(self):
+
+        self.data_structure["id"] = self.name
+
+        transformer_elements = [
+            "type",
+            "phase",
+            "efficiency",
+            "capacity",
+            "peak_load",
+        ]
+        for attr in transformer_elements:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.data_structure[attr] = value
+
+    def insert_to_rpd(self):
+        self.meter.rmd.transformers.append(self.data_structure)

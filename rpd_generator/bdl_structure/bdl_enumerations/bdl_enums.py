@@ -533,6 +533,12 @@ class BDLEnums:
                 "DEM-UNIT-INDEX",
             ]
         ),
+        "ElecMeterKeywords": _ListEnum(
+            [
+                "TRANSFORMER-SIZE",
+                "TRANSFORMER-LOSS",
+            ]
+        ),
         "AirflowConditionOptions": _ListEnum(
             [
                 "SEA-LEVEL",
