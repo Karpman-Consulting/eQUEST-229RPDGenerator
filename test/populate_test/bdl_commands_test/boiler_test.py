@@ -205,4 +205,4 @@ class TestElectricBoiler(unittest.TestCase):
             "efficiency_metric_values": [1, 1],
             "efficiency_metric_types": ["THERMAL", "COMBUSTION"],
         }
-        self.assertDictEqual(self.boiler.boiler_data_structure, expected_data_structure)
+        self.assertDictEqual(expected_data_structure, self.boiler.boiler_data_structure)
