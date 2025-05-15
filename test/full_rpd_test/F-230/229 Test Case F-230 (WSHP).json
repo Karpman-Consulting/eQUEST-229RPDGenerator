@@ -1,18 +1,8 @@
 {
-    "id": "229 Test Case F-230 (WSHP)",
+    "id": "ASHRAE 229",
     "ruleset_model_descriptions": [
         {
             "id": "229 Test Case F-230 (WSHP)",
-            "weather": {
-                "ground_temperature_schedule": "Ground Temperature Schedule",
-                "file_name": "DENVER INTL AP    CO",
-                "climate_zone": "CZ5B"
-            },
-            "calendar": {
-                "is_leap_year": false,
-                "day_of_week_for_january_1": "FRIDAY",
-                "has_daylight_saving_time": false
-            },
             "altitude": 0,
             "buildings": [
                 {
@@ -133379,6 +133369,16 @@
             }
         }
     ],
-    "data_timestamp": "2025-04-22T16:01Z",
+    "calendar": {
+        "is_leap_year": false,
+        "day_of_week_for_january_1": "FRIDAY",
+        "has_daylight_saving_time": false
+    },
+    "weather": {
+        "ground_temperature_schedule": "Ground Temperature Schedule",
+        "file_name": "DENVER INTL AP    CO",
+        "climate_zone": "CZ5B"
+    },
+    "data_timestamp": "2025-04-22T14:00Z",
     "data_version": "0.1.0"
 }

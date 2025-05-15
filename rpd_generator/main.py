@@ -54,7 +54,7 @@ def write_rpd_json_from_inp(inp_path_str):
 
 def write_rpd_json_from_bdl(project_name: str, bdl_path: str, json_file_path: str):
     bdl_input_reader = ModelInputReader()
-    rpd = RulesetProjectDescription(project_name)
+    rpd = RulesetProjectDescription("ASHRAE 229")
     rmds = generate_rmd_structures_from_bdls(rpd, bdl_input_reader, [bdl_path])
     for rmd in rmds:
         # Populate 229 data structures associated with the BDL objects

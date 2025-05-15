@@ -1,18 +1,8 @@
 {
-    "id": "229 Test Case F-220 (FC Purch)",
+    "id": "ASHRAE 229",
     "ruleset_model_descriptions": [
         {
             "id": "229 Test Case F-220 (FC Purch)",
-            "weather": {
-                "ground_temperature_schedule": "Ground Temperature Schedule",
-                "file_name": "DENVER INTL AP    CO",
-                "climate_zone": "CZ5B"
-            },
-            "calendar": {
-                "is_leap_year": false,
-                "day_of_week_for_january_1": "FRIDAY",
-                "has_daylight_saving_time": false
-            },
             "altitude": 0,
             "buildings": [
                 {
@@ -141981,13 +141971,6 @@
                     "unmet_load_hours_cooling": 0.0,
                     "annual_source_results": [
                         {
-                            "id": "PURCHASED_CHILLED_WATER",
-                            "energy_source": "PURCHASED_CHILLED_WATER",
-                            "annual_consumption": 48112178386240.0,
-                            "annual_demand": 27456923421.631947,
-                            "annual_cost": 0
-                        },
-                        {
                             "id": "ELECTRICITY",
                             "energy_source": "ELECTRICITY",
                             "annual_consumption": 125953607365.5,
@@ -142002,6 +141985,13 @@
                             "annual_cost": 0
                         },
                         {
+                            "id": "PURCHASED_CHILLED_WATER",
+                            "energy_source": "PURCHASED_CHILLED_WATER",
+                            "annual_consumption": 48112178386240.0,
+                            "annual_demand": 27456923421.631947,
+                            "annual_cost": 0
+                        },
+                        {
                             "id": "NATURAL_GAS",
                             "energy_source": null,
                             "annual_consumption": 0.0,
@@ -142012,96 +142002,6 @@
                     "building_peak_heating_load": -373.673583984375,
                     "building_peak_cooling_load": 101.0267562866211,
                     "annual_end_use_results": [
-                        {
-                            "id": "PURCHASED_CHILLED_WATER - Interior Lighting",
-                            "type": "INTERIOR_LIGHTING",
-                            "energy_source": "PURCHASED_CHILLED_WATER",
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "PURCHASED_CHILLED_WATER - Misc Equipment",
-                            "type": "MISC_EQUIPMENT",
-                            "energy_source": "PURCHASED_CHILLED_WATER",
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": false
-                        },
-                        {
-                            "id": "PURCHASED_CHILLED_WATER - Space Heating",
-                            "type": "SPACE_HEATING",
-                            "energy_source": "PURCHASED_CHILLED_WATER",
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "PURCHASED_CHILLED_WATER - Space Cooling",
-                            "type": "SPACE_COOLING",
-                            "energy_source": "PURCHASED_CHILLED_WATER",
-                            "annual_site_energy_use": 48112178386240.0,
-                            "annual_site_coincident_demand": 27456923421.631947,
-                            "annual_site_non_coincident_demand": 27456923421.631947,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "PURCHASED_CHILLED_WATER - Heat Rejection",
-                            "type": "HEAT_REJECTION",
-                            "energy_source": "PURCHASED_CHILLED_WATER",
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "PURCHASED_CHILLED_WATER - Pumps & Aux",
-                            "type": "PUMPS",
-                            "energy_source": "PURCHASED_CHILLED_WATER",
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "PURCHASED_CHILLED_WATER - Ventilation Fans",
-                            "type": "FANS_INTERIOR_VENTILATION",
-                            "energy_source": "PURCHASED_CHILLED_WATER",
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "PURCHASED_CHILLED_WATER - Refrigeration Display",
-                            "type": "REFRIGERATION_EQUIPMENT",
-                            "energy_source": "PURCHASED_CHILLED_WATER",
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "PURCHASED_CHILLED_WATER - Ht Pump Supplemental Heat",
-                            "type": "HEAT_PUMP_SUPPLEMENTAL_HEATING",
-                            "energy_source": "PURCHASED_CHILLED_WATER",
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "PURCHASED_CHILLED_WATER - Domestic Hot Water",
-                            "type": "SERVICE_WATER_HEATING",
-                            "energy_source": "PURCHASED_CHILLED_WATER",
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
                         {
                             "id": "ELECTRICITY - Interior Lighting",
                             "type": "INTERIOR_LIGHTING",
@@ -142283,6 +142183,96 @@
                             "is_regulated": true
                         },
                         {
+                            "id": "PURCHASED_CHILLED_WATER - Interior Lighting",
+                            "type": "INTERIOR_LIGHTING",
+                            "energy_source": "PURCHASED_CHILLED_WATER",
+                            "annual_site_energy_use": 0.0,
+                            "annual_site_coincident_demand": 0.0,
+                            "annual_site_non_coincident_demand": 0.0,
+                            "is_regulated": true
+                        },
+                        {
+                            "id": "PURCHASED_CHILLED_WATER - Misc Equipment",
+                            "type": "MISC_EQUIPMENT",
+                            "energy_source": "PURCHASED_CHILLED_WATER",
+                            "annual_site_energy_use": 0.0,
+                            "annual_site_coincident_demand": 0.0,
+                            "annual_site_non_coincident_demand": 0.0,
+                            "is_regulated": false
+                        },
+                        {
+                            "id": "PURCHASED_CHILLED_WATER - Space Heating",
+                            "type": "SPACE_HEATING",
+                            "energy_source": "PURCHASED_CHILLED_WATER",
+                            "annual_site_energy_use": 0.0,
+                            "annual_site_coincident_demand": 0.0,
+                            "annual_site_non_coincident_demand": 0.0,
+                            "is_regulated": true
+                        },
+                        {
+                            "id": "PURCHASED_CHILLED_WATER - Space Cooling",
+                            "type": "SPACE_COOLING",
+                            "energy_source": "PURCHASED_CHILLED_WATER",
+                            "annual_site_energy_use": 48112178386240.0,
+                            "annual_site_coincident_demand": 27456923421.631947,
+                            "annual_site_non_coincident_demand": 27456923421.631947,
+                            "is_regulated": true
+                        },
+                        {
+                            "id": "PURCHASED_CHILLED_WATER - Heat Rejection",
+                            "type": "HEAT_REJECTION",
+                            "energy_source": "PURCHASED_CHILLED_WATER",
+                            "annual_site_energy_use": 0.0,
+                            "annual_site_coincident_demand": 0.0,
+                            "annual_site_non_coincident_demand": 0.0,
+                            "is_regulated": true
+                        },
+                        {
+                            "id": "PURCHASED_CHILLED_WATER - Pumps & Aux",
+                            "type": "PUMPS",
+                            "energy_source": "PURCHASED_CHILLED_WATER",
+                            "annual_site_energy_use": 0.0,
+                            "annual_site_coincident_demand": 0.0,
+                            "annual_site_non_coincident_demand": 0.0,
+                            "is_regulated": true
+                        },
+                        {
+                            "id": "PURCHASED_CHILLED_WATER - Ventilation Fans",
+                            "type": "FANS_INTERIOR_VENTILATION",
+                            "energy_source": "PURCHASED_CHILLED_WATER",
+                            "annual_site_energy_use": 0.0,
+                            "annual_site_coincident_demand": 0.0,
+                            "annual_site_non_coincident_demand": 0.0,
+                            "is_regulated": true
+                        },
+                        {
+                            "id": "PURCHASED_CHILLED_WATER - Refrigeration Display",
+                            "type": "REFRIGERATION_EQUIPMENT",
+                            "energy_source": "PURCHASED_CHILLED_WATER",
+                            "annual_site_energy_use": 0.0,
+                            "annual_site_coincident_demand": 0.0,
+                            "annual_site_non_coincident_demand": 0.0,
+                            "is_regulated": true
+                        },
+                        {
+                            "id": "PURCHASED_CHILLED_WATER - Ht Pump Supplemental Heat",
+                            "type": "HEAT_PUMP_SUPPLEMENTAL_HEATING",
+                            "energy_source": "PURCHASED_CHILLED_WATER",
+                            "annual_site_energy_use": 0.0,
+                            "annual_site_coincident_demand": 0.0,
+                            "annual_site_non_coincident_demand": 0.0,
+                            "is_regulated": true
+                        },
+                        {
+                            "id": "PURCHASED_CHILLED_WATER - Domestic Hot Water",
+                            "type": "SERVICE_WATER_HEATING",
+                            "energy_source": "PURCHASED_CHILLED_WATER",
+                            "annual_site_energy_use": 0.0,
+                            "annual_site_coincident_demand": 0.0,
+                            "annual_site_non_coincident_demand": 0.0,
+                            "is_regulated": true
+                        },
+                        {
                             "id": "NATURAL_GAS - Interior Lighting",
                             "type": "INTERIOR_LIGHTING",
                             "energy_source": null,
@@ -142377,6 +142367,16 @@
             }
         }
     ],
-    "data_timestamp": "2025-04-22T16:01Z",
+    "calendar": {
+        "is_leap_year": false,
+        "day_of_week_for_january_1": "FRIDAY",
+        "has_daylight_saving_time": false
+    },
+    "weather": {
+        "ground_temperature_schedule": "Ground Temperature Schedule",
+        "file_name": "DENVER INTL AP    CO",
+        "climate_zone": "CZ5B"
+    },
+    "data_timestamp": "2025-04-22T14:00Z",
     "data_version": "0.1.0"
 }

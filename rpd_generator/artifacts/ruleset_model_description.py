@@ -145,10 +145,6 @@ class RulesetModelDescription(Base):
         self.has_site_shading = False
 
         # data elements with children
-        self.calendar = {
-            "is_leap_year": False,  # even if the year is a leap year, eQUEST skips Feb 29
-        }
-        self.weather = {}
         self.transformers = []
         self.buildings = []
         self.schedules = []
@@ -2084,8 +2080,6 @@ class RulesetModelDescription(Base):
             for key, value in {
                 "id": self.obj_id,
                 "type": self.type,
-                "weather": self.weather,
-                "calendar": self.calendar,
                 "measured_infiltration_pressure_difference": self.measured_infiltration_pressure_difference,
                 "is_measured_infiltration_based_on_test": self.is_measured_infiltration_based_on_test,
                 "altitude": self.altitude,
