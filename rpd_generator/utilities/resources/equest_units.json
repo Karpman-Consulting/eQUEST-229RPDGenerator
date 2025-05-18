@@ -36,8 +36,8 @@
     },
     "Construction": {
         "u_factor": "btu_h / ft^2 / delta_F",
-        "c_factor": "",
-        "f_factor": "",
+        "c_factor": "btu_h / ft^2 / delta_F",
+        "f_factor": "btu_h / ft / delta_F",
         "r_values": "ft^2 * delta_F / btu_h"
     },
     "Material": {

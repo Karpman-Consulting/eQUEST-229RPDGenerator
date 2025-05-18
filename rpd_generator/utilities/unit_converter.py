@@ -48,7 +48,15 @@ def convert_to_schema_units(rpd_json):
                     if key in unit_dict and isinstance(value, (int, float)):
                         element[key] = value * ureg(unit_dict[key])
                         schema_unit = schema_units.get(dg).get(key)
-                        element[key] = element[key].to(schema_unit)
+                        try:
+                            element[key] = element[key].to(schema_unit)
+                        except pint.errors.DimensionalityError:
+                            if unit_dict[key] == "":
+                                print(f"Units for {key} are blank in equest_units.json")
+                            else:
+                                print(
+                                    f"Cannot convert {key} from {unit_dict[key]} to {schema_unit}"
+                                )
                         element[key] = element[key].magnitude
 
     for data_group in equest_units:

@@ -1,20 +1,11 @@
 import tkinter as tk
 
-from interface.compliance_parameter_window import ComplianceParameterWindow
 from interface.install_config import InstallConfigWindow
 from interface.project_config import ProjectConfigWindow
 from interface.main_app_data import MainAppData
 
 from rpd_generator.config import Config
 from rpd_generator.utilities import validate_configuration
-
-"""MainApplication is the main window of the application. Typically this is a visible window, but in this case it's
-acting as a staging ground for all other windows which will be opened as TopLevel windows. It will hold data that
-can be passed into and out of the TopLevel windows.
-
-Note: With this paradigm, we need to add a protocol for every top level window to call the quit method of the
-MainApplication when the window is closed to make sure the MainApplication closes and doesn't hang in the
-background. It looks like this your_window.protocol("WM_DELETE_WINDOW", self.quit)"""
 
 
 class MainApplication(tk.Tk):
@@ -24,7 +15,6 @@ class MainApplication(tk.Tk):
 
         self.install_config_window = None
         self.project_config_window = None
-        self.compliance_parameter_window = None
 
         # Placeholder so we can see main app window open for sanity check.
         # If it becomes visible we will at least know what it is.
