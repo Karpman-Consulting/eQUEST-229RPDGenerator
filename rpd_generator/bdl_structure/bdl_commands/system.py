@@ -1645,8 +1645,12 @@ class System(ParentNode):
             if obj_inst.get_inp(BDL_SystemKeywords.DOA_SYSTEM) == self.u_name
         ]
         system_fan_schedules = {
-            self.get_obj(system.get_inp(BDL_SystemKeywords.FAN_SCHEDULE))
+            schedule
             for system in systems_served
+            for schedule in [
+                self.get_obj(system.get_inp(BDL_SystemKeywords.FAN_SCHEDULE))
+            ]
+            if schedule is not None
         }
         occupied_hours = [
             1 if any(hour == 1 for hour in hours) else 0

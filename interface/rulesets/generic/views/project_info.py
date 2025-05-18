@@ -35,8 +35,6 @@ class ProjectInfoView(BaseView):
         return "ProjectInfoView"
 
     def open_view(self):
-        # Overwrite behavior of the continue button
-        self.window.continue_button.configure(command=self.view_continue)
         # Update the errors and warnings button formatting
         self.update_warnings_errors()
 
@@ -88,43 +86,8 @@ class ProjectInfoView(BaseView):
             )
             self.subview_buttons[name] = button
 
-    def show_subview(self, subview_name):
-        # Clear previous subview
-        if self.current_subview is not None:
-            self.current_subview.grid_forget()
-
-        # Show new subview
-        subview = self.subviews.get(subview_name)
-        if subview:
-            self.current_subview = subview
-            self.current_subview.grid(row=0, column=0, sticky=FILL)
-            self.current_subview.open_subview()
-
-    def toggle_active_subbutton(self, active_subbutton_name):
-        for name, button in self.subview_buttons.items():
-            if name == active_subbutton_name:
-                self.subview_buttons[name].configure(
-                    fg_color=ACTIVE_SUBVIEW_BUTTON_COLOR,
-                    hover_color=ACTIVE_SUBVIEW_BUTTON_COLOR,
-                    text_color=BLACK,
-                    font=("Arial", 12, "bold"),
-                )
-            else:
-                self.subview_buttons[name].configure(
-                    fg_color=SUBVIEW_BUTTON_COLOR,
-                    hover_color=SUBVIEW_BUTTON_COLOR,
-                    text_color=BLACK,
-                    font=("Arial", 12, "bold"),
-                )
-
     def view_continue(self):
         self.window.show_view("Buildings")
-
-    def get_view_data(self):
-        view_data = {}
-        for subview in self.subviews.values():
-            view_data[subview.json_representation] = subview.get_subview_data()
-        return view_data
 
 
 class ProjectDetailsSubview(CTkXYFrame):
@@ -433,8 +396,7 @@ class ProjectConfigSubview(CTkXYFrame):
             text="Continue",
             width=100,
             corner_radius=12,
-            # TODO: come back to this, goes with regenerate rmds button
-            # command=self.validate_project_info,
+            command=self.validate_project_info,
         )
         self.populate_subview()
 
@@ -442,6 +404,7 @@ class ProjectConfigSubview(CTkXYFrame):
         return "ProjectConfigView"
 
     def open_subview(self):
+        # Overwrite behavior of the back/next buttons
         self.project_info_view.toggle_active_subbutton("Project Config.")
         self.populate_subview() if not self.is_subview_populated else None
 
@@ -520,24 +483,6 @@ class ProjectConfigSubview(CTkXYFrame):
         for widget in self.ruleset_models_frame.winfo_children():
             widget.grid_remove()
 
-    def toggle_baseline_rotations(self):
-        """Add or remove Baseline rotation rows based on checkbox state."""
-        active_ruleset = self.app_data.selected_ruleset.get()
-        for row_widgets in self.ruleset_model_row_widgets[active_ruleset].values():
-            if row_widgets[0].cget("text") in [
-                "Baseline 90: ",
-                "Baseline 180: ",
-                "Baseline 270: ",
-            ]:
-                if row_widgets[0].winfo_ismapped():
-                    # If visible, hide them
-                    for widget in row_widgets:
-                        widget.grid_remove()
-                else:
-                    # If hidden, show them
-                    for widget in row_widgets:
-                        widget.grid()
-
     def create_file_row(self, label_text):
         """Create a row of widgets without placing them using grid()."""
         model_text = label_text.split(":")[0]
@@ -598,9 +543,8 @@ class ProjectConfigSubview(CTkXYFrame):
 
         return label, path_entry, select_button
 
-    # TODO: When options on this view are changed,
-    #  show warning
-    #  reload new instance of compliance parameter window if Energy Code/Program is changed
+    # TODO: When options on this view are changed, show warning pop-up
+    #  if Energy Code/Program is changed, reload new instance of compliance parameter window
     def validate_project_info(self):
         """Verify that all required file paths have been selected."""
         # Check that at least 1 file path has been selected
@@ -631,22 +575,6 @@ class ProjectConfigSubview(CTkXYFrame):
 
         # If the code reaches this point, at least one file is selected and all associated files are found so clear any errors
         self.app_data.errors.clear()
-
-        # Required model types
-        required_models = ["User"]
-
-        # Check if all required model types have file paths selected
-        for model_type in required_models:
-            if (
-                model_type not in self.app_data.ruleset_model_file_paths[active_ruleset]
-                or not self.app_data.ruleset_model_file_paths[active_ruleset][
-                    model_type
-                ]
-            ):
-                model_type = model_type.replace("User", "Design")
-                self.app_data.warnings.append(
-                    f"The '{model_type}' model is missing and is required to evaluate the ASHRAE 90.1-2019 ruleset."
-                )
 
         self.project_info_view.update_warnings_errors()
 

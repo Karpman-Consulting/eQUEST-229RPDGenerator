@@ -69,13 +69,13 @@ class ZonesView(BaseView):
 
         # Update building areas on view open
         for combo in self.building_areas_combos:
-            combo.configure(values=self.main_window.main_app.data.building_area_options)
-
-    def get_view_data(self):
-        view_data = {}
-        for subview in self.subviews.values():
-            view_data[subview.json_representation] = subview.get_subview_data()
-        return view_data
+            combo.configure(
+                values=[
+                    area
+                    for building in self.app_data.buildings.values()
+                    for area in building.get("areas", {}).keys()
+                ]
+            )
 
 
 class ZonesSubview(CTkXYFrame):
@@ -170,9 +170,14 @@ class ZonesSubview(CTkXYFrame):
         floor_label.grid(row=(i + 1), column=1, padx=20, pady=10, sticky=W)
 
         # Place the Building Area ComboBox in `self` (not inside `main_row_frame`) to align properly
+        building_areas = [
+            area
+            for building in self.app_data.buildings.values()
+            for area in building.get("areas", {}).keys()
+        ]
         building_area_combo = ctk.CTkComboBox(
             self,
-            values=self.app_data.building_area_options,
+            values=building_areas,
             state=READONLY,
             fg_color=FLOOR_COMBOBOX_COLOR,
             border_color=FLOOR_COMBOBOX_COLOR,
@@ -184,7 +189,7 @@ class ZonesSubview(CTkXYFrame):
                 floor, value
             ),
         )
-        building_area_combo.set(self.app_data.building_area_options[0])
+        building_area_combo.set(building_areas[0])
         building_area_combo._entry.configure(justify=LEFT)
         building_area_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=10)
 
@@ -203,12 +208,17 @@ class ZonesSubview(CTkXYFrame):
     def add_row(self, i, zone_name):
         floor_label = ctk.CTkLabel(self, text=f"{zone_name}")
         floor_label.grid(row=(i + 1), column=1, padx=20, pady=PAD10SYM, sticky=W)
+        building_areas = [
+            area
+            for building in self.app_data.buildings.values()
+            for area in building.get("areas", {}).keys()
+        ]
         building_area_combo = ctk.CTkComboBox(
             self,
-            values=self.app_data.building_area_options,
+            values=building_areas,
             state=READONLY,
         )
-        building_area_combo.set(self.app_data.building_area_options[0])
+        building_area_combo.set(building_areas[0])
         building_area_combo._entry.configure(justify=LEFT)
         building_area_combo.grid(row=(i + 1), column=2, padx=PAD20END, pady=PAD10SYM)
         self.zones_view.building_areas_combos.append(building_area_combo)

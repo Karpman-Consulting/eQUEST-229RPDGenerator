@@ -1,6 +1,3 @@
-import json
-from tkinter.filedialog import askopenfilename
-
 import customtkinter as ctk
 from tkinter import Menu, filedialog
 from pathlib import Path
@@ -254,7 +251,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             if not self.rotation_exception_checkbox.get():
                 labels.extend(["Baseline 90: ", "Baseline 180: ", "Baseline 270: "])
         else:
-            labels = [""]
+            labels = ["Design: "]
 
         # Create and place rows based on the selected ruleset
         self.create_model_rows(labels)
@@ -498,5 +495,5 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         """Load a saved project data file. In this window, we're loading from a blank state.
         Slightly different flow from loading in compliance parameter window.
         Must perform validation checks"""
-        self.main_app.data.populate_project_data()
+        self.main_app.data.populate_window_with_saved_project_data()
         self.validate_project_info()

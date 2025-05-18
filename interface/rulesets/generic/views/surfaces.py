@@ -2,7 +2,6 @@ import customtkinter as ctk
 
 from interface.ctk_xyframe import CTkXYFrame
 from interface.base_view import BaseView
-from interface.main_app_data import ASHRAE9012019ModelOptions
 from interface.constants import *
 
 
@@ -86,7 +85,6 @@ class SurfacesView(BaseView):
 
     def create_subbutton_bar(self):
         callback_methods = {}
-        current_state = self.app_data.baseline_or_proposed.get()
         if not self.app_data.is_all_new_construction.get():
             if len(self.app_data.rmds[0].ext_wall_names) > 0:
                 callback_methods["Exterior"] = lambda: self.show_subview(
@@ -126,41 +124,6 @@ class SurfacesView(BaseView):
                 command=callback_methods[name],
             )
             self.subview_buttons[name] = button
-
-    def show_subview(self, subview_name):
-        # Clear previous subview
-        if self.current_subview is not None:
-            self.current_subview.grid_forget()
-
-        subview = self.subviews.get(subview_name)
-        if subview:
-            self.current_subview_name = subview_name
-            self.current_subview = subview
-
-        self.current_subview.grid(row=0, column=0, sticky=FILL)
-        self.current_subview.focus_set()
-        self.current_subview.open_subview()
-
-    def toggle_active_subbutton(self, active_subbutton_name):
-        for name, button in self.subview_buttons.items():
-            if name == active_subbutton_name:
-                self.subview_buttons[name].configure(
-                    fg_color=ACTIVE_SUBVIEW_BUTTON_COLOR,
-                    hover_color=ACTIVE_SUBVIEW_BUTTON_COLOR,
-                    text_color=BLACK,
-                )
-            else:
-                self.subview_buttons[name].configure(
-                    fg_color=SUBVIEW_BUTTON_COLOR,
-                    hover_color=SUBVIEW_BUTTON_COLOR,
-                    text_color=BLACK,
-                )
-
-    def get_view_data(self):
-        view_data = {}
-        for subview in self.subviews.values():
-            view_data[subview.json_representation] = subview.get_subview_data()
-        return view_data
 
 
 class ExteriorSurfaceSubview(CTkXYFrame):

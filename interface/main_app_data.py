@@ -45,19 +45,50 @@ class MainAppData:
         self.baseline_or_proposed = ctk.StringVar()
         self.ruleset_model_file_paths = {}
         self.output_directory = ctk.StringVar()
+
         self.climate_zone = ctk.StringVar()
+        self.climate_zone.trace_add(
+            "write", lambda *_: self.insert_to_rpd(self.ClimateZoneMapping2019ASHRAE901)
+        )
+
         self.lighting_zone = ctk.StringVar()
+        self.lighting_zone.trace_add(
+            "write",
+            lambda *_: self.insert_to_rpd(
+                self.ExteriorLightingZoneMapping2019ASHRAE901
+            ),
+        )
+
         self.heating_design_day = ctk.StringVar()
+        self.heating_design_day.trace_add(
+            "write", lambda *_: self.insert_to_rpd(self.HeatingDesignDayMapping)
+        )
+
         self.cooling_design_day = ctk.StringVar()
+        self.cooling_design_day.trace_add(
+            "write", lambda *_: self.insert_to_rpd(self.CoolingDesignDayMapping)
+        )
+
         self.has_measured_infiltration = ctk.BooleanVar()
         self.is_based_on_site_testing = ctk.BooleanVar()
         self.measured_pressure_difference = ctk.StringVar()
+        self.open_from_var = ctk.StringVar()
+        self.open_to_var = ctk.StringVar()
+
+        # Spaces Subview variables
         self.lighting_space_type_vars = {}
+        self.envelope_space_type_vars = {}
+        self.ventilation_space_type_vars = {}
+        self.swh_space_type_vars = {}
+        self.lighting_occ_controls_vars = {}
+        self.daylighting_controls_vars = {}
+        self.occ_controls_modeled_vars = {}
+        self.daylighting_modeled_vars = {}
+        self.status_vars = {}
 
         # View data
-        self.building_area_options = []
-        self.all_project_data = {}
-        self.loaded_project_data = {}
+        self.buildings = {}
+        self.interface_data = {}
 
         self.rmds = []
         self.warnings = []
@@ -389,7 +420,7 @@ class MainAppData:
     def subview_name_to_json_key(subview_name):
         return subview_name.replace(" ", "_").lower().split("subview")[0]
 
-    def populate_project_data(self):
+    def populate_window_with_saved_project_data(self):
         file_path = askopenfilename(
             initialdir=str(Path(self.output_directory.get())),
             title="Load Project Data",
@@ -403,18 +434,18 @@ class MainAppData:
             loaded_data = json.load(project_load_file)
 
         # Clear current project data and update the main app's data with loaded data
-        self.all_project_data.clear()
-        self.all_project_data.update(loaded_data)
+        self.interface_data.clear()
+        self.interface_data.update(loaded_data)
         # Populate project config data
         self.populate_project_config_data()
 
     def populate_project_config_data(self):
-        project_config_data = self.all_project_data.get("project_configuration")
+        project_config_data = self.interface_data.get("project_configuration")
         if not project_config_data:
             return
-        """I know these checks look excessive and they are, but this is a workaround for a bug in the way
-                ctk entries deal with StringVars when they are set to empty strings. We can get rid of the checks
-                and set defaults if they don't exist in the saved project file"""
+
+        # These checks are a workaround for a bug in the way ctk entries deal with StringVars when they are set to empty strings.
+        # We can get rid of the checks and set defaults if they don't exist in the saved project file
         if project_config_data.get("Project Name"):
             self.project_name.set(project_config_data.get("Project Name"))
         if project_config_data.get("Output Directory"):

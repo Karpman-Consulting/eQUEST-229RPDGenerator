@@ -5,7 +5,7 @@ import customtkinter as ctk
 from PIL import Image
 from tkinter import Menu
 from functools import partial
-from tkinter.filedialog import asksaveasfilename, askopenfilename
+from tkinter.filedialog import asksaveasfilename
 
 from interface.CTkMessagebox import CTkMessagebox
 from interface.rulesets import import_views, static_files_path
@@ -34,8 +34,8 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         # Expand subviews vertically to fill maximum window space, support for vertical window resizing
         self.grid_rowconfigure(1, weight=1)
 
-        """Uncomment this if we want to be able to expand the window and have all the contents scale with the resize.
-        If so, we'll have to make some adjustments so the top button bar doesn't act weird."""
+        # Uncomment this if we want to be able to expand the window and have all the contents scale with the resize.
+        # If so, we'll have to make some adjustments so the top button bar doesn't act weird.
         # for i in range(self.grid_size()[0]):
         #     self.grid_columnconfigure(i, weight=1)
 
@@ -46,6 +46,12 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
                 self.main_app.data.selected_ruleset.get()
             ).items()
         }
+        # Remove the SurfacesView if the selected ruleset is ASHRAE 90.1-2019 PRM and there are no doors in the baseline model
+        if (
+            self.main_app.data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM"
+            and len(self.main_app.data.get_rmd("BASELINE_0").door_names) == 0
+        ):
+            self.views.pop("SurfacesView", None)
         self.static_filepath = static_files_path(
             self.main_app.data.selected_ruleset.get()
         )
@@ -80,6 +86,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         self.minsize((162 * len(self.views)), 350)
 
     def toggle_baseline_proposed(self):
+        """When the selected ruleset is ASHRAE 90.1-2019 PRM, enable toggling between the Baseline and Proposed model data"""
         new_state = self.main_app.data.baseline_or_proposed.get()
         old_state = "Baseline" if new_state == "Proposed" else "Proposed"
 
@@ -127,6 +134,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             "SystemsView",
             "ExteriorLightingView",
             "ServiceWaterHeatingView",
+            "MiscellaneousView",
             "ResultsView",
         ]
 
@@ -141,25 +149,9 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         button_names = [self.views[k].button_name for k in sorted_keys]
         icon_paths = [self.views[k].icon for k in sorted_keys]
 
-        baseline_rmd = self.main_app.data.get_rmd("BASELINE_0")
-        baseline_rmd_has_doors = (
-            len(self.main_app.data.get_rmd("BASELINE_0").door_names) > 0
-            if baseline_rmd
-            else None
-        )
-
         for index, (view_name, button_name, icon_path) in enumerate(
             zip(view_names, button_names, icon_paths)
         ):
-            # Special handling for ASHRAE 90.1-2019 PRM ruleset to hide the Surfaces view if there are no doors in the baseline model
-            if (
-                self.main_app.data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM"
-                and view_name == "SurfacesView"
-                and not baseline_rmd_has_doors
-            ):
-                self.views.pop("SurfacesView")
-                continue
-
             # Load and resize the icon
             icon = Image.open(f"{self.static_filepath}/{icon_path}").convert("RGBA")
             icon = icon.resize(ICON_SIZE, Image.LANCZOS)  # Resize icon
@@ -342,12 +334,12 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             self.error_window.focus()  # if window exists, focus it
 
     def save_project_data(self):
-        self.main_app.data.all_project_data.clear()
+        self.main_app.data.interface_data.clear()
         for view in self.views.values():
             # Skip incomplete views
             if not hasattr(view, "get_view_data"):
                 continue
-            self.main_app.data.all_project_data.update(view.get_view_data())
+            self.main_app.data.interface_data.update(view.get_view_data())
 
         # Save the project data to a file
         # file_path = str(Path(self.main_app.data.output_directory.get()) / f"{self.main_app.data.project_name.get()}_data.json")
@@ -359,7 +351,7 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
             defaultextension=".json",
         )
         with open(file_path, "w") as project_save_file:
-            json.dump(self.main_app.data.all_project_data, project_save_file, indent=4)
+            json.dump(self.main_app.data.interface_data, project_save_file, indent=4)
 
     def load_project_data(self):
         """Load a saved project data file. A saved data file will have already undergone
@@ -375,5 +367,5 @@ class ComplianceParameterWindow(ctk.CTkToplevel):
         )
         if msg.get() == "No":
             return
-        self.main_app.data.populate_project_data()
+        self.main_app.data.populate_window_with_saved_project_data()
         self.main_app.refresh_compliance_parameter_window()

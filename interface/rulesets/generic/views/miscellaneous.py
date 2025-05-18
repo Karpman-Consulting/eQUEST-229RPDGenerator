@@ -1,5 +1,3 @@
-import customtkinter as ctk
-
 from interface.base_view import BaseView
 
 
@@ -15,5 +13,4 @@ class MiscellaneousView(BaseView):
         return "MiscellaneousView"
 
     def open_view(self):
-        self.toggle_active_button("Misc.")
-        self.grid_propagate(False)
+        self.open_view_with_subviews("Misc.")

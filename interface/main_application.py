@@ -1,8 +1,8 @@
 import tkinter as tk
 
 from interface.compliance_parameter_window import ComplianceParameterWindow
-from interface.install_config import InstallConfigWindow
-from interface.project_config import ProjectConfigWindow
+from interface.install_config_window import InstallConfigWindow
+from interface.project_config_window import ProjectConfigWindow
 from interface.main_app_data import MainAppData
 
 from rpd_generator.config import Config

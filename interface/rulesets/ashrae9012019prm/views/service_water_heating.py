@@ -74,45 +74,6 @@ class ServiceWaterHeatingView(BaseView):
         self.current_subview_name = current_state + " SWHSubview"
         self.show_subview(current_state + " SWHSubview")
 
-    def show_subview(self, subview_name):
-        # Clear previous subview
-        if self.current_subview is not None:
-            self.current_subview.grid_forget()
-
-        if self.current_subview_header is not None:
-            self.current_subview_header.grid_forget()
-
-        subview = self.subviews.get(subview_name)
-        if subview:
-            self.current_subview_name = subview_name
-            self.current_subview = subview
-        else:
-            current_state = self.app_data.baseline_or_proposed.get()
-            filtered_subviews = [
-                value for key, value in self.subviews.items() if current_state in key
-            ]
-
-            # Set current_subview to the first matching subview, if found
-            if filtered_subviews:
-                self.current_subview = filtered_subviews[0]
-                self.current_subview_name = (
-                    self.app_data.baseline_or_proposed.get()
-                    + " "
-                    + self.current_subview.__repr__()
-                )
-
-        self.current_subview_header = self.current_subview.header_frame
-        self.current_subview_header.grid(row=0, column=0, sticky=FILL)
-        self.current_subview.grid(row=0, column=0, sticky=FILL)
-        self.current_subview.focus_set()
-        self.current_subview.open_subview()
-
-    def get_view_data(self):
-        view_data = {}
-        for subview in self.subviews.values():
-            view_data[subview.json_representation] = subview.get_subview_data()
-        return view_data
-
 
 # TODO: If no service water heating components, hide tab like Surfaces View tab
 class ServiceWaterHeatingSubview(CTkXYFrame):

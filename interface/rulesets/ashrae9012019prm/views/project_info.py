@@ -1,7 +1,6 @@
 import customtkinter as ctk
 from tkinter import filedialog
 from pathlib import Path
-from click import command
 
 from interface.CTkToolTip import CTkToolTip
 from interface.base_view import BaseView
@@ -90,35 +89,6 @@ class ProjectInfoView(BaseView):
             )
             self.subview_buttons[name] = button
 
-    def show_subview(self, subview_name):
-        # Clear previous subview
-        if self.current_subview is not None:
-            self.current_subview.grid_forget()
-
-        # Show new subview
-        subview = self.subviews.get(subview_name)
-        if subview:
-            self.current_subview = subview
-            self.current_subview.grid(row=0, column=0, sticky=FILL)
-            self.current_subview.open_subview()
-
-    def toggle_active_subbutton(self, active_subbutton_name):
-        for name, button in self.subview_buttons.items():
-            if name == active_subbutton_name:
-                self.subview_buttons[name].configure(
-                    fg_color=ACTIVE_SUBVIEW_BUTTON_COLOR,
-                    hover_color=ACTIVE_SUBVIEW_BUTTON_COLOR,
-                    text_color=BLACK,
-                    font=("Arial", 12, "bold"),
-                )
-            else:
-                self.subview_buttons[name].configure(
-                    fg_color=SUBVIEW_BUTTON_COLOR,
-                    hover_color=SUBVIEW_BUTTON_COLOR,
-                    text_color=BLACK,
-                    font=("Arial", 12, "bold"),
-                )
-
 
 class ProjectDetailsSubview(CTkXYFrame):
     json_representation = "project_details"
@@ -146,9 +116,6 @@ class ProjectDetailsSubview(CTkXYFrame):
             values=self.app_data.ClimateZoneDescriptions2019ASHRAE901,
             state=READONLY,
             variable=self.app_data.climate_zone,
-            command=lambda _: self.app_data.insert_to_rpd(
-                self.app_data.ClimateZoneMapping2019ASHRAE901
-            ),
         )
         self.climate_zone_combo._entry.configure(justify=LEFT)
         climate_zone_tooltip = CTkToolTip(
@@ -166,9 +133,6 @@ class ProjectDetailsSubview(CTkXYFrame):
             values=self.app_data.ExteriorLightingZoneDescriptions2019ASHRAE901,
             state=READONLY,
             variable=self.app_data.lighting_zone,
-            command=lambda _: self.app_data.insert_to_rpd(
-                self.app_data.ExteriorLightingZoneMapping2019ASHRAE901
-            ),
         )
         self.lighting_zone_combo._entry.configure(justify=LEFT)
         lighting_zone_tooltip = CTkToolTip(
@@ -181,27 +145,34 @@ class ProjectDetailsSubview(CTkXYFrame):
             anchor=E,
             font=LABEL_FONT,
         )
+        self.open_from_input = ctk.CTkEntry(
+            self.options_frame,
+            textvariable=self.app_data.open_from_var,
+        )
+        open_from_tooltip = CTkToolTip(
+            self.open_from_input,
+            message="Enter the time that the building opens in HH:MM AM/PM format",
+        )
+
+        self.open_to_input = ctk.CTkEntry(
+            self.options_frame,
+            textvariable=self.app_data.open_to_var,
+        )
+        open_to_tooltip = CTkToolTip(
+            self.open_to_input,
+            message="Enter the time that the building closes in HH:MM AM/PM format",
+        )
         self.open_from_label = ctk.CTkLabel(
             self.options_frame,
             text="From:",
             anchor=E,
             font=TEXT_FONT,
         )
-        self.open_from_input = ctk.CTkEntry(self.options_frame)
-        open_from_tooltip = CTkToolTip(
-            self.open_from_input,
-            message="Enter the time that the building opens in HH:MM AM/PM format",
-        )
         self.open_to_label = ctk.CTkLabel(
             self.options_frame,
             text="From:",
             anchor=E,
             font=TEXT_FONT,
-        )
-        self.open_to_input = ctk.CTkEntry(self.options_frame)
-        open_to_tooltip = CTkToolTip(
-            self.open_to_input,
-            message="Enter the time that the building closes in HH:MM AM/PM format",
         )
         self.heating_design_day_label = ctk.CTkLabel(
             self.options_frame,
@@ -214,9 +185,6 @@ class ProjectDetailsSubview(CTkXYFrame):
             values=self.app_data.HeatingDesignDayDescriptions,
             state=READONLY,
             variable=self.app_data.heating_design_day,
-            command=lambda _: self.app_data.insert_to_rpd(
-                self.app_data.HeatingDesignDayMapping
-            ),
         )
         self.heating_design_day_combo._entry.configure(justify=LEFT)
         heating_design_day_tooltip = CTkToolTip(
@@ -234,9 +202,6 @@ class ProjectDetailsSubview(CTkXYFrame):
             values=self.app_data.CoolingDesignDayDescriptions,
             state=READONLY,
             variable=self.app_data.cooling_design_day,
-            command=lambda _: self.app_data.insert_to_rpd(
-                self.app_data.CoolingDesignDayMapping
-            ),
         )
         self.cooling_design_day_combo._entry.configure(justify=LEFT)
         cooling_design_day_tooltip = CTkToolTip(
@@ -298,9 +263,6 @@ class ProjectDetailsSubview(CTkXYFrame):
         return "ProjectDetailsSubview"
 
     def open_subview(self):
-        # Overwrite behavior of the back/next buttons
-        self.project_info_view.main_window.next_button.configure(command=self.view_next)
-        self.project_info_view.main_window.show_back_next_buttons_toggle(False, True)
         self.project_info_view.toggle_active_subbutton("Project Details")
         self.populate_subview() if not self.is_subview_populated else None
 
@@ -366,9 +328,6 @@ class ProjectDetailsSubview(CTkXYFrame):
             self.pressure_units_label.grid_remove()
             self.site_testing_checkbox.grid_remove()
 
-    def view_next(self):
-        self.project_info_view.show_subview("Project Config.")
-
     def get_subview_data(self):
         return {
             "ASHRAE Climate Zone": self.app_data.climate_zone.get(),
@@ -383,22 +342,16 @@ class ProjectDetailsSubview(CTkXYFrame):
         }
 
     def set_subview_data(self):
-        project_details = self.app_data.all_project_data.get("project_details")
+        project_details = self.app_data.interface_data.get("project_details")
         if not project_details:
             return
-        """I know these checks look excessive and they are, but this is a workaround for a bug in the way
-                ctk entries deal with StringVars when they are set to empty strings. We can get rid of the checks
-                and set defaults if they don't exist in the saved project file"""
-        if project_details.get("Building Open From"):
-            self.open_from_input.delete(0, "end")
-            self.open_from_input.insert(0, project_details.get("Building Open From"))
-        if project_details.get("Building Open To"):
-            self.open_to_input.delete(0, "end")
-            self.open_to_input.insert(0, project_details.get("Building Open To"))
-        if project_details.get("Pressure Difference"):
-            self.app_data.measured_pressure_difference.set(
-                project_details.get("Pressure Difference")
-            )
+
+        # Use defaults or empty string if key is missing
+        self.app_data.open_from_var.set(project_details.get("Building Open From", ""))
+        self.app_data.open_to_var.set(project_details.get("Building Open To", ""))
+        self.app_data.measured_pressure_difference.set(
+            project_details.get("Pressure Difference", "")
+        )
         self.app_data.climate_zone.set(project_details.get("ASHRAE Climate Zone", ""))
         self.app_data.lighting_zone.set(
             project_details.get("Exterior Lighting Zone", "")
@@ -412,18 +365,12 @@ class ProjectDetailsSubview(CTkXYFrame):
         self.app_data.has_measured_infiltration.set(
             project_details.get("Measured Infiltration", False)
         )
-        self.toggle_measured_infiltration()
-        if self.app_data.has_measured_infiltration.get():
-            self.measured_infiltration_checkbox.select()
-        else:
-            self.measured_infiltration_checkbox.deselect()
         self.app_data.is_based_on_site_testing.set(
             project_details.get("Based on Site Testing", False)
         )
-        if self.app_data.is_based_on_site_testing.get():
-            self.site_testing_checkbox.select()
-        else:
-            self.site_testing_checkbox.deselect()
+
+        # Trigger any UI changes related to infiltration toggle
+        self.toggle_measured_infiltration()
 
 
 class ProjectConfigSubview(CTkXYFrame):
@@ -536,18 +483,8 @@ class ProjectConfigSubview(CTkXYFrame):
         return "ProjectConfigSubview"
 
     def open_subview(self):
-        # Overwrite behavior of the back/next buttons
-        self.project_info_view.main_window.next_button.configure(command=self.view_next)
-        self.project_info_view.main_window.back_button.configure(command=self.view_back)
-        self.project_info_view.main_window.show_back_next_buttons_toggle()
         self.project_info_view.toggle_active_subbutton("Project Config.")
         self.populate_subview() if not self.is_subview_populated else None
-
-    def view_next(self):
-        self.project_info_view.main_window.show_view("BuildingAreasView")
-
-    def view_back(self):
-        self.project_info_view.show_subview("Project Details")
 
     def populate_subview(self):
         # Place widgets

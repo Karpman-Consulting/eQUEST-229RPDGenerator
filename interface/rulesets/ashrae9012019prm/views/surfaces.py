@@ -102,41 +102,6 @@ class SurfacesView(BaseView):
             )
             self.subview_buttons[name] = button
 
-    def show_subview(self, subview_name):
-        # Clear previous subview
-        if self.current_subview is not None:
-            self.current_subview.grid_forget()
-
-        subview = self.subviews.get(subview_name)
-        if subview:
-            self.current_subview_name = subview_name
-            self.current_subview = subview
-
-        self.current_subview.grid(row=0, column=0, sticky=FILL)
-        self.current_subview.focus_set()
-        self.current_subview.open_subview()
-
-    def toggle_active_subbutton(self, active_subbutton_name):
-        for name, button in self.subview_buttons.items():
-            if name == active_subbutton_name:
-                self.subview_buttons[name].configure(
-                    fg_color=ACTIVE_SUBVIEW_BUTTON_COLOR,
-                    hover_color=ACTIVE_SUBVIEW_BUTTON_COLOR,
-                    text_color=BLACK,
-                )
-            else:
-                self.subview_buttons[name].configure(
-                    fg_color=SUBVIEW_BUTTON_COLOR,
-                    hover_color=SUBVIEW_BUTTON_COLOR,
-                    text_color=BLACK,
-                )
-
-    def get_view_data(self):
-        view_data = {}
-        for subview in self.subviews.values():
-            view_data[subview.json_representation] = subview.get_subview_data()
-        return view_data
-
 
 class DoorSurfaceSubview(CTkXYFrame):
     json_representation = "doors"
@@ -152,17 +117,8 @@ class DoorSurfaceSubview(CTkXYFrame):
         return "DoorSurfaceSubview"
 
     def open_subview(self):
-        self.surfaces_view.main_window.next_button.configure(command=self.view_next)
-        self.surfaces_view.main_window.back_button.configure(command=self.view_back)
-        self.surfaces_view.main_window.show_back_next_buttons_toggle()
         self.surfaces_view.toggle_active_subbutton("Doors")
         self.populate_subview() if not self.is_subview_populated else None
-
-    def view_next(self):
-        self.surfaces_view.main_window.show_view("SystemsView")
-
-    def view_back(self):
-        self.surfaces_view.main_window.show_view("SpacesView")
 
     def populate_subview(self):
         self.add_column_headers()
@@ -234,7 +190,7 @@ class DoorSurfaceSubview(CTkXYFrame):
                 classification.set(door_classification)
 
     def get_classification_from_door_name(self, door_name):
-        door_data = self.app_data.all_project_data.get("doors", [])
+        door_data = self.app_data.interface_data.get("doors", [])
         for door in door_data:
             if door.get("Door Name") == door_name:
                 return door.get("Classification", "Swinging Door")

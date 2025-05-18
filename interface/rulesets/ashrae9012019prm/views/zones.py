@@ -1,6 +1,5 @@
 import customtkinter as ctk
 import interface.custom_widgets as cw
-from PIL import Image
 
 from interface.CTkToolTip import CTkToolTip
 from interface.ctk_xyframe import CTkXYFrame
@@ -71,13 +70,13 @@ class ZonesView(BaseView):
 
         # Update building areas on view open
         for combo in self.building_areas_combos:
-            combo.configure(values=self.main_window.main_app.data.building_area_options)
-
-    def get_view_data(self):
-        view_data = {}
-        for subview in self.subviews.values():
-            view_data[subview.json_representation] = subview.get_subview_data()
-        return view_data
+            combo.configure(
+                values=[
+                    area
+                    for building in self.app_data.buildings.values()
+                    for area in building.get("areas", {}).keys()
+                ]
+            )
 
 
 class ZonesSubview(CTkXYFrame):
@@ -99,16 +98,7 @@ class ZonesSubview(CTkXYFrame):
         return "ZonesSubview"
 
     def open_view(self):
-        self.zones_view.main_window.next_button.configure(command=self.view_next)
-        self.zones_view.main_window.back_button.configure(command=self.view_back)
-        self.zones_view.main_window.show_back_next_buttons_toggle()
         self.populate_subview() if not self.is_view_populated else None
-
-    def view_next(self):
-        self.zones_view.main_window.show_view("SpacesView")
-
-    def view_back(self):
-        self.zones_view.main_window.show_view("BuildingAreasView")
 
     def populate_subview(self):
         self.add_column_headers()
@@ -127,11 +117,11 @@ class ZonesSubview(CTkXYFrame):
             self.collapsed_floors[floor] = True
             self.toggle_zone_visibility(floor, collapse_button)
 
-        """Try to populate the subview data after adding all rows. This will ensure that the 
-        values in the widgets are in sync with the project data. This should really only happen
-        if load data is called. There, the subview will be be marked as non-populated and will 
-        call this method again to refresh the data. On initial population (non-load), there should
-        not be any data in the project data to populate the widgets with."""
+        # Try to populate the subview data after adding all rows.
+        # This will ensure that the values in the widgets are in sync with the project data.
+        # This will only happen if load data is called.
+        # The subview will be marked as non-populated and will call this method again to refresh the data.
+        # On initial population (non-load), there will not be any data in the project data to populate the widgets with.
         self.set_subview_data()
         self.is_view_populated = True
 
@@ -188,9 +178,14 @@ class ZonesSubview(CTkXYFrame):
         floor_label.grid(row=(i + 1), column=1, padx=20, pady=10, sticky=W)
 
         # Place the Building Area ComboBox in `self` (not inside `main_row_frame`) to align properly
+        building_areas = [
+            area
+            for building in self.app_data.buildings.values()
+            for area in building.get("areas", {}).keys()
+        ]
         building_area_combo = ctk.CTkComboBox(
             self,
-            values=self.app_data.building_area_options,
+            values=building_areas,
             state=READONLY,
             fg_color=FLOOR_COMBOBOX_COLOR,
             border_color=FLOOR_COMBOBOX_COLOR,
@@ -202,7 +197,7 @@ class ZonesSubview(CTkXYFrame):
                 floor, value
             ),
         )
-        building_area_combo.set(self.app_data.building_area_options[0])
+        building_area_combo.set(building_areas[0])
         building_area_tooltip = CTkToolTip(
             building_area_combo,
             message="Select the building area for all zones on this floor",
@@ -225,12 +220,17 @@ class ZonesSubview(CTkXYFrame):
     def add_row(self, i, zone_name):
         floor_label = ctk.CTkLabel(self, text=f"{zone_name}")
         floor_label.grid(row=(i + 1), column=1, padx=20, pady=PAD10SYM, sticky=W)
+        building_areas = [
+            area
+            for building in self.app_data.buildings.values()
+            for area in building.get("areas", {}).keys()
+        ]
         building_area_combo = ctk.CTkComboBox(
             self,
-            values=self.app_data.building_area_options,
+            values=building_areas,
             state=READONLY,
         )
-        building_area_combo.set(self.app_data.building_area_options[0])
+        building_area_combo.set(building_areas[0])
         building_area_tooltip = CTkToolTip(
             building_area_combo,
             message="Select the building area for this zone",
@@ -298,7 +298,12 @@ class ZonesSubview(CTkXYFrame):
             ) = widgets[1:]
             building_area_combo.set(
                 zone_row_data.get(
-                    "Building Area", self.app_data.building_area_options[0]
+                    "Building Area",
+                    [
+                        area
+                        for building in self.app_data.buildings.values()
+                        for area in building.get("areas", {}).keys()
+                    ][0],
                 )
             )
             aggregated_zone_qty_spinbox.set(
@@ -315,7 +320,7 @@ class ZonesSubview(CTkXYFrame):
 
     def get_zone_from_project_data(self, zone_name):
         """Helper method to get zone data from the main application project data."""
-        zone_data = self.app_data.all_project_data.get("zones", [])
+        zone_data = self.app_data.interface_data.get("zones", [])
         for zone in zone_data:
             if zone.get("Zone Name") == zone_name:
                 return zone

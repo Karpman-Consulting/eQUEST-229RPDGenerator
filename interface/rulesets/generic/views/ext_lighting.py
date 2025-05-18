@@ -1,5 +1,3 @@
-import customtkinter as ctk
-
 from interface.base_view import BaseView
 
 
@@ -15,5 +13,5 @@ class ExteriorLightingView(BaseView):
         return "ExteriorLightingView"
 
     def open_view(self):
-        self.toggle_active_button("Ext. Lighting")
-        self.grid_propagate(False)
+        # Call base layout with no directions and no subviews
+        self.open_view_with_subviews("Ext. Lighting")

@@ -44,9 +44,6 @@ class ResultsView(BaseView):
         return "ResultsView"
 
     def open_view(self):
-        self.main_window.next_button.configure(command=None)
-        self.main_window.back_button.configure(command=self.view_back)
-        self.main_window.show_back_next_buttons_toggle(True, False)
         self.toggle_active_button("Results")
         self.grid_propagate(False)
         self.main_window.show_baseline_proposed_toggle(True)
@@ -68,40 +65,6 @@ class ResultsView(BaseView):
         self.current_subview_name = current_state + " ResultsSubview"
         self.show_subview(current_state + " ResultsSubview")
 
-    def show_subview(self, subview_name):
-        # Clear previous subview
-        if self.current_subview is not None:
-            self.current_subview.grid_forget()
-
-        subview = self.subviews.get(subview_name)
-        if subview:
-            self.current_subview_name = subview_name
-            self.current_subview = subview
-        else:
-            current_state = self.app_data.baseline_or_proposed.get()
-            filtered_subviews = [
-                value for key, value in self.subviews.items() if current_state in key
-            ]
-
-            # Set current_subview to the first matching subview, if found
-            if filtered_subviews:
-                self.current_subview = filtered_subviews[0]
-                self.current_subview_name = (
-                    self.app_data.baseline_or_proposed.get()
-                    + " "
-                    + self.current_subview.__repr__()
-                )
-
-        self.current_subview.grid(row=0, column=0, sticky=FILL)
-        self.current_subview.focus_set()
-        self.current_subview.open_subview()
-
-    def get_view_data(self):
-        view_data = {}
-        for subview in self.subviews.values():
-            view_data[subview.json_representation] = subview.get_subview_data()
-        return view_data
-
 
 class ResultsSubview(CTkXYFrame):
     # Set right after subview is created
@@ -109,8 +72,8 @@ class ResultsSubview(CTkXYFrame):
 
     def __init__(self, view_frame):
         super().__init__(view_frame)
-        self.spaces_view = view_frame.master
-        self.app_data = self.spaces_view.app_data
+        self.results_view = view_frame.master
+        self.app_data = self.results_view.app_data
         self.is_view_populated = False
         self.widget_rows = []
 
@@ -170,6 +133,3 @@ class ResultsSubview(CTkXYFrame):
 
     def set_subview_data(self):
         pass
-
-    def view_back(self):
-        self.main_window.show_view("MiscellaneousView")

@@ -126,57 +126,6 @@ class SystemsView(BaseView):
             )
             self.subview_buttons[name] = button
 
-    def show_subview(self, subview_name):
-        # Clear previous subview
-        if self.current_subview is not None:
-            self.current_subview.grid_forget()
-
-        subview = self.subviews.get(subview_name)
-        if subview:
-            self.current_subview_name = subview_name
-            self.current_subview = subview
-        else:
-            current_state = self.app_data.baseline_or_proposed.get()
-            filtered_subviews = [
-                value for key, value in self.subviews.items() if current_state in key
-            ]
-
-            # Set current_subview to the first matching subview, if found
-            if filtered_subviews:
-                self.current_subview = filtered_subviews[0]
-                self.current_subview_name = (
-                    self.app_data.baseline_or_proposed.get()
-                    + " "
-                    + self.current_subview.__repr__()
-                )
-
-        self.current_subview.grid(row=0, column=0, sticky=FILL)
-        self.current_subview.focus_set()
-        self.current_subview.open_subview()
-
-    def toggle_active_subbutton(self, active_subbutton_name):
-        for name, button in self.subview_buttons.items():
-            if name == active_subbutton_name:
-                self.subview_buttons[name].configure(
-                    fg_color=ACTIVE_SUBVIEW_BUTTON_COLOR,
-                    hover_color=ACTIVE_SUBVIEW_BUTTON_COLOR,
-                    text_color=BLACK,
-                    font=("Arial", 11, "bold"),
-                )
-            else:
-                self.subview_buttons[name].configure(
-                    fg_color=SUBVIEW_BUTTON_COLOR,
-                    hover_color=SUBVIEW_BUTTON_COLOR,
-                    text_color=BLACK,
-                    font=("Arial", 11, "bold"),
-                )
-
-    def get_view_data(self):
-        view_data = {}
-        for subview in self.subviews.values():
-            view_data[subview.json_representation] = subview.get_subview_data()
-        return view_data
-
 
 class HeatRejectionSubview(CTkXYFrame):
     # Set right after subviews are created in the SystemsView
@@ -193,23 +142,8 @@ class HeatRejectionSubview(CTkXYFrame):
         return "HeatRejectionSubview"
 
     def open_subview(self):
-        self.systems_view.main_window.next_button.configure(command=self.view_next)
-        self.systems_view.main_window.back_button.configure(command=self.view_back)
-        self.systems_view.main_window.show_back_next_buttons_toggle()
         self.systems_view.toggle_active_subbutton("Heat Rejection")
         self.populate_subview() if not self.is_subview_populated else None
-
-    def view_next(self):
-        if len(self.app_data.rmds[0].system_names) > 0:
-            self.systems_view.show_subview("HVACSystemSubview")
-        else:
-            self.systems_view.main_window.show_view("MiscellaneousView")
-
-    def view_back(self):
-        if "SurfacesView" in self.systems_view.main_window.views:
-            self.systems_view.main_window.show_view("SurfacesView")
-        else:
-            self.systems_view.main_window.show_view("SpacesView")
 
     def populate_subview(self):
         self.add_column_headers()
@@ -280,7 +214,7 @@ class HeatRejectionSubview(CTkXYFrame):
                 fan_type_combo.set(fan_type)
 
     def get_fan_type_from_hr_name(self, heat_rejection_name):
-        heat_rejection_data = self.app_data.all_project_data.get(
+        heat_rejection_data = self.app_data.interface_data.get(
             self.json_representation, []
         )
         for heat_rejection in heat_rejection_data:
@@ -304,22 +238,8 @@ class HVACSystemSubview(CTkXYFrame):
         return "HVACSystemSubview"
 
     def open_subview(self):
-        self.systems_view.main_window.next_button.configure(command=self.view_next)
-        self.systems_view.main_window.back_button.configure(command=self.view_back)
-        self.systems_view.main_window.show_back_next_buttons_toggle()
         self.systems_view.toggle_active_subbutton("HVAC Systems")
         self.populate_subview() if not self.is_subview_populated else None
-
-    def view_next(self):
-        self.systems_view.main_window.show_view("MiscellaneousView")
-
-    def view_back(self):
-        if len(self.app_data.rmds[0].heat_rejection_names) > 0:
-            self.systems_view.show_subview("HeatRejectionSubview")
-        elif "SurfacesView" in self.systems_view.main_window.views:
-            self.systems_view.main_window.show_view("SurfacesView")
-        else:
-            self.systems_view.main_window.show_view("SpacesView")
 
     def populate_subview(self):
         self.add_column_headers()
@@ -445,7 +365,7 @@ class HVACSystemSubview(CTkXYFrame):
 
     def get_hvac_data(self, hvac_system_name):
         """Helper method to get HVAC data from the app_data for a specific HVAC System"""
-        hvac_system_data = self.app_data.all_project_data.get(
+        hvac_system_data = self.app_data.interface_data.get(
             self.json_representation, []
         )
         for hvac_system in hvac_system_data:
