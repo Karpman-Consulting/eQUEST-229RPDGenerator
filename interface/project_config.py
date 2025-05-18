@@ -1,6 +1,3 @@
-import json
-from tkinter.filedialog import askopenfilename
-
 import customtkinter as ctk
 from tkinter import Menu, filedialog
 from pathlib import Path
@@ -64,18 +61,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         self.ruleset_label = ctk.CTkLabel(
             self, text="Energy Code/Program:", font=("Arial", 14, "bold"), anchor="e"
         )
-        self.new_construction_checkbox = ctk.CTkCheckBox(
-            self,
-            text="All New Construction?",
-            font=("Arial", 14),
-            variable=self.main_app.data.is_all_new_construction,
-            onvalue=True,
-            offvalue=False,
-        )
-        new_construction_checkbox_tooltip = CTkToolTip(
-            self.new_construction_checkbox,
-            message="Check this box if the buildings in this project are all new construction.",
-        )
+
         self.proposed_reflects_design_checkbox = ctk.CTkCheckBox(
             self,
             text="Proposed Design model reflects design documents?",
@@ -131,9 +117,9 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             command=self.select_output_directory,
             width=80,
         )
-        self.continue_button = ctk.CTkButton(
+        self.generate_button = ctk.CTkButton(
             self,
-            text="Continue",
+            text="Generate RPD",
             width=100,
             corner_radius=12,
             command=self.validate_project_info,
@@ -148,7 +134,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
 
     def create_nav_bar(self):
         # Create the button to continue to the Buildings page
-        self.continue_button.grid(row=8, column=0, columnspan=9, pady=15)
+        self.generate_button.grid(row=8, column=0, columnspan=9, pady=15)
 
     def create_menu_bar(self):
         menubar = Menu(self)
@@ -202,9 +188,6 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         self.project_name_label.grid(row=2, column=0, sticky="e", padx=5, pady=(30, 5))
         self.project_name_entry.grid(
             row=2, column=1, columnspan=3, sticky="ew", padx=5, pady=(30, 5)
-        )
-        self.new_construction_checkbox.grid(
-            row=2, column=4, sticky="e", padx=5, pady=(30, 5)
         )
 
         # Row 3
@@ -370,7 +353,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         return label, path_entry, select_button
 
     def validate_project_info(self):
-        """Verify that all required file paths have been selected."""
+        """Verify that all required file paths have been selected, and generate the RPD file."""
         # Check that at least 1 file path has been selected
         active_ruleset = self.main_app.data.selected_ruleset.get()
         if not any(
@@ -439,7 +422,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             self.main_app.data.run_model_checks()
 
             if len(self.main_app.data.errors) == 0:
-                self.main_app.project_config_complete()
+                self.main_app.data.call_write_rpd_json_from_rmds()
             else:
                 self.raise_error_window("\n".join(self.main_app.data.errors))
 
