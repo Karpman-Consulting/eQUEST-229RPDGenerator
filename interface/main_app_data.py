@@ -191,6 +191,7 @@ class MainAppData:
                 )
 
             # Verify that the LTG-SPEC-METHOD is POWER-DEFINITION for all spaces
+            # LUMINAIRE-COUNT and ILLUMINANCE input methods are not supported
             if (
                 space_obj.get_inp(BDL_SpaceKeywords.LTG_SPEC_METHOD)
                 != BDL_LightingSpecMethodOptions.POWER_DEFINITION
