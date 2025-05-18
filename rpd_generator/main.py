@@ -1,3 +1,5 @@
+import os
+import sys
 import json
 import shutil
 import tempfile
@@ -64,7 +66,8 @@ def write_rpd_json_from_bdl(project_name: str, bdl_path: str, json_file_path: st
     ensure_valid_rpd.make_ids_unique(rpd.rpd_data_structure)
     unit_converter.convert_to_schema_units(rpd.rpd_data_structure)
 
-    with open(json_file_path, "w") as json_file:
+    safe_file_path = safe_path(json_file_path)
+    with open(safe_file_path, "w") as json_file:
         json.dump(rpd.rpd_data_structure, json_file, indent=4)
 
     print(f"RPD JSON file created.")
@@ -83,10 +86,21 @@ def write_rpd_json_from_rpd(
     ensure_valid_rpd.make_ids_unique(rpd.rpd_data_structure)
     unit_converter.convert_to_schema_units(rpd.rpd_data_structure)
 
-    with open(json_file_path, "w") as json_file:
+    safe_file_path = safe_path(json_file_path)
+    with open(safe_file_path, "w") as json_file:
         json.dump(rpd.rpd_data_structure, json_file, indent=4)
 
     print(f"RPD JSON file created.")
+
+
+def safe_path(path):
+    # Only modify the path on Windows
+    if sys.platform.startswith("win"):
+        abs_path = os.path.abspath(path)
+        if not abs_path.startswith("\\\\?\\"):
+            abs_path = "\\\\?\\" + abs_path
+        return abs_path
+    return path
 
 
 def generate_rmd_structures_from_bdls(
