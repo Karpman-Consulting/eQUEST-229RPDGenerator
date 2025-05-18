@@ -50,19 +50,3 @@ class MainApplication(tk.Tk):
         self.install_config_window.destroy()
         self.project_config_window = ProjectConfigWindow(self)
         self.project_config_window.protocol("WM_DELETE_WINDOW", self.quit)
-
-    def project_config_complete(self):
-        """
-        Called by ProjectConfigWindow when the user has successfully configured the project. Closes the
-        ProjectConfigWindow and opens the ComplianceParameterWindow
-        """
-        self.project_config_window.destroy()
-        self.compliance_parameter_window = ComplianceParameterWindow(self)
-        self.compliance_parameter_window.protocol("WM_DELETE_WINDOW", self.quit)
-
-    def refresh_compliance_parameter_window(self):
-        """Called when new data is loaded from compliance parameter window."""
-        if self.compliance_parameter_window:
-            self.compliance_parameter_window.destroy()
-        self.compliance_parameter_window = ComplianceParameterWindow(self)
-        self.compliance_parameter_window.protocol("WM_DELETE_WINDOW", self.quit)
