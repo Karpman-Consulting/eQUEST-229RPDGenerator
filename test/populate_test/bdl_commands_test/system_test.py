@@ -978,3 +978,55 @@ class TestSystems(unittest.TestCase):
 
         self.rmd.populate_rmd_data(testing=True)
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_system_multiplier_population_for_multizone(self, mock_get_output_data):
+        """
+        Verify that system number of units correctly multiplies the system for a multizone system.
+        """
+        mock_get_output_data.return_value = {}
+        self.system.keyword_value_pairs = {
+            BDL_SystemKeywords.TYPE: BDL_SystemTypes.VAVS,
+            BDL_SystemKeywords.NUMBER_OF_UNITS: "2",
+            BDL_SystemKeywords.HEAT_SOURCE: BDL_SystemHeatingTypes.HOT_WATER,
+            BDL_SystemKeywords.COOL_SOURCE: BDL_SystemCoolingTypes.CHILLED_WATER,
+        }
+        self.rmd.populate_rmd_data(testing=True)
+        expected_data_structure = {
+            "id": "System 1 - 2",
+            "fan_system": {
+                "id": "System 1 FanSys",
+                "air_economizer": {},
+                "air_energy_recovery": {},
+                "exhaust_fans": [],
+                "has_fully_ducted_return": False,
+                "operation_during_occupied": "CONTINUOUS",
+                "relief_fans": [],
+                "return_fans": [],
+                "supply_fans": [
+                    {
+                        "id": "System 1 SupplyFan",
+                        "is_airflow_sized_based_on_design_day": True,
+                        "output_validation_points": [],
+                        "specification_method": "SIMPLE",
+                    }
+                ],
+            },
+            "heating_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
+                "id": "System 1 HeatSys",
+                "is_sized_based_on_design_day": True,
+                "type": "FLUID_LOOP",
+            },
+            "cooling_system": {
+                "efficiency_metric_types": [],
+                "efficiency_metric_values": [],
+                "id": "System 1 CoolSys",
+                "is_sized_based_on_design_day": True,
+                "type": "FLUID_LOOP",
+            },
+            "preheat_system": {},
+        }
+        cloned_sys = self.rmd.get_obj("System 1 - 2")
+        self.assertEqual(expected_data_structure, cloned_sys.system_data_structure)

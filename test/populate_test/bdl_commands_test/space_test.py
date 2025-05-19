@@ -352,3 +352,67 @@ class TestSpaces(unittest.TestCase):
             "occupant_latent_heat_gain": 3.0,
         }
         self.assertEqual(expected_data_structure, self.space.space_data_structure)
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_populate_space_with_multipliers(self, mock_get_output_data):
+        """Tests that the space data structure is populated correctly, given multipliers for lighting and equipment."""
+        mock_get_output_data.return_value = {}
+        self.space.keyword_value_pairs = {
+            BDL_SpaceKeywords.FLOOR_MULTIPLIER: "2",
+            BDL_SpaceKeywords.MULTIPLIER: "3",
+            BDL_SpaceKeywords.VOLUME: "4000",
+            BDL_SpaceKeywords.AREA: "400",
+            BDL_SpaceKeywords.LIGHTING_SCHEDUL: "Annual Schedule 1",
+            BDL_SpaceKeywords.LIGHTING_W_AREA: "20.1",
+            BDL_SpaceKeywords.LIGHTING_KW: "30.1",
+            BDL_SpaceKeywords.EQUIP_SCHEDULE: "Annual Schedule 1",
+            BDL_SpaceKeywords.EQUIPMENT_W_AREA: "40.1",
+            BDL_SpaceKeywords.EQUIPMENT_KW: "50.1",
+            BDL_SpaceKeywords.EQUIP_SENSIBLE: "0.4",
+            BDL_SpaceKeywords.EQUIP_LATENT: "0.5",
+            BDL_SpaceKeywords.NUMBER_OF_PEOPLE: "10",
+            BDL_SpaceKeywords.PEOPLE_SCHEDULE: "Annual Schedule 1",
+            BDL_SpaceKeywords.PEOPLE_HG_SENS: "2",
+            BDL_SpaceKeywords.PEOPLE_HG_LAT: "3",
+        }
+        self.rmd.populate_rmd_data(testing=True)
+        space_2 = self.rmd.get_obj("Space 1-2")
+        space_3 = self.rmd.get_obj("Space 1-3")
+        space_4 = self.rmd.get_obj("Space 1-4")
+        space_5 = self.rmd.get_obj("Space 1-5")
+        space_6 = self.rmd.get_obj("Space 1-6")
+        expected_data_structure = {
+            "id": "Space 1-2",
+            "interior_lighting": [
+                {
+                    "id": "Space 1 IntLtg1",
+                    "lighting_multiplier_schedule": "Annual Schedule 1",
+                    "power_per_area": 95.35,
+                }
+            ],
+            "miscellaneous_equipment": [
+                {
+                    "energy_type": "ELECTRICITY",
+                    "id": "Space 1 MiscEqp1",
+                    "latent_fraction": 0.5,
+                    "multiplier_schedule": "Annual Schedule 1",
+                    "power": 66.14,
+                    "sensible_fraction": 0.4,
+                }
+            ],
+            "service_water_heating_uses": [],
+            "floor_area": 400.0,
+            "number_of_occupants": 10.0,
+            "occupant_multiplier_schedule": "Annual Schedule 1",
+            "occupant_sensible_heat_gain": 2.0,
+            "occupant_latent_heat_gain": 3.0,
+        }
+        self.assertEqual(expected_data_structure, space_2.space_data_structure)
+        expected_data_structure["id"] = "Space 1-3"
+        self.assertEqual(expected_data_structure, space_3.space_data_structure)
+        expected_data_structure["id"] = "Space 1-4"
+        self.assertEqual(expected_data_structure, space_4.space_data_structure)
+        expected_data_structure["id"] = "Space 1-5"
+        self.assertEqual(expected_data_structure, space_5.space_data_structure)
+        expected_data_structure["id"] = "Space 1-6"
+        self.assertEqual(expected_data_structure, space_6.space_data_structure)

@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from rpd_generator.bdl_structure.parent_node import ParentNode
 from rpd_generator.bdl_structure.child_node import ChildNode
 from rpd_generator.schema.schema_enums import SchemaEnums
@@ -13,7 +15,8 @@ BDL_InternalEnergySourceOptions = BDLEnums.bdl_enums["InternalEnergySourceOption
 
 
 class Space(ChildNode, ParentNode):
-    """Space objects represent the spaces in the building model and populate the Space data group in the 229 schema.
+    """
+    Space objects represent the spaces in the building model and populate the Space data group in the 229 schema.
     Derived from ChildNode to access the parent FLOOR object through the 'parent' attribute.
     Derived from ParentNode to access the child INTERIOR-WALL, EXTERIOR-WALL, UNDERGROUND-WALL object(s) through the 'children' attribute.
     """
@@ -116,8 +119,13 @@ class Space(ChildNode, ParentNode):
 
         # Populate zone data elements that originate from Space data
         self.zone = self.rmd.space_map.get(self.u_name)
-        self.zone.volume = self.try_float(self.get_inp(BDL_SpaceKeywords.VOLUME))
+        self.zone.volume = (
+            self.try_float(self.get_inp(BDL_SpaceKeywords.VOLUME))
+            * self.try_float(self.get_inp(BDL_SpaceKeywords.FLOOR_MULTIPLIER))
+            * self.try_float(self.get_inp(BDL_SpaceKeywords.MULTIPLIER))
+        )
         self.populate_zone_infiltration()
+        self.replicate_if_necessary()
 
     def populate_data_group(self):
         """Populate schema structure for space object."""
@@ -157,6 +165,34 @@ class Space(ChildNode, ParentNode):
         """Insert space object into the rpd data structure."""
         # find the zone that has the "SPACE" attribute value equal to the space object's u_name
         self.zone.spaces.append(self.space_data_structure)
+
+    def clone(self, index: int):
+        """Return a deep copy of this space with a unique ID and registered in the RMD."""
+        clone = deepcopy(self)
+
+        # Assign new unique name
+        clone.u_name = f"{self.u_name}-{index}"
+        clone.space_data_structure["id"] = clone.u_name
+
+        # Register clone in RMD
+        self.rmd.bdl_obj_instances[clone.u_name] = clone
+
+        return clone
+
+    def replicate_if_necessary(self):
+        floor_mult = self.try_float(self.get_inp(BDL_SpaceKeywords.FLOOR_MULTIPLIER))
+        space_mult = self.try_float(self.get_inp(BDL_SpaceKeywords.MULTIPLIER))
+        total_instances = int(floor_mult * space_mult)
+
+        if total_instances <= 1:
+            return
+
+        self.space_data_structure["id"] = self.u_name
+        self.rmd.bdl_obj_instances[self.u_name] = self  # Update registry with new ID
+
+        for i in range(2, total_instances + 1):
+            clone = self.clone(i)
+            self.rmd.bdl_obj_instances[clone.u_name] = clone
 
     def populate_interior_lighting_data_elements(self):
         space_ltg_scheds = self.get_inp(BDL_SpaceKeywords.LIGHTING_SCHEDUL)

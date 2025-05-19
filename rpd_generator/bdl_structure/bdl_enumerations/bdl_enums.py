@@ -642,6 +642,8 @@ class BDLEnums:
         ),
         "SpaceKeywords": _ListEnum(
             [
+                "MULTIPLIER",
+                "FLOOR-MULTIPLIER",
                 "AZIMUTH",
                 "VOLUME",
                 "AREA",
@@ -909,6 +911,7 @@ class BDLEnums:
         "SystemKeywords": _ListEnum(
             [
                 "TYPE",
+                "NUMBER-OF-UNITS",
                 "SIZING-RATIO",
                 "HEAT-SOURCE",
                 "WLHP-CATEGORY",

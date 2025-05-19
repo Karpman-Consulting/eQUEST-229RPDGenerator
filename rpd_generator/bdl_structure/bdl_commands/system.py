@@ -518,6 +518,21 @@ class System(ParentNode):
         # Remove zones after processing
         self.children = self.children[:1]
 
+    def create_copied_systems(self):
+        """Replicate the system instance based on NUMBER-OF-UNITS keyword."""
+        num_units = self.try_int(self.get_inp(BDL_SystemKeywords.NUMBER_OF_UNITS))
+        if not num_units or num_units <= 1:
+            return  # No replication needed
+
+        for i in range(1, num_units):
+            sys_id = f"{self.u_name} - {i + 1}"
+            system_copy = System(self.u_name, self.rmd)
+            system_copy.sys_id = sys_id
+            system_copy.is_derived_system = True
+            system_copy.keyword_value_pairs = self.keyword_value_pairs.copy()
+            system_copy.populate_data_elements()
+            self.rmd.bdl_obj_instances[sys_id] = system_copy
+
     def populate_data_elements(self):
         """Populate data elements from the keyword_value pairs returned from model_input_reader."""
         system_type = self.get_inp(BDL_SystemKeywords.TYPE)
@@ -532,6 +547,11 @@ class System(ParentNode):
                 self.create_zonal_systems()
 
         self.update_system_mapping()
+
+        # Create unit clones based on NUMBER-OF-UNITS keyword
+        if not self.is_derived_system:
+            self.create_copied_systems()
+
         heat_type = self.heat_type_map.get(self.get_inp(BDL_SystemKeywords.HEAT_SOURCE))
         cool_type = self.cool_type_map.get(self.get_inp(BDL_SystemKeywords.COOL_SOURCE))
 
