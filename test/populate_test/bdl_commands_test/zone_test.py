@@ -797,6 +797,7 @@ class TestZones(unittest.TestCase):
         expected_data_structure = {
             "id": "Zone 1",
             "floor_name": "Floor 1",
+            "volume": 0,
             "infiltration": {
                 "id": "Space 1 Infil",
                 "modeling_method": "WEATHER_DRIVEN",

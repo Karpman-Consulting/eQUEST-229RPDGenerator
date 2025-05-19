@@ -120,9 +120,9 @@ class Space(ChildNode, ParentNode):
         # Populate zone data elements that originate from Space data
         self.zone = self.rmd.space_map.get(self.u_name)
         self.zone.volume = (
-            self.try_float(self.get_inp(BDL_SpaceKeywords.VOLUME))
-            * self.try_float(self.get_inp(BDL_SpaceKeywords.FLOOR_MULTIPLIER))
-            * self.try_float(self.get_inp(BDL_SpaceKeywords.MULTIPLIER))
+            (self.try_float(self.get_inp(BDL_SpaceKeywords.VOLUME)) or 0)
+            * (self.try_float(self.get_inp(BDL_SpaceKeywords.FLOOR_MULTIPLIER)) or 1)
+            * (self.try_float(self.get_inp(BDL_SpaceKeywords.MULTIPLIER)) or 1)
         )
         self.populate_zone_infiltration()
         self.replicate_if_necessary()
@@ -180,8 +180,10 @@ class Space(ChildNode, ParentNode):
         return clone
 
     def replicate_if_necessary(self):
-        floor_mult = self.try_float(self.get_inp(BDL_SpaceKeywords.FLOOR_MULTIPLIER))
-        space_mult = self.try_float(self.get_inp(BDL_SpaceKeywords.MULTIPLIER))
+        floor_mult = (
+            self.try_float(self.get_inp(BDL_SpaceKeywords.FLOOR_MULTIPLIER)) or 1
+        )
+        space_mult = self.try_float(self.get_inp(BDL_SpaceKeywords.MULTIPLIER)) or 1
         total_instances = int(floor_mult * space_mult)
 
         if total_instances <= 1:
