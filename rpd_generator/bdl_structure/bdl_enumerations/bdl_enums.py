@@ -652,7 +652,8 @@ class BDLEnums:
         "SpaceKeywords": _ListEnum(
             [
                 "AZIMUTH",
-                "X," "Y",
+                "X",
+                "Y",
                 "Z",
                 "VOLUME",
                 "AREA",
