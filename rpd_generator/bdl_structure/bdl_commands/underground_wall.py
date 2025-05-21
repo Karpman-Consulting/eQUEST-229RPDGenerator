@@ -234,4 +234,5 @@ class BelowGradeWall(ChildNode):
         """
         Populate the F-factor for below-grade horizontal walls by referencing the calculated value in the Floor object
         """
-        self.construction["f_factor"] = self.parent.parent.f_factor
+        if self.parent.parent.f_factor:
+            self.construction["f_factor"] = self.parent.parent.f_factor
