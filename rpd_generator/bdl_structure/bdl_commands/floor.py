@@ -83,7 +83,9 @@ class Floor(ParentDefinition):
                 surface.get_inp(BDL_UndergroundWallKeywords.CONSTRUCTION)
             )
             u_value = (
-                construction.get_inp(BDL_ConstructionKeywords.U_VALUE)
+                construction.try_float(
+                    construction.get_inp(BDL_ConstructionKeywords.U_VALUE)
+                )
                 if construction
                 else None
             )
