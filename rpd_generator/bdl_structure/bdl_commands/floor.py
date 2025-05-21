@@ -28,7 +28,8 @@ class Floor(ParentDefinition):
 
     def populate_data_elements(self):
         """Populate schema structure for floor object."""
-        self.populate_f_factor()
+        if not self.f_factor:
+            self.populate_f_factor()
 
     def populate_f_factor(self):
         """
@@ -95,4 +96,5 @@ class Floor(ParentDefinition):
             total_slab_heat_transfer += area * u_value
 
         if total_exposed_perimeter and total_slab_heat_transfer:
-            self.f_factor = total_slab_heat_transfer / total_exposed_perimeter
+            for floor in floors_sharing_z:
+                floor.f_factor = total_slab_heat_transfer / total_exposed_perimeter
