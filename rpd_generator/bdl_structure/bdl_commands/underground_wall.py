@@ -234,5 +234,11 @@ class BelowGradeWall(ChildNode):
         """
         Populate the F-factor for below-grade horizontal walls by referencing the calculated value in the Floor object
         """
-        if self.parent.parent.f_factor:
+        construction = self.get_obj(
+            self.get_inp(BDL_UndergroundWallKeywords.CONSTRUCTION)
+        )
+        if (
+            self.parent.parent.f_factor
+            and not construction.used_for_multiple_slabs_on_different_z
+        ):
             self.construction["f_factor"] = self.parent.parent.f_factor
