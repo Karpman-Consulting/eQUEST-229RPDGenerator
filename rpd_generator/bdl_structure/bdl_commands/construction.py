@@ -62,16 +62,23 @@ class Construction(BaseNode):
 
         # Determine if the constructions is assigned to multiple slabs on different Z coordinates
         z_coordinate_set = set()
-        for name in self.rmd.undg_wall_names:
-            wall = self.get_obj(name)
-            if wall.get_inp(BDL_UndergroundWallKeywords.CONSTRUCTION) != self.u_name:
+        for underground_wall_name in self.rmd.undg_wall_names:
+            underground_wall = self.get_obj(underground_wall_name)
+            if (
+                underground_wall.get_inp(BDL_UndergroundWallKeywords.CONSTRUCTION)
+                != self.u_name
+            ):
                 continue
 
-            tilt = wall.try_float(wall.get_inp(BDL_UndergroundWallKeywords.TILT))
+            tilt = underground_wall.try_float(
+                underground_wall.get_inp(BDL_UndergroundWallKeywords.TILT)
+            )
             if tilt is None or tilt <= 120:
                 continue
 
-            z_coordinate_set.add(wall.get_inp(BDL_UndergroundWallKeywords.Z))
+            z_coordinate_set.add(
+                underground_wall.get_inp(BDL_UndergroundWallKeywords.Z)
+            )
 
         self.used_for_multiple_slabs_on_different_z = len(z_coordinate_set) > 1
 
