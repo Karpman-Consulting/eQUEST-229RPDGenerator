@@ -122,6 +122,7 @@ class RulesetModelDescription(Base):
         self.curve_fit_names = []
         self.utility_rate_names = []
         self.elec_generator_names = []
+        self.floor_names = []
         self.system_names = []
         self.zone_names = []
         self.zonal_exh_fan_names = []

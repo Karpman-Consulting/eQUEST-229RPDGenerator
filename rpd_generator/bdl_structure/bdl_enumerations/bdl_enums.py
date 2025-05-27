@@ -384,6 +384,9 @@ class BDLEnums:
         ),
         "ExteriorWallKeywords": _ListEnum(
             [
+                "X",
+                "Y",
+                "Z",
                 "AREA",
                 "HEIGHT",
                 "WIDTH",
@@ -407,6 +410,9 @@ class BDLEnums:
         "FloorKeywords": _ListEnum(
             [
                 "AZIMUTH",
+                "X",
+                "Y",
+                "Z",
             ]
         ),
         "GlassTypeOptions": _ListEnum(
@@ -463,6 +469,9 @@ class BDLEnums:
         ),
         "InteriorWallKeywords": _ListEnum(
             [
+                "X",
+                "Y",
+                "Z",
                 "INT-WALL-TYPE",
                 "NEXT-TO",
                 "AREA",
@@ -643,6 +652,9 @@ class BDLEnums:
         "SpaceKeywords": _ListEnum(
             [
                 "AZIMUTH",
+                "X",
+                "Y",
+                "Z",
                 "VOLUME",
                 "AREA",
                 "LIGHTING-SCHEDUL",
@@ -1028,6 +1040,9 @@ class BDLEnums:
         ),
         "UndergroundWallKeywords": _ListEnum(
             [
+                "X",
+                "Y",
+                "Z",
                 "AREA",
                 "HEIGHT",
                 "WIDTH",

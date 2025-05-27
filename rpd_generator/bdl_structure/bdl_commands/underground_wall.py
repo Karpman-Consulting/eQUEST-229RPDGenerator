@@ -114,6 +114,9 @@ class BelowGradeWall(ChildNode):
         if self.classification == SurfaceClassificationOptions.WALL:
             self.populate_c_factor()
 
+        if self.classification == SurfaceClassificationOptions.FLOOR:
+            self.populate_f_factor()
+
     def populate_data_group(self):
         """Populate schema structure for below grade wall object."""
         self.construction = copy.deepcopy(
@@ -226,3 +229,16 @@ class BelowGradeWall(ChildNode):
         u_factor = self.construction.get("u_factor")
         if u_factor:
             self.construction["c_factor"] = 1 / (1 / u_factor - 0.68)
+
+    def populate_f_factor(self):
+        """
+        Populate the F-factor for below-grade horizontal walls by referencing the calculated value in the Floor object
+        """
+        construction = self.get_obj(
+            self.get_inp(BDL_UndergroundWallKeywords.CONSTRUCTION)
+        )
+        if (
+            self.parent.parent.f_factor
+            and not construction.used_for_multiple_slabs_on_different_z
+        ):
+            self.construction["f_factor"] = self.parent.parent.f_factor
