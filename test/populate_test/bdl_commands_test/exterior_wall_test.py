@@ -71,9 +71,7 @@ class TestExteriorWall(unittest.TestCase):
                 "framing_layers": [],
                 "id": "Construction 1",
                 "insulation_locations": [],
-                "primary_layers": [
-                    {"id": "Simplified Material", "r_value": 1.3199999999999998}
-                ],
+                "primary_layers": [],
                 "r_values": [],
                 "u_factor": 0.4608294930875576,
             },
@@ -111,7 +109,7 @@ class TestExteriorWall(unittest.TestCase):
             "subsurfaces": [],
             "construction": {
                 "id": "Construction 1",
-                "primary_layers": [{"id": "Simplified Material"}],
+                "primary_layers": [],
                 "framing_layers": [],
                 "insulation_locations": [],
                 "r_values": [],
@@ -142,7 +140,7 @@ class TestExteriorWall(unittest.TestCase):
             "subsurfaces": [],
             "construction": {
                 "id": "Construction 1",
-                "primary_layers": [{"id": "Simplified Material"}],
+                "primary_layers": [],
                 "framing_layers": [],
                 "insulation_locations": [],
                 "r_values": [],
@@ -173,7 +171,7 @@ class TestExteriorWall(unittest.TestCase):
             "subsurfaces": [],
             "construction": {
                 "id": "Construction 1",
-                "primary_layers": [{"id": "Simplified Material"}],
+                "primary_layers": [],
                 "framing_layers": [],
                 "insulation_locations": [],
                 "r_values": [],

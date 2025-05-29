@@ -124,7 +124,6 @@ class BelowGradeWall(ChildNode):
                 self.get_inp(BDL_UndergroundWallKeywords.CONSTRUCTION)
             ).construction_data_structure
         )
-        self.account_for_air_film_resistance()
 
         optical_property_attributes = [
             "optical_property_id",
@@ -197,30 +196,6 @@ class BelowGradeWall(ChildNode):
             return SurfaceClassificationOptions.FLOOR
         else:
             return SurfaceClassificationOptions.WALL
-
-    def account_for_air_film_resistance(self):
-        """
-        Remove interior air film resistance from a simplified construction's simplified material r_value.
-        """
-        construction_obj = self.get_obj(
-            self.get_inp(BDL_UndergroundWallKeywords.CONSTRUCTION)
-        )
-        spec_method = construction_obj.get_inp(BDL_ConstructionKeywords.TYPE)
-        u_factor = self.construction.get("u_factor")
-        if u_factor:
-            if spec_method == BDL_ConstructionTypes.U_VALUE:
-                int_air_film_resistance = (
-                    0.61
-                    if self.classification == SurfaceClassificationOptions.CEILING
-                    else (
-                        0.92
-                        if self.classification == SurfaceClassificationOptions.FLOOR
-                        else 0.68
-                    )
-                )
-                self.construction["primary_layers"][0]["r_value"] = (
-                    1 / u_factor - int_air_film_resistance
-                )
 
     def populate_c_factor(self):
         """
