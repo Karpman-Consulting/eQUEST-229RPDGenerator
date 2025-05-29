@@ -845,7 +845,7 @@ class System(ParentNode):
                 not self.fan_system.fan_control
                 == FanSystemSupplyFanControlOptions.CONSTANT
             ):
-                self.supply_fan.populate_operating_points("Relief")
+                self.relief_fan.populate_operating_points("Relief")
 
             self.relief_fan.populate_data_group()
 
@@ -888,7 +888,7 @@ class System(ParentNode):
                 not self.fan_system.fan_control
                 == FanSystemSupplyFanControlOptions.CONSTANT
             ):
-                self.supply_fan.populate_operating_points("Return")
+                self.return_fan.populate_operating_points("Return")
 
             self.return_fan.populate_data_group()
 
@@ -937,7 +937,7 @@ class System(ParentNode):
                 not self.fan_system.fan_control
                 == FanSystemSupplyFanControlOptions.CONSTANT
             ):
-                self.supply_fan.populate_operating_points("HeatingSupply")
+                self.heating_supply_fan.populate_operating_points("HeatingSupply")
 
             self.heating_supply_fan.populate_data_group()
 
