@@ -1,5 +1,6 @@
 from rpd_generator.bdl_structure.child_node import ChildNode
 from rpd_generator.schema.schema_enums import SchemaEnums
+from rpd_generator.bdl_structure.bdl_commands.system import FanSystem
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 HeatingSourceOptions = SchemaEnums.schema_enums["HeatingSourceOptions"]
@@ -988,10 +989,10 @@ class Zone(ChildNode):
             self.parent.get_inp(BDL_SystemKeywords.MIN_FLOW_RATIO)
         )
 
-        if system_type in self.parent.multi_duct_system_types:
+        if system_type in FanSystem.multi_duct_system_types:
             return TerminalTemperatureControlOptions.OTHER
 
-        elif system_type in self.parent.single_duct_system_types:
+        elif system_type in FanSystem.single_duct_system_types:
 
             if (
                 cool_control == BDL_SystemCoolControlOptions.CONSTANT
@@ -1009,7 +1010,7 @@ class Zone(ChildNode):
             elif cool_control == BDL_SystemCoolControlOptions.RESET:
                 return TerminalTemperatureControlOptions.OTHER
 
-        elif system_type in self.parent.single_zone_system_types:
+        elif system_type in FanSystem.single_zone_system_types:
             if min_flow_ratio and min_flow_ratio < 1:
                 if cool_set_t and heat_set_t and cool_set_t == heat_set_t:
                     return TerminalTemperatureControlOptions.CONSTANT
@@ -1037,10 +1038,11 @@ class Zone(ChildNode):
         ):
             # Override fan control of systems that have CONSTANT_VOLUME fans with a minimum flow ratio less than 1
             if (
-                self.parent.fan_sys_fan_control
+                self.parent.fan_system
+                and self.parent.fan_system.fan_control
                 == FanSystemSupplyFanControlOptions.CONSTANT
             ):
-                self.parent.fan_sys_fan_control = (
+                self.parent.fan_system.fan_control = (
                     FanSystemSupplyFanControlOptions.DISCHARGE_DAMPER
                 )
             return TerminalOptions.VARIABLE_AIR_VOLUME
@@ -1178,12 +1180,12 @@ class Zone(ChildNode):
 
     def populate_nonterminal_system_main_terminal_data(self, output_data):
         if self.parent.is_zonal_system:
-            self.parent.fan_design_electric_power[0] = max(
+            self.parent.supply_fan.design_electric_power = max(
                 0,
                 (
-                    self.parent.fan_design_electric_power[0]
+                    self.parent.supply_fan.design_electric_power
                     if self.zone_exhaust_fan_design_electric_power is None
-                    else self.parent.fan_design_electric_power[0]
+                    else self.parent.supply_fan.design_electric_power
                     - self.zone_exhaust_fan_design_electric_power
                 ),
             )
@@ -1244,7 +1246,8 @@ class Zone(ChildNode):
         self.terminals_primary_airflow[2] = minimum_outdoor_airflow
         self.terminals_minimum_airflow[2] = minimum_outdoor_airflow
         if (
-            doas_system.fan_sys_fan_control == FanSystemSupplyFanControlOptions.CONSTANT
+            doas_system.fan_system.fan_control
+            == FanSystemSupplyFanControlOptions.CONSTANT
             or self.get_inp(BDL_ZoneKeywords.MIN_FLOW_RATIO) == 1
         ):
             self.terminals_type[2] = TerminalOptions.CONSTANT_AIR_VOLUME
