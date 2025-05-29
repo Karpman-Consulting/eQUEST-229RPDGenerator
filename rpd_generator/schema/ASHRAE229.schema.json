@@ -955,10 +955,6 @@
                         }
                     ]
                 },
-                "surface_construction_input_option": {
-                    "description": "Identifies whether construction is entered layer-by-layer or simplified (R-value)",
-                    "$ref": "ASHRAE229.schema.json#/definitions/SurfaceConstructionInputOptions"
-                },
                 "fraction_framing": {
                     "description": "Fraction of the construction that is framing.",
                     "type": "number",
@@ -3001,7 +2997,7 @@
                     "description": "Energy validation points",
                     "type": "array",
                     "items": {
-                        "$ref": "ASHRAE229.schema.json#/definitions/FanOutputValidationPoint"
+                        "$ref": "ASHRAE229.schema.json#/definitions/FanOperatingPoint"
                     },
                     "notes": "Airflow is input to each validation point and energy output is the result. A minimum number of four points is recommended. Certain rulesets may have a different minimum number of points. For example, 90.1 Appendix G expects 11 data points."
                 }
@@ -3011,7 +3007,7 @@
             ],
             "additionalProperties": false
         },
-        "FanOutputValidationPoint": {
+        "FanOperatingPoint": {
             "type": "object",
             "properties": {
                 "airflow": {
@@ -4588,10 +4584,6 @@
                     "description": "Indicates whether the water heater has electrical ignition",
                     "type": "boolean",
                     "notes": "From CBECC-Com."
-                },
-                "heater_type": {
-                    "description": "Service water heater type",
-                    "$ref": "ASHRAE229.schema.json#/definitions/ServiceWaterHeaterOptions"
                 },
                 "tank": {
                     "description": "Tank that is part of the service water heating equipment",

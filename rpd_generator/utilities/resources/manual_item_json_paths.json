@@ -127,12 +127,12 @@
     "AirEnergyRecovery": [
         "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.air_energy_recovery"
     ],
-    "FanOutputValidationPoint": [
-        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].zonal_exhaust_fan.output_validation_points",
-        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.supply_fans[*].output_validation_points",
-        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.return_fans[*].output_validation_points",
-        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.exhaust_fans[*].output_validation_points",
-        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.relief_fans[*].output_validation_points"
+    "FanOperatingPoint": [
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].zonal_exhaust_fan.operating_points",
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.supply_fans[*].operating_points",
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.return_fans[*].operating_points",
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.exhaust_fans[*].operating_points",
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.relief_fans[*].operating_points"
     ],
     "FluidLoopDesignAndControl": [
         "$.ruleset_model_descriptions[*].fluid_loops[*].cooling_or_condensing_design_and_control",

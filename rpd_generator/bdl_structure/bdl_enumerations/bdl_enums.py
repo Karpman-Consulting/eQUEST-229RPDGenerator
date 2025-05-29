@@ -806,6 +806,7 @@ class BDLEnums:
                 "TWO-SPEED",
                 "CONSTANT-VOLUME",
                 "FAN-EIR-FPLR",
+                "DEFAULT-FAN-CTRL",
             ]
         ),
         "SystemNightCycleControlOptions": _ListEnum(
@@ -918,6 +919,12 @@ class BDLEnums:
                 "GROUND-LOOP",
             ]
         ),
+        "SystemFanPlacementOptions": _ListEnum(
+            [
+                "BLOW-THROUGH",
+                "DRAW-THROUGH",
+            ]
+        ),
         "SystemKeywords": _ListEnum(
             [
                 "TYPE",
@@ -954,6 +961,7 @@ class BDLEnums:
                 "DDS-TYPE",
                 "FAN-CONTROL",
                 "FAN-SCHEDULE",
+                "FAN-PLACEMENT",
                 "INDOOR-FAN-MODE",
                 "NIGHT-CYCLE-CTRL",
                 "MIN-OA-METHOD",
@@ -989,21 +997,28 @@ class BDLEnums:
                 "DES-MIN-SST",
                 "DES-MAX-SST",
                 "SUPPLY-FLOW",
+                "SUPPLY-KW/FLOW",
                 "SUPPLY-STATIC",
                 "SUPPLY-MTR-EFF",
                 "SUPPLY-MECH-EFF",
+                "FAN-EIR-FPLR",
                 "RETURN-FLOW",
                 "RETURN-STATIC",
                 "RETURN-MTR-EFF",
                 "RETURN-MECH-EFF",
                 "RETURN-AIR-PATH",
                 "RETURN-KW/FLOW",
+                "RETURN-EIR-FPLR",
                 "RETURN-FAN-LOC",
+                "RETURN-FAN-CONTR",
                 "HSUPPLY-FLOW",
                 "HSUPPLY-STATIC",
                 "HSUPPLY-MTR-EFF",
                 "HSUPPLY-MECH-EFF",
                 "HSUPPLY-KW/FLOW",
+                "HFAN-EIR-FPLR",
+                "HFAN-CONTROL",
+                "HFAN-PLACEMENT",
                 "OA-CONTROL",
                 "DOA-SYSTEM",
                 "DOAS-ATTACHED-TO",

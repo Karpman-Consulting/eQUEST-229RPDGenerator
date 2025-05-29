@@ -123,12 +123,10 @@ def calculate_cubic(
     Returns:
         float: The computed `Z` value, constrained within `[min_val, max_val]`.
     """
-    z = (
-        curve_coeffs[0]
-        + curve_coeffs[1] * x
-        + curve_coeffs[2] * x**2
-        + curve_coeffs[3] * x**3
-    )
+    # Extend the list with zeros if it has fewer than 4 coefficients
+    coeffs = curve_coeffs + [0.0] * (4 - len(curve_coeffs))
+
+    z = coeffs[0] + coeffs[1] * x + coeffs[2] * x**2 + coeffs[3] * x**3
 
     # Ensure z is within the range [min_val, max_val]
     z = max(min_val, min(z, max_val))

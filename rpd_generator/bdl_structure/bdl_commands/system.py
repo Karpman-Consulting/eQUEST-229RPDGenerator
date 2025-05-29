@@ -1,4 +1,5 @@
 from rpd_generator.bdl_structure.parent_node import ParentNode
+from rpd_generator.utilities.curve_funcs import calculate_cubic
 from rpd_generator.schema.schema_enums import SchemaEnums
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
@@ -55,6 +56,7 @@ BDL_EnergyRecoveryTemperatureControlOptions = BDLEnums.bdl_enums[
 BDL_SystemMinimumOutdoorAirControlOptions = BDLEnums.bdl_enums[
     "SystemMinimumOutdoorAirControlOptions"
 ]
+BDL_FanPlacementOptions = BDLEnums.bdl_enums["SystemFanPlacementOptions"]
 BDL_IndoorFanModeOptions = BDLEnums.bdl_enums["SystemIndoorFanModeOptions"]
 BDL_HumidificationOptions = BDLEnums.bdl_enums["SystemHumidificationOptions"]
 BDL_DualDuctFanOptions = BDLEnums.bdl_enums["SystemDualDuctFanOptions"]
@@ -791,6 +793,8 @@ class System(ParentNode):
             self.supply_fan.total_efficiency = (
                 self.supply_fan.motor_efficiency * supply_mech_eff
             )
+        if not self.fan_system.fan_control == FanSystemSupplyFanControlOptions.CONSTANT:
+            self.supply_fan.populate_operating_points("Supply")
 
         self.supply_fan.populate_data_group()
 
@@ -837,6 +841,11 @@ class System(ParentNode):
                 self.relief_fan.total_efficiency = (
                     self.relief_fan.motor_efficiency * return_mech_eff
                 )
+            if (
+                not self.fan_system.fan_control
+                == FanSystemSupplyFanControlOptions.CONSTANT
+            ):
+                self.supply_fan.populate_operating_points("Relief")
 
             self.relief_fan.populate_data_group()
 
@@ -875,6 +884,11 @@ class System(ParentNode):
                 self.return_fan.total_efficiency = (
                     self.return_fan.motor_efficiency * return_mech_eff
                 )
+            if (
+                not self.fan_system.fan_control
+                == FanSystemSupplyFanControlOptions.CONSTANT
+            ):
+                self.supply_fan.populate_operating_points("Return")
 
             self.return_fan.populate_data_group()
 
@@ -919,6 +933,11 @@ class System(ParentNode):
                 self.heating_supply_fan.total_efficiency = (
                     self.heating_supply_fan.motor_efficiency * hsupply_mech_eff
                 )
+            if (
+                not self.fan_system.fan_control
+                == FanSystemSupplyFanControlOptions.CONSTANT
+            ):
+                self.supply_fan.populate_operating_points("HeatingSupply")
 
             self.heating_supply_fan.populate_data_group()
 
@@ -1318,6 +1337,34 @@ class FanSystem:
 
 class Fan:
 
+    fan_power_curves = {
+        BDL_SystemFanControlOptions.SPEED: [
+            0.00153028,
+            0.00520806,
+            1.1086242,
+            -0.11635563,
+        ],
+        BDL_SystemFanControlOptions.INLET: [
+            0.35071223,
+            0.30805350,
+            -0.5413736,
+            0.87198823,
+        ],
+        BDL_SystemFanControlOptions.DISCHARGE: [
+            0.37073425,
+            0.97250253,
+            -0.3424076,
+            0.0,
+        ],
+        BDL_SystemFanControlOptions.DEFAULT_FAN_CTRL: [
+            0.37073425,
+            0.97250253,
+            -0.3424076,
+            0.0,
+        ],
+        BDL_SystemFanControlOptions.CYCLING: [0.0, 1.0, 0.0, 0.0],
+    }
+
     def __init__(self, parent_system):
         self.parent_system = parent_system
         self.data_structure = {}
@@ -1344,6 +1391,9 @@ class Fan:
     def populate_data_group(self):
         self.data_structure["id"] = self.name
 
+        if self.operating_points:
+            self.data_structure["operating_points"] = self.operating_points
+
         fan_data_elements = [
             "reporting_name",
             "notes",
@@ -1367,15 +1417,72 @@ class Fan:
             if value is not None:
                 self.data_structure[attr] = value
 
-    # def insert_to_rpd(self, fan_type):
-    #     if fan_type == "Supply":
-    #         self.parent_system.fan_system.supply_fans.append(self.data_structure)
-    #     elif fan_type == "Return":
-    #         self.parent_system.fan_system.return_fans.append(self.data_structure)
-    #     elif fan_type == "Relief":
-    #         self.parent_system.fan_system.relief_fans.append(self.data_structure)
-    #     elif fan_type == "HeatingSupply":
-    #         self.parent_system.fan_system.supply_fans.append(self.data_structure)
+    def populate_operating_points(self, fan_type):
+        if fan_type not in ["Supply", "Return", "HeatingSupply"]:
+            raise ValueError(
+                f"Invalid fan type: {fan_type}. Expected 'Supply', 'Return', or 'HeatingSupply'."
+            )
+
+        if fan_type == "Supply":
+            fan_control_method = self.parent_system.get_inp(
+                BDL_SystemKeywords.FAN_CONTROL
+            )
+            fan_placement = self.parent_system.get_inp(BDL_SystemKeywords.FAN_PLACEMENT)
+            if not fan_control_method == BDL_SystemFanControlOptions.FAN_EIR_FPLR:
+                curve_coeffs = self.fan_power_curves.get(fan_control_method)
+            else:
+                curve = self.parent_system.get_obj(
+                    self.parent_system.get_inp(BDL_SystemKeywords.FAN_EIR_FPLR)
+                )
+                curve_coeffs = curve.coefficients
+
+        elif fan_type == "Return":
+            fan_control_method = self.parent_system.get_inp(
+                BDL_SystemKeywords.RETURN_FAN_CONTR
+            )
+            fan_placement = self.parent_system.get_inp(
+                BDL_SystemKeywords.RETURN_FAN_LOC
+            )
+            if not fan_control_method == BDL_SystemFanControlOptions.FAN_EIR_FPLR:
+                curve_coeffs = self.fan_power_curves.get(fan_control_method)
+            else:
+                curve = self.parent_system.get_obj(
+                    self.parent_system.get_inp(BDL_SystemKeywords.RETURN_EIR_FPLR)
+                )
+                curve_coeffs = curve.coefficients
+
+        else:  # fan_type == "HeatingSupply":
+            fan_control_method = self.parent_system.get_inp(
+                BDL_SystemKeywords.HFAN_CONTROL
+            )
+            fan_placement = self.parent_system.get_inp(
+                BDL_SystemKeywords.HFAN_PLACEMENT
+            )
+            if not fan_control_method == BDL_SystemFanControlOptions.FAN_EIR_FPLR:
+                curve_coeffs = self.fan_power_curves.get(fan_control_method)
+            else:
+                curve = self.parent_system.get_obj(
+                    self.parent_system.get_inp(BDL_SystemKeywords.HFAN_EIR_FPLR)
+                )
+                curve_coeffs = curve.coefficients
+
+        if curve_coeffs:
+            multiplier = (
+                1.11 if fan_placement == BDL_FanPlacementOptions.BLOW_THROUGH else 1.0
+            )
+            for i in range(0, 110, 10):
+                airflow_ratio = i / 100
+                electric_input_ratio = calculate_cubic(
+                    curve_coeffs, airflow_ratio, 0, 1
+                )
+                self.operating_points.append(
+                    {
+                        "airflow": self.design_airflow * airflow_ratio,
+                        "power": self.design_electric_power
+                        * electric_input_ratio
+                        * multiplier,
+                    }
+                )
 
 
 class HeatingSystem:
