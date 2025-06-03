@@ -681,6 +681,13 @@ class BDLEnums:
                 "ZONE-TYPE",
                 "LTG-SPEC-METHOD",
                 "C-ACTIVITY-DESC",
+                "DAYLIGHTING",
+                "LIGHT-CTRL-TYPE1",
+                "LIGHT-CTRL-TYPE2",
+                "LTG-CTRL-METHOD1",
+                "LTG-CTRL-METHOD2",
+                "ZONE-FRACTION1",
+                "ZONE-FRACTION2",
             ]
         ),
         "LightingSpecMethodOptions": _ListEnum(
@@ -688,6 +695,14 @@ class BDLEnums:
                 "POWER-DEFINITION",
                 "LUMINAIRE-COUNT",
                 "ILLUMINANCE",
+            ]
+        ),
+        "DaylightingControlOptions": _ListEnum(
+            [
+                "CONTINUOUS",
+                "CONTINUOUS/OFF",
+                "STEPPED",
+                "DISCRETE",
             ]
         ),
         "SteamAndChilledWaterMeterKeywords": _ListEnum(

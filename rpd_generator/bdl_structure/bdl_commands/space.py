@@ -3,13 +3,16 @@ from rpd_generator.bdl_structure.child_node import ChildNode
 from rpd_generator.schema.schema_enums import SchemaEnums
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
-
 EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
 InfiltrationMethodOptions = SchemaEnums.schema_enums["InfiltrationMethodOptions"]
+DaylightingControlOptions = SchemaEnums.schema_enums[
+    "LightingDaylightingControlOptions"
+]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_SpaceKeywords = BDLEnums.bdl_enums["SpaceKeywords"]
 BDL_InfiltrationAlgorithmOptions = BDLEnums.bdl_enums["InfiltrationAlgorithmOptions"]
 BDL_InternalEnergySourceOptions = BDLEnums.bdl_enums["InternalEnergySourceOptions"]
+BDL_DaylightingControlOptions = BDLEnums.bdl_enums["DaylightingControlOptions"]
 
 
 class Space(ChildNode, ParentNode):
@@ -62,32 +65,6 @@ class Space(ChildNode, ParentNode):
         self.ventilation_space_type = None
         self.service_water_heating_space_type = None
 
-        # InteriorLighting data elements
-        self.int_ltg_id = [None]
-        self.int_ltg_reporting_name = [None]
-        self.int_ltg_notes = [None]
-        self.int_ltg_purpose_type = [None]
-        self.int_ltg_power_per_area = [None]
-        self.int_ltg_lighting_multiplier_schedule = [None]
-        self.int_ltg_occupancy_control_type = [None]
-        self.int_ltg_daylighting_control_type = [None]
-        self.int_ltg_are_schedules_used_for_modeling_occupancy_control = [None]
-        self.int_ltg_are_schedules_used_for_modeling_daylighting_control = [None]
-
-        # MiscellaneousEquipment data elements
-        self.misc_eq_id = [None]
-        self.misc_eq_reporting_name = [None]
-        self.misc_eq_notes = [None]
-        self.misc_eq_energy_type = [None]
-        self.misc_eq_power = [None]
-        self.misc_eq_multiplier_schedule = [None]
-        self.misc_eq_sensible_fraction = [None]
-        self.misc_eq_latent_fraction = [None]
-        self.misc_eq_remaining_fraction_to_loop = [None]
-        self.misc_eq_energy_from_loop = [None]
-        self.misc_eq_type = [None]
-        self.misc_eq_has_automatic_control = [None]
-
     def __repr__(self):
         return f"Space(u_name='{self.u_name}', parent={self.parent})"
 
@@ -121,8 +98,6 @@ class Space(ChildNode, ParentNode):
 
     def populate_data_group(self):
         """Populate schema structure for space object."""
-        self.interior_lighting = self.populate_data_group_with_prefix("int_ltg_")
-        self.miscellaneous_equipment = self.populate_data_group_with_prefix("misc_eq_")
 
         self.space_data_structure = {
             "id": self.u_name,
@@ -170,52 +145,10 @@ class Space(ChildNode, ParentNode):
             )
 
             for i, sched in enumerate(space_ltg_scheds):
-                self.populate_interior_lighting_instance(i, sched)
-
-    def populate_interior_lighting_instance(self, i, schedule):
-        """Populate interior lighting data elements for an instance of InteriorLighting"""
-        int_ltg_id = f"{self.u_name} IntLtg{i + 1}"
-        int_ltg_lpd = self.try_float(
-            self.try_access_index(self.get_inp(BDL_SpaceKeywords.LIGHTING_W_AREA), i)
-        )
-        int_ltg_power = self.try_float(
-            self.try_access_index(self.get_inp(BDL_SpaceKeywords.LIGHTING_KW), i)
-        )
-
-        if int_ltg_lpd is not None and int_ltg_power is not None:
-            total_lpd = int_ltg_lpd + int_ltg_power * 1000 / self.floor_area
-        elif int_ltg_lpd is not None:
-            total_lpd = int_ltg_lpd
-        elif int_ltg_power is not None:
-            total_lpd = int_ltg_power * 1000 / self.floor_area
-        else:
-            total_lpd = None
-
-        int_ltg_lighting_multiplier_schedule = schedule
-
-        if i == 0:
-            self.int_ltg_id = [int_ltg_id]
-            self.int_ltg_power_per_area = [total_lpd]
-            self.int_ltg_lighting_multiplier_schedule = [
-                int_ltg_lighting_multiplier_schedule
-            ]
-        else:
-            self.int_ltg_id.append(int_ltg_id)
-            self.int_ltg_power_per_area.append(total_lpd)
-            self.int_ltg_lighting_multiplier_schedule.append(
-                int_ltg_lighting_multiplier_schedule
-            )
-
-            # Lists must be the same length, even when elements are not populated
-            self.int_ltg_reporting_name.append(None)
-            self.int_ltg_notes.append(None)
-            self.int_ltg_purpose_type.append(None)
-            self.int_ltg_occupancy_control_type.append(None)
-            self.int_ltg_daylighting_control_type.append(None)
-            self.int_ltg_are_schedules_used_for_modeling_occupancy_control.append(None)
-            self.int_ltg_are_schedules_used_for_modeling_daylighting_control.append(
-                None
-            )
+                interior_lighting = InteriorLighting(self, i, sched)
+                interior_lighting.populate_data_elements()
+                interior_lighting.populate_data_group()
+                interior_lighting.insert_to_rpd()
 
     def populate_miscellaneous_equipment_data_elements(self):
         # Populate one instance of miscellaneous equipment for each schedule associated with equipment or internal energy sources
@@ -239,9 +172,12 @@ class Space(ChildNode, ParentNode):
 
             for i, sched in enumerate(space_misc_eq_scheds):
                 misc_eq_counter += 1
-                self.populate_miscellaneous_equipment_instance(
-                    i, misc_eq_counter, sched, "EQUIPMENT"
+                misc_equipment = MiscellaneousEquipment(
+                    self, i, misc_eq_counter, sched, "EQUIPMENT"
                 )
+                misc_equipment.populate_data_elements()
+                misc_equipment.populate_data_group()
+                misc_equipment.insert_to_rpd()
 
         if space_int_energy_source_scheds is not None:
             if not isinstance(space_int_energy_source_scheds, list):
@@ -259,112 +195,12 @@ class Space(ChildNode, ParentNode):
 
             for i, sched in enumerate(space_int_energy_source_scheds):
                 misc_eq_counter += 1
-                self.populate_miscellaneous_equipment_instance(
-                    i, misc_eq_counter, sched, "INTERNAL_ENERGY_SOURCE"
+                misc_equipment = MiscellaneousEquipment(
+                    self, i, misc_eq_counter, sched, "INTERNAL_ENERGY_SOURCE"
                 )
-
-    def populate_miscellaneous_equipment_instance(
-        self, i: int, n: int, schedule, equip_type
-    ):
-        """Populate miscellaneous equipment data elements for an instance of MiscellaneousEquipment"""
-        misc_eq_id = f"{self.u_name} MiscEqp{n}"
-
-        if equip_type == "EQUIPMENT":
-            misc_epd = self.try_float(
-                self.try_access_index(
-                    self.get_inp(BDL_SpaceKeywords.EQUIPMENT_W_AREA),
-                    i,
-                )
-            )
-            misc_eq_power = self.try_float(
-                self.try_access_index(self.get_inp(BDL_SpaceKeywords.EQUIPMENT_KW), i)
-            )
-            total_eq_power = (
-                misc_eq_power + misc_epd * self.floor_area / 1000
-                if misc_eq_power is not None
-                and misc_epd is not None
-                and self.floor_area is not None
-                else misc_eq_power
-            )
-            misc_eq_multiplier_schedule = schedule
-            misc_eq_sensible_fraction = self.try_float(
-                self.try_access_index(
-                    self.get_inp(BDL_SpaceKeywords.EQUIP_SENSIBLE),
-                    i,
-                )
-            )
-            misc_eq_latent_fraction = self.try_float(
-                self.try_access_index(self.get_inp(BDL_SpaceKeywords.EQUIP_LATENT), i)
-            )
-
-            if n == 1:
-                self.misc_eq_id = [misc_eq_id]
-                self.misc_eq_energy_type = [EnergySourceOptions.ELECTRICITY]
-                self.misc_eq_power = [total_eq_power]
-                self.misc_eq_multiplier_schedule = [misc_eq_multiplier_schedule]
-                self.misc_eq_sensible_fraction = [misc_eq_sensible_fraction]
-                self.misc_eq_latent_fraction = [misc_eq_latent_fraction]
-            else:
-                self.misc_eq_id.append(misc_eq_id)
-                self.misc_eq_energy_type.append(EnergySourceOptions.ELECTRICITY)
-                self.misc_eq_power.append(total_eq_power)
-                self.misc_eq_multiplier_schedule.append(misc_eq_multiplier_schedule)
-                self.misc_eq_sensible_fraction.append(misc_eq_sensible_fraction)
-                self.misc_eq_latent_fraction.append(misc_eq_latent_fraction)
-
-                # Lists must be the same length, even when elements are not populated
-                self.misc_eq_reporting_name.append(None)
-                self.misc_eq_notes.append(None)
-                self.misc_eq_remaining_fraction_to_loop.append(None)
-                self.misc_eq_energy_from_loop.append(None)
-                self.misc_eq_type.append(None)
-                self.misc_eq_has_automatic_control.append(None)
-
-        elif equip_type == "INTERNAL_ENERGY_SOURCE":
-            source = self.try_access_index(
-                self.get_inp(BDL_SpaceKeywords.SOURCE_TYPE), i
-            )
-            energy_type = self.energy_source_map.get(source)
-
-            if n == 1:
-                self.misc_eq_id = [misc_eq_id]
-                self.misc_eq_energy_type = [energy_type]
-                self.misc_eq_power = [
-                    self.try_convert_units(
-                        self.try_float(
-                            self.try_access_index(
-                                self.get_inp(BDL_SpaceKeywords.SOURCE_POWER), i
-                            )
-                        ),
-                        "Btu/hr",
-                        "kW",
-                    )
-                ]
-            else:
-                self.misc_eq_id.append(misc_eq_id)
-                self.misc_eq_energy_type.append(energy_type)
-                self.misc_eq_power.append(
-                    self.try_convert_units(
-                        self.try_float(
-                            self.try_access_index(
-                                self.get_inp(BDL_SpaceKeywords.SOURCE_POWER), i
-                            )
-                        ),
-                        "Btu/hr",
-                        "kW",
-                    )
-                )
-
-                # Lists must be the same length, even when elements are not populated
-                self.misc_eq_reporting_name.append(None)
-                self.misc_eq_notes.append(None)
-                self.misc_eq_multiplier_schedule.append(None)
-                self.misc_eq_sensible_fraction.append(None)
-                self.misc_eq_latent_fraction.append(None)
-                self.misc_eq_remaining_fraction_to_loop.append(None)
-                self.misc_eq_energy_from_loop.append(None)
-                self.misc_eq_type.append(None)
-                self.misc_eq_has_automatic_control.append(None)
+                misc_equipment.populate_data_elements()
+                misc_equipment.populate_data_group()
+                misc_equipment.insert_to_rpd()
 
     def populate_zone_infiltration(self):
         """Populate infiltration data elements for the zone object."""
@@ -418,3 +254,221 @@ class Space(ChildNode, ParentNode):
         else:
             # infil_flow_rate will not populate if the infiltration method is not AIR-CHANGE
             self.zone.infil_modeling_method = InfiltrationMethodOptions.WEATHER_DRIVEN
+
+
+class InteriorLighting:
+
+    daylighting_control_type_map = {
+        BDL_DaylightingControlOptions.CONTINUOUS: DaylightingControlOptions.CONTINUOUS_DIMMING,
+        BDL_DaylightingControlOptions.CONTINUOUS_OFF: DaylightingControlOptions.CONTINUOUS_DIMMING,
+        BDL_DaylightingControlOptions.STEPPED: DaylightingControlOptions.STEPPED,
+        BDL_DaylightingControlOptions.DISCRETE: DaylightingControlOptions.STEPPED,
+    }
+
+    def __init__(self, parent_space, i, schedule):
+
+        self.parent_space = parent_space
+        self.i = i
+
+        self.data_structure = {}
+
+        self.name = None
+        # InteriorLighting data elements
+        self.reporting_name = None
+        self.notes = None
+        self.purpose_type = None
+        self.power_per_area = None
+        self.lighting_multiplier_schedule = schedule
+        self.occupancy_control_type = None
+        self.daylighting_control_type = None
+        self.are_schedules_used_for_modeling_occupancy_control = None
+        self.are_schedules_used_for_modeling_daylighting_control = None
+
+    def populate_data_elements(self):
+        self.name = f"{self.parent_space.u_name} IntLtg{self.i + 1}"
+        int_ltg_lpd = self.parent_space.try_float(
+            self.parent_space.try_access_index(
+                self.parent_space.get_inp(BDL_SpaceKeywords.LIGHTING_W_AREA), self.i
+            )
+        )
+        int_ltg_power = self.parent_space.try_float(
+            self.parent_space.try_access_index(
+                self.parent_space.get_inp(BDL_SpaceKeywords.LIGHTING_KW), self.i
+            )
+        )
+
+        if int_ltg_lpd is not None and int_ltg_power is not None:
+            total_lpd = (
+                int_ltg_lpd + int_ltg_power * 1000 / self.parent_space.floor_area
+            )
+        elif int_ltg_lpd is not None:
+            total_lpd = int_ltg_lpd
+        elif int_ltg_power is not None:
+            total_lpd = int_ltg_power * 1000 / self.parent_space.floor_area
+        else:
+            total_lpd = None
+
+        self.power_per_area = total_lpd
+
+        has_daylighting = self.parent_space.boolean_map.get(
+            self.parent_space.get_inp(BDL_SpaceKeywords.DAYLIGHTING)
+        )
+        if has_daylighting:
+            # Check if there are 2 daylighting control systems defined for the space
+            if self.parent_space.get_inp(BDL_SpaceKeywords.ZONE_FRACTION2):
+                # If so, they must both map to the same 229 control type to populate the data element, otherwise populate a Note explaining
+                if self.daylighting_control_type_map.get(
+                    self.parent_space.get_inp(BDL_SpaceKeywords.LIGHT_CTRL_TYPE1)
+                ) == self.daylighting_control_type_map.get(
+                    self.parent_space.get_inp(BDL_SpaceKeywords.LIGHT_CTRL_TYPE2)
+                ):
+                    self.daylighting_control_type = (
+                        self.daylighting_control_type_map.get(
+                            self.parent_space.get_inp(
+                                BDL_SpaceKeywords.LIGHT_CTRL_TYPE1
+                            )
+                        )
+                    )
+                else:
+                    self.notes = "Interior lighting has two daylighting control systems defined, but they do not map to the same 229 control type. "
+            else:
+                # Only one daylighting control system is defined
+                self.daylighting_control_type = self.daylighting_control_type_map.get(
+                    self.parent_space.get_inp(BDL_SpaceKeywords.LIGHT_CTRL_TYPE1)
+                )
+
+    def populate_data_group(self):
+        self.data_structure["id"] = self.name
+
+        int_lighting_data_elements = [
+            "reporting_name",
+            "notes",
+            "purpose_type",
+            "power_per_area",
+            "lighting_multiplier_schedule",
+            "occupancy_control_type",
+            "daylighting_control_type",
+            "are_schedules_used_for_modeling_occupancy_control",
+            "are_schedules_used_for_modeling_daylighting_control",
+        ]
+
+        for attr in int_lighting_data_elements:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.data_structure[attr] = value
+
+    def insert_to_rpd(self):
+        """Insert interior lighting object into the rpd data structure."""
+        # find the zone that has the "SPACE" attribute value equal to the space object's u_name
+        self.parent_space.interior_lighting.append(self.data_structure)
+
+
+class MiscellaneousEquipment:
+
+    def __init__(self, parent_space, i, n, schedule, equip_type):
+        self.parent_space = parent_space
+        self.i = i
+        self.n = n
+        self.equip_type = equip_type
+
+        self.data_structure = {}
+
+        self.name = None
+        # MiscellaneousEquipment data elements
+        self.reporting_name = None
+        self.notes = None
+        self.energy_type = None
+        self.power = None
+        self.multiplier_schedule = schedule
+        self.sensible_fraction = None
+        self.latent_fraction = None
+        self.remaining_fraction_to_loop = None
+        self.energy_from_loop = None
+        self.type = None
+        self.automatic_controlled_percentage = None
+
+    def populate_data_elements(self):
+        misc_eq_id = f"{self.parent_space.u_name} MiscEqp{self.n}"
+
+        if self.equip_type == "EQUIPMENT":
+            misc_epd = self.parent_space.try_float(
+                self.parent_space.try_access_index(
+                    self.parent_space.get_inp(BDL_SpaceKeywords.EQUIPMENT_W_AREA),
+                    self.i,
+                )
+            )
+            misc_eq_power = self.parent_space.try_float(
+                self.parent_space.try_access_index(
+                    self.parent_space.get_inp(BDL_SpaceKeywords.EQUIPMENT_KW), self.i
+                )
+            )
+            total_eq_power = (
+                misc_eq_power + misc_epd * self.parent_space.floor_area / 1000
+                if misc_eq_power is not None
+                and misc_epd is not None
+                and self.parent_space.floor_area is not None
+                else misc_eq_power
+            )
+
+            misc_eq_sensible_fraction = self.parent_space.try_float(
+                self.parent_space.try_access_index(
+                    self.parent_space.get_inp(BDL_SpaceKeywords.EQUIP_SENSIBLE),
+                    self.i,
+                )
+            )
+            misc_eq_latent_fraction = self.parent_space.try_float(
+                self.parent_space.try_access_index(
+                    self.parent_space.get_inp(BDL_SpaceKeywords.EQUIP_LATENT), self.i
+                )
+            )
+
+            self.name = misc_eq_id
+            self.energy_type = EnergySourceOptions.ELECTRICITY
+            self.power = total_eq_power
+            self.sensible_fraction = misc_eq_sensible_fraction
+            self.latent_fraction = misc_eq_latent_fraction
+
+        elif self.equip_type == "INTERNAL_ENERGY_SOURCE":
+            source = self.parent_space.try_access_index(
+                self.parent_space.get_inp(BDL_SpaceKeywords.SOURCE_TYPE), self.i
+            )
+            energy_type = self.parent_space.energy_source_map.get(source)
+
+            self.name = misc_eq_id
+            self.energy_type = energy_type
+            self.power = self.parent_space.try_convert_units(
+                self.parent_space.try_float(
+                    self.parent_space.try_access_index(
+                        self.parent_space.get_inp(BDL_SpaceKeywords.SOURCE_POWER),
+                        self.i,
+                    )
+                ),
+                "Btu/hr",
+                "kW",
+            )
+
+    def populate_data_group(self):
+        self.data_structure["id"] = self.name
+
+        misc_equipment_data_elements = [
+            "reporting_name",
+            "notes",
+            "energy_type",
+            "power",
+            "multiplier_schedule",
+            "sensible_fraction",
+            "latent_fraction",
+            "remaining_fraction_to_loop",
+            "energy_from_loop",
+            "type",
+            "automatic_controlled_percentage",
+        ]
+
+        for attr in misc_equipment_data_elements:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.data_structure[attr] = value
+
+    def insert_to_rpd(self):
+        """Insert miscellaneous equipment object into the rpd data structure."""
+        self.parent_space.miscellaneous_equipment.append(self.data_structure)
