@@ -29,7 +29,6 @@ class Construction(BaseNode):
 
         # data elements with no children
         self.classification = None
-        self.surface_construction_input_option = None
         self.fraction_framing = None
         self.u_factor = None
         self.c_factor = None
@@ -45,17 +44,6 @@ class Construction(BaseNode):
         layer = self.get_obj(self.get_inp(BDL_ConstructionKeywords.LAYERS))
         # Material references will be empty if construction uses U-Value Input method
         self.material_references = layer.material_references if layer else []
-
-        any_detailed_materials = False
-        for material_reference in self.material_references or []:
-            material = self.get_obj(material_reference)
-            if material and material.material_type == BDL_MaterialTypes.PROPERTIES:
-                any_detailed_materials = True
-
-        if len(self.material_references) == 0:
-            simplified_material = {"id": "Simplified Material"}
-            # This simplified material will have its r_value added when used for a surface based on Ext/Int/Underground Wall air film resistances
-            self.primary_layers.append(simplified_material)
 
         # This u_factor will be adjusted when used for a surface based on Ext/Int/Underground Wall air film resistances
         self.u_factor = self.try_float(self.get_inp(BDL_ConstructionKeywords.U_VALUE))
@@ -102,7 +90,6 @@ class Construction(BaseNode):
             "reporting_name",
             "notes",
             "classification",
-            "surface_construction_input_option",
             "fraction_framing",
             "u_factor",
             "c_factor",
