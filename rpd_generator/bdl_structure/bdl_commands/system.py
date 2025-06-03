@@ -618,9 +618,6 @@ class System(ParentNode):
                     "fan_system": self.fan_system.data_structure,
                 }
             )
-            self.system_data_structure.update(
-                {"fan_system": self.fan_system.data_structure}
-            )
 
             for attr in ["heating_system", "cooling_system", "preheat_system"]:
                 subsystem = getattr(self, attr)
@@ -1366,16 +1363,6 @@ class Fan:
             value = getattr(self, attr, None)
             if value is not None:
                 self.data_structure[attr] = value
-
-    # def insert_to_rpd(self, fan_type):
-    #     if fan_type == "Supply":
-    #         self.parent_system.fan_system.supply_fans.append(self.data_structure)
-    #     elif fan_type == "Return":
-    #         self.parent_system.fan_system.return_fans.append(self.data_structure)
-    #     elif fan_type == "Relief":
-    #         self.parent_system.fan_system.relief_fans.append(self.data_structure)
-    #     elif fan_type == "HeatingSupply":
-    #         self.parent_system.fan_system.supply_fans.append(self.data_structure)
 
 
 class HeatingSystem:
