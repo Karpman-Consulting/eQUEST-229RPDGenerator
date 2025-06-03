@@ -5,10 +5,14 @@ from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
 InfiltrationMethodOptions = SchemaEnums.schema_enums["InfiltrationMethodOptions"]
+DaylightingControlOptions = SchemaEnums.schema_enums[
+    "LightingDaylightingControlOptions"
+]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_SpaceKeywords = BDLEnums.bdl_enums["SpaceKeywords"]
 BDL_InfiltrationAlgorithmOptions = BDLEnums.bdl_enums["InfiltrationAlgorithmOptions"]
 BDL_InternalEnergySourceOptions = BDLEnums.bdl_enums["InternalEnergySourceOptions"]
+BDL_DaylightingControlOptions = BDLEnums.bdl_enums["DaylightingControlOptions"]
 
 
 class Space(ChildNode, ParentNode):
@@ -254,6 +258,13 @@ class Space(ChildNode, ParentNode):
 
 class InteriorLighting:
 
+    daylighting_control_type_map = {
+        BDL_DaylightingControlOptions.CONTINUOUS: DaylightingControlOptions.CONTINUOUS_DIMMING,
+        BDL_DaylightingControlOptions.CONTINUOUS_OFF: DaylightingControlOptions.CONTINUOUS_DIMMING,
+        BDL_DaylightingControlOptions.STEPPED: DaylightingControlOptions.STEPPED,
+        BDL_DaylightingControlOptions.DISCRETE: DaylightingControlOptions.STEPPED,
+    }
+
     def __init__(self, parent_space, i, schedule):
 
         self.parent_space = parent_space
@@ -298,6 +309,33 @@ class InteriorLighting:
             total_lpd = None
 
         self.power_per_area = total_lpd
+
+        has_daylighting = self.parent_space.boolean_map.get(
+            self.parent_space.get_inp(BDL_SpaceKeywords.DAYLIGHTING)
+        )
+        if has_daylighting:
+            # Check if there are 2 daylighting control systems defined for the space
+            if self.parent_space.get_inp(BDL_SpaceKeywords.ZONE_FRACTION2):
+                # If so, they must both map to the same 229 control type to populate the data element, otherwise populate a Note explaining
+                if self.daylighting_control_type_map.get(
+                    self.parent_space.get_inp(BDL_SpaceKeywords.LIGHT_CTRL_TYPE1)
+                ) == self.daylighting_control_type_map.get(
+                    self.parent_space.get_inp(BDL_SpaceKeywords.LIGHT_CTRL_TYPE2)
+                ):
+                    self.daylighting_control_type = (
+                        self.daylighting_control_type_map.get(
+                            self.parent_space.get_inp(
+                                BDL_SpaceKeywords.LIGHT_CTRL_TYPE1
+                            )
+                        )
+                    )
+                else:
+                    self.notes = "Interior lighting has two daylighting control systems defined, but they do not map to the same 229 control type. "
+            else:
+                # Only one daylighting control system is defined
+                self.daylighting_control_type = self.daylighting_control_type_map.get(
+                    self.parent_space.get_inp(BDL_SpaceKeywords.LIGHT_CTRL_TYPE1)
+                )
 
     def populate_data_group(self):
         self.data_structure["id"] = self.name
