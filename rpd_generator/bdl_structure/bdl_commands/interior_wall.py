@@ -163,8 +163,6 @@ class InteriorWall(
             ).construction_data_structure
         )
 
-        self.account_for_air_film_resistance()
-
         optical_property_attributes = [
             "optical_property_id",
             "absorptance_thermal_exterior",
@@ -236,32 +234,3 @@ class InteriorWall(
             return SurfaceClassificationOptions.FLOOR
         else:
             return SurfaceClassificationOptions.WALL
-
-    def account_for_air_film_resistance(self):
-        """
-        Set the r_value for a simplified construction's simplified material based on the u_factor.
-        """
-        construction_obj = self.get_obj(
-            self.get_inp(BDL_InteriorWallKeywords.CONSTRUCTION)
-        )
-        spec_method = construction_obj.get_inp(BDL_ConstructionKeywords.TYPE)
-        wall_type = self.get_inp(BDL_InteriorWallKeywords.INT_WALL_TYPE)
-        u_factor = self.construction.get("u_factor")
-        int_air_film_resistance = 0
-        if wall_type in [
-            BDL_InteriorWallTypes.STANDARD,
-            BDL_InteriorWallTypes.INTERNAL,
-        ]:
-            int_air_film_resistance = (
-                0.61
-                if self.classification == SurfaceClassificationOptions.CEILING
-                else (
-                    0.92
-                    if self.classification == SurfaceClassificationOptions.FLOOR
-                    else 0.68
-                )
-            )
-        if u_factor and spec_method == BDL_ConstructionTypes.U_VALUE:
-            self.construction["primary_layers"][0]["r_value"] = (
-                1 / u_factor - 2 * int_air_film_resistance
-            )

@@ -384,6 +384,9 @@ class BDLEnums:
         ),
         "ExteriorWallKeywords": _ListEnum(
             [
+                "X",
+                "Y",
+                "Z",
                 "AREA",
                 "HEIGHT",
                 "WIDTH",
@@ -407,6 +410,9 @@ class BDLEnums:
         "FloorKeywords": _ListEnum(
             [
                 "AZIMUTH",
+                "X",
+                "Y",
+                "Z",
             ]
         ),
         "GlassTypeOptions": _ListEnum(
@@ -463,6 +469,9 @@ class BDLEnums:
         ),
         "InteriorWallKeywords": _ListEnum(
             [
+                "X",
+                "Y",
+                "Z",
                 "INT-WALL-TYPE",
                 "NEXT-TO",
                 "AREA",
@@ -645,6 +654,9 @@ class BDLEnums:
                 "MULTIPLIER",
                 "FLOOR-MULTIPLIER",
                 "AZIMUTH",
+                "X",
+                "Y",
+                "Z",
                 "VOLUME",
                 "AREA",
                 "LIGHTING-SCHEDUL",
@@ -671,6 +683,13 @@ class BDLEnums:
                 "ZONE-TYPE",
                 "LTG-SPEC-METHOD",
                 "C-ACTIVITY-DESC",
+                "DAYLIGHTING",
+                "LIGHT-CTRL-TYPE1",
+                "LIGHT-CTRL-TYPE2",
+                "LTG-CTRL-METHOD1",
+                "LTG-CTRL-METHOD2",
+                "ZONE-FRACTION1",
+                "ZONE-FRACTION2",
             ]
         ),
         "LightingSpecMethodOptions": _ListEnum(
@@ -678,6 +697,14 @@ class BDLEnums:
                 "POWER-DEFINITION",
                 "LUMINAIRE-COUNT",
                 "ILLUMINANCE",
+            ]
+        ),
+        "DaylightingControlOptions": _ListEnum(
+            [
+                "CONTINUOUS",
+                "CONTINUOUS/OFF",
+                "STEPPED",
+                "DISCRETE",
             ]
         ),
         "SteamAndChilledWaterMeterKeywords": _ListEnum(
@@ -1031,6 +1058,9 @@ class BDLEnums:
         ),
         "UndergroundWallKeywords": _ListEnum(
             [
+                "X",
+                "Y",
+                "Z",
                 "AREA",
                 "HEIGHT",
                 "WIDTH",

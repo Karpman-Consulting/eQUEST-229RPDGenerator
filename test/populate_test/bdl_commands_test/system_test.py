@@ -179,12 +179,10 @@ class TestSystems(unittest.TestCase):
                     "design_sensible_effectiveness": 0.7,
                     "design_latent_effectiveness": 0.6,
                 },
-                "exhaust_fans": [],
                 "has_fully_ducted_return": False,
                 "maximum_outdoor_airflow": 12,
                 "operation_during_occupied": "CONTINUOUS",
                 "operation_during_unoccupied": "CYCLING",
-                "relief_fans": [],
                 "return_fans": [
                     {
                         "id": "System 1 ReturnFan",
@@ -193,7 +191,6 @@ class TestSystems(unittest.TestCase):
                         "design_pressure_rise": 15.0,
                         "is_airflow_sized_based_on_design_day": False,
                         "motor_efficiency": 0.7,
-                        "output_validation_points": [],
                         "specification_method": "DETAILED",
                         "total_efficiency": 0.5599999999999999,
                     }
@@ -206,14 +203,12 @@ class TestSystems(unittest.TestCase):
                         "design_pressure_rise": 20.0,
                         "is_airflow_sized_based_on_design_day": True,
                         "motor_efficiency": 0.9,
-                        "output_validation_points": [],
                         "specification_method": "DETAILED",
                         "total_efficiency": 0.855,
                     }
                 ],
                 "temperature_control": "ZONE_RESET",
             },
-            "heating_system": {},
             "preheat_system": {
                 "id": "System 1 PreheatSys",
                 "rated_capacity": 48000.0,
@@ -312,12 +307,10 @@ class TestSystems(unittest.TestCase):
                     "design_sensible_effectiveness": 0.7,
                     "design_latent_effectiveness": 0.6,
                 },
-                "exhaust_fans": [],
                 "has_fully_ducted_return": False,
                 "maximum_outdoor_airflow": 12,
                 "operation_during_occupied": "CONTINUOUS",
                 "operation_during_unoccupied": "CYCLING",
-                "return_fans": [],
                 "relief_fans": [
                     {
                         "id": "System 1 ReliefFan",
@@ -326,7 +319,6 @@ class TestSystems(unittest.TestCase):
                         "design_pressure_rise": 15.0,
                         "is_airflow_sized_based_on_design_day": False,
                         "motor_efficiency": 0.7,
-                        "output_validation_points": [],
                         "specification_method": "DETAILED",
                         "total_efficiency": 0.5599999999999999,
                     }
@@ -339,7 +331,6 @@ class TestSystems(unittest.TestCase):
                         "design_pressure_rise": 20.0,
                         "is_airflow_sized_based_on_design_day": True,
                         "motor_efficiency": 0.9,
-                        "output_validation_points": [],
                         "specification_method": "DETAILED",
                         "total_efficiency": 0.855,
                     }
@@ -356,7 +347,6 @@ class TestSystems(unittest.TestCase):
                 "heating_coil_setpoint": 75.0,
                 "is_sized_based_on_design_day": True,
             },
-            "preheat_system": {},
         }
 
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
@@ -410,21 +400,16 @@ class TestSystems(unittest.TestCase):
                     "type": "TEMPERATURE",
                     "high_limit_shutoff_temperature": 70.0,
                 },
-                "air_energy_recovery": {},
-                "exhaust_fans": [],
                 "has_fully_ducted_return": False,
                 "maximum_outdoor_airflow": 12,
                 "operation_during_occupied": "CYCLING",
                 "operation_during_unoccupied": "CYCLING",
-                "relief_fans": [],
-                "return_fans": [],
                 "supply_fans": [
                     {
                         "id": "System 1 SupplyFan",
                         "design_airflow": 12,
                         "design_electric_power": 13,
                         "is_airflow_sized_based_on_design_day": False,
-                        "output_validation_points": [],
                         "specification_method": "SIMPLE",
                     }
                 ],
@@ -439,7 +424,6 @@ class TestSystems(unittest.TestCase):
                 "is_sized_based_on_design_day": True,
                 "type": "HEAT_PUMP",
             },
-            "preheat_system": {},
         }
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
 
@@ -477,18 +461,12 @@ class TestSystems(unittest.TestCase):
             },
             "fan_system": {
                 "id": "System 1 FanSys",
-                "air_economizer": {},
-                "air_energy_recovery": {},
-                "exhaust_fans": [],
                 "has_fully_ducted_return": False,
                 "operation_during_occupied": "CONTINUOUS",
-                "relief_fans": [],
-                "return_fans": [],
                 "supply_fans": [
                     {
                         "id": "System 1 SupplyFan",
                         "is_airflow_sized_based_on_design_day": True,
-                        "output_validation_points": [],
                         "specification_method": "SIMPLE",
                     }
                 ],
@@ -500,7 +478,6 @@ class TestSystems(unittest.TestCase):
                 "is_sized_based_on_design_day": True,
                 "type": "FLUID_LOOP",
             },
-            "preheat_system": {},
         }
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
 
@@ -519,27 +496,18 @@ class TestSystems(unittest.TestCase):
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "System 1",
-            "cooling_system": {},
             "fan_system": {
                 "id": "System 1 FanSys",
-                "air_economizer": {},
-                "air_energy_recovery": {},
-                "exhaust_fans": [],
                 "has_fully_ducted_return": False,
                 "operation_during_occupied": "KEEP_OFF",
-                "relief_fans": [],
-                "return_fans": [],
                 "supply_fans": [
                     {
                         "id": "System 1 SupplyFan",
                         "is_airflow_sized_based_on_design_day": True,
-                        "output_validation_points": [],
                         "specification_method": "SIMPLE",
                     }
                 ],
             },
-            "heating_system": {},
-            "preheat_system": {},
         }
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
 
@@ -608,13 +576,10 @@ class TestSystems(unittest.TestCase):
                     "design_sensible_effectiveness": 0.7,
                     "design_latent_effectiveness": 0.6,
                 },
-                "exhaust_fans": [],
                 "has_fully_ducted_return": False,
                 "maximum_outdoor_airflow": 12,
                 "operation_during_occupied": "CONTINUOUS",
                 "operation_during_unoccupied": "CONTINUOUS",
-                "return_fans": [],
-                "relief_fans": [],
                 "supply_fans": [
                     {
                         "id": "System 1 SupplyFan",
@@ -623,7 +588,6 @@ class TestSystems(unittest.TestCase):
                         "design_pressure_rise": 20.0,
                         "is_airflow_sized_based_on_design_day": True,
                         "motor_efficiency": 0.9,
-                        "output_validation_points": [],
                         "specification_method": "DETAILED",
                         "total_efficiency": 0.855,
                     },
@@ -634,7 +598,6 @@ class TestSystems(unittest.TestCase):
                         "design_pressure_rise": 21.0,
                         "is_airflow_sized_based_on_design_day": False,
                         "motor_efficiency": 0.91,
-                        "output_validation_points": [],
                         "specification_method": "DETAILED",
                         "total_efficiency": 0.8736,
                     },
@@ -648,7 +611,6 @@ class TestSystems(unittest.TestCase):
                 "is_sized_based_on_design_day": True,
                 "type": "FLUID_LOOP",
             },
-            "preheat_system": {},
         }
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
 
@@ -746,18 +708,12 @@ class TestSystems(unittest.TestCase):
                 "type": "DIRECT_EXPANSION",
             },
             "fan_system": {
-                "air_economizer": {},
-                "air_energy_recovery": {},
-                "exhaust_fans": [],
                 "has_fully_ducted_return": False,
                 "id": "System 1 FanSys",
-                "relief_fans": [],
-                "return_fans": [],
                 "supply_fans": [
                     {
                         "id": "System 1 SupplyFan",
                         "is_airflow_sized_based_on_design_day": True,
-                        "output_validation_points": [],
                         "specification_method": "SIMPLE",
                     }
                 ],
@@ -772,7 +728,6 @@ class TestSystems(unittest.TestCase):
                 "type": "HEAT_PUMP",
             },
             "id": "System 1",
-            "preheat_system": {},
         }
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
 
@@ -795,18 +750,12 @@ class TestSystems(unittest.TestCase):
                 "type": "DIRECT_EXPANSION",
             },
             "fan_system": {
-                "air_economizer": {},
-                "air_energy_recovery": {},
-                "exhaust_fans": [],
                 "has_fully_ducted_return": False,
                 "id": "System 1 FanSys",
-                "relief_fans": [],
-                "return_fans": [],
                 "supply_fans": [
                     {
                         "id": "System 1 SupplyFan",
                         "is_airflow_sized_based_on_design_day": True,
-                        "output_validation_points": [],
                         "specification_method": "SIMPLE",
                     }
                 ],
@@ -823,7 +772,6 @@ class TestSystems(unittest.TestCase):
                 "type": "HEAT_PUMP",
             },
             "id": "System 1",
-            "preheat_system": {},
         }
 
         self.condenser = Condenser("Condensing Unit 1", self.rmd)
@@ -861,18 +809,12 @@ class TestSystems(unittest.TestCase):
                 "type": "DIRECT_EXPANSION",
             },
             "fan_system": {
-                "air_economizer": {},
-                "air_energy_recovery": {},
-                "exhaust_fans": [],
                 "has_fully_ducted_return": False,
                 "id": "System 1 FanSys",
-                "relief_fans": [],
-                "return_fans": [],
                 "supply_fans": [
                     {
                         "id": "System 1 SupplyFan",
                         "is_airflow_sized_based_on_design_day": True,
-                        "output_validation_points": [],
                         "specification_method": "SIMPLE",
                     }
                 ],
@@ -889,7 +831,6 @@ class TestSystems(unittest.TestCase):
                 "type": "HEAT_PUMP",
             },
             "id": "System 1",
-            "preheat_system": {},
         }
 
         self.condenser = Condenser("Condensing Unit 1", self.rmd)
@@ -929,18 +870,12 @@ class TestSystems(unittest.TestCase):
                 "type": "DIRECT_EXPANSION",
             },
             "fan_system": {
-                "air_economizer": {},
-                "air_energy_recovery": {},
-                "exhaust_fans": [],
                 "has_fully_ducted_return": False,
                 "id": "System 1 FanSys",
-                "relief_fans": [],
-                "return_fans": [],
                 "supply_fans": [
                     {
                         "id": "System 1 SupplyFan",
                         "is_airflow_sized_based_on_design_day": True,
-                        "output_validation_points": [],
                         "specification_method": "SIMPLE",
                     }
                 ],
@@ -957,7 +892,6 @@ class TestSystems(unittest.TestCase):
                 "type": "HEAT_PUMP",
             },
             "id": "System 1",
-            "preheat_system": {},
         }
 
         self.condenser = Condenser("Condensing Unit 1", self.rmd)

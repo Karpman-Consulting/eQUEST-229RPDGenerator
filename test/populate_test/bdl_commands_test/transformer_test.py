@@ -9,6 +9,10 @@ from rpd_generator.bdl_structure.bdl_commands.utility_and_economics import (
     ElecMeter,
     BDL_ElecMeterKeywords,
 )
+from rpd_generator.schema.schema_enums import SchemaEnums
+
+
+ElectricalPhaseOptions = SchemaEnums.schema_enums["ElectricalPhaseOptions"]
 
 
 class TestTransformer(unittest.TestCase):
@@ -34,6 +38,7 @@ class TestTransformer(unittest.TestCase):
             "id": "Test Elec Meter Transformer",
             "capacity": 10000,
             "efficiency": 0.98,
+            "phase": ElectricalPhaseOptions.SINGLE_PHASE,
         }
         self.assertDictEqual(
             expected_data_structure,
@@ -52,6 +57,7 @@ class TestTransformer(unittest.TestCase):
             "id": "Test Elec Meter Transformer",
             "capacity": 1000,
             "efficiency": 1,
+            "phase": ElectricalPhaseOptions.SINGLE_PHASE,
         }
         self.assertDictEqual(
             expected_data_structure,

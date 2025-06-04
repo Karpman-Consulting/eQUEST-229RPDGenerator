@@ -3,6 +3,7 @@ from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_ConstructionKeywords = BDLEnums.bdl_enums["ConstructionKeywords"]
+BDL_UndergroundWallKeywords = BDLEnums.bdl_enums["UndergroundWallKeywords"]
 BDL_MaterialTypes = BDLEnums.bdl_enums["MaterialTypes"]
 
 
@@ -15,6 +16,8 @@ class Construction(BaseNode):
         super().__init__(u_name, rmd)
         self.rmd.bdl_obj_instances[u_name] = self
 
+        self.used_for_multiple_slabs_on_different_z = False
+
         self.construction_data_structure = {}
         self.material_references = None
 
@@ -26,7 +29,6 @@ class Construction(BaseNode):
 
         # data elements with no children
         self.classification = None
-        self.surface_construction_input_option = None
         self.fraction_framing = None
         self.u_factor = None
         self.c_factor = None
@@ -43,19 +45,30 @@ class Construction(BaseNode):
         # Material references will be empty if construction uses U-Value Input method
         self.material_references = layer.material_references if layer else []
 
-        any_detailed_materials = False
-        for material_reference in self.material_references or []:
-            material = self.get_obj(material_reference)
-            if material and material.material_type == BDL_MaterialTypes.PROPERTIES:
-                any_detailed_materials = True
-
-        if len(self.material_references) == 0:
-            simplified_material = {"id": "Simplified Material"}
-            # This simplified material will have its r_value added when used for a surface based on Ext/Int/Underground Wall air film resistances
-            self.primary_layers.append(simplified_material)
-
         # This u_factor will be adjusted when used for a surface based on Ext/Int/Underground Wall air film resistances
         self.u_factor = self.try_float(self.get_inp(BDL_ConstructionKeywords.U_VALUE))
+
+        # Determine if the constructions is assigned to multiple slabs on different Z coordinates
+        z_coordinate_set = set()
+        for underground_wall_name in self.rmd.undg_wall_names:
+            underground_wall = self.get_obj(underground_wall_name)
+            if (
+                underground_wall.get_inp(BDL_UndergroundWallKeywords.CONSTRUCTION)
+                != self.u_name
+            ):
+                continue
+
+            tilt = underground_wall.try_float(
+                underground_wall.get_inp(BDL_UndergroundWallKeywords.TILT)
+            )
+            if tilt is None or tilt <= 120:
+                continue
+
+            z_coordinate_set.add(
+                underground_wall.get_inp(BDL_UndergroundWallKeywords.Z)
+            )
+
+        self.used_for_multiple_slabs_on_different_z = len(z_coordinate_set) > 1
 
     def populate_data_group(self):
         """Populate schema structure for construction object."""
@@ -77,7 +90,6 @@ class Construction(BaseNode):
             "reporting_name",
             "notes",
             "classification",
-            "surface_construction_input_option",
             "fraction_framing",
             "u_factor",
             "c_factor",

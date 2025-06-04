@@ -114,6 +114,9 @@ class BelowGradeWall(ChildNode):
         if self.classification == SurfaceClassificationOptions.WALL:
             self.populate_c_factor()
 
+        if self.classification == SurfaceClassificationOptions.FLOOR:
+            self.populate_f_factor()
+
     def populate_data_group(self):
         """Populate schema structure for below grade wall object."""
         self.construction = copy.deepcopy(
@@ -121,7 +124,6 @@ class BelowGradeWall(ChildNode):
                 self.get_inp(BDL_UndergroundWallKeywords.CONSTRUCTION)
             ).construction_data_structure
         )
-        self.account_for_air_film_resistance()
 
         optical_property_attributes = [
             "optical_property_id",
@@ -195,30 +197,6 @@ class BelowGradeWall(ChildNode):
         else:
             return SurfaceClassificationOptions.WALL
 
-    def account_for_air_film_resistance(self):
-        """
-        Remove interior air film resistance from a simplified construction's simplified material r_value.
-        """
-        construction_obj = self.get_obj(
-            self.get_inp(BDL_UndergroundWallKeywords.CONSTRUCTION)
-        )
-        spec_method = construction_obj.get_inp(BDL_ConstructionKeywords.TYPE)
-        u_factor = self.construction.get("u_factor")
-        if u_factor:
-            if spec_method == BDL_ConstructionTypes.U_VALUE:
-                int_air_film_resistance = (
-                    0.61
-                    if self.classification == SurfaceClassificationOptions.CEILING
-                    else (
-                        0.92
-                        if self.classification == SurfaceClassificationOptions.FLOOR
-                        else 0.68
-                    )
-                )
-                self.construction["primary_layers"][0]["r_value"] = (
-                    1 / u_factor - int_air_film_resistance
-                )
-
     def populate_c_factor(self):
         """
         Populate the C-factor for below-grade vertical walls by removing the interior air film resistance
@@ -226,3 +204,16 @@ class BelowGradeWall(ChildNode):
         u_factor = self.construction.get("u_factor")
         if u_factor:
             self.construction["c_factor"] = 1 / (1 / u_factor - 0.68)
+
+    def populate_f_factor(self):
+        """
+        Populate the F-factor for below-grade horizontal walls by referencing the calculated value in the Floor object
+        """
+        construction = self.get_obj(
+            self.get_inp(BDL_UndergroundWallKeywords.CONSTRUCTION)
+        )
+        if (
+            self.parent.parent.f_factor
+            and not construction.used_for_multiple_slabs_on_different_z
+        ):
+            self.construction["f_factor"] = self.parent.parent.f_factor

@@ -212,27 +212,8 @@ class ExteriorWall(ChildNode, ParentNode):
     def account_for_air_film_resistance(self):
         """
         Add exterior air film resistance to the construction object's u_factor.
-        Remove interior air film resistance from a simplified construction's simplified material r_value.
         """
-        construction_obj = self.get_obj(
-            self.get_inp(BDL_ExteriorWallKeywords.CONSTRUCTION)
-        )
-        spec_method = construction_obj.get_inp(BDL_ConstructionKeywords.TYPE)
         u_factor = self.construction.get("u_factor")
         ext_air_film_resistance = 0.17
         if u_factor:
             self.construction["u_factor"] = 1 / (1 / u_factor + ext_air_film_resistance)
-
-            if spec_method == BDL_ConstructionTypes.U_VALUE:
-                int_air_film_resistance = (
-                    0.61
-                    if self.classification == SurfaceClassificationOptions.CEILING
-                    else (
-                        0.92
-                        if self.classification == SurfaceClassificationOptions.FLOOR
-                        else 0.68
-                    )
-                )
-                self.construction["primary_layers"][0]["r_value"] = (
-                    1 / u_factor - int_air_film_resistance
-                )

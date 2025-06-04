@@ -112,42 +112,6 @@ class System(ParentNode):
         BDL_SystemTypes.FNSYS,
         BDL_SystemTypes.PTGSD,
     ]
-    multi_duct_system_types = [
-        BDL_SystemTypes.MZS,
-        BDL_SystemTypes.PMZS,
-        BDL_SystemTypes.DDS,
-    ]
-    single_duct_system_types = [
-        BDL_SystemTypes.PVAVS,
-        BDL_SystemTypes.VAVS,
-        BDL_SystemTypes.CBVAV,
-        BDL_SystemTypes.RHFS,
-        BDL_SystemTypes.PIU,
-        BDL_SystemTypes.IU,
-    ]
-    single_zone_system_types = [
-        BDL_SystemTypes.PSZ,
-        BDL_SystemTypes.SZRH,
-        BDL_SystemTypes.SZCI,
-        BDL_SystemTypes.PVVT,
-        BDL_SystemTypes.FC,
-        BDL_SystemTypes.HP,
-        BDL_SystemTypes.UHT,
-        BDL_SystemTypes.UVT,
-        BDL_SystemTypes.PTAC,
-        BDL_SystemTypes.RESYS,
-        BDL_SystemTypes.RESYS2,
-    ]
-    heat_type_map = {
-        BDL_SystemHeatingTypes.NONE: HeatingSystemOptions.NONE,
-        BDL_SystemHeatingTypes.ELECTRIC: HeatingSystemOptions.ELECTRIC_RESISTANCE,
-        BDL_SystemHeatingTypes.HOT_WATER: HeatingSystemOptions.FLUID_LOOP,
-        BDL_SystemHeatingTypes.FURNACE: HeatingSystemOptions.FURNACE,
-        BDL_SystemHeatingTypes.HEAT_PUMP: HeatingSystemOptions.HEAT_PUMP,
-        BDL_SystemHeatingTypes.CONDENSING_UNIT: HeatingSystemOptions.HEAT_PUMP,
-        BDL_SystemHeatingTypes.DHW_LOOP: HeatingSystemOptions.OTHER,
-        BDL_SystemHeatingTypes.STEAM: HeatingSystemOptions.OTHER,
-    }
     BDL_condenser_output_cool_type_map = {
         BDL_SystemCondenserTypes.AIR_COOLED: BDL_OutputCoolingTypes.DX_AIR_COOLED,
         BDL_SystemCondenserTypes.WATER_COOLED: BDL_OutputCoolingTypes.DX_WATER_COOLED,
@@ -160,186 +124,13 @@ class System(ParentNode):
         BDL_SystemCondenserTypes.EVAP_PRECOOLED: None,
         BDL_SystemCondenserTypes.EVAP_COOLED: None,
     }
-    BDL_output_heat_type_map = {
-        BDL_SystemHeatingTypes.HEAT_PUMP: None,  # Mapping updated based on condenser type
-        BDL_SystemHeatingTypes.FURNACE: BDL_OutputHeatingTypes.FURNACE,
-        BDL_SystemHeatingTypes.ELECTRIC: BDL_OutputHeatingTypes.ELECTRIC,
-        BDL_SystemHeatingTypes.HOT_WATER: BDL_OutputHeatingTypes.HOT_WATER,
-        BDL_SystemHeatingTypes.CONDENSING_UNIT: BDL_OutputHeatingTypes.VRF,
-    }
-    cool_type_map = {
-        BDL_SystemCoolingTypes.ELEC_DX: CoolingSystemOptions.DIRECT_EXPANSION,
-        BDL_SystemCoolingTypes.CHILLED_WATER: CoolingSystemOptions.FLUID_LOOP,
-        BDL_SystemCoolingTypes.NONE: CoolingSystemOptions.NONE,
-    }
-    supply_fan_control_map = {
-        BDL_SystemFanControlOptions.CONSTANT_VOLUME: FanSystemSupplyFanControlOptions.CONSTANT,
-        BDL_SystemFanControlOptions.SPEED: FanSystemSupplyFanControlOptions.VARIABLE_SPEED_DRIVE,
-        #  "": FanSystemSupplyFanControlOptions.MULTISPEED",  no eQUEST options map to MULTISPEED in DOE2.3
-        BDL_SystemFanControlOptions.INLET: FanSystemSupplyFanControlOptions.INLET_VANE,
-        BDL_SystemFanControlOptions.DISCHARGE: FanSystemSupplyFanControlOptions.DISCHARGE_DAMPER,
-        BDL_SystemFanControlOptions.FAN_EIR_FPLR: FanSystemSupplyFanControlOptions.VARIABLE_SPEED_DRIVE,
-    }
-    unoccupied_fan_operation_map = {
-        BDL_NightCycleControlOptions.CYCLE_ON_ANY: FanSystemOperationOptions.CYCLING,
-        BDL_NightCycleControlOptions.CYCLE_ON_FIRST: FanSystemOperationOptions.CYCLING,
-        BDL_NightCycleControlOptions.STAY_OFF: FanSystemOperationOptions.KEEP_OFF,
-        BDL_NightCycleControlOptions.ZONE_FANS_ONLY: FanSystemOperationOptions.OTHER,
-    }
-    occupied_fan_operation_map = {
-        BDL_IndoorFanModeOptions.CONTINUOUS: FanSystemOperationOptions.CONTINUOUS,
-        BDL_IndoorFanModeOptions.INTERMITTENT: FanSystemOperationOptions.CYCLING,
-    }
-    system_cooling_type_map = {
-        BDL_SystemTypes.PTAC: CoolingSystemOptions.DIRECT_EXPANSION,  # Unavailable in DOE 2.3
-        BDL_SystemTypes.PSZ: CoolingSystemOptions.DIRECT_EXPANSION,
-        BDL_SystemTypes.PMZS: CoolingSystemOptions.DIRECT_EXPANSION,
-        BDL_SystemTypes.PVAVS: CoolingSystemOptions.DIRECT_EXPANSION,
-        BDL_SystemTypes.PVVT: CoolingSystemOptions.DIRECT_EXPANSION,
-        BDL_SystemTypes.HP: CoolingSystemOptions.DIRECT_EXPANSION,
-        # IS WATER LOOP HEAT PUMP CONSIDERED DIRECT_EXPANSION???
-        BDL_SystemTypes.SZRH: CoolingSystemOptions.FLUID_LOOP,
-        BDL_SystemTypes.VAVS: CoolingSystemOptions.FLUID_LOOP,
-        BDL_SystemTypes.RHFS: CoolingSystemOptions.FLUID_LOOP,
-        BDL_SystemTypes.DDS: CoolingSystemOptions.FLUID_LOOP,
-        BDL_SystemTypes.MZS: CoolingSystemOptions.FLUID_LOOP,
-        BDL_SystemTypes.PIU: None,  # Mapping updated in populate_data_elements method
-        BDL_SystemTypes.FC: CoolingSystemOptions.FLUID_LOOP,
-        BDL_SystemTypes.IU: CoolingSystemOptions.FLUID_LOOP,
-        BDL_SystemTypes.UVT: CoolingSystemOptions.NONE,
-        BDL_SystemTypes.UHT: CoolingSystemOptions.NONE,
-        BDL_SystemTypes.RESYS2: CoolingSystemOptions.DIRECT_EXPANSION,
-        BDL_SystemTypes.CBVAV: CoolingSystemOptions.FLUID_LOOP,
-        BDL_SystemTypes.SUM: CoolingSystemOptions.NONE,
-        BDL_SystemTypes.DOAS: None,  # Mapping updated in populate_data_elements method
-    }
-    BDL_output_system_heating_type_map = {
-        BDL_SystemTypes.PTAC: None,  # Mapping updated in populate_data_elements method  # Unavailable in DOE 2.3
-        BDL_SystemTypes.PSZ: None,  # Mapping updated in populate_data_elements method
-        BDL_SystemTypes.PMZS: None,  # Mapping updated in populate_data_elements method
-        BDL_SystemTypes.PVAVS: None,  # Mapping updated in populate_data_elements method
-        BDL_SystemTypes.PVVT: None,  # Mapping updated in populate_data_elements method
-        BDL_SystemTypes.HP: BDL_OutputHeatingTypes.HEAT_PUMP_WATER_COOLED,
-        BDL_SystemTypes.SZRH: None,  # Mapping updated in populate_data_elements method
-        BDL_SystemTypes.VAVS: None,  # Mapping updated in populate_data_elements method
-        BDL_SystemTypes.RHFS: None,  # Mapping updated in populate_data_elements method
-        BDL_SystemTypes.DDS: None,  # Mapping updated in populate_data_elements method
-        BDL_SystemTypes.MZS: None,  # Mapping updated in populate_data_elements method
-        BDL_SystemTypes.PIU: None,  # Mapping updated in populate_data_elements method
-        BDL_SystemTypes.FC: None,  # Mapping updated in populate_data_elements method
-        BDL_SystemTypes.IU: None,  # Mapping updated in populate_data_elements method
-        BDL_SystemTypes.UVT: None,  # Mapping updated in populate_data_elements method
-        BDL_SystemTypes.UHT: None,  # Mapping updated in populate_data_elements method
-        BDL_SystemTypes.RESYS2: None,  # Mapping updated in populate_data_elements method
-        BDL_SystemTypes.CBVAV: None,  # Mapping updated in populate_data_elements method
-        BDL_SystemTypes.SUM: None,
-        BDL_SystemTypes.DOAS: None,  # Mapping updated in populate_data_elements method
-    }
-    BDL_output_system_cooling_type_map = {
-        BDL_SystemTypes.PTAC: BDL_OutputCoolingTypes.DX_AIR_COOLED,  # Unavailable in DOE 2.3
-        BDL_SystemTypes.PSZ: None,  # Mapping updated based on condenser type
-        BDL_SystemTypes.PMZS: None,  # Mapping updated based on condenser type
-        BDL_SystemTypes.PVAVS: None,  # Mapping updated based on condenser type
-        BDL_SystemTypes.PVVT: None,  # Mapping updated based on condenser type
-        BDL_SystemTypes.HP: BDL_OutputCoolingTypes.DX_WATER_COOLED,
-        BDL_SystemTypes.SZRH: BDL_OutputCoolingTypes.CHILLED_WATER,
-        BDL_SystemTypes.VAVS: BDL_OutputCoolingTypes.CHILLED_WATER,
-        BDL_SystemTypes.RHFS: BDL_OutputCoolingTypes.CHILLED_WATER,
-        BDL_SystemTypes.DDS: BDL_OutputCoolingTypes.CHILLED_WATER,
-        BDL_SystemTypes.MZS: BDL_OutputCoolingTypes.CHILLED_WATER,
-        BDL_SystemTypes.PIU: None,  # Mapping updated in populate_data_elements method
-        BDL_SystemTypes.FC: BDL_OutputCoolingTypes.CHILLED_WATER,
-        BDL_SystemTypes.IU: BDL_OutputCoolingTypes.CHILLED_WATER,
-        BDL_SystemTypes.UVT: CoolingSystemOptions.NONE,
-        BDL_SystemTypes.UHT: CoolingSystemOptions.NONE,
-        BDL_SystemTypes.RESYS2: None,  # Mapping updated based on condenser type
-        BDL_SystemTypes.CBVAV: BDL_OutputCoolingTypes.CHILLED_WATER,
-        BDL_SystemTypes.SUM: None,
-        BDL_SystemTypes.DOAS: None,  # Mapping updated in populate_data_elements method
-    }
-    economizer_map = {
-        BDL_EconomizerOptions.FIXED: AirEconomizerOptions.FIXED_FRACTION,
-        BDL_EconomizerOptions.OA_TEMP: AirEconomizerOptions.TEMPERATURE,
-        BDL_EconomizerOptions.OA_ENTHALPY: AirEconomizerOptions.ENTHALPY,
-        BDL_EconomizerOptions.DUAL_TEMP: AirEconomizerOptions.DIFFERENTIAL_TEMPERATURE,
-        BDL_EconomizerOptions.DUAL_ENTHALPY: AirEconomizerOptions.DIFFERENTIAL_ENTHALPY,
-    }
-    recovery_type_map = {
-        BDL_EnergyRecoveryTypes.SENSIBLE_HX: EnergyRecoveryOptions.SENSIBLE_HEAT_EXCHANGE,
-        BDL_EnergyRecoveryTypes.ENTHALPY_HX: EnergyRecoveryOptions.ENTHALPY_HEAT_EXCHANGE,
-        BDL_EnergyRecoveryTypes.SENSIBLE_WHEEL: EnergyRecoveryOptions.SENSIBLE_HEAT_WHEEL,
-        BDL_EnergyRecoveryTypes.ENTHALPY_WHEEL: EnergyRecoveryOptions.ENTHALPY_HEAT_WHEEL,
-        BDL_EnergyRecoveryTypes.HEAT_PIPE: EnergyRecoveryOptions.HEAT_PIPE,
-    }
-    has_recovery_map = {
-        BDL_EnergyRecoveryOptions.NO: EnergyRecoveryOperationOptions.NONE,
-        BDL_EnergyRecoveryOptions.RELIEF_ONLY: None,  # Mapping updated in populate_air_energy_recovery method
-        BDL_EnergyRecoveryOptions.EXHAUST_ONLY: None,  # Mapping updated in populate_air_energy_recovery method
-        BDL_EnergyRecoveryOptions.RELIEF_EXHAUST: None,  # Mapping updated in populate_air_energy_recovery method
-        BDL_EnergyRecoveryOptions.YES: None,  # Mapping updated in populate_air_energy_recovery method
-    }
-    er_operation_map = {
-        BDL_EnergyRecoveryOperationOptions.WHEN_FANS_ON: EnergyRecoveryOperationOptions.WHEN_FANS_ON,
-        BDL_EnergyRecoveryOperationOptions.WHEN_MIN_OA: EnergyRecoveryOperationOptions.WHEN_MINIMUM_OUTSIDE_AIR,
-        BDL_EnergyRecoveryOperationOptions.ERV_SCHEDULE: EnergyRecoveryOperationOptions.SCHEDULED,
-        BDL_EnergyRecoveryOperationOptions.OA_EXHAUST_DT: EnergyRecoveryOperationOptions.OTHER,
-        BDL_EnergyRecoveryOperationOptions.OA_EXHAUST_DH: EnergyRecoveryOperationOptions.OTHER,
-    }
-    er_sat_control_map = {
-        BDL_EnergyRecoveryTemperatureControlOptions.FLOAT: EnergyRecoverySupplyAirTemperatureControlOptions.OTHER,
-        BDL_EnergyRecoveryTemperatureControlOptions.FIXED_SETPT: EnergyRecoverySupplyAirTemperatureControlOptions.FIXED_SETPOINT,
-        BDL_EnergyRecoveryTemperatureControlOptions.MIXED_AIR_RESET: EnergyRecoverySupplyAirTemperatureControlOptions.MIXED_AIR_RESET,
-    }
-    dcv_map = {
-        BDL_SystemMinimumOutdoorAirControlOptions.FRAC_OF_DESIGN_FLOW: DemandControlVentilationControlOptions.NONE,
-        BDL_SystemMinimumOutdoorAirControlOptions.FRAC_OF_HOURLY_FLOW: DemandControlVentilationControlOptions.NONE,
-        BDL_SystemMinimumOutdoorAirControlOptions.DCV_RETURN_SENSOR: DemandControlVentilationControlOptions.CO2_RETURN_AIR,
-        BDL_SystemMinimumOutdoorAirControlOptions.DCV_ZONE_SENSORS: DemandControlVentilationControlOptions.CO2_ZONE,
-    }
-    humidification_map = {
-        BDL_HumidificationOptions.NONE: HumidificationOptions.NONE,
-        BDL_HumidificationOptions.ELECTRIC: HumidificationOptions.OTHER,
-        BDL_HumidificationOptions.HOT_WATER: HumidificationOptions.OTHER,
-        BDL_HumidificationOptions.STEAM: HumidificationOptions.OTHER,
-        BDL_HumidificationOptions.FURNACE: HumidificationOptions.OTHER,
-        BDL_HumidificationOptions.HEAT_PUMP: HumidificationOptions.OTHER,
-        BDL_HumidificationOptions.DHW_LOOP: HumidificationOptions.OTHER,
-    }
-    heatpump_aux_type_map = {
-        BDL_HPSupplementSourceOptions.ELECTRIC: HeatpumpAuxiliaryHeatOptions.ELECTRIC_RESISTANCE,
-        BDL_HPSupplementSourceOptions.HOT_WATER: HeatpumpAuxiliaryHeatOptions.OTHER,
-        BDL_HPSupplementSourceOptions.FURNACE: HeatpumpAuxiliaryHeatOptions.FURNACE,
-    }
-    cool_eff_metric_map = {
-        BDL_OutputCoolingTypes.DX_AIR_COOLED: {
-            95: CoolingMetricOptions.FULL_LOAD_COEFFICIENT_OF_PERFORMANCE_NO_FAN
-        },
-        BDL_OutputCoolingTypes.DX_WATER_COOLED: {
-            59: CoolingMetricOptions.COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_GROUND_WATER_NO_FAN,
-            77: CoolingMetricOptions.COEFFICIENT_OF_PERFORMANCE_BRINE_TO_AIR_GROUND_LOOP_NO_FAN,
-            86: CoolingMetricOptions.COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN,
-        },
-    }
-    heat_eff_metric_map = {
-        BDL_OutputHeatingTypes.ELECTRIC: {
-            None: HeatingMetricOptions.THERMAL_EFFICIENCY
-        },
-        BDL_OutputHeatingTypes.FURNACE: {None: HeatingMetricOptions.THERMAL_EFFICIENCY},
-        BDL_OutputHeatingTypes.HEAT_PUMP_AIR_COOLED: {
-            17: HeatingMetricOptions.HEAT_PUMP_COEFFICIENT_OF_PERFORMANCE_LOW_TEMPERATURE_NO_FAN,
-            47: HeatingMetricOptions.HEAT_PUMP_COEFFICIENT_OF_PERFORMANCE_HIGH_TEMPERATURE_NO_FAN,
-        },
-        BDL_OutputHeatingTypes.HEAT_PUMP_WATER_COOLED: {
-            68: HeatingMetricOptions.COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN,
-            50: HeatingMetricOptions.COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_GROUND_WATER_NO_FAN,
-            32: HeatingMetricOptions.COEFFICIENT_OF_PERFORMANCE_BRINE_TO_AIR_GROUND_LOOP_NO_FAN,
-        },
-    }
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
         # On initialization the parent building segment is not known. It will be set in the GUI.
         self.parent_building_segment = self.get_obj("Default Building Segment")
+
+        self.vrf_sys_condenser = None
 
         if u_name not in self.rmd.bdl_obj_instances:
             self.rmd.system_names.append(u_name)
@@ -356,146 +147,19 @@ class System(ParentNode):
         self.is_derived_system = False
         self.bdl_output_cool_type = None
         self.bdl_output_heat_type = None
+        self.preheat_system_type = None
 
-        # system data elements with children
-        self.fan_system = {}
-        self.heating_system = {}
-        self.cooling_system = {}
-        self.preheat_system = {}
-
-        # fan system data elements
-        self.fan_sys_id = None
-        self.fan_sys_reporting_name = None
-        self.fan_sys_notes = None
-        self.fan_sys_supply_fans = []
-        self.fan_sys_return_fans = []
-        self.fan_sys_exhaust_fans = []
-        self.fan_sys_relief_fans = []
-        self.fan_sys_air_economizer = {}
-        self.fan_sys_air_energy_recovery = {}
-        self.fan_sys_temperature_control = None
-        self.fan_sys_operation_during_occupied = None
-        self.fan_sys_operation_during_unoccupied = None
-        self.fan_sys_has_lockout_central_heat_during_unoccupied = None
-        self.fan_sys_fan_control = None
-        self.fan_sys_reset_differential_temperature = None
-        self.fan_sys_supply_air_temperature_reset_load_fraction = None
-        self.fan_sys_supply_air_temperature_reset_schedule = None
-        self.fan_sys_fan_volume_reset_type = None
-        self.fan_sys_fan_volume_reset_fraction = None
-        self.fan_sys_operating_schedule = None
-        self.fan_sys_minimum_airflow = None
-        self.fan_sys_minimum_outdoor_airflow = None
-        self.fan_sys_maximum_outdoor_airflow = None
-        self.fan_sys_air_filter_merv_rating = None
-        self.fan_sys_has_fully_ducted_return = None
-        self.fan_sys_demand_control_ventilation_control = None
-
-        # heating system data elements
-        self.heat_sys_id = None
-        self.heat_sys_reporting_name = None
-        self.heat_sys_notes = None
-        self.heat_sys_type = None
-        self.heat_sys_energy_source_type = None
-        self.heat_sys_hot_water_loop = None
-        self.heat_sys_water_source_heat_pump_loop = None
-        self.heat_sys_design_capacity = None
-        self.heat_sys_rated_capacity = None
-        self.heat_sys_oversizing_factor = None
-        self.heat_sys_is_sized_based_on_design_day = None
-        self.heat_sys_heating_coil_setpoint = None
-        self.heat_sys_efficiency_metric_values = None
-        self.heat_sys_efficiency_metric_types = None
-        self.heat_sys_heatpump_auxiliary_heat_type = None
-        self.heat_sys_heatpump_auxiliary_heat_high_shutoff_temperature = None
-        self.heat_sys_heatpump_low_shutoff_temperature = None
-        self.heat_sys_humidification_type = None
-
-        # cooling system data elements
-        self.cool_sys_id = None
-        self.cool_sys_reporting_name = None
-        self.cool_sys_notes = None
-        self.cool_sys_type = None
-        self.cool_sys_design_total_cool_capacity = None
-        self.cool_sys_design_sensible_cool_capacity = None
-        self.cool_sys_rated_total_cool_capacity = None
-        self.cool_sys_rated_sensible_cool_capacity = None
-        self.cool_sys_oversizing_factor = None
-        self.cool_sys_is_sized_based_on_design_day = None
-        self.cool_sys_chilled_water_loop = None
-        self.cool_sys_condenser_water_loop = None
-        self.vrf_sys_condenser = None
-        self.cool_sys_efficiency_metric_values = None
-        self.cool_sys_efficiency_metric_types = None
-        self.cool_sys_dehumidification_type = None
-        self.cool_sys_turndown_ratio = None
-
-        # preheat system data elements
-        self.preheat_sys_id = None
-        self.preheat_sys_reporting_name = None
-        self.preheat_sys_notes = None
-        self.preheat_sys_type = None
-        self.preheat_sys_energy_source_type = None
-        self.preheat_sys_hot_water_loop = None
-        self.preheat_sys_water_source_heat_pump_loop = None
-        self.preheat_sys_design_capacity = None
-        self.preheat_sys_rated_capacity = None
-        self.preheat_sys_oversizing_factor = None
-        self.preheat_sys_is_sized_based_on_design_day = None
-        self.preheat_sys_heating_coil_setpoint = None
-        self.preheat_sys_efficiency_metric_values = None
-        self.preheat_sys_efficiency_metric_types = None
-        self.preheat_sys_heatpump_auxiliary_heat_type = None
-        self.preheat_sys_heatpump_auxiliary_heat_high_shutoff_temperature = None
-        self.preheat_sys_heatpump_low_shutoff_temperature = None
-        self.preheat_sys_humidification_type = None
-
-        # Define the Fan data group instances from SYSTEM that are possible to model in DOE2
-        # Return fan or Relief fan can be defined for a system, but not both
-        self.cooling_supply_fan = {}
-        self.return_fan = {}
-        self.relief_fan = {}
-        self.heating_supply_fan = {}
-
-        # [cooling supply, return, relief, heating supply] fan data elements
-        self.fan_id: list = [None, None, None, None]
-        self.fan_reporting_name: list = [None, None, None, None]
-        self.fan_notes: list = [None, None, None, None]
-        self.fan_design_airflow: list = [None, None, None, None]
-        self.fan_is_airflow_sized_based_on_design_day: list = [None, None, None, None]
-        self.fan_specification_method: list = [None, None, None, None]
-        self.fan_design_electric_power: list = [None, None, None, None]
-        self.fan_design_pressure_rise: list = [None, None, None, None]
-        self.fan_motor_nameplate_power: list = [None, None, None, None]
-        self.fan_shaft_power: list = [None, None, None, None]
-        self.fan_total_efficiency: list = [None, None, None, None]
-        self.fan_motor_efficiency: list = [None, None, None, None]
-        self.fan_motor_heat_to_airflow_fraction: list = [None, None, None, None]
-        self.fan_motor_heat_to_zone_fraction: list = [None, None, None, None]
-        self.fan_motor_location_zone: list = [None, None, None, None]
-        self.fan_status_type: list = [None, None, None, None]
-        self.fan_output_validation_points: list = [[], [], [], []]
-
-        # air economizer data elements
-        self.air_econ_id = None
-        self.air_econ_reporting_name = None
-        self.air_econ_notes = None
-        self.air_econ_type = None
-        self.air_econ_high_limit_shutoff_temperature = None
-        self.air_econ_is_integrated = None
-
-        # air energy recovery data elements
-        self.air_energy_recovery_id = None
-        self.air_energy_recovery_reporting_name = None
-        self.air_energy_recovery_notes = None
-        self.air_energy_recovery_type = None
-        self.air_energy_recovery_enthalpy_recovery_ratio = None
-        self.air_energy_recovery_energy_recovery_operation = None
-        self.air_energy_recovery_energy_recovery_supply_air_temperature_control = None
-        self.air_energy_recovery_design_sensible_effectiveness = None
-        self.air_energy_recovery_design_latent_effectiveness = None
-        self.air_energy_recovery_outdoor_airflow = None
-        self.air_energy_recovery_exhaust_airflow = None
+        # Store object instances for the system for easy access
+        self.fan_system = None
+        self.supply_fan = None
+        self.relief_fan = None
+        self.return_fan = None
+        self.heating_supply_fan = None
+        self.air_energy_recovery = None
+        self.air_economizer = None
+        self.heating_system = None
+        self.cooling_system = None
+        self.preheat_system = None
 
     def __repr__(self):
         return f"System(u_name='{self.u_name}')"
@@ -552,8 +216,12 @@ class System(ParentNode):
         if not self.is_derived_system:
             self.create_copied_systems()
 
-        heat_type = self.heat_type_map.get(self.get_inp(BDL_SystemKeywords.HEAT_SOURCE))
-        cool_type = self.cool_type_map.get(self.get_inp(BDL_SystemKeywords.COOL_SOURCE))
+        heat_type = HeatingSystem.heat_type_map.get(
+            self.get_inp(BDL_SystemKeywords.HEAT_SOURCE)
+        )
+        cool_type = CoolingSystem.cool_type_map.get(
+            self.get_inp(BDL_SystemKeywords.COOL_SOURCE)
+        )
 
         has_heat = heat_type not in [None, HeatingSystemOptions.NONE] or (
             system_type == BDL_SystemTypes.HP
@@ -564,7 +232,7 @@ class System(ParentNode):
                 BDL_WLHPCategoryOptions.GROUND_LOOP,
             ]
         )
-        has_cool = self.system_cooling_type_map.get(
+        has_cool = CoolingSystem.system_cooling_type_map.get(
             self.get_inp(BDL_SystemKeywords.TYPE)
         ) not in [None, CoolingSystemOptions.NONE] or (
             system_type == BDL_SystemTypes.HP
@@ -613,23 +281,47 @@ class System(ParentNode):
                     output_data[key], "kBtu/hr", "Btu/hr"
                 )
 
-        self.populate_fan_system(output_data)
+        self.fan_system = FanSystem(self)
+        self.fan_system.populate_data_elements(output_data)
+
         self.populate_fans(output_data)
+
         if has_cool:
-            self.populate_cooling_system(output_data)
+            self.cooling_system = CoolingSystem(self)
+            self.cooling_system.populate_data_elements(output_data)
+            self.cooling_system.populate_data_group()
+
         if has_heat:
-            self.populate_heating_system(
-                output_data, self.get_inp(BDL_SystemKeywords.HEAT_SOURCE)
-            )
+            self.heating_system = HeatingSystem(self)
+            self.heating_system.populate_data_elements(output_data)
+            self.heating_system.populate_data_group()
+
         if has_preheat:
-            self.populate_preheat_system(output_data)
+            self.preheat_system = PreheatSystem(self)
+            self.preheat_system.populate_data_elements(output_data)
+            self.preheat_system.populate_data_group()
+
         if has_economizer:
-            self.populate_air_economizer()
-            self.fan_sys_maximum_outdoor_airflow = self.fan_design_airflow[0]
+            self.air_economizer = AirEconomizer(self)
+            self.air_economizer.populate_data_elements()
+            self.air_economizer.populate_data_group()
+            self.fan_system.maximum_outdoor_airflow = self.supply_fan.design_airflow
+
         else:
-            self.fan_sys_maximum_outdoor_airflow = self.fan_sys_minimum_outdoor_airflow
+            self.fan_system.maximum_outdoor_airflow = (
+                self.fan_system.minimum_outdoor_airflow
+            )
+
         if has_energy_recovery:
-            self.populate_air_energy_recovery()
+            self.air_energy_recovery = AirEnergyRecovery(self)
+            self.air_energy_recovery.populate_data_elements()
+            self.air_energy_recovery.populate_data_group()
+            if self.air_energy_recovery.outdoor_airflow is None:
+                self.air_energy_recovery.outdoor_airflow = (
+                    self.fan_system.minimum_outdoor_airflow
+                )
+
+        self.fan_system.populate_data_group()
 
     def get_output_requests(self):
         """Get the output requests for the system dependent on various system component types."""
@@ -886,7 +578,7 @@ class System(ParentNode):
                     # Rated data for Heating - VRF - SYSTEM - capacity, btu/hr
                     requests["Rated Heating Capacity"] = (2203466, self.u_name, "")
 
-            match self.preheat_sys_type:
+            match self.preheat_system_type:
                 case HeatingSystemOptions.FLUID_LOOP:
                     # Design Preheat - hot water - SYSTEM - capacity, btu/hr
                     requests["Design Preheat Capacity"] = (
@@ -936,78 +628,21 @@ class System(ParentNode):
                 if value is None:
                     continue
 
-                if attr.startswith("fan_sys_"):
-                    self.fan_system[attr.split("fan_sys_")[1]] = value
-
-                elif attr.startswith("heat_sys_"):
-                    self.heating_system[attr.split("heat_sys_")[1]] = value
-
-                elif attr.startswith("cool_sys_"):
-                    self.cooling_system[attr.split("cool_sys_")[1]] = value
-
-                elif attr.startswith("preheat_sys_"):
-                    self.preheat_system[attr.split("preheat_sys_")[1]] = value
-
-                elif attr.startswith("fan_") and attr[4:7] != "sys":
-                    key = attr.split("fan_")[1]  # Get the key by removing 'fan_' prefix
-                    for i, fan_dict_name in enumerate(
-                        [
-                            "cooling_supply_fan",
-                            "return_fan",
-                            "relief_fan",
-                            "heating_supply_fan",
-                        ]
-                    ):
-                        # Check if there is a non-None value for the current fan type
-                        if getattr(self, "fan_id")[i] is not None:
-                            fan_dict = getattr(self, fan_dict_name)
-                            if getattr(self, attr)[i] is not None:
-                                fan_dict[key] = getattr(self, attr)[i]
-                            # update the fan dictionary
-                            setattr(self, fan_dict_name, fan_dict)
-
-                elif attr.startswith("air_econ_"):
-                    value = getattr(self, attr, None)
-                    if value is not None:
-                        self.fan_sys_air_economizer[attr.split("air_econ_")[1]] = value
-
-                elif attr.startswith("air_energy_recovery_"):
-                    value = getattr(self, attr, None)
-                    if value is not None:
-                        self.fan_sys_air_energy_recovery[
-                            attr.split("air_energy_recovery_")[1]
-                        ] = value
-
-            for fan_dict_name in [
-                "cooling_supply_fan",
-                "return_fan",
-                "relief_fan",
-                "heating_supply_fan",
-            ]:
-                fan_dict = getattr(self, fan_dict_name)
-                # append to FanSystem
-                if fan_dict and fan_dict_name in [
-                    "cooling_supply_fan",
-                    "heating_supply_fan",
-                ]:
-                    self.fan_sys_supply_fans.append(fan_dict)
-                elif fan_dict and fan_dict_name == "return_fan":
-                    self.fan_sys_return_fans.append(fan_dict)
-                elif fan_dict and fan_dict_name == "relief_fan":
-                    self.fan_sys_relief_fans.append(fan_dict)
-
             if self.is_derived_system:
                 self.system_data_structure["id"] = self.sys_id
             else:
                 self.system_data_structure["id"] = self.u_name
+
             self.system_data_structure.update(
                 {
-                    "fan_system": self.fan_system,
-                    "heating_system": self.heating_system,
-                    "cooling_system": self.cooling_system,
-                    "preheat_system": self.preheat_system,
+                    "fan_system": self.fan_system.data_structure,
                 }
             )
+
+            for attr in ["heating_system", "cooling_system", "preheat_system"]:
+                subsystem = getattr(self, attr)
+                if subsystem:
+                    self.system_data_structure[attr] = subsystem.data_structure
 
     def insert_to_rpd(self):
         """Insert system data structure into the rpd data structure."""
@@ -1017,17 +652,17 @@ class System(ParentNode):
 
     def update_system_mapping(self):
         """Update various system mapping based on the system component types."""
-        self.system_cooling_type_map.update(
+        CoolingSystem.system_cooling_type_map.update(
             {
-                BDL_SystemTypes.PIU: self.cool_type_map.get(
+                BDL_SystemTypes.PIU: CoolingSystem.cool_type_map.get(
                     self.get_inp(BDL_SystemKeywords.COOL_SOURCE)
                 ),
-                BDL_SystemTypes.DOAS: self.cool_type_map.get(
+                BDL_SystemTypes.DOAS: CoolingSystem.cool_type_map.get(
                     self.get_inp(BDL_SystemKeywords.COOL_SOURCE)
                 ),
             }
         )
-        self.BDL_output_heat_type_map.update(
+        HeatingSystem.BDL_output_heat_type_map.update(
             {
                 BDL_SystemHeatingTypes.HEAT_PUMP: self.BDL_condenser_output_heat_type_map.get(
                     self.get_inp(BDL_SystemKeywords.CONDENSER_TYPE)
@@ -1035,14 +670,17 @@ class System(ParentNode):
             }
         )
 
-        self.bdl_output_heat_type = self.BDL_output_heat_type_map.get(
+        self.bdl_output_heat_type = HeatingSystem.BDL_output_heat_type_map.get(
             self.get_inp(BDL_SystemKeywords.HEAT_SOURCE)
         )
         self.bdl_output_cool_type = self.BDL_condenser_output_cool_type_map.get(
             self.get_inp(BDL_SystemKeywords.CONDENSER_TYPE)
         )
+        self.preheat_system_type = PreheatSystem.heat_type_map.get(
+            self.get_inp(BDL_SystemKeywords.PREHEAT_SOURCE)
+        )
 
-        self.BDL_output_system_heating_type_map.update(
+        HeatingSystem.BDL_output_system_heating_type_map.update(
             {
                 BDL_SystemTypes.PTAC: self.bdl_output_heat_type,
                 BDL_SystemTypes.PSZ: self.bdl_output_heat_type,
@@ -1064,7 +702,7 @@ class System(ParentNode):
                 BDL_SystemTypes.DOAS: self.bdl_output_heat_type,
             }
         )
-        self.BDL_output_system_cooling_type_map.update(
+        CoolingSystem.BDL_output_system_cooling_type_map.update(
             {
                 BDL_SystemTypes.PIU: self.bdl_output_cool_type,
                 BDL_SystemTypes.DOAS: self.bdl_output_cool_type,
@@ -1076,283 +714,69 @@ class System(ParentNode):
             }
         )
 
-        self.bdl_output_heat_type = self.BDL_output_system_heating_type_map.get(
-            self.get_inp(BDL_SystemKeywords.TYPE)
+        self.bdl_output_heat_type = (
+            HeatingSystem.BDL_output_system_heating_type_map.get(
+                self.get_inp(BDL_SystemKeywords.TYPE)
+            )
         )
-        self.bdl_output_cool_type = self.BDL_output_system_cooling_type_map.get(
-            self.get_inp(BDL_SystemKeywords.TYPE)
+        self.bdl_output_cool_type = (
+            CoolingSystem.BDL_output_system_cooling_type_map.get(
+                self.get_inp(BDL_SystemKeywords.TYPE)
+            )
         )
 
-    def populate_fan_system(self, output_data):
-        self.fan_sys_id = self.u_name + " FanSys"
-        self.fan_sys_has_fully_ducted_return = (
-            self.get_inp(BDL_SystemKeywords.RETURN_AIR_PATH)
-            == BDL_ReturnAirPathOptions.DUCT
-        )
-        self.fan_sys_fan_control = self.supply_fan_control_map.get(
-            self.get_inp(BDL_SystemKeywords.FAN_CONTROL)
-        )
-        self.fan_sys_temperature_control = self.get_temperature_control()
-        self.fan_sys_demand_control_ventilation_control = self.dcv_map.get(
-            self.get_inp(BDL_SystemKeywords.MIN_OA_METHOD)
-        )
-        cool_control = self.get_inp(BDL_SystemKeywords.COOL_CONTROL)
-        min_reset_t = self.try_float(self.get_inp(BDL_SystemKeywords.COOL_MIN_RESET_T))
-        max_reset_t = self.try_float(self.get_inp(BDL_SystemKeywords.COOL_MAX_RESET_T))
-        if (
-            cool_control == BDL_CoolControlOptions.WARMEST
-            and min_reset_t is not None
-            and max_reset_t is not None
-        ):
-            self.fan_sys_reset_differential_temperature = max_reset_t - min_reset_t
-        supply_fan_airflow = output_data.get("Supply Fan - Airflow")
-        supply_min_flow_ratio = self.try_float(
-            self.get_inp(BDL_SystemKeywords.MIN_FLOW_RATIO)
-        )
-        supply_min_fan_ratio = output_data.get("Supply Fan - Min Flow Ratio")
-        oa_ratio = output_data.get("Outside Air Ratio")
-        if oa_ratio is not None and supply_fan_airflow is not None:
-            self.fan_sys_minimum_outdoor_airflow = oa_ratio * supply_fan_airflow
-        if supply_min_fan_ratio is not None and supply_fan_airflow is not None:
-            self.fan_sys_minimum_airflow = supply_min_fan_ratio * supply_fan_airflow
-        # Set fan control of systems that have a min flow ratio of 1
-        if supply_min_flow_ratio == 1:
-            self.fan_sys_fan_control = FanSystemSupplyFanControlOptions.CONSTANT
-        # Override fan control of systems that have CONSTANT_VOLUME fans with a minimum flow ratio less than 1
-        elif (
-            supply_min_fan_ratio is not None
-            and supply_min_fan_ratio < 1
-            and self.fan_sys_fan_control == FanSystemSupplyFanControlOptions.CONSTANT
-        ):
-            self.fan_sys_fan_control = FanSystemSupplyFanControlOptions.DISCHARGE_DAMPER
-        self.fan_sys_operation_during_unoccupied = (
-            self.unoccupied_fan_operation_map.get(
-                self.get_inp(BDL_SystemKeywords.NIGHT_CYCLE_CTRL)
-            )
-        )
-        self.fan_sys_operation_during_occupied = (
-            self.populate_fan_operation_during_occupied()
-        )
+    def get_loop_energy_source(self, loop):
+        """Get the energy source type for the loop. Used to populate the energy_source_type."""
+        energy_source_set = set()
+        for boiler_name in self.rmd.boiler_names:
+            boiler = self.get_obj(boiler_name)
+            if boiler.loop == loop.u_name:
+                energy_source_set.add(boiler.energy_source_type)
 
-    def populate_heating_system(self, output_data, heat_source):
-        self.heat_sys_id = self.u_name + " HeatSys"
-        self.heat_sys_type = self.heat_type_map.get(heat_source)
-        if self.get_inp(BDL_SystemKeywords.TYPE) == BDL_SystemTypes.HP and self.get_inp(
-            BDL_SystemKeywords.WLHP_CATEGORY
-        ) in [
-            BDL_WLHPCategoryOptions.WATER_LOOP,
-            BDL_WLHPCategoryOptions.GROUND_WATER,
-            BDL_WLHPCategoryOptions.GROUND_LOOP,
-        ]:
-            self.heat_sys_type = HeatingSystemOptions.HEAT_PUMP
-        self.heat_sys_hot_water_loop = self.get_inp(BDL_SystemKeywords.HW_LOOP)
-        self.heat_sys_water_source_heat_pump_loop = self.get_inp(
-            BDL_SystemKeywords.CW_LOOP
-        )
-        self.heat_sys_humidification_type = self.humidification_map.get(
-            self.get_inp(BDL_SystemKeywords.HUMIDIFIER_TYPE)
-        )
-        self.heat_sys_heating_coil_setpoint = self.try_float(
-            self.get_inp(BDL_SystemKeywords.HEAT_SET_T)
-        )
-        self.heat_sys_heatpump_auxiliary_heat_type = self.heatpump_aux_type_map.get(
-            self.get_inp(BDL_SystemKeywords.HP_SUPP_SOURCE)
-        )
-        self.heat_sys_heatpump_auxiliary_heat_high_shutoff_temperature = self.try_float(
-            self.get_inp(BDL_SystemKeywords.MAX_HP_SUPP_T)
-        )
-        self.heat_sys_heatpump_low_shutoff_temperature = self.try_float(
-            self.get_inp(BDL_SystemKeywords.MIN_HP_T)
-        )
+        for steam_meter_name in self.rmd.steam_meter_names:
+            steam_meter = self.get_obj(steam_meter_name)
+            if steam_meter.loop == loop.u_name:
+                energy_source_set.add(steam_meter.energy_source_type)
 
-        sizing_ratio = self.try_float(self.get_inp(BDL_SystemKeywords.SIZING_RATIO))
-        heat_sizing_ratio = self.try_float(
-            self.get_inp(BDL_SystemKeywords.HEAT_SIZING_RATI)
-        )
-        if sizing_ratio is not None and heat_sizing_ratio is not None:
-            self.heat_sys_oversizing_factor = max(
-                0, sizing_ratio * heat_sizing_ratio - 1
-            )
+        for chiller_name in self.rmd.chiller_names:
+            chiller = self.get_obj(chiller_name)
+            if chiller.heat_recovery_loop == loop.u_name:
+                energy_source_set.add(EnergySourceOptions.ELECTRICITY)
 
-        self.heat_sys_rated_capacity = self.try_abs(
-            self.try_float(self.get_inp(BDL_SystemKeywords.HEATING_CAPACITY))
-        )
-        if not self.heat_sys_rated_capacity:
-            self.heat_sys_rated_capacity = self.try_abs(
-                output_data.get("Rated Heating Capacity")
-            )
-        if not self.heat_sys_rated_capacity:
-            self.heat_sys_rated_capacity = self.try_abs(
-                output_data.get("Heating Capacity")
-            )
-        self.heat_sys_design_capacity = self.try_abs(
-            output_data.get("Design Heating Capacity")
-        )
-        if not self.heat_sys_design_capacity:
-            self.heat_sys_design_capacity = self.try_abs(
-                output_data.get("Heating Capacity")
-            )
+        for domestic_water_heater_name in self.rmd.domestic_water_heater_names:
+            domestic_water_heater = self.get_obj(domestic_water_heater_name)
+            if domestic_water_heater.hot_water_loop == loop.u_name:
+                energy_source_set.add(domestic_water_heater.heater_fuel_type)
 
-        if self.is_zonal_system:
-            self.heat_sys_is_sized_based_on_design_day = (
-                not self.get_inp(BDL_SystemKeywords.HEATING_CAPACITY)
-                and not self.children[0].get_inp(BDL_ZoneKeywords.MAX_HEAT_RATE)
-                and not self.children[0].get_inp(BDL_ZoneKeywords.HEATING_CAPACITY)
-            )
+        if len(energy_source_set) == 1:
+            return energy_source_set.pop()
         else:
-            self.heat_sys_is_sized_based_on_design_day = not self.get_inp(
-                BDL_SystemKeywords.HEATING_CAPACITY
-            )
+            return EnergySourceOptions.OTHER
 
-        if self.heat_sys_type in [
-            HeatingSystemOptions.FLUID_LOOP,
-            HeatingSystemOptions.OTHER,
-        ]:
-            loop_name = self.get_inp(BDL_SystemKeywords.HW_LOOP)
-            loop = self.get_obj(loop_name)
-            if loop:
-                self.heat_sys_energy_source_type = self.get_loop_energy_source(loop)
-        elif self.heat_sys_type in [
-            HeatingSystemOptions.ELECTRIC_RESISTANCE,
-            HeatingSystemOptions.HEAT_PUMP,
-        ]:
-            self.heat_sys_energy_source_type = EnergySourceOptions.ELECTRICITY
-        elif self.heat_sys_type == HeatingSystemOptions.FURNACE:
-            self.heat_sys_energy_source_type = self.get_furnace_energy_source()
-        elif self.heat_sys_type == HeatingSystemOptions.NONE:
-            self.heat_sys_energy_source_type = EnergySourceOptions.NONE
-
-        self.heat_sys_efficiency_metric_values = []
-        self.heat_sys_efficiency_metric_types = []
-        self.populate_heating_eff_metric_and_value()
-
-    def populate_cooling_system(self, output_data):
-        self.cool_sys_id = self.u_name + " CoolSys"
-        self.cool_sys_type = self.system_cooling_type_map.get(
-            self.get_inp(BDL_SystemKeywords.TYPE)
-        )
-        self.cool_sys_chilled_water_loop = self.get_inp(BDL_SystemKeywords.CHW_LOOP)
-        self.cool_sys_condenser_water_loop = self.get_inp(BDL_SystemKeywords.CW_LOOP)
-        condensing_unit = self.get_inp(BDL_SystemKeywords.CONDENSING_UNIT)
-        self.vrf_sys_condenser = self.get_obj(condensing_unit)
-        self.cool_sys_turndown_ratio = self.try_float(
-            self.get_inp(BDL_SystemKeywords.MIN_UNLOAD_RATIO)
-        )
-        sizing_ratio = self.try_float(self.get_inp(BDL_SystemKeywords.SIZING_RATIO))
-        cool_sizing_ratio = self.try_float(
-            self.get_inp(BDL_SystemKeywords.COOL_SIZING_RATI)
-        )
-        if sizing_ratio is not None and cool_sizing_ratio is not None:
-            self.cool_sys_oversizing_factor = max(
-                0, sizing_ratio * cool_sizing_ratio - 1
-            )
-        self.cool_sys_rated_total_cool_capacity = self.try_abs(
-            self.try_float(self.get_inp(BDL_SystemKeywords.COOLING_CAPACITY))
-        )
-        if not self.cool_sys_rated_total_cool_capacity:
-            self.cool_sys_rated_total_cool_capacity = self.try_abs(
-                output_data.get("Rated Cooling Capacity")
-            )
-        if not self.cool_sys_rated_total_cool_capacity:
-            self.cool_sys_rated_total_cool_capacity = self.try_abs(
-                output_data.get("Cooling Capacity")
-            )
-        self.cool_sys_rated_sensible_cool_capacity = self.try_abs(
-            self.try_float(self.get_inp(BDL_SystemKeywords.COOL_SH_CAP))
-        )
-        if not self.cool_sys_rated_sensible_cool_capacity:
-            rated_shr = self.try_abs(output_data.get("Rated Cooling SHR"))
-            if rated_shr and self.cool_sys_rated_total_cool_capacity and rated_shr != 1:
-                self.cool_sys_rated_sensible_cool_capacity = (
-                    rated_shr * self.cool_sys_rated_total_cool_capacity
-                )
-        if not self.cool_sys_rated_sensible_cool_capacity:
-            shr = self.try_abs(output_data.get("Sensible Heat Ratio"))
-            if shr and self.cool_sys_rated_total_cool_capacity:
-                self.cool_sys_rated_sensible_cool_capacity = (
-                    shr * self.cool_sys_rated_total_cool_capacity
-                )
-        self.cool_sys_design_total_cool_capacity = self.try_abs(
-            output_data.get("Design Cooling Capacity")
-        )
-        if not self.cool_sys_design_total_cool_capacity:
-            self.cool_sys_design_total_cool_capacity = self.try_abs(
-                output_data.get("Cooling Capacity")
-            )
-        design_shr = self.try_abs(output_data.get("Design Cooling SHR"))
-        if design_shr and self.cool_sys_design_total_cool_capacity and design_shr != 1:
-            self.cool_sys_design_sensible_cool_capacity = (
-                design_shr * self.cool_sys_design_total_cool_capacity
-            )
-        if not self.cool_sys_design_sensible_cool_capacity:
-            shr = self.try_abs(output_data.get("Sensible Heat Ratio"))
-            if shr and self.cool_sys_design_total_cool_capacity:
-                self.cool_sys_design_sensible_cool_capacity = (
-                    shr * self.cool_sys_design_total_cool_capacity
-                )
-        if self.is_zonal_system:
-            self.cool_sys_is_sized_based_on_design_day = (
-                not self.get_inp(BDL_SystemKeywords.COOLING_CAPACITY)
-                and not self.children[0].get_inp(BDL_ZoneKeywords.MAX_COOL_RATE)
-                and not self.children[0].get_inp(BDL_ZoneKeywords.COOLING_CAPACITY)
-            )
+    def get_furnace_energy_source(self):
+        """Get the energy source type for the furnace. Used to populate the energy_source_type."""
+        heat_fuel_meter = self.get_obj(self.get_inp(BDL_SystemKeywords.HEAT_FUEL_METER))
+        if heat_fuel_meter:
+            return heat_fuel_meter.fuel_type
         else:
-            self.cool_sys_is_sized_based_on_design_day = not self.get_inp(
-                BDL_SystemKeywords.COOLING_CAPACITY
-            )
-
-        self.cool_sys_efficiency_metric_values = []
-        self.cool_sys_efficiency_metric_types = []
-        self.populate_cooling_eff_metric_and_value()
-
-    def populate_preheat_system(self, output_data):
-        self.preheat_sys_id = self.u_name + " PreheatSys"
-        self.preheat_sys_type = self.heat_type_map.get(
-            self.get_inp(BDL_SystemKeywords.PREHEAT_SOURCE)
-        )
-        self.preheat_sys_rated_capacity = self.try_abs(
-            self.try_float(self.get_inp(BDL_SystemKeywords.PREHEAT_CAPACITY))
-        )
-        self.preheat_sys_design_capacity = self.try_abs(
-            output_data.get("Design Preheat Capacity")
-        )
-        self.preheat_sys_is_sized_based_on_design_day = not self.get_inp(
-            BDL_SystemKeywords.PREHEAT_CAPACITY
-        )
-        self.preheat_sys_heating_coil_setpoint = self.try_float(
-            self.get_inp(BDL_SystemKeywords.PREHEAT_T)
-        )
-        self.preheat_sys_hot_water_loop = self.get_inp(BDL_SystemKeywords.PHW_LOOP)
-        if self.preheat_sys_type in [
-            HeatingSystemOptions.FLUID_LOOP,
-            HeatingSystemOptions.OTHER,
-        ]:
-            loop = self.get_obj(self.preheat_sys_hot_water_loop)
-            if loop:
-                self.preheat_sys_energy_source_type = self.get_loop_energy_source(loop)
-        elif self.preheat_sys_type in [
-            HeatingSystemOptions.ELECTRIC_RESISTANCE,
-            HeatingSystemOptions.HEAT_PUMP,
-        ]:
-            self.preheat_sys_energy_source_type = EnergySourceOptions.ELECTRICITY
-        elif self.preheat_sys_type == HeatingSystemOptions.FURNACE:
-            self.preheat_sys_energy_source_type = self.get_furnace_energy_source()
-        elif self.preheat_sys_type == HeatingSystemOptions.NONE:
-            self.preheat_sys_energy_source_type = EnergySourceOptions.NONE
-
-        self.preheat_sys_efficiency_metric_types = []
-        self.preheat_sys_efficiency_metric_values = []
-        self.populate_preheat_eff_metric_and_value()
+            master_meters = self.get_obj(self.rmd.master_meters)
+            if master_meters:
+                heat_fuel_meter = self.get_obj(
+                    master_meters.get_inp(BDL_MasterMeterKeywords.HEAT_FUEL_METER)
+                )
+                if heat_fuel_meter:
+                    return heat_fuel_meter.fuel_type
 
     def populate_fans(self, output_data):
         # There is always a supply fan for a fan system in eQUEST, so it is always populated
-        self.fan_id[0] = self.u_name + " SupplyFan"
-        self.fan_design_airflow[0] = output_data.get("Supply Fan - Airflow")
-        self.fan_design_electric_power[0] = output_data.get("Supply Fan - Power")
+        self.supply_fan = Fan()
+        self.supply_fan.name = self.u_name + " SupplyFan"
+        self.supply_fan.design_airflow = output_data.get("Supply Fan - Airflow")
+        self.supply_fan.design_electric_power = output_data.get("Supply Fan - Power")
         if self.get_inp(BDL_SystemKeywords.SUPPLY_FLOW) is not None:
-            self.fan_is_airflow_sized_based_on_design_day[0] = False
-        if self.fan_is_airflow_sized_based_on_design_day[0] is None:
-            self.fan_is_airflow_sized_based_on_design_day[0] = (
+            self.supply_fan.is_airflow_sized_based_on_design_day = False
+        if self.supply_fan.is_airflow_sized_based_on_design_day is None:
+            self.supply_fan.is_airflow_sized_based_on_design_day = (
                 # If any zone served by the system has assigned flow rates, the fan is not sized based on design day
                 not any(
                     child_zone.get_inp(BDL_ZoneKeywords.ASSIGNED_FLOW)
@@ -1366,24 +790,27 @@ class System(ParentNode):
                     for child_zone in self.children
                 )
             )
-        self.fan_specification_method[0] = (
+        self.supply_fan.specification_method = (
             FanSpecificationMethodOptions.DETAILED
             if self.get_inp(BDL_SystemKeywords.SUPPLY_STATIC) is not None
             else FanSpecificationMethodOptions.SIMPLE
         )
-        self.fan_design_pressure_rise[0] = self.try_float(
+        self.supply_fan.design_pressure_rise = self.try_float(
             self.get_inp(BDL_SystemKeywords.SUPPLY_STATIC)
         )
-        self.fan_motor_efficiency[0] = self.try_float(
+        self.supply_fan.motor_efficiency = self.try_float(
             self.get_inp(BDL_SystemKeywords.SUPPLY_MTR_EFF)
         )
         supply_mech_eff = self.try_float(
             self.get_inp(BDL_SystemKeywords.SUPPLY_MECH_EFF)
         )
-        if self.fan_motor_efficiency[0] and supply_mech_eff:
-            self.fan_total_efficiency[0] = (
-                self.fan_motor_efficiency[0] * supply_mech_eff
+        if self.supply_fan.motor_efficiency and supply_mech_eff:
+            self.supply_fan.total_efficiency = (
+                self.supply_fan.motor_efficiency * supply_mech_eff
             )
+
+        self.supply_fan.populate_data_group()
+
         # Determine if there is either a return or relief fan
         return_or_relief = (
             self.get_inp(BDL_SystemKeywords.RETURN_STATIC) is not None
@@ -1395,77 +822,93 @@ class System(ParentNode):
             and self.get_inp(BDL_SystemKeywords.RETURN_FAN_LOC)
             == BDL_ReturnFanOptions.RELIEF
         ):
-            self.fan_id[2] = self.u_name + " ReliefFan"
-            self.fan_design_airflow[2] = output_data.get("Return Fan - Airflow", None)
-            self.fan_design_electric_power[2] = output_data.get(
+            self.relief_fan = Fan()
+            self.relief_fan.name = self.u_name + " ReliefFan"
+            self.relief_fan.design_airflow = output_data.get(
+                "Return Fan - Airflow", None
+            )
+            self.relief_fan.design_electric_power = output_data.get(
                 "Return Fan - Power", None
             )
             if self.get_inp(BDL_SystemKeywords.RETURN_FLOW) is not None:
-                self.fan_is_airflow_sized_based_on_design_day[2] = False
-            if self.fan_is_airflow_sized_based_on_design_day[2] is None:
-                self.fan_is_airflow_sized_based_on_design_day[2] = (
-                    self.fan_is_airflow_sized_based_on_design_day[0]
+                self.relief_fan.is_airflow_sized_based_on_design_day = False
+            if self.relief_fan.is_airflow_sized_based_on_design_day is None:
+                self.relief_fan.is_airflow_sized_based_on_design_day = (
+                    self.supply_fan.is_airflow_sized_based_on_design_day
                 )
-            self.fan_specification_method[2] = (
+            self.relief_fan.specification_method = (
                 FanSpecificationMethodOptions.DETAILED
                 if self.get_inp(BDL_SystemKeywords.RETURN_STATIC) is not None
                 else FanSpecificationMethodOptions.SIMPLE
             )
-            self.fan_design_pressure_rise[2] = self.try_float(
+            self.relief_fan.design_pressure_rise = self.try_float(
                 self.get_inp(BDL_SystemKeywords.RETURN_STATIC)
             )
-            self.fan_motor_efficiency[2] = self.try_float(
+            self.relief_fan.motor_efficiency = self.try_float(
                 self.get_inp(BDL_SystemKeywords.RETURN_MTR_EFF)
             )
             return_mech_eff = self.try_float(
                 self.get_inp(BDL_SystemKeywords.RETURN_MECH_EFF)
             )
-            if self.fan_motor_efficiency[2] and return_mech_eff:
-                self.fan_total_efficiency[2] = (
-                    self.fan_motor_efficiency[2] * return_mech_eff
+            if self.relief_fan.motor_efficiency and return_mech_eff:
+                self.relief_fan.total_efficiency = (
+                    self.relief_fan.motor_efficiency * return_mech_eff
                 )
+
+            self.relief_fan.populate_data_group()
 
         # If the return or relief fan location is not set to RELIEF, it is categorized as a return fan
         elif return_or_relief:
-            self.fan_id[1] = self.u_name + " ReturnFan"
-            self.fan_design_airflow[1] = output_data.get("Return Fan - Airflow", None)
-            self.fan_design_electric_power[1] = output_data.get("Return Fan - Power")
+            self.return_fan = Fan()
+            self.return_fan.name = self.u_name + " ReturnFan"
+            self.return_fan.design_airflow = output_data.get(
+                "Return Fan - Airflow", None
+            )
+            self.return_fan.design_electric_power = output_data.get(
+                "Return Fan - Power"
+            )
             if self.get_inp(BDL_SystemKeywords.RETURN_FLOW) is not None:
-                self.fan_is_airflow_sized_based_on_design_day[1] = False
-            if self.fan_is_airflow_sized_based_on_design_day[1] is None:
-                self.fan_is_airflow_sized_based_on_design_day[1] = (
-                    self.fan_is_airflow_sized_based_on_design_day[0]
+                self.return_fan.is_airflow_sized_based_on_design_day = False
+            if self.return_fan.is_airflow_sized_based_on_design_day is None:
+                self.return_fan.is_airflow_sized_based_on_design_day = (
+                    self.supply_fan.is_airflow_sized_based_on_design_day
                 )
 
-            self.fan_specification_method[1] = (
+            self.return_fan.specification_method = (
                 FanSpecificationMethodOptions.DETAILED
                 if self.get_inp(BDL_SystemKeywords.RETURN_STATIC) is not None
                 else FanSpecificationMethodOptions.SIMPLE
             )
-            self.fan_design_pressure_rise[1] = self.try_float(
+            self.return_fan.design_pressure_rise = self.try_float(
                 self.get_inp(BDL_SystemKeywords.RETURN_STATIC)
             )
-            self.fan_motor_efficiency[1] = self.try_float(
+            self.return_fan.motor_efficiency = self.try_float(
                 self.get_inp(BDL_SystemKeywords.RETURN_MTR_EFF)
             )
             return_mech_eff = self.try_float(
                 self.get_inp(BDL_SystemKeywords.RETURN_MECH_EFF)
             )
-            if self.fan_motor_efficiency[1] and return_mech_eff:
-                self.fan_total_efficiency[1] = (
-                    self.fan_motor_efficiency[1] * return_mech_eff
+            if self.return_fan.motor_efficiency and return_mech_eff:
+                self.return_fan.total_efficiency = (
+                    self.return_fan.motor_efficiency * return_mech_eff
                 )
+
+            self.return_fan.populate_data_group()
+
         # If the system is a dual duct system and the dual duct fan option is dual fan, there is a heating supply fan
         if self.get_inp(BDL_SystemKeywords.DDS_TYPE) == BDL_DualDuctFanOptions.DUAL_FAN:
-            self.fan_id[3] = self.u_name + " HeatingSupplyFan"
-            self.fan_design_airflow[3] = output_data.get("Heating Supply Fan - Airflow")
-            self.fan_design_electric_power[3] = output_data.get(
+            self.heating_supply_fan = Fan()
+            self.heating_supply_fan.name = self.u_name + " HeatingSupplyFan"
+            self.heating_supply_fan.design_airflow = output_data.get(
+                "Heating Supply Fan - Airflow"
+            )
+            self.heating_supply_fan.design_electric_power = output_data.get(
                 "Heating Supply Fan - Power"
             )
             if self.get_inp(BDL_SystemKeywords.HSUPPLY_FLOW) is not None:
-                self.fan_is_airflow_sized_based_on_design_day[3] = False
-            if self.fan_is_airflow_sized_based_on_design_day[3] is None:
-                self.fan_is_airflow_sized_based_on_design_day[3] = (
+                self.heating_supply_fan.is_airflow_sized_based_on_design_day = False
+            if self.heating_supply_fan.is_airflow_sized_based_on_design_day is None:
+                self.heating_supply_fan.is_airflow_sized_based_on_design_day = (
                     # If any zone served by the system has assigned flow rates, the fan is not sized based on design day
                     any(
                         child_zone.get_inp(BDL_ZoneKeywords.HASSIGNED_FLOW)
@@ -1475,224 +918,238 @@ class System(ParentNode):
                         for child_zone in self.children
                     )
                 )
-            self.fan_specification_method[3] = (
+            self.heating_supply_fan.specification_method = (
                 FanSpecificationMethodOptions.DETAILED
                 if self.get_inp(BDL_SystemKeywords.HSUPPLY_STATIC) is not None
                 else FanSpecificationMethodOptions.SIMPLE
             )
-            self.fan_design_pressure_rise[3] = self.try_float(
+            self.heating_supply_fan.design_pressure_rise = self.try_float(
                 self.get_inp(BDL_SystemKeywords.HSUPPLY_STATIC)
             )
-            self.fan_motor_efficiency[3] = self.try_float(
+            self.heating_supply_fan.motor_efficiency = self.try_float(
                 self.get_inp(BDL_SystemKeywords.HSUPPLY_MTR_EFF)
             )
             hsupply_mech_eff = self.try_float(
                 self.get_inp(BDL_SystemKeywords.HSUPPLY_MECH_EFF)
             )
-            if self.fan_motor_efficiency[3] and hsupply_mech_eff:
-                self.fan_total_efficiency[3] = (
-                    self.fan_motor_efficiency[3] * hsupply_mech_eff
+            if self.heating_supply_fan.motor_efficiency and hsupply_mech_eff:
+                self.heating_supply_fan.total_efficiency = (
+                    self.heating_supply_fan.motor_efficiency * hsupply_mech_eff
                 )
 
-    def populate_air_economizer(self):
-        self.air_econ_id = self.u_name + " AirEconomizer"
-        self.air_econ_type = self.economizer_map.get(
-            self.get_inp(BDL_SystemKeywords.OA_CONTROL)
-        )
-        self.air_econ_high_limit_shutoff_temperature = self.try_float(
-            self.get_inp(BDL_SystemKeywords.ECONO_LIMIT_T)
-        )
-        self.air_econ_is_integrated = (
-            True
-            if self.get_inp(BDL_SystemKeywords.COOL_SOURCE)
-            == BDL_SystemCoolingTypes.CHILLED_WATER
-            else not self.boolean_map.get(
-                self.get_inp(BDL_SystemKeywords.ECONO_LOCKOUT)
-            )
-        )
+            self.heating_supply_fan.populate_data_group()
 
-    def populate_air_energy_recovery(self):
-        self.air_energy_recovery_id = self.u_name + " AirEnergyRecovery"
-        recover_exhaust = self.get_inp(BDL_SystemKeywords.RECOVER_EXHAUST)
-        recovery_type = self.recovery_type_map.get(
-            self.get_inp(BDL_SystemKeywords.ERV_RECOVER_TYPE)
+
+class FanSystem:
+
+    supply_fan_control_map = {
+        BDL_SystemFanControlOptions.CONSTANT_VOLUME: FanSystemSupplyFanControlOptions.CONSTANT,
+        BDL_SystemFanControlOptions.SPEED: FanSystemSupplyFanControlOptions.VARIABLE_SPEED_DRIVE,
+        #  "": FanSystemSupplyFanControlOptions.MULTISPEED",  no eQUEST options map to MULTISPEED in DOE2.3
+        BDL_SystemFanControlOptions.INLET: FanSystemSupplyFanControlOptions.INLET_VANE,
+        BDL_SystemFanControlOptions.DISCHARGE: FanSystemSupplyFanControlOptions.DISCHARGE_DAMPER,
+        BDL_SystemFanControlOptions.FAN_EIR_FPLR: FanSystemSupplyFanControlOptions.VARIABLE_SPEED_DRIVE,
+    }
+    occupied_fan_operation_map = {
+        BDL_IndoorFanModeOptions.CONTINUOUS: FanSystemOperationOptions.CONTINUOUS,
+        BDL_IndoorFanModeOptions.INTERMITTENT: FanSystemOperationOptions.CYCLING,
+    }
+    unoccupied_fan_operation_map = {
+        BDL_NightCycleControlOptions.CYCLE_ON_ANY: FanSystemOperationOptions.CYCLING,
+        BDL_NightCycleControlOptions.CYCLE_ON_FIRST: FanSystemOperationOptions.CYCLING,
+        BDL_NightCycleControlOptions.STAY_OFF: FanSystemOperationOptions.KEEP_OFF,
+        BDL_NightCycleControlOptions.ZONE_FANS_ONLY: FanSystemOperationOptions.OTHER,
+    }
+    dcv_map = {
+        BDL_SystemMinimumOutdoorAirControlOptions.FRAC_OF_DESIGN_FLOW: DemandControlVentilationControlOptions.NONE,
+        BDL_SystemMinimumOutdoorAirControlOptions.FRAC_OF_HOURLY_FLOW: DemandControlVentilationControlOptions.NONE,
+        BDL_SystemMinimumOutdoorAirControlOptions.DCV_RETURN_SENSOR: DemandControlVentilationControlOptions.CO2_RETURN_AIR,
+        BDL_SystemMinimumOutdoorAirControlOptions.DCV_ZONE_SENSORS: DemandControlVentilationControlOptions.CO2_ZONE,
+    }
+    single_zone_system_types = [
+        BDL_SystemTypes.PSZ,
+        BDL_SystemTypes.SZRH,
+        BDL_SystemTypes.SZCI,
+        BDL_SystemTypes.PVVT,
+        BDL_SystemTypes.FC,
+        BDL_SystemTypes.HP,
+        BDL_SystemTypes.UHT,
+        BDL_SystemTypes.UVT,
+        BDL_SystemTypes.PTAC,
+        BDL_SystemTypes.RESYS,
+        BDL_SystemTypes.RESYS2,
+    ]
+    single_duct_system_types = [
+        BDL_SystemTypes.PVAVS,
+        BDL_SystemTypes.VAVS,
+        BDL_SystemTypes.CBVAV,
+        BDL_SystemTypes.RHFS,
+        BDL_SystemTypes.PIU,
+        BDL_SystemTypes.IU,
+    ]
+    multi_duct_system_types = [
+        BDL_SystemTypes.MZS,
+        BDL_SystemTypes.PMZS,
+        BDL_SystemTypes.DDS,
+    ]
+
+    def __init__(self, parent_system):
+        self.parent_system = parent_system
+        self.data_structure = {}
+
+        self.name = None
+        self.reporting_name = None
+        self.notes = None
+
+        self.supply_fans = []
+        self.return_fans = []
+        self.exhaust_fans = []
+        self.relief_fans = []
+        self.air_economizer = {}
+        self.air_energy_recovery = {}
+
+        self.temperature_control = None
+        self.operation_during_occupied = None
+        self.operation_during_unoccupied = None
+        self.has_lockout_central_heat_during_unoccupied = None
+        self.fan_control = None
+        self.reset_differential_temperature = None
+        self.supply_air_temperature_reset_load_fraction = None
+        self.supply_air_temperature_reset_schedule = None
+        self.fan_volume_reset_type = None
+        self.fan_volume_reset_fraction = None
+        self.operating_schedule = None
+        self.minimum_airflow = None
+        self.minimum_outdoor_airflow = None
+        self.maximum_outdoor_airflow = None
+        self.air_filter_merv_rating = None
+        self.has_fully_ducted_return = None
+        self.demand_control_ventilation_control = None
+
+    def populate_data_elements(self, output_data):
+        self.name = self.parent_system.u_name + " FanSys"
+        self.has_fully_ducted_return = (
+            self.parent_system.get_inp(BDL_SystemKeywords.RETURN_AIR_PATH)
+            == BDL_ReturnAirPathOptions.DUCT
         )
-        self.has_recovery_map.update(
+        self.fan_control = self.supply_fan_control_map.get(
+            self.parent_system.get_inp(BDL_SystemKeywords.FAN_CONTROL)
+        )
+        self.temperature_control = self.get_temperature_control()
+        self.demand_control_ventilation_control = self.dcv_map.get(
+            self.parent_system.get_inp(BDL_SystemKeywords.MIN_OA_METHOD)
+        )
+        cool_control = self.parent_system.get_inp(BDL_SystemKeywords.COOL_CONTROL)
+        min_reset_t = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.COOL_MIN_RESET_T)
+        )
+        max_reset_t = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.COOL_MAX_RESET_T)
+        )
+        if (
+            cool_control == BDL_CoolControlOptions.WARMEST
+            and min_reset_t is not None
+            and max_reset_t is not None
+        ):
+            self.reset_differential_temperature = max_reset_t - min_reset_t
+        supply_fan_airflow = output_data.get("Supply Fan - Airflow")
+        supply_min_flow_ratio = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.MIN_FLOW_RATIO)
+        )
+        supply_min_fan_ratio = output_data.get("Supply Fan - Min Flow Ratio")
+        oa_ratio = output_data.get("Outside Air Ratio")
+        if oa_ratio is not None and supply_fan_airflow is not None:
+            self.minimum_outdoor_airflow = oa_ratio * supply_fan_airflow
+        if supply_min_fan_ratio is not None and supply_fan_airflow is not None:
+            self.minimum_airflow = supply_min_fan_ratio * supply_fan_airflow
+        # Set fan control of systems that have a min flow ratio of 1
+        if supply_min_flow_ratio == 1:
+            self.fan_control = FanSystemSupplyFanControlOptions.CONSTANT
+        # Override fan control of systems that have CONSTANT_VOLUME fans with a minimum flow ratio less than 1
+        elif (
+            supply_min_fan_ratio is not None
+            and supply_min_fan_ratio < 1
+            and self.fan_control == FanSystemSupplyFanControlOptions.CONSTANT
+        ):
+            self.fan_control = FanSystemSupplyFanControlOptions.DISCHARGE_DAMPER
+        self.operation_during_unoccupied = self.unoccupied_fan_operation_map.get(
+            self.parent_system.get_inp(BDL_SystemKeywords.NIGHT_CYCLE_CTRL)
+        )
+        self.operation_during_occupied = self.populate_fan_operation_during_occupied()
+
+    def populate_data_group(self):
+        self.data_structure.update(
             {
-                BDL_EnergyRecoveryOptions.RELIEF_ONLY: recovery_type,
-                BDL_EnergyRecoveryOptions.EXHAUST_ONLY: recovery_type,
-                BDL_EnergyRecoveryOptions.RELIEF_EXHAUST: recovery_type,
-                BDL_EnergyRecoveryOptions.YES: recovery_type,
+                "id": self.name,
+                "supply_fans": [self.parent_system.supply_fan.data_structure],
             }
         )
-        self.air_energy_recovery_type = self.has_recovery_map.get(recover_exhaust)
-        self.air_energy_recovery_energy_recovery_operation = self.er_operation_map.get(
-            self.get_inp(BDL_SystemKeywords.ERV_RUN_CTRL)
-        )
-        self.air_energy_recovery_energy_recovery_supply_air_temperature_control = (
-            self.er_sat_control_map.get(self.get_inp(BDL_SystemKeywords.ERV_TEMP_CTRL))
-        )
-        self.air_energy_recovery_design_sensible_effectiveness = self.try_float(
-            self.get_inp(BDL_SystemKeywords.ERV_SENSIBLE_EFF)
-        )
-        self.air_energy_recovery_design_latent_effectiveness = self.try_float(
-            self.get_inp(BDL_SystemKeywords.ERV_LATENT_EFF)
-        )
-        self.air_energy_recovery_outdoor_airflow = self.try_float(
-            self.get_inp(BDL_SystemKeywords.ERV_OA_FLOW)
-        )
-        if self.air_energy_recovery_outdoor_airflow is None:
-            self.air_energy_recovery_outdoor_airflow = (
-                self.fan_sys_minimum_outdoor_airflow
+        if self.parent_system.heating_supply_fan:
+            self.data_structure["supply_fans"].append(
+                self.parent_system.heating_supply_fan.data_structure
             )
-        self.air_energy_recovery_exhaust_airflow = self.try_float(
-            self.get_inp(BDL_SystemKeywords.ERV_EXH_FLOW)
-        )
-        if self.air_energy_recovery_exhaust_airflow is None:
-            self.air_energy_recovery_exhaust_airflow = (
-                self.air_energy_recovery_outdoor_airflow
-            )
-
-    def populate_fan_operation_during_occupied(self):
-        fan_sch = self.get_obj(self.get_inp(BDL_SystemKeywords.FAN_SCHEDULE))
-
-        if self.get_inp(BDL_SystemKeywords.TYPE) == BDL_SystemTypes.RESVVT:
-            return FanSystemOperationOptions.CYCLING
-
-        elif self.get_inp(BDL_SystemKeywords.TYPE) == BDL_SystemTypes.DOAS:
-            if not fan_sch:
-                return FanSystemOperationOptions.CONTINUOUS
-            elif all(value == -999 for value in fan_sch.hourly_values):
-                return FanSystemOperationOptions.CONTINUOUS
-
-            doas_occ_sch = self.get_doas_occ_sch()
-            all_occupied_off = True
-            all_occupied_on = True
-            for i, hour in enumerate(doas_occ_sch):
-                if hour == 1:
-                    value = fan_sch.hourly_values[i]
-                    if value not in [0, -1]:
-                        all_occupied_off = False
-                    if value not in [1, -999]:
-                        all_occupied_on = False
-            if all_occupied_off:
-                return FanSystemOperationOptions.KEEP_OFF
-            if all_occupied_on:
-                return FanSystemOperationOptions.CONTINUOUS
-            return FanSystemOperationOptions.OTHER
-
-        elif self.get_inp(BDL_SystemKeywords.TYPE) in [
-            BDL_SystemTypes.PTAC,
-            BDL_SystemTypes.HP,
-            BDL_SystemTypes.UVT,
-            BDL_SystemTypes.UHT,
-            BDL_SystemTypes.PSZ,
-            BDL_SystemTypes.PVVT,
-            BDL_SystemTypes.RESYS2,
-            BDL_SystemTypes.EVAP_COOL,
-            BDL_SystemTypes.FC,
-            BDL_SystemTypes.SZRH,
-        ]:
-            if not fan_sch:
-                return self.occupied_fan_operation_map.get(
-                    self.get_inp(BDL_SystemKeywords.INDOOR_FAN_MODE)
-                )
-
-            has_one = False
-            has_neg_999 = False
-            is_all_0 = True
-            is_all_1 = True
-            for value in fan_sch.hourly_values:
-                if is_all_0 and value != 0:
-                    is_all_0 = False
-                if is_all_1 and value != 1:
-                    is_all_1 = False
-                if not has_one and value == 1:
-                    has_one = True
-                elif not has_neg_999 and value == -999:
-                    has_neg_999 = True
-
-            # Handle special case where all fan schedule values are 0 so unoccupied/occupied cannot be distinguished
-            if is_all_0:
-                return self.unoccupied_fan_operation_map.get(
-                    self.get_inp(BDL_SystemKeywords.NIGHT_CYCLE_CTRL)
-                )
-            if is_all_1:
-                self.fan_sys_operation_during_unoccupied = (
-                    self.occupied_fan_operation_map.get(
-                        self.get_inp(BDL_SystemKeywords.INDOOR_FAN_MODE)
-                    )
-                )
-
-            mixed_operation = has_one and has_neg_999
-            if mixed_operation:
-                return FanSystemOperationOptions.OTHER
-            if has_one:  # and not mixed_operation implied to reach here
-                return self.occupied_fan_operation_map.get(
-                    self.get_inp(BDL_SystemKeywords.INDOOR_FAN_MODE)
-                )
-            if has_neg_999:  # and not mixed_operation implied to reach here
-                return FanSystemOperationOptions.CYCLING
-
-        else:
-            if fan_sch:
-                # Handle special case where all fan schedule values are 0 so unoccupied/occupied cannot be distinguished
-                if all(value == 0 for value in fan_sch.hourly_values):
-                    return self.unoccupied_fan_operation_map.get(
-                        self.get_inp(BDL_SystemKeywords.NIGHT_CYCLE_CTRL)
-                    )
-                if all(value == 1 for value in fan_sch.hourly_values):
-                    self.fan_sys_operation_during_unoccupied = (
-                        FanSystemOperationOptions.CONTINUOUS
-                    )
-
-                if any(value == -999 for value in fan_sch.hourly_values):
-                    # TODO raise this error in a window of the GUI
-                    raise ValueError(
-                        f"""Fan schedule {fan_sch.u_name} for system {self.u_name} is not allowed to have -999 values. These
-                        flags are not accurately supported by DOE 2.3 (see help text Volume 2: Dictionary > HVAC Components 
-                        > SYSTEM > Airside Control > Fan Availability)"""
-                    )
-
-            return (
-                FanSystemOperationOptions.CONTINUOUS
-            )  # if there is no fan schedule or the fan schedule has 1s
-
-    def get_doas_occ_sch(self):
-        systems_served = [
-            obj_inst
-            for obj_inst in list(map(self.get_obj, self.rmd.system_names))
-            if obj_inst.get_inp(BDL_SystemKeywords.DOA_SYSTEM) == self.u_name
-        ]
-        system_fan_schedules = {
-            schedule
-            for system in systems_served
-            for schedule in [
-                self.get_obj(system.get_inp(BDL_SystemKeywords.FAN_SCHEDULE))
+        if self.parent_system.return_fan:
+            self.data_structure["return_fans"] = [
+                self.parent_system.return_fan.data_structure
             ]
-            if schedule is not None
-        }
-        occupied_hours = [
-            1 if any(hour == 1 for hour in hours) else 0
-            for hours in zip(
-                *(schedule.hourly_values for schedule in system_fan_schedules)
+        if self.parent_system.relief_fan:
+            self.data_structure["relief_fans"] = [
+                self.parent_system.relief_fan.data_structure
+            ]
+        if self.parent_system.air_energy_recovery:
+            self.data_structure["air_energy_recovery"] = (
+                self.parent_system.air_energy_recovery.data_structure
             )
+        if self.parent_system.air_economizer:
+            self.data_structure["air_economizer"] = (
+                self.parent_system.air_economizer.data_structure
+            )
+
+        fan_system_data_elements = [
+            "reporting_name",
+            "notes",
+            "temperature_control",
+            "operation_during_occupied",
+            "operation_during_unoccupied",
+            "has_lockout_central_heat_during_unoccupied",
+            "fan_control",
+            "reset_differential_temperature",
+            "supply_air_temperature_reset_load_fraction",
+            "supply_air_temperature_reset_schedule",
+            "fan_volume_reset_type",
+            "fan_volume_reset_fraction",
+            "operating_schedule",
+            "minimum_airflow",
+            "minimum_outdoor_airflow",
+            "maximum_outdoor_airflow",
+            "air_filter_merv_rating",
+            "has_fully_ducted_return",
+            "demand_control_ventilation_control",
         ]
-        return occupied_hours
+        for attr in fan_system_data_elements:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.data_structure[attr] = value
 
     def get_temperature_control(self):
-        system_type = self.get_inp(BDL_SystemKeywords.TYPE)
-        cool_control = self.get_inp(BDL_SystemKeywords.COOL_CONTROL)
-        cool_set_t = self.try_float(self.get_inp(BDL_SystemKeywords.COOL_SET_T))
-        cool_max_reset_t = self.try_float(
-            self.get_inp(BDL_SystemKeywords.COOL_MAX_RESET_T)
+        system_type = self.parent_system.get_inp(BDL_SystemKeywords.TYPE)
+        cool_control = self.parent_system.get_inp(BDL_SystemKeywords.COOL_CONTROL)
+        cool_set_t = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.COOL_SET_T)
         )
-        heat_control = self.get_inp(BDL_SystemKeywords.HEAT_CONTROL)
-        heat_set_t = self.try_float(self.get_inp(BDL_SystemKeywords.HEAT_SET_T))
-        heat_max_reset_t = self.try_float(
-            self.get_inp(BDL_SystemKeywords.HEAT_MAX_RESET_T)
+        cool_max_reset_t = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.COOL_MAX_RESET_T)
         )
-        min_flow_ratio = self.try_float(self.get_inp(BDL_SystemKeywords.MIN_FLOW_RATIO))
+        heat_control = self.parent_system.get_inp(BDL_SystemKeywords.HEAT_CONTROL)
+        heat_set_t = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.HEAT_SET_T)
+        )
+        heat_max_reset_t = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.HEAT_MAX_RESET_T)
+        )
+        min_flow_ratio = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.MIN_FLOW_RATIO)
+        )
 
         if system_type in self.multi_duct_system_types:
             return FanSystemTemperatureControlOptions.OTHER
@@ -1738,115 +1195,435 @@ class System(ParentNode):
         elif system_type == BDL_SystemTypes.DOAS:
             pass
 
-    def get_loop_energy_source(self, loop):
-        """Get the energy source type for the loop. Used to populate the energy_source_type."""
-        energy_source_set = set()
-        for boiler_name in self.rmd.boiler_names:
-            boiler = self.get_obj(boiler_name)
-            if boiler.loop == loop.u_name:
-                energy_source_set.add(boiler.energy_source_type)
-
-        for steam_meter_name in self.rmd.steam_meter_names:
-            steam_meter = self.get_obj(steam_meter_name)
-            if steam_meter.loop == loop.u_name:
-                energy_source_set.add(steam_meter.energy_source_type)
-
-        for chiller_name in self.rmd.chiller_names:
-            chiller = self.get_obj(chiller_name)
-            if chiller.heat_recovery_loop == loop.u_name:
-                energy_source_set.add(EnergySourceOptions.ELECTRICITY)
-
-        for domestic_water_heater_name in self.rmd.domestic_water_heater_names:
-            domestic_water_heater = self.get_obj(domestic_water_heater_name)
-            if domestic_water_heater.hot_water_loop == loop.u_name:
-                energy_source_set.add(domestic_water_heater.heater_fuel_type)
-
-        if len(energy_source_set) == 1:
-            return energy_source_set.pop()
-        else:
-            return EnergySourceOptions.OTHER
-
-    def get_furnace_energy_source(self):
-        """Get the energy source type for the furnace. Used to populate the energy_source_type."""
-        heat_fuel_meter = self.get_obj(self.get_inp(BDL_SystemKeywords.HEAT_FUEL_METER))
-        if heat_fuel_meter:
-            return heat_fuel_meter.fuel_type
-        else:
-            master_meters = self.get_obj(self.rmd.master_meters)
-            if master_meters:
-                heat_fuel_meter = self.get_obj(
-                    master_meters.get_inp(BDL_MasterMeterKeywords.HEAT_FUEL_METER)
-                )
-                if heat_fuel_meter:
-                    return heat_fuel_meter.fuel_type
-
-    def populate_cooling_eff_metric_and_value(self):
-        """
-        Populate the cooling system efficiency metric and the efficiency value.
-        """
-        cooling_eir, cop, entering_condenser_temperature = None, None, None
-
-        if (cooling_eir := self.get_inp(BDL_SystemKeywords.COOLING_EIR)) is not None:
-            cop = 1 / self.try_float(cooling_eir)
-
-        if (rated_ect := self.get_inp(BDL_SystemKeywords.RATED_ECT)) is not None:
-            entering_condenser_temperature = self.try_float(rated_ect)
+    def populate_fan_operation_during_occupied(self):
+        fan_sch = self.parent_system.get_obj(
+            self.parent_system.get_inp(BDL_SystemKeywords.FAN_SCHEDULE)
+        )
 
         if (
-            self.bdl_output_cool_type in self.cool_eff_metric_map
-            and self.bdl_output_heat_type != BDL_OutputHeatingTypes.VRF
+            self.parent_system.get_inp(BDL_SystemKeywords.TYPE)
+            == BDL_SystemTypes.RESVVT
         ):
-            metric_type = self.cool_eff_metric_map[self.bdl_output_cool_type].get(
-                entering_condenser_temperature, CoolingMetricOptions.OTHER
-            )
-            self.cool_sys_efficiency_metric_types.append(metric_type)
-            self.cool_sys_efficiency_metric_values.append(cop)
-
-        elif self.bdl_output_heat_type == BDL_OutputHeatingTypes.VRF:
-            # Covers VRF, takes the efficiency from the condensing unit
-            if (
-                self.try_float(
-                    self.vrf_sys_condenser.get_inp(BDL_CondenserKeywords.COOL_RATED_ODB)
-                )
-                == 95
-            ):
-                self.cool_sys_efficiency_metric_types.append(
-                    CoolingMetricOptions.FULL_LOAD_COEFFICIENT_OF_PERFORMANCE_NO_FAN
-                )
-            else:
-                self.cool_sys_efficiency_metric_types.append(CoolingMetricOptions.OTHER)
-
-            if (
-                self.vrf_sys_condenser.get_inp(BDL_CondenserKeywords.COOLING_EIR)
-                is not None
-            ):
-                self.cool_sys_efficiency_metric_values.append(
-                    1
-                    / self.try_float(
-                        self.vrf_sys_condenser.get_inp(
-                            BDL_CondenserKeywords.COOLING_EIR
-                        )
-                    )
-                )
+            return FanSystemOperationOptions.CYCLING
 
         elif (
-            self.bdl_output_cool_type != BDL_OutputCoolingTypes.CHILLED_WATER
-            and self.bdl_output_cool_type is not None
+            self.parent_system.get_inp(BDL_SystemKeywords.TYPE) == BDL_SystemTypes.DOAS
         ):
-            self.cool_sys_efficiency_metric_types.append(CoolingMetricOptions.OTHER)
-            self.cool_sys_efficiency_metric_values.append(cop)
+            if not fan_sch:
+                return FanSystemOperationOptions.CONTINUOUS
+            elif all(value == -999 for value in fan_sch.hourly_values):
+                return FanSystemOperationOptions.CONTINUOUS
+
+            doas_occ_sch = self.get_doas_occ_sch()
+            all_occupied_off = True
+            all_occupied_on = True
+            for i, hour in enumerate(doas_occ_sch):
+                if hour == 1:
+                    value = fan_sch.hourly_values[i]
+                    if value not in [0, -1]:
+                        all_occupied_off = False
+                    if value not in [1, -999]:
+                        all_occupied_on = False
+            if all_occupied_off:
+                return FanSystemOperationOptions.KEEP_OFF
+            if all_occupied_on:
+                return FanSystemOperationOptions.CONTINUOUS
+            return FanSystemOperationOptions.OTHER
+
+        elif self.parent_system.get_inp(BDL_SystemKeywords.TYPE) in [
+            BDL_SystemTypes.PTAC,
+            BDL_SystemTypes.HP,
+            BDL_SystemTypes.UVT,
+            BDL_SystemTypes.UHT,
+            BDL_SystemTypes.PSZ,
+            BDL_SystemTypes.PVVT,
+            BDL_SystemTypes.RESYS2,
+            BDL_SystemTypes.EVAP_COOL,
+            BDL_SystemTypes.FC,
+            BDL_SystemTypes.SZRH,
+        ]:
+            if not fan_sch:
+                return self.occupied_fan_operation_map.get(
+                    self.parent_system.get_inp(BDL_SystemKeywords.INDOOR_FAN_MODE)
+                )
+
+            has_one = False
+            has_neg_999 = False
+            is_all_0 = True
+            is_all_1 = True
+            for value in fan_sch.hourly_values:
+                if is_all_0 and value != 0:
+                    is_all_0 = False
+                if is_all_1 and value != 1:
+                    is_all_1 = False
+                if not has_one and value == 1:
+                    has_one = True
+                elif not has_neg_999 and value == -999:
+                    has_neg_999 = True
+
+            # Handle special case where all fan schedule values are 0 so unoccupied/occupied cannot be distinguished
+            if is_all_0:
+                return self.unoccupied_fan_operation_map.get(
+                    self.parent_system.get_inp(BDL_SystemKeywords.NIGHT_CYCLE_CTRL)
+                )
+            if is_all_1:
+                self.operation_during_unoccupied = self.occupied_fan_operation_map.get(
+                    self.parent_system.get_inp(BDL_SystemKeywords.INDOOR_FAN_MODE)
+                )
+
+            mixed_operation = has_one and has_neg_999
+            if mixed_operation:
+                return FanSystemOperationOptions.OTHER
+            if has_one:  # and not mixed_operation implied to reach here
+                return self.occupied_fan_operation_map.get(
+                    self.parent_system.get_inp(BDL_SystemKeywords.INDOOR_FAN_MODE)
+                )
+            if has_neg_999:  # and not mixed_operation implied to reach here
+                return FanSystemOperationOptions.CYCLING
+
+        else:
+            if fan_sch:
+                # Handle special case where all fan schedule values are 0 so unoccupied/occupied cannot be distinguished
+                if all(value == 0 for value in fan_sch.hourly_values):
+                    return self.unoccupied_fan_operation_map.get(
+                        self.parent_system.get_inp(BDL_SystemKeywords.NIGHT_CYCLE_CTRL)
+                    )
+                if all(value == 1 for value in fan_sch.hourly_values):
+                    self.operation_during_unoccupied = (
+                        FanSystemOperationOptions.CONTINUOUS
+                    )
+
+                if any(value == -999 for value in fan_sch.hourly_values):
+                    # TODO raise this error in a window of the GUI
+                    raise ValueError(
+                        f"""Fan schedule {fan_sch.u_name} for system {self.parent_system.u_name} is not allowed to have -999 values. These
+                        flags are not accurately supported by DOE 2.3 (see help text Volume 2: Dictionary > HVAC Components 
+                        > SYSTEM > Airside Control > Fan Availability)"""
+                    )
+
+            return (
+                FanSystemOperationOptions.CONTINUOUS
+            )  # if there is no fan schedule or the fan schedule has 1s
+
+    def get_doas_occ_sch(self):
+        systems_served = [
+            obj_inst
+            for obj_inst in list(
+                map(self.parent_system.get_obj, self.parent_system.rmd.system_names)
+            )
+            if obj_inst.get_inp(BDL_SystemKeywords.DOA_SYSTEM)
+            == self.parent_system.u_name
+        ]
+        system_fan_schedules = {
+            schedule
+            for system in systems_served
+            for schedule in [
+                self.parent_system.get_obj(
+                    system.get_inp(BDL_SystemKeywords.FAN_SCHEDULE)
+                )
+            ]
+            if schedule is not None
+        }
+        occupied_hours = [
+            1 if any(hour == 1 for hour in hours) else 0
+            for hours in zip(
+                *(schedule.hourly_values for schedule in system_fan_schedules)
+            )
+        ]
+        return occupied_hours
+
+
+class Fan:
+
+    def __init__(self):
+        self.data_structure = {}
+
+        self.name = None
+        self.reporting_name = None
+        self.notes = None
+
+        self.design_airflow = None
+        self.is_airflow_sized_based_on_design_day = None
+        self.specification_method = None
+        self.design_electric_power = None
+        self.design_pressure_rise = None
+        self.motor_nameplate_power = None
+        self.shaft_power = None
+        self.total_efficiency = None
+        self.motor_efficiency = None
+        self.motor_heat_to_airflow_fraction = None
+        self.motor_heat_to_zone_fraction = None
+        self.motor_location_zone = None
+        self.status_type = None
+        self.operating_points = []
+
+    def populate_data_group(self):
+        self.data_structure["id"] = self.name
+
+        fan_data_elements = [
+            "reporting_name",
+            "notes",
+            "design_airflow",
+            "is_airflow_sized_based_on_design_day",
+            "specification_method",
+            "design_electric_power",
+            "design_pressure_rise",
+            "motor_nameplate_power",
+            "shaft_power",
+            "total_efficiency",
+            "motor_efficiency",
+            "motor_heat_to_airflow_fraction",
+            "motor_heat_to_zone_fraction",
+            "motor_location_zone",
+            "status_type",
+        ]
+
+        for attr in fan_data_elements:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.data_structure[attr] = value
+
+
+class HeatingSystem:
+
+    BDL_output_heat_type_map = {
+        BDL_SystemHeatingTypes.HEAT_PUMP: None,  # Mapping updated based on condenser type
+        BDL_SystemHeatingTypes.FURNACE: BDL_OutputHeatingTypes.FURNACE,
+        BDL_SystemHeatingTypes.ELECTRIC: BDL_OutputHeatingTypes.ELECTRIC,
+        BDL_SystemHeatingTypes.HOT_WATER: BDL_OutputHeatingTypes.HOT_WATER,
+        BDL_SystemHeatingTypes.CONDENSING_UNIT: BDL_OutputHeatingTypes.VRF,
+    }
+    BDL_output_system_heating_type_map = {
+        BDL_SystemTypes.PTAC: None,  # Mapping updated in populate_data_elements method  # Unavailable in DOE 2.3
+        BDL_SystemTypes.PSZ: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.PMZS: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.PVAVS: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.PVVT: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.HP: BDL_OutputHeatingTypes.HEAT_PUMP_WATER_COOLED,
+        BDL_SystemTypes.SZRH: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.VAVS: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.RHFS: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.DDS: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.MZS: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.PIU: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.FC: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.IU: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.UVT: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.UHT: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.RESYS2: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.CBVAV: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.SUM: None,
+        BDL_SystemTypes.DOAS: None,  # Mapping updated in populate_data_elements method
+    }
+    heat_type_map = {
+        BDL_SystemHeatingTypes.NONE: HeatingSystemOptions.NONE,
+        BDL_SystemHeatingTypes.ELECTRIC: HeatingSystemOptions.ELECTRIC_RESISTANCE,
+        BDL_SystemHeatingTypes.HOT_WATER: HeatingSystemOptions.FLUID_LOOP,
+        BDL_SystemHeatingTypes.FURNACE: HeatingSystemOptions.FURNACE,
+        BDL_SystemHeatingTypes.HEAT_PUMP: HeatingSystemOptions.HEAT_PUMP,
+        BDL_SystemHeatingTypes.CONDENSING_UNIT: HeatingSystemOptions.HEAT_PUMP,
+        BDL_SystemHeatingTypes.DHW_LOOP: HeatingSystemOptions.OTHER,
+        BDL_SystemHeatingTypes.STEAM: HeatingSystemOptions.OTHER,
+    }
+    humidification_map = {
+        BDL_HumidificationOptions.NONE: HumidificationOptions.NONE,
+        BDL_HumidificationOptions.ELECTRIC: HumidificationOptions.OTHER,
+        BDL_HumidificationOptions.HOT_WATER: HumidificationOptions.OTHER,
+        BDL_HumidificationOptions.STEAM: HumidificationOptions.OTHER,
+        BDL_HumidificationOptions.FURNACE: HumidificationOptions.OTHER,
+        BDL_HumidificationOptions.HEAT_PUMP: HumidificationOptions.OTHER,
+        BDL_HumidificationOptions.DHW_LOOP: HumidificationOptions.OTHER,
+    }
+    heatpump_aux_type_map = {
+        BDL_HPSupplementSourceOptions.ELECTRIC: HeatpumpAuxiliaryHeatOptions.ELECTRIC_RESISTANCE,
+        BDL_HPSupplementSourceOptions.HOT_WATER: HeatpumpAuxiliaryHeatOptions.OTHER,
+        BDL_HPSupplementSourceOptions.FURNACE: HeatpumpAuxiliaryHeatOptions.FURNACE,
+    }
+    heat_eff_metric_map = {
+        BDL_OutputHeatingTypes.ELECTRIC: {
+            None: HeatingMetricOptions.THERMAL_EFFICIENCY
+        },
+        BDL_OutputHeatingTypes.FURNACE: {None: HeatingMetricOptions.THERMAL_EFFICIENCY},
+        BDL_OutputHeatingTypes.HEAT_PUMP_AIR_COOLED: {
+            17: HeatingMetricOptions.HEAT_PUMP_COEFFICIENT_OF_PERFORMANCE_LOW_TEMPERATURE_NO_FAN,
+            47: HeatingMetricOptions.HEAT_PUMP_COEFFICIENT_OF_PERFORMANCE_HIGH_TEMPERATURE_NO_FAN,
+        },
+        BDL_OutputHeatingTypes.HEAT_PUMP_WATER_COOLED: {
+            68: HeatingMetricOptions.COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN,
+            50: HeatingMetricOptions.COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_GROUND_WATER_NO_FAN,
+            32: HeatingMetricOptions.COEFFICIENT_OF_PERFORMANCE_BRINE_TO_AIR_GROUND_LOOP_NO_FAN,
+        },
+    }
+
+    def __init__(self, parent_system):
+        self.parent_system = parent_system
+        self.data_structure = {}
+
+        self.name = None
+        self.reporting_name = None
+        self.notes = None
+
+        self.type = None
+        self.energy_source_type = None
+        self.hot_water_loop = None
+        self.water_source_heat_pump_loop = None
+        self.design_capacity = None
+        self.rated_capacity = None
+        self.oversizing_factor = None
+        self.is_sized_based_on_design_day = None
+        self.heating_coil_setpoint = None
+        self.efficiency_metric_values = None
+        self.efficiency_metric_types = None
+        self.heatpump_auxiliary_heat_type = None
+        self.heatpump_auxiliary_heat_high_shutoff_temperature = None
+        self.heatpump_low_shutoff_temperature = None
+        self.humidification_type = None
+
+    def populate_data_elements(self, output_data):
+        self.name = self.parent_system.u_name + " HeatSys"
+        self.type = self.heat_type_map.get(
+            self.parent_system.get_inp(BDL_SystemKeywords.HEAT_SOURCE)
+        )
+        if self.parent_system.get_inp(
+            BDL_SystemKeywords.TYPE
+        ) == BDL_SystemTypes.HP and self.parent_system.get_inp(
+            BDL_SystemKeywords.WLHP_CATEGORY
+        ) in [
+            BDL_WLHPCategoryOptions.WATER_LOOP,
+            BDL_WLHPCategoryOptions.GROUND_WATER,
+            BDL_WLHPCategoryOptions.GROUND_LOOP,
+        ]:
+            self.type = HeatingSystemOptions.HEAT_PUMP
+        self.hot_water_loop = self.parent_system.get_inp(BDL_SystemKeywords.HW_LOOP)
+        self.water_source_heat_pump_loop = self.parent_system.get_inp(
+            BDL_SystemKeywords.CW_LOOP
+        )
+        self.humidification_type = self.humidification_map.get(
+            self.parent_system.get_inp(BDL_SystemKeywords.HUMIDIFIER_TYPE)
+        )
+        self.heating_coil_setpoint = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.HEAT_SET_T)
+        )
+        self.heatpump_auxiliary_heat_type = self.heatpump_aux_type_map.get(
+            self.parent_system.get_inp(BDL_SystemKeywords.HP_SUPP_SOURCE)
+        )
+        self.heatpump_auxiliary_heat_high_shutoff_temperature = (
+            self.parent_system.try_float(
+                self.parent_system.get_inp(BDL_SystemKeywords.MAX_HP_SUPP_T)
+            )
+        )
+        self.heatpump_low_shutoff_temperature = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.MIN_HP_T)
+        )
+
+        sizing_ratio = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.SIZING_RATIO)
+        )
+        heat_sizing_ratio = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.HEAT_SIZING_RATI)
+        )
+        if sizing_ratio is not None and heat_sizing_ratio is not None:
+            self.oversizing_factor = max(0, sizing_ratio * heat_sizing_ratio - 1)
+
+        self.rated_capacity = self.parent_system.try_abs(
+            self.parent_system.try_float(
+                self.parent_system.get_inp(BDL_SystemKeywords.HEATING_CAPACITY)
+            )
+        )
+        if not self.rated_capacity:
+            self.rated_capacity = self.parent_system.try_abs(
+                output_data.get("Rated Heating Capacity")
+            )
+        if not self.rated_capacity:
+            self.rated_capacity = self.parent_system.try_abs(
+                output_data.get("Heating Capacity")
+            )
+        self.design_capacity = self.parent_system.try_abs(
+            output_data.get("Design Heating Capacity")
+        )
+        if not self.design_capacity:
+            self.design_capacity = self.parent_system.try_abs(
+                output_data.get("Heating Capacity")
+            )
+
+        if self.parent_system.is_zonal_system:
+            self.is_sized_based_on_design_day = (
+                not self.parent_system.get_inp(BDL_SystemKeywords.HEATING_CAPACITY)
+                and not self.parent_system.children[0].get_inp(
+                    BDL_ZoneKeywords.MAX_HEAT_RATE
+                )
+                and not self.parent_system.children[0].get_inp(
+                    BDL_ZoneKeywords.HEATING_CAPACITY
+                )
+            )
+        else:
+            self.is_sized_based_on_design_day = not self.parent_system.get_inp(
+                BDL_SystemKeywords.HEATING_CAPACITY
+            )
+
+        if self.type in [
+            HeatingSystemOptions.FLUID_LOOP,
+            HeatingSystemOptions.OTHER,
+        ]:
+            loop_name = self.parent_system.get_inp(BDL_SystemKeywords.HW_LOOP)
+            loop = self.parent_system.get_obj(loop_name)
+            if loop:
+                self.energy_source_type = self.parent_system.get_loop_energy_source(
+                    loop
+                )
+        elif self.type in [
+            HeatingSystemOptions.ELECTRIC_RESISTANCE,
+            HeatingSystemOptions.HEAT_PUMP,
+        ]:
+            self.energy_source_type = EnergySourceOptions.ELECTRICITY
+        elif self.type == HeatingSystemOptions.FURNACE:
+            self.energy_source_type = self.parent_system.get_furnace_energy_source()
+        elif self.type == HeatingSystemOptions.NONE:
+            self.energy_source_type = EnergySourceOptions.NONE
+
+        self.efficiency_metric_values = []
+        self.efficiency_metric_types = []
+        self.populate_heating_eff_metric_and_value()
+
+    def populate_data_group(self):
+        self.data_structure["id"] = self.name
+
+        heating_system_data_elements = [
+            "reporting_name",
+            "notes",
+            "type",
+            "energy_source_type",
+            "hot_water_loop",
+            "water_source_heat_pump_loop",
+            "design_capacity",
+            "rated_capacity",
+            "oversizing_factor",
+            "is_sized_based_on_design_day",
+            "heating_coil_setpoint",
+            "efficiency_metric_values",
+            "efficiency_metric_types",
+            "heatpump_auxiliary_heat_type",
+            "heatpump_auxiliary_heat_high_shutoff_temperature",
+            "heatpump_low_shutoff_temperature",
+            "humidification_type",
+        ]
+
+        for attr in heating_system_data_elements:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.data_structure[attr] = value
 
     def populate_heating_eff_metric_and_value(self):
         """Populate the heating system efficiency metric and efficiency value."""
-        heating_eir = self.get_inp(BDL_SystemKeywords.HEATING_EIR)
-        furnace_hir = self.get_inp(BDL_SystemKeywords.FURNACE_HIR)
-        rated_ect = self.get_inp(BDL_SystemKeywords.HT_RATED_ECT)
+        heating_eir = self.parent_system.get_inp(BDL_SystemKeywords.HEATING_EIR)
+        furnace_hir = self.parent_system.get_inp(BDL_SystemKeywords.FURNACE_HIR)
+        rated_ect = self.parent_system.get_inp(BDL_SystemKeywords.HT_RATED_ECT)
 
         metric_type = None
         entering_condenser_temperature = (
-            self.try_float(rated_ect)
+            self.parent_system.try_float(rated_ect)
             if rated_ect is not None
-            and self.bdl_output_heat_type
+            and self.parent_system.bdl_output_heat_type
             in [
                 BDL_OutputHeatingTypes.HEAT_PUMP_AIR_COOLED,
                 BDL_OutputHeatingTypes.HEAT_PUMP_WATER_COOLED,
@@ -1855,46 +1632,588 @@ class System(ParentNode):
         )
 
         if (
-            self.bdl_output_heat_type in self.heat_eff_metric_map
-            and self.bdl_output_heat_type != BDL_OutputHeatingTypes.VRF
+            self.parent_system.bdl_output_heat_type in self.heat_eff_metric_map
+            and self.parent_system.bdl_output_heat_type != BDL_OutputHeatingTypes.VRF
         ):
-            metric_type = self.heat_eff_metric_map[self.bdl_output_heat_type].get(
-                entering_condenser_temperature, HeatingMetricOptions.OTHER
-            )
+            metric_type = self.heat_eff_metric_map[
+                self.parent_system.bdl_output_heat_type
+            ].get(entering_condenser_temperature, HeatingMetricOptions.OTHER)
 
         if not metric_type:
             return
 
-        eff_cop = 1 / self.try_float(heating_eir) if heating_eir is not None else None
+        eff_cop = (
+            1 / self.parent_system.try_float(heating_eir)
+            if heating_eir is not None
+            else None
+        )
         eff_et = (
             1
-            if self.bdl_output_heat_type == BDL_OutputHeatingTypes.ELECTRIC
-            else 1 / self.try_float(furnace_hir) if furnace_hir is not None else None
+            if self.parent_system.bdl_output_heat_type
+            == BDL_OutputHeatingTypes.ELECTRIC
+            else (
+                1 / self.parent_system.try_float(furnace_hir)
+                if furnace_hir is not None
+                else None
+            )
         )
 
         if metric_type == HeatingMetricOptions.THERMAL_EFFICIENCY:
-            self.heat_sys_efficiency_metric_values.append(eff_et)
+            self.efficiency_metric_values.append(eff_et)
         else:
-            self.heat_sys_efficiency_metric_values.append(eff_cop)
+            self.efficiency_metric_values.append(eff_cop)
 
-        self.heat_sys_efficiency_metric_types.append(metric_type)
+        self.efficiency_metric_types.append(metric_type)
+
+
+class CoolingSystem:
+    cool_type_map = {
+        BDL_SystemCoolingTypes.ELEC_DX: CoolingSystemOptions.DIRECT_EXPANSION,
+        BDL_SystemCoolingTypes.CHILLED_WATER: CoolingSystemOptions.FLUID_LOOP,
+        BDL_SystemCoolingTypes.NONE: CoolingSystemOptions.NONE,
+    }
+    system_cooling_type_map = {
+        BDL_SystemTypes.PTAC: CoolingSystemOptions.DIRECT_EXPANSION,  # Unavailable in DOE 2.3
+        BDL_SystemTypes.PSZ: CoolingSystemOptions.DIRECT_EXPANSION,
+        BDL_SystemTypes.PMZS: CoolingSystemOptions.DIRECT_EXPANSION,
+        BDL_SystemTypes.PVAVS: CoolingSystemOptions.DIRECT_EXPANSION,
+        BDL_SystemTypes.PVVT: CoolingSystemOptions.DIRECT_EXPANSION,
+        BDL_SystemTypes.HP: CoolingSystemOptions.DIRECT_EXPANSION,
+        # IS WATER LOOP HEAT PUMP CONSIDERED DIRECT_EXPANSION???
+        BDL_SystemTypes.SZRH: CoolingSystemOptions.FLUID_LOOP,
+        BDL_SystemTypes.VAVS: CoolingSystemOptions.FLUID_LOOP,
+        BDL_SystemTypes.RHFS: CoolingSystemOptions.FLUID_LOOP,
+        BDL_SystemTypes.DDS: CoolingSystemOptions.FLUID_LOOP,
+        BDL_SystemTypes.MZS: CoolingSystemOptions.FLUID_LOOP,
+        BDL_SystemTypes.PIU: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.FC: CoolingSystemOptions.FLUID_LOOP,
+        BDL_SystemTypes.IU: CoolingSystemOptions.FLUID_LOOP,
+        BDL_SystemTypes.UVT: CoolingSystemOptions.NONE,
+        BDL_SystemTypes.UHT: CoolingSystemOptions.NONE,
+        BDL_SystemTypes.RESYS2: CoolingSystemOptions.DIRECT_EXPANSION,
+        BDL_SystemTypes.CBVAV: CoolingSystemOptions.FLUID_LOOP,
+        BDL_SystemTypes.SUM: CoolingSystemOptions.NONE,
+        BDL_SystemTypes.DOAS: None,  # Mapping updated in populate_data_elements method
+    }
+    cool_eff_metric_map = {
+        BDL_OutputCoolingTypes.DX_AIR_COOLED: {
+            95: CoolingMetricOptions.FULL_LOAD_COEFFICIENT_OF_PERFORMANCE_NO_FAN
+        },
+        BDL_OutputCoolingTypes.DX_WATER_COOLED: {
+            59: CoolingMetricOptions.COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_GROUND_WATER_NO_FAN,
+            77: CoolingMetricOptions.COEFFICIENT_OF_PERFORMANCE_BRINE_TO_AIR_GROUND_LOOP_NO_FAN,
+            86: CoolingMetricOptions.COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN,
+        },
+    }
+    BDL_output_system_cooling_type_map = {
+        BDL_SystemTypes.PTAC: BDL_OutputCoolingTypes.DX_AIR_COOLED,  # Unavailable in DOE 2.3
+        BDL_SystemTypes.PSZ: None,  # Mapping updated based on condenser type
+        BDL_SystemTypes.PMZS: None,  # Mapping updated based on condenser type
+        BDL_SystemTypes.PVAVS: None,  # Mapping updated based on condenser type
+        BDL_SystemTypes.PVVT: None,  # Mapping updated based on condenser type
+        BDL_SystemTypes.HP: BDL_OutputCoolingTypes.DX_WATER_COOLED,
+        BDL_SystemTypes.SZRH: BDL_OutputCoolingTypes.CHILLED_WATER,
+        BDL_SystemTypes.VAVS: BDL_OutputCoolingTypes.CHILLED_WATER,
+        BDL_SystemTypes.RHFS: BDL_OutputCoolingTypes.CHILLED_WATER,
+        BDL_SystemTypes.DDS: BDL_OutputCoolingTypes.CHILLED_WATER,
+        BDL_SystemTypes.MZS: BDL_OutputCoolingTypes.CHILLED_WATER,
+        BDL_SystemTypes.PIU: None,  # Mapping updated in populate_data_elements method
+        BDL_SystemTypes.FC: BDL_OutputCoolingTypes.CHILLED_WATER,
+        BDL_SystemTypes.IU: BDL_OutputCoolingTypes.CHILLED_WATER,
+        BDL_SystemTypes.UVT: CoolingSystemOptions.NONE,
+        BDL_SystemTypes.UHT: CoolingSystemOptions.NONE,
+        BDL_SystemTypes.RESYS2: None,  # Mapping updated based on condenser type
+        BDL_SystemTypes.CBVAV: BDL_OutputCoolingTypes.CHILLED_WATER,
+        BDL_SystemTypes.SUM: None,
+        BDL_SystemTypes.DOAS: None,  # Mapping updated in populate_data_elements method
+    }
+
+    def __init__(self, parent_system):
+        self.parent_system = parent_system
+        self.data_structure = {}
+
+        self.name = None
+        self.reporting_name = None
+        self.notes = None
+
+        self.type = None
+        self.design_total_cool_capacity = None
+        self.design_sensible_cool_capacity = None
+        self.rated_total_cool_capacity = None
+        self.rated_sensible_cool_capacity = None
+        self.oversizing_factor = None
+        self.is_sized_based_on_design_day = None
+        self.chilled_water_loop = None
+        self.condenser_water_loop = None
+        self.vrf_sys_condenser = None
+        self.efficiency_metric_values = None
+        self.efficiency_metric_types = None
+        self.dehumidification_type = None
+        self.turndown_ratio = None
+
+    def populate_data_elements(self, output_data):
+        self.name = self.parent_system.u_name + " CoolSys"
+        self.type = self.system_cooling_type_map.get(
+            self.parent_system.get_inp(BDL_SystemKeywords.TYPE)
+        )
+        self.chilled_water_loop = self.parent_system.get_inp(
+            BDL_SystemKeywords.CHW_LOOP
+        )
+        self.condenser_water_loop = self.parent_system.get_inp(
+            BDL_SystemKeywords.CW_LOOP
+        )
+        condensing_unit = self.parent_system.get_inp(BDL_SystemKeywords.CONDENSING_UNIT)
+        self.vrf_sys_condenser = self.parent_system.get_obj(condensing_unit)
+        self.turndown_ratio = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.MIN_UNLOAD_RATIO)
+        )
+        sizing_ratio = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.SIZING_RATIO)
+        )
+        cool_sizing_ratio = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.COOL_SIZING_RATI)
+        )
+        if sizing_ratio is not None and cool_sizing_ratio is not None:
+            self.oversizing_factor = max(0, sizing_ratio * cool_sizing_ratio - 1)
+        self.rated_total_cool_capacity = self.parent_system.try_abs(
+            self.parent_system.try_float(
+                self.parent_system.get_inp(BDL_SystemKeywords.COOLING_CAPACITY)
+            )
+        )
+        if not self.rated_total_cool_capacity:
+            self.rated_total_cool_capacity = self.parent_system.try_abs(
+                output_data.get("Rated Cooling Capacity")
+            )
+        if not self.rated_total_cool_capacity:
+            self.rated_total_cool_capacity = self.parent_system.try_abs(
+                output_data.get("Cooling Capacity")
+            )
+        self.rated_sensible_cool_capacity = self.parent_system.try_abs(
+            self.parent_system.try_float(
+                self.parent_system.get_inp(BDL_SystemKeywords.COOL_SH_CAP)
+            )
+        )
+        if not self.rated_sensible_cool_capacity:
+            rated_shr = self.parent_system.try_abs(output_data.get("Rated Cooling SHR"))
+            if rated_shr and self.rated_total_cool_capacity and rated_shr != 1:
+                self.rated_sensible_cool_capacity = (
+                    rated_shr * self.rated_total_cool_capacity
+                )
+        if not self.rated_sensible_cool_capacity:
+            shr = self.parent_system.try_abs(output_data.get("Sensible Heat Ratio"))
+            if shr and self.rated_total_cool_capacity:
+                self.rated_sensible_cool_capacity = shr * self.rated_total_cool_capacity
+        self.design_total_cool_capacity = self.parent_system.try_abs(
+            output_data.get("Design Cooling Capacity")
+        )
+        if not self.design_total_cool_capacity:
+            self.design_total_cool_capacity = self.parent_system.try_abs(
+                output_data.get("Cooling Capacity")
+            )
+        design_shr = self.parent_system.try_abs(output_data.get("Design Cooling SHR"))
+        if design_shr and self.design_total_cool_capacity and design_shr != 1:
+            self.design_sensible_cool_capacity = (
+                design_shr * self.design_total_cool_capacity
+            )
+        if not self.design_sensible_cool_capacity:
+            shr = self.parent_system.try_abs(output_data.get("Sensible Heat Ratio"))
+            if shr and self.design_total_cool_capacity:
+                self.design_sensible_cool_capacity = (
+                    shr * self.design_total_cool_capacity
+                )
+        if self.parent_system.is_zonal_system:
+            self.is_sized_based_on_design_day = (
+                not self.parent_system.get_inp(BDL_SystemKeywords.COOLING_CAPACITY)
+                and not self.parent_system.children[0].get_inp(
+                    BDL_ZoneKeywords.MAX_COOL_RATE
+                )
+                and not self.parent_system.children[0].get_inp(
+                    BDL_ZoneKeywords.COOLING_CAPACITY
+                )
+            )
+        else:
+            self.is_sized_based_on_design_day = not self.parent_system.get_inp(
+                BDL_SystemKeywords.COOLING_CAPACITY
+            )
+
+        self.efficiency_metric_values = []
+        self.efficiency_metric_types = []
+        self.populate_cooling_eff_metric_and_value()
+
+    def populate_data_group(self):
+        self.data_structure["id"] = self.name
+
+        cooling_system_data_elements = [
+            "reporting_name",
+            "notes",
+            "type",
+            "design_total_cool_capacity",
+            "design_sensible_cool_capacity",
+            "rated_total_cool_capacity",
+            "rated_sensible_cool_capacity",
+            "oversizing_factor",
+            "is_sized_based_on_design_day",
+            "chilled_water_loop",
+            "condenser_water_loop",
+            "efficiency_metric_values",
+            "efficiency_metric_types",
+            "dehumidification_type",
+            "turndown_ratio",
+        ]
+
+        for attr in cooling_system_data_elements:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.data_structure[attr] = value
+
+    def populate_cooling_eff_metric_and_value(self):
+        """
+        Populate the cooling system efficiency metric and the efficiency value.
+        """
+        cooling_eir, cop, entering_condenser_temperature = None, None, None
+
+        if (
+            cooling_eir := self.parent_system.get_inp(BDL_SystemKeywords.COOLING_EIR)
+        ) is not None:
+            cop = 1 / self.parent_system.try_float(cooling_eir)
+
+        if (
+            rated_ect := self.parent_system.get_inp(BDL_SystemKeywords.RATED_ECT)
+        ) is not None:
+            entering_condenser_temperature = self.parent_system.try_float(rated_ect)
+
+        if (
+            self.parent_system.bdl_output_cool_type in self.cool_eff_metric_map
+            and self.parent_system.bdl_output_heat_type != BDL_OutputHeatingTypes.VRF
+        ):
+            metric_type = self.cool_eff_metric_map[
+                self.parent_system.bdl_output_cool_type
+            ].get(entering_condenser_temperature, CoolingMetricOptions.OTHER)
+            self.efficiency_metric_types.append(metric_type)
+            self.efficiency_metric_values.append(cop)
+
+        elif self.parent_system.bdl_output_heat_type == BDL_OutputHeatingTypes.VRF:
+            # Covers VRF, takes the efficiency from the condensing unit
+            if (
+                self.parent_system.try_float(
+                    self.vrf_sys_condenser.get_inp(BDL_CondenserKeywords.COOL_RATED_ODB)
+                )
+                == 95
+            ):
+                self.efficiency_metric_types.append(
+                    CoolingMetricOptions.FULL_LOAD_COEFFICIENT_OF_PERFORMANCE_NO_FAN
+                )
+            else:
+                self.efficiency_metric_types.append(CoolingMetricOptions.OTHER)
+
+            if (
+                self.vrf_sys_condenser.get_inp(BDL_CondenserKeywords.COOLING_EIR)
+                is not None
+            ):
+                self.efficiency_metric_values.append(
+                    1
+                    / self.parent_system.try_float(
+                        self.vrf_sys_condenser.get_inp(
+                            BDL_CondenserKeywords.COOLING_EIR
+                        )
+                    )
+                )
+
+        elif (
+            self.parent_system.bdl_output_cool_type
+            != BDL_OutputCoolingTypes.CHILLED_WATER
+            and self.parent_system.bdl_output_cool_type is not None
+        ):
+            self.efficiency_metric_types.append(CoolingMetricOptions.OTHER)
+            self.efficiency_metric_values.append(cop)
+
+
+class PreheatSystem:
+
+    heat_type_map = {
+        BDL_SystemHeatingTypes.NONE: HeatingSystemOptions.NONE,
+        BDL_SystemHeatingTypes.ELECTRIC: HeatingSystemOptions.ELECTRIC_RESISTANCE,
+        BDL_SystemHeatingTypes.HOT_WATER: HeatingSystemOptions.FLUID_LOOP,
+        BDL_SystemHeatingTypes.FURNACE: HeatingSystemOptions.FURNACE,
+        BDL_SystemHeatingTypes.HEAT_PUMP: HeatingSystemOptions.HEAT_PUMP,
+        BDL_SystemHeatingTypes.CONDENSING_UNIT: HeatingSystemOptions.HEAT_PUMP,
+        BDL_SystemHeatingTypes.DHW_LOOP: HeatingSystemOptions.OTHER,
+        BDL_SystemHeatingTypes.STEAM: HeatingSystemOptions.OTHER,
+    }
+
+    def __init__(self, parent_system):
+        self.parent_system = parent_system
+        self.data_structure = {}
+
+        self.name = None
+        self.reporting_name = None
+        self.notes = None
+
+        self.type = None
+        self.energy_source_type = None
+        self.hot_water_loop = None
+        self.water_source_heat_pump_loop = None
+        self.design_capacity = None
+        self.rated_capacity = None
+        self.oversizing_factor = None
+        self.is_sized_based_on_design_day = None
+        self.heating_coil_setpoint = None
+        self.efficiency_metric_values = []
+        self.efficiency_metric_types = []
+        self.heatpump_auxiliary_heat_type = None
+        self.heatpump_auxiliary_heat_high_shutoff_temperature = None
+        self.heatpump_low_shutoff_temperature = None
+        self.humidification_type = None
+
+    def populate_data_elements(self, output_data):
+        self.name = self.parent_system.u_name + " PreheatSys"
+        self.type = self.heat_type_map.get(
+            self.parent_system.get_inp(BDL_SystemKeywords.PREHEAT_SOURCE)
+        )
+        self.rated_capacity = self.parent_system.try_abs(
+            self.parent_system.try_float(
+                self.parent_system.get_inp(BDL_SystemKeywords.PREHEAT_CAPACITY)
+            )
+        )
+        self.design_capacity = self.parent_system.try_abs(
+            output_data.get("Design Preheat Capacity")
+        )
+        self.is_sized_based_on_design_day = not self.parent_system.get_inp(
+            BDL_SystemKeywords.PREHEAT_CAPACITY
+        )
+        self.heating_coil_setpoint = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.PREHEAT_T)
+        )
+        self.hot_water_loop = self.parent_system.get_inp(BDL_SystemKeywords.PHW_LOOP)
+        if self.type in [
+            HeatingSystemOptions.FLUID_LOOP,
+            HeatingSystemOptions.OTHER,
+        ]:
+            loop = self.parent_system.get_obj(self.hot_water_loop)
+            if loop:
+                self.energy_source_type = self.parent_system.get_loop_energy_source(
+                    loop
+                )
+        elif self.type in [
+            HeatingSystemOptions.ELECTRIC_RESISTANCE,
+            HeatingSystemOptions.HEAT_PUMP,
+        ]:
+            self.energy_source_type = EnergySourceOptions.ELECTRICITY
+        elif self.type == HeatingSystemOptions.FURNACE:
+            self.energy_source_type = self.parent_system.get_furnace_energy_source()
+        elif self.type == HeatingSystemOptions.NONE:
+            self.energy_source_type = EnergySourceOptions.NONE
+
+        self.efficiency_metric_types = []
+        self.efficiency_metric_values = []
+        self.populate_preheat_eff_metric_and_value()
+
+    def populate_data_group(self):
+        self.data_structure["id"] = self.name
+
+        preheat_system_data_elements = [
+            "reporting_name",
+            "notes",
+            "type",
+            "energy_source_type",
+            "hot_water_loop",
+            "water_source_heat_pump_loop",
+            "design_capacity",
+            "rated_capacity",
+            "oversizing_factor",
+            "is_sized_based_on_design_day",
+            "heating_coil_setpoint",
+            "efficiency_metric_values",
+            "efficiency_metric_types",
+            "heatpump_auxiliary_heat_type",
+            "heatpump_auxiliary_heat_high_shutoff_temperature",
+            "heatpump_low_shutoff_temperature",
+            "humidification_type",
+        ]
+
+        for attr in preheat_system_data_elements:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.data_structure[attr] = value
 
     def populate_preheat_eff_metric_and_value(self):
         """
         Populate the preheating system efficiency metric and the efficiency value.
         """
 
-        furnace_hir = self.get_inp(BDL_SystemKeywords.FURNACE_HIR)
-        eff_et = 1 / self.try_float(furnace_hir) if furnace_hir is not None else None
+        furnace_hir = self.parent_system.get_inp(BDL_SystemKeywords.FURNACE_HIR)
+        eff_et = (
+            1 / self.parent_system.try_float(furnace_hir)
+            if furnace_hir is not None
+            else None
+        )
 
-        match self.preheat_sys_type:
+        match self.type:
             case HeatingSystemOptions.FURNACE:
-                self.preheat_sys_efficiency_metric_types.append(
+                self.efficiency_metric_types.append(
                     HeatingMetricOptions.THERMAL_EFFICIENCY
                 )
-                self.preheat_sys_efficiency_metric_values.append(eff_et)
+                self.efficiency_metric_values.append(eff_et)
             case HeatingSystemOptions.ELECTRIC_RESISTANCE:
-                self.preheat_sys_efficiency_metric_types.append(
+                self.efficiency_metric_types.append(
                     HeatingMetricOptions.THERMAL_EFFICIENCY
                 )
-                self.preheat_sys_efficiency_metric_values.append(1)
+                self.efficiency_metric_values.append(1)
+
+
+class AirEconomizer:
+
+    economizer_map = {
+        BDL_EconomizerOptions.FIXED: AirEconomizerOptions.FIXED_FRACTION,
+        BDL_EconomizerOptions.OA_TEMP: AirEconomizerOptions.TEMPERATURE,
+        BDL_EconomizerOptions.OA_ENTHALPY: AirEconomizerOptions.ENTHALPY,
+        BDL_EconomizerOptions.DUAL_TEMP: AirEconomizerOptions.DIFFERENTIAL_TEMPERATURE,
+        BDL_EconomizerOptions.DUAL_ENTHALPY: AirEconomizerOptions.DIFFERENTIAL_ENTHALPY,
+    }
+
+    def __init__(self, parent_system):
+        self.parent_system = parent_system
+        self.data_structure = {}
+
+        self.name = None
+        self.reporting_name = None
+        self.notes = None
+
+        self.type = None
+        self.high_limit_shutoff_temperature = None
+        self.is_integrated = None
+
+    def populate_data_elements(self):
+        self.name = self.parent_system.u_name + " AirEconomizer"
+        self.type = self.economizer_map.get(
+            self.parent_system.get_inp(BDL_SystemKeywords.OA_CONTROL)
+        )
+        self.high_limit_shutoff_temperature = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.ECONO_LIMIT_T)
+        )
+        self.is_integrated = (
+            True
+            if self.parent_system.get_inp(BDL_SystemKeywords.COOL_SOURCE)
+            == BDL_SystemCoolingTypes.CHILLED_WATER
+            else not self.parent_system.boolean_map.get(
+                self.parent_system.get_inp(BDL_SystemKeywords.ECONO_LOCKOUT)
+            )
+        )
+
+    def populate_data_group(self):
+        self.data_structure["id"] = self.name
+
+        air_economizer_data_elements = [
+            "reporting_name",
+            "notes",
+            "type",
+            "high_limit_shutoff_temperature",
+            "is_integrated",
+        ]
+        for attr in air_economizer_data_elements:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.data_structure[attr] = value
+
+
+class AirEnergyRecovery:
+
+    has_recovery_map = {
+        BDL_EnergyRecoveryOptions.NO: EnergyRecoveryOperationOptions.NONE,
+        BDL_EnergyRecoveryOptions.RELIEF_ONLY: None,  # Mapping updated in populate_air_energy_recovery method
+        BDL_EnergyRecoveryOptions.EXHAUST_ONLY: None,  # Mapping updated in populate_air_energy_recovery method
+        BDL_EnergyRecoveryOptions.RELIEF_EXHAUST: None,  # Mapping updated in populate_air_energy_recovery method
+        BDL_EnergyRecoveryOptions.YES: None,  # Mapping updated in populate_air_energy_recovery method
+    }
+    recovery_type_map = {
+        BDL_EnergyRecoveryTypes.SENSIBLE_HX: EnergyRecoveryOptions.SENSIBLE_HEAT_EXCHANGE,
+        BDL_EnergyRecoveryTypes.ENTHALPY_HX: EnergyRecoveryOptions.ENTHALPY_HEAT_EXCHANGE,
+        BDL_EnergyRecoveryTypes.SENSIBLE_WHEEL: EnergyRecoveryOptions.SENSIBLE_HEAT_WHEEL,
+        BDL_EnergyRecoveryTypes.ENTHALPY_WHEEL: EnergyRecoveryOptions.ENTHALPY_HEAT_WHEEL,
+        BDL_EnergyRecoveryTypes.HEAT_PIPE: EnergyRecoveryOptions.HEAT_PIPE,
+    }
+    er_operation_map = {
+        BDL_EnergyRecoveryOperationOptions.WHEN_FANS_ON: EnergyRecoveryOperationOptions.WHEN_FANS_ON,
+        BDL_EnergyRecoveryOperationOptions.WHEN_MIN_OA: EnergyRecoveryOperationOptions.WHEN_MINIMUM_OUTSIDE_AIR,
+        BDL_EnergyRecoveryOperationOptions.ERV_SCHEDULE: EnergyRecoveryOperationOptions.SCHEDULED,
+        BDL_EnergyRecoveryOperationOptions.OA_EXHAUST_DT: EnergyRecoveryOperationOptions.OTHER,
+        BDL_EnergyRecoveryOperationOptions.OA_EXHAUST_DH: EnergyRecoveryOperationOptions.OTHER,
+    }
+    er_sat_control_map = {
+        BDL_EnergyRecoveryTemperatureControlOptions.FLOAT: EnergyRecoverySupplyAirTemperatureControlOptions.OTHER,
+        BDL_EnergyRecoveryTemperatureControlOptions.FIXED_SETPT: EnergyRecoverySupplyAirTemperatureControlOptions.FIXED_SETPOINT,
+        BDL_EnergyRecoveryTemperatureControlOptions.MIXED_AIR_RESET: EnergyRecoverySupplyAirTemperatureControlOptions.MIXED_AIR_RESET,
+    }
+
+    def __init__(self, parent_system):
+        self.parent_system = parent_system
+        self.data_structure = {}
+
+        self.name = None
+        self.reporting_name = None
+        self.notes = None
+
+        self.type = None
+        self.energy_recovery_operation = None
+        self.energy_recovery_supply_air_temperature_control = None
+        self.design_sensible_effectiveness = None
+        self.design_latent_effectiveness = None
+        self.outdoor_airflow = None
+        self.exhaust_airflow = None
+
+    def populate_data_elements(self):
+        self.name = self.parent_system.u_name + " AirEnergyRecovery"
+        recover_exhaust = self.parent_system.get_inp(BDL_SystemKeywords.RECOVER_EXHAUST)
+        recovery_type = self.recovery_type_map.get(
+            self.parent_system.get_inp(BDL_SystemKeywords.ERV_RECOVER_TYPE)
+        )
+        self.has_recovery_map.update(
+            {
+                BDL_EnergyRecoveryOptions.RELIEF_ONLY: recovery_type,
+                BDL_EnergyRecoveryOptions.EXHAUST_ONLY: recovery_type,
+                BDL_EnergyRecoveryOptions.RELIEF_EXHAUST: recovery_type,
+                BDL_EnergyRecoveryOptions.YES: recovery_type,
+            }
+        )
+        self.type = self.has_recovery_map.get(recover_exhaust)
+        self.energy_recovery_operation = self.er_operation_map.get(
+            self.parent_system.get_inp(BDL_SystemKeywords.ERV_RUN_CTRL)
+        )
+        self.energy_recovery_supply_air_temperature_control = (
+            self.er_sat_control_map.get(
+                self.parent_system.get_inp(BDL_SystemKeywords.ERV_TEMP_CTRL)
+            )
+        )
+        self.design_sensible_effectiveness = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.ERV_SENSIBLE_EFF)
+        )
+        self.design_latent_effectiveness = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.ERV_LATENT_EFF)
+        )
+        self.outdoor_airflow = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.ERV_OA_FLOW)
+        )
+        self.exhaust_airflow = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.ERV_EXH_FLOW)
+        )
+        if self.exhaust_airflow is None:
+            self.exhaust_airflow = self.outdoor_airflow
+
+    def populate_data_group(self):
+        self.data_structure["id"] = self.name
+
+        air_energy_recovery_data_elements = [
+            "reporting_name",
+            "notes",
+            "type",
+            "energy_recovery_operation",
+            "energy_recovery_supply_air_temperature_control",
+            "design_sensible_effectiveness",
+            "design_latent_effectiveness",
+            "outdoor_airflow",
+            "exhaust_airflow",
+        ]
+        for attr in air_energy_recovery_data_elements:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.data_structure[attr] = value

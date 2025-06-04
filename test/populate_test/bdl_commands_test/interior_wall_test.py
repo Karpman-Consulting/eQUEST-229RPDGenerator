@@ -70,7 +70,7 @@ class TestInteriorWalls(unittest.TestCase):
             "subsurfaces": [],
             "construction": {
                 "id": "Construction 1",
-                "primary_layers": [{"id": "Simplified Material", "r_value": 0.78}],
+                "primary_layers": [],
                 "framing_layers": [],
                 "insulation_locations": [],
                 "r_values": [],
@@ -118,7 +118,7 @@ class TestInteriorWalls(unittest.TestCase):
                 "id": "Construction 1",
                 "framing_layers": [],
                 "insulation_locations": [],
-                "primary_layers": [{"id": "Simplified Material", "r_value": 2.0}],
+                "primary_layers": [],
                 "r_values": [],
                 "u_factor": 0.5,
             },
@@ -155,9 +155,7 @@ class TestInteriorWalls(unittest.TestCase):
                 "framing_layers": [],
                 "id": "Construction 1",
                 "insulation_locations": [],
-                "primary_layers": [
-                    {"id": "Simplified Material", "r_value": 0.6399999999999999}
-                ],
+                "primary_layers": [],
                 "r_values": [],
                 "u_factor": 0.5,
             },
@@ -199,7 +197,7 @@ class TestInteriorWalls(unittest.TestCase):
                 "framing_layers": [],
                 "id": "Construction 1",
                 "insulation_locations": [],
-                "primary_layers": [{"id": "Simplified Material"}],
+                "primary_layers": [],
                 "r_values": [],
                 "u_factor": 0.0,
             },
@@ -235,7 +233,7 @@ class TestInteriorWalls(unittest.TestCase):
             "subsurfaces": [],
             "construction": {
                 "id": "Construction 1",
-                "primary_layers": [{"id": "Simplified Material"}],
+                "primary_layers": [],
                 "framing_layers": [],
                 "insulation_locations": [],
                 "r_values": [],
@@ -274,9 +272,7 @@ class TestInteriorWalls(unittest.TestCase):
                 "framing_layers": [],
                 "id": "Construction 1",
                 "insulation_locations": [],
-                "primary_layers": [
-                    {"id": "Simplified Material", "r_value": 0.6399999999999999}
-                ],
+                "primary_layers": [],
                 "r_values": [],
                 "u_factor": 0.5,
             },

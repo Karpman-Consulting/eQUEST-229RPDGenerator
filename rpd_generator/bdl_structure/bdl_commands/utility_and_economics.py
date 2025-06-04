@@ -5,6 +5,7 @@ from rpd_generator.schema.schema_enums import SchemaEnums
 
 
 EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
+ElectricalPhaseOptions = SchemaEnums.schema_enums["ElectricalPhaseOptions"]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_FuelMeterKeywords = BDLEnums.bdl_enums["FuelMeterKeywords"]
 BDL_ElecMeterKeywords = BDLEnums.bdl_enums["ElecMeterKeywords"]
@@ -215,7 +216,7 @@ class Transformer:
         self.data_structure = {}
 
         self.transformer_type = None
-        self.phase = None
+        self.phase = ElectricalPhaseOptions.SINGLE_PHASE
         self.efficiency = None
         self.capacity = None
         self.peak_load = None

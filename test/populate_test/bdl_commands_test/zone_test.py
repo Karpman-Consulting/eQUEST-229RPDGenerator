@@ -55,7 +55,7 @@ class TestZones(unittest.TestCase):
         self.holidays = Holidays("Holidays 1", self.rmd)
 
         self.system = System("System 1", self.rmd)
-        self.zone = Zone("Zone 1", self.system, self.rmd)
+        self.test_zone = Zone("Zone 1", self.system, self.rmd)
         self.pump = Pump("Pump 1", self.rmd)
         self.hw_circulation_loop = CirculationLoop("HW Circulation Loop", self.rmd)
 
@@ -259,7 +259,7 @@ class TestZones(unittest.TestCase):
             BDL_SystemKeywords.HEATING_CAPACITY: "15",
             BDL_SystemKeywords.COOLING_CAPACITY: "14",
         }
-        self.zone.keyword_value_pairs = {
+        self.test_zone.keyword_value_pairs = {
             BDL_ZoneKeywords.BASEBOARD_CTRL: BDL_BaseboardControlOptions.NONE,
             BDL_ZoneKeywords.DESIGN_COOL_T: "85",
             BDL_ZoneKeywords.COOL_TEMP_SCH: "Thermostat Annual Schedule",
@@ -299,7 +299,7 @@ class TestZones(unittest.TestCase):
             "thermostat_heating_setpoint_schedule": "Thermostat Annual Schedule",
             "zonal_exhaust_fan": {},
         }
-        self.assertEqual(expected_data_structure, self.zone.zone_data_structure)
+        self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_zone_terminal_system_data(self, mock_get_output_data):
@@ -336,7 +336,7 @@ class TestZones(unittest.TestCase):
             BDL_SystemKeywords.COOLING_CAPACITY: "14",
             BDL_SystemKeywords.HW_LOOP: "HW Circulation Loop",
         }
-        self.zone.keyword_value_pairs = {
+        self.test_zone.keyword_value_pairs = {
             BDL_ZoneKeywords.BASEBOARD_CTRL: BDL_BaseboardControlOptions.NONE,
             BDL_ZoneKeywords.DESIGN_COOL_T: "85",
             BDL_ZoneKeywords.COOL_TEMP_SCH: "Thermostat Annual Schedule",
@@ -379,7 +379,7 @@ class TestZones(unittest.TestCase):
             "thermostat_heating_setpoint_schedule": "Thermostat Annual Schedule",
             "zonal_exhaust_fan": {},
         }
-        self.assertEqual(expected_data_structure, self.zone.zone_data_structure)
+        self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_zone_variable_volume_data(self, mock_get_output_data):
@@ -415,7 +415,7 @@ class TestZones(unittest.TestCase):
             BDL_SystemKeywords.COOLING_CAPACITY: "14",
             BDL_SystemKeywords.HW_LOOP: "HW Circulation Loop",
         }
-        self.zone.keyword_value_pairs = {
+        self.test_zone.keyword_value_pairs = {
             BDL_ZoneKeywords.BASEBOARD_CTRL: BDL_BaseboardControlOptions.NONE,
             BDL_ZoneKeywords.DESIGN_COOL_T: "85",
             BDL_ZoneKeywords.COOL_TEMP_SCH: "Thermostat Annual Schedule",
@@ -459,7 +459,7 @@ class TestZones(unittest.TestCase):
             "thermostat_heating_setpoint_schedule": "Thermostat Annual Schedule",
             "zonal_exhaust_fan": {},
         }
-        self.assertEqual(expected_data_structure, self.zone.zone_data_structure)
+        self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_zone_on_sum_system_data(self, mock_get_output_data):
@@ -481,7 +481,7 @@ class TestZones(unittest.TestCase):
             "terminals": [],
             "zonal_exhaust_fan": {},
         }
-        self.assertEqual(expected_data_structure, self.zone.zone_data_structure)
+        self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_zone_with_exhaust_fan_data(self, mock_get_output_data):
@@ -495,7 +495,7 @@ class TestZones(unittest.TestCase):
             BDL_SystemKeywords.TYPE: BDL_SystemTypes.PSZ,
             BDL_SystemKeywords.FAN_CONTROL: BDL_SystemFanControlOptions.CONSTANT_VOLUME,
         }
-        self.zone.keyword_value_pairs = {
+        self.test_zone.keyword_value_pairs = {
             BDL_ZoneKeywords.EXHAUST_FLOW: "150",
             BDL_ZoneKeywords.EXHAUST_FAN_SCH: "Fan Annual Schedule",
             BDL_ZoneKeywords.EXHAUST_STATIC: "2",
@@ -528,7 +528,7 @@ class TestZones(unittest.TestCase):
                 "total_efficiency": 0.8,
             },
         }
-        self.assertEqual(expected_data_structure, self.zone.zone_data_structure)
+        self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_zone_with_induction_data(self, mock_get_output_data):
@@ -546,7 +546,7 @@ class TestZones(unittest.TestCase):
             BDL_SystemKeywords.TYPE: BDL_SystemTypes.PIU,
             BDL_SystemKeywords.FAN_CONTROL: BDL_SystemFanControlOptions.CONSTANT_VOLUME,
         }
-        self.zone.keyword_value_pairs = {
+        self.test_zone.keyword_value_pairs = {
             BDL_ZoneKeywords.BASEBOARD_CTRL: BDL_BaseboardControlOptions.NONE,
             BDL_ZoneKeywords.TERMINAL_TYPE: BDL_TerminalTypes.TERMINAL_IU,
         }
@@ -569,7 +569,7 @@ class TestZones(unittest.TestCase):
             ],
             "zonal_exhaust_fan": {},
         }
-        self.assertEqual(expected_data_structure, self.zone.zone_data_structure)
+        self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_zone_with_doas_data(self, mock_get_output_data):
@@ -588,7 +588,7 @@ class TestZones(unittest.TestCase):
             BDL_SystemKeywords.FAN_CONTROL: BDL_SystemFanControlOptions.CONSTANT_VOLUME,
             BDL_SystemKeywords.DOA_SYSTEM: "DOAS 1",
         }
-        self.zone.keyword_value_pairs = {}
+        self.test_zone.keyword_value_pairs = {}
 
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
@@ -615,7 +615,13 @@ class TestZones(unittest.TestCase):
             ],
             "zonal_exhaust_fan": {},
         }
-        self.assertEqual(expected_data_structure, self.zone.zone_data_structure)
+        expected_data_structure["terminals"] = sorted(
+            expected_data_structure["terminals"], key=lambda t: t["id"]
+        )
+        self.test_zone.zone_data_structure["terminals"] = sorted(
+            self.test_zone.zone_data_structure["terminals"], key=lambda t: t["id"]
+        )
+        self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_zone_with_baseboard_data(self, mock_get_output_data):
@@ -634,7 +640,7 @@ class TestZones(unittest.TestCase):
             BDL_SystemKeywords.BASEBOARD_SOURCE: BDL_SystemHeatingTypes.HOT_WATER,
             BDL_SystemKeywords.BBRD_LOOP: "HW Baseboard Loop",
         }
-        self.zone.keyword_value_pairs = {
+        self.test_zone.keyword_value_pairs = {
             BDL_ZoneKeywords.BASEBOARD_CTRL: BDL_BaseboardControlOptions.THERMOSTATIC,
             BDL_ZoneKeywords.BASEBOARD_RATING: "-6000",
         }
@@ -666,7 +672,14 @@ class TestZones(unittest.TestCase):
             ],
             "zonal_exhaust_fan": {},
         }
-        self.assertEqual(expected_data_structure, self.zone.zone_data_structure)
+
+        expected_data_structure["terminals"] = sorted(
+            expected_data_structure["terminals"], key=lambda t: t["id"]
+        )
+        self.test_zone.zone_data_structure["terminals"] = sorted(
+            self.test_zone.zone_data_structure["terminals"], key=lambda t: t["id"]
+        )
+        self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_zone_with_dcv(self, mock_get_output_data):
@@ -680,7 +693,7 @@ class TestZones(unittest.TestCase):
             BDL_SystemKeywords.FAN_CONTROL: BDL_SystemFanControlOptions.CONSTANT_VOLUME,
             BDL_SystemKeywords.ZONE_OA_METHOD: BDL_ZoneOAMethodsOptions.SUM_OCC_AND_AREA,
         }
-        self.zone.keyword_value_pairs = {
+        self.test_zone.keyword_value_pairs = {
             BDL_ZoneKeywords.BASEBOARD_CTRL: BDL_BaseboardControlOptions.NONE,
             BDL_ZoneKeywords.OA_FLOW_PER: "5",
             BDL_ZoneKeywords.TERMINAL_TYPE: BDL_TerminalTypes.SVAV,
@@ -704,7 +717,7 @@ class TestZones(unittest.TestCase):
             ],
             "zonal_exhaust_fan": {},
         }
-        self.assertEqual(expected_data_structure, self.zone.zone_data_structure)
+        self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_zone_with_dcv_prevented_by_occ_cfm(self, mock_get_output_data):
@@ -714,10 +727,9 @@ class TestZones(unittest.TestCase):
 
         """
         mock_get_output_data.return_value = {}
-
+        self.rmd.space_map["Space 1"] = self.test_zone
         self.floor = Floor("Floor 1", self.rmd)
         self.space = Space("Space 1", self.floor, self.rmd)
-        self.rmd.space_map["Space 1"] = self.zone
 
         self.space.keyword_value_pairs = {
             BDL_SpaceKeywords.PEOPLE_SCHEDULE: "People Annual Schedule",
@@ -729,7 +741,7 @@ class TestZones(unittest.TestCase):
             BDL_SystemKeywords.TYPE: BDL_SystemTypes.PVAVS,
             BDL_SystemKeywords.ZONE_OA_METHOD: BDL_ZoneOAMethodsOptions.MAX_OCC_OR_AREA,
         }
-        self.zone.keyword_value_pairs = {
+        self.test_zone.keyword_value_pairs = {
             BDL_ZoneKeywords.SPACE: "Space 1",
             BDL_ZoneKeywords.OA_FLOW_PER: "5",
             BDL_ZoneKeywords.OA_CHANGES: "1",
@@ -741,7 +753,7 @@ class TestZones(unittest.TestCase):
             "id": "Zone 1",
             "floor_name": "Floor 1",
             "infiltration": {
-                "id": "Space 1 Infil",
+                "id": "Zone 1 Infil",
                 "modeling_method": "WEATHER_DRIVEN",
             },
             "spaces": [],
@@ -758,7 +770,7 @@ class TestZones(unittest.TestCase):
             "volume": 1000.0,
             "zonal_exhaust_fan": {},
         }
-        self.assertEqual(expected_data_structure, self.zone.zone_data_structure)
+        self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_zone_with_dcv_prevented_by_min_flow_sch(
@@ -771,9 +783,9 @@ class TestZones(unittest.TestCase):
         """
         mock_get_output_data.return_value = {}
 
+        self.rmd.space_map["Space 1"] = self.test_zone
         self.floor = Floor("Floor 1", self.rmd)
         self.space = Space("Space 1", self.floor, self.rmd)
-        self.rmd.space_map["Space 1"] = self.zone
 
         self.space.keyword_value_pairs = {}
         self.system.keyword_value_pairs = {
@@ -785,7 +797,7 @@ class TestZones(unittest.TestCase):
             BDL_DayScheduleKeywords.TYPE: BDL_ScheduleTypes.FRAC_DESIGN,
             BDL_DayScheduleKeywords.VALUES: ["-999"] * 24,
         }
-        self.zone.keyword_value_pairs = {
+        self.test_zone.keyword_value_pairs = {
             BDL_ZoneKeywords.OA_FLOW_PER: "5",
             BDL_ZoneKeywords.TERMINAL_TYPE: BDL_TerminalTypes.SVAV,
             BDL_ZoneKeywords.SPACE: "Space 1",
@@ -799,7 +811,7 @@ class TestZones(unittest.TestCase):
             "floor_name": "Floor 1",
             "volume": 0,
             "infiltration": {
-                "id": "Space 1 Infil",
+                "id": "Zone 1 Infil",
                 "modeling_method": "WEATHER_DRIVEN",
             },
             "spaces": [],
@@ -815,4 +827,4 @@ class TestZones(unittest.TestCase):
             ],
             "zonal_exhaust_fan": {},
         }
-        self.assertEqual(expected_data_structure, self.zone.zone_data_structure)
+        self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
