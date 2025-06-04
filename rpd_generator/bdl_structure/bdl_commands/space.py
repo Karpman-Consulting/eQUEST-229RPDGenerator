@@ -88,6 +88,8 @@ class Space(ChildNode, ParentNode):
         # Populate miscellaneous equipment data elements
         self.populate_miscellaneous_equipment_data_elements()
 
+        self.replicate_if_necessary()
+
     def populate_data_group(self):
         """Populate schema structure for space object."""
 

@@ -114,7 +114,9 @@ class Zone(ChildNode):
 
         # Populate zone data elements that originate from Space data
         self.volume = (
-            self.try_float(space.get_inp(BDL_SpaceKeywords.VOLUME)) if space else None
+            (self.try_float(self.get_inp(BDL_SpaceKeywords.VOLUME)) or 0)
+            * (self.try_float(self.get_inp(BDL_SpaceKeywords.FLOOR_MULTIPLIER)) or 1)
+            * (self.try_float(self.get_inp(BDL_SpaceKeywords.MULTIPLIER)) or 1)
         )
         space.populate_zone_infiltration() if space else None
 
