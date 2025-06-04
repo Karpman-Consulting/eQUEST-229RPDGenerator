@@ -749,7 +749,7 @@ class System(ParentNode):
 
     def populate_fans(self, output_data):
         # There is always a supply fan for a fan system in eQUEST, so it is always populated
-        self.supply_fan = Fan(self)
+        self.supply_fan = Fan()
         self.supply_fan.name = self.u_name + " SupplyFan"
         self.supply_fan.design_airflow = output_data.get("Supply Fan - Airflow")
         self.supply_fan.design_electric_power = output_data.get("Supply Fan - Power")
@@ -802,7 +802,7 @@ class System(ParentNode):
             and self.get_inp(BDL_SystemKeywords.RETURN_FAN_LOC)
             == BDL_ReturnFanOptions.RELIEF
         ):
-            self.relief_fan = Fan(self)
+            self.relief_fan = Fan()
             self.relief_fan.name = self.u_name + " ReliefFan"
             self.relief_fan.design_airflow = output_data.get(
                 "Return Fan - Airflow", None
@@ -839,7 +839,7 @@ class System(ParentNode):
 
         # If the return or relief fan location is not set to RELIEF, it is categorized as a return fan
         elif return_or_relief:
-            self.return_fan = Fan(self)
+            self.return_fan = Fan()
             self.return_fan.name = self.u_name + " ReturnFan"
             self.return_fan.design_airflow = output_data.get(
                 "Return Fan - Airflow", None
@@ -877,7 +877,7 @@ class System(ParentNode):
 
         # If the system is a dual duct system and the dual duct fan option is dual fan, there is a heating supply fan
         if self.get_inp(BDL_SystemKeywords.DDS_TYPE) == BDL_DualDuctFanOptions.DUAL_FAN:
-            self.heating_supply_fan = Fan(self)
+            self.heating_supply_fan = Fan()
             self.heating_supply_fan.name = self.u_name + " HeatingSupplyFan"
             self.heating_supply_fan.design_airflow = output_data.get(
                 "Heating Supply Fan - Airflow"
@@ -1315,8 +1315,7 @@ class FanSystem:
 
 class Fan:
 
-    def __init__(self, parent_system):
-        self.parent_system = parent_system
+    def __init__(self):
         self.data_structure = {}
 
         self.name = None

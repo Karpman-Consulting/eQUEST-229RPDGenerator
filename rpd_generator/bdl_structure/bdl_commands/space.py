@@ -23,15 +23,6 @@ class Space(ChildNode, ParentNode):
 
     bdl_command = BDL_Commands.SPACE
 
-    infiltration_algorithm_map = {
-        BDL_InfiltrationAlgorithmOptions.NONE: "None",
-        BDL_InfiltrationAlgorithmOptions.AIR_CHANGE: "Air Change Method",
-        BDL_InfiltrationAlgorithmOptions.RESIDENTIAL: "Residential Infiltration Coefficient",
-        BDL_InfiltrationAlgorithmOptions.S_G: "Sherman-Grimsrud Infiltration Method",
-        BDL_InfiltrationAlgorithmOptions.CRACK: "Crack Method",
-        BDL_InfiltrationAlgorithmOptions.ASHRAE_ENHANCED: "2005 ASHRAE Handbook Fundamentals - Enhanced Infiltration Method",
-    }
-
     energy_source_map = {
         BDL_InternalEnergySourceOptions.GAS: EnergySourceOptions.NATURAL_GAS,
         BDL_InternalEnergySourceOptions.ELECTRIC: EnergySourceOptions.ELECTRICITY,
@@ -45,7 +36,6 @@ class Space(ChildNode, ParentNode):
         self.rmd.bdl_obj_instances[u_name] = self
 
         self.space_data_structure = {}
-        self.zone = None
 
         # data elements with children
         self.interior_lighting = []
@@ -64,6 +54,10 @@ class Space(ChildNode, ParentNode):
         self.lighting_space_type = None
         self.ventilation_space_type = None
         self.service_water_heating_space_type = None
+
+        # Store object instances for easy access
+        self.zone = self.rmd.space_map.get(self.u_name)
+        self.infiltration = None
 
     def __repr__(self):
         return f"Space(u_name='{self.u_name}', parent={self.parent})"
@@ -90,11 +84,6 @@ class Space(ChildNode, ParentNode):
 
         # Populate miscellaneous equipment data elements
         self.populate_miscellaneous_equipment_data_elements()
-
-        # Populate zone data elements that originate from Space data
-        self.zone = self.rmd.space_map.get(self.u_name)
-        self.zone.volume = self.try_float(self.get_inp(BDL_SpaceKeywords.VOLUME))
-        self.populate_zone_infiltration()
 
     def populate_data_group(self):
         """Populate schema structure for space object."""
@@ -204,56 +193,10 @@ class Space(ChildNode, ParentNode):
 
     def populate_zone_infiltration(self):
         """Populate infiltration data elements for the zone object."""
-        self.zone.infil_id = self.u_name + " Infil"
-        self.zone.infil_multiplier_schedule = self.get_inp(
-            BDL_SpaceKeywords.INF_SCHEDULE
-        )
-        infiltration_method = self.get_inp(BDL_SpaceKeywords.INF_METHOD)
-        self.zone.infil_algorithm_name = self.infiltration_algorithm_map.get(
-            infiltration_method
-        )
-        if infiltration_method == BDL_InfiltrationAlgorithmOptions.AIR_CHANGE:
-            flow_per_area = self.try_float(
-                self.get_inp(BDL_SpaceKeywords.INF_FLOW_AREA)
-            )
-            air_changes_per_hour = self.try_float(
-                self.get_inp(BDL_SpaceKeywords.AIR_CHANGES_HR)
-            )
-            if (
-                flow_per_area
-                and air_changes_per_hour
-                and self.zone.volume
-                and self.floor_area
-            ):
-                self.zone.infil_flow_rate = (
-                    flow_per_area * self.floor_area
-                    + air_changes_per_hour * self.zone.volume / 60
-                )
-                self.zone.infil_modeling_method = (
-                    InfiltrationMethodOptions.WEATHER_DRIVEN
-                )
-            elif flow_per_area and self.floor_area:
-                self.zone.infil_flow_rate = flow_per_area * self.floor_area
-                if self.zone.infil_multiplier_schedule:
-                    self.zone.infil_modeling_method = (
-                        InfiltrationMethodOptions.CONSTANT_SCHEDULED
-                    )
-                else:
-                    self.zone.infil_modeling_method = InfiltrationMethodOptions.CONSTANT
-            elif air_changes_per_hour and self.zone.volume:
-                self.zone.infil_flow_rate = air_changes_per_hour * self.zone.volume / 60
-                self.zone.infil_modeling_method = (
-                    InfiltrationMethodOptions.WEATHER_DRIVEN
-                )
-            elif flow_per_area == 0 and air_changes_per_hour == 0:
-                self.zone.infil_flow_rate = 0
-                self.zone.infil_modeling_method = (
-                    InfiltrationMethodOptions.WEATHER_DRIVEN
-                )
-
-        else:
-            # infil_flow_rate will not populate if the infiltration method is not AIR-CHANGE
-            self.zone.infil_modeling_method = InfiltrationMethodOptions.WEATHER_DRIVEN
+        self.infiltration = Infiltration(self.zone)
+        self.infiltration.populate_data_elements()
+        self.infiltration.populate_data_group()
+        self.infiltration.insert_to_rpd()
 
 
 class InteriorLighting:
@@ -472,3 +415,91 @@ class MiscellaneousEquipment:
     def insert_to_rpd(self):
         """Insert miscellaneous equipment object into the rpd data structure."""
         self.parent_space.miscellaneous_equipment.append(self.data_structure)
+
+
+class Infiltration:
+
+    infiltration_algorithm_map = {
+        BDL_InfiltrationAlgorithmOptions.NONE: "None",
+        BDL_InfiltrationAlgorithmOptions.AIR_CHANGE: "Air Change Method",
+        BDL_InfiltrationAlgorithmOptions.RESIDENTIAL: "Residential Infiltration Coefficient",
+        BDL_InfiltrationAlgorithmOptions.S_G: "Sherman-Grimsrud Infiltration Method",
+        BDL_InfiltrationAlgorithmOptions.CRACK: "Crack Method",
+        BDL_InfiltrationAlgorithmOptions.ASHRAE_ENHANCED: "2005 ASHRAE Handbook Fundamentals - Enhanced Infiltration Method",
+    }
+
+    def __init__(self, zone):
+        self.data_structure = {}
+        self.zone = zone
+
+        # infiltration data elements
+        self.name = self.zone.u_name + " Infil"
+        self.reporting_name = None
+        self.notes = None
+        self.modeling_method = None
+        self.algorithm_name = None
+        self.measured_air_leakage_rate = None
+        self.flow_rate = None
+        self.multiplier_schedule = None
+
+    def populate_data_elements(self):
+        self.multiplier_schedule = self.zone.get_inp(BDL_SpaceKeywords.INF_SCHEDULE)
+        infiltration_method = self.zone.get_inp(BDL_SpaceKeywords.INF_METHOD)
+        self.algorithm_name = self.infiltration_algorithm_map.get(infiltration_method)
+        if infiltration_method == BDL_InfiltrationAlgorithmOptions.AIR_CHANGE:
+            flow_per_area = self.zone.try_float(
+                self.zone.get_inp(BDL_SpaceKeywords.INF_FLOW_AREA)
+            )
+            air_changes_per_hour = self.zone.try_float(
+                self.zone.get_inp(BDL_SpaceKeywords.AIR_CHANGES_HR)
+            )
+            if (
+                flow_per_area
+                and air_changes_per_hour
+                and self.zone.volume
+                and self.zone.floor_area
+            ):
+                self.flow_rate = (
+                    flow_per_area * self.zone.floor_area
+                    + air_changes_per_hour * self.zone.volume / 60
+                )
+                self.modeling_method = InfiltrationMethodOptions.WEATHER_DRIVEN
+            elif flow_per_area and self.zone.floor_area:
+                self.flow_rate = flow_per_area * self.zone.floor_area
+                if self.multiplier_schedule:
+                    self.modeling_method = InfiltrationMethodOptions.CONSTANT_SCHEDULED
+                else:
+                    self.modeling_method = InfiltrationMethodOptions.CONSTANT
+            elif air_changes_per_hour and self.zone.volume:
+                self.flow_rate = air_changes_per_hour * self.zone.volume / 60
+                self.modeling_method = InfiltrationMethodOptions.WEATHER_DRIVEN
+            elif flow_per_area == 0 and air_changes_per_hour == 0:
+                self.flow_rate = 0
+                self.modeling_method = InfiltrationMethodOptions.WEATHER_DRIVEN
+
+        else:
+            # infil_flow_rate will not populate if the infiltration method is not AIR-CHANGE
+            self.modeling_method = InfiltrationMethodOptions.WEATHER_DRIVEN
+
+    def populate_data_group(self):
+        self.data_structure["id"] = self.name
+
+        infiltration_data_elements = [
+            "reporting_name",
+            "notes",
+            "modeling_method",
+            "algorithm_name",
+            "measured_air_leakage_rate",
+            "flow_rate",
+            "multiplier_schedule",
+        ]
+
+        for attr in infiltration_data_elements:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.data_structure[attr] = value
+
+    def insert_to_rpd(self):
+        """Insert infiltration object into the rpd data structure."""
+        # find the zone that has the "SPACE" attribute value equal to the space object's u_name
+        self.zone.infiltration = self.data_structure
