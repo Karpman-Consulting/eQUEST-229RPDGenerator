@@ -373,6 +373,16 @@ class TestZones(unittest.TestCase):
                     "supply_design_cooling_setpoint_temperature": 50.0,
                     "supply_design_heating_setpoint_temperature": 70.0,
                     "temperature_control": "CONSTANT",
+                    "fan": {
+                        "design_airflow": 10000,
+                        "design_electric_power": 0,
+                        "design_pressure_rise": 30.0,
+                        "id": "Zone 1 MainTerminal Fan",
+                        "is_airflow_sized_based_on_design_day": False,
+                        "motor_efficiency": 0.9,
+                        "specification_method": "DETAILED",
+                        "total_efficiency": 0.9,
+                    },
                 }
             ],
             "thermostat_cooling_setpoint_schedule": "Thermostat Annual Schedule",

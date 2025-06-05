@@ -121,8 +121,8 @@
     "AirEnergyRecovery": [
         "air_energy_recovery"
     ],
-    "FanOutputValidationPoint": [
-        "output_validation_points"
+    "FanOperatingPoint": [
+        "operating_points"
     ],
     "FluidLoopDesignAndControl": [
         "cooling_or_condensing_design_and_control",

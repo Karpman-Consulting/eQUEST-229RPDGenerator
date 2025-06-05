@@ -972,7 +972,7 @@ class Terminal:
             )
 
             if self.zone.parent.is_terminal:
-                self.zone.terminal_fan = Fan()
+                self.zone.terminal_fan = Fan(self.zone)
                 self.zone.terminal_fan.name = self.zone.u_name + " MainTerminal Fan"
                 self.zone.terminal_fan.specification_method = (
                     FanSpecificationMethodOptions.DETAILED
@@ -1012,6 +1012,9 @@ class Terminal:
                             or self.zone.get_inp(BDL_ZoneKeywords.HMIN_FLOW_AREA)
                         )
                     )
+
+                if self.type == TerminalOptions.VARIABLE_AIR_VOLUME:
+                    self.zone.terminal_fan.populate_operating_points("Supply")
 
                 self.heating_capacity = self.zone.try_abs(
                     self.zone.try_float(
@@ -1074,6 +1077,8 @@ class Terminal:
                     self.zone.terminal_fan.design_electric_power = output_data.get(
                         "Supply Fan - Power"
                     )
+
+                self.zone.terminal_fan.populate_data_group()
 
             else:  # not self.parent.is_terminal:
                 if self.zone.parent.is_zonal_system:
@@ -1164,6 +1169,7 @@ class Terminal:
                     BDL_TerminalTypes.SERIES_PIU,
                     BDL_TerminalTypes.PARALLEL_PIU,
                 ]:
+                    self.zone.terminal_fan = Fan(self.zone)
                     self.zone.terminal_fan.name = self.zone.u_name + " MainTerminal Fan"
                     self.zone.terminal_fan.design_airflow = piu_fan_flow
                     self.is_fan_first_stage_heat = self.is_fan_first_stage_map.get(
@@ -1184,6 +1190,11 @@ class Terminal:
                         self.fan_configuration
                         or TerminalFanConfigurationOptions.PARALLEL
                     )
+
+                    if self.type == TerminalOptions.VARIABLE_AIR_VOLUME:
+                        self.zone.terminal_fan.populate_operating_points("Terminal")
+
+                    self.zone.terminal_fan.populate_data_group()
 
             elif self.zone.get_inp(BDL_ZoneKeywords.TERMINAL_TYPE) in [
                 BDL_TerminalTypes.DUAL_DUCT,
@@ -1271,6 +1282,9 @@ class Terminal:
 
     def populate_data_group(self):
         self.data_structure["id"] = self.name
+
+        if self.zone.terminal_fan:
+            self.fan = self.zone.terminal_fan.data_structure
 
         terminal_data_elements = [
             "reporting_name",

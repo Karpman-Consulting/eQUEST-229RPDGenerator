@@ -130,6 +130,8 @@ class TestSystems(unittest.TestCase):
             BDL_SystemKeywords.ERV_OA_FLOW: "5000",
             BDL_SystemKeywords.ERV_EXH_FLOW: "5500",
             BDL_SystemKeywords.FAN_SCHEDULE: "Fan Annual Schedule",
+            BDL_SystemKeywords.FAN_CONTROL: BDL_SystemFanControlOptions.DISCHARGE,
+            BDL_SystemKeywords.RETURN_FAN_CONTR: BDL_SystemFanControlOptions.DISCHARGE,
             BDL_SystemKeywords.PREHEAT_CAPACITY: "-48000",
             BDL_SystemKeywords.PREHEAT_T: "60",
             BDL_SystemKeywords.COOL_CONTROL: BDL_CoolControlOptions.WARMEST,
@@ -181,6 +183,7 @@ class TestSystems(unittest.TestCase):
                 },
                 "has_fully_ducted_return": False,
                 "maximum_outdoor_airflow": 12,
+                "operating_schedule": "Fan Annual Schedule",
                 "operation_during_occupied": "CONTINUOUS",
                 "operation_during_unoccupied": "CYCLING",
                 "return_fans": [
@@ -193,6 +196,19 @@ class TestSystems(unittest.TestCase):
                         "motor_efficiency": 0.7,
                         "specification_method": "DETAILED",
                         "total_efficiency": 0.5599999999999999,
+                        "operating_points": [
+                            {"airflow": 0.0, "power": 4.07807675},
+                            {"airflow": 1.0, "power": 5.110164697},
+                            {"airflow": 2.0, "power": 6.0669229719999995},
+                            {"airflow": 3.0, "power": 6.948351574999999},
+                            {"airflow": 4.0, "power": 7.7544505059999995},
+                            {"airflow": 5.0, "power": 8.485219765},
+                            {"airflow": 6.0, "power": 9.140659352},
+                            {"airflow": 7.0, "power": 9.720769267},
+                            {"airflow": 8.0, "power": 10.22554951},
+                            {"airflow": 9.0, "power": 10.655000080999999},
+                            {"airflow": 10.0, "power": 11.0},
+                        ],
                     }
                 ],
                 "supply_fans": [
@@ -205,9 +221,23 @@ class TestSystems(unittest.TestCase):
                         "motor_efficiency": 0.9,
                         "specification_method": "DETAILED",
                         "total_efficiency": 0.855,
+                        "operating_points": [
+                            {"airflow": 0.0, "power": 4.81954525},
+                            {"airflow": 1.2000000000000002, "power": 6.039285551},
+                            {"airflow": 2.4000000000000004, "power": 7.169999875999999},
+                            {"airflow": 3.5999999999999996, "power": 8.211688225},
+                            {"airflow": 4.800000000000001, "power": 9.164350598},
+                            {"airflow": 6.0, "power": 10.027986995},
+                            {"airflow": 7.199999999999999, "power": 10.802597416000001},
+                            {"airflow": 8.399999999999999, "power": 11.488181861},
+                            {"airflow": 9.600000000000001, "power": 12.08474033},
+                            {"airflow": 10.8, "power": 12.592272822999998},
+                            {"airflow": 12.0, "power": 13.0},
+                        ],
                     }
                 ],
                 "temperature_control": "ZONE_RESET",
+                "fan_control": "DISCHARGE_DAMPER",
             },
             "preheat_system": {
                 "id": "System 1 PreheatSys",
@@ -260,6 +290,7 @@ class TestSystems(unittest.TestCase):
             BDL_SystemKeywords.ERV_SENSIBLE_EFF: "0.7",
             BDL_SystemKeywords.ERV_LATENT_EFF: "0.6",
             BDL_SystemKeywords.FAN_SCHEDULE: "Fan Annual Schedule",
+            BDL_SystemKeywords.FAN_CONTROL: BDL_SystemFanControlOptions.SPEED,
             BDL_SystemKeywords.COOL_CONTROL: BDL_CoolControlOptions.CONSTANT,
             BDL_SystemKeywords.HEAT_CONTROL: BDL_HeatControlOptions.CONSTANT,
             BDL_SystemKeywords.HEAT_SET_T: "75",
@@ -309,6 +340,7 @@ class TestSystems(unittest.TestCase):
                 },
                 "has_fully_ducted_return": False,
                 "maximum_outdoor_airflow": 12,
+                "operating_schedule": "Fan Annual Schedule",
                 "operation_during_occupied": "CONTINUOUS",
                 "operation_during_unoccupied": "CYCLING",
                 "relief_fans": [
@@ -333,9 +365,29 @@ class TestSystems(unittest.TestCase):
                         "motor_efficiency": 0.9,
                         "specification_method": "DETAILED",
                         "total_efficiency": 0.855,
+                        "operating_points": [
+                            {"airflow": 0.0, "power": 0.01989364},
+                            {
+                                "airflow": 1.2000000000000002,
+                                "power": 0.16927264080999999,
+                            },
+                            {
+                                "airflow": 2.4000000000000004,
+                                "power": 0.5978181944800001,
+                            },
+                            {"airflow": 3.5999999999999996, "power": 1.29645456187},
+                            {"airflow": 4.800000000000001, "power": 2.2561060038400003},
+                            {"airflow": 6.0, "power": 3.467696781249999},
+                            {"airflow": 7.199999999999999, "power": 4.92215115496},
+                            {"airflow": 8.399999999999999, "power": 6.610393385829998},
+                            {"airflow": 9.600000000000001, "power": 8.523347734720002},
+                            {"airflow": 10.8, "power": 10.65193846249},
+                            {"airflow": 12.0, "power": 12.98708983},
+                        ],
                     }
                 ],
                 "temperature_control": "CONSTANT",
+                "fan_control": "VARIABLE_SPEED_DRIVE",
             },
             "heating_system": {
                 "id": "System 1 HeatSys",
@@ -402,6 +454,7 @@ class TestSystems(unittest.TestCase):
                 },
                 "has_fully_ducted_return": False,
                 "maximum_outdoor_airflow": 12,
+                "operating_schedule": "Fan Annual Schedule",
                 "operation_during_occupied": "CYCLING",
                 "operation_during_unoccupied": "CYCLING",
                 "supply_fans": [
@@ -463,6 +516,7 @@ class TestSystems(unittest.TestCase):
                 "id": "System 1 FanSys",
                 "has_fully_ducted_return": False,
                 "operation_during_occupied": "CONTINUOUS",
+                "operating_schedule": "Fan Annual Schedule",
                 "supply_fans": [
                     {
                         "id": "System 1 SupplyFan",
@@ -500,6 +554,7 @@ class TestSystems(unittest.TestCase):
                 "id": "System 1 FanSys",
                 "has_fully_ducted_return": False,
                 "operation_during_occupied": "KEEP_OFF",
+                "operating_schedule": "Fan Annual Schedule",
                 "supply_fans": [
                     {
                         "id": "System 1 SupplyFan",
@@ -578,6 +633,7 @@ class TestSystems(unittest.TestCase):
                 },
                 "has_fully_ducted_return": False,
                 "maximum_outdoor_airflow": 12,
+                "operating_schedule": "Fan Annual Schedule",
                 "operation_during_occupied": "CONTINUOUS",
                 "operation_during_unoccupied": "CONTINUOUS",
                 "supply_fans": [

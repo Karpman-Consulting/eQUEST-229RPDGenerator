@@ -114,9 +114,9 @@
         "motor_nameplate_power": "",
         "shaft_power": ""
     },
-    "FanOutputValidationPoint": {
-        "airflow": "",
-        "result": ""
+    "FanOperatingPoint": {
+        "airflow": "cfm",
+        "power": "kW"
     },
     "Terminal": {
         "primary_airflow": "cfm",

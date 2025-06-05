@@ -114,9 +114,9 @@
         "motor_nameplate_power": "W",
         "shaft_power": "W"
     },
-    "FanOutputValidationPoint": {
+    "FanOperatingPoint": {
         "airflow": "L/s",
-        "result": "W"
+        "power": "W"
     },
     "Terminal": {
         "primary_airflow": "L/s",
