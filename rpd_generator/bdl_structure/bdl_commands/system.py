@@ -1038,6 +1038,9 @@ class FanSystem:
             self.parent_system.get_inp(BDL_SystemKeywords.FAN_CONTROL)
         )
         self.temperature_control = self.get_temperature_control()
+        self.operating_schedule = self.parent_system.get_inp(
+            BDL_SystemKeywords.FAN_SCHEDULE
+        )
         self.demand_control_ventilation_control = self.dcv_map.get(
             self.parent_system.get_inp(BDL_SystemKeywords.MIN_OA_METHOD)
         )
@@ -1418,9 +1421,9 @@ class Fan:
                 self.data_structure[attr] = value
 
     def populate_operating_points(self, fan_type):
-        if fan_type not in ["Supply", "Return", "HeatingSupply"]:
+        if fan_type not in ["Supply", "Return", "Relief", "HeatingSupply"]:
             raise ValueError(
-                f"Invalid fan type: {fan_type}. Expected 'Supply', 'Return', or 'HeatingSupply'."
+                f"Invalid fan type: {fan_type}. Expected 'Supply', 'Return', 'Relief', or 'HeatingSupply'."
             )
 
         if fan_type == "Supply":
@@ -1436,7 +1439,7 @@ class Fan:
                 )
                 curve_coeffs = curve.coefficients
 
-        elif fan_type == "Return":
+        elif fan_type in ["Return", "Relief"]:
             fan_control_method = self.parent_system.get_inp(
                 BDL_SystemKeywords.RETURN_FAN_CONTR
             )
