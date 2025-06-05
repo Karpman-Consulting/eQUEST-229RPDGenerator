@@ -620,9 +620,6 @@ class System(ParentNode):
                     "fan_system": self.fan_system.data_structure,
                 }
             )
-            self.system_data_structure.update(
-                {"fan_system": self.fan_system.data_structure}
-            )
 
             for attr in ["heating_system", "cooling_system", "preheat_system"]:
                 subsystem = getattr(self, attr)
@@ -1368,7 +1365,7 @@ class Fan:
         BDL_SystemFanControlOptions.CYCLING: [0.0, 1.0, 0.0, 0.0],
     }
 
-    def __init__(self, parent_system):
+    def __init__(self, parent_system=None):
         self.parent_system = parent_system
         self.data_structure = {}
 

@@ -258,11 +258,13 @@ class TestSpaces(unittest.TestCase):
                 {
                     "id": "Space 1 MiscEqp3",
                     "energy_type": "NATURAL_GAS",
+                    "multiplier_schedule": "Annual Schedule 1",
                     "power": 0.04396066666666667,
                 },
                 {
                     "id": "Space 1 MiscEqp4",
                     "energy_type": "ELECTRICITY",
+                    "multiplier_schedule": "Annual Schedule 1",
                     "power": 0.05861422222222223,
                 },
             ],
@@ -336,11 +338,13 @@ class TestSpaces(unittest.TestCase):
                 {
                     "id": "Space 1 MiscEqp1",
                     "energy_type": "NONE",
+                    "multiplier_schedule": "Annual Schedule 1",
                     "power": 0.04396066666666667,
                 },
                 {
                     "id": "Space 1 MiscEqp2",
                     "energy_type": "NONE",
+                    "multiplier_schedule": "Annual Schedule 1",
                     "power": 0.05861422222222223,
                 },
             ],
