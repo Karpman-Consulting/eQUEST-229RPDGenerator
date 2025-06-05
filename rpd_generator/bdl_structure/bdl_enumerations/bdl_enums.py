@@ -1235,6 +1235,7 @@ class BDLEnums:
                 "ZONE-FAN-FLOW",
                 "ZONE-FAN-CTRL",
                 "ZONE-FAN-RUN",
+                "ZONE-FAN-KW-FPLR",
                 "CHW-LOOP",
                 "CW-LOOP",
                 "WSE-LOOP",
