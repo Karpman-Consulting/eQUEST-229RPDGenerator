@@ -19,6 +19,7 @@ pytest = "*"
 black = "*"
 xlsxwriter = "*"
 pre-commit = "*"
+rpdvalidator = "*"
 
 [requires]
 python_version = "3.11"
