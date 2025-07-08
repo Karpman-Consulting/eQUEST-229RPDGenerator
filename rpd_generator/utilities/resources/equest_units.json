@@ -147,7 +147,7 @@
         "design_head": "ft_WC",
         "design_flow": "gpm"
     },
-    "PumpOutputValidationPoint": {
+    "PumpOperatingPoint": {
         "flow": "",
         "result": ""
     },
@@ -158,7 +158,7 @@
         "operation_lower_limit": "MMbtu_h",
         "operation_upper_limit": "MMbtu_h"
     },
-    "BoilerOutputValidationPoint": {
+    "BoilerOperatingPoint": {
         "load": "",
         "entering_water_temperature": "",
         "result": ""
@@ -175,12 +175,12 @@
         "full_load_efficiency": "",
         "part_load_efficiency": ""
     },
-    "ChillerCapacityValidationPoint": {
+    "ChillerCapacityOperatingPoint": {
         "chilled_water_supply_temperature": "",
         "condenser_temperature": "",
         "result": ""
     },
-    "ChillerPowerValidationPoint": {
+    "ChillerPowerOperatingPoint": {
         "chilled_water_supply_temperature": "",
         "condenser_temperature": "",
         "load": "",
@@ -215,18 +215,18 @@
         "setpoint_temperature": "F",
         "draft_fan_power": ""
     },
-    "ServiceWaterHeaterValidationPoint": {
+    "ServiceWaterHeaterOperatingPoint": {
         "load": "",
         "result": ""
     },
-    "HeatPumpWaterHeaterCapacityValidationPoint": {
+    "HeatPumpWaterHeaterCapacityOperatingPoint": {
         "evaporator_air_temperature": "",
         "condenser_water_temperature": "",
         "evaporator_air_flow": "",
         "condenser_water_flow": "",
         "result": ""
     },
-    "HeatPumpWaterHeaterPowerValidationPoint": {
+    "HeatPumpWaterHeaterPowerOperatingPoint": {
         "evaporator_air_temperature": "",
         "condenser_water_temperature": "",
         "evaporator_air_flow": "",
@@ -241,8 +241,7 @@
         "exterior_insulation": ""
     },
     "ServiceWaterHeatingUse": {
-        "temperature_at_fixture": "F",
-        "use": "gpm"
+        "temperature_at_fixture": "F"
     },
     "ExteriorLighting": {
         "area": "",

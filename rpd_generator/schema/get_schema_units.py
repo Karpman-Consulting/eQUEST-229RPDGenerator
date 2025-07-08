@@ -17,8 +17,9 @@ def extract_units(schema_data):
 
 
 if __name__ == "__main__":
+    # WARNING: Manual updates to the schema_units.json file will be required after running this script. Particularly around delta-temperature units and units with exponents
     file_dir = os.path.dirname(__file__)
-    json_schema_path = os.path.join(file_dir, "resources", "ASHRAE229.schema.json")
+    json_schema_path = os.path.join(file_dir, "ASHRAE229.schema.json")
     output_path = os.path.join(file_dir, "resources", "schema_units.json")
 
     with open(json_schema_path) as f:

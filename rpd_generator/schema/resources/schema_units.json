@@ -1,24 +1,14 @@
 {
     "RulesetModelDescription": {
-        "measured_infiltration_pressure_difference": "Pa"
-    },
-    "SourceResult": {
-        "annual_consumption": "J",
-        "annual_demand": "W"
-    },
-    "EndUseResult": {
-        "annual_site_energy_use": "J",
-        "annual_site_coincident_demand": "W",
-        "annual_site_non_coincident_demand": "W"
+        "measured_infiltration_pressure_difference": "Pa",
+        "altitude": "m"
     },
     "Zone": {
         "volume": "m^3",
         "design_thermostat_cooling_setpoint": "C",
         "design_thermostat_heating_setpoint": "C",
         "transfer_airflow_rate": "L/s",
-        "makeup_airflow_rate": "L/s",
-        "non_mechanical_cooling_fan_power": "W",
-        "non_mechanical_cooling_fan_airflow": "L/s"
+        "makeup_airflow_rate": "L/s"
     },
     "Space": {
         "floor_area": "m^2",
@@ -35,10 +25,10 @@
         "azimuth": "degrees"
     },
     "Construction": {
-        "u_factor": "W/m^2/K",
-        "c_factor": "W/m^2/K",
-        "f_factor": "W/m/K",
-        "r_values": "delta K*m^2/W"
+        "u_factor": "W/m^2/delta_K",
+        "c_factor": "W/m^2/delta_K",
+        "f_factor": "W/m/delta_K",
+        "r_values": "delta_K*m^2/W"
     },
     "Material": {
         "thickness": "m",
@@ -75,9 +65,7 @@
         "design_load": "kg",
         "speed": "m/s",
         "cab_area": "m^2",
-        "cab_lighting_power": "W",
-        "cab_ventilation_fan_power": "W",
-        "cab_ventilation_fan_flow": "L/s"
+        "cab_lighting_power": "W"
     },
     "HeatingSystem": {
         "design_capacity": "W",
@@ -121,7 +109,7 @@
     "Terminal": {
         "primary_airflow": "L/s",
         "secondary_airflow": "L/s",
-        "max_heating_airflow": "L/s",
+        "maximum_heating_airflow": "L/s",
         "supply_design_heating_setpoint_temperature": "C",
         "supply_design_cooling_setpoint_temperature": "C",
         "minimum_airflow": "L/s",
@@ -147,9 +135,9 @@
         "design_head": "Pa",
         "design_flow": "L/s"
     },
-    "PumpOutputValidationPoint": {
+    "PumpOperatingPoint": {
         "flow": "L/s",
-        "result": "W"
+        "power": "W"
     },
     "Boiler": {
         "design_capacity": "W",
@@ -158,10 +146,10 @@
         "operation_lower_limit": "W",
         "operation_upper_limit": "W"
     },
-    "BoilerOutputValidationPoint": {
+    "BoilerOperatingPoint": {
         "load": "W",
         "entering_water_temperature": "C",
-        "result": "W"
+        "power": "W"
     },
     "Chiller": {
         "design_capacity": "W",
@@ -172,27 +160,23 @@
         "design_flow_condenser": "L/s",
         "design_entering_condenser_temperature": "C",
         "design_leaving_evaporator_temperature": "C",
-        "full_load_efficiency": "W/W",
-        "part_load_efficiency": "W/W"
+        "efficiency_metric_values": "W/W"
     },
-    "ChillerCapacityValidationPoint": {
+    "ChillerCapacityOperatingPoint": {
         "chilled_water_supply_temperature": "C",
         "condenser_temperature": "C",
-        "result": "W"
+        "capacity": "W"
     },
-    "ChillerPowerValidationPoint": {
+    "ChillerPowerOperatingPoint": {
         "chilled_water_supply_temperature": "C",
         "condenser_temperature": "C",
         "load": "W",
         "is_at_full_capacity": "W",
-        "result": "W"
+        "power": "W"
     },
     "HeatRejection": {
         "range": "K",
         "approach": "K",
-        "fan_shaft_power": "W",
-        "fan_motor_efficiency": "W",
-        "fan_motor_nameplate_power": "W",
         "design_wetbulb_temperature": "C",
         "design_water_flowrate": "L/s",
         "rated_water_flowrate": "L/s",
@@ -212,27 +196,26 @@
         "input_power": "W",
         "rated_capacity": "W",
         "minimum_capacity": "W",
-        "setpoint_temperature": "C",
-        "draft_fan_power": "W"
+        "setpoint_temperature": "C"
     },
-    "ServiceWaterHeaterValidationPoint": {
+    "ServiceWaterHeaterOperatingPoint": {
         "load": "W",
-        "result": "W"
+        "power": "W"
     },
-    "HeatPumpWaterHeaterCapacityValidationPoint": {
+    "HeatPumpWaterHeaterCapacityOperatingPoint": {
         "evaporator_air_temperature": "C",
         "condenser_water_temperature": "C",
         "evaporator_air_flow": "L/s",
         "condenser_water_flow": "L/s",
-        "result": "W"
+        "capacity": "W"
     },
-    "HeatPumpWaterHeaterPowerValidationPoint": {
+    "HeatPumpWaterHeaterPowerOperatingPoint": {
         "evaporator_air_temperature": "C",
         "condenser_water_temperature": "C",
         "evaporator_air_flow": "L/s",
         "condenser_water_flow": "L/s",
         "load": "W",
-        "result": "W"
+        "power": "W"
     },
     "Tank": {
         "storage_capacity": "L",
@@ -241,8 +224,7 @@
         "exterior_insulation": "K*m^2/W"
     },
     "ServiceWaterHeatingUse": {
-        "temperature_at_fixture": "C",
-        "use": "l/s"
+        "temperature_at_fixture": "C"
     },
     "ExteriorLighting": {
         "area": "m^2",

@@ -43,7 +43,9 @@ results_data = {
 # Test Case Report
 def add_test_case_report(test_case_dir, generated_file_name):
     files_utilized = [
-        f.name for f in test_case_dir.iterdir() if f.is_file() and f.suffix != ".json"
+        f.name
+        for f in test_case_dir.iterdir()
+        if f.is_file() and f.suffix not in [".rpd"]
     ]
     test_case_report = {
         "test_id": test_case_dir.name,
@@ -2098,10 +2100,10 @@ def run_comparison_for_all_tests(test_dir: Path):
             # if os.path.isdir(test_dir) and (test == "E-1"):
 
             generated_json_file = next(
-                (f for f in test_case_dir.iterdir() if f.suffix == ".json"), None
+                (f for f in test_case_dir.iterdir() if f.suffix == ".rpd"), None
             )
             spec_file = spec_dir / f"{test} spec.json"
-            reference_json_file = reference_dir / f"{test}.json"
+            reference_json_file = reference_dir / f"{test}.rpd"
 
             if (
                 generated_json_file.is_file()

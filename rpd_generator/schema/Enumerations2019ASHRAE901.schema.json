@@ -6,16 +6,12 @@
         "RulesetModelOptions2019ASHRAE901": {
             "type": "string",
             "enum": [
-                "USER",
-                "PROPOSED",
                 "BASELINE_0",
                 "BASELINE_90",
                 "BASELINE_180",
                 "BASELINE_270"
             ],
             "descriptions": [
-                "The building model as described without consideration of the ruleset",
-                "The building model that corresponds with the Proposed Buildings Performance column of Appendix G Table G3.1",
                 "The building model that corresponds with the Baseline Buildings Performance column of Appendix G Table G3.1 with no rotation",
                 "The building model that corresponds with the Baseline Buildings Performance column of Appendix G Table G3.1 with 90 degree rotation",
                 "The building model that corresponds with the Baseline Buildings Performance column of Appendix G Table G3.1 with 180 degree rotation",
@@ -480,12 +476,14 @@
                 "GENERAL",
                 "TASK",
                 "DECORATIVE",
+                "RETAIL_DISPLAY",
                 "UNREGULATED"
             ],
             "descriptions": [
                 "General",
                 "Task",
                 "Decorative",
+                "Retail display",
                 "Unregulated"
             ]
         },
@@ -807,7 +805,7 @@
                 "Transient Residential - Dwelling unit"
             ]
         },
-        "ServiceWaterHeatingSpaceOptions2019ASHRAE901": {
+        "ServiceWaterHeatingAreaOptions2019ASHRAE901": {
             "type": "string",
             "enum": [
                 "AUTOMOTIVE_FACILITY",
@@ -820,6 +818,7 @@
                 "DORMITORY",
                 "EXERCISE_CENTER",
                 "FIRE_STATION",
+                "GROCERY_STORE",
                 "GYMNASIUM",
                 "HEALTH_CARE_CLINIC",
                 "HOSPITAL_AND_OUTPATIENT_SURGERY",
@@ -857,6 +856,7 @@
                 "Dormitory",
                 "Exercise center",
                 "Fire station",
+                "Grocery store",
                 "Gymnasium",
                 "Health-care clinic",
                 "Hospital and outpatient surgery center",
@@ -908,25 +908,25 @@
                 "CZ8"
             ],
             "descriptions": [
-                "CZ0A - Extremely Hot - Humid",
-                "CZ0B - Extremely Hot - Dry",
-                "CZ1A - Very Hot - Humid",
-                "CZ1B - Very Hot - Dry",
-                "CZ2A - Hot - Humid",
-                "CZ2B - Hot - Dry",
-                "CZ3A - Warm - Humid",
-                "CZ3B - Warm - Dry",
-                "CZ3C - Warm - Marine",
-                "CZ4A - Mixed - Humid",
-                "CZ4B - Mixed - Dry",
-                "CZ4C - Mixed - Marine",
-                "CZ5A - Cool - Humid",
-                "CZ5B - Cool - Dry",
-                "CZ5C - Cool - Marine",
-                "CZ6A - Cold - Humid",
-                "CZ6B - Cold - Dry",
-                "CZ7 - Very cold",
-                "CZ8 - Subarctic/arctic"
+                "Extremely Hot - Humid",
+                "Extremely Hot - Dry",
+                "Very Hot - Humid",
+                "Very Hot - Dry",
+                "Hot - Humid",
+                "Hot - Dry",
+                "Warm - Humid",
+                "Warm - Dry",
+                "Warm - Marine",
+                "Mixed - Humid",
+                "Mixed - Dry",
+                "Mixed - Marine",
+                "Cool - Humid",
+                "Cool - Dry",
+                "Cool - Marine",
+                "Cold - Humid",
+                "Cold - Dry",
+                "Very cold",
+                "Subarctic/arctic"
             ]
         },
         "VerticalFenestrationBuildingAreaOptions2019ASHRAE901": {
@@ -1006,59 +1006,13 @@
                 "No prescribed schedules for Appendix G of ASHRAE Standard 90.1-2019. This field may be relavent for other rulesets."
             ]
         },
-        "SpaceStatusOptions2019ASHRAE901": {
-            "type": "string",
-            "enum": [
-                "NEW",
-                "EXISTING",
-                "ALTERED"
-            ],
-            "descriptions": [
-                "New",
-                "Existing",
-                "Altered"
-            ]
-        },
-        "AdditionalSurfaceAdjacencyOptions2019ASHRAE901": {
-            "type": "string",
-            "enum": [
-                "UNENCLOSED",
-                "UNCONDITIONED",
-                "UNHEATED",
-                "SEMIHEATED"
-            ],
-            "descriptions": [
-                "The space on the other side of the surface is assumed to be unenclosed. The space on the other side of the surface is not explicity modeled.",
-                "The space on the other side of the surface is assumed to be unconditioned. The space on the other side of the surface is not explicity modeled.",
-                "Surface adjacent to a environment that is not heated but enclosed. The space on the other side of the surface is not explicity modeled.",
-                "Surface adjacent to a environment that is semi-heated. The space on the other side of the surface is not explicity modeled."
-            ]
-        },
         "ConstructionClassificationOptions2019ASHRAE901": {
             "type": "string",
             "enum": [
-                "METAL_BUILDING",
-                "WOOD_FRAMED",
-                "STEEL_FRAMED",
-                "MASS",
-                "INSULATION_ENTIRELY_ABOVE_DECK",
-                "ATTIC",
-                "BELOW_GRADE_WALL",
-                "STEEL_JOIST",
-                "SLAB_ON_GRADE",
-                "OTHER"
+                "STEEL_FRAMED"
             ],
             "descriptions": [
-                "Metal building",
-                "Wood-framed",
-                "Steel-framed",
-                "Mass",
-                "Insulation entirely above deck",
-                "Attic",
-                "Below-grade wall",
-                "Steel joist",
-                "Slab-on-grade",
-                "Other"
+                "Steel-framed"
             ]
         },
         "SubsurfaceSubclassificationOptions2019ASHRAE901": {
@@ -1073,13 +1027,13 @@
                 "OTHER"
             ],
             "descriptions": [
-                "Metal Coiling Door",
-                "Non-swinging Door",
-                "Sectional Garage Door",
-                "Swinging Door",
-                "Spandrel Glass",
-                "Glass Block",
-                "Other"
+                "an upward-acting, nonswinging door assembly consisting of interlocking horizontal slats or sheets that, upon opening the door, roll up around a horizontal barrel above the door opening.",
+                "roll-up, metal coiling, sliding, and any other door that is not a swinging door.",
+                "an upward-acting, nonswinging door assembly made of two or more horizontal panels hinged together vertically.",
+                "a door having an operable opaque panel with hinges or pivots on one side.",
+                "opaque glass that conceals structural building components from being visible from the exterior of the building",
+                "a translucent, hollow or solid block of glass for glazing openings or constructing partitions",
+                "other subclassifications"
             ]
         },
         "HeatingVentilatingAirConditioningBuildingAreaOptions2019ASHRAE901": {
@@ -1104,13 +1058,13 @@
         "OutputSchemaOptions2019ASHRAE901": {
             "type": "string",
             "enum": [
-                "OUTPUT_SCHEMA_ASHRAE901_2019",
-                "OTHER"
+                "OUTPUT_SCHEMA_ASHRAE901_2019"
             ],
             "descriptions": [
-                "Output schema for ASHRAE 90.1 2019",
-                "other"
+                "Output schema for ASHRAE 90.1 2019"
             ]
         }
-    }
+    },
+    "version": "0.1.7",
+    "$ref": "ASHRAE229_extra.schema.json#/definitions/RulesetProjectDescription"
 }

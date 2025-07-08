@@ -35,7 +35,7 @@ def extract_parent_element_data(schema, parent_key=None, refs=None):
 
 if __name__ == "__main__":
     file_dir = os.path.dirname(__file__)
-    json_schema_path = os.path.join(file_dir, "resources", "ASHRAE229.schema.json")
+    json_schema_path = os.path.join(file_dir, "ASHRAE229.schema.json")
     output_path = os.path.join(file_dir, "resources", "item_parents.json")
 
     with open(json_schema_path) as f:

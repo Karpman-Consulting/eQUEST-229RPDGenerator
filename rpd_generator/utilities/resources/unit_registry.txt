@@ -144,6 +144,7 @@ degree_Rankine = 5 / 9 * kelvin; offset: 0 = R = rankine = degR = degreeR = °R
 degree_Fahrenheit = 5 / 9 * kelvin; offset: 233.15 + 200 / 9 = F = fahrenheit = degF = degreeF
 
 # Delta Temperature
+delta_kelvin = kelvin = delta_K = delta_degK = delta_degreeK = delta_kelvin
 delta_degree_Fahrenheit = 5 / 9 * kelvin = delta_F = delta_degF = delta_degreeF = delta_Fahrenheit
 delta_degree_Celsius = kelvin = delta_C = delta_degC = delta_degreeC = delta_Celsius
 

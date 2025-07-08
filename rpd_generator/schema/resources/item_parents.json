@@ -1,15 +1,16 @@
 {
-    "Timestamp": [
-        "data_timestamp"
-    ],
     "RulesetModelDescription": [
         "ruleset_model_descriptions"
     ],
-    "Calendar": [
-        "calendar"
+    "Metadata": [
+        "metadata"
     ],
-    "Weather": [
-        "weather"
+    "Version": [
+        "schema_version",
+        "version"
+    ],
+    "Timestamp": [
+        "time_of_creation"
     ],
     "Transformer": [
         "transformers"
@@ -20,6 +21,12 @@
     "Schedule": [
         "schedules"
     ],
+    "Material": [
+        "materials"
+    ],
+    "Construction": [
+        "constructions"
+    ],
     "FluidLoop": [
         "fluid_loops",
         "child_loops"
@@ -29,6 +36,9 @@
     ],
     "ServiceWaterHeatingEquipment": [
         "service_water_heating_equipment"
+    ],
+    "ServiceWaterHeatingUse": [
+        "service_water_heating_uses"
     ],
     "Pump": [
         "pumps"
@@ -44,6 +54,12 @@
     ],
     "ExternalFluidSource": [
         "external_fluid_sources"
+    ],
+    "Calendar": [
+        "calendar"
+    ],
+    "Weather": [
+        "weather"
     ],
     "BuildingSegment": [
         "building_segments"
@@ -76,12 +92,16 @@
         "terminals"
     ],
     "Fan": [
-        "zonal_exhaust_fan",
+        "zonal_supply_fans",
+        "zonal_exhaust_fans",
+        "cab_ventilation_fan",
         "supply_fans",
         "return_fans",
         "exhaust_fans",
         "relief_fans",
-        "fan"
+        "fan",
+        "fan",
+        "draft_fan"
     ],
     "InteriorLighting": [
         "interior_lighting"
@@ -89,21 +109,11 @@
     "MiscellaneousEquipment": [
         "miscellaneous_equipment"
     ],
-    "ServiceWaterHeatingUse": [
-        "service_water_heating_uses"
-    ],
     "Subsurface": [
         "subsurfaces"
     ],
-    "Construction": [
-        "construction"
-    ],
     "SurfaceOpticalProperties": [
         "optical_properties"
-    ],
-    "Material": [
-        "primary_layers",
-        "framing_layers"
     ],
     "FanSystem": [
         "fan_system"
@@ -126,19 +136,20 @@
     ],
     "FluidLoopDesignAndControl": [
         "cooling_or_condensing_design_and_control",
-        "heating_design_and_control"
+        "heating_design_and_control",
+        "service_water_heating_design_and_control"
     ],
-    "PumpOutputValidationPoint": [
-        "output_validation_points"
+    "PumpOperatingPoint": [
+        "operating_points"
     ],
-    "BoilerOutputValidationPoint": [
-        "output_validation_points"
+    "BoilerOperatingPoint": [
+        "operating_points"
     ],
-    "ChillerCapacityValidationPoint": [
-        "capacity_validation_points"
+    "ChillerCapacityOperatingPoint": [
+        "capacity_operating_points"
     ],
-    "ChillerPowerValidationPoint": [
-        "power_validation_points"
+    "ChillerPowerOperatingPoint": [
+        "power_operating_points"
     ],
     "Tank": [
         "tanks",
@@ -149,14 +160,14 @@
         "service_water_piping",
         "child"
     ],
-    "ServiceWaterHeaterValidationPoint": [
-        "output_validation_points"
+    "ServiceWaterHeaterOperatingPoint": [
+        "operating_points"
     ],
-    "HeatPumpWaterHeaterCapacityValidationPoint": [
-        "compressor_capacity_validation_points"
+    "HeatPumpWaterHeaterCapacityOperatingPoint": [
+        "compressor_capacity_operating_points"
     ],
-    "HeatPumpWaterHeaterPowerValidationPoint": [
-        "compressor_power_validation_points"
+    "HeatPumpWaterHeaterPowerOperatingPoint": [
+        "compressor_power_operating_points"
     ],
     "SolarThermal": [
         "solar_thermal_systems"

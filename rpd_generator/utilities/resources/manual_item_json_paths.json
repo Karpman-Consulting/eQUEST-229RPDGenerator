@@ -6,16 +6,16 @@
         "$.ruleset_model_descriptions"
     ],
     "SourceResult": [
-        "$.ruleset_model_descriptions[*].output.output_instance.annual_source_results"
+        "$.ruleset_model_descriptions[*].model_output.annual_source_results"
     ],
     "EndUseResult": [
-        "$.ruleset_model_descriptions[*].output.output_instance.annual_end_use_results"
+        "$.ruleset_model_descriptions[*].model_output.annual_end_use_results"
     ],
     "Calendar": [
-        "$.calendar"
+        "$.ruleset_model_descriptions[*].calendar"
     ],
     "Weather": [
-        "$.weather"
+        "$.ruleset_model_descriptions[*].weather"
     ],
     "Transformer": [
         "$.ruleset_model_descriptions[*].transformers"
@@ -82,7 +82,8 @@
         "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].terminals"
     ],
     "Fan": [
-        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].zonal_exhaust_fan",
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].zonal_exhaust_fans",
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].zonal_supply_fans",
         "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.supply_fans",
         "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.return_fans",
         "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.exhaust_fans",
@@ -96,20 +97,19 @@
         "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].spaces[*].miscellaneous_equipment"
     ],
     "ServiceWaterHeatingUse": [
-        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].service_water_heating_uses",
-        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].spaces[*].service_water_heating_uses"
+        "$.ruleset_model_descriptions[*].service_water_heating_uses"
     ],
     "Subsurface": [
         "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].surfaces[*].subsurfaces"
     ],
     "Construction": [
-        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].surfaces[*].construction"
+        "$.ruleset_model_descriptions[*].constructions"
+    ],
+    "Material": [
+        "$.ruleset_model_descriptions[*].materials"
     ],
     "SurfaceOpticalProperties": [
         "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].surfaces[*].optical_properties"
-    ],
-    "Material": [
-        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].surfaces[*].construction.primary_layers"
     ],
     "FanSystem": [
         "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system"
@@ -128,7 +128,7 @@
         "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.air_energy_recovery"
     ],
     "FanOperatingPoint": [
-        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].zonal_exhaust_fan.operating_points",
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].zonal_exhaust_fans[*].operating_points",
         "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*].terminals[*].fan.operating_points",
         "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.supply_fans[*].operating_points",
         "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.return_fans[*].operating_points",
@@ -143,17 +143,17 @@
         "$.ruleset_model_descriptions[*].fluid_loops[*].child_loops[*].child_loops[*].cooling_or_condensing_design_and_control",
         "$.ruleset_model_descriptions[*].fluid_loops[*].child_loops[*].child_loops[*].heating_design_and_control"
     ],
-    "PumpOutputValidationPoint": [
-        "$.ruleset_model_descriptions[*].pumps[*].output_validation_points"
+    "PumpOperatingPoint": [
+        "$.ruleset_model_descriptions[*].pumps[*].operating_points"
     ],
-    "BoilerOutputValidationPoint": [
-        "$.ruleset_model_descriptions[*].boilers[*].output_validation_points"
+    "BoilerOperatingPoint": [
+        "$.ruleset_model_descriptions[*].boilers[*].operating_points"
     ],
-    "ChillerCapacityValidationPoint": [
-        "$.ruleset_model_descriptions[*].chillers[*].capacity_validation_points"
+    "ChillerCapacityOperatingPoint": [
+        "$.ruleset_model_descriptions[*].chillers[*].capacity_operating_points"
     ],
-    "ChillerPowerValidationPoint": [
-        "$.ruleset_model_descriptions[*].chillers[*].power_validation_points"
+    "ChillerPowerOperatingPoint": [
+        "$.ruleset_model_descriptions[*].chillers[*].power_operating_points"
     ],
     "Tank": [
         "$.ruleset_model_descriptions[*].service_water_heating_distribution_systems[*].tanks",
@@ -164,14 +164,14 @@
         "$.ruleset_model_descriptions[*].service_water_heating_distribution_systems[*].service_water_piping",
         "$.ruleset_model_descriptions[*].service_water_heating_distribution_systems[*].service_water_piping[*].child"
     ],
-    "ServiceWaterHeaterValidationPoint": [
-        "$.ruleset_model_descriptions[*].service_water_heating_equipment[*].output_validation_points"
+    "ServiceWaterHeaterOperatingPoint": [
+        "$.ruleset_model_descriptions[*].service_water_heating_equipment[*].operating_points"
     ],
-    "HeatPumpWaterHeaterCapacityValidationPoint": [
-        "$.ruleset_model_descriptions[*].service_water_heating_equipment[*].compressor_capacity_validation_points"
+    "HeatPumpWaterHeaterCapacityOperatingPoint": [
+        "$.ruleset_model_descriptions[*].service_water_heating_equipment[*].compressor_capacity_operating_points"
     ],
-    "HeatPumpWaterHeaterPowerValidationPoint": [
-        "$.ruleset_model_descriptions[*].service_water_heating_equipment[*].compressor_power_validation_points"
+    "HeatPumpWaterHeaterPowerOperatingPoint": [
+        "$.ruleset_model_descriptions[*].service_water_heating_equipment[*].compressor_power_operating_points"
     ],
     "SolarThermal": [
         "$.ruleset_model_descriptions[*].service_water_heating_equipment[*].solar_thermal_systems"
