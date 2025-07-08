@@ -155,6 +155,7 @@ class RulesetModelDescription(Base):
         self.fluid_loops = []
         self.service_water_heating_distribution_systems = []
         self.service_water_heating_equipment = []
+        self.service_water_heating_uses = []
         self.pumps = []
         self.boilers = []
         self.chillers = []
@@ -233,6 +234,10 @@ class RulesetModelDescription(Base):
         return self.bdl_obj_instances.get(u_name, None)
 
     def populate_data_elements(self):
+        self.type = SchemaEnums.schema_enums[
+            "CommonRulesetModelOptions"
+        ].USER  # Default type for RMD
+
         weather = Weather(self)
         weather.populate_data_group()
 
@@ -1302,6 +1307,7 @@ class RulesetModelDescription(Base):
                 "fluid_loops": self.fluid_loops,
                 "service_water_heating_distribution_systems": self.service_water_heating_distribution_systems,
                 "service_water_heating_equipment": self.service_water_heating_equipment,
+                "service_water_heating_uses": self.service_water_heating_uses,
                 "pumps": self.pumps,
                 "boilers": self.boilers,
                 "chillers": self.chillers,
@@ -1375,7 +1381,7 @@ class OutputInstance:
         self.unmet_occupied_load_hours_heating = None
         self.unmet_load_hours_cooling = None
         self.unmet_occupied_load_hours_cooling = None
-        self.building_peak_heating_load = None
+        # self.building_peak_heating_load = None
         self.building_peak_cooling_load = None
         self.annual_source_results = []
         self.annual_end_use_results = []
@@ -1387,7 +1393,7 @@ class OutputInstance:
         self.unmet_load_hours_heating = output_data.get("Unmet Heating Load Hours")
         self.unmet_load_hours_cooling = output_data.get("Unmet Cooling Load Hours")
         self.building_peak_cooling_load = output_data.get("Building Peak Cooling Load")
-        self.building_peak_heating_load = output_data.get("Building Peak Heating Load")
+        # self.building_peak_heating_load = output_data.get("Building Peak Heating Load")
 
         energy_source_types = set()
 
@@ -1433,7 +1439,7 @@ class OutputInstance:
             "unmet_load_hours_cooling",
             "unmet_occupied_load_hours_cooling",
             "annual_source_results",
-            "building_peak_heating_load",
+            # "building_peak_heating_load",
             "building_peak_cooling_load",
             "annual_end_use_results",
         ]

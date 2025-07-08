@@ -1180,6 +1180,5 @@ class ServiceWaterHeatingUse:
                 self.data_structure[attr] = value
 
     def insert_to_rpd(self):
-        self.parent_building_segment.service_water_heating_uses.append(
-            self.data_structure
-        )
+        self.parent_building_segment.service_water_heating_uses.append(self.name)
+        self.loop.rmd.service_water_heating_uses.append(self.data_structure)

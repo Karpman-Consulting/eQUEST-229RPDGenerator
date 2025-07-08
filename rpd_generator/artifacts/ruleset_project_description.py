@@ -1,3 +1,6 @@
+from time import strftime, gmtime
+
+
 class RulesetProjectDescription:
     """
     This class is used to represent the RulesetProjectDescription object in the 229 schema. It also stores additional project-level data.
@@ -118,16 +121,20 @@ class Metadata:
         self.data_structure = {}
 
         # Initialize attributes
-        self.schema_author = None
-        self.schema_name = None
-        self.schema_version = None
-        self.schema_url = None
-        self.author = None
-        self.description = None
-        self.time_of_creation = None
-        self.version = None
-        self.source = None
-        self.disclaimer = None
+        self.schema_author = "ASHRAE SPC 229 Schema Working Group"
+        self.schema_name = "Ruleset Evaluation Schema"
+        self.schema_version = "0.1.7"
+        self.schema_url = "https://github.com/open229/ruleset-model-description-schema"
+        self.author = "Jackson Jarboe, Karpman Consulting LLC"
+        self.description = "DOE2.3 Ruleset Project Description (RPD)"
+        self.time_of_creation = strftime("%Y-%m-%dT%H:%MZ", gmtime())
+        self.version = "1.1.1"
+        self.source = "DOE-2.3 Energy Model .INP, .LRP, .SRP, .ERP, .NHR files"
+        self.disclaimer = """
+        Acknowledgment: This material is based upon work supported by the U.S. Department of Energy’s Office of Energy Efficiency and Renewable Energy (EERE) under the Building Technologies Office - DE-FOA-0002813 - Bipartisan Infrastructure Law Resilient and Efficient Codes Implementation.
+        Award Number: DE-EE0010949
+        Abridged Disclaimer: The views expressed herein do not necessarily represent the view of the U.S. Department of Energy or the United States Government.
+        """
         self.notes = None
 
     def __repr__(self):

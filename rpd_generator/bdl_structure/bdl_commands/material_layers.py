@@ -39,6 +39,8 @@ class Material(BaseNode):
             self.thickness = self.try_float(
                 self.get_inp(BDL_MaterialKeywords.THICKNESS)
             )
+            if self.thickness is not None and self.thickness <= 0:
+                self.thickness = 0.00001  # Set a minimum thickness to avoid issues with zero thickness
 
             self.thermal_conductivity = self.try_float(
                 self.get_inp(BDL_MaterialKeywords.CONDUCTIVITY)
