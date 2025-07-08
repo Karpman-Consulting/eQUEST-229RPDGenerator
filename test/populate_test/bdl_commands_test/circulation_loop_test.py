@@ -1060,9 +1060,7 @@ class TestCHWLoop(unittest.TestCase):
         ]
         self.assertEqual(
             expected_data_structure,
-            self.circulation_loop.get_obj(
-                "Default Building Segment"
-            ).service_water_heating_uses,
+            self.circulation_loop.rmd.service_water_heating_uses,
         )
 
     def test_populate_mixed_water_swh_use(self):
@@ -1094,9 +1092,7 @@ class TestCHWLoop(unittest.TestCase):
         ]
         self.assertEqual(
             expected_data_structure,
-            self.circulation_loop.get_obj(
-                "Default Building Segment"
-            ).service_water_heating_uses,
+            self.circulation_loop.rmd.service_water_heating_uses,
         )
 
     def test_populate_swh_uses(self):
@@ -1136,7 +1132,5 @@ class TestCHWLoop(unittest.TestCase):
         ]
         self.assertEqual(
             expected_data_structure,
-            self.circulation_loop.get_obj(
-                "Default Building Segment"
-            ).service_water_heating_uses,
+            self.circulation_loop.rmd.service_water_heating_uses,
         )
