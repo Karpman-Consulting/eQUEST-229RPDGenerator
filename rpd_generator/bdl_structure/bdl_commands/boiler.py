@@ -48,7 +48,7 @@ class Boiler(BaseNode):
         self.boiler_data_structure = {}
 
         # data elements with children
-        self.output_validation_points = []
+        self.operating_points = []
         self.efficiency_metric_types = []
         self.efficiency_metric_values = []
 
@@ -216,7 +216,7 @@ class Boiler(BaseNode):
             "id": self.u_name,
             "efficiency_metric_values": self.efficiency_metric_values,
             "efficiency_metric_types": self.efficiency_metric_types,
-            "output_validation_points": self.output_validation_points,
+            "operating_points": self.operating_points,
         }
 
         no_children_attributes = [

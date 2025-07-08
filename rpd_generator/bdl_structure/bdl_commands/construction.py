@@ -44,7 +44,7 @@ class Construction(BaseNode):
         """Populate data elements for construction object."""
         layer = self.get_obj(self.get_inp(BDL_ConstructionKeywords.LAYERS))
         # Material references will be empty if construction uses U-Value Input method
-        self.material_references = layer.material_references if layer else []
+        self.primary_layers = layer.material_references if layer else []
 
         # This u_factor will be adjusted when used for a surface based on Ext/Int/Underground Wall air film resistances
         self.u_factor = self.try_float(self.get_inp(BDL_ConstructionKeywords.U_VALUE))
@@ -78,11 +78,6 @@ class Construction(BaseNode):
 
     def populate_data_group(self):
         """Populate schema structure for construction object."""
-
-        for material_reference in self.material_references or []:
-            material = self.get_obj(material_reference)
-            if material:
-                self.primary_layers.append(material.material_data_structure)
 
         self.construction_data_structure = {
             "id": self.u_name,

@@ -32,7 +32,7 @@ class Pump(BaseNode):
         self.pump_data_structures = []
         self.output_data = None
         # data elements with children
-        self.output_validation_points = []
+        self.operating_points = []
 
         # data elements with no children
         self.loop_or_piping = []
@@ -120,7 +120,7 @@ class Pump(BaseNode):
         for i in range(self.qty):
             pump_data_structure = {
                 "id": self.u_name + f" {i}".replace(" 0", ""),
-                "output_validation_points": [],
+                "operating_points": [],
             }
             # Iterate over the no_children_attributes list and populate if the value is not None
             for attr in no_children_attributes:

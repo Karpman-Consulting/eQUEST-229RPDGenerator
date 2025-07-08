@@ -151,6 +151,7 @@ class RulesetModelDescription(Base):
         self.buildings = []
         self.schedules = []
         self.constructions = []
+        self.materials = []
         self.fluid_loops = []
         self.service_water_heating_distribution_systems = []
         self.service_water_heating_equipment = []
@@ -1297,6 +1298,7 @@ class RulesetModelDescription(Base):
                 "buildings": self.buildings,
                 "schedules": self.schedules,
                 "constructions": self.constructions,
+                "materials": self.materials,
                 "fluid_loops": self.fluid_loops,
                 "service_water_heating_distribution_systems": self.service_water_heating_distribution_systems,
                 "service_water_heating_equipment": self.service_water_heating_equipment,

@@ -73,6 +73,10 @@ class Material(BaseNode):
             if value is not None:
                 self.material_data_structure[attr] = value
 
+    def insert_to_rpd(self):
+        """Insert material object into the rpd data structure."""
+        self.rmd.materials.append(self.material_data_structure)
+
 
 class Layer(BaseDefinition):
     """Layer object in the tree."""
