@@ -65,7 +65,6 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "tank": {
                 "id": "DWH 1 Tank",
                 "storage_capacity": 250.0,
-                "location": "IN_ZONE",
                 "location_zone": "ZONE 1",
             },
             "solar_thermal_systems": [],
@@ -465,13 +464,11 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "tank": {
                 "id": "DWH 1 Tank",
                 "storage_capacity": 250.0,
-                "location": "IN_ZONE",
                 "location_zone": "ZONE 1",
             },
             "solar_thermal_systems": [],
             "compressor_capacity_operating_points": [],
             "compressor_power_operating_points": [],
-            "compressor_location": "IN_ZONE",
             "compressor_zone": "ZONE 1",
             "compressor_heat_rejection_source": "OTHER",
             "notes": 'At the time of development, heat pump water heaters within a zone are not fully supported by eQUEST. The compressor heat rejection source is therefore populated as OTHER. According to help text Volume 2: Dictionary > HVAC Components > DW-HEATER > Energy Consumption: "Partially implemented; the program will use the zone temperature when calculating the tank losses or the performance of a HEAT-PUMP water heater, however these interactions do not have any effect on the zone temperature."',
