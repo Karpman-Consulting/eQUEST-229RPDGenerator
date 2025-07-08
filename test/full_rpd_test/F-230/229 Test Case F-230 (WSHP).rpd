@@ -1,17 +1,31 @@
 {
-    "id": "229 Test Case E-3 (Pkgd VAV Bbrd)",
+    "id": "229 Test Case F-230 (WSHP)",
+    "metadata": {
+        "schema_author": "ASHRAE SPC 229 Schema Working Group",
+        "schema_name": "Ruleset Evaluation Schema",
+        "schema_version": "0.1.7",
+        "schema_url": "https://github.com/open229/ruleset-model-description-schema",
+        "author": "Jackson Jarboe, Karpman Consulting LLC",
+        "description": "DOE2.3 Ruleset Project Description (RPD)",
+        "time_of_creation": "2025-07-08T13:44Z",
+        "version": "1.1.1",
+        "source": "DOE-2.3 Energy Model .INP, .LRP, .SRP, .ERP, .NHR files",
+        "disclaimer": "\n        Acknowledgment: This material is based upon work supported by the U.S. Department of Energy\u2019s Office of Energy Efficiency and Renewable Energy (EERE) under the Building Technologies Office - DE-FOA-0002813 - Bipartisan Infrastructure Law Resilient and Efficient Codes Implementation.\n        Award Number: DE-EE0010949\n        Abridged Disclaimer: The views expressed herein do not necessarily represent the view of the U.S. Department of Energy or the United States Government.\n        "
+    },
+    "output": {
+        "id": "Output2019ASHRAE901"
+    },
     "ruleset_model_descriptions": [
         {
-            "id": "229 Test Case E-3 (Pkgd VAV Bbrd)",
+            "id": "229 Test Case F-230 (WSHP)",
+            "type": "USER",
             "weather": {
                 "ground_temperature_schedule": "Ground Temperature Schedule",
                 "file_name": "DENVER INTL AP    CO",
                 "climate_zone": "CZ5B"
             },
             "calendar": {
-                "is_leap_year": false,
-                "day_of_week_for_january_1": "FRIDAY",
-                "has_daylight_saving_time": false
+                "day_of_week_for_january_1": "FRIDAY"
             },
             "altitude": 0,
             "buildings": [
@@ -22,6 +36,98 @@
                             "id": "Default Building Segment",
                             "zones": [
                                 {
+                                    "id": "Core Zone 1",
+                                    "spaces": [
+                                        {
+                                            "id": "Core Space 1",
+                                            "interior_lighting": [
+                                                {
+                                                    "id": "Core Space 1 IntLtg1",
+                                                    "power_per_area": 11.033008177127465,
+                                                    "lighting_multiplier_schedule": "Lighting Schedule"
+                                                }
+                                            ],
+                                            "miscellaneous_equipment": [
+                                                {
+                                                    "id": "Core Space 1 MiscEqp1",
+                                                    "energy_type": "ELECTRICITY",
+                                                    "power": 7947.719999999999,
+                                                    "multiplier_schedule": "Plug Load Annual",
+                                                    "sensible_fraction": 1.0,
+                                                    "latent_fraction": 0.0
+                                                }
+                                            ],
+                                            "service_water_heating_uses": [],
+                                            "floor_area": 984.4897987583998,
+                                            "number_of_occupants": 52.9848,
+                                            "occupant_multiplier_schedule": "Occupancy Annual",
+                                            "occupant_sensible_heat_gain": 66.00002452177777,
+                                            "occupant_latent_heat_gain": 53.99999342044444
+                                        }
+                                    ],
+                                    "surfaces": [
+                                        {
+                                            "id": "Core Space 1 Roof",
+                                            "subsurfaces": [],
+                                            "optical_properties": {
+                                                "id": "Core Space 1 Roof OpticalProps",
+                                                "absorptance_thermal_exterior": 0.9,
+                                                "absorptance_solar_exterior": 0.7,
+                                                "absorptance_solar_interior": 0.7,
+                                                "absorptance_visible_interior": 0.7
+                                            },
+                                            "classification": "CEILING",
+                                            "construction": "Roof Type 1",
+                                            "area": 984.4897987584,
+                                            "tilt": 0.0,
+                                            "azimuth": 180.0,
+                                            "adjacent_to": "EXTERIOR",
+                                            "does_cast_shade": false
+                                        },
+                                        {
+                                            "id": "Core Space 1 Slab on Grade",
+                                            "optical_properties": {
+                                                "id": "Core Space 1 Slab on Grade OpticalProps",
+                                                "absorptance_solar_interior": 0.7,
+                                                "absorptance_visible_interior": 0.8
+                                            },
+                                            "classification": "FLOOR",
+                                            "construction": "Slab-on-grade Type 1",
+                                            "area": 984.4897987583998,
+                                            "tilt": 180.0,
+                                            "azimuth": 90.0,
+                                            "adjacent_to": "GROUND"
+                                        }
+                                    ],
+                                    "terminals": [
+                                        {
+                                            "id": "Core Zone 1 MainTerminal",
+                                            "type": "CONSTANT_AIR_VOLUME",
+                                            "served_by_heating_ventilating_air_conditioning_system": "WSHP Units",
+                                            "primary_airflow": 943.9263994922153,
+                                            "secondary_airflow": 0.0,
+                                            "supply_design_heating_setpoint_temperature": 32.222222222222285,
+                                            "supply_design_cooling_setpoint_temperature": 12.777777777777828,
+                                            "minimum_airflow": 943.9263994922153,
+                                            "minimum_outdoor_airflow": 94.39264282976012,
+                                            "has_demand_control_ventilation": false
+                                        }
+                                    ],
+                                    "zonal_exhaust_fans": [],
+                                    "infiltration": {
+                                        "id": "Core Zone 1 Infil",
+                                        "modeling_method": "WEATHER_DRIVEN",
+                                        "algorithm_name": "Air Change Method",
+                                        "flow_rate": 0.0
+                                    },
+                                    "floor_name": "Floor 1",
+                                    "volume": 3900.942503194408,
+                                    "design_thermostat_cooling_setpoint": 23.888888888888914,
+                                    "thermostat_cooling_setpoint_schedule": "Cooling Setpoint Annual",
+                                    "design_thermostat_heating_setpoint": 21.111111111111143,
+                                    "thermostat_heating_setpoint_schedule": "Heating Setpoint Annual"
+                                },
+                                {
                                     "id": "Prm Zone 1 (South) Zn",
                                     "spaces": [
                                         {
@@ -29,18 +135,18 @@
                                             "interior_lighting": [
                                                 {
                                                     "id": "Prm Space 1 (South) IntLtg1",
-                                                    "lighting_multiplier_schedule": "Lighting Schedule",
-                                                    "power_per_area": 11.033008177127465
+                                                    "power_per_area": 11.033008177127465,
+                                                    "lighting_multiplier_schedule": "Lighting Schedule"
                                                 }
                                             ],
                                             "miscellaneous_equipment": [
                                                 {
-                                                    "energy_type": "ELECTRICITY",
                                                     "id": "Prm Space 1 (South) MiscEqp1",
-                                                    "latent_fraction": 0.0,
-                                                    "multiplier_schedule": "Plug Load Annual",
+                                                    "energy_type": "ELECTRICITY",
                                                     "power": 1674.0,
-                                                    "sensible_fraction": 1.0
+                                                    "multiplier_schedule": "Plug Load Annual",
+                                                    "sensible_fraction": 1.0,
+                                                    "latent_fraction": 0.0
                                                 }
                                             ],
                                             "service_water_heating_uses": [],
@@ -106,43 +212,6 @@
                                                     "u_factor": 4.266903684738647
                                                 }
                                             ],
-                                            "construction": {
-                                                "id": "Exterior Wall Type 1",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Stucco",
-                                                        "thickness": 0.0252984,
-                                                        "thermal_conductivity": 0.7199857217847769,
-                                                        "density": 1858.1417513793767,
-                                                        "specific_heat": 841.5469175550725
-                                                    },
-                                                    {
-                                                        "id": "Gypsum Board",
-                                                        "thickness": 0.0158496,
-                                                        "thermal_conductivity": 0.15922761154855644,
-                                                        "density": 800.9231686980072,
-                                                        "specific_heat": 1088.5681520612877
-                                                    },
-                                                    {
-                                                        "id": "Insulation",
-                                                        "thickness": 0.06217919999999999,
-                                                        "thermal_conductivity": 0.03634543307086615,
-                                                        "density": 9.611078024376086,
-                                                        "specific_heat": 837.3601169702214
-                                                    },
-                                                    {
-                                                        "id": "Gypsum Board--1",
-                                                        "thickness": 0.0158496,
-                                                        "thermal_conductivity": 0.15922761154855644,
-                                                        "density": 800.9231686980072,
-                                                        "specific_heat": 1088.5681520612877
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 0.4785360618245472
-                                            },
                                             "optical_properties": {
                                                 "id": "Perimeter Space 1 Ext Wall OpticalProps",
                                                 "absorptance_thermal_exterior": 0.9,
@@ -151,6 +220,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "WALL",
+                                            "construction": "Exterior Wall Type 1",
                                             "area": 197.827733376,
                                             "tilt": 90.0,
                                             "azimuth": 180.0,
@@ -160,36 +230,6 @@
                                         {
                                             "id": "Perimeter Space 1 Roof",
                                             "subsurfaces": [],
-                                            "construction": {
-                                                "id": "Roof Type 1",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Metal Deck",
-                                                        "thickness": 0.0007924799999999998,
-                                                        "thermal_conductivity": 45.27948666666667,
-                                                        "density": 7824.058250377093,
-                                                        "specific_heat": 498.22926959728164
-                                                    },
-                                                    {
-                                                        "id": "Continuous Insulation",
-                                                        "thickness": 0.05273039999999999,
-                                                        "thermal_conductivity": 0.0207688188976378,
-                                                        "density": 32.03692674792029,
-                                                        "specific_heat": 921.0961286672434
-                                                    },
-                                                    {
-                                                        "id": "Built-up roofing",
-                                                        "thickness": 0.009448799999999999,
-                                                        "thermal_conductivity": 0.15922761154855644,
-                                                        "density": 1120.0109591072933,
-                                                        "specific_heat": 1461.1934041130362
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 0.365608802525771
-                                            },
                                             "optical_properties": {
                                                 "id": "Perimeter Space 1 Roof OpticalProps",
                                                 "absorptance_thermal_exterior": 0.9,
@@ -198,6 +238,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "CEILING",
+                                            "construction": "Roof Type 1",
                                             "area": 207.35958527999998,
                                             "tilt": 0.0,
                                             "azimuth": 180.0,
@@ -207,19 +248,6 @@
                                         {
                                             "id": "Perimeter Space 1 NE Wall",
                                             "subsurfaces": [],
-                                            "construction": {
-                                                "id": "BL1 IWall Construction",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Simplified Material",
-                                                        "r_value": 0.3504739661669534
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 1.6949618440903549
-                                            },
                                             "optical_properties": {
                                                 "id": "Perimeter Space 1 NE Wall OpticalProps",
                                                 "absorptance_solar_exterior": 0.5,
@@ -228,6 +256,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "WALL",
+                                            "construction": "BL1 IWall Construction",
                                             "area": 25.620019985663994,
                                             "tilt": 90.0,
                                             "azimuth": 45.0,
@@ -237,19 +266,6 @@
                                         {
                                             "id": "Perimeter Space 1 North Wall",
                                             "subsurfaces": [],
-                                            "construction": {
-                                                "id": "BL1 IWall Construction--1",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Simplified Material--1",
-                                                        "r_value": 0.3504739661669534
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 1.6949618440903549
-                                            },
                                             "optical_properties": {
                                                 "id": "Perimeter Space 1 North Wall OpticalProps",
                                                 "absorptance_solar_exterior": 0.5,
@@ -258,6 +274,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "WALL",
+                                            "construction": "BL1 IWall Construction",
                                             "area": 161.595547776,
                                             "tilt": 90.0,
                                             "azimuth": 0.0,
@@ -267,19 +284,6 @@
                                         {
                                             "id": "Perimeter Space 1 NW Wall",
                                             "subsurfaces": [],
-                                            "construction": {
-                                                "id": "BL1 IWall Construction--2",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Simplified Material--2",
-                                                        "r_value": 0.3504739661669534
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 1.6949618440903549
-                                            },
                                             "optical_properties": {
                                                 "id": "Perimeter Space 1 NW Wall OpticalProps",
                                                 "absorptance_solar_exterior": 0.5,
@@ -288,6 +292,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "WALL",
+                                            "construction": "BL1 IWall Construction",
                                             "area": 25.620019985663994,
                                             "tilt": 90.0,
                                             "azimuth": 315.0,
@@ -296,28 +301,13 @@
                                         },
                                         {
                                             "id": "Perimeter Space 1 Slab on Grade",
-                                            "construction": {
-                                                "id": "Slab-on-grade Type 1",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Concrete",
-                                                        "thickness": 0.10149839999999999,
-                                                        "thermal_conductivity": 2.310531102362205,
-                                                        "density": 2324.6794971459663,
-                                                        "specific_heat": 833.1733163853703
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 4.8554836612451
-                                            },
                                             "optical_properties": {
                                                 "id": "Perimeter Space 1 Slab on Grade OpticalProps",
                                                 "absorptance_solar_interior": 0.7,
                                                 "absorptance_visible_interior": 0.8
                                             },
                                             "classification": "FLOOR",
+                                            "construction": "Slab-on-grade Type 1",
                                             "area": 207.35958527999998,
                                             "tilt": 180.0,
                                             "azimuth": 90.0,
@@ -326,37 +316,24 @@
                                     ],
                                     "terminals": [
                                         {
-                                            "cooling_capacity": 0.0,
-                                            "has_demand_control_ventilation": false,
-                                            "heating_capacity": 7033.70722565545,
-                                            "heating_from_loop": "Hot Water Loop",
-                                            "heating_source": "HOT_WATER",
                                             "id": "Prm Zone 1 (South) Zn MainTerminal",
-                                            "minimum_airflow": 94.39264135578146,
-                                            "minimum_outdoor_airflow": 94.39264282976012,
+                                            "type": "CONSTANT_AIR_VOLUME",
+                                            "served_by_heating_ventilating_air_conditioning_system": "WSHP Units - Prm Zone 1 (South) Zn",
                                             "primary_airflow": 943.9263994922153,
                                             "secondary_airflow": 0.0,
-                                            "served_by_heating_ventilating_air_conditioning_system": "Pkgd VAV",
-                                            "supply_design_cooling_setpoint_temperature": 12.777777777777828,
                                             "supply_design_heating_setpoint_temperature": 32.222222222222285,
-                                            "type": "VARIABLE_AIR_VOLUME"
-                                        },
-                                        {
-                                            "cooling_capacity": 0.0,
-                                            "has_demand_control_ventilation": false,
-                                            "heating_capacity": 1758.4266666666667,
-                                            "heating_from_loop": "Hot Water Loop",
-                                            "heating_source": "HOT_WATER",
-                                            "id": "Prm Zone 1 (South) Zn BaseboardTerminal",
-                                            "is_supply_ducted": false,
-                                            "type": "BASEBOARD"
+                                            "supply_design_cooling_setpoint_temperature": 12.777777777777828,
+                                            "minimum_airflow": 943.9263994922153,
+                                            "minimum_outdoor_airflow": 94.39264282976012,
+                                            "has_demand_control_ventilation": false
                                         }
                                     ],
+                                    "zonal_exhaust_fans": [],
                                     "infiltration": {
+                                        "id": "Prm Zone 1 (South) Zn Infil",
+                                        "modeling_method": "WEATHER_DRIVEN",
                                         "algorithm_name": "Air Change Method",
-                                        "flow_rate": 114.11689176575996,
-                                        "id": "Prm Space 1 (South) Infil",
-                                        "modeling_method": "WEATHER_DRIVEN"
+                                        "flow_rate": 114.11689176575996
                                     },
                                     "floor_name": "Floor 1",
                                     "volume": 821.6416207134719,
@@ -373,18 +350,18 @@
                                             "interior_lighting": [
                                                 {
                                                     "id": "Prm Space 2 (East) IntLtg1",
-                                                    "lighting_multiplier_schedule": "Lighting Schedule",
-                                                    "power_per_area": 11.033008177127465
+                                                    "power_per_area": 11.033008177127465,
+                                                    "lighting_multiplier_schedule": "Lighting Schedule"
                                                 }
                                             ],
                                             "miscellaneous_equipment": [
                                                 {
-                                                    "energy_type": "ELECTRICITY",
                                                     "id": "Prm Space 2 (East) MiscEqp1",
-                                                    "latent_fraction": 0.0,
-                                                    "multiplier_schedule": "Plug Load Annual",
+                                                    "energy_type": "ELECTRICITY",
                                                     "power": 1059.75,
-                                                    "sensible_fraction": 1.0
+                                                    "multiplier_schedule": "Plug Load Annual",
+                                                    "sensible_fraction": 1.0,
+                                                    "latent_fraction": 0.0
                                                 }
                                             ],
                                             "service_water_heating_uses": [],
@@ -431,37 +408,6 @@
                                                     "u_factor": 4.266903684738647
                                                 }
                                             ],
-                                            "construction": {
-                                                "id": "Exterior Wall Type 2",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Stucco--1",
-                                                        "thickness": 0.0252984,
-                                                        "thermal_conductivity": 0.7199857217847769,
-                                                        "density": 1858.1417513793767,
-                                                        "specific_heat": 841.5469175550725
-                                                    },
-                                                    {
-                                                        "id": "Gypsum board resistance",
-                                                        "r_value": 0.09950223988110582
-                                                    },
-                                                    {
-                                                        "id": "Insulation--1",
-                                                        "thickness": 0.06217919999999999,
-                                                        "thermal_conductivity": 0.03634543307086615,
-                                                        "density": 9.611078024376086,
-                                                        "specific_heat": 837.3601169702214
-                                                    },
-                                                    {
-                                                        "id": "Gypsum board resistance--1",
-                                                        "r_value": 0.09950223988110582
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 0.18802180423859668
-                                            },
                                             "optical_properties": {
                                                 "id": "Perimeter Space 2 Ext Wall OpticalProps",
                                                 "absorptance_thermal_exterior": 0.9,
@@ -470,6 +416,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "WALL",
+                                            "construction": "Exterior Wall Type 2",
                                             "area": 131.885155584,
                                             "tilt": 90.0,
                                             "azimuth": 90.0,
@@ -479,36 +426,6 @@
                                         {
                                             "id": "Perimeter Space 2 Roof",
                                             "subsurfaces": [],
-                                            "construction": {
-                                                "id": "Roof Type 1--1",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Metal Deck--1",
-                                                        "thickness": 0.0007924799999999998,
-                                                        "thermal_conductivity": 45.27948666666667,
-                                                        "density": 7824.058250377093,
-                                                        "specific_heat": 498.22926959728164
-                                                    },
-                                                    {
-                                                        "id": "Continuous Insulation--1",
-                                                        "thickness": 0.05273039999999999,
-                                                        "thermal_conductivity": 0.0207688188976378,
-                                                        "density": 32.03692674792029,
-                                                        "specific_heat": 921.0961286672434
-                                                    },
-                                                    {
-                                                        "id": "Built-up roofing--1",
-                                                        "thickness": 0.009448799999999999,
-                                                        "thermal_conductivity": 0.15922761154855644,
-                                                        "density": 1120.0109591072933,
-                                                        "specific_heat": 1461.1934041130362
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 0.365608802525771
-                                            },
                                             "optical_properties": {
                                                 "id": "Perimeter Space 2 Roof OpticalProps",
                                                 "absorptance_thermal_exterior": 0.9,
@@ -517,6 +434,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "CEILING",
+                                            "construction": "Roof Type 1",
                                             "area": 131.27199552,
                                             "tilt": 0.0,
                                             "azimuth": 90.0,
@@ -526,19 +444,6 @@
                                         {
                                             "id": "Perimeter Space 2 NW Wall",
                                             "subsurfaces": [],
-                                            "construction": {
-                                                "id": "BL1 IWall Construction--3",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Simplified Material--3",
-                                                        "r_value": 0.3504739661669534
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 1.6949618440903549
-                                            },
                                             "optical_properties": {
                                                 "id": "Perimeter Space 2 NW Wall OpticalProps",
                                                 "absorptance_solar_exterior": 0.5,
@@ -547,6 +452,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "WALL",
+                                            "construction": "BL1 IWall Construction",
                                             "area": 25.620019985663994,
                                             "tilt": 90.0,
                                             "azimuth": 315.0,
@@ -556,19 +462,6 @@
                                         {
                                             "id": "Perimeter Space 2 West Wall",
                                             "subsurfaces": [],
-                                            "construction": {
-                                                "id": "BL1 IWall Construction--4",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Simplified Material--4",
-                                                        "r_value": 0.3504739661669534
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 1.6949618440903549
-                                            },
                                             "optical_properties": {
                                                 "id": "Perimeter Space 2 West Wall OpticalProps",
                                                 "absorptance_solar_exterior": 0.5,
@@ -577,6 +470,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "WALL",
+                                            "construction": "BL1 IWall Construction",
                                             "area": 95.65296998399998,
                                             "tilt": 90.0,
                                             "azimuth": 270.0,
@@ -585,28 +479,13 @@
                                         },
                                         {
                                             "id": "Perimeter Space 2 Slab on Grade",
-                                            "construction": {
-                                                "id": "Slab-on-grade Type 1--1",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Concrete--1",
-                                                        "thickness": 0.10149839999999999,
-                                                        "thermal_conductivity": 2.310531102362205,
-                                                        "density": 2324.6794971459663,
-                                                        "specific_heat": 833.1733163853703
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 4.8554836612451
-                                            },
                                             "optical_properties": {
                                                 "id": "Perimeter Space 2 Slab on Grade OpticalProps",
                                                 "absorptance_solar_interior": 0.7,
                                                 "absorptance_visible_interior": 0.8
                                             },
                                             "classification": "FLOOR",
+                                            "construction": "Slab-on-grade Type 1",
                                             "area": 131.27199552,
                                             "tilt": 180.0,
                                             "azimuth": 0.0,
@@ -615,37 +494,24 @@
                                     ],
                                     "terminals": [
                                         {
-                                            "cooling_capacity": 0.0,
-                                            "has_demand_control_ventilation": false,
-                                            "heating_capacity": 7033.70722565545,
-                                            "heating_from_loop": "Hot Water Loop",
-                                            "heating_source": "HOT_WATER",
                                             "id": "Prm Zone 2 (East) Zn MainTerminal",
-                                            "minimum_airflow": 94.39264135578146,
-                                            "minimum_outdoor_airflow": 94.39264282976012,
+                                            "type": "CONSTANT_AIR_VOLUME",
+                                            "served_by_heating_ventilating_air_conditioning_system": "WSHP Units - Prm Zone 2 (East) Zn",
                                             "primary_airflow": 943.9263994922153,
                                             "secondary_airflow": 0.0,
-                                            "served_by_heating_ventilating_air_conditioning_system": "Pkgd VAV",
-                                            "supply_design_cooling_setpoint_temperature": 12.777777777777828,
                                             "supply_design_heating_setpoint_temperature": 32.222222222222285,
-                                            "type": "VARIABLE_AIR_VOLUME"
-                                        },
-                                        {
-                                            "cooling_capacity": 0.0,
-                                            "has_demand_control_ventilation": false,
-                                            "heating_capacity": 1758.4266666666667,
-                                            "heating_from_loop": "Hot Water Loop",
-                                            "heating_source": "HOT_WATER",
-                                            "id": "Prm Zone 2 (East) Zn BaseboardTerminal",
-                                            "is_supply_ducted": false,
-                                            "type": "BASEBOARD"
+                                            "supply_design_cooling_setpoint_temperature": 12.777777777777828,
+                                            "minimum_airflow": 943.9263994922153,
+                                            "minimum_outdoor_airflow": 94.39264282976012,
+                                            "has_demand_control_ventilation": false
                                         }
                                     ],
+                                    "zonal_exhaust_fans": [],
                                     "infiltration": {
+                                        "id": "Prm Zone 2 (East) Zn Infil",
+                                        "modeling_method": "CONSTANT",
                                         "algorithm_name": "Air Change Method",
-                                        "flow_rate": 76.95584447768061,
-                                        "id": "Prm Space 2 (East) Infil",
-                                        "modeling_method": "CONSTANT"
+                                        "flow_rate": 76.95584447768061
                                     },
                                     "floor_name": "Floor 1",
                                     "volume": 520.1521550484479,
@@ -662,18 +528,18 @@
                                             "interior_lighting": [
                                                 {
                                                     "id": "Prm Space 3 (North) IntLtg1",
-                                                    "lighting_multiplier_schedule": "Lighting Schedule",
-                                                    "power_per_area": 11.033008177127465
+                                                    "power_per_area": 11.033008177127465,
+                                                    "lighting_multiplier_schedule": "Lighting Schedule"
                                                 }
                                             ],
                                             "miscellaneous_equipment": [
                                                 {
-                                                    "energy_type": "ELECTRICITY",
                                                     "id": "Prm Space 3 (North) MiscEqp1",
-                                                    "latent_fraction": 0.0,
-                                                    "multiplier_schedule": "Plug Load Annual",
+                                                    "energy_type": "ELECTRICITY",
                                                     "power": 1674.0,
-                                                    "sensible_fraction": 1.0
+                                                    "multiplier_schedule": "Plug Load Annual",
+                                                    "sensible_fraction": 1.0,
+                                                    "latent_fraction": 0.0
                                                 }
                                             ],
                                             "service_water_heating_uses": [],
@@ -739,19 +605,6 @@
                                                     "u_factor": 4.266903684738647
                                                 }
                                             ],
-                                            "construction": {
-                                                "id": "Exterior Wall Type 3",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Simplified Material--5",
-                                                        "r_value": 1.9472657383222005
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 0.47688096041226397
-                                            },
                                             "optical_properties": {
                                                 "id": "Perimeter Space 3 Ext Wall OpticalProps",
                                                 "absorptance_thermal_exterior": 0.9,
@@ -760,6 +613,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "WALL",
+                                            "construction": "Exterior Wall Type 3",
                                             "area": 197.827733376,
                                             "tilt": 90.0,
                                             "azimuth": 0.0,
@@ -769,33 +623,6 @@
                                         {
                                             "id": "Perimeter Space 3 Roof",
                                             "subsurfaces": [],
-                                            "construction": {
-                                                "id": "Roof Type 2",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Metal Deck--2",
-                                                        "thickness": 0.0007924799999999998,
-                                                        "thermal_conductivity": 45.27948666666667,
-                                                        "density": 7824.058250377093,
-                                                        "specific_heat": 498.22926959728164
-                                                    },
-                                                    {
-                                                        "id": "Continuous Insulation--2",
-                                                        "thickness": 0.05273039999999999,
-                                                        "thermal_conductivity": 0.0207688188976378,
-                                                        "density": 32.03692674792029,
-                                                        "specific_heat": 921.0961286672434
-                                                    },
-                                                    {
-                                                        "id": "Builtup roof resistance",
-                                                        "r_value": 0.05934912361050029
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 0.18970607381902888
-                                            },
                                             "optical_properties": {
                                                 "id": "Perimeter Space 3 Roof OpticalProps",
                                                 "absorptance_thermal_exterior": 0.9,
@@ -804,6 +631,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "CEILING",
+                                            "construction": "Roof Type 2",
                                             "area": 207.35958527999998,
                                             "tilt": 0.0,
                                             "azimuth": 0.0,
@@ -813,19 +641,6 @@
                                         {
                                             "id": "Perimeter Space 2 SW Wall",
                                             "subsurfaces": [],
-                                            "construction": {
-                                                "id": "BL1 IWall Construction--5",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Simplified Material--6",
-                                                        "r_value": 0.3504739661669534
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 1.6949618440903549
-                                            },
                                             "optical_properties": {
                                                 "id": "Perimeter Space 2 SW Wall OpticalProps",
                                                 "absorptance_solar_exterior": 0.7,
@@ -834,6 +649,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "WALL",
+                                            "construction": "BL1 IWall Construction",
                                             "area": 25.620019985663994,
                                             "tilt": 90.0,
                                             "azimuth": 225.0,
@@ -843,19 +659,6 @@
                                         {
                                             "id": "Perimeter Space 2 South Wall",
                                             "subsurfaces": [],
-                                            "construction": {
-                                                "id": "BL1 IWall Construction--6",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Simplified Material--7",
-                                                        "r_value": 0.3504739661669534
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 1.6949618440903549
-                                            },
                                             "optical_properties": {
                                                 "id": "Perimeter Space 2 South Wall OpticalProps",
                                                 "absorptance_solar_exterior": 0.7,
@@ -864,6 +667,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "WALL",
+                                            "construction": "BL1 IWall Construction",
                                             "area": 161.595547776,
                                             "tilt": 90.0,
                                             "azimuth": 180.0,
@@ -872,35 +676,13 @@
                                         },
                                         {
                                             "id": "Perimeter Space 3 Slab on Grade",
-                                            "construction": {
-                                                "id": "Slab-on-grade Type 2",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Insulation (Slab on grade)",
-                                                        "thickness": 0.11429999999999998,
-                                                        "thermal_conductivity": 0.04326837270341208,
-                                                        "density": 91.30524123157284,
-                                                        "specific_heat": 837.3601169702214
-                                                    },
-                                                    {
-                                                        "id": "Concrete--2",
-                                                        "thickness": 0.10149839999999999,
-                                                        "thermal_conductivity": 2.310531102362205,
-                                                        "density": 2324.6794971459663,
-                                                        "specific_heat": 833.1733163853703
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 0.3509167235001137
-                                            },
                                             "optical_properties": {
                                                 "id": "Perimeter Space 3 Slab on Grade OpticalProps",
                                                 "absorptance_solar_interior": 0.7,
                                                 "absorptance_visible_interior": 0.8
                                             },
                                             "classification": "FLOOR",
+                                            "construction": "Slab-on-grade Type 2",
                                             "area": 207.35958527999998,
                                             "tilt": 180.0,
                                             "azimuth": 270.0,
@@ -909,37 +691,24 @@
                                     ],
                                     "terminals": [
                                         {
-                                            "cooling_capacity": 0.0,
-                                            "has_demand_control_ventilation": false,
-                                            "heating_capacity": 7033.70722565545,
-                                            "heating_from_loop": "Hot Water Loop",
-                                            "heating_source": "HOT_WATER",
                                             "id": "Prm Zone 3 (North) MainTerminal",
-                                            "minimum_airflow": 94.39264135578146,
-                                            "minimum_outdoor_airflow": 94.39264282976012,
+                                            "type": "CONSTANT_AIR_VOLUME",
+                                            "served_by_heating_ventilating_air_conditioning_system": "WSHP Units - Prm Zone 3 (North)",
                                             "primary_airflow": 943.9263994922153,
                                             "secondary_airflow": 0.0,
-                                            "served_by_heating_ventilating_air_conditioning_system": "Pkgd VAV",
-                                            "supply_design_cooling_setpoint_temperature": 12.777777777777828,
                                             "supply_design_heating_setpoint_temperature": 32.222222222222285,
-                                            "type": "VARIABLE_AIR_VOLUME"
-                                        },
-                                        {
-                                            "cooling_capacity": 0.0,
-                                            "has_demand_control_ventilation": false,
-                                            "heating_capacity": 1758.4266666666667,
-                                            "heating_from_loop": "Hot Water Loop",
-                                            "heating_source": "HOT_WATER",
-                                            "id": "Prm Zone 3 (North) BaseboardTerminal",
-                                            "is_supply_ducted": false,
-                                            "type": "BASEBOARD"
+                                            "supply_design_cooling_setpoint_temperature": 12.777777777777828,
+                                            "minimum_airflow": 943.9263994922153,
+                                            "minimum_outdoor_airflow": 94.39264282976012,
+                                            "has_demand_control_ventilation": false
                                         }
                                     ],
+                                    "zonal_exhaust_fans": [],
                                     "infiltration": {
+                                        "id": "Prm Zone 3 (North) Infil",
+                                        "modeling_method": "CONSTANT_SCHEDULED",
                                         "algorithm_name": "Air Change Method",
                                         "flow_rate": 80.58408203151356,
-                                        "id": "Prm Space 3 (North) Infil",
-                                        "modeling_method": "CONSTANT_SCHEDULED",
                                         "multiplier_schedule": "ZG0-S1 (PSZ) P-Inf Sch"
                                     },
                                     "floor_name": "Floor 1",
@@ -957,18 +726,18 @@
                                             "interior_lighting": [
                                                 {
                                                     "id": "Prm Space 4 (West) IntLtg1",
-                                                    "lighting_multiplier_schedule": "Lighting Schedule",
-                                                    "power_per_area": 11.033008177127465
+                                                    "power_per_area": 11.033008177127465,
+                                                    "lighting_multiplier_schedule": "Lighting Schedule"
                                                 }
                                             ],
                                             "miscellaneous_equipment": [
                                                 {
-                                                    "energy_type": "ELECTRICITY",
                                                     "id": "Prm Space 4 (West) MiscEqp1",
-                                                    "latent_fraction": 0.0,
-                                                    "multiplier_schedule": "Plug Load Annual",
+                                                    "energy_type": "ELECTRICITY",
                                                     "power": 1059.75,
-                                                    "sensible_fraction": 1.0
+                                                    "multiplier_schedule": "Plug Load Annual",
+                                                    "sensible_fraction": 1.0,
+                                                    "latent_fraction": 0.0
                                                 }
                                             ],
                                             "service_water_heating_uses": [],
@@ -1015,19 +784,6 @@
                                                     "u_factor": 4.266903684738647
                                                 }
                                             ],
-                                            "construction": {
-                                                "id": "Exterior Wall Type 3--1",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Simplified Material--8",
-                                                        "r_value": 1.9472657383222005
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 0.47688096041226397
-                                            },
                                             "optical_properties": {
                                                 "id": "Perimeter Space 4 Ext Wall OpticalProps",
                                                 "absorptance_thermal_exterior": 0.9,
@@ -1036,6 +792,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "WALL",
+                                            "construction": "Exterior Wall Type 3",
                                             "area": 131.885155584,
                                             "tilt": 90.0,
                                             "azimuth": 270.0,
@@ -1045,19 +802,6 @@
                                         {
                                             "id": "Perimeter Space 4 Roof",
                                             "subsurfaces": [],
-                                            "construction": {
-                                                "id": "Roof Type 3",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Simplified Material--9",
-                                                        "r_value": 2.657253479280524
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 0.35783047909715215
-                                            },
                                             "optical_properties": {
                                                 "id": "Perimeter Space 4 Roof OpticalProps",
                                                 "absorptance_thermal_exterior": 0.9,
@@ -1066,6 +810,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "CEILING",
+                                            "construction": "Roof Type 3",
                                             "area": 131.27199552,
                                             "tilt": 0.0,
                                             "azimuth": 270.0,
@@ -1075,19 +820,6 @@
                                         {
                                             "id": "Perimeter Space 4 East Wall",
                                             "subsurfaces": [],
-                                            "construction": {
-                                                "id": "BL1 IWall Construction--7",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Simplified Material--10",
-                                                        "r_value": 0.3504739661669534
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 1.6949618440903549
-                                            },
                                             "optical_properties": {
                                                 "id": "Perimeter Space 4 East Wall OpticalProps",
                                                 "absorptance_solar_exterior": 0.7,
@@ -1096,6 +828,7 @@
                                                 "absorptance_visible_interior": 0.7
                                             },
                                             "classification": "WALL",
+                                            "construction": "BL1 IWall Construction",
                                             "area": 95.65296998399998,
                                             "tilt": 90.0,
                                             "azimuth": 90.0,
@@ -1104,35 +837,13 @@
                                         },
                                         {
                                             "id": "Perimeter Space 4 Slab on Grade",
-                                            "construction": {
-                                                "id": "Slab-on-grade Type 2--1",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Insulation (Slab on grade)--1",
-                                                        "thickness": 0.11429999999999998,
-                                                        "thermal_conductivity": 0.04326837270341208,
-                                                        "density": 91.30524123157284,
-                                                        "specific_heat": 837.3601169702214
-                                                    },
-                                                    {
-                                                        "id": "Concrete--3",
-                                                        "thickness": 0.10149839999999999,
-                                                        "thermal_conductivity": 2.310531102362205,
-                                                        "density": 2324.6794971459663,
-                                                        "specific_heat": 833.1733163853703
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 0.3509167235001137
-                                            },
                                             "optical_properties": {
                                                 "id": "Perimeter Space 4 Slab on Grade OpticalProps",
                                                 "absorptance_solar_interior": 0.7,
                                                 "absorptance_visible_interior": 0.8
                                             },
                                             "classification": "FLOOR",
+                                            "construction": "Slab-on-grade Type 2",
                                             "area": 131.27199552,
                                             "tilt": 180.0,
                                             "azimuth": 180.0,
@@ -1141,37 +852,24 @@
                                     ],
                                     "terminals": [
                                         {
-                                            "cooling_capacity": 0.0,
-                                            "has_demand_control_ventilation": false,
-                                            "heating_capacity": 7033.70722565545,
-                                            "heating_from_loop": "Hot Water Loop",
-                                            "heating_source": "HOT_WATER",
                                             "id": "Prm Zone 4 (West) MainTerminal",
-                                            "minimum_airflow": 94.39264135578146,
-                                            "minimum_outdoor_airflow": 94.39264282976012,
+                                            "type": "CONSTANT_AIR_VOLUME",
+                                            "served_by_heating_ventilating_air_conditioning_system": "WSHP Units - Prm Zone 4 (West)",
                                             "primary_airflow": 943.9263994922153,
                                             "secondary_airflow": 0.0,
-                                            "served_by_heating_ventilating_air_conditioning_system": "Pkgd VAV",
-                                            "supply_design_cooling_setpoint_temperature": 12.777777777777828,
                                             "supply_design_heating_setpoint_temperature": 32.222222222222285,
-                                            "type": "VARIABLE_AIR_VOLUME"
-                                        },
-                                        {
-                                            "cooling_capacity": 0.0,
-                                            "has_demand_control_ventilation": false,
-                                            "heating_capacity": 1758.4266666666667,
-                                            "heating_from_loop": "Hot Water Loop",
-                                            "heating_source": "HOT_WATER",
-                                            "id": "Prm Zone 4 (West) BaseboardTerminal",
-                                            "is_supply_ducted": false,
-                                            "type": "BASEBOARD"
+                                            "supply_design_cooling_setpoint_temperature": 12.777777777777828,
+                                            "minimum_airflow": 943.9263994922153,
+                                            "minimum_outdoor_airflow": 94.39264282976012,
+                                            "has_demand_control_ventilation": false
                                         }
                                     ],
+                                    "zonal_exhaust_fans": [],
                                     "infiltration": {
+                                        "id": "Prm Zone 4 (West) Infil",
+                                        "modeling_method": "CONSTANT_SCHEDULED",
                                         "algorithm_name": "Air Change Method",
                                         "flow_rate": 53.68236984794878,
-                                        "id": "Prm Space 4 (West) Infil",
-                                        "modeling_method": "CONSTANT_SCHEDULED",
                                         "multiplier_schedule": "ZG0-S1 (PSZ) P-Inf Sch"
                                     },
                                     "floor_name": "Floor 1",
@@ -1180,229 +878,292 @@
                                     "thermostat_cooling_setpoint_schedule": "Cooling Setpoint Annual",
                                     "design_thermostat_heating_setpoint": 21.111111111111143,
                                     "thermostat_heating_setpoint_schedule": "Heating Setpoint Annual"
-                                },
-                                {
-                                    "id": "Core Zone 1",
-                                    "spaces": [
-                                        {
-                                            "id": "Core Space 1",
-                                            "interior_lighting": [
-                                                {
-                                                    "id": "Core Space 1 IntLtg1",
-                                                    "lighting_multiplier_schedule": "Lighting Schedule",
-                                                    "power_per_area": 11.033008177127465
-                                                }
-                                            ],
-                                            "miscellaneous_equipment": [
-                                                {
-                                                    "energy_type": "ELECTRICITY",
-                                                    "id": "Core Space 1 MiscEqp1",
-                                                    "latent_fraction": 0.0,
-                                                    "multiplier_schedule": "Plug Load Annual",
-                                                    "power": 7947.719999999999,
-                                                    "sensible_fraction": 1.0
-                                                }
-                                            ],
-                                            "service_water_heating_uses": [],
-                                            "floor_area": 984.4897987583998,
-                                            "number_of_occupants": 52.9848,
-                                            "occupant_multiplier_schedule": "Occupancy Annual",
-                                            "occupant_sensible_heat_gain": 66.00002452177777,
-                                            "occupant_latent_heat_gain": 53.99999342044444
-                                        }
-                                    ],
-                                    "surfaces": [
-                                        {
-                                            "id": "Core Space 1 Roof",
-                                            "subsurfaces": [],
-                                            "construction": {
-                                                "id": "Roof Type 1--2",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Metal Deck--3",
-                                                        "thickness": 0.0007924799999999998,
-                                                        "thermal_conductivity": 45.27948666666667,
-                                                        "density": 7824.058250377093,
-                                                        "specific_heat": 498.22926959728164
-                                                    },
-                                                    {
-                                                        "id": "Continuous Insulation--3",
-                                                        "thickness": 0.05273039999999999,
-                                                        "thermal_conductivity": 0.0207688188976378,
-                                                        "density": 32.03692674792029,
-                                                        "specific_heat": 921.0961286672434
-                                                    },
-                                                    {
-                                                        "id": "Built-up roofing--2",
-                                                        "thickness": 0.009448799999999999,
-                                                        "thermal_conductivity": 0.15922761154855644,
-                                                        "density": 1120.0109591072933,
-                                                        "specific_heat": 1461.1934041130362
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 0.365608802525771
-                                            },
-                                            "optical_properties": {
-                                                "id": "Core Space 1 Roof OpticalProps",
-                                                "absorptance_thermal_exterior": 0.9,
-                                                "absorptance_solar_exterior": 0.7,
-                                                "absorptance_solar_interior": 0.7,
-                                                "absorptance_visible_interior": 0.7
-                                            },
-                                            "classification": "CEILING",
-                                            "area": 984.4897987584,
-                                            "tilt": 0.0,
-                                            "azimuth": 180.0,
-                                            "adjacent_to": "EXTERIOR",
-                                            "does_cast_shade": false
-                                        },
-                                        {
-                                            "id": "Core Space 1 Slab on Grade",
-                                            "construction": {
-                                                "id": "Slab-on-grade Type 1--2",
-                                                "primary_layers": [
-                                                    {
-                                                        "id": "Concrete--4",
-                                                        "thickness": 0.10149839999999999,
-                                                        "thermal_conductivity": 2.310531102362205,
-                                                        "density": 2324.6794971459663,
-                                                        "specific_heat": 833.1733163853703
-                                                    }
-                                                ],
-                                                "framing_layers": [],
-                                                "insulation_locations": [],
-                                                "r_values": [],
-                                                "u_factor": 4.8554836612451
-                                            },
-                                            "optical_properties": {
-                                                "id": "Core Space 1 Slab on Grade OpticalProps",
-                                                "absorptance_solar_interior": 0.7,
-                                                "absorptance_visible_interior": 0.8
-                                            },
-                                            "classification": "FLOOR",
-                                            "area": 984.4897987583998,
-                                            "tilt": 180.0,
-                                            "azimuth": 90.0,
-                                            "adjacent_to": "GROUND"
-                                        }
-                                    ],
-                                    "terminals": [
-                                        {
-                                            "cooling_capacity": 0.0,
-                                            "has_demand_control_ventilation": false,
-                                            "heating_capacity": 7033.70722565545,
-                                            "heating_from_loop": "Hot Water Loop",
-                                            "heating_source": "HOT_WATER",
-                                            "id": "Core Zone 1 MainTerminal",
-                                            "minimum_airflow": 94.39264135578146,
-                                            "minimum_outdoor_airflow": 94.39264282976012,
-                                            "primary_airflow": 943.9263994922153,
-                                            "secondary_airflow": 0.0,
-                                            "served_by_heating_ventilating_air_conditioning_system": "Pkgd VAV",
-                                            "supply_design_cooling_setpoint_temperature": 12.777777777777828,
-                                            "supply_design_heating_setpoint_temperature": 32.222222222222285,
-                                            "type": "VARIABLE_AIR_VOLUME"
-                                        },
-                                        {
-                                            "cooling_capacity": 0.0,
-                                            "has_demand_control_ventilation": false,
-                                            "heating_capacity": 1758.4266666666667,
-                                            "heating_from_loop": "Hot Water Loop",
-                                            "heating_source": "HOT_WATER",
-                                            "id": "Core Zone 1 BaseboardTerminal",
-                                            "is_supply_ducted": false,
-                                            "type": "BASEBOARD"
-                                        }
-                                    ],
-                                    "infiltration": {
-                                        "algorithm_name": "Air Change Method",
-                                        "flow_rate": 0.0,
-                                        "id": "Core Space 1 Infil",
-                                        "modeling_method": "WEATHER_DRIVEN"
-                                    },
-                                    "floor_name": "Floor 1",
-                                    "volume": 3900.942503194408,
-                                    "design_thermostat_cooling_setpoint": 23.888888888888914,
-                                    "thermostat_cooling_setpoint_schedule": "Cooling Setpoint Annual",
-                                    "design_thermostat_heating_setpoint": 21.111111111111143,
-                                    "thermostat_heating_setpoint_schedule": "Heating Setpoint Annual"
                                 }
                             ],
                             "heating_ventilating_air_conditioning_systems": [
                                 {
-                                    "id": "Pkgd VAV",
+                                    "id": "WSHP Units",
                                     "fan_system": {
-                                        "air_economizer": {
-                                            "high_limit_shutoff_temperature": 21.111111111111143,
-                                            "id": "Pkgd VAV AirEconomizer",
-                                            "is_integrated": true,
-                                            "type": "DIFFERENTIAL_ENTHALPY"
-                                        },
-                                        "air_energy_recovery": {
-                                            "design_sensible_effectiveness": 0.8,
-                                            "energy_recovery_operation": "SCHEDULED",
-                                            "energy_recovery_supply_air_temperature_control": "FIXED_SETPOINT",
-                                            "exhaust_airflow": 424.75269887999985,
-                                            "id": "Pkgd VAV AirEnergyRecovery",
-                                            "outdoor_airflow": 471.94744319999984,
-                                            "type": "SENSIBLE_HEAT_WHEEL"
-                                        },
-                                        "demand_control_ventilation_control": "CO2_RETURN_AIR",
-                                        "exhaust_fans": [],
-                                        "fan_control": "VARIABLE_SPEED_DRIVE",
-                                        "has_fully_ducted_return": true,
-                                        "id": "Pkgd VAV FanSys",
-                                        "maximum_outdoor_airflow": 4719.632055071848,
-                                        "minimum_airflow": 1415.8896727839528,
-                                        "minimum_outdoor_airflow": 471.9632125399846,
-                                        "operation_during_occupied": "CONTINUOUS",
-                                        "operation_during_unoccupied": "KEEP_OFF",
-                                        "relief_fans": [],
-                                        "return_fans": [],
+                                        "id": "WSHP Units FanSys",
                                         "supply_fans": [
                                             {
-                                                "design_airflow": 4719.632055071848,
-                                                "design_electric_power": 7460.000514984131,
-                                                "id": "Pkgd VAV SupplyFan",
-                                                "is_airflow_sized_based_on_design_day": false,
-                                                "output_validation_points": [],
-                                                "specification_method": "SIMPLE"
+                                                "id": "WSHP Units SupplyFan",
+                                                "design_airflow": 943.9263994922153,
+                                                "is_airflow_calculated": false,
+                                                "specification_method": "SIMPLE",
+                                                "design_electric_power": 600.0000238418579
                                             }
-                                        ]
+                                        ],
+                                        "temperature_control": "ZONE_RESET",
+                                        "fan_control": "CONSTANT",
+                                        "operating_schedule": "All ON Sch",
+                                        "minimum_airflow": 0.0,
+                                        "minimum_outdoor_airflow": 94.39264135578146,
+                                        "maximum_outdoor_airflow": 94.39264135578146,
+                                        "has_fully_ducted_return": true
+                                    },
+                                    "heating_system": {
+                                        "id": "WSHP Units HeatSys",
+                                        "type": "HEAT_PUMP",
+                                        "energy_source_type": "ELECTRICITY",
+                                        "water_source_heat_pump_loop": "Condenser Water Loop",
+                                        "design_capacity": 17725.154879288195,
+                                        "rated_capacity": 17584.266666666666,
+                                        "is_calculated_size": false,
+                                        "heating_coil_setpoint": 32.222222222222285,
+                                        "efficiency_metric_values": [
+                                            5.555555555555555
+                                        ],
+                                        "efficiency_metric_types": [
+                                            "COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN"
+                                        ],
+                                        "heatpump_low_shutoff_temperature": 15.5555555555556
                                     },
                                     "cooling_system": {
-                                        "design_sensible_cool_capacity": 59909.969150954006,
-                                        "design_total_cool_capacity": 80742.30918791668,
-                                        "id": "Pkgd VAV CoolSys",
-                                        "is_sized_based_on_design_day": false,
-                                        "rated_sensible_cool_capacity": 65236.731779019035,
-                                        "rated_total_cool_capacity": 87921.33333333333,
-                                        "turndown_ratio": 0.165,
-                                        "type": "DIRECT_EXPANSION"
+                                        "id": "WSHP Units CoolSys",
+                                        "type": "DIRECT_EXPANSION",
+                                        "design_total_cool_capacity": 21888.535676631946,
+                                        "design_sensible_cool_capacity": 15774.479820650622,
+                                        "rated_total_cool_capacity": 17584.266666666666,
+                                        "rated_sensible_cool_capacity": 12672.507693099977,
+                                        "is_calculated_size": false,
+                                        "condenser_water_loop": "Condenser Water Loop",
+                                        "efficiency_metric_values": [
+                                            5.524861878453039
+                                        ],
+                                        "efficiency_metric_types": [
+                                            "COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN"
+                                        ],
+                                        "cooling_turndown_ratio": 1.0
+                                    }
+                                },
+                                {
+                                    "id": "WSHP Units - Prm Zone 1 (South) Zn",
+                                    "fan_system": {
+                                        "id": "WSHP Units FanSys--1",
+                                        "supply_fans": [
+                                            {
+                                                "id": "WSHP Units SupplyFan--1",
+                                                "design_airflow": 943.9263994922153,
+                                                "is_airflow_calculated": false,
+                                                "specification_method": "SIMPLE",
+                                                "design_electric_power": 600.0000238418579
+                                            }
+                                        ],
+                                        "temperature_control": "ZONE_RESET",
+                                        "fan_control": "CONSTANT",
+                                        "operating_schedule": "All ON Sch",
+                                        "minimum_airflow": 0.0,
+                                        "minimum_outdoor_airflow": 94.39264135578146,
+                                        "maximum_outdoor_airflow": 94.39264135578146,
+                                        "has_fully_ducted_return": true
                                     },
-                                    "preheat_system": {
-                                        "energy_source_type": "NATURAL_GAS",
-                                        "heating_coil_setpoint": 10.000000000000057,
-                                        "hot_water_loop": "Hot Water Loop",
-                                        "id": "Pkgd VAV PreheatSys",
-                                        "is_sized_based_on_design_day": false,
-                                        "rated_capacity": 43960.666666666664,
-                                        "type": "FLUID_LOOP"
+                                    "heating_system": {
+                                        "id": "WSHP Units HeatSys--1",
+                                        "type": "HEAT_PUMP",
+                                        "energy_source_type": "ELECTRICITY",
+                                        "water_source_heat_pump_loop": "Condenser Water Loop",
+                                        "design_capacity": 17674.214311979165,
+                                        "rated_capacity": 17584.266666666666,
+                                        "is_calculated_size": false,
+                                        "heating_coil_setpoint": 32.222222222222285,
+                                        "efficiency_metric_values": [
+                                            5.555555555555555
+                                        ],
+                                        "efficiency_metric_types": [
+                                            "COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN"
+                                        ],
+                                        "heatpump_low_shutoff_temperature": 15.5555555555556
+                                    },
+                                    "cooling_system": {
+                                        "id": "WSHP Units CoolSys--1",
+                                        "type": "DIRECT_EXPANSION",
+                                        "design_total_cool_capacity": 17449.582174166666,
+                                        "design_sensible_cool_capacity": 12575.445244564286,
+                                        "rated_total_cool_capacity": 17584.266666666666,
+                                        "rated_sensible_cool_capacity": 12672.507693099977,
+                                        "is_calculated_size": false,
+                                        "condenser_water_loop": "Condenser Water Loop",
+                                        "efficiency_metric_values": [
+                                            5.524861878453039
+                                        ],
+                                        "efficiency_metric_types": [
+                                            "COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN"
+                                        ],
+                                        "cooling_turndown_ratio": 1.0
+                                    }
+                                },
+                                {
+                                    "id": "WSHP Units - Prm Zone 2 (East) Zn",
+                                    "fan_system": {
+                                        "id": "WSHP Units FanSys--2",
+                                        "supply_fans": [
+                                            {
+                                                "id": "WSHP Units SupplyFan--2",
+                                                "design_airflow": 943.9263994922153,
+                                                "is_airflow_calculated": false,
+                                                "specification_method": "SIMPLE",
+                                                "design_electric_power": 600.0000238418579
+                                            }
+                                        ],
+                                        "temperature_control": "ZONE_RESET",
+                                        "fan_control": "CONSTANT",
+                                        "operating_schedule": "All ON Sch",
+                                        "minimum_airflow": 0.0,
+                                        "minimum_outdoor_airflow": 94.39264135578146,
+                                        "maximum_outdoor_airflow": 94.39264135578146,
+                                        "has_fully_ducted_return": true
+                                    },
+                                    "heating_system": {
+                                        "id": "WSHP Units HeatSys--2",
+                                        "type": "HEAT_PUMP",
+                                        "energy_source_type": "ELECTRICITY",
+                                        "water_source_heat_pump_loop": "Condenser Water Loop",
+                                        "design_capacity": 17547.374050937502,
+                                        "rated_capacity": 17584.266666666666,
+                                        "is_calculated_size": false,
+                                        "heating_coil_setpoint": 32.222222222222285,
+                                        "efficiency_metric_values": [
+                                            5.555555555555555
+                                        ],
+                                        "efficiency_metric_types": [
+                                            "COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN"
+                                        ],
+                                        "heatpump_low_shutoff_temperature": 15.5555555555556
+                                    },
+                                    "cooling_system": {
+                                        "id": "WSHP Units CoolSys--2",
+                                        "type": "DIRECT_EXPANSION",
+                                        "design_total_cool_capacity": 17449.582174166666,
+                                        "design_sensible_cool_capacity": 12575.445244564286,
+                                        "rated_total_cool_capacity": 17584.266666666666,
+                                        "rated_sensible_cool_capacity": 12672.507693099977,
+                                        "is_calculated_size": false,
+                                        "condenser_water_loop": "Condenser Water Loop",
+                                        "efficiency_metric_values": [
+                                            5.524861878453039
+                                        ],
+                                        "efficiency_metric_types": [
+                                            "COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN"
+                                        ],
+                                        "cooling_turndown_ratio": 1.0
+                                    }
+                                },
+                                {
+                                    "id": "WSHP Units - Prm Zone 3 (North)",
+                                    "fan_system": {
+                                        "id": "WSHP Units FanSys--3",
+                                        "supply_fans": [
+                                            {
+                                                "id": "WSHP Units SupplyFan--3",
+                                                "design_airflow": 943.9263994922153,
+                                                "is_airflow_calculated": false,
+                                                "specification_method": "SIMPLE",
+                                                "design_electric_power": 600.0000238418579
+                                            }
+                                        ],
+                                        "temperature_control": "ZONE_RESET",
+                                        "fan_control": "CONSTANT",
+                                        "operating_schedule": "All ON Sch",
+                                        "minimum_airflow": 0.0,
+                                        "minimum_outdoor_airflow": 94.39264135578146,
+                                        "maximum_outdoor_airflow": 94.39264135578146,
+                                        "has_fully_ducted_return": true
+                                    },
+                                    "heating_system": {
+                                        "id": "WSHP Units HeatSys--3",
+                                        "type": "HEAT_PUMP",
+                                        "energy_source_type": "ELECTRICITY",
+                                        "water_source_heat_pump_loop": "Condenser Water Loop",
+                                        "design_capacity": 17574.710945711806,
+                                        "rated_capacity": 17584.266666666666,
+                                        "is_calculated_size": false,
+                                        "heating_coil_setpoint": 32.222222222222285,
+                                        "efficiency_metric_values": [
+                                            5.555555555555555
+                                        ],
+                                        "efficiency_metric_types": [
+                                            "COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN"
+                                        ],
+                                        "heatpump_low_shutoff_temperature": 15.5555555555556
+                                    },
+                                    "cooling_system": {
+                                        "id": "WSHP Units CoolSys--3",
+                                        "type": "DIRECT_EXPANSION",
+                                        "design_total_cool_capacity": 17449.582174166666,
+                                        "design_sensible_cool_capacity": 12575.445244564286,
+                                        "rated_total_cool_capacity": 17584.266666666666,
+                                        "rated_sensible_cool_capacity": 12672.507693099977,
+                                        "is_calculated_size": false,
+                                        "condenser_water_loop": "Condenser Water Loop",
+                                        "efficiency_metric_values": [
+                                            5.524861878453039
+                                        ],
+                                        "efficiency_metric_types": [
+                                            "COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN"
+                                        ],
+                                        "cooling_turndown_ratio": 1.0
+                                    }
+                                },
+                                {
+                                    "id": "WSHP Units - Prm Zone 4 (West)",
+                                    "fan_system": {
+                                        "id": "WSHP Units FanSys--4",
+                                        "supply_fans": [
+                                            {
+                                                "id": "WSHP Units SupplyFan--4",
+                                                "design_airflow": 943.9263994922153,
+                                                "is_airflow_calculated": false,
+                                                "specification_method": "SIMPLE",
+                                                "design_electric_power": 600.0000238418579
+                                            }
+                                        ],
+                                        "temperature_control": "ZONE_RESET",
+                                        "fan_control": "CONSTANT",
+                                        "operating_schedule": "All ON Sch",
+                                        "minimum_airflow": 0.0,
+                                        "minimum_outdoor_airflow": 94.39264135578146,
+                                        "maximum_outdoor_airflow": 94.39264135578146,
+                                        "has_fully_ducted_return": true
+                                    },
+                                    "heating_system": {
+                                        "id": "WSHP Units HeatSys--4",
+                                        "type": "HEAT_PUMP",
+                                        "energy_source_type": "ELECTRICITY",
+                                        "water_source_heat_pump_loop": "Condenser Water Loop",
+                                        "design_capacity": 17503.073375989585,
+                                        "rated_capacity": 17584.266666666666,
+                                        "is_calculated_size": false,
+                                        "heating_coil_setpoint": 32.222222222222285,
+                                        "efficiency_metric_values": [
+                                            5.555555555555555
+                                        ],
+                                        "efficiency_metric_types": [
+                                            "COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN"
+                                        ],
+                                        "heatpump_low_shutoff_temperature": 15.5555555555556
+                                    },
+                                    "cooling_system": {
+                                        "id": "WSHP Units CoolSys--4",
+                                        "type": "DIRECT_EXPANSION",
+                                        "design_total_cool_capacity": 17449.582174166666,
+                                        "design_sensible_cool_capacity": 12575.445244564286,
+                                        "rated_total_cool_capacity": 17584.266666666666,
+                                        "rated_sensible_cool_capacity": 12672.507693099977,
+                                        "is_calculated_size": false,
+                                        "condenser_water_loop": "Condenser Water Loop",
+                                        "efficiency_metric_values": [
+                                            5.524861878453039
+                                        ],
+                                        "efficiency_metric_types": [
+                                            "COEFFICIENT_OF_PERFORMANCE_WATER_TO_AIR_WATER_LOOP_NO_FAN"
+                                        ],
+                                        "cooling_turndown_ratio": 1.0
                                     }
                                 }
                             ],
                             "service_water_heating_uses": [
-                                {
-                                    "id": "DHW Plant 1 Loop (1) Load1",
-                                    "served_by_distribution_system": "DHW Plant 1 Loop (1)",
-                                    "use": 0.01038351666666667,
-                                    "use_units": "VOLUME",
-                                    "use_multiplier_schedule": "DHW Eqp NRes Sch",
-                                    "temperature_at_fixture": 57.222222222222285
-                                }
+                                "DHW Plant 1 Loop (1) Load1"
                             ]
                         }
                     ],
@@ -106630,7 +106391,12 @@
                     "prescribed_type": "NOT_APPLICABLE"
                 },
                 {
-                    "id": "OA Reset Annual",
+                    "id": "HW OA Reset",
+                    "sequence_type": "HOURLY",
+                    "prescribed_type": "NOT_APPLICABLE"
+                },
+                {
+                    "id": "CHW OA Reset",
                     "sequence_type": "HOURLY",
                     "prescribed_type": "NOT_APPLICABLE"
                 },
@@ -132938,43 +132704,349 @@
                     "prescribed_type": "NOT_APPLICABLE"
                 }
             ],
+            "constructions": [
+                {
+                    "id": "Roof Type 1",
+                    "primary_layers": [
+                        "Metal Deck",
+                        "Continuous Insulation",
+                        "Built-up roofing"
+                    ],
+                    "framing_layers": [],
+                    "insulation_locations": [],
+                    "r_values": [],
+                    "u_factor": 0.365608802525771
+                },
+                {
+                    "id": "Exterior Wall Type 1",
+                    "primary_layers": [
+                        "Stucco",
+                        "Gypsum Board",
+                        "Insulation",
+                        "Gypsum Board"
+                    ],
+                    "framing_layers": [],
+                    "insulation_locations": [],
+                    "r_values": [],
+                    "u_factor": 0.4785360618245472
+                },
+                {
+                    "id": "Roof Type 2",
+                    "primary_layers": [
+                        "Metal Deck",
+                        "Continuous Insulation",
+                        "Builtup roof resistance"
+                    ],
+                    "framing_layers": [],
+                    "insulation_locations": [],
+                    "r_values": [],
+                    "u_factor": 0.18970607381902888
+                },
+                {
+                    "id": "Exterior Wall Type 2",
+                    "primary_layers": [
+                        "Stucco",
+                        "Gypsum board resistance",
+                        "Insulation",
+                        "Gypsum board resistance"
+                    ],
+                    "framing_layers": [],
+                    "insulation_locations": [],
+                    "r_values": [],
+                    "u_factor": 0.18802180423859668
+                },
+                {
+                    "id": "Roof Type 3",
+                    "primary_layers": [],
+                    "framing_layers": [],
+                    "insulation_locations": [],
+                    "r_values": [],
+                    "u_factor": 0.35783047909715215
+                },
+                {
+                    "id": "BL1 Ceilg Construction",
+                    "primary_layers": [
+                        "AcousTile 1/2in (AC02)"
+                    ],
+                    "framing_layers": [],
+                    "insulation_locations": [],
+                    "r_values": [],
+                    "u_factor": 2.9214668971004607
+                },
+                {
+                    "id": "BL1 IWall Construction",
+                    "primary_layers": [],
+                    "framing_layers": [],
+                    "insulation_locations": [],
+                    "r_values": [],
+                    "u_factor": 1.6949618440903549
+                },
+                {
+                    "id": "Slab-on-grade Type 1",
+                    "primary_layers": [
+                        "Concrete"
+                    ],
+                    "framing_layers": [],
+                    "insulation_locations": [],
+                    "r_values": [],
+                    "u_factor": 4.8554836612451,
+                    "f_factor": 39.317355313145285
+                },
+                {
+                    "id": "BL1 IFlSP Construction",
+                    "primary_layers": [
+                        "Concrete"
+                    ],
+                    "framing_layers": [],
+                    "insulation_locations": [],
+                    "r_values": [],
+                    "u_factor": 4.8554836612451
+                },
+                {
+                    "id": "BL1 UFCons (G.S1.U2)",
+                    "primary_layers": [
+                        "BL1 UFMat (G.S1.U2.M1)",
+                        "Light Soil, Damp 12in",
+                        "Conc HW 140lb 6in (HF-C13)",
+                        "Carpet & No Pad"
+                    ],
+                    "framing_layers": [],
+                    "insulation_locations": [],
+                    "r_values": [],
+                    "u_factor": 0.13741399205020632
+                },
+                {
+                    "id": "BL1 UFCons (G.E2.U3)",
+                    "primary_layers": [
+                        "BL1 UFMat (G.E2.U3.M1)",
+                        "Light Soil, Damp 12in",
+                        "Conc HW 140lb 6in (HF-C13)",
+                        "Carpet & No Pad"
+                    ],
+                    "framing_layers": [],
+                    "insulation_locations": [],
+                    "r_values": [],
+                    "u_factor": 0.14422790901137358
+                },
+                {
+                    "id": "BL1 UFCons (G.C5.U6)",
+                    "primary_layers": [
+                        "BL1 UFMat (G.C5.U6.M1)",
+                        "Light Soil, Damp 12in",
+                        "Conc HW 140lb 6in (HF-C13)",
+                        "Carpet & No Pad"
+                    ],
+                    "framing_layers": [],
+                    "insulation_locations": [],
+                    "r_values": [],
+                    "u_factor": 0.054511335689338046
+                },
+                {
+                    "id": "Exterior Wall Type 3",
+                    "primary_layers": [],
+                    "framing_layers": [],
+                    "insulation_locations": [],
+                    "r_values": [],
+                    "u_factor": 0.47688096041226397
+                },
+                {
+                    "id": "Slab-on-grade Type 2",
+                    "primary_layers": [
+                        "Insulation (Slab on grade)",
+                        "Concrete"
+                    ],
+                    "framing_layers": [],
+                    "insulation_locations": [],
+                    "r_values": [],
+                    "u_factor": 0.3509167235001137,
+                    "f_factor": 39.317355313145285
+                },
+                {
+                    "id": "Sgl Lyr Unins Mtl Door",
+                    "primary_layers": [],
+                    "framing_layers": [],
+                    "insulation_locations": [],
+                    "r_values": [],
+                    "u_factor": 11.810789399356578
+                }
+            ],
+            "materials": [
+                {
+                    "id": "Roof Type 2 M1",
+                    "r_value": 0.05934912361050029
+                },
+                {
+                    "id": "Exterior Wall Type 2 M2",
+                    "r_value": 0.09950223988110582
+                },
+                {
+                    "id": "Roof Type 3 FRV",
+                    "r_value": 1.2058262592317375
+                },
+                {
+                    "id": "BL1 UFMat (G.S1.U2.M1)",
+                    "r_value": 6.556933442926252
+                },
+                {
+                    "id": "BL1 UFMat (G.E2.U3.M1)",
+                    "r_value": 6.190412979845618
+                },
+                {
+                    "id": "BL1 UFMat (G.C5.U6.M1)",
+                    "r_value": 17.611015908160326
+                },
+                {
+                    "id": "Conc LW 30lb 4in (CC34)",
+                    "thickness": 0.10158983999999999,
+                    "thermal_conductivity": 0.12997819160104987,
+                    "density": 480.55390121880436,
+                    "specific_heat": 837.3601169702214
+                },
+                {
+                    "id": "Metal Deck",
+                    "thickness": 0.0007924799999999998,
+                    "thermal_conductivity": 45.27948666666667,
+                    "density": 7824.058250377093,
+                    "specific_heat": 498.22926959728164
+                },
+                {
+                    "id": "Continuous Insulation",
+                    "thickness": 0.05273039999999999,
+                    "thermal_conductivity": 0.0207688188976378,
+                    "density": 32.03692674792029,
+                    "specific_heat": 921.0961286672434
+                },
+                {
+                    "id": "Built-up roofing",
+                    "thickness": 0.009448799999999999,
+                    "thermal_conductivity": 0.15922761154855644,
+                    "density": 1120.0109591072933,
+                    "specific_heat": 1461.1934041130362
+                },
+                {
+                    "id": "Stucco",
+                    "thickness": 0.0252984,
+                    "thermal_conductivity": 0.7199857217847769,
+                    "density": 1858.1417513793767,
+                    "specific_heat": 841.5469175550725
+                },
+                {
+                    "id": "Gypsum Board",
+                    "thickness": 0.0158496,
+                    "thermal_conductivity": 0.15922761154855644,
+                    "density": 800.9231686980072,
+                    "specific_heat": 1088.5681520612877
+                },
+                {
+                    "id": "Insulation",
+                    "thickness": 0.06217919999999999,
+                    "thermal_conductivity": 0.03634543307086615,
+                    "density": 9.611078024376086,
+                    "specific_heat": 837.3601169702214
+                },
+                {
+                    "id": "Builtup roof resistance",
+                    "r_value": 0.05934912361050029
+                },
+                {
+                    "id": "Gypsum board resistance",
+                    "r_value": 0.09950223988110582
+                },
+                {
+                    "id": "Concrete",
+                    "thickness": 0.10149839999999999,
+                    "thermal_conductivity": 2.310531102362205,
+                    "density": 2324.6794971459663,
+                    "specific_heat": 833.1733163853703
+                },
+                {
+                    "id": "Insulation (Slab on grade)",
+                    "thickness": 0.11429999999999998,
+                    "thermal_conductivity": 0.04326837270341208,
+                    "density": 91.30524123157284,
+                    "specific_heat": 837.3601169702214
+                },
+                {
+                    "id": "exterior wall type3",
+                    "r_value": 1.9460172578517159
+                },
+                {
+                    "id": "Roof Type 3lyr",
+                    "r_value": 2.6575023005413927
+                },
+                {
+                    "id": "Surface to Surface",
+                    "thickness": 3.048e-06,
+                    "thermal_conductivity": 0.1142285039370079,
+                    "density": 0.0,
+                    "specific_heat": 0.0
+                },
+                {
+                    "id": "Surface to surface wall",
+                    "thickness": 3.048e-06,
+                    "thermal_conductivity": 0.15576614173228348,
+                    "density": 0.0,
+                    "specific_heat": 0.0
+                },
+                {
+                    "id": "AcousTile 1/2in (AC02)",
+                    "thickness": 0.012710159999999998,
+                    "thermal_conductivity": 0.05711425196850395,
+                    "density": 288.3323407312826,
+                    "specific_heat": 1339.7761871523542
+                },
+                {
+                    "id": "Light Soil, Damp 12in",
+                    "thickness": 0.30479999999999996,
+                    "thermal_conductivity": 0.8653674540682416,
+                    "density": 1601.8463373960144,
+                    "specific_heat": 1046.7001462127766
+                },
+                {
+                    "id": "Conc HW 140lb 6in (HF-C13)",
+                    "thickness": 0.15239999999999998,
+                    "thermal_conductivity": 1.7307349081364831,
+                    "density": 2242.5848723544204,
+                    "specific_heat": 837.3601169702214
+                },
+                {
+                    "id": "Carpet & No Pad",
+                    "r_value": 0.13208261931120244
+                }
+            ],
             "fluid_loops": [
                 {
-                    "id": "Hot Water Loop",
-                    "heating_design_and_control": {
-                        "id": "Hot Water Loop HeatingDesign/Control",
-                        "design_supply_temperature": 82.22222222222229,
-                        "design_return_temperature": 54.44444444444446,
+                    "id": "Condenser Water Loop",
+                    "cooling_or_condensing_design_and_control": {
+                        "id": "Condenser Water Loop CondensingDesign/Control",
+                        "design_supply_temperature": 21.111111111111143,
+                        "design_return_temperature": 26.666666666666686,
                         "is_sized_using_coincident_load": true,
-                        "minimum_flow_fraction": 0.05,
+                        "minimum_flow_fraction": 0.25,
                         "operation": "CONTINUOUS",
-                        "operation_schedule": "All ON Sch",
-                        "flow_control": "FIXED_FLOW",
-                        "temperature_reset_type": "LOAD_RESET",
-                        "loop_supply_temperature_at_low_load": 71.11111111111114
+                        "flow_control": "VARIABLE_FLOW",
+                        "temperature_reset_type": "NO_RESET"
                     },
                     "child_loops": [],
-                    "type": "HEATING",
-                    "pump_power_per_flow_rate": 301.1889234086796
+                    "type": "CONDENSER",
+                    "pump_power_per_flow_rate": 301.1888934882503
                 }
             ],
             "service_water_heating_distribution_systems": [
                 {
                     "id": "DHW Plant 1 Loop (1)",
                     "tanks": [],
-                    "service_water_piping": [
-                        {
-                            "id": "DHW Plant 1 Loop (1) ServiceWaterPiping",
-                            "child": [],
-                            "service_water_heating_design_and_control": {
-                                "id": "DHW Plant 1 Loop (1) Design/Control",
-                                "design_supply_temperature": 135.0,
-                                "temperature_reset_type": "NO_RESET"
-                            },
-                            "is_recirculation_loop": false,
-                            "are_thermal_losses_modeled": false
-                        }
-                    ],
+                    "service_water_piping": {
+                        "id": "DHW Plant 1 Loop (1) ServiceWaterPiping",
+                        "child": [],
+                        "service_water_heating_design_and_control": {
+                            "id": "DHW Plant 1 Loop (1) Design/Control",
+                            "design_supply_temperature": 135.0,
+                            "temperature_reset_type": "NO_RESET"
+                        },
+                        "is_recirculation_loop": false,
+                        "are_thermal_losses_modeled": false
+                    },
                     "design_supply_temperature": 57.222222222222285,
                     "design_supply_temperature_difference": 44.44444444444444,
                     "entering_water_mains_temperature_schedule": "Ground Temperature Schedule",
@@ -132984,16 +133056,15 @@
             "service_water_heating_equipment": [
                 {
                     "id": "DHW Plant 1 Wtr Htr (1)",
-                    "output_validation_points": [],
+                    "operating_points": [],
                     "tank": {
                         "id": "DHW Plant 1 Wtr Htr (1) Tank",
                         "storage_capacity": 169.25535900000003,
-                        "location": "IN_ZONE",
                         "location_zone": "Core Zone 1"
                     },
                     "solar_thermal_systems": [],
-                    "compressor_capacity_validation_points": [],
-                    "compressor_power_validation_points": [],
+                    "compressor_capacity_operating_points": [],
+                    "compressor_power_operating_points": [],
                     "heater_fuel_type": "NATURAL_GAS",
                     "distribution_system": "DHW Plant 1 Loop (1)",
                     "efficiency_metric_types": [
@@ -133002,41 +133073,54 @@
                     "efficiency_metric_values": [
                         0.8
                     ],
+                    "input_power": 21833.543057769097,
                     "rated_capacity": 17466.834446215278,
                     "setpoint_temperature": 57.222222222222285
                 }
             ],
+            "service_water_heating_uses": [
+                {
+                    "id": "DHW Plant 1 Loop (1) Load1",
+                    "served_by_distribution_system": "DHW Plant 1 Loop (1)",
+                    "use": 0.1646,
+                    "use_units": "VOLUME",
+                    "use_multiplier_schedule": "DHW Eqp NRes Sch",
+                    "temperature_at_fixture": 57.222222222222285
+                }
+            ],
             "pumps": [
                 {
-                    "id": "Hot Water Pumps",
-                    "output_validation_points": [],
-                    "loop_or_piping": "Hot Water Loop",
+                    "id": "CW-PUMP",
+                    "operating_points": [],
+                    "loop_or_piping": "Condenser Water Loop",
                     "specification_method": "SIMPLE",
-                    "design_electric_power": 380.0,
-                    "design_head": 92661.077,
-                    "impeller_efficiency": 0.43909013271331787,
-                    "motor_efficiency": 0.699999988079071,
-                    "speed_control": "FIXED_SPEED",
-                    "design_flow": 1.2616666666666672,
-                    "is_flow_sized_based_on_design_day": false
+                    "design_electric_power": 1425.0,
+                    "design_head": 119562.68,
+                    "impeller_efficiency": 0.4957469403743744,
+                    "motor_efficiency": 0.800000011920929,
+                    "speed_control": "VARIABLE_SPEED",
+                    "design_flow": 4.731250000000001,
+                    "is_flow_calculated": false
                 }
             ],
             "boilers": [
                 {
                     "id": "Boiler 1",
                     "efficiency_metric_values": [
-                        0.8999999570846579
+                        0.7980845836037662,
+                        0.8180845836037662
                     ],
                     "efficiency_metric_types": [
-                        "THERMAL"
+                        "THERMAL",
+                        "COMBUSTION"
                     ],
-                    "output_validation_points": [],
+                    "operating_points": [],
                     "notes": "The equations in the ANSI/ASHRAE/IES Standard 90.1-2019 Performance Rating Method Reference Manual Section 3.8.1 under the \"Boiler Efficiency\" descriptor for converting from boiler thermal efficiency to combustion efficiency and AFUE were used to populate combustion efficiency and AFUE.",
-                    "loop": "Hot Water Loop",
+                    "loop": "Condenser Water Loop",
                     "design_capacity": 87921.33333333333,
                     "rated_capacity": 87921.33333333333,
-                    "minimum_load_ratio": 0.33,
-                    "draft_type": "FORCED",
+                    "minimum_load_ratio": 0.4,
+                    "draft_type": "NATURAL",
                     "energy_source_type": "NATURAL_GAS",
                     "auxiliary_power": 0.0,
                     "operation_lower_limit": 0.0,
@@ -133044,218 +133128,28 @@
                 }
             ],
             "chillers": [],
-            "heat_rejections": [],
-            "external_fluid_sources": [],
-            "output": {
-                "id": "Output2019ASHRAE901",
-                "output_instance": {
-                    "id": "229 Test Case E-3 (Pkgd VAV Bbrd) Output",
-                    "unmet_load_hours_heating": 2580.0,
-                    "unmet_load_hours_cooling": 0.0,
-                    "annual_source_results": [
-                        {
-                            "id": "ELECTRICITY",
-                            "energy_source": "ELECTRICITY",
-                            "annual_consumption": 115711222629.0,
-                            "annual_demand": 12340023.959859213,
-                            "annual_cost": 7677.0
-                        },
-                        {
-                            "id": "NATURAL_GAS",
-                            "energy_source": null,
-                            "annual_consumption": 0.0,
-                            "annual_demand": 40456983216.38889,
-                            "annual_cost": 1957.0
-                        }
-                    ],
-                    "building_peak_heating_load": -373.673583984375,
-                    "building_peak_cooling_load": 101.0267562866211,
-                    "annual_end_use_results": [
-                        {
-                            "id": "ELECTRICITY - Interior Lighting",
-                            "type": "INTERIOR_LIGHTING",
-                            "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 47531097062.5,
-                            "annual_site_coincident_demand": 5104544.702046713,
-                            "annual_site_non_coincident_demand": 5104544.702046713,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "ELECTRICITY - Misc Equipment",
-                            "type": "MISC_EQUIPMENT",
-                            "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 57297478447.875,
-                            "annual_site_coincident_demand": 3381187.5941594443,
-                            "annual_site_non_coincident_demand": 3381187.5941594443,
-                            "is_regulated": false
-                        },
-                        {
-                            "id": "ELECTRICITY - Space Heating",
-                            "type": "SPACE_HEATING",
-                            "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "ELECTRICITY - Space Cooling",
-                            "type": "SPACE_COOLING",
-                            "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 6335417063.1484375,
-                            "annual_site_coincident_demand": 3344777.3007837934,
-                            "annual_site_non_coincident_demand": 3344777.3007837934,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "ELECTRICITY - Heat Rejection",
-                            "type": "HEAT_REJECTION",
-                            "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "ELECTRICITY - Pumps & Aux",
-                            "type": "PUMPS",
-                            "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 2343718553.3632812,
-                            "annual_site_coincident_demand": 67132.23391963376,
-                            "annual_site_non_coincident_demand": 81785.78860176934,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "ELECTRICITY - Ventilation Fans",
-                            "type": "FANS_INTERIOR_VENTILATION",
-                            "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 2203708037.203125,
-                            "annual_site_coincident_demand": 442381.0328075621,
-                            "annual_site_non_coincident_demand": 443575.52196343744,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "ELECTRICITY - Refrigeration Display",
-                            "type": "REFRIGERATION_EQUIPMENT",
-                            "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "ELECTRICITY - Ht Pump Supplemental Heat",
-                            "type": "HEAT_PUMP_SUPPLEMENTAL_HEATING",
-                            "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "ELECTRICITY - Domestic Hot Water",
-                            "type": "SERVICE_WATER_HEATING",
-                            "energy_source": "ELECTRICITY",
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "NATURAL_GAS - Interior Lighting",
-                            "type": "INTERIOR_LIGHTING",
-                            "energy_source": null,
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "NATURAL_GAS - Misc Equipment",
-                            "type": "MISC_EQUIPMENT",
-                            "energy_source": null,
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": false
-                        },
-                        {
-                            "id": "NATURAL_GAS - Space Heating",
-                            "type": "SPACE_HEATING",
-                            "energy_source": null,
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 38094717869.548615,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "NATURAL_GAS - Space Cooling",
-                            "type": "SPACE_COOLING",
-                            "energy_source": null,
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "NATURAL_GAS - Heat Rejection",
-                            "type": "HEAT_REJECTION",
-                            "energy_source": null,
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "NATURAL_GAS - Pumps & Aux",
-                            "type": "PUMPS",
-                            "energy_source": null,
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "NATURAL_GAS - Ventilation Fans",
-                            "type": "FANS_INTERIOR_VENTILATION",
-                            "energy_source": null,
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "NATURAL_GAS - Refrigeration Display",
-                            "type": "REFRIGERATION_EQUIPMENT",
-                            "energy_source": null,
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "NATURAL_GAS - Ht Pump Supplemental Heat",
-                            "type": "HEAT_PUMP_SUPPLEMENTAL_HEATING",
-                            "energy_source": null,
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 0.0,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        },
-                        {
-                            "id": "NATURAL_GAS - Domestic Hot Water",
-                            "type": "SERVICE_WATER_HEATING",
-                            "energy_source": null,
-                            "annual_site_energy_use": 0.0,
-                            "annual_site_coincident_demand": 2362265489.9414062,
-                            "annual_site_non_coincident_demand": 0.0,
-                            "is_regulated": true
-                        }
-                    ]
+            "heat_rejections": [
+                {
+                    "id": "Heat Rejection 1",
+                    "loop": "Condenser Water Loop",
+                    "type": "OPEN_CIRCUIT_COOLING_TOWER",
+                    "range": 5.555555555555555,
+                    "approach": 3.8888888888888893,
+                    "fan_speed_control": "VARIABLE_SPEED",
+                    "rated_water_flowrate": 4.727468041737875,
+                    "leaving_water_setpoint_temperature": 21.111111111111143
                 }
+            ],
+            "external_fluid_sources": [],
+            "model_output": {
+                "id": "229 Test Case F-230 (WSHP) Output",
+                "unmet_load_hours_heating": 3406.0,
+                "unmet_load_hours_cooling": 0.0,
+                "annual_source_results": [],
+                "building_peak_cooling_load": 101.0267562866211,
+                "annual_end_use_results": []
             }
         }
     ],
-    "data_timestamp": "2025-04-22T16:00Z",
-    "data_version": "0.1.0"
+    "output_format_type": "OUTPUT_SCHEMA_ASHRAE901_2019"
 }
