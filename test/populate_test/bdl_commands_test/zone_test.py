@@ -37,7 +37,11 @@ from rpd_generator.bdl_structure.bdl_commands.system import (
     BDL_SystemCoolingTypes,
 )
 from rpd_generator.bdl_structure.bdl_commands.zone import *
-from rpd_generator.bdl_structure.bdl_commands.space import Space
+from rpd_generator.bdl_structure.bdl_commands.space import (
+    Space,
+    Infiltration,
+    BDL_InfiltrationAlgorithmOptions,
+)
 from rpd_generator.artifacts.ruleset_project_description import (
     RulesetProjectDescription,
 )
@@ -837,3 +841,158 @@ class TestZones(unittest.TestCase):
             "zonal_exhaust_fan": {},
         }
         self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
+
+    def test_infiltration_air_change_method(self):
+        """
+        Test infiltration data structure populated from AIR_CHANGE method using both flow/area and air changes/hour.
+        """
+        floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        space = Space("Space 1", floor, self.rmd)
+        self.test_zone.keyword_value_pairs[BDL_ZoneKeywords.SPACE] = "Space 1"
+
+        space.keyword_value_pairs = {
+            BDL_SpaceKeywords.INF_METHOD: BDL_InfiltrationAlgorithmOptions.AIR_CHANGE,
+            BDL_SpaceKeywords.INF_FLOW_AREA: "0.1",  # cfm/ft²
+            BDL_SpaceKeywords.AIR_CHANGES_HR: "1.2",
+        }
+        space.floor_area = 500  # ft²
+        self.test_zone.volume = 5000  # ft³
+
+        infiltration = Infiltration(space)
+        infiltration.populate_data_elements()
+        infiltration.populate_data_group()
+
+        expected_flow_rate = 0.1 * 500 + 1.2 * 5000 / 60  # = 50 + 100 = 150
+        expected_structure = {
+            "id": "Zone 1 Infil",
+            "modeling_method": "WEATHER_DRIVEN",
+            "algorithm_name": "Air Change Method",
+            "flow_rate": expected_flow_rate,
+        }
+
+        self.assertEqual(expected_structure, infiltration.data_structure)
+
+    def test_infiltration_flow_area_only(self):
+        floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        space = Space("Space 1", floor, self.rmd)
+        self.test_zone.keyword_value_pairs[BDL_ZoneKeywords.SPACE] = "Space 1"
+
+        space.keyword_value_pairs = {
+            BDL_SpaceKeywords.INF_METHOD: BDL_InfiltrationAlgorithmOptions.AIR_CHANGE,
+            BDL_SpaceKeywords.INF_FLOW_AREA: "0.15",
+        }
+        space.floor_area = 600  # ft²
+
+        infiltration = Infiltration(space)
+        infiltration.populate_data_elements()
+        infiltration.populate_data_group()
+
+        expected_structure = {
+            "id": "Zone 1 Infil",
+            "modeling_method": "CONSTANT",
+            "algorithm_name": "Air Change Method",
+            "flow_rate": 0.15 * 600,
+        }
+
+        self.assertEqual(expected_structure, infiltration.data_structure)
+
+    def test_infiltration_constant_scheduled(self):
+        floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        space = Space("Space 1", floor, self.rmd)
+        self.test_zone.keyword_value_pairs[BDL_ZoneKeywords.SPACE] = "Space 1"
+
+        space.keyword_value_pairs = {
+            BDL_SpaceKeywords.INF_METHOD: BDL_InfiltrationAlgorithmOptions.AIR_CHANGE,
+            BDL_SpaceKeywords.INF_FLOW_AREA: "0.2",
+            BDL_SpaceKeywords.INF_SCHEDULE: "Infiltration Schedule",
+        }
+        space.floor_area = 400  # ft²
+
+        infiltration = Infiltration(space)
+        infiltration.populate_data_elements()
+        infiltration.populate_data_group()
+
+        expected_structure = {
+            "id": "Zone 1 Infil",
+            "modeling_method": "CONSTANT_SCHEDULED",
+            "algorithm_name": "Air Change Method",
+            "flow_rate": 0.2 * 400,
+            "multiplier_schedule": "Infiltration Schedule",
+        }
+
+        self.assertEqual(expected_structure, infiltration.data_structure)
+
+    def test_infiltration_air_changes_only(self):
+        floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        space = Space("Space 1", floor, self.rmd)
+        self.test_zone.keyword_value_pairs[BDL_ZoneKeywords.SPACE] = "Space 1"
+
+        space.keyword_value_pairs = {
+            BDL_SpaceKeywords.INF_METHOD: BDL_InfiltrationAlgorithmOptions.AIR_CHANGE,
+            BDL_SpaceKeywords.AIR_CHANGES_HR: "0.5",
+        }
+        self.test_zone.volume = 3600  # ft³
+
+        infiltration = Infiltration(space)
+        infiltration.populate_data_elements()
+        infiltration.populate_data_group()
+
+        expected_structure = {
+            "id": "Zone 1 Infil",
+            "modeling_method": "WEATHER_DRIVEN",
+            "algorithm_name": "Air Change Method",
+            "flow_rate": 0.5 * 3600 / 60,
+        }
+
+        self.assertEqual(expected_structure, infiltration.data_structure)
+
+    def test_infiltration_zero_values(self):
+        floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        space = Space("Space 1", floor, self.rmd)
+        self.test_zone.keyword_value_pairs[BDL_ZoneKeywords.SPACE] = "Space 1"
+
+        space.keyword_value_pairs = {
+            BDL_SpaceKeywords.INF_METHOD: BDL_InfiltrationAlgorithmOptions.AIR_CHANGE,
+            BDL_SpaceKeywords.INF_FLOW_AREA: "0",
+            BDL_SpaceKeywords.AIR_CHANGES_HR: "0",
+        }
+
+        infiltration = Infiltration(space)
+        infiltration.populate_data_elements()
+        infiltration.populate_data_group()
+
+        expected_structure = {
+            "id": "Zone 1 Infil",
+            "modeling_method": "WEATHER_DRIVEN",
+            "algorithm_name": "Air Change Method",
+            "flow_rate": 0.0,
+        }
+
+        self.assertEqual(expected_structure, infiltration.data_structure)
+
+    def test_infiltration_non_air_change_method(self):
+        floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        space = Space("Space 1", floor, self.rmd)
+        self.test_zone.keyword_value_pairs[BDL_ZoneKeywords.SPACE] = "Space 1"
+
+        space.keyword_value_pairs = {
+            BDL_SpaceKeywords.INF_METHOD: BDL_InfiltrationAlgorithmOptions.CRACK,
+        }
+
+        infiltration = Infiltration(space)
+        infiltration.populate_data_elements()
+        infiltration.populate_data_group()
+
+        expected_structure = {
+            "id": "Zone 1 Infil",
+            "modeling_method": "WEATHER_DRIVEN",
+            "algorithm_name": "Crack Method",
+        }
+
+        self.assertEqual(expected_structure, infiltration.data_structure)
