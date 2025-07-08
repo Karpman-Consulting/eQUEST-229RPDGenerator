@@ -64,7 +64,7 @@ class TestPumps(unittest.TestCase):
         expected_data_structures = [
             {
                 "id": "Pump 1",
-                "output_validation_points": [],
+                "operating_points": [],
                 "specification_method": "SIMPLE",
                 "design_electric_power": 100.0,
                 "design_head": 5.0,
@@ -76,7 +76,7 @@ class TestPumps(unittest.TestCase):
             },
             {
                 "id": "Pump 1 1",
-                "output_validation_points": [],
+                "operating_points": [],
                 "specification_method": "SIMPLE",
                 "design_electric_power": 100.0,
                 "design_head": 5.0,
@@ -106,7 +106,7 @@ class TestPumps(unittest.TestCase):
         expected_data_structures = [
             {
                 "id": "Pump 1",
-                "output_validation_points": [],
+                "operating_points": [],
                 "specification_method": "DETAILED",
                 "design_electric_power": 125.0,
                 "design_head": 5.0,
@@ -133,7 +133,7 @@ class TestPumps(unittest.TestCase):
         expected_data_structures = [
             {
                 "id": "Pump 1",
-                "output_validation_points": [],
+                "operating_points": [],
                 "specification_method": "DETAILED",
                 "design_electric_power": 125.0,
                 "design_head": 5.0,
@@ -160,7 +160,7 @@ class TestPumps(unittest.TestCase):
         expected_data_structures = [
             {
                 "id": "Pump 1",
-                "output_validation_points": [],
+                "operating_points": [],
                 "specification_method": "DETAILED",
                 "design_electric_power": 125.0,
                 "design_head": 5.0,
@@ -186,7 +186,7 @@ class TestPumps(unittest.TestCase):
         expected_data_structures = [
             {
                 "id": "Pump 1",
-                "output_validation_points": [],
+                "operating_points": [],
                 "specification_method": "DETAILED",
                 "design_electric_power": 125.0,
                 "design_head": 5.0,
@@ -218,7 +218,7 @@ class TestPumps(unittest.TestCase):
         expected_data_structures = [
             {
                 "id": "Pump 1",
-                "output_validation_points": [],
+                "operating_points": [],
                 "specification_method": "DETAILED",
                 "is_flow_calculated": True,
                 "loop_or_piping": "Test HW Loop",
@@ -306,7 +306,7 @@ class TestPumps(unittest.TestCase):
         expected_data_structures = [
             {
                 "id": "Pump 1",
-                "output_validation_points": [],
+                "operating_points": [],
                 "specification_method": "DETAILED",
                 "is_flow_calculated": True,
                 "loop_or_piping": "Test CHW Loop",
@@ -335,7 +335,7 @@ class TestPumps(unittest.TestCase):
         expected_data_structures = [
             {
                 "id": "Pump 1",
-                "output_validation_points": [],
+                "operating_points": [],
                 "specification_method": "DETAILED",
                 "is_flow_calculated": True,
                 "loop_or_piping": "Test CW Loop",
