@@ -192,7 +192,7 @@ class TestSystems(unittest.TestCase):
                         "design_airflow": 10,
                         "design_electric_power": 11,
                         "design_pressure_rise": 15.0,
-                        "is_airflow_sized_based_on_design_day": False,
+                        "is_airflow_calculated": False,
                         "motor_efficiency": 0.7,
                         "specification_method": "DETAILED",
                         "total_efficiency": 0.5599999999999999,
@@ -217,7 +217,7 @@ class TestSystems(unittest.TestCase):
                         "design_airflow": 12,
                         "design_electric_power": 13,
                         "design_pressure_rise": 20.0,
-                        "is_airflow_sized_based_on_design_day": True,
+                        "is_airflow_calculated": True,
                         "motor_efficiency": 0.9,
                         "specification_method": "DETAILED",
                         "total_efficiency": 0.855,
@@ -349,7 +349,7 @@ class TestSystems(unittest.TestCase):
                         "design_airflow": 10,
                         "design_electric_power": 11,
                         "design_pressure_rise": 15.0,
-                        "is_airflow_sized_based_on_design_day": False,
+                        "is_airflow_calculated": False,
                         "motor_efficiency": 0.7,
                         "specification_method": "DETAILED",
                         "total_efficiency": 0.5599999999999999,
@@ -361,7 +361,7 @@ class TestSystems(unittest.TestCase):
                         "design_airflow": 12,
                         "design_electric_power": 13,
                         "design_pressure_rise": 20.0,
-                        "is_airflow_sized_based_on_design_day": True,
+                        "is_airflow_calculated": True,
                         "motor_efficiency": 0.9,
                         "specification_method": "DETAILED",
                         "total_efficiency": 0.855,
@@ -462,7 +462,7 @@ class TestSystems(unittest.TestCase):
                         "id": "System 1 SupplyFan",
                         "design_airflow": 12,
                         "design_electric_power": 13,
-                        "is_airflow_sized_based_on_design_day": False,
+                        "is_airflow_calculated": False,
                         "specification_method": "SIMPLE",
                     }
                 ],
@@ -520,7 +520,7 @@ class TestSystems(unittest.TestCase):
                 "supply_fans": [
                     {
                         "id": "System 1 SupplyFan",
-                        "is_airflow_sized_based_on_design_day": True,
+                        "is_airflow_calculated": True,
                         "specification_method": "SIMPLE",
                     }
                 ],
@@ -558,7 +558,7 @@ class TestSystems(unittest.TestCase):
                 "supply_fans": [
                     {
                         "id": "System 1 SupplyFan",
-                        "is_airflow_sized_based_on_design_day": True,
+                        "is_airflow_calculated": True,
                         "specification_method": "SIMPLE",
                     }
                 ],
@@ -642,7 +642,7 @@ class TestSystems(unittest.TestCase):
                         "design_airflow": 12,
                         "design_electric_power": 13,
                         "design_pressure_rise": 20.0,
-                        "is_airflow_sized_based_on_design_day": True,
+                        "is_airflow_calculated": True,
                         "motor_efficiency": 0.9,
                         "specification_method": "DETAILED",
                         "total_efficiency": 0.855,
@@ -652,7 +652,7 @@ class TestSystems(unittest.TestCase):
                         "design_airflow": 14,
                         "design_electric_power": 15,
                         "design_pressure_rise": 21.0,
-                        "is_airflow_sized_based_on_design_day": False,
+                        "is_airflow_calculated": False,
                         "motor_efficiency": 0.91,
                         "specification_method": "DETAILED",
                         "total_efficiency": 0.8736,
@@ -769,7 +769,7 @@ class TestSystems(unittest.TestCase):
                 "supply_fans": [
                     {
                         "id": "System 1 SupplyFan",
-                        "is_airflow_sized_based_on_design_day": True,
+                        "is_airflow_calculated": True,
                         "specification_method": "SIMPLE",
                     }
                 ],
@@ -811,7 +811,7 @@ class TestSystems(unittest.TestCase):
                 "supply_fans": [
                     {
                         "id": "System 1 SupplyFan",
-                        "is_airflow_sized_based_on_design_day": True,
+                        "is_airflow_calculated": True,
                         "specification_method": "SIMPLE",
                     }
                 ],
@@ -870,7 +870,7 @@ class TestSystems(unittest.TestCase):
                 "supply_fans": [
                     {
                         "id": "System 1 SupplyFan",
-                        "is_airflow_sized_based_on_design_day": True,
+                        "is_airflow_calculated": True,
                         "specification_method": "SIMPLE",
                     }
                 ],
@@ -931,7 +931,7 @@ class TestSystems(unittest.TestCase):
                 "supply_fans": [
                     {
                         "id": "System 1 SupplyFan",
-                        "is_airflow_sized_based_on_design_day": True,
+                        "is_airflow_calculated": True,
                         "specification_method": "SIMPLE",
                     }
                 ],
