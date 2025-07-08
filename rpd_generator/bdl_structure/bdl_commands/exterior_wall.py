@@ -134,8 +134,6 @@ class ExteriorWall(ChildNode, ParentNode):
     def populate_data_group(self):
         """Populate schema structure for exterior wall object."""
 
-        self.account_for_air_film_resistance()
-
         optical_property_attributes = [
             "optical_property_id",
             "absorptance_thermal_exterior",
@@ -155,7 +153,6 @@ class ExteriorWall(ChildNode, ParentNode):
         self.exterior_wall_data_structure = {
             "id": self.u_name,
             "subsurfaces": self.subsurfaces,
-            "construction": self.construction,
             "optical_properties": self.optical_properties,
         }
 
@@ -163,6 +160,7 @@ class ExteriorWall(ChildNode, ParentNode):
             "reporting_name",
             "notes",
             "classification",
+            "construction",
             "area",
             "tilt",
             "azimuth",
@@ -206,12 +204,3 @@ class ExteriorWall(ChildNode, ParentNode):
                 polygon.calculate_area_of_polygon_coords()
                 area = polygon.area
         return area
-
-    def account_for_air_film_resistance(self):
-        """
-        Add exterior air film resistance to the construction object's u_factor.
-        """
-        u_factor = self.construction.get("u_factor")
-        ext_air_film_resistance = 0.17
-        if u_factor:
-            self.construction["u_factor"] = 1 / (1 / u_factor + ext_air_film_resistance)

@@ -249,9 +249,10 @@ class RulesetModelDescription(Base):
         for key, value in str_requests.items():
             output_data[key] = self.get_single_string_output(self, *value)
 
-        self.model_output = OutputInstance(self)
-        self.model_output.populate_data_elements(output_data)
-        self.model_output.populate_data_group()
+        model_output = OutputInstance(self)
+        model_output.populate_data_elements(output_data)
+        model_output.populate_data_group()
+        model_output.insert_to_rpd()
 
     def get_output_requests(self):
         requests = {
@@ -1439,6 +1440,10 @@ class OutputInstance:
             if value is not None:
                 self.data_structure[attr] = value
 
+    def insert_to_rpd(self):
+        """Insert OutputInstance object into the RPD data structure."""
+        self.rmd.model_output = self.data_structure
+
 
 class SourceResult:
     """Class to represent a source result in the RPD data structure."""
@@ -2171,12 +2176,12 @@ class EndUseResult:
     is_regulated_presets = {
         EndUseOptions.INTERIOR_LIGHTING: True,
         EndUseOptions.SPACE_HEATING: True,
-        EndUseOptions.HEAT_PUMP_SUPPLEMENTAL_HEAT: True,
+        EndUseOptions.HEAT_PUMP_SUPPLEMENTAL_HEATING: True,
         EndUseOptions.SPACE_COOLING: True,
-        EndUseOptions.PUMPS_AND_AUXILIARIES: True,
+        EndUseOptions.PUMPS: True,
         EndUseOptions.HEAT_REJECTION: True,
-        EndUseOptions.VENTILATION_FANS: True,
-        EndUseOptions.REFRIGERATION_DISPLAY: True,
+        EndUseOptions.FANS_INTERIOR_VENTILATION: True,
+        EndUseOptions.REFRIGERATION_EQUIPMENT: True,
         EndUseOptions.SERVICE_WATER_HEATING: True,
         EndUseOptions.MISC_EQUIPMENT: False,
     }

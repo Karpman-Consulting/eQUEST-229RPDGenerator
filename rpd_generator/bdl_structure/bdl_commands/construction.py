@@ -3,6 +3,7 @@ from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_ConstructionKeywords = BDLEnums.bdl_enums["ConstructionKeywords"]
+BDL_ExteriorWallKeywords = BDLEnums.bdl_enums["ExteriorWallKeywords"]
 BDL_UndergroundWallKeywords = BDLEnums.bdl_enums["UndergroundWallKeywords"]
 BDL_MaterialTypes = BDLEnums.bdl_enums["MaterialTypes"]
 
@@ -47,6 +48,11 @@ class Construction(BaseNode):
 
         # This u_factor will be adjusted when used for a surface based on Ext/Int/Underground Wall air film resistances
         self.u_factor = self.try_float(self.get_inp(BDL_ConstructionKeywords.U_VALUE))
+
+        if self.u_factor and self.is_assigned_to_exterior_wall():
+            # For exterior walls, the U-factor is adjusted by the exterior air film resistance
+            ext_air_film_resistance = 0.17
+            self.u_factor = 1 / (1 / self.u_factor + ext_air_film_resistance)
 
         # Determine if the constructions is assigned to multiple slabs on different Z coordinates
         z_coordinate_set = set()
@@ -107,3 +113,14 @@ class Construction(BaseNode):
     def insert_to_rpd(self):
         """Insert construction object into the rpd data structure."""
         self.rmd.constructions.append(self.construction_data_structure)
+
+    def is_assigned_to_exterior_wall(self):
+        """Check if this construction is assigned to an exterior wall."""
+        for exterior_wall_name in self.rmd.ext_wall_names:
+            exterior_wall = self.get_obj(exterior_wall_name)
+            if (
+                exterior_wall.get_inp(BDL_ExteriorWallKeywords.CONSTRUCTION)
+                == self.u_name
+            ):
+                return True
+        return False

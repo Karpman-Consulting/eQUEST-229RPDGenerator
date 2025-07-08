@@ -161,7 +161,7 @@ class TestSystems(unittest.TestCase):
                 "design_total_cool_capacity": 120000.0,
                 "rated_sensible_cool_capacity": 86800.0,
                 "rated_total_cool_capacity": 124000.0,
-                "is_sized_based_on_design_day": True,
+                "is_calculated_size": True,
                 "type": "FLUID_LOOP",
             },
             "fan_system": {
@@ -247,7 +247,7 @@ class TestSystems(unittest.TestCase):
                 "efficiency_metric_values": [None],
                 "heating_coil_setpoint": 60.0,
                 "energy_source_type": "PROPANE",
-                "is_sized_based_on_design_day": False,
+                "is_calculated_size": False,
                 "type": "FURNACE",
             },
         }
@@ -319,7 +319,7 @@ class TestSystems(unittest.TestCase):
                 "efficiency_metric_types": [],
                 "efficiency_metric_values": [],
                 "id": "System 1 CoolSys",
-                "is_sized_based_on_design_day": True,
+                "is_calculated_size": True,
                 "type": "FLUID_LOOP",
             },
             "fan_system": {
@@ -397,7 +397,7 @@ class TestSystems(unittest.TestCase):
                 "energy_source_type": "FUEL_OIL",
                 "hot_water_loop": "Circulation Loop",
                 "heating_coil_setpoint": 75.0,
-                "is_sized_based_on_design_day": True,
+                "is_calculated_size": True,
             },
         }
 
@@ -441,7 +441,7 @@ class TestSystems(unittest.TestCase):
                 "efficiency_metric_types": [],
                 "efficiency_metric_values": [],
                 "id": "System 1 CoolSys",
-                "is_sized_based_on_design_day": True,
+                "is_calculated_size": True,
                 "type": "FLUID_LOOP",
             },
             "fan_system": {
@@ -474,7 +474,7 @@ class TestSystems(unittest.TestCase):
                 "efficiency_metric_types": [],
                 "efficiency_metric_values": [],
                 "heating_coil_setpoint": 70.0,
-                "is_sized_based_on_design_day": True,
+                "is_calculated_size": True,
                 "type": "HEAT_PUMP",
             },
         }
@@ -509,7 +509,7 @@ class TestSystems(unittest.TestCase):
                 "efficiency_metric_types": [],
                 "efficiency_metric_values": [],
                 "id": "System 1 CoolSys",
-                "is_sized_based_on_design_day": True,
+                "is_calculated_size": True,
                 "type": "DIRECT_EXPANSION",
             },
             "fan_system": {
@@ -529,7 +529,7 @@ class TestSystems(unittest.TestCase):
                 "efficiency_metric_types": [],
                 "efficiency_metric_values": [],
                 "id": "System 1 HeatSys",
-                "is_sized_based_on_design_day": True,
+                "is_calculated_size": True,
                 "type": "FLUID_LOOP",
             },
         }
@@ -612,7 +612,7 @@ class TestSystems(unittest.TestCase):
                 "efficiency_metric_types": [],
                 "efficiency_metric_values": [],
                 "id": "System 1 CoolSys",
-                "is_sized_based_on_design_day": True,
+                "is_calculated_size": True,
                 "type": "FLUID_LOOP",
             },
             "fan_system": {
@@ -664,7 +664,7 @@ class TestSystems(unittest.TestCase):
                 "efficiency_metric_types": [],
                 "efficiency_metric_values": [],
                 "id": "System 1 HeatSys",
-                "is_sized_based_on_design_day": True,
+                "is_calculated_size": True,
                 "type": "FLUID_LOOP",
             },
         }
@@ -760,7 +760,7 @@ class TestSystems(unittest.TestCase):
                 ],
                 "efficiency_metric_values": [4.0],
                 "id": "System 1 CoolSys",
-                "is_sized_based_on_design_day": True,
+                "is_calculated_size": True,
                 "type": "DIRECT_EXPANSION",
             },
             "fan_system": {
@@ -780,7 +780,7 @@ class TestSystems(unittest.TestCase):
                 "efficiency_metric_values": [],
                 "energy_source_type": "ELECTRICITY",
                 "id": "System 1 HeatSys",
-                "is_sized_based_on_design_day": True,
+                "is_calculated_size": True,
                 "type": "HEAT_PUMP",
             },
             "id": "System 1",
@@ -802,7 +802,7 @@ class TestSystems(unittest.TestCase):
                 ],
                 "efficiency_metric_values": [3.125],
                 "id": "System 1 CoolSys",
-                "is_sized_based_on_design_day": True,
+                "is_calculated_size": True,
                 "type": "DIRECT_EXPANSION",
             },
             "fan_system": {
@@ -824,7 +824,7 @@ class TestSystems(unittest.TestCase):
                 "efficiency_metric_values": [4.0],
                 "energy_source_type": "ELECTRICITY",
                 "id": "System 1 HeatSys",
-                "is_sized_based_on_design_day": True,
+                "is_calculated_size": True,
                 "type": "HEAT_PUMP",
             },
             "id": "System 1",
@@ -861,7 +861,7 @@ class TestSystems(unittest.TestCase):
                 "efficiency_metric_types": ["OTHER"],
                 "efficiency_metric_values": [3.125],
                 "id": "System 1 CoolSys",
-                "is_sized_based_on_design_day": True,
+                "is_calculated_size": True,
                 "type": "DIRECT_EXPANSION",
             },
             "fan_system": {
@@ -883,7 +883,7 @@ class TestSystems(unittest.TestCase):
                 "efficiency_metric_values": [3.4482758620689657],
                 "energy_source_type": "ELECTRICITY",
                 "id": "System 1 HeatSys",
-                "is_sized_based_on_design_day": True,
+                "is_calculated_size": True,
                 "type": "HEAT_PUMP",
             },
             "id": "System 1",
@@ -922,7 +922,7 @@ class TestSystems(unittest.TestCase):
                 ],
                 "efficiency_metric_values": [3.125],
                 "id": "System 1 CoolSys",
-                "is_sized_based_on_design_day": True,
+                "is_calculated_size": True,
                 "type": "DIRECT_EXPANSION",
             },
             "fan_system": {
@@ -944,7 +944,7 @@ class TestSystems(unittest.TestCase):
                 "efficiency_metric_values": [3.4482758620689657],
                 "energy_source_type": "ELECTRICITY",
                 "id": "System 1 HeatSys",
-                "is_sized_based_on_design_day": True,
+                "is_calculated_size": True,
                 "type": "HEAT_PUMP",
             },
             "id": "System 1",

@@ -198,9 +198,12 @@ class BelowGradeWall(ChildNode):
         """
         Populate the C-factor for below-grade vertical walls by removing the interior air film resistance
         """
-        u_factor = self.construction.get("u_factor")
+        construction = self.get_obj(
+            self.get_inp(BDL_UndergroundWallKeywords.CONSTRUCTION)
+        )
+        u_factor = construction.u_factor
         if u_factor:
-            self.construction["c_factor"] = 1 / (1 / u_factor - 0.68)
+            construction.c_factor = 1 / (1 / u_factor - 0.68)
 
     def populate_f_factor(self):
         """
@@ -213,4 +216,4 @@ class BelowGradeWall(ChildNode):
             self.parent.parent.f_factor
             and not construction.used_for_multiple_slabs_on_different_z
         ):
-            self.construction["f_factor"] = self.parent.parent.f_factor
+            construction.f_factor = self.parent.parent.f_factor

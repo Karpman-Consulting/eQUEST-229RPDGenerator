@@ -713,18 +713,16 @@ class TestCHWLoop(unittest.TestCase):
             "design_supply_temperature_difference": 30.0,
             "is_ground_temperature_used_for_entering_water": False,
             "tanks": [],
-            "service_water_piping": [
-                {
-                    "id": "Circulation Loop 1 ServiceWaterPiping",
-                    "is_recirculation_loop": False,
-                    "are_thermal_losses_modeled": False,
-                    "child": [],
-                    "service_water_heating_design_and_control": {
-                        "id": "Circulation Loop 1 Design/Control",
-                        "design_supply_temperature": 160.0,
-                    },
-                }
-            ],
+            "service_water_piping": {
+                "id": "Circulation Loop 1 ServiceWaterPiping",
+                "is_recirculation_loop": False,
+                "are_thermal_losses_modeled": False,
+                "child": [],
+                "service_water_heating_design_and_control": {
+                    "id": "Circulation Loop 1 Design/Control",
+                    "design_supply_temperature": 160.0,
+                },
+            },
         }
         self.assertEqual(expected_data_structure, self.circulation_loop.data_structure)
 
@@ -765,29 +763,27 @@ class TestCHWLoop(unittest.TestCase):
             "design_supply_temperature_difference": 30.0,
             "is_ground_temperature_used_for_entering_water": False,
             "tanks": [],
-            "service_water_piping": [
-                {
-                    "id": "Circulation Loop 1 ServiceWaterPiping",
-                    "is_recirculation_loop": True,
-                    "are_thermal_losses_modeled": False,
-                    "service_water_heating_design_and_control": {
-                        "id": "Circulation Loop 1 Design/Control",
-                        "design_supply_temperature": 160.0,
-                    },
-                    "child": [
-                        {
-                            "id": "Circulation Loop 2",
-                            "is_recirculation_loop": False,
-                            "are_thermal_losses_modeled": True,
-                            "service_water_heating_design_and_control": {
-                                "id": "Circulation Loop 2 Design/Control",
-                                "design_supply_temperature": 160.0,
-                            },
-                            "child": [],
-                        }
-                    ],
-                }
-            ],
+            "service_water_piping": {
+                "id": "Circulation Loop 1 ServiceWaterPiping",
+                "is_recirculation_loop": True,
+                "are_thermal_losses_modeled": False,
+                "service_water_heating_design_and_control": {
+                    "id": "Circulation Loop 1 Design/Control",
+                    "design_supply_temperature": 160.0,
+                },
+                "child": [
+                    {
+                        "id": "Circulation Loop 2",
+                        "is_recirculation_loop": False,
+                        "are_thermal_losses_modeled": True,
+                        "service_water_heating_design_and_control": {
+                            "id": "Circulation Loop 2 Design/Control",
+                            "design_supply_temperature": 160.0,
+                        },
+                        "child": [],
+                    }
+                ],
+            },
         }
         self.assertEqual(expected_data_structure, self.circulation_loop.data_structure)
 

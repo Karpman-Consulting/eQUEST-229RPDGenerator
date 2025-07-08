@@ -129,10 +129,10 @@ class DomesticWaterHeater(BaseNode):
         self.storage_capacity = self.try_float(
             self.get_inp(BDL_DWHeaterKeywords.TANK_VOLUME)
         )
-        # self.location = self.location_map.get(
-        #     self.get_inp(BDL_DWHeaterKeywords.LOCATION)
-        # )
-        # self.location_zone = self.get_inp(BDL_DWHeaterKeywords.ZONE_NAME)
+        self.location = self.location_map.get(
+            self.get_inp(BDL_DWHeaterKeywords.LOCATION)
+        )
+        self.location_zone = self.get_inp(BDL_DWHeaterKeywords.ZONE_NAME)
 
         heat_ratio = self.try_float(self.get_inp(BDL_DWHeaterKeywords.HEAT_INPUT_RATIO))
         elec_ratio = self.try_float(self.get_inp(BDL_DWHeaterKeywords.ELEC_INPUT_RATIO))
