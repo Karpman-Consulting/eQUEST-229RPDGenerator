@@ -104,7 +104,7 @@ class CirculationLoop(BaseNode):
         self.pump_power_per_flow_rate = None
 
         # ServiceWaterHeatingDistributionSystem data elements with children
-        self.service_water_piping = []
+        self.service_water_piping = {}
         self.tanks = []
 
         # ServiceWaterPiping data elements with children
@@ -275,7 +275,7 @@ class CirculationLoop(BaseNode):
                 if value is not None:
                     primary_service_water_piping[attr] = value
 
-            self.service_water_piping.append(primary_service_water_piping)
+            self.service_water_piping.update(primary_service_water_piping)
 
             self.data_structure = {
                 "id": self.u_name,
@@ -785,9 +785,9 @@ class CirculationLoop(BaseNode):
 
         pump.loop_or_piping = [self.u_name] * pump.qty
         for i in range(pump.qty):
-            if pump.is_flow_sized_based_on_design_day[i]:
-                # Override is_flow_sized_based_on_design_day if the circulation loop is not sized based on design loads
-                pump.is_flow_sized_based_on_design_day[i] = (
+            if pump.is_flow_calculated[i]:
+                # Override is_flow_calculated if the circulation loop is not sized based on design loads
+                pump.is_flow_calculated[i] = (
                     self.get_inp(BDL_CirculationLoopKeywords.SIZING_OPTION)
                     != BDL_CirculationLoopSizingOptions.PRIMARY
                 )

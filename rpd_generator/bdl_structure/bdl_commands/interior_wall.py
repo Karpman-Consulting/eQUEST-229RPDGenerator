@@ -49,11 +49,11 @@ class InteriorWall(
 
         # data elements with children
         self.subsurfaces = []
-        self.construction = {}
         self.optical_properties = {}
 
         # data elements with no children
         self.classification = None
+        self.construction = None
         self.area = None
         self.tilt = None
         self.azimuth = None
@@ -85,6 +85,8 @@ class InteriorWall(
         self.tilt = self.try_float(self.get_inp(BDL_InteriorWallKeywords.TILT))
 
         self.classification = self.determine_surface_classification()
+
+        self.construction = self.get_inp(BDL_InteriorWallKeywords.CONSTRUCTION)
 
         parent_floor_azimuth = self.try_float(
             self.parent.parent.get_inp(BDL_FloorKeywords.AZIMUTH)
@@ -157,11 +159,6 @@ class InteriorWall(
 
     def populate_data_group(self):
         """Populate schema structure for interior wall object."""
-        self.construction = copy.deepcopy(
-            self.get_obj(
-                self.get_inp(BDL_InteriorWallKeywords.CONSTRUCTION)
-            ).construction_data_structure
-        )
 
         optical_property_attributes = [
             "optical_property_id",
@@ -182,7 +179,6 @@ class InteriorWall(
         self.interior_wall_data_structure = {
             "id": self.u_name,
             "subsurfaces": self.subsurfaces,
-            "construction": self.construction,
             "optical_properties": self.optical_properties,
         }
 
@@ -190,6 +186,7 @@ class InteriorWall(
             "reporting_name",
             "notes",
             "classification",
+            "construction",
             "area",
             "tilt",
             "azimuth",

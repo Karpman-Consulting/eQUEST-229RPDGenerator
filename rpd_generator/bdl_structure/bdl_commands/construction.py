@@ -103,3 +103,7 @@ class Construction(BaseNode):
             value = getattr(self, attr, None)
             if value is not None:
                 self.construction_data_structure[attr] = value
+
+    def insert_to_rpd(self):
+        """Insert construction object into the rpd data structure."""
+        self.rmd.constructions.append(self.construction_data_structure)

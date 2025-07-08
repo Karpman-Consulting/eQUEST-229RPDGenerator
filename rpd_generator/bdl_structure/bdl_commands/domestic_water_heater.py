@@ -41,12 +41,12 @@ class DomesticWaterHeater(BaseNode):
         self.compressor_power_validation_points = []
         self.tank = {}
         self.solar_thermal_systems = []
+        self.efficiency_metric_types = []
+        self.efficiency_metric_values = []
 
         # data elements with no children
         self.heater_fuel_type = None
         self.distribution_system = None
-        self.efficiency_metric_types = []
-        self.efficiency_metric_values = []
         self.draw_pattern = None
         self.first_hour_rating = None
         self.input_power = None
@@ -60,7 +60,6 @@ class DomesticWaterHeater(BaseNode):
         self.compressor_heat_rejection_zone = None
         self.draft_fan_power = None
         self.has_electrical_ignition = None
-        self.heater_type = None
         self.status_type = None
         self.hot_water_loop = None
 
@@ -130,10 +129,10 @@ class DomesticWaterHeater(BaseNode):
         self.storage_capacity = self.try_float(
             self.get_inp(BDL_DWHeaterKeywords.TANK_VOLUME)
         )
-        self.location = self.location_map.get(
-            self.get_inp(BDL_DWHeaterKeywords.LOCATION)
-        )
-        self.location_zone = self.get_inp(BDL_DWHeaterKeywords.ZONE_NAME)
+        # self.location = self.location_map.get(
+        #     self.get_inp(BDL_DWHeaterKeywords.LOCATION)
+        # )
+        # self.location_zone = self.get_inp(BDL_DWHeaterKeywords.ZONE_NAME)
 
         heat_ratio = self.try_float(self.get_inp(BDL_DWHeaterKeywords.HEAT_INPUT_RATIO))
         elec_ratio = self.try_float(self.get_inp(BDL_DWHeaterKeywords.ELEC_INPUT_RATIO))
@@ -234,7 +233,6 @@ class DomesticWaterHeater(BaseNode):
             "compressor_heat_rejection_zone",
             "draft_fan_power",
             "has_electrical_ignition",
-            "heater_type",
             "status_type",
             "hot_water_loop",
         ]

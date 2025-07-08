@@ -857,7 +857,7 @@ class Zone(ChildNode):
         self.exhaust_fan.name = self.u_name + " EF"
         self.rmd.zonal_exh_fan_names.append(self.exhaust_fan.name)
         self.exhaust_fan.design_airflow = exhaust_airflow
-        self.exhaust_fan.is_airflow_sized_based_on_design_day = False
+        self.exhaust_fan.is_airflow_calculated = False
 
         if self.get_inp(BDL_ZoneKeywords.EXHAUST_STATIC) is not None:
             self.exhaust_fan.specification_method = (
@@ -997,9 +997,9 @@ class Terminal:
                     self.get_terminal_system_temperature_control()
                 )
                 if self.zone.parent.get_inp(BDL_SystemKeywords.SUPPLY_FLOW) is not None:
-                    self.zone.terminal_fan.is_airflow_sized_based_on_design_day = False
-                if self.zone.terminal_fan.is_airflow_sized_based_on_design_day is None:
-                    self.zone.terminal_fan.is_airflow_sized_based_on_design_day = (
+                    self.zone.terminal_fan.is_airflow_calculated = False
+                if self.zone.terminal_fan.is_airflow_calculated is None:
+                    self.zone.terminal_fan.is_airflow_calculated = (
                         # If the zone has assigned flow rates, the fan is not sized based on design day
                         not (
                             self.zone.get_inp(BDL_ZoneKeywords.ASSIGNED_FLOW)
@@ -1176,9 +1176,7 @@ class Terminal:
                         self.zone.get_inp(BDL_ZoneKeywords.ZONE_FAN_RUN)
                     )
                     if self.zone.get_inp(BDL_ZoneKeywords.ZONE_FAN_FLOW):
-                        self.zone.terminal_fan.is_airflow_sized_based_on_design_day = (
-                            False
-                        )
+                        self.zone.terminal_fan.is_airflow_calculated = False
                     self.zone.terminal_fan.specification_method = (
                         FanSpecificationMethodOptions.SIMPLE
                     )

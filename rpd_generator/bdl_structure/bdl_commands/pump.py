@@ -44,7 +44,7 @@ class Pump(BaseNode):
         self.motor_efficiency = []
         self.speed_control = []
         self.design_flow = []
-        self.is_flow_sized_based_on_design_day = []
+        self.is_flow_calculated = []
 
     def __repr__(self):
         return f"Pump(u_name='{self.u_name}')"
@@ -57,7 +57,7 @@ class Pump(BaseNode):
         self.output_data = self.get_output_data(requests)
         self.loop_or_piping = [None] * self.qty
         self.speed_control = [None] * self.qty
-        self.is_flow_sized_based_on_design_day = [None] * self.qty
+        self.is_flow_calculated = [None] * self.qty
         spec_method = (
             PumpSpecificationMethodOptions.SIMPLE
             if self.get_inp(BDL_PumpKeywords.PUMP_KW) is not None
@@ -87,9 +87,9 @@ class Pump(BaseNode):
                 self.pump_speed_control_map.get(self.get_inp(BDL_PumpKeywords.CAP_CTRL))
             ] * self.qty
         if self.try_float(self.get_inp(BDL_PumpKeywords.FLOW)):
-            self.is_flow_sized_based_on_design_day = [False] * self.qty
+            self.is_flow_calculated = [False] * self.qty
         else:
-            self.is_flow_sized_based_on_design_day = [True] * self.qty
+            self.is_flow_calculated = [True] * self.qty
 
     def get_output_requests(self):
         """Get the output requests for the pump object."""
@@ -114,7 +114,7 @@ class Pump(BaseNode):
             "motor_efficiency",
             "speed_control",
             "design_flow",
-            "is_flow_sized_based_on_design_day",
+            "is_flow_calculated",
         ]
 
         for i in range(self.qty):

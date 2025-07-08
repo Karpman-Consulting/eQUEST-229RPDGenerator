@@ -37,11 +37,11 @@ class BelowGradeWall(ChildNode):
         self.underground_wall_data_structure = {}
 
         # data elements with children
-        self.construction = {}
         self.optical_properties = {}
 
         # data elements with no children
         self.classification = None
+        self.construction = None
         self.area = None
         self.tilt = None
         self.azimuth = None
@@ -70,6 +70,8 @@ class BelowGradeWall(ChildNode):
         self.tilt = self.try_float(self.get_inp(BDL_UndergroundWallKeywords.TILT))
 
         self.classification = self.determine_surface_classification()
+
+        self.construction = self.get_inp(BDL_UndergroundWallKeywords.CONSTRUCTION)
 
         parent_floor_azimuth = self.parent.parent.try_float(
             self.parent.parent.get_inp(BDL_FloorKeywords.AZIMUTH)
@@ -119,11 +121,6 @@ class BelowGradeWall(ChildNode):
 
     def populate_data_group(self):
         """Populate schema structure for below grade wall object."""
-        self.construction = copy.deepcopy(
-            self.get_obj(
-                self.get_inp(BDL_UndergroundWallKeywords.CONSTRUCTION)
-            ).construction_data_structure
-        )
 
         optical_property_attributes = [
             "optical_property_id",
@@ -143,7 +140,6 @@ class BelowGradeWall(ChildNode):
 
         self.underground_wall_data_structure = {
             "id": self.u_name,
-            "construction": self.construction,
             "optical_properties": self.optical_properties,
         }
         self.populate_data_elements()
@@ -152,6 +148,7 @@ class BelowGradeWall(ChildNode):
             "reporting_name",
             "notes",
             "classification",
+            "construction",
             "area",
             "tilt",
             "azimuth",

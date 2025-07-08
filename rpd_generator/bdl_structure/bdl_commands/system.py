@@ -127,6 +127,15 @@ class System(ParentNode):
         BDL_SystemCondenserTypes.EVAP_PRECOOLED: None,
         BDL_SystemCondenserTypes.EVAP_COOLED: None,
     }
+    humidification_map = {
+        BDL_HumidificationOptions.NONE: HumidificationOptions.NONE,
+        BDL_HumidificationOptions.ELECTRIC: HumidificationOptions.OTHER,
+        BDL_HumidificationOptions.HOT_WATER: HumidificationOptions.OTHER,
+        BDL_HumidificationOptions.STEAM: HumidificationOptions.OTHER,
+        BDL_HumidificationOptions.FURNACE: HumidificationOptions.OTHER,
+        BDL_HumidificationOptions.HEAT_PUMP: HumidificationOptions.OTHER,
+        BDL_HumidificationOptions.DHW_LOOP: HumidificationOptions.OTHER,
+    }
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
@@ -163,6 +172,8 @@ class System(ParentNode):
         self.heating_system = None
         self.cooling_system = None
         self.preheat_system = None
+
+        self.humidification_type = None
 
     def __repr__(self):
         return f"System(u_name='{self.u_name}')"
@@ -263,6 +274,10 @@ class System(ParentNode):
                 output_data[key] = self.try_convert_units(
                     output_data[key], "kBtu/hr", "Btu/hr"
                 )
+
+        self.humidification_type = self.humidification_map.get(
+            self.get_inp(BDL_SystemKeywords.HUMIDIFIER_TYPE)
+        )
 
         self.fan_system = FanSystem(self)
         self.fan_system.populate_data_elements(output_data)
@@ -627,6 +642,11 @@ class System(ParentNode):
                 if subsystem:
                     self.system_data_structure[attr] = subsystem.data_structure
 
+            for attr in ["humidification_type"]:
+                value = getattr(self, attr)
+                if value is not None:
+                    self.system_data_structure[attr] = value
+
     def insert_to_rpd(self):
         """Insert system data structure into the rpd data structure."""
         if self.omit:
@@ -757,9 +777,9 @@ class System(ParentNode):
         self.supply_fan.design_airflow = output_data.get("Supply Fan - Airflow")
         self.supply_fan.design_electric_power = output_data.get("Supply Fan - Power")
         if self.get_inp(BDL_SystemKeywords.SUPPLY_FLOW) is not None:
-            self.supply_fan.is_airflow_sized_based_on_design_day = False
-        if self.supply_fan.is_airflow_sized_based_on_design_day is None:
-            self.supply_fan.is_airflow_sized_based_on_design_day = (
+            self.supply_fan.is_airflow_calculated = False
+        if self.supply_fan.is_airflow_calculated is None:
+            self.supply_fan.is_airflow_calculated = (
                 # If any zone served by the system has assigned flow rates, the fan is not sized based on design day
                 not any(
                     child_zone.get_inp(BDL_ZoneKeywords.ASSIGNED_FLOW)
@@ -816,10 +836,10 @@ class System(ParentNode):
                 "Return Fan - Power", None
             )
             if self.get_inp(BDL_SystemKeywords.RETURN_FLOW) is not None:
-                self.relief_fan.is_airflow_sized_based_on_design_day = False
-            if self.relief_fan.is_airflow_sized_based_on_design_day is None:
-                self.relief_fan.is_airflow_sized_based_on_design_day = (
-                    self.supply_fan.is_airflow_sized_based_on_design_day
+                self.relief_fan.is_airflow_calculated = False
+            if self.relief_fan.is_airflow_calculated is None:
+                self.relief_fan.is_airflow_calculated = (
+                    self.supply_fan.is_airflow_calculated
                 )
             self.relief_fan.specification_method = (
                 FanSpecificationMethodOptions.DETAILED
@@ -858,10 +878,10 @@ class System(ParentNode):
                 "Return Fan - Power"
             )
             if self.get_inp(BDL_SystemKeywords.RETURN_FLOW) is not None:
-                self.return_fan.is_airflow_sized_based_on_design_day = False
-            if self.return_fan.is_airflow_sized_based_on_design_day is None:
-                self.return_fan.is_airflow_sized_based_on_design_day = (
-                    self.supply_fan.is_airflow_sized_based_on_design_day
+                self.return_fan.is_airflow_calculated = False
+            if self.return_fan.is_airflow_calculated is None:
+                self.return_fan.is_airflow_calculated = (
+                    self.supply_fan.is_airflow_calculated
                 )
 
             self.return_fan.specification_method = (
@@ -901,9 +921,9 @@ class System(ParentNode):
                 "Heating Supply Fan - Power"
             )
             if self.get_inp(BDL_SystemKeywords.HSUPPLY_FLOW) is not None:
-                self.heating_supply_fan.is_airflow_sized_based_on_design_day = False
-            if self.heating_supply_fan.is_airflow_sized_based_on_design_day is None:
-                self.heating_supply_fan.is_airflow_sized_based_on_design_day = (
+                self.heating_supply_fan.is_airflow_calculated = False
+            if self.heating_supply_fan.is_airflow_calculated is None:
+                self.heating_supply_fan.is_airflow_calculated = (
                     # If any zone served by the system has assigned flow rates, the fan is not sized based on design day
                     any(
                         child_zone.get_inp(BDL_ZoneKeywords.HASSIGNED_FLOW)
@@ -1374,7 +1394,7 @@ class Fan:
         self.notes = None
 
         self.design_airflow = None
-        self.is_airflow_sized_based_on_design_day = None
+        self.is_airflow_calculated = None
         self.specification_method = None
         self.design_electric_power = None
         self.design_pressure_rise = None
@@ -1398,7 +1418,7 @@ class Fan:
             "reporting_name",
             "notes",
             "design_airflow",
-            "is_airflow_sized_based_on_design_day",
+            "is_airflow_calculated",
             "specification_method",
             "design_electric_power",
             "design_pressure_rise",
@@ -1533,15 +1553,6 @@ class HeatingSystem:
         BDL_SystemHeatingTypes.DHW_LOOP: HeatingSystemOptions.OTHER,
         BDL_SystemHeatingTypes.STEAM: HeatingSystemOptions.OTHER,
     }
-    humidification_map = {
-        BDL_HumidificationOptions.NONE: HumidificationOptions.NONE,
-        BDL_HumidificationOptions.ELECTRIC: HumidificationOptions.OTHER,
-        BDL_HumidificationOptions.HOT_WATER: HumidificationOptions.OTHER,
-        BDL_HumidificationOptions.STEAM: HumidificationOptions.OTHER,
-        BDL_HumidificationOptions.FURNACE: HumidificationOptions.OTHER,
-        BDL_HumidificationOptions.HEAT_PUMP: HumidificationOptions.OTHER,
-        BDL_HumidificationOptions.DHW_LOOP: HumidificationOptions.OTHER,
-    }
     heatpump_aux_type_map = {
         BDL_HPSupplementSourceOptions.ELECTRIC: HeatpumpAuxiliaryHeatOptions.ELECTRIC_RESISTANCE,
         BDL_HPSupplementSourceOptions.HOT_WATER: HeatpumpAuxiliaryHeatOptions.OTHER,
@@ -1578,14 +1589,13 @@ class HeatingSystem:
         self.design_capacity = None
         self.rated_capacity = None
         self.oversizing_factor = None
-        self.is_sized_based_on_design_day = None
+        self.is_calculated_size = None
         self.heating_coil_setpoint = None
         self.efficiency_metric_values = None
         self.efficiency_metric_types = None
         self.heatpump_auxiliary_heat_type = None
         self.heatpump_auxiliary_heat_high_shutoff_temperature = None
         self.heatpump_low_shutoff_temperature = None
-        self.humidification_type = None
 
     def populate_data_elements(self, output_data):
         self.name = self.parent_system.u_name + " HeatSys"
@@ -1605,9 +1615,6 @@ class HeatingSystem:
         self.hot_water_loop = self.parent_system.get_inp(BDL_SystemKeywords.HW_LOOP)
         self.water_source_heat_pump_loop = self.parent_system.get_inp(
             BDL_SystemKeywords.CW_LOOP
-        )
-        self.humidification_type = self.humidification_map.get(
-            self.parent_system.get_inp(BDL_SystemKeywords.HUMIDIFIER_TYPE)
         )
         self.heating_coil_setpoint = self.parent_system.try_float(
             self.parent_system.get_inp(BDL_SystemKeywords.HEAT_SET_T)
@@ -1655,7 +1662,7 @@ class HeatingSystem:
             )
 
         if self.parent_system.is_zonal_system:
-            self.is_sized_based_on_design_day = (
+            self.is_calculated_size = (
                 not self.parent_system.get_inp(BDL_SystemKeywords.HEATING_CAPACITY)
                 and not self.parent_system.children[0].get_inp(
                     BDL_ZoneKeywords.MAX_HEAT_RATE
@@ -1665,7 +1672,7 @@ class HeatingSystem:
                 )
             )
         else:
-            self.is_sized_based_on_design_day = not self.parent_system.get_inp(
+            self.is_calculated_size = not self.parent_system.get_inp(
                 BDL_SystemKeywords.HEATING_CAPACITY
             )
 
@@ -1706,14 +1713,13 @@ class HeatingSystem:
             "design_capacity",
             "rated_capacity",
             "oversizing_factor",
-            "is_sized_based_on_design_day",
+            "is_calculated_size",
             "heating_coil_setpoint",
             "efficiency_metric_values",
             "efficiency_metric_types",
             "heatpump_auxiliary_heat_type",
             "heatpump_auxiliary_heat_high_shutoff_temperature",
             "heatpump_low_shutoff_temperature",
-            "humidification_type",
         ]
 
         for attr in heating_system_data_elements:
@@ -1850,14 +1856,14 @@ class CoolingSystem:
         self.rated_total_cool_capacity = None
         self.rated_sensible_cool_capacity = None
         self.oversizing_factor = None
-        self.is_sized_based_on_design_day = None
+        self.is_calculated_size = None
         self.chilled_water_loop = None
         self.condenser_water_loop = None
         self.vrf_sys_condenser = None
         self.efficiency_metric_values = None
         self.efficiency_metric_types = None
         self.dehumidification_type = None
-        self.turndown_ratio = None
+        self.cooling_turndown_ratio = None
 
     def populate_data_elements(self, output_data):
         self.name = self.parent_system.u_name + " CoolSys"
@@ -1872,7 +1878,7 @@ class CoolingSystem:
         )
         condensing_unit = self.parent_system.get_inp(BDL_SystemKeywords.CONDENSING_UNIT)
         self.vrf_sys_condenser = self.parent_system.get_obj(condensing_unit)
-        self.turndown_ratio = self.parent_system.try_float(
+        self.cooling_turndown_ratio = self.parent_system.try_float(
             self.parent_system.get_inp(BDL_SystemKeywords.MIN_UNLOAD_RATIO)
         )
         sizing_ratio = self.parent_system.try_float(
@@ -1930,7 +1936,7 @@ class CoolingSystem:
                     shr * self.design_total_cool_capacity
                 )
         if self.parent_system.is_zonal_system:
-            self.is_sized_based_on_design_day = (
+            self.is_calculated_size = (
                 not self.parent_system.get_inp(BDL_SystemKeywords.COOLING_CAPACITY)
                 and not self.parent_system.children[0].get_inp(
                     BDL_ZoneKeywords.MAX_COOL_RATE
@@ -1940,7 +1946,7 @@ class CoolingSystem:
                 )
             )
         else:
-            self.is_sized_based_on_design_day = not self.parent_system.get_inp(
+            self.is_calculated_size = not self.parent_system.get_inp(
                 BDL_SystemKeywords.COOLING_CAPACITY
             )
 
@@ -1960,13 +1966,13 @@ class CoolingSystem:
             "rated_total_cool_capacity",
             "rated_sensible_cool_capacity",
             "oversizing_factor",
-            "is_sized_based_on_design_day",
+            "is_calculated_size",
             "chilled_water_loop",
             "condenser_water_loop",
             "efficiency_metric_values",
             "efficiency_metric_types",
             "dehumidification_type",
-            "turndown_ratio",
+            "cooling_turndown_ratio",
         ]
 
         for attr in cooling_system_data_elements:
@@ -2064,14 +2070,13 @@ class PreheatSystem:
         self.design_capacity = None
         self.rated_capacity = None
         self.oversizing_factor = None
-        self.is_sized_based_on_design_day = None
+        self.is_calculated_size = None
         self.heating_coil_setpoint = None
         self.efficiency_metric_values = []
         self.efficiency_metric_types = []
         self.heatpump_auxiliary_heat_type = None
         self.heatpump_auxiliary_heat_high_shutoff_temperature = None
         self.heatpump_low_shutoff_temperature = None
-        self.humidification_type = None
 
     def populate_data_elements(self, output_data):
         self.name = self.parent_system.u_name + " PreheatSys"
@@ -2086,7 +2091,7 @@ class PreheatSystem:
         self.design_capacity = self.parent_system.try_abs(
             output_data.get("Design Preheat Capacity")
         )
-        self.is_sized_based_on_design_day = not self.parent_system.get_inp(
+        self.is_calculated_size = not self.parent_system.get_inp(
             BDL_SystemKeywords.PREHEAT_CAPACITY
         )
         self.heating_coil_setpoint = self.parent_system.try_float(
@@ -2129,14 +2134,13 @@ class PreheatSystem:
             "design_capacity",
             "rated_capacity",
             "oversizing_factor",
-            "is_sized_based_on_design_day",
+            "is_calculated_size",
             "heating_coil_setpoint",
             "efficiency_metric_values",
             "efficiency_metric_types",
             "heatpump_auxiliary_heat_type",
             "heatpump_auxiliary_heat_high_shutoff_temperature",
             "heatpump_low_shutoff_temperature",
-            "humidification_type",
         ]
 
         for attr in preheat_system_data_elements:

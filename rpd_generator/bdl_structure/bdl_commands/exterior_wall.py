@@ -39,11 +39,11 @@ class ExteriorWall(ChildNode, ParentNode):
 
         # data elements with children
         self.subsurfaces = []
-        self.construction = {}
         self.optical_properties = {}
 
         # data elements with no children
         self.classification = None
+        self.construction = None
         self.area = None
         self.tilt = None
         self.azimuth = None
@@ -71,6 +71,8 @@ class ExteriorWall(ChildNode, ParentNode):
         self.tilt = self.try_float(self.get_inp(BDL_ExteriorWallKeywords.TILT))
 
         self.classification = self.determine_surface_classification()
+
+        self.construction = self.get_inp(BDL_ExteriorWallKeywords.CONSTRUCTION)
 
         parent_floor_azimuth = self.try_float(
             self.parent.parent.get_inp(BDL_FloorKeywords.AZIMUTH)
@@ -131,11 +133,7 @@ class ExteriorWall(ChildNode, ParentNode):
 
     def populate_data_group(self):
         """Populate schema structure for exterior wall object."""
-        self.construction = copy.deepcopy(
-            self.get_obj(
-                self.get_inp(BDL_ExteriorWallKeywords.CONSTRUCTION)
-            ).construction_data_structure
-        )
+
         self.account_for_air_film_resistance()
 
         optical_property_attributes = [
