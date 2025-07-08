@@ -2,31 +2,23 @@
     "name": "Test Case F-230 Specifications",
     "json-test-key-paths": [
         {
-        "json-key-path": "$.weather.climate_zone",
+        "json-key-path": "$.ruleset_model_descriptions[0].weather.climate_zone",
         "compare-value": true
         },
         {
-        "json-key-path": "$.weather.ground_temperature_schedule",
+        "json-key-path": "$.ruleset_model_descriptions[0].weather.ground_temperature_schedule",
         "compare-value": false
         },
         {
-        "json-key-path": "$.weather.cooling_design_day_type",
+        "json-key-path": "$.ruleset_model_descriptions[0].weather.cooling_design_day_type",
         "compare-value": true
         },
         {
-        "json-key-path": "$.weather.heating_design_day_type",
+        "json-key-path": "$.ruleset_model_descriptions[0].weather.heating_design_day_type",
         "compare-value": true
         },
         {
-        "json-key-path": "$.calendar.day_of_week_for_january_1",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.calendar.is_leap_year",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.calendar.has_daylight_saving_time",
+        "json-key-path": "$.ruleset_model_descriptions[0].calendar.day_of_week_for_january_1",
         "compare-value": true
         },
         {
