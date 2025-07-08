@@ -63,7 +63,8 @@ class Zone(ChildNode):
         self.spaces = []
         self.surfaces = []
         self.terminals = []
-        self.zonal_exhaust_fan = {}
+        self.zonal_exhaust_fans = []
+        self.zonal_supply_fans = []
         self.infiltration = {}
 
         # data elements with no children
@@ -116,7 +117,6 @@ class Zone(ChildNode):
         self.volume = (
             self.try_float(space.get_inp(BDL_SpaceKeywords.VOLUME)) if space else None
         )
-        space.populate_zone_infiltration() if space else None
 
         self.floor_name = space.parent.u_name if space else None
 
@@ -194,14 +194,15 @@ class Zone(ChildNode):
         # Populate the zonal exhaust fan data structure
         self.exhaust_fan.populate_data_group() if self.exhaust_fan else None
         if self.exhaust_fan:
-            self.zonal_exhaust_fan = self.exhaust_fan.data_structure
+            self.zonal_exhaust_fans = [self.exhaust_fan.data_structure]
 
         self.zone_data_structure = {
             "id": self.u_name,
             "spaces": self.spaces,
             "surfaces": self.surfaces,
             "terminals": self.terminals,
-            "zonal_exhaust_fan": self.zonal_exhaust_fan,
+            "zonal_exhaust_fans": self.zonal_exhaust_fans,
+            "zonal_supply_fans": self.zonal_supply_fans,
             "infiltration": self.infiltration,
         }
 

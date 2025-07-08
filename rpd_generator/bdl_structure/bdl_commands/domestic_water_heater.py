@@ -25,7 +25,7 @@ class DomesticWaterHeater(BaseNode):
 
     location_map = {
         BDL_DWHeaterLocationOptions.OUTDOOR: ComponentLocationOptions.OUTSIDE,
-        BDL_DWHeaterLocationOptions.ZONE: ComponentLocationOptions.IN_ZONE,
+        BDL_DWHeaterLocationOptions.ZONE: None,  # TODO ZONE must be mapped to CONDITIONED, UNCONDITIONED, SEMICONDITIONED, etc
     }
 
     def __init__(self, u_name, rmd):

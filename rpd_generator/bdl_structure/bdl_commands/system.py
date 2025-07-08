@@ -319,8 +319,6 @@ class System(ParentNode):
                     self.fan_system.minimum_outdoor_airflow
                 )
 
-        self.fan_system.populate_data_group()
-
     def get_output_requests(self):
         """Get the output requests for the system dependent on various system component types."""
         requests = {
@@ -631,6 +629,8 @@ class System(ParentNode):
             else:
                 self.system_data_structure["id"] = self.u_name
 
+            self.fan_system.populate_data_group()
+
             self.system_data_structure.update(
                 {
                     "fan_system": self.fan_system.data_structure,
@@ -814,8 +814,6 @@ class System(ParentNode):
         if not self.fan_system.fan_control == FanSystemSupplyFanControlOptions.CONSTANT:
             self.supply_fan.populate_operating_points("Supply")
 
-        self.supply_fan.populate_data_group()
-
         # Determine if there is either a return or relief fan
         return_or_relief = (
             self.get_inp(BDL_SystemKeywords.RETURN_STATIC) is not None
@@ -865,8 +863,6 @@ class System(ParentNode):
             ):
                 self.relief_fan.populate_operating_points("Relief")
 
-            self.relief_fan.populate_data_group()
-
         # If the return or relief fan location is not set to RELIEF, it is categorized as a return fan
         elif return_or_relief:
             self.return_fan = Fan(self)
@@ -907,8 +903,6 @@ class System(ParentNode):
                 == FanSystemSupplyFanControlOptions.CONSTANT
             ):
                 self.return_fan.populate_operating_points("Return")
-
-            self.return_fan.populate_data_group()
 
         # If the system is a dual duct system and the dual duct fan option is dual fan, there is a heating supply fan
         if self.get_inp(BDL_SystemKeywords.DDS_TYPE) == BDL_DualDuctFanOptions.DUAL_FAN:
@@ -956,8 +950,6 @@ class System(ParentNode):
                 == FanSystemSupplyFanControlOptions.CONSTANT
             ):
                 self.heating_supply_fan.populate_operating_points("HeatingSupply")
-
-            self.heating_supply_fan.populate_data_group()
 
 
 class FanSystem:
@@ -1101,6 +1093,14 @@ class FanSystem:
         self.operation_during_occupied = self.populate_fan_operation_during_occupied()
 
     def populate_data_group(self):
+        self.parent_system.supply_fan.populate_data_group()
+        if self.parent_system.relief_fan:
+            self.parent_system.relief_fan.populate_data_group()
+        if self.parent_system.return_fan:
+            self.parent_system.return_fan.populate_data_group()
+        if self.parent_system.heating_supply_fan:
+            self.parent_system.heating_supply_fan.populate_data_group()
+
         self.data_structure.update(
             {
                 "id": self.name,
@@ -1591,8 +1591,8 @@ class HeatingSystem:
         self.oversizing_factor = None
         self.is_calculated_size = None
         self.heating_coil_setpoint = None
-        self.efficiency_metric_values = None
-        self.efficiency_metric_types = None
+        self.efficiency_metric_values = []
+        self.efficiency_metric_types = []
         self.heatpump_auxiliary_heat_type = None
         self.heatpump_auxiliary_heat_high_shutoff_temperature = None
         self.heatpump_low_shutoff_temperature = None
@@ -1696,8 +1696,6 @@ class HeatingSystem:
         elif self.type == HeatingSystemOptions.NONE:
             self.energy_source_type = EnergySourceOptions.NONE
 
-        self.efficiency_metric_values = []
-        self.efficiency_metric_types = []
         self.populate_heating_eff_metric_and_value()
 
     def populate_data_group(self):

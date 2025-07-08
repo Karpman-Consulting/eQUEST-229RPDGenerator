@@ -1,5 +1,3 @@
-import copy
-
 from rpd_generator.bdl_structure.parent_node import ParentNode
 from rpd_generator.bdl_structure.child_node import ChildNode
 from rpd_generator.schema.schema_enums import SchemaEnums
@@ -8,9 +6,6 @@ from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 SurfaceClassificationOptions = SchemaEnums.schema_enums["SurfaceClassificationOptions"]
 SurfaceAdjacencyOptions = SchemaEnums.schema_enums["SurfaceAdjacencyOptions"]
-AdditionalSurfaceAdjacencyOptions2019ASHRAE901 = SchemaEnums.schema_enums[
-    "AdditionalSurfaceAdjacencyOptions2019ASHRAE901"
-]
 StatusOptions = SchemaEnums.schema_enums["StatusOptions"]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_InteriorWallKeywords = BDLEnums.bdl_enums["InteriorWallKeywords"]

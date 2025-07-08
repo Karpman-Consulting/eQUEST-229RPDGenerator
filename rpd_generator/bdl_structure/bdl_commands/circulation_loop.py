@@ -78,7 +78,7 @@ class CirculationLoop(BaseNode):
     }
     piping_location_map = {
         BDL_CirculationLoopLocationOptions.OUTDOORS: ComponentLocationOptions.OUTSIDE,
-        BDL_CirculationLoopLocationOptions.ZONE: ComponentLocationOptions.IN_ZONE,
+        BDL_CirculationLoopLocationOptions.ZONE: None,  # TODO ZONE must be mapped to CONDITIONED, UNCONDITIONED, SEMICONDITIONED, etc
         BDL_CirculationLoopLocationOptions.TUNNEL: ComponentLocationOptions.CRAWL_SPACE,
         BDL_CirculationLoopLocationOptions.UNDERGROUND: ComponentLocationOptions.UNDERGROUND,
     }
@@ -775,6 +775,7 @@ class CirculationLoop(BaseNode):
         self.loop_pipe_location = self.piping_location_map.get(
             self.get_inp(BDL_CirculationLoopKeywords.LOOP_LOCN)
         )
+
         self.location_zone = self.get_inp(BDL_CirculationLoopKeywords.LOOP_LOSS_ZONE)
         self.populate_swh_piping_design_and_control()
 
