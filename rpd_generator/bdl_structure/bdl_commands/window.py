@@ -102,11 +102,13 @@ class Window(ChildNode):
             self.get_inp(BDL_WindowKeywords.OVERHANG_D)
         )
         self.has_shading_overhang = bool(self.depth_of_overhang)
-        self.has_manual_interior_shades = bool(
-            self.get_inp(BDL_WindowKeywords.WIN_SHADE_TYPE)
-            == BDL_WindowShadeTypes.MOVABLE_INTERIOR
-            and self.get_inp(BDL_WindowKeywords.SHADING_SCHEDULE)
-        )
+
+        # Commented because can't assume shades are manual, could be automatic
+        # self.has_manual_interior_shades = bool(
+        #     self.get_inp(BDL_WindowKeywords.WIN_SHADE_TYPE)
+        #     == BDL_WindowShadeTypes.MOVABLE_INTERIOR
+        #     and self.get_inp(BDL_WindowKeywords.SHADING_SCHEDULE)
+        # )
 
         glass_type = self.get_obj(self.get_inp(BDL_WindowKeywords.GLASS_TYPE))
         if not glass_type:
