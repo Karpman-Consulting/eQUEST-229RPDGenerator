@@ -110,6 +110,8 @@ class RulesetModelDescription(Base):
         self.bdl_obj_instances = {self.rpd.project_name: self.rpd, obj_id: self}
         # store space names mapped to their zone objects for quick access
         self.space_map = {}
+        # store material variants to know when a clone is needed
+        self.material_variants = {}  # key = (base_id, thickness), value = material_id
         # store names of specific object types for quick access
         self.site_parameter_name = None
         self.master_meters = None

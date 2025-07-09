@@ -39,8 +39,6 @@ class Material(BaseNode):
             self.thickness = self.try_float(
                 self.get_inp(BDL_MaterialKeywords.THICKNESS)
             )
-            if self.thickness is not None and self.thickness <= 0:
-                self.thickness = 0.00001  # Set a minimum thickness to avoid issues with zero thickness
 
             self.thermal_conductivity = self.try_float(
                 self.get_inp(BDL_MaterialKeywords.CONDUCTIVITY)
@@ -79,6 +77,26 @@ class Material(BaseNode):
         """Insert material object into the rpd data structure."""
         self.rmd.materials.append(self.material_data_structure)
 
+    def clone_with_thickness(self, new_thickness: float):
+        """Clone this material with a new thickness and register it in the RMD."""
+        new_id = f"{self.u_name}_{str(new_thickness)}"
+        if (self.u_name, new_thickness) in self.rmd.material_variants:
+            return self.rmd.get_obj(
+                self.rmd.material_variants[(self.u_name, new_thickness)]
+            )
+
+        new_material = Material(new_id, self.rmd)
+        new_material.material_type = self.material_type
+        new_material.thermal_conductivity = self.thermal_conductivity
+        new_material.density = self.density
+        new_material.specific_heat = self.specific_heat
+        new_material.r_value = self.r_value
+        new_material.thickness = new_thickness
+
+        # Register variant
+        self.rmd.material_variants[(self.u_name, new_thickness)] = new_id
+        return new_material
+
 
 class Layer(BaseDefinition):
     """Layer object in the tree."""
@@ -96,9 +114,38 @@ class Layer(BaseDefinition):
 
     def populate_data_elements(self):
         """Populate data elements for layers object."""
-        material_references = self.get_inp(BDL_LayerKeywords.MATERIAL, [])
-        self.material_references = (
-            material_references
-            if isinstance(material_references, list)
-            else [material_references]
+        material_ids = self.get_inp(BDL_LayerKeywords.MATERIAL, [])
+        material_ids = (
+            material_ids if isinstance(material_ids, list) else [material_ids]
         )
+
+        material_layers = self.get_inp("MATERIAL-LAYERS", [])
+        self.material_references = []
+
+        for idx, mat_id in enumerate(material_ids):
+            layer_props = material_layers[idx] if idx < len(material_layers) else {}
+            true_thickness = layer_props.get("thickness")
+
+            original_material = self.get_obj(mat_id)
+            if true_thickness is not None:
+                true_thickness = original_material.try_float(true_thickness)
+
+            # If we’ve already seen this material ID with this exact thickness, reuse
+            key = (mat_id, true_thickness)
+            if key in self.rmd.material_variants:
+                resolved_id = self.rmd.material_variants[key]
+            else:
+                if (
+                    original_material.thickness is not None
+                    and true_thickness != original_material.thickness
+                ):
+                    # Need to clone
+                    new_material = original_material.clone_with_thickness(
+                        true_thickness
+                    )
+                    resolved_id = new_material.u_name
+                else:
+                    resolved_id = mat_id
+                    self.rmd.material_variants[key] = mat_id  # Register baseline usage
+
+            self.material_references.append(resolved_id)
