@@ -301,7 +301,8 @@ class TestZones(unittest.TestCase):
             ],
             "thermostat_cooling_setpoint_schedule": "Thermostat Annual Schedule",
             "thermostat_heating_setpoint_schedule": "Thermostat Annual Schedule",
-            "zonal_exhaust_fan": {},
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [],
         }
         self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
@@ -391,7 +392,8 @@ class TestZones(unittest.TestCase):
             ],
             "thermostat_cooling_setpoint_schedule": "Thermostat Annual Schedule",
             "thermostat_heating_setpoint_schedule": "Thermostat Annual Schedule",
-            "zonal_exhaust_fan": {},
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [],
         }
         self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
@@ -471,7 +473,8 @@ class TestZones(unittest.TestCase):
             ],
             "thermostat_cooling_setpoint_schedule": "Thermostat Annual Schedule",
             "thermostat_heating_setpoint_schedule": "Thermostat Annual Schedule",
-            "zonal_exhaust_fan": {},
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [],
         }
         self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
@@ -493,7 +496,8 @@ class TestZones(unittest.TestCase):
             "spaces": [],
             "surfaces": [],
             "terminals": [],
-            "zonal_exhaust_fan": {},
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [],
         }
         self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
@@ -532,15 +536,18 @@ class TestZones(unittest.TestCase):
                 }
             ],
             "exhaust_airflow_rate_multiplier_schedule": "Fan Annual Schedule",
-            "zonal_exhaust_fan": {
-                "id": "Zone 1 EF",
-                "design_airflow": 150.0,
-                "design_electric_power": 0.04408382900635919,
-                "design_pressure_rise": 2.0,
-                "is_airflow_calculated": False,
-                "specification_method": "DETAILED",
-                "total_efficiency": 0.8,
-            },
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [
+                {
+                    "id": "Zone 1 EF",
+                    "design_airflow": 150.0,
+                    "design_electric_power": 0.04408382900635919,
+                    "design_pressure_rise": 2.0,
+                    "is_airflow_calculated": False,
+                    "specification_method": "DETAILED",
+                    "total_efficiency": 0.8,
+                }
+            ],
         }
         self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
@@ -581,7 +588,8 @@ class TestZones(unittest.TestCase):
                     "served_by_heating_ventilating_air_conditioning_system": "System 1",
                 }
             ],
-            "zonal_exhaust_fan": {},
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [],
         }
         self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
@@ -627,7 +635,8 @@ class TestZones(unittest.TestCase):
                     "served_by_heating_ventilating_air_conditioning_system": "DOAS 1",
                 },
             ],
-            "zonal_exhaust_fan": {},
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [],
         }
         expected_data_structure["terminals"] = sorted(
             expected_data_structure["terminals"], key=lambda t: t["id"]
@@ -684,7 +693,8 @@ class TestZones(unittest.TestCase):
                     "is_supply_ducted": False,
                 },
             ],
-            "zonal_exhaust_fan": {},
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [],
         }
 
         expected_data_structure["terminals"] = sorted(
@@ -729,7 +739,8 @@ class TestZones(unittest.TestCase):
                     "served_by_heating_ventilating_air_conditioning_system": "System 1",
                 }
             ],
-            "zonal_exhaust_fan": {},
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [],
         }
         self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
@@ -782,7 +793,8 @@ class TestZones(unittest.TestCase):
                 }
             ],
             "volume": 1000.0,
-            "zonal_exhaust_fan": {},
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [],
         }
         self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
@@ -838,7 +850,8 @@ class TestZones(unittest.TestCase):
                     "served_by_heating_ventilating_air_conditioning_system": "System 1",
                 }
             ],
-            "zonal_exhaust_fan": {},
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [],
         }
         self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 

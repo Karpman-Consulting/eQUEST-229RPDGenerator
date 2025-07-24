@@ -33,9 +33,10 @@ class TestExteriorWall(unittest.TestCase):
         self.rmd.doe2_data_path = Config.DOE23_DATA_PATH
         self.rmd.building_azimuth = 100
         self.floor = Floor("Floor 1", self.rmd)
-        self.space = Space("Space 1", self.floor, self.rmd)
         self.zone = MockZone.return_value
+        self.zone.u_name = "Zone 1"
         self.rmd.space_map = {"Space 1": self.zone}
+        self.space = Space("Space 1", self.floor, self.rmd)
         self.exterior_wall = ExteriorWall("Exterior Wall 1", self.space, self.rmd)
         self.construction = Construction("Construction 1", self.rmd)
         self.layer = Layer("Layer 1", self.rmd)

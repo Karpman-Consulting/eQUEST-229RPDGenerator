@@ -33,8 +33,8 @@ class TestUndergroundWalls(unittest.TestCase):
         self.rmd.building_azimuth = 100
         self.floor = Floor("Floor 1", self.rmd)
         self.zone = MockZone.return_value
-        self.space = Space("Space 1", self.floor, self.rmd)
         self.rmd.space_map = {"Space 1": self.zone}
+        self.space = Space("Space 1", self.floor, self.rmd)
         self.underground_wall = BelowGradeWall(
             "Below Grade Wall 1", self.space, self.rmd
         )
