@@ -7,7 +7,7 @@
         "schema_url": "https://github.com/open229/ruleset-model-description-schema",
         "author": "Jackson Jarboe, Karpman Consulting LLC",
         "description": "DOE2.3 Ruleset Project Description (RPD)",
-        "time_of_creation": "2025-07-08T13:44Z",
+        "time_of_creation": "2025-07-24T13:53Z",
         "version": "1.1.1",
         "source": "DOE-2.3 Energy Model .INP, .LRP, .SRP, .ERP, .NHR files",
         "disclaimer": "\n        Acknowledgment: This material is based upon work supported by the U.S. Department of Energy\u2019s Office of Energy Efficiency and Renewable Energy (EERE) under the Building Technologies Office - DE-FOA-0002813 - Bipartisan Infrastructure Law Resilient and Efficient Codes Implementation.\n        Award Number: DE-EE0010949\n        Abridged Disclaimer: The views expressed herein do not necessarily represent the view of the U.S. Department of Energy or the United States Government.\n        "
@@ -171,6 +171,7 @@
                                         }
                                     ],
                                     "zonal_exhaust_fans": [],
+                                    "zonal_supply_fans": [],
                                     "infiltration": {
                                         "id": "Core Zone 1 Infil",
                                         "modeling_method": "WEATHER_DRIVEN",
@@ -227,8 +228,7 @@
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
-                                                    "has_shading_sidefins": false,
-                                                    "has_manual_interior_shades": false
+                                                    "has_shading_sidefins": false
                                                 },
                                                 {
                                                     "id": "South Window 2",
@@ -239,8 +239,7 @@
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
-                                                    "has_shading_sidefins": false,
-                                                    "has_manual_interior_shades": false
+                                                    "has_shading_sidefins": false
                                                 },
                                                 {
                                                     "id": "South Window 3",
@@ -251,8 +250,7 @@
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
-                                                    "has_shading_sidefins": false,
-                                                    "has_manual_interior_shades": false
+                                                    "has_shading_sidefins": false
                                                 },
                                                 {
                                                     "id": "South Door 1",
@@ -443,6 +441,7 @@
                                         }
                                     ],
                                     "zonal_exhaust_fans": [],
+                                    "zonal_supply_fans": [],
                                     "infiltration": {
                                         "id": "Prm Zone 1 (South) Zn Infil",
                                         "modeling_method": "WEATHER_DRIVEN",
@@ -499,8 +498,7 @@
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
-                                                    "has_shading_sidefins": false,
-                                                    "has_manual_interior_shades": false
+                                                    "has_shading_sidefins": false
                                                 },
                                                 {
                                                     "id": "East Window 2",
@@ -511,8 +509,7 @@
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
-                                                    "has_shading_sidefins": false,
-                                                    "has_manual_interior_shades": false
+                                                    "has_shading_sidefins": false
                                                 },
                                                 {
                                                     "id": "East Door 1",
@@ -678,6 +675,7 @@
                                         }
                                     ],
                                     "zonal_exhaust_fans": [],
+                                    "zonal_supply_fans": [],
                                     "infiltration": {
                                         "id": "Prm Zone 2 (East) Zn Infil",
                                         "modeling_method": "CONSTANT",
@@ -734,8 +732,7 @@
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
-                                                    "has_shading_sidefins": false,
-                                                    "has_manual_interior_shades": false
+                                                    "has_shading_sidefins": false
                                                 },
                                                 {
                                                     "id": "North Window 2",
@@ -746,8 +743,7 @@
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
-                                                    "has_shading_sidefins": false,
-                                                    "has_manual_interior_shades": false
+                                                    "has_shading_sidefins": false
                                                 },
                                                 {
                                                     "id": "North Window 3",
@@ -758,8 +754,7 @@
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
-                                                    "has_shading_sidefins": false,
-                                                    "has_manual_interior_shades": false
+                                                    "has_shading_sidefins": false
                                                 },
                                                 {
                                                     "id": "North Door 1",
@@ -932,6 +927,7 @@
                                         }
                                     ],
                                     "zonal_exhaust_fans": [],
+                                    "zonal_supply_fans": [],
                                     "infiltration": {
                                         "id": "Prm Zone 3 (North) Infil",
                                         "modeling_method": "CONSTANT_SCHEDULED",
@@ -989,8 +985,7 @@
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
-                                                    "has_shading_sidefins": false,
-                                                    "has_manual_interior_shades": false
+                                                    "has_shading_sidefins": false
                                                 },
                                                 {
                                                     "id": "West Window 2",
@@ -1001,8 +996,7 @@
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
-                                                    "has_shading_sidefins": false,
-                                                    "has_manual_interior_shades": false
+                                                    "has_shading_sidefins": false
                                                 },
                                                 {
                                                     "id": "West Door 1",
@@ -1150,6 +1144,7 @@
                                         }
                                     ],
                                     "zonal_exhaust_fans": [],
+                                    "zonal_supply_fans": [],
                                     "infiltration": {
                                         "id": "Prm Zone 4 (West) Infil",
                                         "modeling_method": "CONSTANT_SCHEDULED",
@@ -132828,10 +132823,10 @@
                 {
                     "id": "Exterior Wall Type 1",
                     "primary_layers": [
-                        "Stucco",
-                        "Gypsum Board",
-                        "Insulation",
-                        "Gypsum Board"
+                        "Stucco_0.0833",
+                        "Gypsum Board_0.0522",
+                        "Insulation_0.2034",
+                        "Gypsum Board_0.0522"
                     ],
                     "framing_layers": [],
                     "insulation_locations": [],
@@ -132842,7 +132837,7 @@
                     "id": "Roof Type 2",
                     "primary_layers": [
                         "Metal Deck",
-                        "Continuous Insulation",
+                        "Continuous Insulation_0.346",
                         "Builtup roof resistance"
                     ],
                     "framing_layers": [],
@@ -132855,7 +132850,7 @@
                     "primary_layers": [
                         "Stucco",
                         "Gypsum board resistance",
-                        "Insulation",
+                        "Insulation_0.588",
                         "Gypsum board resistance"
                     ],
                     "framing_layers": [],
@@ -133084,14 +133079,14 @@
                 },
                 {
                     "id": "Surface to Surface",
-                    "thickness": 3.048e-06,
+                    "thickness": 0.0,
                     "thermal_conductivity": 0.1142285039370079,
                     "density": 0.0,
                     "specific_heat": 0.0
                 },
                 {
                     "id": "Surface to surface wall",
-                    "thickness": 3.048e-06,
+                    "thickness": 0.0,
                     "thermal_conductivity": 0.15576614173228348,
                     "density": 0.0,
                     "specific_heat": 0.0
@@ -133120,6 +133115,41 @@
                 {
                     "id": "Carpet & No Pad",
                     "r_value": 0.13208261931120244
+                },
+                {
+                    "id": "Stucco_0.0833",
+                    "thickness": 0.025389839999999997,
+                    "thermal_conductivity": 0.7199857217847769,
+                    "density": 1858.1417513793767,
+                    "specific_heat": 841.5469175550725
+                },
+                {
+                    "id": "Gypsum Board_0.0522",
+                    "thickness": 0.015910559999999997,
+                    "thermal_conductivity": 0.15922761154855644,
+                    "density": 800.9231686980072,
+                    "specific_heat": 1088.5681520612877
+                },
+                {
+                    "id": "Insulation_0.2034",
+                    "thickness": 0.061996319999999994,
+                    "thermal_conductivity": 0.03634543307086615,
+                    "density": 9.611078024376086,
+                    "specific_heat": 837.3601169702214
+                },
+                {
+                    "id": "Continuous Insulation_0.346",
+                    "thickness": 0.10546079999999998,
+                    "thermal_conductivity": 0.0207688188976378,
+                    "density": 32.03692674792029,
+                    "specific_heat": 921.0961286672434
+                },
+                {
+                    "id": "Insulation_0.588",
+                    "thickness": 0.17922239999999998,
+                    "thermal_conductivity": 0.03634543307086615,
+                    "density": 9.611078024376086,
+                    "specific_heat": 837.3601169702214
                 }
             ],
             "fluid_loops": [],

@@ -1288,7 +1288,7 @@ $              Boilers
 $ ---------------------------------------------------------
 
 "Boiler 1" = BOILER          
-   TYPE             = HW-BOILER-W/DRAFT
+   TYPE             = HW-BOILER
    CAPACITY         = -0.3
    ELEC-INPUT-RATIO = 0
    HW-LOOP          = "Hot Water Loop"

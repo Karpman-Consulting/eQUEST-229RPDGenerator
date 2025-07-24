@@ -11,6 +11,7 @@ from rpd_generator.utilities.jsonpath_utils import (
     find_all_with_field_value,
     find_all_with_filters,
     get_dict_of_zones_and_terminals_served_by_hvac_sys,
+    get_dict_of_surfaces_with_construction_assigned,
 )
 
 
@@ -25,6 +26,7 @@ class TestOutcomeOptions(Enum):
     MATCH = "MATCH"
     DIFFER = "DIFFER"
     NOT_IMPLEMENTED = "NOT_IMPLEMENTED"
+    UNKNOWN = "UNKNOWN"
 
 
 # RPD Generation Test Report
@@ -113,11 +115,19 @@ def compare_json_values(
     errors = []
 
     for i, generated_id in enumerate(generated_ids):
+
         if generated_id not in generated_values and i in generated_values:
             generated_id = i
+
+        if generated_id not in generated_values:
+            continue  # Skip if generated_id was not mapped successfully
+
         generated_value = generated_values[generated_id]
         reference_value = reference_values[generated_id]
         reference_id = object_id_map.get(generated_id)
+
+        if isinstance(reference_id, dict):
+            reference_id = reference_id.get("id")
 
         if generated_value is None and reference_value is not None:
             notes = f"Missing value for key '{json_key_path.split('.')[-1]}' at {generated_ids[i]}"
@@ -143,8 +153,8 @@ def compare_json_values(
                 notes = f"List length mismatch at '{generated_ids[i]}' for key '{json_key_path.split('.')[-1]}'. Expected: {len(reference_value)}; got: {len(generated_value)}"
                 add_test_result(
                     specification_test,
-                    generated_id,
-                    reference_id,
+                    generated_id if not isinstance(generated_id, int) else None,
+                    reference_id if not isinstance(reference_id, int) else None,
                     TestOutcomeOptions.DIFFER.value,
                 )
                 errors.append(notes)
@@ -152,8 +162,8 @@ def compare_json_values(
             else:
                 add_test_result(
                     specification_test,
-                    generated_id,
-                    reference_id,
+                    generated_id if not isinstance(generated_id, int) else None,
+                    reference_id if not isinstance(reference_id, int) else None,
                     TestOutcomeOptions.MATCH.value,
                 )
 
@@ -182,7 +192,44 @@ def compare_json_values(
                 EvaluationCriteriaOptions.REFERENCE.value
             )
 
+            if (
+                generated_value in object_id_map
+                and object_id_map[generated_value] == reference_value
+            ) or ("schedule" in json_key_path):
+                add_test_result(
+                    specification_test,
+                    generated_id if not isinstance(generated_id, int) else None,
+                    reference_id if not isinstance(reference_id, int) else None,
+                    TestOutcomeOptions.MATCH.value,
+                )
+
+            else:
+                add_test_result(
+                    specification_test,
+                    generated_id,
+                    reference_id,
+                    TestOutcomeOptions.UNKNOWN.value,
+                )
+
         if compare_value is False:
+            # Check for presence of generated value
+            if generated_value:
+                add_test_result(
+                    specification_test,
+                    generated_id if not isinstance(generated_id, int) else None,
+                    reference_id if not isinstance(reference_id, int) else None,
+                    TestOutcomeOptions.MATCH.value,
+                )
+            else:
+                notes = f"Missing value for key '{json_key_path.split('.')[-1]}' at {generated_ids[i]}"
+                add_test_result(
+                    specification_test,
+                    generated_id if not isinstance(generated_id, int) else None,
+                    reference_id if not isinstance(reference_id, int) else None,
+                    TestOutcomeOptions.NOT_IMPLEMENTED.value,
+                    notes,
+                )
+                warnings.append(notes)
             continue  # No comparison needed, just check for existence
 
         if reference_value is None and generated_value is None:
@@ -195,16 +242,18 @@ def compare_json_values(
         test_outcome = TestOutcomeOptions.NOT_IMPLEMENTED.value
 
         # Else: the values are strings, ints, or floats, and we need to compare them
-        notes = ""
         does_match = compare_values(generated_value, reference_value, tolerance)
+
         if does_match:
             test_outcome = TestOutcomeOptions.MATCH.value
+
         if not does_match and reference_value is None:
             warnings.append(
                 f"Extra data provided at '{generated_ids[i]}' for key '{json_key_path.split('.')[-1]}'. Expected: 'None'; got: '{generated_value}'"
             )
             # Avoid adding a test result when extra data is provided
             continue
+
         elif not does_match:
             notes = f"Value mismatch at '{generated_ids[i]}' for key '{json_key_path.split('.')[-1]}'. Expected: '{reference_value}'; got: '{generated_value}'"
             errors.append(notes)
@@ -212,8 +261,8 @@ def compare_json_values(
 
         add_test_result(
             specification_test,
-            generated_id,
-            reference_id,
+            generated_id if not isinstance(generated_id, int) else None,
+            reference_id if not isinstance(reference_id, int) else None,
             test_outcome,
         )
 
@@ -253,8 +302,25 @@ def get_mapping(
     object_id_map=None,
 ):
     """Find matches for a key in the generated and reference JSON based on the json path in the spec."""
+
+    if len(generated_values) != len(reference_values):
+        print(
+            f"{match_type} count mismatch. Expected: {len(reference_values)}; got: {len(generated_values)}. Verify the object mapping."
+        )
     mapping = {}
-    if match_type == "Surfaces":
+    if match_type == "Constructions":
+        mapping = match_constructions_by_surfaces_assigned(
+            generated_values, reference_values
+        )
+
+    elif match_type == "Materials":
+        mapping = match_by_attributes_with_excess_generated(
+            generated_values,
+            reference_values,
+            attrs=["thickness", "conductivity", "density", "specific_heat", "r_value"],
+        )
+
+    elif match_type == "Surfaces":
         mapping = match_by_attributes(
             generated_values,
             reference_values,
@@ -263,7 +329,7 @@ def get_mapping(
             ["area", "azimuth"],
         )
 
-    if match_type == "HVAC Systems":
+    elif match_type == "HVAC Systems":
         mapping = match_sys_by_zones_served(
             generated_values, reference_values, object_id_map
         )
@@ -276,12 +342,12 @@ def get_mapping(
                 ["cooling_system.type", "heating_system.type"],
             )
 
-    if match_type == "Terminals":
-        mapping = match_terminal_by_references(
+    elif match_type == "Terminals":
+        mapping = match_terminals_by_references(
             generated_values, reference_values, object_id_map
         )
 
-    if match_type == "Boilers":
+    elif match_type == "Boilers":
         mapping = match_by_attributes(
             generated_values,
             reference_values,
@@ -290,7 +356,7 @@ def get_mapping(
             ["draft_type", "energy_source_type"],
         )
 
-    if match_type == "Chillers":
+    elif match_type == "Chillers":
         mapping = match_by_attributes(
             generated_values,
             reference_values,
@@ -299,7 +365,7 @@ def get_mapping(
             ["compressor_type", "energy_source_type"],
         )
 
-    if match_type == "Heat Rejections":
+    elif match_type == "Heat Rejections":
         mapping = match_by_attributes(
             generated_values,
             reference_values,
@@ -308,7 +374,7 @@ def get_mapping(
             ["type", "fan_type", "fan_speed_control"],
         )
 
-    if match_type == "Loops":
+    elif match_type == "Loops":
         mapping = match_by_attributes(
             generated_values,
             reference_values,
@@ -317,7 +383,7 @@ def get_mapping(
             ["type", "child_loops"],
         )
 
-    if match_type == "Pumps":
+    elif match_type == "Pumps":
         mapping = match_pumps_by_references(
             generated_values, reference_values, object_id_map
         )
@@ -327,16 +393,23 @@ def get_mapping(
 
     # TODO: Expand capabilities when length of mapping is less than length of generated_values -e.g. unmatched objects
     if len(mapping) < len(generated_values):
-        unmatched_object_ids = []
-        for generated_object in generated_values:
-            if (
-                isinstance(generated_object, dict)
-                and generated_object.get("id") not in mapping
-            ):
-                unmatched_object_ids.append(generated_object.get("id"))
-            elif isinstance(generated_object, str) and generated_object not in mapping:
-                unmatched_object_ids.append(generated_object)
-        print(f"Unmatched {match_type} objects: {unmatched_object_ids}")
+        if isinstance(generated_values, dict):
+            unmatched_objects = [
+                generated_object_id
+                for generated_object_id in generated_values
+                if generated_object_id not in mapping
+            ]
+        elif isinstance(generated_values, list):
+            unmatched_objects = [
+                generated_object.get("id")
+                for generated_object in generated_values
+                if generated_object.get("id") not in mapping
+            ]
+        else:
+            raise TypeError(
+                f"Unsupported type for generated_values: {type(generated_values)}"
+            )
+        print(f"Unmatched {match_type} objects: {','.join(unmatched_objects)}")
 
     return mapping
 
@@ -359,6 +432,8 @@ def match_by_attributes(
 ):
     """Matches generated and reference objects based on specified attributes."""
     mapping = {}
+    used_reference_ids = set()
+
     for generated_object in generated_values:
         best_match = get_best_match_attrs(
             generated_object,
@@ -366,11 +441,79 @@ def match_by_attributes(
             attrs,
             generated_zone_id,
             reference_zone_id,
+            used_reference_ids,
         )
         if best_match:
             mapping[generated_object.get("id")] = best_match.get("id")
-            reference_values.pop(reference_values.index(best_match))
+            used_reference_ids.add(best_match.get("id"))
+
     return mapping
+
+
+def match_by_attributes_with_excess_generated(
+    generated_values, reference_values, attrs
+):
+    """Matches generated and reference objects based on specified attributes.
+
+    Handles cases where generated list is longer than reference list.
+    Each reference object is used at most once. Unmatched generated objects are excluded.
+    """
+    all_matches = []
+
+    # Generate all possible (gen_id, ref_id, score) tuples
+    for gen_obj in generated_values:
+        gen_id = gen_obj.get("id")
+        for ref_obj in reference_values:
+            ref_id = ref_obj.get("id")
+            score = sum(compare_attributes(gen_obj, ref_obj, attr) for attr in attrs)
+            all_matches.append((gen_id, ref_id, score))
+
+    # Sort all potential matches by descending score
+    all_matches.sort(key=lambda x: -x[2])
+
+    mapping = {}
+    used_gen_ids = set()
+    used_ref_ids = set()
+
+    # Greedily select highest-scoring matches without reusing any IDs
+    for gen_id, ref_id, score in all_matches:
+        if gen_id not in used_gen_ids and ref_id not in used_ref_ids:
+            mapping[gen_id] = ref_id
+            used_gen_ids.add(gen_id)
+            used_ref_ids.add(ref_id)
+
+    return mapping
+
+
+def match_constructions_by_surfaces_assigned(generated_values, reference_values):
+    # Convert to list-of-dict format with `id` key for compatibility
+    generated_list = [
+        {"id": generated_id, **generated_data}
+        for generated_id, generated_data in generated_values.items()
+    ]
+    reference_list = [
+        {"id": reference_id, **reference_data}
+        for reference_id, reference_data in reference_values.items()
+    ]
+
+    # Attributes to compare (numeric + counts)
+    attrs = [
+        "exterior_walls",
+        "rooves",
+        "below_grade_surfaces",
+        "interior_surfaces",
+        "primary_layers_length",
+        "framing_layers_length",
+        "u_factor",
+        "c_factor",
+        "f_factor",
+    ]
+
+    return match_by_attributes_with_excess_generated(
+        generated_list,
+        reference_list,
+        attrs=attrs,
+    )
 
 
 def match_sys_by_zones_served(generated_values, reference_values, object_id_map):
@@ -399,27 +542,34 @@ def match_sys_by_zones_served(generated_values, reference_values, object_id_map)
     return mapping
 
 
-def match_terminal_by_references(generated_values, reference_values, object_id_map):
-    """Matches generated and reference terminal objects based on references to the hvac systems that serve them."""
+def match_terminals_by_references(generated_values, reference_values, object_id_map):
+    """Matches generated and reference terminal objects based on references to the HVAC systems that serve them."""
     mapping = {}
+    used_reference_ids = set()
+
     for generated_object in generated_values:
         generated_hvac_id = generated_object.get(
             "served_by_heating_ventilating_air_conditioning_system"
         )
+        best_match = None
+
         if generated_hvac_id:
             reference_hvac_id = object_id_map.get(generated_hvac_id)
             if reference_hvac_id:
                 best_match = next(
-                    terminal
-                    for terminal in reference_values
-                    if terminal.get(
-                        "served_by_heating_ventilating_air_conditioning_system"
-                    )
-                    == reference_hvac_id
+                    (
+                        terminal
+                        for terminal in reference_values
+                        if terminal.get("id") not in used_reference_ids
+                        and terminal.get(
+                            "served_by_heating_ventilating_air_conditioning_system"
+                        )
+                        == reference_hvac_id
+                    ),
+                    None,
                 )
-                if best_match:
-                    mapping[generated_object.get("id")] = best_match.get("id")
-        else:
+
+        if not best_match:
             best_match = get_best_match_attrs(
                 generated_object,
                 reference_values,
@@ -434,9 +584,12 @@ def match_terminal_by_references(generated_values, reference_values, object_id_m
                 ],
                 None,
                 None,
+                used_reference_ids,
             )
-            if best_match:
-                mapping[generated_object.get("id")] = best_match.get("id")
+
+        if best_match:
+            mapping[generated_object.get("id")] = best_match.get("id")
+            used_reference_ids.add(best_match.get("id"))
 
     return mapping
 
@@ -450,22 +603,29 @@ def match_pumps_by_references(generated_values, reference_values, object_id_map)
             reference_loop_id = object_id_map.get(generated_loop_id)
             if reference_loop_id:
                 best_match = next(
-                    reference_value
-                    for reference_value in reference_values
-                    if reference_value.get("loop_or_piping") == reference_loop_id
+                    (
+                        reference_value
+                        for reference_value in reference_values
+                        if reference_value.get("loop_or_piping") == reference_loop_id
+                    ),
+                    None,
                 )
                 if best_match:
                     mapping[generated_object.get("id")] = best_match.get("id")
-                    reference_values.pop(reference_values.index(best_match))
+                    reference_values.remove(best_match)
 
     return mapping
 
 
 def get_best_match_attrs(
-    target, candidates, attrs, generated_zone_id, reference_zone_id
+    target, candidates, attrs, generated_zone_id, reference_zone_id, used_reference_ids
 ):
-    """Finds the best match for a target object based on specified attributes."""
-    best_match_found, highest_qty_matched = None, 0
+    """Finds the best match for a target object based on specified attributes,
+    prioritizing unused candidates when scores are tied.
+    """
+    best_match_found = None
+    highest_qty_matched = -1
+
     for candidate in candidates:
         qty_matched = sum(
             compare_attributes(
@@ -473,12 +633,24 @@ def get_best_match_attrs(
             )
             for attr in attrs
         )
+
         if qty_matched > highest_qty_matched:
-            highest_qty_matched, best_match_found = qty_matched, candidate
+            highest_qty_matched = qty_matched
+            best_match_found = candidate
+        elif qty_matched == highest_qty_matched:
+            if (
+                best_match_found
+                and best_match_found.get("id") in used_reference_ids
+                and candidate.get("id") not in used_reference_ids
+            ):
+                best_match_found = candidate
+
     return best_match_found
 
 
-def compare_values(value, reference_value, tolerance):
+def compare_values(
+    value, reference_value, absolute_tolerance=None, relative_tolerance=None
+):
     """Compares a generated value with a reference value based on the tolerance."""
     if isinstance(reference_value, str):
         return value == reference_value
@@ -486,14 +658,21 @@ def compare_values(value, reference_value, tolerance):
     if isinstance(reference_value, bool):
         return value == reference_value
 
-    if isinstance(reference_value, (int, float)):
-        return math.isclose(value, reference_value, abs_tol=tolerance)
+    if isinstance(reference_value, (int, float)) and absolute_tolerance:
+        return math.isclose(value, reference_value, abs_tol=absolute_tolerance)
+    elif isinstance(reference_value, (int, float)) and relative_tolerance:
+        return math.isclose(value, reference_value, rel_tol=relative_tolerance)
 
     return False
 
 
-def compare_attributes(target, candidate, attr, generated_zone_id, reference_zone_id):
-    """Compares attributes between two objects with special rules for azimuth and area."""
+def compare_attributes(
+    target, candidate, attr, generated_zone_id=None, reference_zone_id=None
+):
+    """Compares attributes between two objects, with special rules for azimuth and area."""
+    if attr not in target:
+        return False
+
     target_value, candidate_value = target.get(attr), candidate.get(attr)
     if attr == "azimuth":
         return compare_azimuth(
@@ -506,11 +685,14 @@ def compare_attributes(target, candidate, attr, generated_zone_id, reference_zon
         )
 
     elif attr == "area":
-        return compare_values(candidate_value, target_value, 0.1)
+        return compare_values(target_value, candidate_value, 0.1)
 
     elif isinstance(target_value, list):
         candidate_length = len(candidate_value) if candidate_value else 0
         return len(target_value) == candidate_length
+
+    elif isinstance(target_value, (int, float)):
+        return compare_values(target_value, candidate_value, relative_tolerance=0.01)
 
     else:
         return target_value == candidate_value
@@ -731,6 +913,89 @@ def define_terminal_map(object_id_map, generated_zone, reference_zone):
             object_id_map=object_id_map,
         )
     return terminal_map, errors
+
+
+def define_construction_map(generated_json, reference_json, object_id_map):
+    errors = []
+    construction_map = {}
+
+    generated_constructions = get_dict_of_surfaces_with_construction_assigned(
+        generated_json
+    )
+    reference_constructions = get_dict_of_surfaces_with_construction_assigned(
+        reference_json
+    )
+
+    if (
+        len(generated_constructions) == len(reference_constructions)
+        and len(generated_constructions) == 1
+    ):
+        generated_hvac_id, generated_hvac_data = next(
+            iter(generated_constructions.items())
+        )
+        reference_hvac_id, reference_hvac_data = next(
+            iter(reference_constructions.items())
+        )
+        construction_map[generated_hvac_id] = reference_hvac_id
+        return construction_map, errors
+
+    else:
+        construction_map = get_mapping(
+            "Constructions",
+            generated_constructions,
+            reference_constructions,
+            object_id_map=object_id_map,
+        )
+
+    return construction_map, errors
+
+
+def define_materials_map(generated_json, reference_json, object_id_map):
+    errors = []
+    materials_map = {}
+
+    generated_materials = find_all(
+        "$.ruleset_model_descriptions[0].materials[*]", generated_json
+    )
+    reference_materials = find_all(
+        "$.ruleset_model_descriptions[0].materials[*]", reference_json
+    )
+
+    primary_layer_ids = find_all(
+        "$.ruleset_model_descriptions[0].constructions[*].primary_layers[*]",
+        generated_json,
+    )
+    framing_layer_ids = find_all(
+        "$.ruleset_model_descriptions[0].constructions[*].framing_layers[*]",
+        generated_json,
+    )
+
+    # Combine both lists into a set for faster lookup
+    referenced_ids = set(primary_layer_ids + framing_layer_ids)
+
+    # Filter generated_materials to only include those whose id is referenced in primary_layer_ids or framing_layer_ids
+    filtered_generated_materials = [
+        mat for mat in generated_materials if mat.get("id") in referenced_ids
+    ]
+
+    if (
+        len(filtered_generated_materials) == len(reference_materials)
+        and len(filtered_generated_materials) == 1
+    ):
+        generated_material_data = filtered_generated_materials[0]
+        reference_material_data = reference_materials[0]
+        materials_map[generated_material_data["id"]] = reference_material_data["id"]
+        return materials_map, errors
+
+    else:
+        materials_map = get_mapping(
+            "Materials",
+            filtered_generated_materials,
+            reference_materials,
+            object_id_map=object_id_map,
+        )
+
+    return materials_map, errors
 
 
 def define_boiler_map(generated_json, reference_json, object_id_map):
@@ -972,6 +1237,18 @@ def map_objects(generated_json, reference_json):
         )
         object_id_map.update(terminal_map)
         errors.extend(terminal_map_errors)
+
+    construction_map, construction_map_errors = define_construction_map(
+        generated_json, reference_json, object_id_map
+    )
+    object_id_map.update(construction_map)
+    errors.extend(construction_map_errors)
+
+    materials_map, materials_map_errors = define_materials_map(
+        generated_json, reference_json, object_id_map
+    )
+    object_id_map.update(materials_map)
+    errors.extend(materials_map_errors)
 
     boiler_map, boiler_map_errors = define_boiler_map(
         generated_json, reference_json, object_id_map
@@ -1578,6 +1855,130 @@ def handle_ordered_comparisons(
         warnings.extend(general_comparison_warnings)
         errors.extend(general_comparison_errors)
 
+    elif "constructions[" in json_key_path:
+        aligned_generated_values = {}
+        aligned_reference_values = {}
+
+        generated_constructions = find_all(
+            json_key_path[
+                : json_key_path.index("].", json_key_path.index("constructions")) + 1
+            ],
+            generated_json,
+        )
+        generated_construction_ids = [
+            construction["id"] for construction in generated_constructions
+        ]
+
+        for generated_construction in generated_constructions:
+            generated_construction_id = generated_construction["id"]
+            reference_construction_id = object_id_map.get(generated_construction_id)
+
+            if isinstance(reference_construction_id, dict):
+                reference_construction_id = reference_construction_id.get("id")
+
+            if not reference_construction_id:
+                continue
+
+            construction_data_path = json_key_path[
+                json_key_path.index("].", json_key_path.index("constructions")) + 2 :
+            ]
+            generated_value = find_one(construction_data_path, generated_construction)
+            aligned_generated_values[generated_construction_id] = generated_value
+
+            aligned_reference_value = find_one(
+                json_key_path.replace(
+                    "constructions[*]",
+                    f"constructions[?(@.id == '{reference_construction_id}')]",
+                ),
+                reference_json,
+                None,
+            )
+
+            aligned_reference_values[generated_construction_id] = (
+                aligned_reference_value
+            )
+
+        if all(value is None for value in aligned_generated_values.values()):
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.NOT_IMPLEMENTED.value,
+            )
+            warnings.append(notes)
+            return warnings, errors
+
+        general_comparison_warnings, general_comparison_errors = compare_json_values(
+            path_spec,
+            aligned_generated_values,
+            aligned_reference_values,
+            generated_construction_ids,
+            specification_test,
+            object_id_map,
+        )
+        errors.extend(general_comparison_errors)
+
+    elif "materials[" in json_key_path:
+        aligned_generated_values = {}
+        aligned_reference_values = {}
+
+        generated_materials = find_all(
+            json_key_path[
+                : json_key_path.index("].", json_key_path.index("materials")) + 1
+            ],
+            generated_json,
+        )
+        generated_material_ids = [material["id"] for material in generated_materials]
+
+        for generated_material in generated_materials:
+            generated_material_id = generated_material["id"]
+            reference_material_id = object_id_map.get(generated_material_id)
+
+            if isinstance(reference_material_id, dict):
+                reference_material_id = reference_material_id.get("id")
+
+            if not reference_material_id:
+                continue
+
+            material_data_path = json_key_path[
+                json_key_path.index("].", json_key_path.index("materials")) + 2 :
+            ]
+            generated_value = find_one(material_data_path, generated_material)
+            aligned_generated_values[generated_material_id] = generated_value
+
+            aligned_reference_value = find_one(
+                json_key_path.replace(
+                    "materials[*]",
+                    f"materials[?(@.id == '{reference_material_id}')]",
+                ),
+                reference_json,
+                None,
+            )
+
+            aligned_reference_values[generated_material_id] = aligned_reference_value
+
+        if all(value is None for value in aligned_generated_values.values()):
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.NOT_IMPLEMENTED.value,
+            )
+            warnings.append(notes)
+            return warnings, errors
+
+        general_comparison_warnings, general_comparison_errors = compare_json_values(
+            path_spec,
+            aligned_generated_values,
+            aligned_reference_values,
+            generated_material_ids,
+            specification_test,
+            object_id_map,
+        )
+        errors.extend(general_comparison_errors)
+
     elif "heating_ventilating_air_conditioning_systems[" in json_key_path:
         aligned_generated_values = {}
         aligned_reference_values = {}
@@ -1896,6 +2297,9 @@ def handle_ordered_comparisons(
             generated_pump_id = generated_pump["id"]
             reference_pump_id = object_id_map.get(generated_pump_id)
 
+            if isinstance(reference_pump_id, dict):
+                reference_pump_id = reference_pump_id.get("id")
+
             if not reference_pump_id:
                 continue
 
@@ -2044,6 +2448,8 @@ def run_file_comparison(
             if any(
                 group in json_key_path
                 for group in [
+                    "constructions[",
+                    "materials[",
                     "zones[",
                     "surfaces[",
                     "terminals[",

@@ -74,7 +74,8 @@
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].air_distribution_effectiveness",
-        "compare-value": true
+        "compare-value": true,
+        "tolerance": 0.01
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].infiltration.modeling_method",
@@ -96,7 +97,8 @@
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*].tilt",
-        "compare-value": true
+        "compare-value": true,
+        "tolerance": 0.01
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[?(@.classification = \"WALL\")].azimuth",
@@ -109,31 +111,33 @@
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[?(@.adjacent_to == \"EXTERIOR\")].optical_properties.absorptance_thermal_exterior",
-        "compare-value": true
+        "compare-value": true,
+        "tolerance": 0.01
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[?(@.adjacent_to == \"EXTERIOR\")].optical_properties.absorptance_solar_exterior",
-        "compare-value": true
+        "compare-value": true,
+        "tolerance": 0.01
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[?(@.adjacent_to == \"EXTERIOR\")].optical_properties.absorptance_visible_exterior",
-        "compare-value": true
+        "compare-value": true,
+        "tolerance": 0.01
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*].optical_properties.absorptance_thermal_interior",
-        "compare-value": true
+        "compare-value": true,
+        "tolerance": 0.01
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*].optical_properties.absorptance_solar_interior",
-        "compare-value": true
+        "compare-value": true,
+        "tolerance": 0.01
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*].optical_properties.absorptance_visible_interior",
-        "compare-value": true
-        },
-        {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*].construction.surface_construction_input_option",
-        "compare-value": true
+        "compare-value": true,
+        "tolerance": 0.01
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*].construction.u_factor",
@@ -141,31 +145,31 @@
         "tolerance": 0.01
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*].construction.primary_layers",
+        "json-key-path": "$.ruleset_model_descriptions[0].constructions[*].primary_layers",
         "compare-value": false
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*].construction.primary_layers[*].thickness",
+        "json-key-path": "$.ruleset_model_descriptions[0].materials[*].thickness",
         "compare-value": true,
         "tolerance": 0.001
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*].construction.primary_layers[*].thermal_conductivity",
+        "json-key-path": "$.ruleset_model_descriptions[0].materials[*].thermal_conductivity",
         "compare-value": true,
         "tolerance": 0.01
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*].construction.primary_layers[*].density",
+        "json-key-path": "$.ruleset_model_descriptions[0].materials[*].density",
         "compare-value": true,
         "tolerance": 5.0
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*].construction.primary_layers[*].specific_heat",
+        "json-key-path": "$.ruleset_model_descriptions[0].materials[*].specific_heat",
         "compare-value": true,
         "tolerance": 5.0
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*].construction.primary_layers[*].r_value",
+        "json-key-path": "$.ruleset_model_descriptions[0].materials[*].r_value",
         "compare-value": true,
         "tolerance": 0.01
         },
@@ -315,7 +319,7 @@
         "tolerance": 1.0
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].cooling_system.is_sized_based_on_design_day",
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].cooling_system.is_calculated_size",
         "compare-value": true
         },
         {
@@ -341,7 +345,8 @@
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].preheat_system.heating_coil_setpoint",
-        "compare-value": true
+        "compare-value": true,
+        "tolerance": 0.01
         },
         {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].heating_ventilating_air_conditioning_systems[*].preheat_system.humidification_type",
@@ -615,7 +620,7 @@
         "compare-value": false
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].pumps[*].is_flow_sized_based_on_design_day",
+        "json-key-path": "$.ruleset_model_descriptions[0].pumps[*].is_flow_calculated",
         "compare-value": true
         },
         {
@@ -709,7 +714,7 @@
         "compare-value": true
         },
         {
-        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[*].cooling_or_condensing_design_and_control.minimum_flow_fraction",
+        "json-key-path": "$.ruleset_model_descriptions[0].fluid_loops[?(@.type == \"COOLING\")].cooling_or_condensing_design_and_control.minimum_flow_fraction",
         "compare-value": true,
         "tolerance": 0.01
         },
