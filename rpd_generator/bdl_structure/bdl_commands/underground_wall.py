@@ -1,5 +1,3 @@
-import copy
-
 from rpd_generator.bdl_structure.child_node import ChildNode
 from rpd_generator.schema.schema_enums import SchemaEnums
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
@@ -7,9 +5,6 @@ from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 SurfaceClassificationOptions = SchemaEnums.schema_enums["SurfaceClassificationOptions"]
 SurfaceAdjacencyOptions = SchemaEnums.schema_enums["SurfaceAdjacencyOptions"]
-AdditionalSurfaceAdjacencyOptions2019ASHRAE901 = SchemaEnums.schema_enums[
-    "AdditionalSurfaceAdjacencyOptions2019ASHRAE901"
-]
 StatusOptions = SchemaEnums.schema_enums["StatusOptions"]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_UndergroundWallKeywords = BDLEnums.bdl_enums["UndergroundWallKeywords"]
@@ -37,11 +32,11 @@ class BelowGradeWall(ChildNode):
         self.underground_wall_data_structure = {}
 
         # data elements with children
-        self.construction = {}
         self.optical_properties = {}
 
         # data elements with no children
         self.classification = None
+        self.construction = None
         self.area = None
         self.tilt = None
         self.azimuth = None
@@ -70,6 +65,8 @@ class BelowGradeWall(ChildNode):
         self.tilt = self.try_float(self.get_inp(BDL_UndergroundWallKeywords.TILT))
 
         self.classification = self.determine_surface_classification()
+
+        self.construction = self.get_inp(BDL_UndergroundWallKeywords.CONSTRUCTION)
 
         parent_floor_azimuth = self.parent.parent.try_float(
             self.parent.parent.get_inp(BDL_FloorKeywords.AZIMUTH)
@@ -119,11 +116,6 @@ class BelowGradeWall(ChildNode):
 
     def populate_data_group(self):
         """Populate schema structure for below grade wall object."""
-        self.construction = copy.deepcopy(
-            self.get_obj(
-                self.get_inp(BDL_UndergroundWallKeywords.CONSTRUCTION)
-            ).construction_data_structure
-        )
 
         optical_property_attributes = [
             "optical_property_id",
@@ -143,7 +135,6 @@ class BelowGradeWall(ChildNode):
 
         self.underground_wall_data_structure = {
             "id": self.u_name,
-            "construction": self.construction,
             "optical_properties": self.optical_properties,
         }
         self.populate_data_elements()
@@ -152,6 +143,7 @@ class BelowGradeWall(ChildNode):
             "reporting_name",
             "notes",
             "classification",
+            "construction",
             "area",
             "tilt",
             "azimuth",
@@ -201,9 +193,12 @@ class BelowGradeWall(ChildNode):
         """
         Populate the C-factor for below-grade vertical walls by removing the interior air film resistance
         """
-        u_factor = self.construction.get("u_factor")
+        construction = self.get_obj(
+            self.get_inp(BDL_UndergroundWallKeywords.CONSTRUCTION)
+        )
+        u_factor = construction.u_factor
         if u_factor:
-            self.construction["c_factor"] = 1 / (1 / u_factor - 0.68)
+            construction.c_factor = 1 / (1 / u_factor - 0.68)
 
     def populate_f_factor(self):
         """
@@ -216,4 +211,4 @@ class BelowGradeWall(ChildNode):
             self.parent.parent.f_factor
             and not construction.used_for_multiple_slabs_on_different_z
         ):
-            self.construction["f_factor"] = self.parent.parent.f_factor
+            construction.f_factor = self.parent.parent.f_factor

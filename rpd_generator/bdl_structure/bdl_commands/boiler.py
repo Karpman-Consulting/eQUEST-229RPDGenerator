@@ -48,7 +48,7 @@ class Boiler(BaseNode):
         self.boiler_data_structure = {}
 
         # data elements with children
-        self.output_validation_points = []
+        self.operating_points = []
         self.efficiency_metric_types = []
         self.efficiency_metric_values = []
 
@@ -151,19 +151,25 @@ class Boiler(BaseNode):
                     BoilerEfficiencyMetricOptions.THERMAL
                 )
                 self.notes = 'The equations in the ANSI/ASHRAE/IES Standard 90.1-2019 Performance Rating Method Reference Manual Section 3.8.1 under the "Boiler Efficiency" descriptor for converting from boiler thermal efficiency to combustion efficiency and AFUE were used to populate combustion efficiency and AFUE.'
-                # self.efficiency.append(1 / boiler_f_i_r + 0.02)
-                # self.efficiency_metrics.append(BoilerEfficiencyMetricOptions.COMBUSTION)
-                # # EQUATIONS DERIVED FROM PRM REFERENCE MANUAL
-                # if 0.825 > self.efficiency[0] > 0.8:
-                #     self.efficiency.append((self.efficiency[0] - 0.725) / 0.1)
-                #     self.efficiency_metrics.append(
-                #         BoilerEfficiencyMetricOptions.ANNUAL_FUEL_UTILIZATION
-                #     )
-                # elif 0.825 <= self.efficiency[0] <= 0.98:
-                #     self.efficiency.append((self.efficiency[0] - 0.105) / 0.875)
-                #     self.efficiency_metrics.append(
-                #         BoilerEfficiencyMetricOptions.ANNUAL_FUEL_UTILIZATION
-                #     )
+                self.efficiency_metric_values.append(1 / boiler_f_i_r + 0.02)
+                self.efficiency_metric_types.append(
+                    BoilerEfficiencyMetricOptions.COMBUSTION
+                )
+                # EQUATIONS DERIVED FROM PRM REFERENCE MANUAL
+                if 0.825 > self.efficiency_metric_values[0] > 0.8:
+                    self.efficiency_metric_values.append(
+                        (self.efficiency_metric_values[0] - 0.725) / 0.1
+                    )
+                    self.efficiency_metric_types.append(
+                        BoilerEfficiencyMetricOptions.ANNUAL_FUEL_UTILIZATION
+                    )
+                elif 0.825 <= self.efficiency_metric_values[0] <= 0.98:
+                    self.efficiency_metric_values.append(
+                        (self.efficiency_metric_values[0] - 0.105) / 0.875
+                    )
+                    self.efficiency_metric_types.append(
+                        BoilerEfficiencyMetricOptions.ANNUAL_FUEL_UTILIZATION
+                    )
 
         # Assign pump data elements populated from the boiler keyword value pairs
         pump = self.get_obj(self.get_inp(BDL_BoilerKeywords.HW_PUMP))
@@ -216,7 +222,7 @@ class Boiler(BaseNode):
             "id": self.u_name,
             "efficiency_metric_values": self.efficiency_metric_values,
             "efficiency_metric_types": self.efficiency_metric_types,
-            "output_validation_points": self.output_validation_points,
+            "operating_points": self.operating_points,
         }
 
         no_children_attributes = [

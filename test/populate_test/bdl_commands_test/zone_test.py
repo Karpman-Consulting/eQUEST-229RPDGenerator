@@ -37,7 +37,11 @@ from rpd_generator.bdl_structure.bdl_commands.system import (
     BDL_SystemCoolingTypes,
 )
 from rpd_generator.bdl_structure.bdl_commands.zone import *
-from rpd_generator.bdl_structure.bdl_commands.space import Space
+from rpd_generator.bdl_structure.bdl_commands.space import (
+    Space,
+    Infiltration,
+    BDL_InfiltrationAlgorithmOptions,
+)
 from rpd_generator.artifacts.ruleset_project_description import (
     RulesetProjectDescription,
 )
@@ -297,7 +301,8 @@ class TestZones(unittest.TestCase):
             ],
             "thermostat_cooling_setpoint_schedule": "Thermostat Annual Schedule",
             "thermostat_heating_setpoint_schedule": "Thermostat Annual Schedule",
-            "zonal_exhaust_fan": {},
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [],
         }
         self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
@@ -378,7 +383,7 @@ class TestZones(unittest.TestCase):
                         "design_electric_power": 0,
                         "design_pressure_rise": 30.0,
                         "id": "Zone 1 MainTerminal Fan",
-                        "is_airflow_sized_based_on_design_day": False,
+                        "is_airflow_calculated": False,
                         "motor_efficiency": 0.9,
                         "specification_method": "DETAILED",
                         "total_efficiency": 0.9,
@@ -387,7 +392,8 @@ class TestZones(unittest.TestCase):
             ],
             "thermostat_cooling_setpoint_schedule": "Thermostat Annual Schedule",
             "thermostat_heating_setpoint_schedule": "Thermostat Annual Schedule",
-            "zonal_exhaust_fan": {},
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [],
         }
         self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
@@ -467,7 +473,8 @@ class TestZones(unittest.TestCase):
             ],
             "thermostat_cooling_setpoint_schedule": "Thermostat Annual Schedule",
             "thermostat_heating_setpoint_schedule": "Thermostat Annual Schedule",
-            "zonal_exhaust_fan": {},
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [],
         }
         self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
@@ -489,7 +496,8 @@ class TestZones(unittest.TestCase):
             "spaces": [],
             "surfaces": [],
             "terminals": [],
-            "zonal_exhaust_fan": {},
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [],
         }
         self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
@@ -528,15 +536,18 @@ class TestZones(unittest.TestCase):
                 }
             ],
             "exhaust_airflow_rate_multiplier_schedule": "Fan Annual Schedule",
-            "zonal_exhaust_fan": {
-                "id": "Zone 1 EF",
-                "design_airflow": 150.0,
-                "design_electric_power": 0.04408382900635919,
-                "design_pressure_rise": 2.0,
-                "is_airflow_sized_based_on_design_day": False,
-                "specification_method": "DETAILED",
-                "total_efficiency": 0.8,
-            },
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [
+                {
+                    "id": "Zone 1 EF",
+                    "design_airflow": 150.0,
+                    "design_electric_power": 0.04408382900635919,
+                    "design_pressure_rise": 2.0,
+                    "is_airflow_calculated": False,
+                    "specification_method": "DETAILED",
+                    "total_efficiency": 0.8,
+                }
+            ],
         }
         self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
@@ -577,7 +588,8 @@ class TestZones(unittest.TestCase):
                     "served_by_heating_ventilating_air_conditioning_system": "System 1",
                 }
             ],
-            "zonal_exhaust_fan": {},
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [],
         }
         self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
@@ -623,7 +635,8 @@ class TestZones(unittest.TestCase):
                     "served_by_heating_ventilating_air_conditioning_system": "DOAS 1",
                 },
             ],
-            "zonal_exhaust_fan": {},
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [],
         }
         expected_data_structure["terminals"] = sorted(
             expected_data_structure["terminals"], key=lambda t: t["id"]
@@ -680,7 +693,8 @@ class TestZones(unittest.TestCase):
                     "is_supply_ducted": False,
                 },
             ],
-            "zonal_exhaust_fan": {},
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [],
         }
 
         expected_data_structure["terminals"] = sorted(
@@ -725,7 +739,8 @@ class TestZones(unittest.TestCase):
                     "served_by_heating_ventilating_air_conditioning_system": "System 1",
                 }
             ],
-            "zonal_exhaust_fan": {},
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [],
         }
         self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
@@ -778,7 +793,8 @@ class TestZones(unittest.TestCase):
                 }
             ],
             "volume": 1000.0,
-            "zonal_exhaust_fan": {},
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [],
         }
         self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
 
@@ -834,6 +850,162 @@ class TestZones(unittest.TestCase):
                     "served_by_heating_ventilating_air_conditioning_system": "System 1",
                 }
             ],
-            "zonal_exhaust_fan": {},
+            "zonal_supply_fans": [],
+            "zonal_exhaust_fans": [],
         }
         self.assertEqual(expected_data_structure, self.test_zone.zone_data_structure)
+
+    def test_infiltration_air_change_method(self):
+        """
+        Test infiltration data structure populated from AIR_CHANGE method using both flow/area and air changes/hour.
+        """
+        floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        space = Space("Space 1", floor, self.rmd)
+        self.test_zone.keyword_value_pairs[BDL_ZoneKeywords.SPACE] = "Space 1"
+
+        space.keyword_value_pairs = {
+            BDL_SpaceKeywords.INF_METHOD: BDL_InfiltrationAlgorithmOptions.AIR_CHANGE,
+            BDL_SpaceKeywords.INF_FLOW_AREA: "0.1",  # cfm/ft²
+            BDL_SpaceKeywords.AIR_CHANGES_HR: "1.2",
+        }
+        space.floor_area = 500  # ft²
+        self.test_zone.volume = 5000  # ft³
+
+        infiltration = Infiltration(space)
+        infiltration.populate_data_elements()
+        infiltration.populate_data_group()
+
+        expected_flow_rate = 0.1 * 500 + 1.2 * 5000 / 60  # = 50 + 100 = 150
+        expected_structure = {
+            "id": "Zone 1 Infil",
+            "modeling_method": "WEATHER_DRIVEN",
+            "algorithm_name": "Air Change Method",
+            "flow_rate": expected_flow_rate,
+        }
+
+        self.assertEqual(expected_structure, infiltration.data_structure)
+
+    def test_infiltration_flow_area_only(self):
+        floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        space = Space("Space 1", floor, self.rmd)
+        self.test_zone.keyword_value_pairs[BDL_ZoneKeywords.SPACE] = "Space 1"
+
+        space.keyword_value_pairs = {
+            BDL_SpaceKeywords.INF_METHOD: BDL_InfiltrationAlgorithmOptions.AIR_CHANGE,
+            BDL_SpaceKeywords.INF_FLOW_AREA: "0.15",
+        }
+        space.floor_area = 600  # ft²
+
+        infiltration = Infiltration(space)
+        infiltration.populate_data_elements()
+        infiltration.populate_data_group()
+
+        expected_structure = {
+            "id": "Zone 1 Infil",
+            "modeling_method": "CONSTANT",
+            "algorithm_name": "Air Change Method",
+            "flow_rate": 0.15 * 600,
+        }
+
+        self.assertEqual(expected_structure, infiltration.data_structure)
+
+    def test_infiltration_constant_scheduled(self):
+        floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        space = Space("Space 1", floor, self.rmd)
+        self.test_zone.keyword_value_pairs[BDL_ZoneKeywords.SPACE] = "Space 1"
+
+        space.keyword_value_pairs = {
+            BDL_SpaceKeywords.INF_METHOD: BDL_InfiltrationAlgorithmOptions.AIR_CHANGE,
+            BDL_SpaceKeywords.INF_FLOW_AREA: "0.2",
+            BDL_SpaceKeywords.INF_SCHEDULE: "Infiltration Schedule",
+        }
+        space.floor_area = 400  # ft²
+
+        infiltration = Infiltration(space)
+        infiltration.populate_data_elements()
+        infiltration.populate_data_group()
+
+        expected_structure = {
+            "id": "Zone 1 Infil",
+            "modeling_method": "CONSTANT_SCHEDULED",
+            "algorithm_name": "Air Change Method",
+            "flow_rate": 0.2 * 400,
+            "multiplier_schedule": "Infiltration Schedule",
+        }
+
+        self.assertEqual(expected_structure, infiltration.data_structure)
+
+    def test_infiltration_air_changes_only(self):
+        floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        space = Space("Space 1", floor, self.rmd)
+        self.test_zone.keyword_value_pairs[BDL_ZoneKeywords.SPACE] = "Space 1"
+
+        space.keyword_value_pairs = {
+            BDL_SpaceKeywords.INF_METHOD: BDL_InfiltrationAlgorithmOptions.AIR_CHANGE,
+            BDL_SpaceKeywords.AIR_CHANGES_HR: "0.5",
+        }
+        self.test_zone.volume = 3600  # ft³
+
+        infiltration = Infiltration(space)
+        infiltration.populate_data_elements()
+        infiltration.populate_data_group()
+
+        expected_structure = {
+            "id": "Zone 1 Infil",
+            "modeling_method": "WEATHER_DRIVEN",
+            "algorithm_name": "Air Change Method",
+            "flow_rate": 0.5 * 3600 / 60,
+        }
+
+        self.assertEqual(expected_structure, infiltration.data_structure)
+
+    def test_infiltration_zero_values(self):
+        floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        space = Space("Space 1", floor, self.rmd)
+        self.test_zone.keyword_value_pairs[BDL_ZoneKeywords.SPACE] = "Space 1"
+
+        space.keyword_value_pairs = {
+            BDL_SpaceKeywords.INF_METHOD: BDL_InfiltrationAlgorithmOptions.AIR_CHANGE,
+            BDL_SpaceKeywords.INF_FLOW_AREA: "0",
+            BDL_SpaceKeywords.AIR_CHANGES_HR: "0",
+        }
+
+        infiltration = Infiltration(space)
+        infiltration.populate_data_elements()
+        infiltration.populate_data_group()
+
+        expected_structure = {
+            "id": "Zone 1 Infil",
+            "modeling_method": "WEATHER_DRIVEN",
+            "algorithm_name": "Air Change Method",
+            "flow_rate": 0.0,
+        }
+
+        self.assertEqual(expected_structure, infiltration.data_structure)
+
+    def test_infiltration_non_air_change_method(self):
+        floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        space = Space("Space 1", floor, self.rmd)
+        self.test_zone.keyword_value_pairs[BDL_ZoneKeywords.SPACE] = "Space 1"
+
+        space.keyword_value_pairs = {
+            BDL_SpaceKeywords.INF_METHOD: BDL_InfiltrationAlgorithmOptions.CRACK,
+        }
+
+        infiltration = Infiltration(space)
+        infiltration.populate_data_elements()
+        infiltration.populate_data_group()
+
+        expected_structure = {
+            "id": "Zone 1 Infil",
+            "modeling_method": "WEATHER_DRIVEN",
+            "algorithm_name": "Crack Method",
+        }
+
+        self.assertEqual(expected_structure, infiltration.data_structure)

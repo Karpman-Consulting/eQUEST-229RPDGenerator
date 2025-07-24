@@ -78,7 +78,7 @@ class CirculationLoop(BaseNode):
     }
     piping_location_map = {
         BDL_CirculationLoopLocationOptions.OUTDOORS: ComponentLocationOptions.OUTSIDE,
-        BDL_CirculationLoopLocationOptions.ZONE: ComponentLocationOptions.IN_ZONE,
+        BDL_CirculationLoopLocationOptions.ZONE: None,  # TODO ZONE must be mapped to CONDITIONED, UNCONDITIONED, SEMICONDITIONED, etc
         BDL_CirculationLoopLocationOptions.TUNNEL: ComponentLocationOptions.CRAWL_SPACE,
         BDL_CirculationLoopLocationOptions.UNDERGROUND: ComponentLocationOptions.UNDERGROUND,
     }
@@ -104,7 +104,7 @@ class CirculationLoop(BaseNode):
         self.pump_power_per_flow_rate = None
 
         # ServiceWaterHeatingDistributionSystem data elements with children
-        self.service_water_piping = []
+        self.service_water_piping = {}
         self.tanks = []
 
         # ServiceWaterPiping data elements with children
@@ -275,7 +275,7 @@ class CirculationLoop(BaseNode):
                 if value is not None:
                     primary_service_water_piping[attr] = value
 
-            self.service_water_piping.append(primary_service_water_piping)
+            self.service_water_piping.update(primary_service_water_piping)
 
             self.data_structure = {
                 "id": self.u_name,
@@ -775,6 +775,7 @@ class CirculationLoop(BaseNode):
         self.loop_pipe_location = self.piping_location_map.get(
             self.get_inp(BDL_CirculationLoopKeywords.LOOP_LOCN)
         )
+
         self.location_zone = self.get_inp(BDL_CirculationLoopKeywords.LOOP_LOSS_ZONE)
         self.populate_swh_piping_design_and_control()
 
@@ -785,9 +786,9 @@ class CirculationLoop(BaseNode):
 
         pump.loop_or_piping = [self.u_name] * pump.qty
         for i in range(pump.qty):
-            if pump.is_flow_sized_based_on_design_day[i]:
-                # Override is_flow_sized_based_on_design_day if the circulation loop is not sized based on design loads
-                pump.is_flow_sized_based_on_design_day[i] = (
+            if pump.is_flow_calculated[i]:
+                # Override is_flow_calculated if the circulation loop is not sized based on design loads
+                pump.is_flow_calculated[i] = (
                     self.get_inp(BDL_CirculationLoopKeywords.SIZING_OPTION)
                     != BDL_CirculationLoopSizingOptions.PRIMARY
                 )
@@ -1180,6 +1181,5 @@ class ServiceWaterHeatingUse:
                 self.data_structure[attr] = value
 
     def insert_to_rpd(self):
-        self.parent_building_segment.service_water_heating_uses.append(
-            self.data_structure
-        )
+        self.parent_building_segment.service_water_heating_uses.append(self.name)
+        self.loop.rmd.service_water_heating_uses.append(self.data_structure)

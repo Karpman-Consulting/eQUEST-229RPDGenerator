@@ -33,8 +33,8 @@ class TestUndergroundWalls(unittest.TestCase):
         self.rmd.building_azimuth = 100
         self.floor = Floor("Floor 1", self.rmd)
         self.zone = MockZone.return_value
-        self.space = Space("Space 1", self.floor, self.rmd)
         self.rmd.space_map = {"Space 1": self.zone}
+        self.space = Space("Space 1", self.floor, self.rmd)
         self.underground_wall = BelowGradeWall(
             "Below Grade Wall 1", self.space, self.rmd
         )
@@ -74,15 +74,7 @@ class TestUndergroundWalls(unittest.TestCase):
                 "absorptance_solar_interior": 2.0,
                 "absorptance_visible_interior": 0.5,
             },
-            "construction": {
-                "framing_layers": [],
-                "id": "Construction 1",
-                "insulation_locations": [],
-                "primary_layers": [],
-                "r_values": [],
-                "u_factor": 0.5,
-                "c_factor": 0.7575757575757577,
-            },
+            "construction": "Construction 1",
             "adjacent_to": "GROUND",
             "azimuth": 350.0,
             "does_cast_shade": True,
@@ -111,13 +103,7 @@ class TestUndergroundWalls(unittest.TestCase):
             "tilt": 120.0,
             "classification": "FLOOR",
             "optical_properties": {"id": "Below Grade Wall 1 OpticalProps"},
-            "construction": {
-                "id": "Construction 1",
-                "primary_layers": [],
-                "framing_layers": [],
-                "insulation_locations": [],
-                "r_values": [],
-            },
+            "construction": "Construction 1",
             "adjacent_to": "GROUND",
         }
         self.assertEqual(
@@ -138,13 +124,7 @@ class TestUndergroundWalls(unittest.TestCase):
             "area": 400.0,
             "classification": "WALL",
             "optical_properties": {"id": "Below Grade Wall 1 OpticalProps"},
-            "construction": {
-                "id": "Construction 1",
-                "primary_layers": [],
-                "framing_layers": [],
-                "insulation_locations": [],
-                "r_values": [],
-            },
+            "construction": "Construction 1",
             "adjacent_to": "GROUND",
         }
         self.assertEqual(
@@ -207,30 +187,7 @@ class TestUndergroundWalls(unittest.TestCase):
                 "absorptance_solar_interior": 2.0,
                 "absorptance_visible_interior": 0.5,
             },
-            "construction": {
-                "framing_layers": [],
-                "id": "Construction 1",
-                "insulation_locations": [],
-                "primary_layers": [
-                    {
-                        "id": "Material 1",
-                        "thickness": 2.0,
-                        "thermal_conductivity": 3.0,
-                        "specific_heat": 4.0,
-                        "density": 20.1,
-                    },
-                    {
-                        "id": "Material 2",
-                        "r_value": 2.0,
-                    },
-                    {
-                        "id": "Material 3",
-                        "r_value": 3.0,
-                    },
-                ],
-                "r_values": [],
-                "u_factor": 0.5,
-            },
+            "construction": "Construction 1",
             "adjacent_to": "GROUND",
             "azimuth": 350.0,
             "does_cast_shade": True,
@@ -292,27 +249,7 @@ class TestUndergroundWalls(unittest.TestCase):
                 "absorptance_solar_interior": 2.0,
                 "absorptance_visible_interior": 0.5,
             },
-            "construction": {
-                "framing_layers": [],
-                "id": "Construction 1",
-                "insulation_locations": [],
-                "primary_layers": [
-                    {
-                        "id": "Material 1",
-                        "r_value": 1.0,
-                    },
-                    {
-                        "id": "Material 2",
-                        "r_value": 2.0,
-                    },
-                    {
-                        "id": "Material 3",
-                        "r_value": 3.0,
-                    },
-                ],
-                "r_values": [],
-                "u_factor": 0.5,
-            },
+            "construction": "Construction 1",
             "adjacent_to": "GROUND",
             "azimuth": 350.0,
             "does_cast_shade": True,

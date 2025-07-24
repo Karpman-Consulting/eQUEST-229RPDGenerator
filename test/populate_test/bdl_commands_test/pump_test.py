@@ -64,7 +64,7 @@ class TestPumps(unittest.TestCase):
         expected_data_structures = [
             {
                 "id": "Pump 1",
-                "output_validation_points": [],
+                "operating_points": [],
                 "specification_method": "SIMPLE",
                 "design_electric_power": 100.0,
                 "design_head": 5.0,
@@ -72,11 +72,11 @@ class TestPumps(unittest.TestCase):
                 "motor_efficiency": 0.8,
                 "design_flow": 30,
                 "speed_control": "FIXED_SPEED",
-                "is_flow_sized_based_on_design_day": False,
+                "is_flow_calculated": False,
             },
             {
                 "id": "Pump 1 1",
-                "output_validation_points": [],
+                "operating_points": [],
                 "specification_method": "SIMPLE",
                 "design_electric_power": 100.0,
                 "design_head": 5.0,
@@ -84,7 +84,7 @@ class TestPumps(unittest.TestCase):
                 "motor_efficiency": 0.8,
                 "design_flow": 30,
                 "speed_control": "FIXED_SPEED",
-                "is_flow_sized_based_on_design_day": False,
+                "is_flow_calculated": False,
             },
         ]
         self.assertEqual(expected_data_structures, self.pump.pump_data_structures)
@@ -106,12 +106,12 @@ class TestPumps(unittest.TestCase):
         expected_data_structures = [
             {
                 "id": "Pump 1",
-                "output_validation_points": [],
+                "operating_points": [],
                 "specification_method": "DETAILED",
                 "design_electric_power": 125.0,
                 "design_head": 5.0,
                 "speed_control": "FIXED_SPEED",
-                "is_flow_sized_based_on_design_day": False,
+                "is_flow_calculated": False,
             }
         ]
         self.assertEqual(expected_data_structures, self.pump.pump_data_structures)
@@ -133,12 +133,12 @@ class TestPumps(unittest.TestCase):
         expected_data_structures = [
             {
                 "id": "Pump 1",
-                "output_validation_points": [],
+                "operating_points": [],
                 "specification_method": "DETAILED",
                 "design_electric_power": 125.0,
                 "design_head": 5.0,
                 "speed_control": "TWO_SPEED",
-                "is_flow_sized_based_on_design_day": False,
+                "is_flow_calculated": False,
             }
         ]
         self.assertEqual(expected_data_structures, self.pump.pump_data_structures)
@@ -160,19 +160,19 @@ class TestPumps(unittest.TestCase):
         expected_data_structures = [
             {
                 "id": "Pump 1",
-                "output_validation_points": [],
+                "operating_points": [],
                 "specification_method": "DETAILED",
                 "design_electric_power": 125.0,
                 "design_head": 5.0,
                 "speed_control": "VARIABLE_SPEED",
-                "is_flow_sized_based_on_design_day": False,
+                "is_flow_calculated": False,
             }
         ]
         self.assertEqual(expected_data_structures, self.pump.pump_data_structures)
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_data_with_pump_design_day(self, mock_get_output_data):
-        """Tests that is_flow_sized_based_on_design_day is True when no FLOW value is provided"""
+        """Tests that is_flow_calculated is True when no FLOW value is provided"""
         mock_get_output_data.return_value = {
             "Pump - Power (kW)": 125,
         }
@@ -186,12 +186,12 @@ class TestPumps(unittest.TestCase):
         expected_data_structures = [
             {
                 "id": "Pump 1",
-                "output_validation_points": [],
+                "operating_points": [],
                 "specification_method": "DETAILED",
                 "design_electric_power": 125.0,
                 "design_head": 5.0,
                 "speed_control": "VARIABLE_SPEED",
-                "is_flow_sized_based_on_design_day": True,
+                "is_flow_calculated": True,
             }
         ]
         self.assertEqual(expected_data_structures, self.pump.pump_data_structures)
@@ -218,9 +218,9 @@ class TestPumps(unittest.TestCase):
         expected_data_structures = [
             {
                 "id": "Pump 1",
-                "output_validation_points": [],
+                "operating_points": [],
                 "specification_method": "DETAILED",
-                "is_flow_sized_based_on_design_day": True,
+                "is_flow_calculated": True,
                 "loop_or_piping": "Test HW Loop",
             }
         ]
@@ -306,9 +306,9 @@ class TestPumps(unittest.TestCase):
         expected_data_structures = [
             {
                 "id": "Pump 1",
-                "output_validation_points": [],
+                "operating_points": [],
                 "specification_method": "DETAILED",
-                "is_flow_sized_based_on_design_day": True,
+                "is_flow_calculated": True,
                 "loop_or_piping": "Test CHW Loop",
             }
         ]
@@ -335,9 +335,9 @@ class TestPumps(unittest.TestCase):
         expected_data_structures = [
             {
                 "id": "Pump 1",
-                "output_validation_points": [],
+                "operating_points": [],
                 "specification_method": "DETAILED",
-                "is_flow_sized_based_on_design_day": True,
+                "is_flow_calculated": True,
                 "loop_or_piping": "Test CW Loop",
             }
         ]

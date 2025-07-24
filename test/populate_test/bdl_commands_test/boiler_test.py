@@ -63,7 +63,7 @@ class TestFuelBoiler(unittest.TestCase):
             "notes": 'The equations in the ANSI/ASHRAE/IES Standard 90.1-2019 Performance Rating Method Reference Manual Section 3.8.1 under the "Boiler Efficiency" descriptor for converting from boiler thermal efficiency to combustion efficiency and AFUE were used to populate combustion efficiency and AFUE.',
             "draft_type": "NATURAL",
             "energy_source_type": "OTHER",
-            "output_validation_points": [],
+            "operating_points": [],
             "loop": "Test HW Loop",
             "auxiliary_power": 0.0,
             "design_capacity": 0.188203578125,
@@ -71,8 +71,16 @@ class TestFuelBoiler(unittest.TestCase):
             "operation_lower_limit": 0,
             "operation_upper_limit": 0.188203578125,
             "minimum_load_ratio": 0.33,
-            "efficiency_metric_values": [0.900009000090001],
-            "efficiency_metric_types": ["THERMAL"],
+            "efficiency_metric_values": [
+                0.900009000090001,
+                0.920009000090001,
+                0.9085817143885725,
+            ],
+            "efficiency_metric_types": [
+                "THERMAL",
+                "COMBUSTION",
+                "ANNUAL_FUEL_UTILIZATION",
+            ],
         }
         self.assertDictEqual(expected_data_structure, self.boiler.boiler_data_structure)
 
@@ -107,7 +115,7 @@ class TestFuelBoiler(unittest.TestCase):
             "notes": 'The equations in the ANSI/ASHRAE/IES Standard 90.1-2019 Performance Rating Method Reference Manual Section 3.8.1 under the "Boiler Efficiency" descriptor for converting from boiler thermal efficiency to combustion efficiency and AFUE were used to populate combustion efficiency and AFUE.',
             "draft_type": "FORCED",
             "energy_source_type": "NATURAL_GAS",
-            "output_validation_points": [],
+            "operating_points": [],
             "loop": "Test HW Loop",
             "auxiliary_power": 0.0,
             "design_capacity": 0.188203578125,
@@ -115,8 +123,16 @@ class TestFuelBoiler(unittest.TestCase):
             "operation_lower_limit": 0,
             "operation_upper_limit": 0.188203578125,
             "minimum_load_ratio": 0.33,
-            "efficiency_metric_values": [0.900009000090001],
-            "efficiency_metric_types": ["THERMAL"],
+            "efficiency_metric_values": [
+                0.900009000090001,
+                0.920009000090001,
+                0.9085817143885725,
+            ],
+            "efficiency_metric_types": [
+                "THERMAL",
+                "COMBUSTION",
+                "ANNUAL_FUEL_UTILIZATION",
+            ],
         }
         self.assertDictEqual(expected_data_structure, self.boiler.boiler_data_structure)
 
@@ -158,7 +174,7 @@ class TestElectricBoiler(unittest.TestCase):
             "id": "Boiler 1",
             "draft_type": "NATURAL",
             "energy_source_type": "ELECTRICITY",
-            "output_validation_points": [],
+            "operating_points": [],
             "loop": "Test HW Loop",
             "auxiliary_power": 0.0,
             "design_capacity": 0.8822398124999999,
@@ -194,7 +210,7 @@ class TestElectricBoiler(unittest.TestCase):
             "notes": "Electric boiler efficiency appears to be unregulated and so the impact of jacket losses on boiler thermal efficiency are unknown. As a simplification, where the modeler entered an electric input ratio of 1.0 it is assumed that the combustion and AFUE efficiency are also 1.0. This neglects the impact of jacket losses on efficiency.",
             "draft_type": "NATURAL",
             "energy_source_type": "ELECTRICITY",
-            "output_validation_points": [],
+            "operating_points": [],
             "loop": "Test HW Loop",
             "auxiliary_power": 0.0,
             "design_capacity": 0.8822398124999999,

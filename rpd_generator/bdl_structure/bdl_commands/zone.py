@@ -63,7 +63,8 @@ class Zone(ChildNode):
         self.spaces = []
         self.surfaces = []
         self.terminals = []
-        self.zonal_exhaust_fan = {}
+        self.zonal_exhaust_fans = []
+        self.zonal_supply_fans = []
         self.infiltration = {}
 
         # data elements with no children
@@ -116,7 +117,6 @@ class Zone(ChildNode):
         self.volume = (
             self.try_float(space.get_inp(BDL_SpaceKeywords.VOLUME)) if space else None
         )
-        space.populate_zone_infiltration() if space else None
 
         self.floor_name = space.parent.u_name if space else None
 
@@ -194,14 +194,15 @@ class Zone(ChildNode):
         # Populate the zonal exhaust fan data structure
         self.exhaust_fan.populate_data_group() if self.exhaust_fan else None
         if self.exhaust_fan:
-            self.zonal_exhaust_fan = self.exhaust_fan.data_structure
+            self.zonal_exhaust_fans = [self.exhaust_fan.data_structure]
 
         self.zone_data_structure = {
             "id": self.u_name,
             "spaces": self.spaces,
             "surfaces": self.surfaces,
             "terminals": self.terminals,
-            "zonal_exhaust_fan": self.zonal_exhaust_fan,
+            "zonal_exhaust_fans": self.zonal_exhaust_fans,
+            "zonal_supply_fans": self.zonal_supply_fans,
             "infiltration": self.infiltration,
         }
 
@@ -857,7 +858,7 @@ class Zone(ChildNode):
         self.exhaust_fan.name = self.u_name + " EF"
         self.rmd.zonal_exh_fan_names.append(self.exhaust_fan.name)
         self.exhaust_fan.design_airflow = exhaust_airflow
-        self.exhaust_fan.is_airflow_sized_based_on_design_day = False
+        self.exhaust_fan.is_airflow_calculated = False
 
         if self.get_inp(BDL_ZoneKeywords.EXHAUST_STATIC) is not None:
             self.exhaust_fan.specification_method = (
@@ -997,9 +998,9 @@ class Terminal:
                     self.get_terminal_system_temperature_control()
                 )
                 if self.zone.parent.get_inp(BDL_SystemKeywords.SUPPLY_FLOW) is not None:
-                    self.zone.terminal_fan.is_airflow_sized_based_on_design_day = False
-                if self.zone.terminal_fan.is_airflow_sized_based_on_design_day is None:
-                    self.zone.terminal_fan.is_airflow_sized_based_on_design_day = (
+                    self.zone.terminal_fan.is_airflow_calculated = False
+                if self.zone.terminal_fan.is_airflow_calculated is None:
+                    self.zone.terminal_fan.is_airflow_calculated = (
                         # If the zone has assigned flow rates, the fan is not sized based on design day
                         not (
                             self.zone.get_inp(BDL_ZoneKeywords.ASSIGNED_FLOW)
@@ -1176,9 +1177,7 @@ class Terminal:
                         self.zone.get_inp(BDL_ZoneKeywords.ZONE_FAN_RUN)
                     )
                     if self.zone.get_inp(BDL_ZoneKeywords.ZONE_FAN_FLOW):
-                        self.zone.terminal_fan.is_airflow_sized_based_on_design_day = (
-                            False
-                        )
+                        self.zone.terminal_fan.is_airflow_calculated = False
                     self.zone.terminal_fan.specification_method = (
                         FanSpecificationMethodOptions.SIMPLE
                     )

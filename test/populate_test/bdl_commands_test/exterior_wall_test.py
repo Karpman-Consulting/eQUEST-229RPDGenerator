@@ -33,9 +33,10 @@ class TestExteriorWall(unittest.TestCase):
         self.rmd.doe2_data_path = Config.DOE23_DATA_PATH
         self.rmd.building_azimuth = 100
         self.floor = Floor("Floor 1", self.rmd)
-        self.space = Space("Space 1", self.floor, self.rmd)
         self.zone = MockZone.return_value
+        self.zone.u_name = "Zone 1"
         self.rmd.space_map = {"Space 1": self.zone}
+        self.space = Space("Space 1", self.floor, self.rmd)
         self.exterior_wall = ExteriorWall("Exterior Wall 1", self.space, self.rmd)
         self.construction = Construction("Construction 1", self.rmd)
         self.layer = Layer("Layer 1", self.rmd)
@@ -67,14 +68,7 @@ class TestExteriorWall(unittest.TestCase):
         expected_data_structure = {
             "id": "Exterior Wall 1",
             "subsurfaces": [],
-            "construction": {
-                "framing_layers": [],
-                "id": "Construction 1",
-                "insulation_locations": [],
-                "primary_layers": [],
-                "r_values": [],
-                "u_factor": 0.4608294930875576,
-            },
+            "construction": "Construction 1",
             "area": 300.0,
             "classification": SurfaceClassificationOptions.WALL,
             "tilt": 90.0,
@@ -107,13 +101,7 @@ class TestExteriorWall(unittest.TestCase):
         expected_data_structure = {
             "id": "Exterior Wall 1",
             "subsurfaces": [],
-            "construction": {
-                "id": "Construction 1",
-                "primary_layers": [],
-                "framing_layers": [],
-                "insulation_locations": [],
-                "r_values": [],
-            },
+            "construction": "Construction 1",
             "area": 300.0,
             "classification": SurfaceClassificationOptions.WALL,
             "adjacent_to": SurfaceAdjacencyOptions.EXTERIOR,
@@ -138,13 +126,7 @@ class TestExteriorWall(unittest.TestCase):
         expected_data_structure = {
             "id": "Exterior Wall 1",
             "subsurfaces": [],
-            "construction": {
-                "id": "Construction 1",
-                "primary_layers": [],
-                "framing_layers": [],
-                "insulation_locations": [],
-                "r_values": [],
-            },
+            "construction": "Construction 1",
             "area": 300.0,
             "classification": SurfaceClassificationOptions.FLOOR,
             "tilt": 120.0,
@@ -169,13 +151,7 @@ class TestExteriorWall(unittest.TestCase):
         expected_data_structure = {
             "id": "Exterior Wall 1",
             "subsurfaces": [],
-            "construction": {
-                "id": "Construction 1",
-                "primary_layers": [],
-                "framing_layers": [],
-                "insulation_locations": [],
-                "r_values": [],
-            },
+            "construction": "Construction 1",
             "area": 300.0,
             "classification": SurfaceClassificationOptions.WALL,
             "does_cast_shade": True,
@@ -237,30 +213,7 @@ class TestExteriorWall(unittest.TestCase):
         expected_data_structure = {
             "id": "Exterior Wall 1",
             "subsurfaces": [],
-            "construction": {
-                "framing_layers": [],
-                "id": "Construction 1",
-                "insulation_locations": [],
-                "primary_layers": [
-                    {
-                        "id": "Material 1",
-                        "thickness": 2.0,
-                        "thermal_conductivity": 3.0,
-                        "specific_heat": 4.0,
-                        "density": 20.1,
-                    },
-                    {
-                        "id": "Material 2",
-                        "r_value": 2.0,
-                    },
-                    {
-                        "id": "Material 3",
-                        "r_value": 3.0,
-                    },
-                ],
-                "r_values": [],
-                "u_factor": 0.4608294930875576,
-            },
+            "construction": "Construction 1",
             "area": 300.0,
             "classification": SurfaceClassificationOptions.CEILING,
             "tilt": 5.0,
@@ -325,27 +278,7 @@ class TestExteriorWall(unittest.TestCase):
         expected_data_structure = {
             "id": "Exterior Wall 1",
             "subsurfaces": [],
-            "construction": {
-                "id": "Construction 1",
-                "insulation_locations": [],
-                "primary_layers": [
-                    {
-                        "id": "Material 1",
-                        "r_value": 1.0,
-                    },
-                    {
-                        "id": "Material 2",
-                        "r_value": 2.0,
-                    },
-                    {
-                        "id": "Material 3",
-                        "r_value": 3.0,
-                    },
-                ],
-                "framing_layers": [],
-                "r_values": [],
-                "u_factor": 0.4608294930875576,
-            },
+            "construction": "Construction 1",
             "area": 300.0,
             "classification": SurfaceClassificationOptions.CEILING,
             "tilt": 5.0,

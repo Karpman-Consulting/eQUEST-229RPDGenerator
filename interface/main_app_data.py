@@ -100,7 +100,7 @@ class MainAppData:
         rpd_generator.write_rpd_json_from_rpd(
             self.rpd,
             self.rmds,
-            str(Path(self.output_directory.get()) / f"{self.project_name.get()}.json"),
+            str(Path(self.output_directory.get()) / f"{self.project_name.get()}.rpd"),
         )
 
     def get_rmd(self, rmd_type):

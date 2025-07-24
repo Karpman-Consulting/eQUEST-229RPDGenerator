@@ -25,7 +25,7 @@ class DomesticWaterHeater(BaseNode):
 
     location_map = {
         BDL_DWHeaterLocationOptions.OUTDOOR: ComponentLocationOptions.OUTSIDE,
-        BDL_DWHeaterLocationOptions.ZONE: ComponentLocationOptions.IN_ZONE,
+        BDL_DWHeaterLocationOptions.ZONE: None,  # TODO ZONE must be mapped to CONDITIONED, UNCONDITIONED, SEMICONDITIONED, etc
     }
 
     def __init__(self, u_name, rmd):
@@ -36,17 +36,17 @@ class DomesticWaterHeater(BaseNode):
         self.data_structure = {}
 
         # data elements with children
-        self.output_validation_points = []
-        self.compressor_capacity_validation_points = []
-        self.compressor_power_validation_points = []
+        self.operating_points = []
+        self.compressor_capacity_operating_points = []
+        self.compressor_power_operating_points = []
         self.tank = {}
         self.solar_thermal_systems = []
+        self.efficiency_metric_types = []
+        self.efficiency_metric_values = []
 
         # data elements with no children
         self.heater_fuel_type = None
         self.distribution_system = None
-        self.efficiency_metric_types = []
-        self.efficiency_metric_values = []
         self.draw_pattern = None
         self.first_hour_rating = None
         self.input_power = None
@@ -60,7 +60,6 @@ class DomesticWaterHeater(BaseNode):
         self.compressor_heat_rejection_zone = None
         self.draft_fan_power = None
         self.has_electrical_ignition = None
-        self.heater_type = None
         self.status_type = None
         self.hot_water_loop = None
 
@@ -190,11 +189,11 @@ class DomesticWaterHeater(BaseNode):
         self.data_structure.update(
             {
                 "id": self.u_name,
-                "output_validation_points": self.output_validation_points,
+                "operating_points": self.operating_points,
                 "tank": self.tank,
                 "solar_thermal_systems": self.solar_thermal_systems,
-                "compressor_capacity_validation_points": self.compressor_capacity_validation_points,
-                "compressor_power_validation_points": self.compressor_power_validation_points,
+                "compressor_capacity_operating_points": self.compressor_capacity_operating_points,
+                "compressor_power_operating_points": self.compressor_power_operating_points,
             }
         )
 
@@ -234,7 +233,6 @@ class DomesticWaterHeater(BaseNode):
             "compressor_heat_rejection_zone",
             "draft_fan_power",
             "has_electrical_ignition",
-            "heater_type",
             "status_type",
             "hot_water_loop",
         ]

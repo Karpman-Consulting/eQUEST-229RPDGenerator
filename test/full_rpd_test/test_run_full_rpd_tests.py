@@ -626,17 +626,17 @@ class TestRunFullRPDTests(unittest.TestCase):
             object_id_map,
         )
 
-    def test_map_e1_objects(self):
+    def test_map_objects(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "E-1.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "E-1.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         generated_json_path = os.path.join(
-            current_dir, "E-1", "229 Test Case E-1 (PSZHP).json"
+            current_dir, "E-1", "229 Test Case E-1 (PSZHP).rpd"
         )
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
@@ -692,14 +692,14 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_map_e2_objects(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "E-2.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "E-2.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         generated_json_path = os.path.join(
-            current_dir, "E-2", "229 Test Case E-2 (CHW VAV).json"
+            current_dir, "E-2", "229 Test Case E-2 (CHW VAV).rpd"
         )
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
@@ -771,14 +771,14 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_map_e3_objects(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "E-3.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "E-3.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         generated_json_path = os.path.join(
-            current_dir, "E-3", "229 Test Case E-3 (Pkgd VAV Bbrd).json"
+            current_dir, "E-3", "229 Test Case E-3 (Pkgd VAV Bbrd).rpd"
         )
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
@@ -847,14 +847,14 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_map_f100_objects(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "F-100.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "F-100.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         generated_json_path = os.path.join(
-            current_dir, "F-100", "229 Test Case F-100 (PTAC).json"
+            current_dir, "F-100", "229 Test Case F-100 (PTAC).rpd"
         )
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
@@ -918,14 +918,14 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_map_f110_objects(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "F-110.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "F-110.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         generated_json_path = os.path.join(
-            current_dir, "F-110", "229 Test Case F-110 (PTHP).json"
+            current_dir, "F-110", "229 Test Case F-110 (PTHP).rpd"
         )
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
@@ -986,14 +986,14 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_map_f120_objects(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "F-120.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "F-120.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         generated_json_path = os.path.join(
-            current_dir, "F-120", "229 Test Case F-120 (PSZ).json"
+            current_dir, "F-120", "229 Test Case F-120 (PSZ).rpd"
         )
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
@@ -1054,14 +1054,14 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_map_f130_objects(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "F-130.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "F-130.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         generated_json_path = os.path.join(
-            current_dir, "F-130", "229 Test Case F-130 (PVAV).json"
+            current_dir, "F-130", "229 Test Case F-130 (PVAV).rpd"
         )
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
@@ -1121,14 +1121,14 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_map_f140_objects(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "F-140.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "F-140.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         generated_json_path = os.path.join(
-            current_dir, "F-140", "229 Test Case F-140 (PVAV PFP).json"
+            current_dir, "F-140", "229 Test Case F-140 (PVAV PFP).rpd"
         )
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
@@ -1185,14 +1185,14 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_map_f150_objects(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "F-150.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "F-150.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         generated_json_path = os.path.join(
-            current_dir, "F-150", "229 Test Case F-150 (VAV PFP).json"
+            current_dir, "F-150", "229 Test Case F-150 (VAV PFP).rpd"
         )
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
@@ -1252,14 +1252,14 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_map_f160_objects(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "F-160.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "F-160.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         generated_json_path = os.path.join(
-            current_dir, "F-160", "229 Test Case F-160 (UHT).json"
+            current_dir, "F-160", "229 Test Case F-160 (UHT).rpd"
         )
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
@@ -1324,14 +1324,14 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_map_f170_objects(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "F-170.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "F-170.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         generated_json_path = os.path.join(
-            current_dir, "F-170", "229 Test Case F-170 (UHT).json"
+            current_dir, "F-170", "229 Test Case F-170 (UHT).rpd"
         )
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
@@ -1396,14 +1396,14 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_map_f180_objects(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "F-180.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "F-180.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         generated_json_path = os.path.join(
-            current_dir, "F-180", "229 Test Case F-180 (SZ VAV).json"
+            current_dir, "F-180", "229 Test Case F-180 (SZ VAV).rpd"
         )
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
@@ -1467,14 +1467,14 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_map_f190_objects(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "F-190.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "F-190.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         generated_json_path = os.path.join(
-            current_dir, "F-190", "229 Test Case F-190 (SZ CV).json"
+            current_dir, "F-190", "229 Test Case F-190 (SZ CV).rpd"
         )
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
@@ -1544,14 +1544,14 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_map_f200_objects(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "F-200.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "F-200.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         generated_json_path = os.path.join(
-            current_dir, "F-200", "229 Test Case F-200 (SZ CV ER).json"
+            current_dir, "F-200", "229 Test Case F-200 (SZ CV ER).rpd"
         )
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
@@ -1615,14 +1615,14 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_map_f210_objects(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "F-210.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "F-210.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         generated_json_path = os.path.join(
-            current_dir, "F-210", "229 Test Case F-210 (FC).json"
+            current_dir, "F-210", "229 Test Case F-210 (FC).rpd"
         )
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
@@ -1692,14 +1692,14 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_map_f220_objects(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "F-220.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "F-220.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         generated_json_path = os.path.join(
-            current_dir, "F-220", "229 Test Case F-220 (FC Purch).json"
+            current_dir, "F-220", "229 Test Case F-220 (FC Purch).rpd"
         )
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
@@ -1768,14 +1768,14 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_map_f230_objects(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "F-230.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "F-230.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         generated_json_path = os.path.join(
-            current_dir, "F-230", "229 Test Case F-230 (WSHP).json"
+            current_dir, "F-230", "229 Test Case F-230 (WSHP).rpd"
         )
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
@@ -1842,14 +1842,14 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_map_f240_objects(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "F-240.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "F-240.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         generated_json_path = os.path.join(
-            current_dir, "F-240", "229 Test Case F-240 (WSHP DOAS).json"
+            current_dir, "F-240", "229 Test Case F-240 (WSHP DOAS).rpd"
         )
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
@@ -1929,10 +1929,10 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_find_all_simple(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "E-2.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "E-2.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         json_path = (
@@ -1944,10 +1944,10 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_find_all_end_filter(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "E-2.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "E-2.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         json_path = "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[?(@.adjacent_to == 'EXTERIOR')]"
@@ -1957,10 +1957,10 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_find_all_mid_filter(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "E-2.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "E-2.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         json_path = '$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*][?(@.adjacent_to = "EXTERIOR")].optical_properties.absorptance_thermal_exterior'
@@ -1970,10 +1970,10 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_find_all_combo_filter(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "E-2.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "E-2.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         json_path = '$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*][?(@.adjacent_to = "EXTERIOR" and @.id = "Prm Zone 1 South Wall")].optical_properties.absorptance_thermal_exterior'
@@ -1983,10 +1983,10 @@ class TestRunFullRPDTests(unittest.TestCase):
     def test_find_all_multi_filter(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        correct_answer_e1_path = os.path.join(
-            current_dir, "Correct Answer RPDs", "E-2.json"
+        correct_answer_path = os.path.join(
+            current_dir, "Correct Answer RPDs", "E-2.rpd"
         )
-        with open(correct_answer_e1_path, "r") as f:
+        with open(correct_answer_path, "r") as f:
             reference_json = json.load(f)
 
         json_path = '$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*][?(@.id = "Prm Zone 1 (South)")].surfaces[*][?(@.adjacent_to = "EXTERIOR")].optical_properties.absorptance_thermal_exterior'

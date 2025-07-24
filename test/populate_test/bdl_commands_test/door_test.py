@@ -62,11 +62,9 @@ class TestDoor(unittest.TestCase):
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     @patch("rpd_generator.bdl_structure.bdl_commands.zone.Zone")
-    def test_populate_data_with_interior_door(self, mock_get_output_data, MockZone):
+    def test_populate_data_with_interior_door(self, mock_get_output_data, MockSpace):
         # Create additional objects for this test specifically
-        space2 = Space("Space 2", self.floor, self.rmd)
-        zone2 = MockZone.return_value
-        self.rmd.space_map["Space 2"] = zone2
+        self.space2 = MockSpace.return_value
         self.interior_wall = InteriorWall("Interior Wall 1", self.space, self.rmd)
 
         self.interior_wall.keyword_value_pairs = {

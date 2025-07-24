@@ -35,12 +35,6 @@ class SiteParameters(BaseDefinition):
 
     def populate_data_elements(self):
         """Populate schema structure for site parameters object."""
-        self.rmd.calendar.setdefault(
-            "has_daylight_saving_time",
-            self.boolean_map.get(
-                self.get_inp(BDL_SiteParameterKeywords.DAYLIGHT_SAVINGS)
-            ),
-        )
         monthly_ground_temps = self.get_inp(BDL_SiteParameterKeywords.GROUND_T)
         if monthly_ground_temps:
             self.rmd.weather.setdefault(
@@ -105,12 +99,14 @@ class RunPeriod(BaseDefinition):
         """Populate schema structure for run period object."""
         year = int(float(self.get_inp(BDL_RunPeriodKeywords.END_YEAR)))
         jan_1_day = schedule_funcs.get_day_of_week_jan_1(year)
-        self.rmd.calendar.setdefault(
-            "day_of_week_for_january_1",
-            jan_1_day,
-        )
+
         Schedule.year = year
         Schedule.day_of_week_for_january_1 = jan_1_day
+
+        calendar = Calendar(self.rmd)
+        calendar.day_of_week_for_january_1 = jan_1_day
+        calendar.populate_data_group()
+        calendar.insert_to_rpd()
 
 
 class FixedShade(BaseDefinition):
@@ -158,3 +154,33 @@ class DesignDay(BaseDefinition):
 
     def __repr__(self):
         return f"DesignDay(u_name='{self.u_name}')"
+
+
+class Calendar:
+
+    def __init__(self, rmd):
+        self.rmd = rmd
+
+        self.data_structure = {}
+
+        self.notes = None
+        self.day_of_week_for_january_1 = None
+
+    def __repr__(self):
+        return "Calendar()"
+
+    def populate_data_group(self):
+        no_children_attributes = [
+            "notes",
+            "day_of_week_for_january_1",
+        ]
+
+        # Iterate over the no_children_attributes list and populate if the value is not None
+        for attr in no_children_attributes:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.data_structure[attr] = value
+
+    def insert_to_rpd(self):
+        """Insert calendar object into the rpd data structure."""
+        self.rmd.calendar = self.data_structure

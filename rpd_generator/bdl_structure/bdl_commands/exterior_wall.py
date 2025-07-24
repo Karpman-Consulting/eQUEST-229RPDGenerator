@@ -1,5 +1,3 @@
-import copy
-
 from rpd_generator.bdl_structure.parent_node import ParentNode
 from rpd_generator.bdl_structure.child_node import ChildNode
 from rpd_generator.schema.schema_enums import SchemaEnums
@@ -8,9 +6,6 @@ from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 SurfaceClassificationOptions = SchemaEnums.schema_enums["SurfaceClassificationOptions"]
 SurfaceAdjacencyOptions = SchemaEnums.schema_enums["SurfaceAdjacencyOptions"]
-AdditionalSurfaceAdjacencyOptions2019ASHRAE901 = SchemaEnums.schema_enums[
-    "AdditionalSurfaceAdjacencyOptions2019ASHRAE901"
-]
 StatusOptions = SchemaEnums.schema_enums["StatusOptions"]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_ExteriorWallKeywords = BDLEnums.bdl_enums["ExteriorWallKeywords"]
@@ -39,11 +34,11 @@ class ExteriorWall(ChildNode, ParentNode):
 
         # data elements with children
         self.subsurfaces = []
-        self.construction = {}
         self.optical_properties = {}
 
         # data elements with no children
         self.classification = None
+        self.construction = None
         self.area = None
         self.tilt = None
         self.azimuth = None
@@ -71,6 +66,8 @@ class ExteriorWall(ChildNode, ParentNode):
         self.tilt = self.try_float(self.get_inp(BDL_ExteriorWallKeywords.TILT))
 
         self.classification = self.determine_surface_classification()
+
+        self.construction = self.get_inp(BDL_ExteriorWallKeywords.CONSTRUCTION)
 
         parent_floor_azimuth = self.try_float(
             self.parent.parent.get_inp(BDL_FloorKeywords.AZIMUTH)
@@ -131,12 +128,6 @@ class ExteriorWall(ChildNode, ParentNode):
 
     def populate_data_group(self):
         """Populate schema structure for exterior wall object."""
-        self.construction = copy.deepcopy(
-            self.get_obj(
-                self.get_inp(BDL_ExteriorWallKeywords.CONSTRUCTION)
-            ).construction_data_structure
-        )
-        self.account_for_air_film_resistance()
 
         optical_property_attributes = [
             "optical_property_id",
@@ -157,7 +148,6 @@ class ExteriorWall(ChildNode, ParentNode):
         self.exterior_wall_data_structure = {
             "id": self.u_name,
             "subsurfaces": self.subsurfaces,
-            "construction": self.construction,
             "optical_properties": self.optical_properties,
         }
 
@@ -165,6 +155,7 @@ class ExteriorWall(ChildNode, ParentNode):
             "reporting_name",
             "notes",
             "classification",
+            "construction",
             "area",
             "tilt",
             "azimuth",
@@ -208,12 +199,3 @@ class ExteriorWall(ChildNode, ParentNode):
                 polygon.calculate_area_of_polygon_coords()
                 area = polygon.area
         return area
-
-    def account_for_air_film_resistance(self):
-        """
-        Add exterior air film resistance to the construction object's u_factor.
-        """
-        u_factor = self.construction.get("u_factor")
-        ext_air_film_resistance = 0.17
-        if u_factor:
-            self.construction["u_factor"] = 1 / (1 / u_factor + ext_air_film_resistance)

@@ -88,8 +88,8 @@ class Chiller(BaseNode):
         # data elements with children
         self.efficiency_metric_values = []
         self.efficiency_metric_types = []
-        self.capacity_validation_points = []
-        self.power_validation_points = []
+        self.capacity_operating_points = []
+        self.power_operating_points = []
 
         # data elements with no children
         self.notes = None
@@ -391,8 +391,8 @@ class Chiller(BaseNode):
             "id": self.u_name,
             "efficiency_metric_values": self.efficiency_metric_values,
             "efficiency_metric_types": self.efficiency_metric_types,
-            "capacity_validation_points": self.capacity_validation_points,
-            "power_validation_points": self.power_validation_points,
+            "capacity_operating_points": self.capacity_operating_points,
+            "power_operating_points": self.power_operating_points,
         }
 
         no_children_attributes = [

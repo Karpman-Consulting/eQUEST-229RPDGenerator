@@ -35,7 +35,7 @@ def write_rpd_json_from_inp(inp_path_str):
         # Set the paths for the inp file, json file, and the directories
         temp_inp_path = Path(temp_file_path)
         bdl_path = temp_inp_path.with_suffix(".BDL")
-        json_path = temp_inp_path.with_suffix(".json")
+        rpd_path = temp_inp_path.with_suffix(".rpd")
         doe23_path = Path(Config.DOE23_DATA_PATH) / "DOE23"
         bdlcio32_path = Path(Config.EQUEST_INSTALL_PATH) / "Bdlcio32.dll"
 
@@ -48,15 +48,16 @@ def write_rpd_json_from_inp(inp_path_str):
         )
         shutil.copy(str(bdl_path), inp_path.parent)
         # Generate the RPD json file in the temporary directory
-        write_rpd_json_from_bdl(str(inp_path.stem), str(bdl_path), str(json_path))
+        write_rpd_json_from_bdl(str(inp_path.stem), str(bdl_path), str(rpd_path))
 
         # Copy the json file from the temporary directory back to the project directory
-        shutil.copy(str(json_path), inp_path.parent)
+        shutil.copy(str(rpd_path), inp_path.parent)
 
 
-def write_rpd_json_from_bdl(project_name: str, bdl_path: str, json_file_path: str):
+def write_rpd_json_from_bdl(project_name: str, bdl_path: str, rpd_file_path: str):
     bdl_input_reader = ModelInputReader()
     rpd = RulesetProjectDescription(project_name)
+    rpd.populate_data_elements()
     rmds = generate_rmd_structures_from_bdls(rpd, bdl_input_reader, [bdl_path])
     for rmd in rmds:
         # Populate 229 data structures associated with the BDL objects
@@ -66,9 +67,9 @@ def write_rpd_json_from_bdl(project_name: str, bdl_path: str, json_file_path: st
     ensure_valid_rpd.make_ids_unique(rpd.rpd_data_structure)
     unit_converter.convert_to_schema_units(rpd.rpd_data_structure)
 
-    safe_file_path = safe_path(json_file_path)
-    with open(safe_file_path, "w") as json_file:
-        json.dump(rpd.rpd_data_structure, json_file, indent=4)
+    safe_file_path = safe_path(rpd_file_path)
+    with open(safe_file_path, "w") as rpd_file:
+        json.dump(rpd.rpd_data_structure, rpd_file, indent=4)
 
     print(f"RPD JSON file created.")
 
@@ -76,7 +77,7 @@ def write_rpd_json_from_bdl(project_name: str, bdl_path: str, json_file_path: st
 def write_rpd_json_from_rpd(
     rpd: RulesetProjectDescription,
     rmds: list[RulesetModelDescription],
-    json_file_path: str,
+    rpd_file_path: str,
 ):
     for rmd in rmds:
         rmd.populate_all_data_groups()
@@ -86,9 +87,9 @@ def write_rpd_json_from_rpd(
     ensure_valid_rpd.make_ids_unique(rpd.rpd_data_structure)
     unit_converter.convert_to_schema_units(rpd.rpd_data_structure)
 
-    safe_file_path = safe_path(json_file_path)
-    with open(safe_file_path, "w") as json_file:
-        json.dump(rpd.rpd_data_structure, json_file, indent=4)
+    safe_file_path = safe_path(rpd_file_path)
+    with open(safe_file_path, "w") as rpd_file:
+        json.dump(rpd.rpd_data_structure, rpd_file, indent=4)
 
     print(f"RPD JSON file created.")
 

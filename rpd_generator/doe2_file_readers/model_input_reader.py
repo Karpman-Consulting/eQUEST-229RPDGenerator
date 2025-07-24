@@ -123,6 +123,8 @@ class ModelInputReader:
             file_commands = {}
 
             active_command_dict = None
+            in_layer_table = False
+            parsed_layers = []
             record_data_for = False
             raw_read_flag = False
             special_read_flag = False
@@ -183,6 +185,11 @@ class ModelInputReader:
 
                     if active_command_dict and "COEF" in special_data:
                         active_command_dict["COEF"] = special_data["COEF"]
+
+                    if active_command_dict and "MATERIAL-LAYERS" in special_data:
+                        active_command_dict["MATERIAL-LAYERS"] = special_data[
+                            "MATERIAL-LAYERS"
+                        ]
 
                     special_data = {}
                     continue
@@ -285,6 +292,36 @@ class ModelInputReader:
                     # End special read block when ".." is encountered.
                     if ".." in line:
                         special_read_flag = True
+
+                # Detect beginning of material layer table
+                if "LAYER" in line and "THICKNESS" in line and "CONDUCTIVITY" in line:
+                    in_layer_table = True
+                    parsed_layers = []
+                    continue
+
+                # Collect material layer rows
+                if in_layer_table:
+                    # Exit condition: empty line or new section
+                    if not line.strip() or line.strip().startswith("RESPONSE FACTORS"):
+                        special_data["MATERIAL-LAYERS"] = parsed_layers
+                        in_layer_table = False
+                        continue
+
+                    # Match data rows that begin with an index and numeric values
+                    match = re.match(
+                        r"\s*(\d+)\s+([\d.-]+)\s+([\d.-]+)\s+([\d.-]+)\s+([\d.-]+)\s+([\d.-]+)",
+                        line,
+                    )
+                    if match:
+                        layer = {
+                            "layer": int(match.group(1)),
+                            "thickness": float(match.group(2)),
+                            "conductivity": float(match.group(3)),
+                            "density": float(match.group(4)),
+                            "specific_heat": float(match.group(5)),
+                            "resistance": float(match.group(6)),
+                        }
+                        parsed_layers.append(layer)
 
             file_commands = self._group_by_command(file_commands)
             return {"doe2_version": doe2_version, "file_commands": file_commands}

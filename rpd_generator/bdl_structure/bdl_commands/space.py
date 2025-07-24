@@ -57,7 +57,6 @@ class Space(ChildNode, ParentNode):
 
         # Store object instances for easy access
         self.zone = self.rmd.space_map.get(self.u_name)
-        self.infiltration = None
 
     def __repr__(self):
         return f"Space(u_name='{self.u_name}', parent={self.parent})"
@@ -78,6 +77,9 @@ class Space(ChildNode, ParentNode):
         self.occupant_latent_heat_gain = self.try_float(
             self.get_inp(BDL_SpaceKeywords.PEOPLE_HG_LAT)
         )
+
+        # Populate infiltration data elements
+        self.populate_infiltration()
 
         # Populate interior lighting data elements
         self.populate_interior_lighting_data_elements()
@@ -191,12 +193,12 @@ class Space(ChildNode, ParentNode):
                 misc_equipment.populate_data_group()
                 misc_equipment.insert_to_rpd()
 
-    def populate_zone_infiltration(self):
+    def populate_infiltration(self):
         """Populate infiltration data elements for the zone object."""
-        self.infiltration = Infiltration(self.zone)
-        self.infiltration.populate_data_elements()
-        self.infiltration.populate_data_group()
-        self.infiltration.insert_to_rpd()
+        infiltration = Infiltration(self)
+        infiltration.populate_data_elements()
+        infiltration.populate_data_group()
+        infiltration.insert_to_rpd()
 
 
 class InteriorLighting:
@@ -428,9 +430,10 @@ class Infiltration:
         BDL_InfiltrationAlgorithmOptions.ASHRAE_ENHANCED: "2005 ASHRAE Handbook Fundamentals - Enhanced Infiltration Method",
     }
 
-    def __init__(self, zone):
+    def __init__(self, parent_space):
         self.data_structure = {}
-        self.zone = zone
+        self.parent_space = parent_space
+        self.zone = parent_space.zone
 
         # infiltration data elements
         self.name = self.zone.u_name + " Infil"
@@ -443,29 +446,31 @@ class Infiltration:
         self.multiplier_schedule = None
 
     def populate_data_elements(self):
-        self.multiplier_schedule = self.zone.get_inp(BDL_SpaceKeywords.INF_SCHEDULE)
-        infiltration_method = self.zone.get_inp(BDL_SpaceKeywords.INF_METHOD)
+        self.multiplier_schedule = self.parent_space.get_inp(
+            BDL_SpaceKeywords.INF_SCHEDULE
+        )
+        infiltration_method = self.parent_space.get_inp(BDL_SpaceKeywords.INF_METHOD)
         self.algorithm_name = self.infiltration_algorithm_map.get(infiltration_method)
         if infiltration_method == BDL_InfiltrationAlgorithmOptions.AIR_CHANGE:
-            flow_per_area = self.zone.try_float(
-                self.zone.get_inp(BDL_SpaceKeywords.INF_FLOW_AREA)
+            flow_per_area = self.parent_space.try_float(
+                self.parent_space.get_inp(BDL_SpaceKeywords.INF_FLOW_AREA)
             )
-            air_changes_per_hour = self.zone.try_float(
-                self.zone.get_inp(BDL_SpaceKeywords.AIR_CHANGES_HR)
+            air_changes_per_hour = self.parent_space.try_float(
+                self.parent_space.get_inp(BDL_SpaceKeywords.AIR_CHANGES_HR)
             )
             if (
                 flow_per_area
                 and air_changes_per_hour
                 and self.zone.volume
-                and self.zone.floor_area
+                and self.parent_space.floor_area
             ):
                 self.flow_rate = (
-                    flow_per_area * self.zone.floor_area
+                    flow_per_area * self.parent_space.floor_area
                     + air_changes_per_hour * self.zone.volume / 60
                 )
                 self.modeling_method = InfiltrationMethodOptions.WEATHER_DRIVEN
-            elif flow_per_area and self.zone.floor_area:
-                self.flow_rate = flow_per_area * self.zone.floor_area
+            elif flow_per_area and self.parent_space.floor_area:
+                self.flow_rate = flow_per_area * self.parent_space.floor_area
                 if self.multiplier_schedule:
                     self.modeling_method = InfiltrationMethodOptions.CONSTANT_SCHEDULED
                 else:
