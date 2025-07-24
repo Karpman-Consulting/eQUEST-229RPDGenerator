@@ -8,7 +8,6 @@ customtkinter = "*"
 pillow = "*"
 tksheet = "*"
 pint = "*"
-pip = "==23.3"
 rpd-generator = {file = ".", editable = true}
 jsonschema = "*"
 jsonpath-ng = "*"
@@ -23,3 +22,4 @@ rpdvalidator = "*"
 
 [requires]
 python_version = "3.11"
+pip_version = ">=23.0"
