@@ -1984,10 +1984,11 @@ class CoolingSystem:
         """
         cooling_eir, cop, entering_condenser_temperature = None, None, None
 
-        if (
-            cooling_eir := self.parent_system.get_inp(BDL_SystemKeywords.COOLING_EIR)
-        ) is not None:
-            cop = 1 / self.parent_system.try_float(cooling_eir)
+        cooling_eir = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.COOLING_EIR)
+        )
+        if cooling_eir:
+            cop = 1 / cooling_eir
 
         if (
             rated_ect := self.parent_system.get_inp(BDL_SystemKeywords.RATED_ECT)
@@ -2018,18 +2019,11 @@ class CoolingSystem:
             else:
                 self.efficiency_metric_types.append(CoolingMetricOptions.OTHER)
 
-            if (
+            cooling_eir = self.vrf_sys_condenser.try_float(
                 self.vrf_sys_condenser.get_inp(BDL_CondenserKeywords.COOLING_EIR)
-                is not None
-            ):
-                self.efficiency_metric_values.append(
-                    1
-                    / self.parent_system.try_float(
-                        self.vrf_sys_condenser.get_inp(
-                            BDL_CondenserKeywords.COOLING_EIR
-                        )
-                    )
-                )
+            )
+            if cooling_eir:
+                self.efficiency_metric_values.append(1 / cooling_eir)
 
         elif (
             self.parent_system.bdl_output_cool_type

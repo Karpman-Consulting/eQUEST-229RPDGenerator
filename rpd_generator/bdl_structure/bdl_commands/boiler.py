@@ -122,7 +122,7 @@ class Boiler(BaseNode):
         self.design_capacity = self.try_abs(
             output_data.get("Boilers - Design Parameters - Capacity")
         )
-        self.populate_operation_limits()
+        self.populate_operation_limits(output_data)
         self.auxiliary_power = output_data.get(
             "Boilers - Design Parameters - Auxiliary Power"
         )
@@ -248,7 +248,7 @@ class Boiler(BaseNode):
     def insert_to_rpd(self):
         self.rmd.boilers.append(self.boiler_data_structure)
 
-    def populate_operation_limits(self):
+    def populate_operation_limits(self, output_data):
         requests = {}
         boiler_capacities = {}
         for boiler_name in self.rmd.boiler_names:
@@ -256,10 +256,8 @@ class Boiler(BaseNode):
             if boiler.rated_capacity:  # boiler is guaranteed to exist
                 boiler_capacities[boiler_name] = boiler.rated_capacity
             else:
-                requests[boiler_name] = (
-                    2315901,
-                    boiler_name,
-                    "",
+                boiler_capacities[boiler_name] = output_data.get(
+                    "Boilers - Rated Capacity at Peak (Btu/hr)"
                 )
 
         hw_loop_equip_ctrls = []
