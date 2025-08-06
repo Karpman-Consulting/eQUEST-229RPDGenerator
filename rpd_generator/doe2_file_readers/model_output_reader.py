@@ -94,8 +94,8 @@ def get_multiple_results(
         entry_id, report_key, row_key = value_request
 
         mrt_array[i].entry_id = entry_id
-        mrt_array[i].psz_report_key = report_key.encode("utf-8")
-        mrt_array[i].psz_row_key = row_key.encode("utf-8")
+        mrt_array[i].psz_report_key = report_key.encode("mbcs")
+        mrt_array[i].psz_row_key = row_key.encode("mbcs")
 
         if entry_id in nhr_dict:
             max_values += nhr_dict[entry_id]
