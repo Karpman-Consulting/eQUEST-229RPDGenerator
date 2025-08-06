@@ -103,8 +103,8 @@ def get_multiple_results(
     pf_data = (ctypes.c_float * max_values)()
 
     multiple_result_dll(
-        ctypes.c_char_p(doe2_data_dir.encode("utf-8")),
-        ctypes.c_char_p(project_fname.encode("utf-8")),
+        ctypes.c_char_p(doe2_data_dir.encode("mbcs")),
+        ctypes.c_char_p(project_fname.encode("mbcs")),
         ctypes.c_int(file_type),
         pf_data,
         ctypes.c_int(max_values),
@@ -159,13 +159,13 @@ def get_string_result(
     single_result_dll.restype = ctypes.c_long
 
     pf_data = ctypes.create_string_buffer(256)
-    report_key_arr = (ctypes.c_char * 40)(*report_key.encode("utf-8"))
-    row_key_arr = (ctypes.c_char * 40)(*row_key.encode("utf-8"))
+    report_key_arr = (ctypes.c_char * 40)(*report_key.encode("mbcs"))
+    row_key_arr = (ctypes.c_char * 40)(*row_key.encode("mbcs"))
 
     # Call the function
     single_result_dll(
-        doe2_dir.encode("utf-8"),
-        project_fname.encode("utf-8"),
+        doe2_dir.encode("mbcs"),
+        project_fname.encode("mbcs"),
         entry_id,
         pf_data,
         1,
@@ -174,4 +174,4 @@ def get_string_result(
     )
 
     # Return the string from the buffer
-    return pf_data.value.decode("utf-8").strip()
+    return pf_data.value.decode("mbcs").strip()
