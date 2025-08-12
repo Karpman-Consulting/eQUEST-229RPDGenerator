@@ -417,6 +417,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             self.main_app.data.rpd = RulesetProjectDescription(
                 self.main_app.data.project_name.get()
             )
+            self.main_app.data.rpd.populate_data_elements()
             self.main_app.data.generate_rmd_data(self.main_app.data.rpd)
             # Run model checks to populate additional errors and warnings
             self.main_app.data.run_model_checks()

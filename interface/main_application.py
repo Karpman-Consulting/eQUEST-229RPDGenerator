@@ -21,7 +21,7 @@ class MainApplication(tk.Tk):
         self.title("Main Application Window")
         self.main_app_window_label = tk.Label(
             self,
-            text="\U0001F419 ...You shouldn't be seeing this... \U0001F419",
+            text="\U0001f419 ...You shouldn't be seeing this... \U0001f419",
             font=("Segoe UI Emoji", 20),
         )
         self.main_app_window_label.pack(anchor="center", padx=10, pady=10)

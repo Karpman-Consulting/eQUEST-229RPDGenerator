@@ -535,7 +535,7 @@ class TestZones(unittest.TestCase):
                     "served_by_heating_ventilating_air_conditioning_system": "System 1",
                 }
             ],
-            "exhaust_airflow_rate_multiplier_schedule": "Fan Annual Schedule",
+            "exhaust_airflow_rate_multiplier_schedules": ["Fan Annual Schedule"],
             "zonal_supply_fans": [],
             "zonal_exhaust_fans": [
                 {

@@ -80,7 +80,7 @@ class Zone(ChildNode):
         self.served_by_service_water_heating_system = None
         self.transfer_airflow_rate = None
         self.transfer_airflow_source_zone = None
-        self.exhaust_airflow_rate_multiplier_schedule = None
+        self.exhaust_airflow_rate_multiplier_schedules = None
         self.makeup_airflow_rate = None
         self.non_mechanical_cooling_fan_power = None
         self.non_mechanical_cooling_fan_airflow = None
@@ -132,9 +132,10 @@ class Zone(ChildNode):
         self.thermostat_heating_setpoint_schedule = self.get_inp(
             BDL_ZoneKeywords.HEAT_TEMP_SCH
         )
-        self.exhaust_airflow_rate_multiplier_schedule = self.get_inp(
-            BDL_ZoneKeywords.EXHAUST_FAN_SCH
-        )
+        if self.get_inp(BDL_ZoneKeywords.EXHAUST_FAN_SCH):
+            self.exhaust_airflow_rate_multiplier_schedules = [
+                self.get_inp(BDL_ZoneKeywords.EXHAUST_FAN_SCH)
+            ]
 
         # if the zone is served by a SUM system don't populate the data elements below
         if self.parent.get_inp(BDL_SystemKeywords.TYPE) == BDL_SystemTypes.SUM:
@@ -222,7 +223,7 @@ class Zone(ChildNode):
             "transfer_airflow_rate",
             "transfer_airflow_source_zone",
             "zonal_exhaust_flow",
-            "exhaust_airflow_rate_multiplier_schedule",
+            "exhaust_airflow_rate_multiplier_schedules",
             "makeup_airflow_rate",
             "non_mechanical_cooling_fan_power",
             "non_mechanical_cooling_fan_airflow",
