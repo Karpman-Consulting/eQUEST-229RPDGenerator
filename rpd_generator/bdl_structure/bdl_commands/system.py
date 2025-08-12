@@ -1998,6 +1998,7 @@ class CoolingSystem:
         if (
             self.parent_system.bdl_output_cool_type in self.cool_eff_metric_map
             and self.parent_system.bdl_output_heat_type != BDL_OutputHeatingTypes.VRF
+            and cop
         ):
             metric_type = self.cool_eff_metric_map[
                 self.parent_system.bdl_output_cool_type
@@ -2013,22 +2014,25 @@ class CoolingSystem:
                 )
                 == 95
             ):
-                self.efficiency_metric_types.append(
+                efficiency_metric_type = (
                     CoolingMetricOptions.FULL_LOAD_COEFFICIENT_OF_PERFORMANCE_NO_FAN
                 )
+
             else:
-                self.efficiency_metric_types.append(CoolingMetricOptions.OTHER)
+                efficiency_metric_type = CoolingMetricOptions.OTHER
 
             cooling_eir = self.vrf_sys_condenser.try_float(
                 self.vrf_sys_condenser.get_inp(BDL_CondenserKeywords.COOLING_EIR)
             )
             if cooling_eir:
+                self.efficiency_metric_types.append(efficiency_metric_type)
                 self.efficiency_metric_values.append(1 / cooling_eir)
 
         elif (
             self.parent_system.bdl_output_cool_type
             != BDL_OutputCoolingTypes.CHILLED_WATER
             and self.parent_system.bdl_output_cool_type is not None
+            and cop
         ):
             self.efficiency_metric_types.append(CoolingMetricOptions.OTHER)
             self.efficiency_metric_values.append(cop)
