@@ -156,12 +156,13 @@ class CirculationLoop(BaseNode):
     def populate_data_elements(self):
         """Populate data elements from the keyword_value pairs returned from model_input_reader"""
 
+        self.circulation_loop_type = self.determine_circ_loop_type()
+
         # Assign pump data elements populated from the circulation loop keyword value pairs
         pump_name = self.get_inp(BDL_CirculationLoopKeywords.LOOP_PUMP)
         if pump_name is not None:
             self.populate_pump_data_elements(pump_name)
 
-        self.circulation_loop_type = self.determine_circ_loop_type()
         if self.circulation_loop_type in ["FluidLoop", "SecondaryFluidLoop"]:
             loop_type = self.get_inp(BDL_CirculationLoopKeywords.TYPE)
             self.type = self.loop_type_map.get(loop_type, FluidLoopOptions.OTHER)
@@ -723,12 +724,16 @@ class CirculationLoop(BaseNode):
         self.entering_water_mains_temperature_schedule = self.get_inp(
             BDL_CirculationLoopKeywords.DHW_INLET_T_SCH
         )
-        if self.is_ground_temperature_used_for_entering_water:
+        if (
+            self.is_ground_temperature_used_for_entering_water
+            and "Ground Temperature Schedule" in self.rmd.bdl_obj_instances
+        ):
             self.entering_water_mains_temperature_schedule = (
                 "Ground Temperature Schedule"
             )
-        if self.entering_water_mains_temperature_schedule is None:
-            # If the code reaches this point, it is safe to assume the DHW-INLET-T must have been specified.
+        if self.entering_water_mains_temperature_schedule is None and self.try_float(
+            self.get_inp(BDL_CirculationLoopKeywords.DHW_INLET_T)
+        ):
             inlet_t_schedule = Schedule("DHW Inlet Temperature Schedule", self.rmd)
             inlet_t_schedule.type = BDL_ScheduleTypes.TEMPERATURE
             inlet_t_schedule.hourly_values = 8760 * [
@@ -784,7 +789,13 @@ class CirculationLoop(BaseNode):
         if not pump:
             return
 
-        pump.loop_or_piping = [self.u_name] * pump.qty
+        if self.circulation_loop_type == "ServiceWaterHeatingDistributionSystem":
+            loop_or_piping_id = self.u_name + " ServiceWaterPiping"
+        else:
+            loop_or_piping_id = self.u_name
+
+        pump.loop_or_piping = [loop_or_piping_id] * pump.qty
+
         for i in range(pump.qty):
             if pump.is_flow_calculated[i]:
                 # Override is_flow_calculated if the circulation loop is not sized based on design loads
