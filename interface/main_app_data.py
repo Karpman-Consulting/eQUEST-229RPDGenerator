@@ -1,8 +1,8 @@
 import atexit
 import tempfile
-
 import customtkinter as ctk
 from pathlib import Path
+from copy import deepcopy
 
 from rpd_generator import main as rpd_generator
 from rpd_generator.doe2_file_readers.model_input_reader import ModelInputReader
@@ -39,6 +39,7 @@ class MainAppData:
         self.proposed_reflects_design = ctk.BooleanVar()
         self.has_rotation_exception = ctk.BooleanVar()
         self.ruleset_model_file_paths = {}
+        self.applicable_models = set()
         self.output_directory = ctk.StringVar()
 
         self.rmds = []
@@ -77,24 +78,62 @@ class MainAppData:
 
         return True
 
-    def generate_rmd_data(self, rpd):
-        active_ruleset = self.selected_ruleset.get()
-        for ruleset_model_type, file_path in self.ruleset_model_file_paths[
-            active_ruleset
-        ].items():
-            rmd_type_enum = (
-                ruleset_model_type.upper() + "_0"
-                if ruleset_model_type == "Baseline"
-                else ruleset_model_type.upper().replace(" ", "_")
-            )
-            if file_path:
-                rmd = rpd_generator.generate_rmd_structure_from_inp(
-                    rpd, file_path, self.processing_dir
-                )
+    def generate_rmd_data(self, rpd, progress_cb=None):
+        """
+        Build RMDs from active models. If provided, progress_cb(done:int, total:int, msg:str)
+        is called after each model (including implicit Proposed clone) is created.
+        """
+        active_models = {m: p for m, p in self.iter_active_models()}
+        # Only count models with an actual path
+        base_total = sum(1 for _, path in active_models.items() if path)
 
-                rmd.populate_all_child_data_elements()
-                rmd.type = rmd_type_enum
-                self.rmds.append(rmd)
+        # Will we create an implicit Proposed clone from User?
+        will_clone_proposed = (
+            self.selected_ruleset.get() != "None"
+            and "Proposed" not in active_models
+            and bool(active_models.get("User"))
+        )
+
+        total_to_create = base_total + (1 if will_clone_proposed else 0)
+        done = 0
+
+        for model_type, file_path in active_models.items():
+            if not file_path:
+                continue
+
+            rmd_type_enum = (
+                model_type.upper() + "_0"
+                if model_type == "Baseline"
+                else model_type.upper().replace(" ", "_")
+            )
+            rmd = rpd_generator.generate_rmd_structure_from_inp(
+                rpd, file_path, self.processing_dir
+            )
+            rmd.populate_all_child_data_elements()
+            rmd.type = rmd_type_enum
+            self.rmds.append(rmd)
+
+            done += 1
+            if progress_cb:
+                progress_cb(done, total_to_create, f"Creating RMD: {rmd.type}")
+
+            # implicit Proposed from User if needed
+            if (
+                self.selected_ruleset.get() != "None"
+                and model_type == "User"
+                and "Proposed" not in active_models
+            ):
+                proposed_rmd = deepcopy(rmd)
+                proposed_rmd.rpd = rmd.rpd
+                proposed_rmd.obj_id = f"{rmd.obj_id} - Proposed"
+                proposed_rmd.type = "PROPOSED"
+                self.rmds.append(proposed_rmd)
+
+                done += 1
+                if progress_cb:
+                    progress_cb(
+                        done, total_to_create, f"Creating RMD: {proposed_rmd.type}"
+                    )
 
     def call_write_rpd_json_from_rmds(self):
         rpd_generator.write_rpd_json_from_rpd(
@@ -108,6 +147,23 @@ class MainAppData:
             if rmd.type == rmd_type:
                 return rmd
         return None
+
+    def set_applicable_models(self, models: list[str]):
+        self.applicable_models = set(models)
+
+    def is_model_active(self, model_type: str) -> bool:
+        return model_type in self.applicable_models
+
+    def get_effective_path(self, ruleset: str, model_type: str) -> str | None:
+        if model_type == "Proposed" and self.proposed_reflects_design.get():
+            return self.ruleset_model_file_paths[ruleset].get("User")
+        return self.ruleset_model_file_paths[ruleset].get(model_type)
+
+    def iter_active_models(self):
+        """Yield (model_type, effective_path) for currently applicable models only."""
+        ruleset = self.selected_ruleset.get()
+        for model_type in self.applicable_models:
+            yield model_type, self.get_effective_path(ruleset, model_type)
 
     @staticmethod
     def summarize_rmd_surfaces(rmd):
