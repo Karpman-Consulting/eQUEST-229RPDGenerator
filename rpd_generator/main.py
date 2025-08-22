@@ -10,8 +10,6 @@ from rpd_generator.artifacts.ruleset_project_description import (
     RulesetProjectDescription,
 )
 from rpd_generator.artifacts.ruleset_model_description import RulesetModelDescription
-from rpd_generator.artifacts.building_segment import BuildingSegment
-from rpd_generator.artifacts.building import Building
 from rpd_generator.doe2_file_readers.bdlcio32 import process_input_file
 from rpd_generator.doe2_file_readers.model_input_reader import ModelInputReader
 from rpd_generator.bdl_structure import *
@@ -114,14 +112,6 @@ def generate_rmd_structures_from_bdls(
         model_path = Path(model_path_str)
         rmd = RulesetModelDescription(model_path.stem, rpd)
         rmd.file_path = str(model_path.with_suffix(""))
-
-        # Create the default building and building segment objects to store data. (Can be renamed via GUI)
-        default_building = Building("Default Building", rmd)
-        default_building_segment = BuildingSegment(
-            "Default Building Segment", default_building
-        )
-        rmd.bdl_obj_instances["Default Building"] = default_building
-        rmd.bdl_obj_instances["Default Building Segment"] = default_building_segment
 
         model_input_data = bdl_input_reader.read_input_bdl_file(str(model_path))
         rmd.doe2_version = model_input_data["doe2_version"]
