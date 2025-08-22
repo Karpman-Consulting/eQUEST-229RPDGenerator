@@ -3,13 +3,13 @@
         "measured_infiltration_pressure_difference": ""
     },
     "SourceResult": {
-        "annual_consumption": "kbtu",
-        "annual_demand": "MMbtu/h"
+        "annual_consumption": "btu",
+        "annual_demand": "btu/h"
     },
     "EndUseResult": {
-        "annual_site_energy_use": "kbtu",
-        "annual_site_coincident_demand": "MMbtu/h",
-        "annual_site_non_coincident_demand": "MMbtu/h"
+        "annual_site_energy_use": "btu",
+        "annual_site_coincident_demand": "btu/h",
+        "annual_site_non_coincident_demand": "btu/h"
     },
     "Zone": {
         "volume": "ft^3",
