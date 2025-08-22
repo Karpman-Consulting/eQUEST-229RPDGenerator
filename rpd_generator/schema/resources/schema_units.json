@@ -236,5 +236,14 @@
         "power": "W",
         "volume": "m^3",
         "total_display_area": "m^2"
+    },
+    "SourceResult": {
+        "annual_consumption": "J",
+        "annual_demand": "W"
+    },
+    "EndUseResult": {
+        "annual_site_energy_use": "J",
+        "annual_site_coincident_demand": "W",
+        "annual_site_non_coincident_demand": "W"
     }
 }
