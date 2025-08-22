@@ -1,12 +1,12 @@
 class Building:
     """
-    This class is used to describe a building. The building object is created once per project by default, but user can
-    add/delete Buildings and assign DOE-2 FLOORs (eQUEST Shells) to them through the eQUEST 229RPDGenerator App UI.
+    This class is used to describe a building. The building object is created once per project, because it is assumed
+    that every building will be modeled independently for code compliance purposes.
     """
 
-    def __init__(self, u_name, rmd):
+    def __init__(self, obj_id, rmd):
         self.rmd = rmd
-        self.u_name = u_name
+        self.obj_id = obj_id
         self.building_data_structure = {}
 
         # data elements with children
@@ -26,7 +26,7 @@ class Building:
     def populate_data_group(self):
         """Populate the building data structure."""
         self.building_data_structure = {
-            "id": self.u_name,
+            "id": self.obj_id,
             "building_segments": self.building_segments,
             "elevators": self.elevators,
             "exterior_lighting": self.exterior_lighting,
