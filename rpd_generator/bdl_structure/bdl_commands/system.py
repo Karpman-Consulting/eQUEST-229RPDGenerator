@@ -139,7 +139,7 @@ class System(ParentNode):
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
-        # On initialization the parent building segment is not known. It will be set in the GUI.
+        # On initialization the parent building segment is not known. It is set in the Space object methods.
         self.parent_building_segment = self.get_obj("Default Building Segment")
 
         self.vrf_sys_condenser = None
@@ -618,6 +618,10 @@ class System(ParentNode):
             return
 
         else:
+            # Set the default building segment for systems that have no zones directly assigned (DOAS)
+            if self.parent_building_segment is None:
+                self.parent_building_segment = self.rmd.default_building_segment
+
             for attr in dir(self):
                 value = getattr(self, attr, None)
 
