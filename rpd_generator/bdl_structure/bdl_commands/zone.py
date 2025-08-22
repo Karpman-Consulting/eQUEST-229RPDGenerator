@@ -54,7 +54,7 @@ class Zone(ChildNode):
         self.rmd.zone_names.append(u_name)
         self.rmd.bdl_obj_instances[u_name] = self
 
-        # On initialization the parent building segment is not known. It will be set in the GUI.
+        # On initialization the parent building segment is not known. It is set in the Space object methods.
         self.parent_building_segment = self.get_obj("Default Building Segment")
 
         self.zone_data_structure = {}
