@@ -2,6 +2,7 @@ from rpd_generator.bdl_structure.base_node import BaseNode
 from rpd_generator.bdl_structure.bdl_commands.schedule import Schedule
 from rpd_generator.schema.schema_enums import SchemaEnums
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
+from rpd_generator.artifacts.building_segment import BuildingSegment
 
 FluidLoopOptions = SchemaEnums.schema_enums["FluidLoopOptions"]
 FluidLoopOperationOptions = SchemaEnums.schema_enums["FluidLoopOperationOptions"]
@@ -740,7 +741,7 @@ class CirculationLoop(BaseNode):
                 self.try_float(self.get_inp(BDL_CirculationLoopKeywords.DHW_INLET_T))
             ]
 
-    def populate_service_water_heating_uses(self):
+    def populate_service_water_heating_uses(self, testing=False):
         process_flows = self.get_inp(BDL_CirculationLoopKeywords.PROCESS_FLOW)
         process_schedules = self.get_inp(BDL_CirculationLoopKeywords.PROCESS_SCH)
         process_outlet_temps = self.get_inp(BDL_CirculationLoopKeywords.PROCESS_T)
@@ -766,8 +767,9 @@ class CirculationLoop(BaseNode):
         ):
             swh_use = ServiceWaterHeatingUse(i, self)
             swh_use.populate_data_elements()
-            swh_use.populate_data_group()
-            swh_use.insert_to_rpd()
+            if testing:
+                swh_use.populate_data_group()
+                swh_use.insert_to_rpd()
 
     def populate_service_water_piping(self):
         self.are_thermal_losses_modeled = bool(
@@ -1090,13 +1092,12 @@ class CirculationLoop(BaseNode):
 
 class ServiceWaterHeatingUse:
     def __init__(self, n, loop):
-        self.parent_building_segment = loop.rmd.bdl_obj_instances.get(
-            "Default Building Segment"
-        )
+        self.parent_building_segment = None
 
         self.n = n
         self.name = loop.u_name + " Load" + str(n)
         self.loop = loop
+        self.loop.rmd.bdl_obj_instances[self.name] = self
 
         self.data_structure = {}
 
@@ -1172,6 +1173,13 @@ class ServiceWaterHeatingUse:
             self.use_units = ServiceWaterHeatingUseUnitOptions.VOLUME
 
     def populate_data_group(self):
+        # Put all SWH uses on the first building segment by default, until TODO - they can be differentiated
+        building_area_type = list(self.loop.rmd.building_area_types)[0]
+        self.parent_building_segment = self.loop.get_obj(
+            BuildingSegment.lighting_building_area_map.get(
+                building_area_type, "Default Building Segment"
+            )
+        )
 
         self.data_structure["id"] = self.name
 

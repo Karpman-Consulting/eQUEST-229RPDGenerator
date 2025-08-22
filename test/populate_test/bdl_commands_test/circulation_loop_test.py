@@ -69,7 +69,6 @@ class TestCHWLoop(unittest.TestCase):
         self.cap_f_t = CurveFit("CAP-fT Curve", self.rmd)
 
         building_segment = BuildingSegment("Default Building Segment", self.rmd)
-        self.rmd.bdl_obj_instances["Default Building Segment"] = building_segment
 
         # Create Chilled Water/Hot Water Temperature Reset Schedules
         self.temp_reset_day_schedule = DaySchedulePD(
@@ -1047,7 +1046,8 @@ class TestCHWLoop(unittest.TestCase):
             BDL_CirculationLoopKeywords.HEAT_SETPT_T: "135",
             BDL_CirculationLoopKeywords.PROCESS_FLOW: "10.0",
         }
-        self.circulation_loop.populate_service_water_heating_uses()
+        self.rmd.building_area_types = {0}
+        self.circulation_loop.populate_service_water_heating_uses(testing=True)
         expected_data_structure = [
             {
                 "id": "Circulation Loop 1 Load1",
@@ -1079,7 +1079,8 @@ class TestCHWLoop(unittest.TestCase):
             BDL_CirculationLoopKeywords.PROCESS_FLOW: "10.0",
             BDL_CirculationLoopKeywords.PROCESS_SCH: "Load1",
         }
-        self.circulation_loop.populate_service_water_heating_uses()
+        self.rmd.building_area_types = {0}
+        self.circulation_loop.populate_service_water_heating_uses(testing=True)
         expected_data_structure = [
             {
                 "id": "Circulation Loop 1 Load1",
@@ -1111,7 +1112,8 @@ class TestCHWLoop(unittest.TestCase):
             BDL_CirculationLoopKeywords.PROCESS_FLOW: ["10.0", "5.0"],
             BDL_CirculationLoopKeywords.PROCESS_SCH: ["Load1", "Load2"],
         }
-        self.circulation_loop.populate_service_water_heating_uses()
+        self.rmd.building_area_types = {0}
+        self.circulation_loop.populate_service_water_heating_uses(testing=True)
         expected_data_structure = [
             {
                 "id": "Circulation Loop 1 Load1",
