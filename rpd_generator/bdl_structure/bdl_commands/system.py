@@ -69,6 +69,7 @@ BDL_WLHPCategoryOptions = BDLEnums.bdl_enums["SystemWLHPCategoryOptions"]
 BDL_SystemCondenserTypes = BDLEnums.bdl_enums["SystemCondenserTypes"]
 BDL_CondenserKeywords = BDLEnums.bdl_enums["CondenserKeywords"]
 BDL_ZoneFanControlOptions = BDLEnums.bdl_enums["ZoneFanControlOptions"]
+BDL_ZoneTypeOptions = BDLEnums.bdl_enums["ZoneTypeOptions"]
 
 
 class System(ParentNode):
@@ -183,6 +184,13 @@ class System(ParentNode):
         Use the current System object for the first zone assigned to the zonal system"""
 
         for zone in self.children[1:]:
+            # Don't create systems for unconditioned or plenum zones
+            if zone.get_inp(BDL_ZoneKeywords.TYPE) in [
+                BDL_ZoneTypeOptions.UNCONDITIONED,
+                BDL_ZoneTypeOptions.PLENUM,
+            ]:
+                continue
+
             sys_id = f"{self.u_name} - {zone.u_name}"
             zone_system = System(self.u_name, self.rmd)
             zone_system.sys_id = sys_id

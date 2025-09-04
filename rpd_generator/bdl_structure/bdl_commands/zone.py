@@ -27,6 +27,7 @@ BDL_SystemFanControlOptions = BDLEnums.bdl_enums["SystemFanControlOptions"]
 BDL_SystemCoolControlOptions = BDLEnums.bdl_enums["SystemCoolControlOptions"]
 BDL_SystemHeatControlOptions = BDLEnums.bdl_enums["SystemHeatControlOptions"]
 BDL_ZoneHeatSourceOptions = BDLEnums.bdl_enums["ZoneHeatSourceOptions"]
+BDL_ZoneTypeOptions = BDLEnums.bdl_enums["ZoneTypeOptions"]
 BDL_TerminalTypes = BDLEnums.bdl_enums["TerminalTypes"]
 BDL_BaseboardControlOptions = BDLEnums.bdl_enums["BaseboardControlOptions"]
 BDL_SystemMinimumOutdoorAirControlOptions = BDLEnums.bdl_enums[
@@ -158,6 +159,10 @@ class Zone(ChildNode):
         # Populate Zonal Exhaust Fan data elements prior to MainTerminal data elements for accurate zone fan power calc
         if exhaust_airflow is not None and exhaust_airflow > 0:
             self.populate_zonal_exhaust(exhaust_airflow)
+
+        # If the zone is unconditioned do not populate terminals
+        if self.get_inp(BDL_ZoneKeywords.TYPE) == BDL_ZoneTypeOptions.UNCONDITIONED:
+            return
 
         # Populate MainTerminal data elements
         self.main_terminal = Terminal(self)
