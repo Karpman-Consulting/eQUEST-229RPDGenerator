@@ -30,6 +30,14 @@ class Door(ChildNode):
 
     bdl_command = BDL_Commands.DOOR
 
+    door_subclassification_map = {
+        1: SubsurfaceSubclassificationOptions2019ASHRAE901.SWINGING_DOOR,
+        2: SubsurfaceSubclassificationOptions2019ASHRAE901.NONSWINGING_DOOR,
+        3: SubsurfaceSubclassificationOptions2019ASHRAE901.SECTIONAL_GARAGE_DOOR,
+        4: SubsurfaceSubclassificationOptions2019ASHRAE901.METAL_COILING_DOOR,
+        5: SubsurfaceSubclassificationOptions2019ASHRAE901.OTHER,
+    }
+
     def __init__(self, u_name, parent, rmd):
         super().__init__(u_name, parent, rmd)
         self.rmd.door_names.append(u_name)
@@ -66,6 +74,9 @@ class Door(ChildNode):
     def populate_data_elements(self):
         """Populate data elements for door object."""
         self.classification = SubsurfaceClassificationOptions.DOOR
+        self.subclassification = self.door_subclassification_map.get(
+            self.try_int(self.get_inp(BDL_DoorKeywords.C_TYPE))
+        )
         self.u_factor = self.calc_u_factor()
         height = self.try_float(self.get_inp(BDL_DoorKeywords.HEIGHT))
         width = self.try_float(self.get_inp(BDL_DoorKeywords.WIDTH))

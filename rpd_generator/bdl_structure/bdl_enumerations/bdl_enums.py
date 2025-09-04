@@ -380,6 +380,7 @@ class BDLEnums:
                 "CONSTRUCTION",
                 "HEIGHT",
                 "WIDTH",
+                "C-TYPE",
             ]
         ),
         "ExteriorWallKeywords": _ListEnum(
