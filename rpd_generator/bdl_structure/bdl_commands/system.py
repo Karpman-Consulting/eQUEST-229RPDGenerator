@@ -1102,7 +1102,9 @@ class FanSystem:
         self.operation_during_unoccupied = self.unoccupied_fan_operation_map.get(
             self.parent_system.get_inp(BDL_SystemKeywords.NIGHT_CYCLE_CTRL)
         )
-        self.operation_during_occupied = self.populate_fan_operation_during_occupied()
+        self.operation_during_occupied = self.populate_fan_operation_during_occupied(
+            oa_ratio
+        )
 
     def populate_data_group(self):
         self.parent_system.supply_fan.populate_data_group()
@@ -1230,7 +1232,7 @@ class FanSystem:
         elif system_type == BDL_SystemTypes.DOAS:
             pass
 
-    def populate_fan_operation_during_occupied(self):
+    def populate_fan_operation_during_occupied(self, oa_ratio):
         fan_sch = self.parent_system.get_obj(
             self.parent_system.get_inp(BDL_SystemKeywords.FAN_SCHEDULE)
         )
@@ -1310,9 +1312,33 @@ class FanSystem:
             if mixed_operation:
                 return FanSystemOperationOptions.OTHER
             if has_one:  # and not mixed_operation implied to reach here
-                return self.occupied_fan_operation_map.get(
-                    self.parent_system.get_inp(BDL_SystemKeywords.INDOOR_FAN_MODE)
-                )
+                if self.parent_system.get_inp(BDL_SystemKeywords.TYPE) in [
+                    BDL_SystemTypes.PSZ,
+                    BDL_SystemTypes.PVVT,
+                    BDL_SystemTypes.RESYS2,
+                    BDL_SystemTypes.EVAP_COOL,
+                ] or (
+                    self.parent_system.bdl_output_cool_type
+                    == BDL_OutputCoolingTypes.CHILLED_WATER
+                    and self.parent_system.get_inp(BDL_SystemKeywords.TYPE)
+                    in [BDL_SystemTypes.FC, BDL_SystemTypes.SZRH, BDL_SystemTypes.HP]
+                ):
+                    return self.occupied_fan_operation_map.get(
+                        self.parent_system.get_inp(BDL_SystemKeywords.INDOOR_FAN_MODE)
+                    )
+                elif self.parent_system.get_inp(BDL_SystemKeywords.TYPE) in [
+                    BDL_SystemTypes.PTAC,
+                    BDL_SystemTypes.UVT,
+                    BDL_SystemTypes.UHT,
+                    BDL_SystemTypes.HP,
+                ]:
+                    # Cycles the fan if the outdoor air fraction is zero
+                    if oa_ratio == 0:
+                        return FanSystemOperationOptions.CYCLING
+                    else:
+                        return FanSystemOperationOptions.CONTINUOUS
+                else:
+                    return FanSystemOperationOptions.CONTINUOUS
             if has_neg_999:  # and not mixed_operation implied to reach here
                 return FanSystemOperationOptions.CYCLING
 
