@@ -174,6 +174,7 @@ class Zone(ChildNode):
             self.doas_terminal.populate_data_elements("doas", output_data, has_dcv)
             self.doas_terminal.populate_data_group()
             self.doas_terminal.insert_to_rpd()
+            self.main_terminal.minimum_outdoor_airflow = 0
 
         else:
             self.main_terminal.minimum_outdoor_airflow = minimum_outdoor_airflow
