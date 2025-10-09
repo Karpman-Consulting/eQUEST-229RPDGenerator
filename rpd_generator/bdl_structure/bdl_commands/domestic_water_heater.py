@@ -9,6 +9,7 @@ StatusOptions = SchemaEnums.schema_enums["StatusOptions"]
 ServiceWaterHeatingEfficiencyMetricOptions = SchemaEnums.schema_enums[
     "ServiceWaterHeatingEfficiencyMetricOptions"
 ]
+TankTypeOptions = SchemaEnums.schema_enums["ServiceWaterHeaterTankOptions"]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_DWHeaterKeywords = BDLEnums.bdl_enums["DomesticWaterHeaterKeywords"]
 BDL_DWHeaterTypes = BDLEnums.bdl_enums["DomesticWaterHeaterTypes"]
@@ -63,15 +64,6 @@ class DomesticWaterHeater(BaseNode):
         self.status_type = None
         self.hot_water_loop = None
 
-        # Tank data elements
-        self.storage_capacity = None
-        self.type = None
-        self.height = None
-        self.interior_insulation = None
-        self.exterior_insulation = None
-        self.location = None
-        self.location_zone = None
-
     def __repr__(self):
         return f"DomesticWaterHeater(u_name='{self.u_name}')"
 
@@ -120,19 +112,15 @@ class DomesticWaterHeater(BaseNode):
         loop = self.get_obj(self.distribution_system)
         loop_stpt = None
         if loop is not None:
-            loop_stpt = loop.design_supply_temperature[1]
+            loop_stpt = (
+                loop.associated_data_group.service_water_piping_obj.service_water_heating_design_and_control_obj.design_supply_temperature
+            )
+
         tank_stpt = self.try_float(self.get_inp(BDL_DWHeaterKeywords.AQUASTAT_SETPT_T))
         if tank_stpt is not None and loop_stpt is not None:
             self.setpoint_temperature = max(loop_stpt, tank_stpt)
         elif tank_stpt is None:
             self.setpoint_temperature = loop_stpt
-        self.storage_capacity = self.try_float(
-            self.get_inp(BDL_DWHeaterKeywords.TANK_VOLUME)
-        )
-        self.location = self.location_map.get(
-            self.get_inp(BDL_DWHeaterKeywords.LOCATION)
-        )
-        self.location_zone = self.get_inp(BDL_DWHeaterKeywords.ZONE_NAME)
 
         heat_ratio = self.try_float(self.get_inp(BDL_DWHeaterKeywords.HEAT_INPUT_RATIO))
         elec_ratio = self.try_float(self.get_inp(BDL_DWHeaterKeywords.ELEC_INPUT_RATIO))
@@ -159,6 +147,15 @@ class DomesticWaterHeater(BaseNode):
             ServiceWaterHeatingEfficiencyMetricOptions.THERMAL_EFFICIENCY
         )
         self.input_power = self.rated_capacity / self.efficiency_metric_values[0]
+
+        storage_capacity = self.try_float(
+            self.get_inp(BDL_DWHeaterKeywords.TANK_VOLUME)
+        )
+        if storage_capacity is not None and storage_capacity > 0:
+            tank = Tank(self)
+            tank.populate_data_elements()
+            tank.populate_data_group()
+            tank.insert_to_rpd()
 
     def get_output_requests(self):
         """Get the output requests for the domestic water heater object."""
@@ -197,23 +194,6 @@ class DomesticWaterHeater(BaseNode):
             }
         )
 
-        if self.storage_capacity is not None and self.storage_capacity > 0:
-            self.tank["id"] = self.u_name + " Tank"
-            tank_data_elements = [
-                "storage_capacity",
-                "type",
-                "height",
-                "interior_insulation",
-                "exterior_insulation",
-                "location",
-                "location_zone",
-            ]
-
-            for attr in tank_data_elements:
-                value = getattr(self, attr, None)
-                if value is not None:
-                    self.tank[attr] = value
-
         no_children_attributes = [
             "reporting_name",
             "notes",
@@ -246,3 +226,68 @@ class DomesticWaterHeater(BaseNode):
     def insert_to_rpd(self):
         """Insert window object into the rpd data structure."""
         self.rmd.service_water_heating_equipment.append(self.data_structure)
+
+
+class Tank:
+
+    location_map = {
+        BDL_DWHeaterLocationOptions.OUTDOOR: ComponentLocationOptions.OUTSIDE,
+        BDL_DWHeaterLocationOptions.ZONE: None,
+        # TODO ZONE must be mapped to CONDITIONED, UNCONDITIONED, SEMICONDITIONED, etc
+    }
+
+    tank_type_map = {
+        1: TankTypeOptions.COMMERCIAL_STORAGE,
+        2: TankTypeOptions.COMMERCIAL_INSTANTANEOUS,
+        3: TankTypeOptions.OTHER,
+    }
+
+    def __init__(self, heater):
+        self.heater = heater
+
+        self.data_structure = {}
+
+        # Tank data elements
+        self.storage_capacity = None
+        self.type = None
+        self.height = None
+        self.interior_insulation = None
+        self.exterior_insulation = None
+        self.location = None
+        self.location_zone = None
+
+    def __repr__(self):
+        return f"Tank()"
+
+    def populate_data_elements(self):
+        self.type = self.tank_type_map.get(
+            self.heater.try_int(self.heater.get_inp(BDL_DWHeaterKeywords.C_TYPE)),
+            TankTypeOptions.COMMERCIAL_STORAGE,
+        )
+        self.storage_capacity = self.heater.try_float(
+            self.heater.get_inp(BDL_DWHeaterKeywords.TANK_VOLUME)
+        )
+        self.location = self.location_map.get(
+            self.heater.get_inp(BDL_DWHeaterKeywords.LOCATION)
+        )
+        self.location_zone = self.heater.get_inp(BDL_DWHeaterKeywords.ZONE_NAME)
+
+    def populate_data_group(self):
+        self.data_structure["id"] = self.heater.u_name + " Tank"
+        tank_data_elements = [
+            "storage_capacity",
+            "type",
+            "height",
+            "interior_insulation",
+            "exterior_insulation",
+            "location",
+            "location_zone",
+        ]
+
+        for attr in tank_data_elements:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.data_structure[attr] = value
+
+    def insert_to_rpd(self):
+        self.heater.tank = self.data_structure

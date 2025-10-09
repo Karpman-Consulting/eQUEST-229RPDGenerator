@@ -252,7 +252,10 @@ class TestCHWLoop(unittest.TestCase):
             "child_loops": [],
             "pump_power_per_flow_rate": 50.0,
         }
-        self.assertEqual(expected_data_structure, self.circulation_loop.data_structure)
+        self.assertEqual(
+            expected_data_structure,
+            self.circulation_loop.associated_data_group.data_structure,
+        )
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_data_with_chw_loop_fixed_continuous_system_operation(
@@ -305,7 +308,10 @@ class TestCHWLoop(unittest.TestCase):
             "child_loops": [],
             "pump_power_per_flow_rate": 50.0,
         }
-        self.assertEqual(expected_data_structure, self.circulation_loop.data_structure)
+        self.assertEqual(
+            expected_data_structure,
+            self.circulation_loop.associated_data_group.data_structure,
+        )
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_data_with_chw_loop_fixed_intermittent_system_operation(
@@ -355,7 +361,10 @@ class TestCHWLoop(unittest.TestCase):
             "child_loops": [],
             "pump_power_per_flow_rate": 50.0,
         }
-        self.assertEqual(expected_data_structure, self.circulation_loop.data_structure)
+        self.assertEqual(
+            expected_data_structure,
+            self.circulation_loop.associated_data_group.data_structure,
+        )
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_data_with_primary_secondary_chw_loop(self, mock_get_output_data):
@@ -405,7 +414,7 @@ class TestCHWLoop(unittest.TestCase):
         }
 
         self.rmd.populate_rmd_data(testing=True)
-        self.circulation_loop_2.insert_to_rpd()
+        self.circulation_loop_2.associated_data_group.insert_to_rpd()
         expected_data_structure = {
             "id": "Circulation Loop 1",
             "cooling_or_condensing_design_and_control": {
@@ -445,7 +454,10 @@ class TestCHWLoop(unittest.TestCase):
             ],
             "pump_power_per_flow_rate": 50.0,
         }
-        self.assertEqual(expected_data_structure, self.circulation_loop.data_structure)
+        self.assertEqual(
+            expected_data_structure,
+            self.circulation_loop.associated_data_group.data_structure,
+        )
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_data_with_hw_loop_oa_reset_continuous_scheduled_operation(
@@ -499,7 +511,10 @@ class TestCHWLoop(unittest.TestCase):
             "child_loops": [],
             "pump_power_per_flow_rate": 50.0,
         }
-        self.assertEqual(expected_data_structure, self.circulation_loop.data_structure)
+        self.assertEqual(
+            expected_data_structure,
+            self.circulation_loop.associated_data_group.data_structure,
+        )
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_data_with_hw_loop_fixed_demand_operation(
@@ -546,7 +561,10 @@ class TestCHWLoop(unittest.TestCase):
             "child_loops": [],
             "pump_power_per_flow_rate": 50.0,
         }
-        self.assertEqual(expected_data_structure, self.circulation_loop.data_structure)
+        self.assertEqual(
+            expected_data_structure,
+            self.circulation_loop.associated_data_group.data_structure,
+        )
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_data_with_cw_loop_oa_reset_continuous_scheduled_operation(
@@ -619,7 +637,10 @@ class TestCHWLoop(unittest.TestCase):
             "child_loops": [],
             "pump_power_per_flow_rate": 50.0,
         }
-        self.assertEqual(expected_data_structure, self.circulation_loop.data_structure)
+        self.assertEqual(
+            expected_data_structure,
+            self.circulation_loop.associated_data_group.data_structure,
+        )
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_data_with_heat_cool_changeover_loop_continuous_scheduled_operation(
@@ -688,7 +709,10 @@ class TestCHWLoop(unittest.TestCase):
             "child_loops": [],
             "pump_power_per_flow_rate": 50.0,
         }
-        self.assertEqual(expected_data_structure, self.circulation_loop.data_structure)
+        self.assertEqual(
+            expected_data_structure,
+            self.circulation_loop.associated_data_group.data_structure,
+        )
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_data_with_swh_loop(self, mock_get_output_data):
@@ -718,15 +742,20 @@ class TestCHWLoop(unittest.TestCase):
                 "are_thermal_losses_modeled": False,
                 "child": [],
                 "service_water_heating_design_and_control": {
-                    "id": "Circulation Loop 1 Design/Control",
+                    "id": "Circulation Loop 1 HeatingDesign/Control",
                     "design_supply_temperature": 160.0,
+                    "design_return_temperature": 130.0,
+                    "flow_control": "FIXED_FLOW",
                 },
             },
         }
-        self.assertEqual(expected_data_structure, self.circulation_loop.data_structure)
+        self.assertEqual(
+            expected_data_structure,
+            self.circulation_loop.associated_data_group.data_structure,
+        )
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
-    def test_populate_data_with_secndary_swh_loop(self, mock_get_output_data):
+    def test_populate_data_with_secondary_swh_loop(self, mock_get_output_data):
         """
         Tests that circulation_loop output contains expected values, given valid inputs for loop with:
             - TYPE DHW
@@ -767,24 +796,31 @@ class TestCHWLoop(unittest.TestCase):
                 "is_recirculation_loop": True,
                 "are_thermal_losses_modeled": False,
                 "service_water_heating_design_and_control": {
-                    "id": "Circulation Loop 1 Design/Control",
+                    "id": "Circulation Loop 1 HeatingDesign/Control",
                     "design_supply_temperature": 160.0,
+                    "design_return_temperature": 130.0,
+                    "flow_control": "FIXED_FLOW",
                 },
                 "child": [
                     {
-                        "id": "Circulation Loop 2",
+                        "id": "Circulation Loop 2 ServiceWaterPiping",
                         "is_recirculation_loop": False,
                         "are_thermal_losses_modeled": True,
                         "service_water_heating_design_and_control": {
-                            "id": "Circulation Loop 2 Design/Control",
+                            "id": "Circulation Loop 2 HeatingDesign/Control",
                             "design_supply_temperature": 160.0,
+                            "design_return_temperature": 130.0,
+                            "flow_control": "FIXED_FLOW",
                         },
                         "child": [],
                     }
                 ],
             },
         }
-        self.assertEqual(expected_data_structure, self.circulation_loop.data_structure)
+        self.assertEqual(
+            expected_data_structure,
+            self.circulation_loop.associated_data_group.data_structure,
+        )
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_determine_chw_loop_flow_control_variable_secondary_loop_valve(
@@ -1114,6 +1150,15 @@ class TestCHWLoop(unittest.TestCase):
         }
         self.rmd.building_area_types = {0}
         self.circulation_loop.populate_service_water_heating_uses(testing=True)
+        swh_uses = [
+            obj
+            for obj in self.rmd.bdl_obj_instances.values()
+            if isinstance(obj, ServiceWaterHeatingUse)
+        ]
+        for swh_use in swh_uses:
+            swh_use.populate_data_group()
+            swh_use.insert_to_rpd()
+
         expected_data_structure = [
             {
                 "id": "Circulation Loop 1 Load1",

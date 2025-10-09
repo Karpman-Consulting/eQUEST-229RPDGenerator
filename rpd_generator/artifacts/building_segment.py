@@ -9,6 +9,9 @@ HVACBuildingAreaOptions = SchemaEnums.schema_enums[
 VerticalFenestrationBuildingAreaOptions = SchemaEnums.schema_enums[
     "VerticalFenestrationBuildingAreaOptions2019ASHRAE901"
 ]
+ServiceWaterHeatingBuildingAreaOptions = SchemaEnums.schema_enums[
+    "ServiceWaterHeatingAreaOptions2019ASHRAE901"
+]
 
 
 class BuildingSegment:
@@ -145,6 +148,92 @@ class BuildingSegment:
         40: VerticalFenestrationBuildingAreaOptions.OTHER,
     }
 
+    service_water_heating_building_area_map = {
+        1: ServiceWaterHeatingBuildingAreaOptions.AUTOMOTIVE_FACILITY,
+        2: ServiceWaterHeatingBuildingAreaOptions.CONVENTION_CENTER,
+        3: ServiceWaterHeatingBuildingAreaOptions.COURTHOUSE,
+        4: ServiceWaterHeatingBuildingAreaOptions.DINING_BAR_LOUNGE_LEISURE,
+        5: ServiceWaterHeatingBuildingAreaOptions.DINING_CAFETERIA_FAST_FOOD,
+        6: ServiceWaterHeatingBuildingAreaOptions.DINING_FAMILY,
+        7: ServiceWaterHeatingBuildingAreaOptions.DINING_BAR_LOUNGE_LEISURE,
+        8: ServiceWaterHeatingBuildingAreaOptions.DINING_CAFETERIA_FAST_FOOD,
+        9: ServiceWaterHeatingBuildingAreaOptions.DINING_FAMILY,
+        10: ServiceWaterHeatingBuildingAreaOptions.EXERCISE_CENTER,
+        11: ServiceWaterHeatingBuildingAreaOptions.FIRE_STATION,
+        12: ServiceWaterHeatingBuildingAreaOptions.GROCERY_STORE,
+        13: ServiceWaterHeatingBuildingAreaOptions.GYMNASIUM,
+        14: ServiceWaterHeatingBuildingAreaOptions.HEALTH_CARE_CLINIC,
+        15: ServiceWaterHeatingBuildingAreaOptions.HOSPITAL_AND_OUTPATIENT_SURGERY,
+        16: ServiceWaterHeatingBuildingAreaOptions.LIBRARY,
+        17: ServiceWaterHeatingBuildingAreaOptions.MANUFACTURING_FACILITY,
+        18: ServiceWaterHeatingBuildingAreaOptions.MOTION_PICTURE_THEATER,
+        19: ServiceWaterHeatingBuildingAreaOptions.MUSEUM,  # May be small, medium, or large depending on area
+        20: ServiceWaterHeatingBuildingAreaOptions.OFFICE,
+        21: ServiceWaterHeatingBuildingAreaOptions.PARKING_GARAGE,
+        22: ServiceWaterHeatingBuildingAreaOptions.PENITENTIARY,
+        23: ServiceWaterHeatingBuildingAreaOptions.PERFORMING_ARTS_THEATER,
+        24: ServiceWaterHeatingBuildingAreaOptions.POLICE_STATION,
+        25: ServiceWaterHeatingBuildingAreaOptions.POST_OFFICE,
+        26: ServiceWaterHeatingBuildingAreaOptions.RELIGIOUS_FACILITY,
+        27: ServiceWaterHeatingBuildingAreaOptions.RETAIL,
+        28: ServiceWaterHeatingBuildingAreaOptions.RETAIL,
+        29: ServiceWaterHeatingBuildingAreaOptions.SCHOOL_UNIVERSITY,
+        30: ServiceWaterHeatingBuildingAreaOptions.SCHOOL_UNIVERSITY,
+        31: ServiceWaterHeatingBuildingAreaOptions.SPORTS_ARENA,
+        32: ServiceWaterHeatingBuildingAreaOptions.TOWN_HALL,
+        33: ServiceWaterHeatingBuildingAreaOptions.TRANSPORTATION,
+        34: ServiceWaterHeatingBuildingAreaOptions.WAREHOUSE,
+        35: ServiceWaterHeatingBuildingAreaOptions.WAREHOUSE,
+        36: ServiceWaterHeatingBuildingAreaOptions.WORKSHOP,
+        37: ServiceWaterHeatingBuildingAreaOptions.DORMITORY,
+        38: ServiceWaterHeatingBuildingAreaOptions.HOTEL,
+        39: ServiceWaterHeatingBuildingAreaOptions.HOTEL,
+        40: ServiceWaterHeatingBuildingAreaOptions.MULTIFAMILY,
+    }
+
+    bpf_area_map = {
+        1: "RETAIL",
+        2: "ALL_OTHERS",
+        3: "ALL_OTHERS",
+        4: "RESTAURANT",
+        5: "RESTAURANT",
+        6: "RESTAURANT",
+        7: "RESTAURANT",
+        8: "RESTAURANT",
+        9: "RESTAURANT",
+        10: "ALL_OTHERS",
+        11: "ALL_OTHERS",
+        12: "RETAIL",
+        13: "ALL_OTHERS",
+        14: "HEALTHCARE_HOSPITAL",
+        15: "HEALTHCARE_HOSPITAL",
+        16: "ALL_OTHERS",
+        17: "ALL_OTHERS",
+        18: "ALL_OTHERS",
+        19: "ALL_OTHERS",
+        20: "OFFICE",
+        21: "ALL_OTHERS",
+        22: "ALL_OTHERS",
+        23: "ALL_OTHERS",
+        24: "ALL_OTHERS",
+        25: "ALL_OTHERS",
+        26: "ALL_OTHERS",
+        27: "RETAIL",
+        28: "RETAIL",
+        29: "SCHOOL",
+        30: "SCHOOL",
+        31: "ALL_OTHERS",
+        32: "ALL_OTHERS",
+        33: "ALL_OTHERS",
+        34: "WAREHOUSE",
+        35: "WAREHOUSE",
+        36: "ALL_OTHERS",
+        37: "ALL_OTHERS",
+        38: "HOTEL_MOTEL",
+        39: "HOTEL_MOTEL",
+        40: "MULTIFAMILY",
+    }
+
     def __init__(self, obj_id, rmd, building_type=None):
         self.rmd = rmd
         self.obj_id = obj_id
@@ -166,6 +255,7 @@ class BuildingSegment:
         self.area_type_vertical_fenestration = None
         self.lighting_building_area_type = None
         self.area_type_heating_ventilating_air_conditioning_system = None
+        self.service_water_heating_area_type = None
 
     def populate_data_elements(self):
         # BuildingSegment instances will be created for each unique building area type set within a SPACE BDL command
@@ -178,6 +268,9 @@ class BuildingSegment:
         )
         self.area_type_heating_ventilating_air_conditioning_system = (
             self.hvac_building_area_map.get(self.building_type)
+        )
+        self.service_water_heating_area_type = (
+            self.service_water_heating_building_area_map.get(self.building_type)
         )
 
     def populate_data_group(self):
@@ -198,6 +291,7 @@ class BuildingSegment:
             "area_type_vertical_fenestration",
             "lighting_building_area_type",
             "area_type_heating_ventilating_air_conditioning_system",
+            "service_water_heating_area_type",
         ]
 
         # Iterate over the no_children_attributes list and populate if the value is not None

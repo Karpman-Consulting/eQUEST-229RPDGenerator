@@ -1,5 +1,6 @@
 import customtkinter as ctk
 import threading
+import traceback
 from tkinter import Menu, filedialog
 from pathlib import Path
 
@@ -537,8 +538,11 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             else:
                 msg = "\n".join(data.errors)
                 self.after(0, lambda: self._on_generation_complete(False, msg))
+
         except Exception as e:
-            self.after(0, lambda: self._on_generation_complete(False, str(e)))
+            msg = str(e)
+            tb = traceback.format_exc()
+            self.after(0, lambda tb=tb: self._on_generation_complete(False, tb))
 
     def _on_generation_complete(self, success: bool, msg: str = ""):
         self.close_progress()

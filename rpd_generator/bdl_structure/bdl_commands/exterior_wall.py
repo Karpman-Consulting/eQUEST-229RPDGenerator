@@ -47,15 +47,6 @@ class ExteriorWall(ChildNode, ParentNode):
         self.does_cast_shade = None
         self.status_type = None
 
-        # data elements for surface optical properties
-        self.optical_property_id = self.u_name + " OpticalProps"
-        self.absorptance_thermal_exterior = None
-        self.absorptance_solar_exterior = None
-        self.absorptance_visible_exterior = None
-        self.absorptance_thermal_interior = None
-        self.absorptance_solar_interior = None
-        self.absorptance_visible_interior = None
-
     def __repr__(self):
         return f"ExteriorWall(u_name='{self.u_name}', parent={self.parent})"
 
@@ -96,54 +87,13 @@ class ExteriorWall(ChildNode, ParentNode):
             self.get_inp(BDL_ExteriorWallKeywords.SHADING_SURFACE)
         )
 
-        self.absorptance_thermal_exterior = self.try_float(
-            self.get_inp(BDL_ExteriorWallKeywords.OUTSIDE_EMISS)
-        )
-
-        self.absorptance_solar_interior = self.try_float(
-            self.get_inp(BDL_ExteriorWallKeywords.INSIDE_SOL_ABS)
-        )
-
-        reflectance_visible_interior = self.try_float(
-            self.get_inp(BDL_ExteriorWallKeywords.INSIDE_VIS_REFL)
-        )
-        if reflectance_visible_interior is not None:
-            self.absorptance_visible_interior = 1 - reflectance_visible_interior
-
-        construction = self.get_obj(self.get_inp(BDL_ExteriorWallKeywords.CONSTRUCTION))
-        if construction is not None:
-            self.absorptance_solar_exterior = self.try_float(
-                construction.get_inp(BDL_ConstructionKeywords.ABSORPTANCE)
-            )
-
-    # def get_output_requests(self):
-    #     requests = {}
-    #     if (
-    #         self.area is None
-    #         and self.get_inp(BDL_ExteriorWallKeywords.LOCATION)
-    #         == BDL_WallLocationOptions.TOP
-    #     ):
-    #         requests["Roof Area"] = (1104008, "", self.u_name)
-    #     return requests
+        optical_properties = SurfaceOpticalProperties(self)
+        optical_properties.populate_data_elements()
+        optical_properties.populate_data_group()
+        optical_properties.insert_to_rpd()
 
     def populate_data_group(self):
         """Populate schema structure for exterior wall object."""
-
-        optical_property_attributes = [
-            "optical_property_id",
-            "absorptance_thermal_exterior",
-            "absorptance_solar_exterior",
-            "absorptance_visible_exterior",
-            "absorptance_thermal_interior",
-            "absorptance_solar_interior",
-            "absorptance_visible_interior",
-        ]
-
-        for attr in optical_property_attributes:
-            value = getattr(self, attr, None)
-            if value is not None:
-                attr = attr.replace("optical_property_", "")
-                self.optical_properties[attr] = value
 
         self.exterior_wall_data_structure = {
             "id": self.u_name,
@@ -199,3 +149,65 @@ class ExteriorWall(ChildNode, ParentNode):
                 polygon.calculate_area_of_polygon_coords()
                 area = polygon.area
         return area
+
+
+class SurfaceOpticalProperties:
+
+    def __init__(self, wall):
+        self.wall = wall
+
+        self.data_structure = {}
+
+        # data elements for surface optical properties
+        self.absorptance_thermal_exterior = None
+        self.absorptance_solar_exterior = None
+        self.absorptance_visible_exterior = None
+        self.absorptance_thermal_interior = None
+        self.absorptance_solar_interior = None
+        self.absorptance_visible_interior = None
+
+    def __repr__(self):
+        return f"SurfaceOpticalProperties()"
+
+    def populate_data_elements(self):
+        self.absorptance_thermal_exterior = self.wall.try_float(
+            self.wall.get_inp(BDL_ExteriorWallKeywords.OUTSIDE_EMISS)
+        )
+
+        self.absorptance_solar_interior = self.wall.try_float(
+            self.wall.get_inp(BDL_ExteriorWallKeywords.INSIDE_SOL_ABS)
+        )
+
+        reflectance_visible_interior = self.wall.try_float(
+            self.wall.get_inp(BDL_ExteriorWallKeywords.INSIDE_VIS_REFL)
+        )
+        if reflectance_visible_interior is not None:
+            self.absorptance_visible_interior = 1 - reflectance_visible_interior
+
+        construction = self.wall.get_obj(
+            self.wall.get_inp(BDL_ExteriorWallKeywords.CONSTRUCTION)
+        )
+        if construction is not None:
+            self.absorptance_solar_exterior = self.wall.try_float(
+                construction.get_inp(BDL_ConstructionKeywords.ABSORPTANCE)
+            )
+
+    def populate_data_group(self):
+        self.data_structure["id"] = self.wall.u_name + " OpticalProps"
+
+        optical_property_attributes = [
+            "optical_property_id",
+            "absorptance_thermal_exterior",
+            "absorptance_solar_exterior",
+            "absorptance_visible_exterior",
+            "absorptance_thermal_interior",
+            "absorptance_solar_interior",
+            "absorptance_visible_interior",
+        ]
+        for attr in optical_property_attributes:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.data_structure[attr] = value
+
+    def insert_to_rpd(self):
+        self.wall.optical_properties = self.data_structure

@@ -136,9 +136,13 @@ class Door(ChildNode):
                     + int_air_film_resistance
                 )
                 return u_factor
+            else:
+                return None
         else:
             if construction_obj and construction_obj.u_factor is not None:
                 u_factor = 1 / (
                     1 / construction_obj.u_factor + 2 * int_air_film_resistance
                 )
                 return u_factor
+            else:
+                return None

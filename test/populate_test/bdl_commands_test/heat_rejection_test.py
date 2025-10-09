@@ -35,7 +35,7 @@ class TestHeatRejection(unittest.TestCase):
         """Tests that heat_rejection outputs expected values, given valid inputs"""
         mock_get_output_data.return_value = {"Cooling Tower - Flow (gal/min)": 80}
         self.loop.keyword_value_pairs = {
-            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.CHW,
+            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.CW,
             BDL_CirculationLoopKeywords.DESIGN_COOL_T: "62",
         }
         self.heat_rejection.keyword_value_pairs = {
@@ -71,7 +71,7 @@ class TestHeatRejection(unittest.TestCase):
         """Tests that heat_rejection outputs expected values, given valid inputs with no circulation_loop"""
         mock_get_output_data.return_value = {"Cooling Tower - Flow (gal/min)": 80}
         self.loop.keyword_value_pairs = {
-            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.CHW,
+            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.CW,
             BDL_CirculationLoopKeywords.DESIGN_COOL_T: "62",
         }
         self.heat_rejection.keyword_value_pairs = {
@@ -102,7 +102,7 @@ class TestHeatRejection(unittest.TestCase):
         """Tests that heat_rejection outputs expected values, given valid inputs and no pump"""
         mock_get_output_data.return_value = {"Cooling Tower - Flow (gal/min)": 80}
         self.loop.keyword_value_pairs = {
-            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.CHW,
+            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.CW,
             BDL_CirculationLoopKeywords.DESIGN_COOL_T: "62",
         }
         self.heat_rejection.keyword_value_pairs = {

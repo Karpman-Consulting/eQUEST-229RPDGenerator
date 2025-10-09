@@ -6,6 +6,9 @@ from rpd_generator.bdl_structure.base_node import Base, BaseNode
 from rpd_generator.bdl_structure.base_definition import BaseDefinition
 from rpd_generator.artifacts.building_segment import BuildingSegment
 from rpd_generator.artifacts.building import Building
+from rpd_generator.bdl_structure.bdl_commands.circulation_loop import (
+    ServiceWaterHeatingUse,
+)
 
 EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
 EndUseOptions = SchemaEnums.schema_enums["EndUseOptions"]
@@ -149,6 +152,7 @@ class RulesetModelDescription(Base):
         self.ground_loop_hx_names = []
         self.pump_names = []
         self.equip_ctrl_names = []
+        self.service_water_heating_use_names = []
 
         self.rmd_data_structure = {}
 
@@ -198,7 +202,13 @@ class RulesetModelDescription(Base):
         for obj_instance in sorted_commands:
             if isinstance(
                 obj_instance,
-                (BaseNode, RulesetModelDescription, Building, BuildingSegment),
+                (
+                    BaseNode,
+                    RulesetModelDescription,
+                    Building,
+                    BuildingSegment,
+                    ServiceWaterHeatingUse,
+                ),
             ):
                 obj_instance.populate_data_group()
 
@@ -206,7 +216,13 @@ class RulesetModelDescription(Base):
         for obj_instance in self.bdl_obj_instances.values():
             if isinstance(
                 obj_instance,
-                (BaseNode, RulesetModelDescription, Building, BuildingSegment),
+                (
+                    BaseNode,
+                    RulesetModelDescription,
+                    Building,
+                    BuildingSegment,
+                    ServiceWaterHeatingUse,
+                ),
             ):
                 obj_instance.insert_to_rpd()
 
@@ -225,7 +241,15 @@ class RulesetModelDescription(Base):
         for obj in self.bdl_obj_instances.values():
             if isinstance(obj, (BaseNode, BaseDefinition)):
                 command_tuples.append((obj.bdl_command, obj))
-            elif isinstance(obj, (RulesetModelDescription, Building, BuildingSegment)):
+            elif isinstance(
+                obj,
+                (
+                    RulesetModelDescription,
+                    Building,
+                    BuildingSegment,
+                    ServiceWaterHeatingUse,
+                ),
+            ):
                 additional_objs.append(obj)
 
         order_map = {cmd: i for i, cmd in enumerate(self.COMMAND_PROCESSING_ORDER)}

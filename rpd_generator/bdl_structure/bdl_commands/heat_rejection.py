@@ -96,7 +96,7 @@ class HeatRejection(BaseNode):
         circulation_loop = self.get_obj(self.loop)
         if circulation_loop is not None:
             self.leaving_water_setpoint_temperature = (
-                circulation_loop.design_supply_temperature[0]
+                circulation_loop.condenser_fluid_loop_design_and_control.design_supply_temperature
             )
 
         # Assign pump data elements populated from the heat rejection keyword value pairs

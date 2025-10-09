@@ -220,7 +220,7 @@ class Space(ChildNode, ParentNode):
         building_area_type = self.try_int(
             self.get_inp(BDL_SpaceKeywords.C_901_BLDG_TYPE)
         )
-        # if the budilding area type is new, create a new BuildingSegment object
+        # if the building area type is new, create a new BuildingSegment object
         if building_area_type not in self.rmd.building_area_types:
             building_segment = BuildingSegment(
                 f"{BuildingSegment.lighting_building_area_map.get(building_area_type, 'Default Building Segment')}",

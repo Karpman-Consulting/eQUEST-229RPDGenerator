@@ -16,6 +16,7 @@ from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 
 BDL_CirculationLoopKeywords = BDLEnums.bdl_enums["CirculationLoopKeywords"]
+BDL_CirculationLoopTypes = BDLEnums.bdl_enums["CirculationLoopTypes"]
 
 
 class TestFuelBoiler(unittest.TestCase):
@@ -31,7 +32,7 @@ class TestFuelBoiler(unittest.TestCase):
         self.boiler = Boiler("Boiler 1", self.rmd)
         self.loop = CirculationLoop("Test HW Loop", self.rmd)
         self.loop.keyword_value_pairs = {
-            BDL_CirculationLoopKeywords.TYPE: "HOT_WATER",
+            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.HW,
         }
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
@@ -151,7 +152,7 @@ class TestElectricBoiler(unittest.TestCase):
         self.boiler = Boiler("Boiler 1", self.rmd)
         self.loop = CirculationLoop("Test HW Loop", self.rmd)
         self.loop.keyword_value_pairs = {
-            BDL_CirculationLoopKeywords.TYPE: "HOT_WATER",
+            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.HW,
         }
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")

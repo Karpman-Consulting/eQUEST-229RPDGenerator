@@ -45,15 +45,6 @@ class BelowGradeWall(ChildNode):
         self.does_cast_shade = None
         self.status_type = None
 
-        # data elements for surface optical properties
-        self.optical_property_id = self.u_name + " OpticalProps"
-        self.absorptance_thermal_exterior = None
-        self.absorptance_solar_exterior = None
-        self.absorptance_visible_exterior = None
-        self.absorptance_thermal_interior = None
-        self.absorptance_solar_interior = None
-        self.absorptance_visible_interior = None
-
     def __repr__(self):
         return f"BelowGradeWall(u_name='{self.u_name}')"
 
@@ -98,40 +89,19 @@ class BelowGradeWall(ChildNode):
             self.get_inp(BDL_UndergroundWallKeywords.SHADING_SURFACE)
         )
 
-        self.absorptance_solar_interior = self.try_float(
-            self.get_inp(BDL_UndergroundWallKeywords.INSIDE_SOL_ABS)
-        )
-
-        reflectance_visible_interior = self.try_float(
-            self.get_inp(BDL_UndergroundWallKeywords.INSIDE_VIS_REFL)
-        )
-        if reflectance_visible_interior is not None:
-            self.absorptance_visible_interior = 1 - reflectance_visible_interior
-
         if self.classification == SurfaceClassificationOptions.WALL:
             self.populate_c_factor()
 
         if self.classification == SurfaceClassificationOptions.FLOOR:
             self.populate_f_factor()
 
+        optical_properties = SurfaceOpticalProperties(self)
+        optical_properties.populate_data_elements()
+        optical_properties.populate_data_group()
+        optical_properties.insert_to_rpd()
+
     def populate_data_group(self):
         """Populate schema structure for below grade wall object."""
-
-        optical_property_attributes = [
-            "optical_property_id",
-            "absorptance_thermal_exterior",
-            "absorptance_solar_exterior",
-            "absorptance_visible_exterior",
-            "absorptance_thermal_interior",
-            "absorptance_solar_interior",
-            "absorptance_visible_interior",
-        ]
-
-        for attr in optical_property_attributes:
-            value = getattr(self, attr, None)
-            if value is not None:
-                attr = attr.replace("optical_property_", "")
-                self.optical_properties[attr] = value
 
         self.underground_wall_data_structure = {
             "id": self.u_name,
@@ -212,3 +182,53 @@ class BelowGradeWall(ChildNode):
             and not construction.used_for_multiple_slabs_on_different_z
         ):
             construction.f_factor = self.parent.parent.f_factor
+
+
+class SurfaceOpticalProperties:
+
+    def __init__(self, wall):
+        self.wall = wall
+
+        self.data_structure = {}
+
+        # data elements for surface optical properties
+        self.absorptance_thermal_exterior = None
+        self.absorptance_solar_exterior = None
+        self.absorptance_visible_exterior = None
+        self.absorptance_thermal_interior = None
+        self.absorptance_solar_interior = None
+        self.absorptance_visible_interior = None
+
+    def __repr__(self):
+        return f"SurfaceOpticalProperties()"
+
+    def populate_data_elements(self):
+        self.absorptance_solar_interior = self.wall.try_float(
+            self.wall.get_inp(BDL_UndergroundWallKeywords.INSIDE_SOL_ABS)
+        )
+
+        reflectance_visible_interior = self.wall.try_float(
+            self.wall.get_inp(BDL_UndergroundWallKeywords.INSIDE_VIS_REFL)
+        )
+        if reflectance_visible_interior is not None:
+            self.absorptance_visible_interior = 1 - reflectance_visible_interior
+
+    def populate_data_group(self):
+        self.data_structure["id"] = self.wall.u_name + " OpticalProps"
+
+        optical_property_attributes = [
+            "optical_property_id",
+            "absorptance_thermal_exterior",
+            "absorptance_solar_exterior",
+            "absorptance_visible_exterior",
+            "absorptance_thermal_interior",
+            "absorptance_solar_interior",
+            "absorptance_visible_interior",
+        ]
+        for attr in optical_property_attributes:
+            value = getattr(self, attr, None)
+            if value is not None:
+                self.data_structure[attr] = value
+
+    def insert_to_rpd(self):
+        self.wall.optical_properties = self.data_structure

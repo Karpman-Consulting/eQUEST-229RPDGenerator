@@ -623,6 +623,7 @@ class TestZones(unittest.TestCase):
                     "id": "Zone 1 MainTerminal",
                     "type": "CONSTANT_AIR_VOLUME",
                     "has_demand_control_ventilation": False,
+                    "minimum_outdoor_airflow": 0,
                     "secondary_airflow": 0,
                     "served_by_heating_ventilating_air_conditioning_system": "System 1",
                 },

@@ -373,6 +373,7 @@ class BDLEnums:
                 "DHW-LOOP",
                 "ELEC-INPUT-RATIO",
                 "HEAT-INPUT-RATIO",
+                "C-TYPE",
             ]
         ),
         "DoorKeywords": _ListEnum(
