@@ -42,7 +42,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             BDL_FuelMeterKeywords.TYPE: BDL_FuelTypes.NATURAL_GAS
         }
         self.loop.keyword_value_pairs = {
-            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.HW,
+            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.DHW,
             BDL_CirculationLoopKeywords.DESIGN_HEAT_T: "65",
         }
         self.domestic_water_heater.keyword_value_pairs = {
@@ -64,6 +64,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "operating_points": [],
             "tank": {
                 "id": "DWH 1 Tank",
+                "type": "COMMERCIAL_STORAGE",
                 "storage_capacity": 250.0,
                 "location_zone": "ZONE 1",
             },
@@ -93,7 +94,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             BDL_FuelMeterKeywords.TYPE: BDL_FuelTypes.FUEL_OIL
         }
         self.loop.keyword_value_pairs = {
-            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.HW,
+            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.DHW,
             BDL_CirculationLoopKeywords.DESIGN_HEAT_T: "65",
         }
         self.domestic_water_heater.keyword_value_pairs = {
@@ -114,6 +115,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "operating_points": [],
             "tank": {
                 "id": "DWH 1 Tank",
+                "type": "COMMERCIAL_STORAGE",
                 "storage_capacity": 250.0,
                 "location": "OUTSIDE",
             },
@@ -146,7 +148,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             BDL_MasterMeterKeywords.DHW_FUEL_METER: "Master Fuel Meter"
         }
         self.loop.keyword_value_pairs = {
-            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.HW,
+            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.DHW,
             BDL_CirculationLoopKeywords.DESIGN_HEAT_T: "65",
         }
         self.domestic_water_heater.keyword_value_pairs = {
@@ -166,6 +168,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "operating_points": [],
             "tank": {
                 "id": "DWH 1 Tank",
+                "type": "COMMERCIAL_STORAGE",
                 "storage_capacity": 250.0,
                 "location": "OUTSIDE",
             },
@@ -195,7 +198,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             BDL_FuelMeterKeywords.TYPE: BDL_FuelTypes.NATURAL_GAS
         }
         self.loop.keyword_value_pairs = {
-            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.HW,
+            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.DHW,
             BDL_CirculationLoopKeywords.DESIGN_HEAT_T: "65",
         }
         self.domestic_water_heater.keyword_value_pairs = {
@@ -216,6 +219,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "operating_points": [],
             "tank": {
                 "id": "DWH 1 Tank",
+                "type": "COMMERCIAL_STORAGE",
                 "storage_capacity": 250.0,
                 "location": "OUTSIDE",
             },
@@ -245,7 +249,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             BDL_FuelMeterKeywords.TYPE: BDL_FuelTypes.NATURAL_GAS
         }
         self.loop.keyword_value_pairs = {
-            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.HW,
+            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.DHW,
             BDL_CirculationLoopKeywords.DESIGN_HEAT_T: "65",
         }
         self.domestic_water_heater.keyword_value_pairs = {
@@ -265,6 +269,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "operating_points": [],
             "tank": {
                 "id": "DWH 1 Tank",
+                "type": "COMMERCIAL_STORAGE",
                 "storage_capacity": 250.0,
                 "location": "OUTSIDE",
             },
@@ -294,7 +299,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             BDL_FuelMeterKeywords.TYPE: BDL_FuelTypes.NATURAL_GAS
         }
         self.loop.keyword_value_pairs = {
-            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.HW,
+            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.DHW,
             BDL_CirculationLoopKeywords.DESIGN_HEAT_T: "65",
         }
         self.domestic_water_heater.keyword_value_pairs = {
@@ -314,6 +319,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "operating_points": [],
             "tank": {
                 "id": "DWH 1 Tank",
+                "type": "COMMERCIAL_STORAGE",
                 "storage_capacity": 250.0,
                 "location": "OUTSIDE",
             },
@@ -343,7 +349,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             BDL_FuelMeterKeywords.TYPE: BDL_FuelTypes.NATURAL_GAS
         }
         self.loop.keyword_value_pairs = {
-            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.HW,
+            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.DHW,
             BDL_CirculationLoopKeywords.DESIGN_HEAT_T: "65",
         }
         self.domestic_water_heater.keyword_value_pairs = {
@@ -363,6 +369,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "operating_points": [],
             "tank": {
                 "id": "DWH 1 Tank",
+                "type": "COMMERCIAL_STORAGE",
                 "storage_capacity": 250.0,
                 "location": "OUTSIDE",
             },
@@ -392,7 +399,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             BDL_FuelMeterKeywords.TYPE: BDL_FuelTypes.OTHER_FUEL
         }
         self.loop.keyword_value_pairs = {
-            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.HW,
+            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.DHW,
             BDL_CirculationLoopKeywords.DESIGN_HEAT_T: "65",
         }
         self.domestic_water_heater.keyword_value_pairs = {
@@ -413,6 +420,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "operating_points": [],
             "tank": {
                 "id": "DWH 1 Tank",
+                "type": "COMMERCIAL_STORAGE",
                 "storage_capacity": 250.0,
                 "location": "OUTSIDE",
             },
@@ -442,7 +450,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             BDL_FuelMeterKeywords.TYPE: BDL_FuelTypes.OTHER_FUEL
         }
         self.loop.keyword_value_pairs = {
-            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.HW,
+            BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.DHW,
             BDL_CirculationLoopKeywords.DESIGN_HEAT_T: "65",
         }
         self.domestic_water_heater.keyword_value_pairs = {
@@ -463,6 +471,7 @@ class TestDomesticWaterHeater(unittest.TestCase):
             "operating_points": [],
             "tank": {
                 "id": "DWH 1 Tank",
+                "type": "COMMERCIAL_STORAGE",
                 "storage_capacity": 250.0,
                 "location_zone": "ZONE 1",
             },

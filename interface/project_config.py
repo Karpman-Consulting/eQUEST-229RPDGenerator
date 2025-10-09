@@ -1,9 +1,12 @@
 import customtkinter as ctk
+import threading
+import traceback
 from tkinter import Menu, filedialog
 from pathlib import Path
 
 from interface.CTkToolTip import CTkToolTip
 from interface.disclaimer_window import DisclaimerWindow
+from interface.loading_window import LoadingWindow
 from interface.error_window import ErrorWindow
 from interface.constants import *
 from rpd_generator.artifacts.ruleset_project_description import (
@@ -19,6 +22,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         self.title("Project Configuration")
         self.license_window = None
         self.disclaimer_window = None
+        self.progress_window = None
         self.error_window = None
 
         self.main_app.data.ruleset_model_file_paths = {
@@ -128,6 +132,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         self.menubar = self.create_menu_bar()
         self.place_widgets()
         self.create_nav_bar()
+        self._refresh_applicability()
 
     def __repr__(self):
         return "ProjectConfigWindow"
@@ -140,7 +145,6 @@ class ProjectConfigWindow(ctk.CTkToplevel):
         menubar = Menu(self)
         file_menu = Menu(menubar, tearoff=0)
         file_menu.add_command(label="New", command="donothing")
-        file_menu.add_command(label="Open", command=self.load_project_data)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self.quit)
         menubar.add_cascade(label="File", menu=file_menu)
@@ -171,6 +175,19 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             self.error_window.after(100, self.error_window.lift, None)
         else:
             self.error_window.focus()  # if window exists, focus it
+
+    def open_progress(self, message="Generating RPD..."):
+        # Close any existing one first (defensive)
+        if self.progress_window and self.progress_window.winfo_exists():
+            self.progress_window.close()
+
+        self.progress_window = LoadingWindow(self, message)
+        self.after(100, self.progress_window.lift)
+
+    def close_progress(self):
+        if self.progress_window and self.progress_window.winfo_exists():
+            self.progress_window.close()
+        self.progress_window = None
 
     def place_widgets(self):
         # Place widgets
@@ -215,11 +232,12 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             row=7, column=1, columnspan=6, sticky="nsew", padx=5
         )
 
-    def update_ruleset_model_frame(self, *args):
+    def update_ruleset_model_frame(self):
         self.proposed_reflects_design_checkbox.grid_remove()
         self.rotation_exception_checkbox.grid_remove()
         self.clear_ruleset_models_frame()
         self.show_ruleset_models()
+        self._refresh_applicability()
 
     def show_ruleset_models(self):
         # Main logic
@@ -279,6 +297,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
                     # If hidden, show them
                     for widget in row_widgets:
                         widget.grid()
+        self._refresh_applicability()
 
     def toggle_baseline_rotations(self):
         """Add or remove Baseline rotation rows based on checkbox state."""
@@ -297,6 +316,7 @@ class ProjectConfigWindow(ctk.CTkToplevel):
                     # If hidden, show them
                     for widget in row_widgets:
                         widget.grid()
+        self._refresh_applicability()
 
     def create_file_row(self, label_text):
         """Create a row of widgets without placing them using grid()."""
@@ -414,19 +434,12 @@ class ProjectConfigWindow(ctk.CTkToplevel):
 
         # If there are no errors, generate RMDs
         if len(self.main_app.data.errors) == 0:
-            self.main_app.data.rpd = RulesetProjectDescription(
-                self.main_app.data.project_name.get()
-            )
-            self.main_app.data.rpd.populate_data_elements()
-            self.main_app.data.generate_rmd_data(self.main_app.data.rpd)
-            # Run model checks to populate additional errors and warnings
-            self.main_app.data.run_model_checks()
+            self.generate_button.configure(state="disabled", text="Generating...")
+            self.open_progress("Generating RPD...")
+            worker = threading.Thread(target=self._generate_rpd_thread, daemon=True)
+            worker.start()
 
-            if len(self.main_app.data.errors) == 0:
-                self.main_app.data.call_write_rpd_json_from_rmds()
-            else:
-                self.raise_error_window("\n".join(self.main_app.data.errors))
-
+        # If there are errors, raise the error window
         else:
             self.raise_error_window("\n".join(self.main_app.data.errors))
 
@@ -478,9 +491,72 @@ class ProjectConfigWindow(ctk.CTkToplevel):
             return f"{path.parent.name}/{path.name}"
         return path.name
 
-    def load_project_data(self):
-        """Load a saved project data file. In this window, we're loading from a blank state.
-        Slightly different flow from loading in compliance parameter window.
-        Must perform validation checks"""
-        self.main_app.data.populate_project_data()
-        self.validate_project_info()
+    def _active_model_types(self) -> list[str]:
+        # Build the *current* applicable set
+        active = []
+        if self.main_app.data.selected_ruleset.get() == "ASHRAE 90.1-2019 PRM":
+            active.append("User")  # "Design" label maps to "User" key
+            if not self.proposed_reflects_design_checkbox.get():
+                active.append("Proposed")
+            active.append("Baseline")
+            if not self.rotation_exception_checkbox.get():
+                active.extend(["Baseline 90", "Baseline 180", "Baseline 270"])
+        return active
+
+    def _refresh_applicability(self):
+        self.main_app.data.set_applicable_models(self._active_model_types())
+
+    def _generate_rpd_thread(self):
+        try:
+            data = self.main_app.data
+            data.rpd = RulesetProjectDescription(data.project_name.get())
+            data.rpd.populate_data_elements()
+
+            def report_progress(done: int, total: int, m: str):
+                frac = 0.75 * (done / total) if total else 0.0
+                self.after(
+                    0, lambda: self._progress_update(f"{m}  ({done}/{total})", frac)
+                )
+
+            # update message before starting
+            self.after(0, lambda: self._progress_update("Reading models...", 0.0))
+
+            data.generate_rmd_data(data.rpd, progress_cb=report_progress)
+
+            self.after(0, lambda: self._progress_update("Running checks...", 0.75))
+            data.run_model_checks()
+
+            if len(data.errors) == 0:
+                self.after(0, lambda: self._progress_update("Writing output...", 0.76))
+                data.call_write_rpd_json_from_rmds()
+                self.after(
+                    0,
+                    lambda: self._on_generation_complete(
+                        True, "RPD successfully generated."
+                    ),
+                )
+            else:
+                msg = "\n".join(data.errors)
+                self.after(0, lambda: self._on_generation_complete(False, msg))
+
+        except Exception as e:
+            msg = str(e)
+            tb = traceback.format_exc()
+            self.after(0, lambda tb=tb: self._on_generation_complete(False, tb))
+
+    def _on_generation_complete(self, success: bool, msg: str = ""):
+        self.close_progress()
+        # Restore button
+        self.generate_button.configure(state="normal", text="Generate RPD")
+
+        if success:
+            self.main_app.data.errors.clear()
+            self.raise_error_window("RPD successfully generated!")
+        else:
+            self.raise_error_window(msg)
+
+    def _progress_update(self, msg: str, frac: float):
+        if self.progress_window and self.progress_window.winfo_exists():
+            self.progress_window.set_message(msg)
+            # clamp for safety
+            self.progress_window.set_progress(max(0.0, min(1.0, float(frac))))

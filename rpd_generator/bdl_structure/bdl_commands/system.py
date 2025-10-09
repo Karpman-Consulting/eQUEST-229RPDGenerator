@@ -69,6 +69,7 @@ BDL_WLHPCategoryOptions = BDLEnums.bdl_enums["SystemWLHPCategoryOptions"]
 BDL_SystemCondenserTypes = BDLEnums.bdl_enums["SystemCondenserTypes"]
 BDL_CondenserKeywords = BDLEnums.bdl_enums["CondenserKeywords"]
 BDL_ZoneFanControlOptions = BDLEnums.bdl_enums["ZoneFanControlOptions"]
+BDL_ZoneTypeOptions = BDLEnums.bdl_enums["ZoneTypeOptions"]
 
 
 class System(ParentNode):
@@ -139,7 +140,7 @@ class System(ParentNode):
 
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
-        # On initialization the parent building segment is not known. It will be set in the GUI.
+        # On initialization the parent building segment is not known. It is set in the Space object methods.
         self.parent_building_segment = self.get_obj("Default Building Segment")
 
         self.vrf_sys_condenser = None
@@ -183,6 +184,13 @@ class System(ParentNode):
         Use the current System object for the first zone assigned to the zonal system"""
 
         for zone in self.children[1:]:
+            # Don't create systems for unconditioned or plenum zones
+            if zone.get_inp(BDL_ZoneKeywords.TYPE) in [
+                BDL_ZoneTypeOptions.UNCONDITIONED,
+                BDL_ZoneTypeOptions.PLENUM,
+            ]:
+                continue
+
             sys_id = f"{self.u_name} - {zone.u_name}"
             zone_system = System(self.u_name, self.rmd)
             zone_system.sys_id = sys_id
@@ -618,6 +626,10 @@ class System(ParentNode):
             return
 
         else:
+            # Set the default building segment for systems that have no zones directly assigned (DOAS)
+            if self.parent_building_segment is None:
+                self.parent_building_segment = self.rmd.default_building_segment
+
             for attr in dir(self):
                 value = getattr(self, attr, None)
 
@@ -1090,7 +1102,9 @@ class FanSystem:
         self.operation_during_unoccupied = self.unoccupied_fan_operation_map.get(
             self.parent_system.get_inp(BDL_SystemKeywords.NIGHT_CYCLE_CTRL)
         )
-        self.operation_during_occupied = self.populate_fan_operation_during_occupied()
+        self.operation_during_occupied = self.populate_fan_operation_during_occupied(
+            oa_ratio
+        )
 
     def populate_data_group(self):
         self.parent_system.supply_fan.populate_data_group()
@@ -1218,7 +1232,7 @@ class FanSystem:
         elif system_type == BDL_SystemTypes.DOAS:
             pass
 
-    def populate_fan_operation_during_occupied(self):
+    def populate_fan_operation_during_occupied(self, oa_ratio):
         fan_sch = self.parent_system.get_obj(
             self.parent_system.get_inp(BDL_SystemKeywords.FAN_SCHEDULE)
         )
@@ -1298,9 +1312,33 @@ class FanSystem:
             if mixed_operation:
                 return FanSystemOperationOptions.OTHER
             if has_one:  # and not mixed_operation implied to reach here
-                return self.occupied_fan_operation_map.get(
-                    self.parent_system.get_inp(BDL_SystemKeywords.INDOOR_FAN_MODE)
-                )
+                if self.parent_system.get_inp(BDL_SystemKeywords.TYPE) in [
+                    BDL_SystemTypes.PSZ,
+                    BDL_SystemTypes.PVVT,
+                    BDL_SystemTypes.RESYS2,
+                    BDL_SystemTypes.EVAP_COOL,
+                ] or (
+                    self.parent_system.bdl_output_cool_type
+                    == BDL_OutputCoolingTypes.CHILLED_WATER
+                    and self.parent_system.get_inp(BDL_SystemKeywords.TYPE)
+                    in [BDL_SystemTypes.FC, BDL_SystemTypes.SZRH, BDL_SystemTypes.HP]
+                ):
+                    return self.occupied_fan_operation_map.get(
+                        self.parent_system.get_inp(BDL_SystemKeywords.INDOOR_FAN_MODE)
+                    )
+                elif self.parent_system.get_inp(BDL_SystemKeywords.TYPE) in [
+                    BDL_SystemTypes.PTAC,
+                    BDL_SystemTypes.UVT,
+                    BDL_SystemTypes.UHT,
+                    BDL_SystemTypes.HP,
+                ]:
+                    # Cycles the fan if the outdoor air fraction is zero
+                    if oa_ratio == 0:
+                        return FanSystemOperationOptions.CYCLING
+                    else:
+                        return FanSystemOperationOptions.CONTINUOUS
+                else:
+                    return FanSystemOperationOptions.CONTINUOUS
             if has_neg_999:  # and not mixed_operation implied to reach here
                 return FanSystemOperationOptions.CYCLING
 

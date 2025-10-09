@@ -249,7 +249,6 @@ class Boiler(BaseNode):
         self.rmd.boilers.append(self.boiler_data_structure)
 
     def populate_operation_limits(self, output_data):
-        requests = {}
         boiler_capacities = {}
         for boiler_name in self.rmd.boiler_names:
             boiler = self.get_obj(boiler_name)

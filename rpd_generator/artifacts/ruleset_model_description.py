@@ -6,6 +6,9 @@ from rpd_generator.bdl_structure.base_node import Base, BaseNode
 from rpd_generator.bdl_structure.base_definition import BaseDefinition
 from rpd_generator.artifacts.building_segment import BuildingSegment
 from rpd_generator.artifacts.building import Building
+from rpd_generator.bdl_structure.bdl_commands.circulation_loop import (
+    ServiceWaterHeatingUse,
+)
 
 EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
 EndUseOptions = SchemaEnums.schema_enums["EndUseOptions"]
@@ -106,8 +109,17 @@ class RulesetModelDescription(Base):
         self.doe2_data_path = None
 
         self.rpd = rpd
+        self.has_site_shading = False  # Store the default value for all buildings in the RMD based on presence of FixedShade objects
+        self.building_azimuth = None
         # store BDL objects for the model associated with the RMD
-        self.bdl_obj_instances = {self.rpd.project_name: self.rpd, obj_id: self}
+        self.bdl_obj_instances = {
+            self.rpd.project_name: self.rpd,
+            obj_id: self,
+            "Default Building": Building("Default Building", self),
+        }
+        self.default_building_segment = None
+        # store unique building area types to create BuildingSegment objects
+        self.building_area_types = set()
         # store space names mapped to their zone objects for quick access
         self.space_map = {}
         # store material variants to know when a clone is needed
@@ -140,9 +152,7 @@ class RulesetModelDescription(Base):
         self.ground_loop_hx_names = []
         self.pump_names = []
         self.equip_ctrl_names = []
-
-        self.has_site_shading = False  # Store the default value for all buildings in the RMD based on presence of FixedShade objects
-        self.building_azimuth = None
+        self.service_water_heating_use_names = []
 
         self.rmd_data_structure = {}
 
@@ -192,7 +202,13 @@ class RulesetModelDescription(Base):
         for obj_instance in sorted_commands:
             if isinstance(
                 obj_instance,
-                (BaseNode, RulesetModelDescription, Building, BuildingSegment),
+                (
+                    BaseNode,
+                    RulesetModelDescription,
+                    Building,
+                    BuildingSegment,
+                    ServiceWaterHeatingUse,
+                ),
             ):
                 obj_instance.populate_data_group()
 
@@ -200,7 +216,13 @@ class RulesetModelDescription(Base):
         for obj_instance in self.bdl_obj_instances.values():
             if isinstance(
                 obj_instance,
-                (BaseNode, RulesetModelDescription, Building, BuildingSegment),
+                (
+                    BaseNode,
+                    RulesetModelDescription,
+                    Building,
+                    BuildingSegment,
+                    ServiceWaterHeatingUse,
+                ),
             ):
                 obj_instance.insert_to_rpd()
 
@@ -219,7 +241,15 @@ class RulesetModelDescription(Base):
         for obj in self.bdl_obj_instances.values():
             if isinstance(obj, (BaseNode, BaseDefinition)):
                 command_tuples.append((obj.bdl_command, obj))
-            elif isinstance(obj, (RulesetModelDescription, Building, BuildingSegment)):
+            elif isinstance(
+                obj,
+                (
+                    RulesetModelDescription,
+                    Building,
+                    BuildingSegment,
+                    ServiceWaterHeatingUse,
+                ),
+            ):
                 additional_objs.append(obj)
 
         order_map = {cmd: i for i, cmd in enumerate(self.COMMAND_PROCESSING_ORDER)}
@@ -1197,66 +1227,148 @@ class RulesetModelDescription(Base):
                 "",
             )
             requests[f"Fuel (meter {fuel_meter_name}) - Peak - Lights"] = (
-                2310058,
+                2310021,
                 fuel_meter_name,
                 "",
             )
             requests[f"Fuel (meter {fuel_meter_name}) - Peak - Task Lights"] = (
-                2310059,
+                2310022,
                 fuel_meter_name,
                 "",
             )
             requests[f"Fuel (meter {fuel_meter_name}) - Peak - Misc Equip"] = (
-                2310060,
+                2310023,
                 fuel_meter_name,
                 "",
             )
             requests[f"Fuel (meter {fuel_meter_name}) - Peak - Space Heating"] = (
-                2310061,
+                2310024,
                 fuel_meter_name,
                 "",
             )
             requests[f"Fuel (meter {fuel_meter_name}) - Peak - Space Cooling"] = (
-                2310062,
+                2310025,
                 fuel_meter_name,
                 "",
             )
             requests[f"Fuel (meter {fuel_meter_name}) - Peak - Heat Rejection"] = (
-                2310063,
+                2310026,
                 fuel_meter_name,
                 "",
             )
             requests[f"Fuel (meter {fuel_meter_name}) - Peak - Pumps & Aux"] = (
-                2310064,
+                2310027,
                 fuel_meter_name,
                 "",
             )
             requests[f"Fuel (meter {fuel_meter_name}) - Peak - Ventilation Fans"] = (
-                2310065,
+                2310028,
                 fuel_meter_name,
                 "",
             )
             requests[
                 f"Fuel (meter {fuel_meter_name}) - Peak - Refrigeration Display"
             ] = (
-                2310066,
+                2310029,
                 fuel_meter_name,
                 "",
             )
             requests[
                 f"Fuel (meter {fuel_meter_name}) - Peak - Ht Pump Supplemental Heat"
             ] = (
-                2310067,
+                2310030,
                 fuel_meter_name,
                 "",
             )
             requests[f"Fuel (meter {fuel_meter_name}) - Peak - Domestic Hot Water"] = (
-                2310068,
+                2310031,
                 fuel_meter_name,
                 "",
             )
             requests[f"Fuel (meter {fuel_meter_name}) - Peak - Exterior Usage"] = (
-                2310069,
+                2310032,
+                fuel_meter_name,
+                "",
+            )
+            requests[f"Fuel (meter {fuel_meter_name}) - Coincident Peak - Lights"] = (
+                2310202,
+                fuel_meter_name,
+                "",
+            )
+            requests[
+                f"Fuel (meter {fuel_meter_name}) - Coincident Peak - Task Lights"
+            ] = (
+                2310203,
+                fuel_meter_name,
+                "",
+            )
+            requests[
+                f"Fuel (meter {fuel_meter_name}) - Coincident Peak - Misc Equip"
+            ] = (
+                2310204,
+                fuel_meter_name,
+                "",
+            )
+            requests[
+                f"Fuel (meter {fuel_meter_name}) - Coincident Peak - Space Heating"
+            ] = (
+                2310205,
+                fuel_meter_name,
+                "",
+            )
+            requests[
+                f"Fuel (meter {fuel_meter_name}) - Coincident Peak - Space Cooling"
+            ] = (
+                2310206,
+                fuel_meter_name,
+                "",
+            )
+            requests[
+                f"Fuel (meter {fuel_meter_name}) - Coincident Peak - Heat Rejection"
+            ] = (
+                2310207,
+                fuel_meter_name,
+                "",
+            )
+            requests[
+                f"Fuel (meter {fuel_meter_name}) - Coincident Peak - Pumps & Aux"
+            ] = (
+                2310208,
+                fuel_meter_name,
+                "",
+            )
+            requests[
+                f"Fuel (meter {fuel_meter_name}) - Coincident Peak - Ventilation Fans"
+            ] = (
+                2310209,
+                fuel_meter_name,
+                "",
+            )
+            requests[
+                f"Fuel (meter {fuel_meter_name}) - Coincident Peak - Refrigeration Display"
+            ] = (
+                2310210,
+                fuel_meter_name,
+                "",
+            )
+            requests[
+                f"Fuel (meter {fuel_meter_name}) - Coincident Peak - Ht Pump Supplemental Heat"
+            ] = (
+                2310211,
+                fuel_meter_name,
+                "",
+            )
+            requests[
+                f"Fuel (meter {fuel_meter_name}) - Coincident Peak - Domestic Hot Water"
+            ] = (
+                2310212,
+                fuel_meter_name,
+                "",
+            )
+            requests[
+                f"Fuel (meter {fuel_meter_name}) - Coincident Peak - Exterior Usage"
+            ] = (
+                2310213,
                 fuel_meter_name,
                 "",
             )
@@ -1405,9 +1517,7 @@ class OutputInstance:
         for fuel_meter_name in self.rmd.fuel_meter_names:
             fuel_meter = self.rmd.bdl_obj_instances.get(fuel_meter_name)
             if fuel_meter:
-                energy_source_types.add(
-                    fuel_type_map.get(fuel_meter.get_inp(BDL_FuelMeterKeywords.TYPE))
-                )
+                energy_source_types.add(fuel_meter.get_inp(BDL_FuelMeterKeywords.TYPE))
         if self.rmd.steam_meter_names:
             energy_source_types.add(EnergySourceOptions.PURCHASED_HOT_WATER)
         if self.rmd.chilled_water_meter_names:
@@ -1428,6 +1538,7 @@ class OutputInstance:
             source_result = SourceResult(self, energy_source)
             source_result.populate_data_elements(output_data)
             source_result.populate_data_group()
+            source_result.insert_to_rpd()
 
     def populate_data_group(self):
         self.data_structure["id"] = self.output_instance_id
@@ -1489,6 +1600,8 @@ class SourceResult:
         return f"SourceResult()"
 
     def populate_data_elements(self, output_data):
+
+        self.energy_source = fuel_type_map.get(self.energy_source_type)
 
         energy_source_results = {
             "Consumption": {
@@ -1674,6 +1787,11 @@ class SourceResult:
             source_results["SERVICE_WATER_HEATING"]["non_coincident_demand"] = (
                 output_data.get("Elec (all meters) - Peak - Domestic Hot Water")
             )
+
+            for category in source_results:
+                for metric in source_results[category]:
+                    if metric in ["site_energy_use", "peak_demand"]:
+                        source_results[category][metric] *= 3412.969482
 
         elif self.energy_source_type == EnergySourceOptions.PURCHASED_HOT_WATER:
             source_results["Consumption"]["site_energy_use"] = output_data.get(
@@ -1966,185 +2084,302 @@ class SourceResult:
             source_results["Consumption"]["cost"] += sum(
                 output_data.get(f"{utility_rate_name} - Total Charges")
                 for utility_rate_name in self.rmd.utility_rate_names
-                if utility_rate_service_map.get(
-                    self.rmd.bdl_obj_instances.get(utility_rate_name).get_inp(
-                        BDL_UtilityRateKeywords.TYPE
-                    )
+                if self.rmd.bdl_obj_instances.get(utility_rate_name).get_inp(
+                    BDL_UtilityRateKeywords.TYPE
                 )
                 == self.energy_source_type
             )
             # Sum results from fuel meters that have the same type
             for fuel_meter_name in self.rmd.fuel_meter_names:
                 fuel_meter = self.rmd.bdl_obj_instances.get(fuel_meter_name)
-                if (
-                    fuel_meter
-                    and fuel_meter.get_inp(BDL_FuelMeterKeywords.TYPE)
-                    == self.energy_source_type
-                ):
-                    source_results["Consumption"]["site_energy_use"] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Fuel Use"
-                    )
+                if fuel_meter:
+                    meter_type = fuel_meter.get_inp(BDL_FuelMeterKeywords.TYPE)
+                    if meter_type and meter_type == self.energy_source_type:
+                        source_results["Consumption"]["site_energy_use"] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Fuel Use"
+                            )
+                            * fuel_meter.thermal_value
+                        )
 
-                    source_results["INTERIOR_LIGHTING"][
-                        "site_energy_use"
-                    ] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Fuel Use - Lights"
-                    )
-                    source_results["INTERIOR_LIGHTING"][
-                        "non_coincident_demand"
-                    ] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Peak - Lights"
-                    )
+                        source_results["INTERIOR_LIGHTING"]["site_energy_use"] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Fuel Use - Lights"
+                            )
+                            * fuel_meter.thermal_value
+                        )
+                        source_results["INTERIOR_LIGHTING"][
+                            "non_coincident_demand"
+                        ] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Peak - Lights"
+                            )
+                            * fuel_meter.thermal_value
+                        )
 
-                    source_results["MISC_EQUIPMENT"][
-                        "site_energy_use"
-                    ] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Fuel Use - Misc Equip"
-                    )
-                    source_results["MISC_EQUIPMENT"][
-                        "non_coincident_demand"
-                    ] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Peak - Misc Equip"
-                    )
+                        source_results["MISC_EQUIPMENT"]["site_energy_use"] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Fuel Use - Misc Equip"
+                            )
+                            * fuel_meter.thermal_value
+                        )
+                        source_results["MISC_EQUIPMENT"]["non_coincident_demand"] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Peak - Misc Equip"
+                            )
+                            * fuel_meter.thermal_value
+                        )
 
-                    source_results["SPACE_HEATING"][
-                        "site_energy_use"
-                    ] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Fuel Use - Space Heating"
-                    )
-                    source_results["SPACE_HEATING"][
-                        "non_coincident_demand"
-                    ] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Peak - Space Heating"
-                    )
+                        source_results["SPACE_HEATING"]["site_energy_use"] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Fuel Use - Space Heating"
+                            )
+                            * fuel_meter.thermal_value
+                        )
+                        source_results["SPACE_HEATING"]["non_coincident_demand"] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Peak - Space Heating"
+                            )
+                            * fuel_meter.thermal_value
+                        )
 
-                    source_results["SPACE_COOLING"][
-                        "site_energy_use"
-                    ] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Fuel Use - Space Cooling"
-                    )
-                    source_results["SPACE_COOLING"][
-                        "non_coincident_demand"
-                    ] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Peak - Space Cooling"
-                    )
+                        source_results["SPACE_COOLING"]["site_energy_use"] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Fuel Use - Space Cooling"
+                            )
+                            * fuel_meter.thermal_value
+                        )
+                        source_results["SPACE_COOLING"]["non_coincident_demand"] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Peak - Space Cooling"
+                            )
+                            * fuel_meter.thermal_value
+                        )
 
-                    source_results["HEAT_REJECTION"][
-                        "site_energy_use"
-                    ] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Fuel Use - Heat Rejection"
-                    )
-                    source_results["HEAT_REJECTION"][
-                        "non_coincident_demand"
-                    ] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Peak - Heat Rejection"
-                    )
+                        source_results["HEAT_REJECTION"]["site_energy_use"] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Fuel Use - Heat Rejection"
+                            )
+                            * fuel_meter.thermal_value
+                        )
+                        source_results["HEAT_REJECTION"]["non_coincident_demand"] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Peak - Heat Rejection"
+                            )
+                            * fuel_meter.thermal_value
+                        )
 
-                    source_results["PUMPS"]["site_energy_use"] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Fuel Use - Pumps & Aux"
-                    )
-                    source_results["PUMPS"]["non_coincident_demand"] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Peak - Pumps & Aux"
-                    )
+                        source_results["PUMPS"]["site_energy_use"] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Fuel Use - Pumps & Aux"
+                            )
+                            * fuel_meter.thermal_value
+                        )
+                        source_results["PUMPS"]["non_coincident_demand"] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Peak - Pumps & Aux"
+                            )
+                            * fuel_meter.thermal_value
+                        )
 
-                    source_results["FANS_INTERIOR_VENTILATION"][
-                        "site_energy_use"
-                    ] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Fuel Use - Ventilation Fans"
-                    )
-                    source_results["FANS_INTERIOR_VENTILATION"][
-                        "non_coincident_demand"
-                    ] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Peak - Ventilation Fans"
-                    )
+                        source_results["FANS_INTERIOR_VENTILATION"][
+                            "site_energy_use"
+                        ] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Fuel Use - Ventilation Fans"
+                            )
+                            * fuel_meter.thermal_value
+                        )
+                        source_results["FANS_INTERIOR_VENTILATION"][
+                            "non_coincident_demand"
+                        ] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Peak - Ventilation Fans"
+                            )
+                            * fuel_meter.thermal_value
+                        )
 
-                    source_results["REFRIGERATION_EQUIPMENT"][
-                        "site_energy_use"
-                    ] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Fuel Use - Refrigeration Display"
-                    )
-                    source_results["REFRIGERATION_EQUIPMENT"][
-                        "non_coincident_demand"
-                    ] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Peak - Refrigeration Display"
-                    )
+                        source_results["REFRIGERATION_EQUIPMENT"][
+                            "site_energy_use"
+                        ] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Fuel Use - Refrigeration Display"
+                            )
+                            * fuel_meter.thermal_value
+                        )
+                        source_results["REFRIGERATION_EQUIPMENT"][
+                            "non_coincident_demand"
+                        ] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Peak - Refrigeration Display"
+                            )
+                            * fuel_meter.thermal_value
+                        )
 
-                    source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"][
-                        "site_energy_use"
-                    ] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Fuel Use - Ht Pump Supplemental Heat"
-                    )
-                    source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"][
-                        "non_coincident_demand"
-                    ] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Peak - Ht Pump Supplemental Heat"
-                    )
+                        source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"][
+                            "site_energy_use"
+                        ] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Fuel Use - Ht Pump Supplemental Heat"
+                            )
+                            * fuel_meter.thermal_value
+                        )
+                        source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"][
+                            "non_coincident_demand"
+                        ] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Peak - Ht Pump Supplemental Heat"
+                            )
+                            * fuel_meter.thermal_value
+                        )
 
-                    source_results["SERVICE_WATER_HEATING"][
-                        "site_energy_use"
-                    ] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Fuel Use - Domestic Hot Water"
-                    )
-                    source_results["SERVICE_WATER_HEATING"][
-                        "non_coincident_demand"
-                    ] += output_data.get(
-                        f"Fuel (meter {fuel_meter_name}) - Peak - Domestic Hot Water"
-                    )
+                        source_results["SERVICE_WATER_HEATING"]["site_energy_use"] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Fuel Use - Domestic Hot Water"
+                            )
+                            * fuel_meter.thermal_value
+                        )
+                        source_results["SERVICE_WATER_HEATING"][
+                            "non_coincident_demand"
+                        ] += (
+                            output_data.get(
+                                f"Fuel (meter {fuel_meter_name}) - Peak - Domestic Hot Water"
+                            )
+                            * fuel_meter.thermal_value
+                        )
 
             if len(self.rmd.fuel_meter_names) == 1:
-                source_results["Consumption"]["peak_demand"] = output_data.get(
-                    f"Fuel (all meters) - Peak Demand"
+                # Only populate peak demand and coincident demand if there is only one fuel meter
+                fuel_meter = self.rmd.bdl_obj_instances.get(
+                    self.rmd.fuel_meter_names[0]
+                )
+                source_results["Consumption"]["peak_demand"] = (
+                    output_data.get(f"Fuel (all meters) - Peak Demand")
+                    * fuel_meter.thermal_value
                 )
 
-                source_results["INTERIOR_LIGHTING"][
-                    "coincident_demand"
-                ] += output_data.get("Fuel (all meters) - Coincident Peak - Lights")
-
-                source_results["MISC_EQUIPMENT"][
-                    "coincident_demand"
-                ] += output_data.get("Fuel (all meters) - Coincident Peak - Misc Equip")
-
-                source_results["SPACE_HEATING"]["coincident_demand"] += output_data.get(
-                    "Fuel (all meters) - Coincident Peak - Space Heating"
+                source_results["INTERIOR_LIGHTING"]["coincident_demand"] += (
+                    output_data.get("Fuel (all meters) - Coincident Peak - Lights")
+                    * fuel_meter.thermal_value
                 )
 
-                source_results["SPACE_COOLING"]["coincident_demand"] += output_data.get(
-                    "Fuel (all meters) - Coincident Peak - Space Cooling"
+                source_results["MISC_EQUIPMENT"]["coincident_demand"] += (
+                    output_data.get("Fuel (all meters) - Coincident Peak - Misc Equip")
+                    * fuel_meter.thermal_value
                 )
 
-                source_results["HEAT_REJECTION"][
-                    "coincident_demand"
-                ] += output_data.get(
-                    "Fuel (all meters) - Coincident Peak - Heat Rejection"
+                source_results["SPACE_HEATING"]["coincident_demand"] += (
+                    output_data.get(
+                        "Fuel (all meters) - Coincident Peak - Space Heating"
+                    )
+                    * fuel_meter.thermal_value
                 )
 
-                source_results["PUMPS"]["coincident_demand"] += output_data.get(
-                    "Fuel (all meters) - Coincident Peak - Pumps & Aux"
+                source_results["SPACE_COOLING"]["coincident_demand"] += (
+                    output_data.get(
+                        "Fuel (all meters) - Coincident Peak - Space Cooling"
+                    )
+                    * fuel_meter.thermal_value
                 )
 
-                source_results["FANS_INTERIOR_VENTILATION"][
-                    "coincident_demand"
-                ] += output_data.get(
-                    "Fuel (all meters) - Coincident Peak - Ventilation Fans"
+                source_results["HEAT_REJECTION"]["coincident_demand"] += (
+                    output_data.get(
+                        "Fuel (all meters) - Coincident Peak - Heat Rejection"
+                    )
+                    * fuel_meter.thermal_value
                 )
 
-                source_results["REFRIGERATION_EQUIPMENT"][
-                    "coincident_demand"
-                ] += output_data.get(
-                    "Fuel (all meters) - Coincident Peak - Refrigeration Display"
+                source_results["PUMPS"]["coincident_demand"] += (
+                    output_data.get("Fuel (all meters) - Coincident Peak - Pumps & Aux")
+                    * fuel_meter.thermal_value
+                )
+
+                source_results["FANS_INTERIOR_VENTILATION"]["coincident_demand"] += (
+                    output_data.get(
+                        "Fuel (all meters) - Coincident Peak - Ventilation Fans"
+                    )
+                    * fuel_meter.thermal_value
+                )
+
+                source_results["REFRIGERATION_EQUIPMENT"]["coincident_demand"] += (
+                    output_data.get(
+                        "Fuel (all meters) - Coincident Peak - Refrigeration Display"
+                    )
+                    * fuel_meter.thermal_value
                 )
 
                 source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"][
                     "coincident_demand"
-                ] += output_data.get(
-                    "Fuel (all meters) - Coincident Peak - Ht Pump Supplemental Heat"
+                ] += (
+                    output_data.get(
+                        "Fuel (all meters) - Coincident Peak - Ht Pump Supplemental Heat"
+                    )
+                    * fuel_meter.thermal_value
                 )
 
-                source_results["SERVICE_WATER_HEATING"][
-                    "coincident_demand"
-                ] += output_data.get(
-                    "Fuel (all meters) - Coincident Peak - Domestic Hot Water"
+                source_results["SERVICE_WATER_HEATING"]["coincident_demand"] += (
+                    output_data.get(
+                        "Fuel (all meters) - Coincident Peak - Domestic Hot Water"
+                    )
+                    * fuel_meter.thermal_value
                 )
+
+                source_results["INTERIOR_LIGHTING"]["non_coincident_demand"] += (
+                    output_data.get("Fuel (all meters) - Peak - Lights")
+                    * fuel_meter.thermal_value
+                )
+
+                source_results["MISC_EQUIPMENT"]["non_coincident_demand"] += (
+                    output_data.get("Fuel (all meters) - Peak - Misc Equip")
+                    * fuel_meter.thermal_value
+                )
+
+                source_results["SPACE_HEATING"]["non_coincident_demand"] += (
+                    output_data.get("Fuel (all meters) - Peak - Space Heating")
+                    * fuel_meter.thermal_value
+                )
+
+                source_results["SPACE_COOLING"]["non_coincident_demand"] += (
+                    output_data.get("Fuel (all meters) - Peak - Space Cooling")
+                    * fuel_meter.thermal_value
+                )
+
+                source_results["HEAT_REJECTION"]["non_coincident_demand"] += (
+                    output_data.get("Fuel (all meters) - Peak - Heat Rejection")
+                    * fuel_meter.thermal_value
+                )
+
+                source_results["PUMPS"]["non_coincident_demand"] += (
+                    output_data.get("Fuel (all meters) - Peak - Pumps & Aux")
+                    * fuel_meter.thermal_value
+                )
+
+                source_results["FANS_INTERIOR_VENTILATION"][
+                    "non_coincident_demand"
+                ] += (
+                    output_data.get("Fuel (all meters) - Peak - Ventilation Fans")
+                    * fuel_meter.thermal_value
+                )
+
+                source_results["REFRIGERATION_EQUIPMENT"]["non_coincident_demand"] += (
+                    output_data.get("Fuel (all meters) - Peak - Refrigeration Display")
+                    * fuel_meter.thermal_value
+                )
+
+                source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"][
+                    "non_coincident_demand"
+                ] += (
+                    output_data.get(
+                        "Fuel (all meters) - Peak - Ht Pump Supplemental Heat"
+                    )
+                    * fuel_meter.thermal_value
+                )
+
+                source_results["SERVICE_WATER_HEATING"]["non_coincident_demand"] += (
+                    output_data.get("Fuel (all meters) - Peak - Domestic Hot Water")
+                    * fuel_meter.thermal_value
+                )
+
         self.annual_consumption = source_results["Consumption"]["site_energy_use"]
         self.annual_demand = source_results["Consumption"]["peak_demand"]
         self.annual_cost = source_results["Consumption"]["cost"]
@@ -2158,6 +2393,7 @@ class SourceResult:
             )
             end_use_result.populate_data_elements()
             end_use_result.populate_data_group()
+            end_use_result.insert_to_rpd()
 
     def populate_data_group(self):
         self.data_structure["id"] = self.energy_source_type
@@ -2177,7 +2413,7 @@ class SourceResult:
 
     def insert_to_rpd(self):
         """Insert the energy source result into the RPD data structure."""
-        self.output_instance.energy_source_results.append(self.data_structure)
+        self.output_instance.annual_source_results.append(self.data_structure)
 
 
 class EndUseResult:
@@ -2229,7 +2465,7 @@ class EndUseResult:
         self.is_regulated = self.is_regulated_presets.get(self.type, False)
 
     def populate_data_group(self):
-        self.data_structure["id"] = self.energy_source_type
+        self.data_structure["id"] = self.energy_source_type + "-" + self.type
 
         source_result_attributes = [
             "reporting_name",
@@ -2248,4 +2484,4 @@ class EndUseResult:
 
     def insert_to_rpd(self):
         """Insert the end use result into the RPD data structure."""
-        self.output_instance.end_use_results.append(self.data_structure)
+        self.output_instance.annual_end_use_results.append(self.data_structure)

@@ -178,7 +178,10 @@ class BaseNode(Base):
         if value is None:
             return None
         try:
-            return int(value)
+            if isinstance(value, str):
+                # Handle cases where value is a string that can be converted to an int
+                value = value.strip()
+            return int(float(value))
         except (ValueError, TypeError):
             # TODO log error for future GUI error window
             return None

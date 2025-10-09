@@ -1,5 +1,6 @@
 from rpd_generator.bdl_structure.parent_node import ParentNode
 from rpd_generator.bdl_structure.child_node import ChildNode
+from rpd_generator.artifacts.building_segment import BuildingSegment
 from rpd_generator.schema.schema_enums import SchemaEnums
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
@@ -8,6 +9,7 @@ InfiltrationMethodOptions = SchemaEnums.schema_enums["InfiltrationMethodOptions"
 DaylightingControlOptions = SchemaEnums.schema_enums[
     "LightingDaylightingControlOptions"
 ]
+LightingSpaceOptions = SchemaEnums.schema_enums["LightingSpaceOptions2019ASHRAE901TG37"]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_SpaceKeywords = BDLEnums.bdl_enums["SpaceKeywords"]
 BDL_InfiltrationAlgorithmOptions = BDLEnums.bdl_enums["InfiltrationAlgorithmOptions"]
@@ -28,6 +30,113 @@ class Space(ChildNode, ParentNode):
         BDL_InternalEnergySourceOptions.ELECTRIC: EnergySourceOptions.ELECTRICITY,
         BDL_InternalEnergySourceOptions.HOT_WATER: EnergySourceOptions.NONE,
         BDL_InternalEnergySourceOptions.PROCESS: EnergySourceOptions.NONE,
+    }
+
+    lighting_space_map = {
+        0: None,
+        1: LightingSpaceOptions.ATRIUM_LOW_MEDIUM,
+        2: LightingSpaceOptions.ATRIUM_HIGH,
+        3: LightingSpaceOptions.AUDIENCE_SEATING_AREA_AUDITORIUM,
+        4: LightingSpaceOptions.AUDIENCE_SEATING_AREA_CONVENTION_CENTER,
+        5: LightingSpaceOptions.AUDIENCE_SEATING_AREA_EXERCISE_CENTER,
+        6: LightingSpaceOptions.AUDIENCE_SEATING_AREA_GYMNASIUM,
+        7: LightingSpaceOptions.AUDIENCE_SEATING_AREA_MOTION_PICTURE_THEATER,
+        8: LightingSpaceOptions.AUDIENCE_SEATING_AREA_PENITENTIARY,
+        9: LightingSpaceOptions.AUDIENCE_SEATING_AREA_PERFORMING_ARTS_THEATER,
+        10: LightingSpaceOptions.AUDIENCE_SEATING_AREA_RELIGIOUS_FACILITY,
+        11: LightingSpaceOptions.AUDIENCE_SEATING_AREA_SPORTS_ARENA,
+        12: LightingSpaceOptions.AUDIENCE_SEATING_AREA_TRANSPORTATION_FACILITY,
+        13: LightingSpaceOptions.AUDIENCE_SEATING_AREA_ALL_OTHER,
+        14: LightingSpaceOptions.BANKING_ACTIVITY_AREA,
+        15: LightingSpaceOptions.CLASSROOM_LECTURE_HALL_TRAINING_ROOM_PENITENTIARY,
+        16: LightingSpaceOptions.CLASSROOM_LECTURE_HALL_TRAINING_ROOM_SCHOOL,
+        17: LightingSpaceOptions.CLASSROOM_LECTURE_HALL_TRAINING_ROOM_ALL_OTHER,
+        18: LightingSpaceOptions.CONFERENCE_MEETING_MULTIPURPOSE_ROOM,
+        19: LightingSpaceOptions.CONFINEMENT_CELLS,
+        20: LightingSpaceOptions.COPY_PRINT_ROOM,
+        21: LightingSpaceOptions.CORRIDOR_FACILITY_FOR_THE_VISUALLY_IMPAIRED,
+        22: LightingSpaceOptions.CORRIDOR_HOSPITAL,
+        23: LightingSpaceOptions.CORRIDOR_MANUFACTURING_FACILITY,
+        24: LightingSpaceOptions.CORRIDOR_ALL_OTHERS,
+        25: LightingSpaceOptions.COURT_ROOM,
+        26: LightingSpaceOptions.COMPUTER_ROOM,
+        27: LightingSpaceOptions.DINING_AREA_PENITENTIARY,
+        28: LightingSpaceOptions.DINING_AREA_FACILITY_FOR_THE_VISUALLY_IMPAIRED,
+        29: LightingSpaceOptions.DINING_AREA_BAR_LOUNGE_OR_LEISURE_DINING,
+        30: LightingSpaceOptions.DINING_AREA_CAFETERIA_OR_FAST_FOOD_DINING,
+        31: LightingSpaceOptions.DINING_AREA_FAMILY_DINING,
+        32: LightingSpaceOptions.DINING_AREA_ALL_OTHERS,
+        33: LightingSpaceOptions.ELECTRICAL_MECHANICAL_ROOM,
+        34: LightingSpaceOptions.EMERGENCY_VEHICLE_GARAGE,
+        35: LightingSpaceOptions.FOOD_PREPARATION_AREA,
+        36: LightingSpaceOptions.GUEST_ROOM,
+        37: LightingSpaceOptions.JUDGES_CHAMBERS,
+        38: LightingSpaceOptions.DWELLING_UNIT,
+        39: LightingSpaceOptions.LABORATORY_EXCEPT_IN_OR_AS_A_CLASSROOM,
+        40: LightingSpaceOptions.LAUNDRY_WASHING_AREA,
+        41: LightingSpaceOptions.LOADING_DOCK_INTERIOR,
+        42: LightingSpaceOptions.LOBBY_FACILITY_FOR_THE_VISUALLY_IMPAIRED,
+        43: LightingSpaceOptions.LOBBY_ELEVATOR,
+        44: LightingSpaceOptions.LOBBY_HOTEL,
+        45: LightingSpaceOptions.LOBBY_MOTION_PICTURE_THEATER,
+        46: LightingSpaceOptions.LOBBY_PERFORMING_ARTS_THEATER,
+        47: LightingSpaceOptions.LOBBY_ALL_OTHERS,
+        48: LightingSpaceOptions.LOCKER_ROOM,
+        49: LightingSpaceOptions.LOUNGE_BREAKROOM_HEALTH_CARE_FACILITY,
+        50: LightingSpaceOptions.LOUNGE_BREAKROOM_ALL_OTHERS,
+        51: LightingSpaceOptions.OFFICE_ENCLOSED,
+        52: LightingSpaceOptions.OFFICE_OPEN_PLAN,
+        53: LightingSpaceOptions.PARKING_AREA_INTERIOR,
+        54: LightingSpaceOptions.PHARMACY_AREA,
+        55: LightingSpaceOptions.RESTROOM_FACILITY_FOR_THE_VISUALLY_IMPAIRED,
+        56: LightingSpaceOptions.RESTROOM_ALL_OTHERS,
+        57: LightingSpaceOptions.SALES_AREA,
+        58: LightingSpaceOptions.SEATING_AREA_GENERAL,
+        59: LightingSpaceOptions.STAIRWELL,
+        60: LightingSpaceOptions.STORAGE_ROOM_HOSPITAL,
+        61: LightingSpaceOptions.STORAGE_ROOM_SMALL,
+        62: LightingSpaceOptions.STORAGE_ROOM_LARGE,
+        63: LightingSpaceOptions.VEHICULAR_MAINTENANCE_AREA,
+        64: LightingSpaceOptions.WORKSHOP,
+        65: LightingSpaceOptions.ASSISTED_LIVING_FACILITY_CHAPEL,
+        66: LightingSpaceOptions.ASSISTED_LIVING_FACILITY_RECREATION_ROOM_COMMON_LIVING_ROOM,
+        67: LightingSpaceOptions.CONVENTION_CENTER_EXHIBIT_SPACE,
+        68: LightingSpaceOptions.DORMITORY_LIVING_QUARTERS,
+        69: LightingSpaceOptions.FIRE_STATION_SLEEPING_QUARTERS,
+        70: LightingSpaceOptions.GYMNASIUM_FITNESS_CENTER_EXERCISE_AREA,
+        71: LightingSpaceOptions.GYMNASIUM_FITNESS_CENTER_PLAYING_AREA,
+        72: LightingSpaceOptions.HEALTHCARE_FACILITY_EMERGENCY_ROOM,
+        73: LightingSpaceOptions.HEALTHCARE_FACILITY_EXAM_TREATMENT_ROOM,
+        74: LightingSpaceOptions.HEALTHCARE_FACILITY_MEDICAL_SUPPLY_ROOM,
+        75: LightingSpaceOptions.HEALTHCARE_FACILITY_NURSERY,
+        76: LightingSpaceOptions.HEALTHCARE_FACILITY_NURSES_STATION,
+        77: LightingSpaceOptions.HEALTHCARE_FACILITY_OPERATING_ROOM,
+        78: LightingSpaceOptions.HEALTHCARE_FACILITY_PATIENT_ROOM,
+        79: LightingSpaceOptions.HEALTHCARE_FACILITY_PHYSICAL_THERAPY_ROOM,
+        80: LightingSpaceOptions.HEALTHCARE_FACILITY_RECOVERY_ROOM,
+        81: LightingSpaceOptions.LIBRARY_READING_AREA,
+        82: LightingSpaceOptions.LIBRARY_STACKS,
+        83: LightingSpaceOptions.MANUFACTURING_FACILITY_DETAILED_MANUFACTURING_AREA,
+        84: LightingSpaceOptions.MANUFACTURING_FACILITY_EQUIPMENTROOM,
+        85: LightingSpaceOptions.MANUFACTURING_FACILITY_EXTRA_HIGH_BAY_AREA,
+        86: LightingSpaceOptions.MANUFACTURING_FACILITY_HIGH_BAY_AREA,
+        87: LightingSpaceOptions.MANUFACTURING_FACILITY_LOW_BAY_AREA,
+        88: LightingSpaceOptions.MUSEUM_GENERAL_EXHIBITION_AREA,
+        89: LightingSpaceOptions.MUSEUM_RESTORATION_ROOM,
+        90: LightingSpaceOptions.POST_OFFICE_SORTING_AREA,
+        91: LightingSpaceOptions.RELIGIOUS_FACILITY_FELLOWSHIP_HALL,
+        92: LightingSpaceOptions.RELIGIOUS_FACILITY_WORSHIP_PULPIT_CHOIR_AREA,
+        93: LightingSpaceOptions.RETAIL_FACILITIES_DRESSING_FITTING_ROOM,
+        94: LightingSpaceOptions.RETAIL_FACILITIES_MALL_CONCOURSE,
+        95: LightingSpaceOptions.SPORTS_ARENA_PLAYING_AREA_CLASS_I_FACILITY,
+        96: LightingSpaceOptions.SPORTS_ARENA_PLAYING_AREA_CLASS_II_FACILITY,
+        97: LightingSpaceOptions.SPORTS_ARENA_PLAYING_AREA_CLASS_III_FACILITY,
+        98: LightingSpaceOptions.SPORTS_ARENA_PLAYING_AREA_CLASS_IV_FACILITY,
+        99: LightingSpaceOptions.TRANSPORTATION_FACILITY_BAGGAGE_CAROUSEL_AREA,
+        100: LightingSpaceOptions.TRANSPORTATION_FACILITY_AIRPORT_CONCOURSE,
+        101: LightingSpaceOptions.TRANSPORTATION_FACILITY_TICKET_COUNTER,
+        102: LightingSpaceOptions.WAREHOUSE_STORAGE_AREA_MEDIUM_TO_BULKY_PALLETIZED_ITEMS,
+        103: LightingSpaceOptions.WAREHOUSE_STORAGE_AREA_SMALLER_HAND_CARRIED_ITEMS,
     }
 
     def __init__(self, u_name, parent, rmd):
@@ -63,8 +172,28 @@ class Space(ChildNode, ParentNode):
 
     def populate_data_elements(self):
         """Populate data elements that originate from eQUEST's SPACE command"""
+
+        occupancy_type_list = self.get_inp(BDL_SpaceKeywords.C_901_OCC_TYPE)
+        if isinstance(occupancy_type_list, list):
+            # Remove undefined occupancy types from the end of the list
+            while occupancy_type_list and self.try_int(occupancy_type_list[-1]) == 0:
+                occupancy_type_list.pop()
+
+            # Get the unique occupancy types from the SPACE command
+            unique_occupancy_types = set(occupancy_type_list)
+            if len(unique_occupancy_types) > 1:
+                # Iterate through the list of occupancy types after the first
+                for i in range(1, len(occupancy_type_list)):
+                    self.create_subspace_clones(i)
+
+            # If no subspaces are created, use the SPACE command's floor area for the main space
+            else:
+                self.floor_area = self.try_float(self.get_inp(BDL_SpaceKeywords.AREA))
+
+        else:
+            self.floor_area = self.try_float(self.get_inp(BDL_SpaceKeywords.AREA))
+
         # Populate space data elements
-        self.floor_area = self.try_float(self.get_inp(BDL_SpaceKeywords.AREA))
         self.number_of_occupants = self.try_float(
             self.get_inp(BDL_SpaceKeywords.NUMBER_OF_PEOPLE)
         )
@@ -81,11 +210,44 @@ class Space(ChildNode, ParentNode):
         # Populate infiltration data elements
         self.populate_infiltration()
 
-        # Populate interior lighting data elements
+        # Populate interior lighting data elements in the main space until TODO - lighting can be assigned to subspaces
         self.populate_interior_lighting_data_elements()
 
-        # Populate miscellaneous equipment data elements
+        # Populate miscellaneous equipment data elements in the main space until TODO - equipment can be assigned to subspaces
         self.populate_miscellaneous_equipment_data_elements()
+
+        # Populate the set of unique building area types for the project
+        building_area_type = self.try_int(
+            self.get_inp(BDL_SpaceKeywords.C_901_BLDG_TYPE)
+        )
+        # if the building area type is new, create a new BuildingSegment object
+        if building_area_type not in self.rmd.building_area_types:
+            building_segment = BuildingSegment(
+                f"{BuildingSegment.lighting_building_area_map.get(building_area_type, 'Default Building Segment')}",
+                self.rmd,
+                building_area_type,
+            )
+            building_segment.populate_data_elements()
+            self.rmd.building_area_types.add(building_area_type)
+            if self.rmd.default_building_segment is None:
+                self.rmd.default_building_segment = building_segment
+        self.zone.parent_building_segment = self.get_obj(
+            BuildingSegment.lighting_building_area_map.get(
+                building_area_type, "Default Building Segment"
+            )
+        )
+        self.zone.parent.parent_building_segment = self.zone.parent_building_segment
+
+        # Use the first occupancy type for the main Space object, and subspace Space objects for each additional occupancy type
+        first_occ = None
+        if isinstance(occupancy_type_list, list) and occupancy_type_list:
+            first_occ = self.try_int(occupancy_type_list[0]) or None
+
+        # Only set if we can resolve an occupancy type; otherwise keep existing value
+        if first_occ is not None:
+            self.lighting_space_type = self.lighting_space_map.get(
+                first_occ, self.lighting_space_type
+            )
 
     def populate_data_group(self):
         """Populate schema structure for space object."""
@@ -199,6 +361,18 @@ class Space(ChildNode, ParentNode):
         infiltration.populate_data_elements()
         infiltration.populate_data_group()
         infiltration.insert_to_rpd()
+
+    def create_subspace_clones(self, i):
+        """Create subspace clones for each subspace defined in the SPACE command."""
+        # Do not call populate_data_elements() on subspace clones, only populate lighting_space_type and floor_area
+        # TODO - lighting and equipment can be assigned to subspaces in the future
+        subspace = Space(f"{self.u_name} Subspace {i + 1}", self.parent, self.rmd)
+        subspace.lighting_space_type = self.lighting_space_map.get(
+            self.try_access_index(self.get_inp(BDL_SpaceKeywords.C_901_OCC_TYPE), i)
+        )
+        subspace.floor_area = self.try_access_index(
+            self.get_inp(BDL_SpaceKeywords.C_SUB_AREA), i
+        )
 
 
 class InteriorLighting:

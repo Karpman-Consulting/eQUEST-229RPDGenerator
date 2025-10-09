@@ -27,6 +27,7 @@ BDL_SystemFanControlOptions = BDLEnums.bdl_enums["SystemFanControlOptions"]
 BDL_SystemCoolControlOptions = BDLEnums.bdl_enums["SystemCoolControlOptions"]
 BDL_SystemHeatControlOptions = BDLEnums.bdl_enums["SystemHeatControlOptions"]
 BDL_ZoneHeatSourceOptions = BDLEnums.bdl_enums["ZoneHeatSourceOptions"]
+BDL_ZoneTypeOptions = BDLEnums.bdl_enums["ZoneTypeOptions"]
 BDL_TerminalTypes = BDLEnums.bdl_enums["TerminalTypes"]
 BDL_BaseboardControlOptions = BDLEnums.bdl_enums["BaseboardControlOptions"]
 BDL_SystemMinimumOutdoorAirControlOptions = BDLEnums.bdl_enums[
@@ -54,7 +55,7 @@ class Zone(ChildNode):
         self.rmd.zone_names.append(u_name)
         self.rmd.bdl_obj_instances[u_name] = self
 
-        # On initialization the parent building segment is not known. It will be set in the GUI.
+        # On initialization the parent building segment is not known. It is set in the Space object methods.
         self.parent_building_segment = self.get_obj("Default Building Segment")
 
         self.zone_data_structure = {}
@@ -159,6 +160,10 @@ class Zone(ChildNode):
         if exhaust_airflow is not None and exhaust_airflow > 0:
             self.populate_zonal_exhaust(exhaust_airflow)
 
+        # If the zone is unconditioned do not populate terminals
+        if self.get_inp(BDL_ZoneKeywords.TYPE) == BDL_ZoneTypeOptions.UNCONDITIONED:
+            return
+
         # Populate MainTerminal data elements
         self.main_terminal = Terminal(self)
         self.main_terminal.populate_data_elements("main", output_data, has_dcv)
@@ -169,6 +174,7 @@ class Zone(ChildNode):
             self.doas_terminal.populate_data_elements("doas", output_data, has_dcv)
             self.doas_terminal.populate_data_group()
             self.doas_terminal.insert_to_rpd()
+            self.main_terminal.minimum_outdoor_airflow = 0
 
         else:
             self.main_terminal.minimum_outdoor_airflow = minimum_outdoor_airflow

@@ -373,6 +373,7 @@ class BDLEnums:
                 "DHW-LOOP",
                 "ELEC-INPUT-RATIO",
                 "HEAT-INPUT-RATIO",
+                "C-TYPE",
             ]
         ),
         "DoorKeywords": _ListEnum(
@@ -380,6 +381,7 @@ class BDLEnums:
                 "CONSTRUCTION",
                 "HEIGHT",
                 "WIDTH",
+                "C-TYPE",
             ]
         ),
         "ExteriorWallKeywords": _ListEnum(
@@ -681,6 +683,11 @@ class BDLEnums:
                 "ZONE-TYPE",
                 "LTG-SPEC-METHOD",
                 "C-ACTIVITY-DESC",
+                "C-901-OCC-TYPE",
+                "C-SUB-AREA",
+                "C-901-CONDITION",
+                "C-901-BLDG-TYPE",
+                "C-901-SCH-TYPE",
                 "DAYLIGHTING",
                 "LIGHT-CTRL-TYPE1",
                 "LIGHT-CTRL-TYPE2",
