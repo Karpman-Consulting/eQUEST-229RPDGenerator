@@ -5,6 +5,7 @@ from rpd_generator.schema.schema_enums import SchemaEnums
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
 EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
+SpaceFunctionOptions = SchemaEnums.schema_enums["SpaceFunctionOptions"]
 InfiltrationMethodOptions = SchemaEnums.schema_enums["InfiltrationMethodOptions"]
 DaylightingControlOptions = SchemaEnums.schema_enums[
     "LightingDaylightingControlOptions"
@@ -12,6 +13,8 @@ DaylightingControlOptions = SchemaEnums.schema_enums[
 LightingSpaceOptions = SchemaEnums.schema_enums["LightingSpaceOptions2019ASHRAE901TG37"]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_SpaceKeywords = BDLEnums.bdl_enums["SpaceKeywords"]
+BDL_ZoneKeywords = BDLEnums.bdl_enums["ZoneKeywords"]
+BDL_ZoneTypeOptions = BDLEnums.bdl_enums["ZoneTypeOptions"]
 BDL_InfiltrationAlgorithmOptions = BDLEnums.bdl_enums["InfiltrationAlgorithmOptions"]
 BDL_InternalEnergySourceOptions = BDLEnums.bdl_enums["InternalEnergySourceOptions"]
 BDL_DaylightingControlOptions = BDLEnums.bdl_enums["DaylightingControlOptions"]
@@ -205,6 +208,15 @@ class Space(ChildNode, ParentNode):
         )
         self.occupant_latent_heat_gain = self.try_float(
             self.get_inp(BDL_SpaceKeywords.PEOPLE_HG_LAT)
+        )
+        self.function = (
+            SpaceFunctionOptions.PLENUM
+            if (
+                self.get_inp(BDL_SpaceKeywords.ZONE_TYPE) == BDL_ZoneTypeOptions.PLENUM
+                or self.zone.get_inp(BDL_ZoneKeywords.TYPE)
+                == BDL_ZoneTypeOptions.PLENUM
+            )
+            else None
         )
 
         # Populate infiltration data elements
