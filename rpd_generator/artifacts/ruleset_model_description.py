@@ -126,6 +126,8 @@ class RulesetModelDescription(Base):
         self.material_variants = {}  # key = (base_id, thickness), value = material_id
         # store names of specific object types for quick access
         self.site_parameter_name = None
+        self.weather_obj = Weather(self)
+
         self.master_meters = None
         self.electric_meter_names = []
         self.fuel_meter_names = []
@@ -179,7 +181,7 @@ class RulesetModelDescription(Base):
         self.obj_id = obj_id
         self.reporting_name = None
         self.notes = None
-        self.type = None
+        self.type = SchemaEnums.schema_enums["CommonRulesetModelOptions"].USER
         self.measured_infiltration_pressure_difference = None
         self.is_measured_infiltration_based_on_test = None
         self.altitude = None
@@ -266,13 +268,6 @@ class RulesetModelDescription(Base):
         return self.bdl_obj_instances.get(u_name, None)
 
     def populate_data_elements(self):
-        self.type = SchemaEnums.schema_enums[
-            "CommonRulesetModelOptions"
-        ].USER  # Default type for RMD
-
-        weather = Weather(self)
-        weather.populate_data_group()
-
         site_parameter_obj = self.bdl_obj_instances.get(self.site_parameter_name)
         altitude = site_parameter_obj.get_inp(BDL_SiteParameterKeywords.ALTITUDE)
         self.altitude = (
@@ -1402,6 +1397,8 @@ class RulesetModelDescription(Base):
 
     def populate_data_group(self):
         """Populate the RMD data structure."""
+        self.weather_obj.populate_data_group()
+        self.weather_obj.insert_to_rpd()
 
         self.rmd_data_structure = {
             key: value
@@ -1438,7 +1435,6 @@ class RulesetModelDescription(Base):
 
 
 class Weather:
-
     def __init__(self, rmd):
         self.rmd = rmd
 

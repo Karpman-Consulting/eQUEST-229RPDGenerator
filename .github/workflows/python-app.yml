@@ -56,7 +56,7 @@ jobs:
           pipenv install -e .
 
       - name: Run Unit Tests
-        run: pipenv run pytest -v test/populate_test
+        run: poetry run pytest
 
       - name: Run Full RPD Tests
-        run: pipenv run python test/full_rpd_test/run_full_rpd_tests.py
+        run: poetry run python test/full_rpd_test/run_full_rpd_tests.py

@@ -7,7 +7,7 @@
         "schema_url": "https://github.com/open229/ruleset-model-description-schema",
         "author": "Jackson Jarboe, Karpman Consulting LLC",
         "description": "DOE2.3 Ruleset Project Description (RPD)",
-        "time_of_creation": "2025-10-09T02:59Z",
+        "time_of_creation": "2025-10-13T00:08Z",
         "version": "1.1.1",
         "source": "DOE-2.3 Energy Model .INP, .LRP, .SRP, .ERP, .NHR files",
         "disclaimer": "\n        Acknowledgment: This material is based upon work supported by the U.S. Department of Energy\u2019s Office of Energy Efficiency and Renewable Energy (EERE) under the Building Technologies Office - DE-FOA-0002813 - Bipartisan Infrastructure Law Resilient and Efficient Codes Implementation.\n        Award Number: DE-EE0010949\n        Abridged Disclaimer: The views expressed herein do not necessarily represent the view of the U.S. Department of Energy or the United States Government.\n        "
@@ -141927,11 +141927,11 @@
                 "unmet_load_hours_cooling": 0.0,
                 "annual_source_results": [
                     {
-                        "id": "PURCHASED_HOT_WATER",
-                        "energy_source": "PURCHASED_HOT_WATER",
-                        "annual_consumption": 597438745265.152,
-                        "annual_demand": 89566.35979694445,
-                        "annual_cost": 0
+                        "id": "ELECTRICITY",
+                        "energy_source": "ELECTRICITY",
+                        "annual_consumption": 429875818086.26196,
+                        "annual_demand": 33337.82205565135,
+                        "annual_cost": 8357.0
                     },
                     {
                         "id": "PURCHASED_CHILLED_WATER",
@@ -141941,107 +141941,107 @@
                         "annual_cost": 0
                     },
                     {
-                        "id": "ELECTRICITY",
-                        "energy_source": "ELECTRICITY",
-                        "annual_consumption": 429875818086.26196,
-                        "annual_demand": 33337.82205565135,
-                        "annual_cost": 8357.0
-                    },
-                    {
                         "id": "NATURAL-GAS",
                         "energy_source": "NATURAL_GAS",
                         "annual_consumption": 22915078669.458008,
                         "annual_demand": 235799721.25824654,
                         "annual_cost": 109.0
+                    },
+                    {
+                        "id": "PURCHASED_HOT_WATER",
+                        "energy_source": "PURCHASED_HOT_WATER",
+                        "annual_consumption": 597438745265.152,
+                        "annual_demand": 89566.35979694445,
+                        "annual_cost": 0
                     }
                 ],
                 "building_peak_cooling_load": 101.0267562866211,
                 "annual_end_use_results": [
                     {
-                        "id": "PURCHASED_HOT_WATER-INTERIOR_LIGHTING",
+                        "id": "ELECTRICITY-INTERIOR_LIGHTING",
                         "type": "INTERIOR_LIGHTING",
-                        "energy_source": "PURCHASED_HOT_WATER",
-                        "annual_site_energy_use": 0.0,
-                        "annual_site_coincident_demand": 0.0,
-                        "annual_site_non_coincident_demand": 0.0,
+                        "energy_source": "ELECTRICITY",
+                        "annual_site_energy_use": 162222183720.29236,
+                        "annual_site_coincident_demand": 5.104544702046712,
+                        "annual_site_non_coincident_demand": 5.104544702046712,
                         "is_regulated": true
                     },
                     {
-                        "id": "PURCHASED_HOT_WATER-MISC_EQUIPMENT",
+                        "id": "ELECTRICITY-MISC_EQUIPMENT",
                         "type": "MISC_EQUIPMENT",
-                        "energy_source": "PURCHASED_HOT_WATER",
-                        "annual_site_energy_use": 0.0,
-                        "annual_site_coincident_demand": 0.0,
-                        "annual_site_non_coincident_demand": 0.0,
+                        "energy_source": "ELECTRICITY",
+                        "annual_site_energy_use": 195554545338.15012,
+                        "annual_site_coincident_demand": 3.381187314665053,
+                        "annual_site_non_coincident_demand": 3.381187314665053,
                         "is_regulated": false
                     },
                     {
-                        "id": "PURCHASED_HOT_WATER-SPACE_HEATING",
+                        "id": "ELECTRICITY-SPACE_HEATING",
                         "type": "SPACE_HEATING",
-                        "energy_source": "PURCHASED_HOT_WATER",
-                        "annual_site_energy_use": 597438745265.152,
-                        "annual_site_coincident_demand": 89566.35979694445,
-                        "annual_site_non_coincident_demand": 89566.35979694445,
+                        "energy_source": "ELECTRICITY",
+                        "annual_site_energy_use": 0.0,
+                        "annual_site_coincident_demand": 0.0,
+                        "annual_site_non_coincident_demand": 0.0,
                         "is_regulated": true
                     },
                     {
-                        "id": "PURCHASED_HOT_WATER-SPACE_COOLING",
+                        "id": "ELECTRICITY-SPACE_COOLING",
                         "type": "SPACE_COOLING",
-                        "energy_source": "PURCHASED_HOT_WATER",
+                        "energy_source": "ELECTRICITY",
                         "annual_site_energy_use": 0.0,
                         "annual_site_coincident_demand": 0.0,
                         "annual_site_non_coincident_demand": 0.0,
                         "is_regulated": true
                     },
                     {
-                        "id": "PURCHASED_HOT_WATER-HEAT_REJECTION",
+                        "id": "ELECTRICITY-HEAT_REJECTION",
                         "type": "HEAT_REJECTION",
-                        "energy_source": "PURCHASED_HOT_WATER",
+                        "energy_source": "ELECTRICITY",
                         "annual_site_energy_use": 0.0,
                         "annual_site_coincident_demand": 0.0,
                         "annual_site_non_coincident_demand": 0.0,
                         "is_regulated": true
                     },
                     {
-                        "id": "PURCHASED_HOT_WATER-PUMPS",
+                        "id": "ELECTRICITY-PUMPS",
                         "type": "PUMPS",
-                        "energy_source": "PURCHASED_HOT_WATER",
-                        "annual_site_energy_use": 0.0,
-                        "annual_site_coincident_demand": 0.0,
-                        "annual_site_non_coincident_demand": 0.0,
+                        "energy_source": "ELECTRICITY",
+                        "annual_site_energy_use": 8959875434.94693,
+                        "annual_site_coincident_demand": 0.4023065679587258,
+                        "annual_site_non_coincident_demand": 0.4023065679587258,
                         "is_regulated": true
                     },
                     {
-                        "id": "PURCHASED_HOT_WATER-FANS_INTERIOR_VENTILATION",
+                        "id": "ELECTRICITY-FANS_INTERIOR_VENTILATION",
                         "type": "FANS_INTERIOR_VENTILATION",
-                        "energy_source": "PURCHASED_HOT_WATER",
-                        "annual_site_energy_use": 0.0,
-                        "annual_site_coincident_demand": 0.0,
-                        "annual_site_non_coincident_demand": 0.0,
+                        "energy_source": "ELECTRICITY",
+                        "annual_site_energy_use": 63139495790.26792,
+                        "annual_site_coincident_demand": 0.8799423245800866,
+                        "annual_site_non_coincident_demand": 0.8799423245800866,
                         "is_regulated": true
                     },
                     {
-                        "id": "PURCHASED_HOT_WATER-REFRIGERATION_EQUIPMENT",
+                        "id": "ELECTRICITY-REFRIGERATION_EQUIPMENT",
                         "type": "REFRIGERATION_EQUIPMENT",
-                        "energy_source": "PURCHASED_HOT_WATER",
+                        "energy_source": "ELECTRICITY",
                         "annual_site_energy_use": 0.0,
                         "annual_site_coincident_demand": 0.0,
                         "annual_site_non_coincident_demand": 0.0,
                         "is_regulated": true
                     },
                     {
-                        "id": "PURCHASED_HOT_WATER-HEAT_PUMP_SUPPLEMENTAL_HEATING",
+                        "id": "ELECTRICITY-HEAT_PUMP_SUPPLEMENTAL_HEATING",
                         "type": "HEAT_PUMP_SUPPLEMENTAL_HEATING",
-                        "energy_source": "PURCHASED_HOT_WATER",
+                        "energy_source": "ELECTRICITY",
                         "annual_site_energy_use": 0.0,
                         "annual_site_coincident_demand": 0.0,
                         "annual_site_non_coincident_demand": 0.0,
                         "is_regulated": true
                     },
                     {
-                        "id": "PURCHASED_HOT_WATER-SERVICE_WATER_HEATING",
+                        "id": "ELECTRICITY-SERVICE_WATER_HEATING",
                         "type": "SERVICE_WATER_HEATING",
-                        "energy_source": "PURCHASED_HOT_WATER",
+                        "energy_source": "ELECTRICITY",
                         "annual_site_energy_use": 0.0,
                         "annual_site_coincident_demand": 0.0,
                         "annual_site_non_coincident_demand": 0.0,
@@ -142138,96 +142138,6 @@
                         "is_regulated": true
                     },
                     {
-                        "id": "ELECTRICITY-INTERIOR_LIGHTING",
-                        "type": "INTERIOR_LIGHTING",
-                        "energy_source": "ELECTRICITY",
-                        "annual_site_energy_use": 162222183720.29236,
-                        "annual_site_coincident_demand": 5.104544702046712,
-                        "annual_site_non_coincident_demand": 5.104544702046712,
-                        "is_regulated": true
-                    },
-                    {
-                        "id": "ELECTRICITY-MISC_EQUIPMENT",
-                        "type": "MISC_EQUIPMENT",
-                        "energy_source": "ELECTRICITY",
-                        "annual_site_energy_use": 195554545338.15012,
-                        "annual_site_coincident_demand": 3.381187314665053,
-                        "annual_site_non_coincident_demand": 3.381187314665053,
-                        "is_regulated": false
-                    },
-                    {
-                        "id": "ELECTRICITY-SPACE_HEATING",
-                        "type": "SPACE_HEATING",
-                        "energy_source": "ELECTRICITY",
-                        "annual_site_energy_use": 0.0,
-                        "annual_site_coincident_demand": 0.0,
-                        "annual_site_non_coincident_demand": 0.0,
-                        "is_regulated": true
-                    },
-                    {
-                        "id": "ELECTRICITY-SPACE_COOLING",
-                        "type": "SPACE_COOLING",
-                        "energy_source": "ELECTRICITY",
-                        "annual_site_energy_use": 0.0,
-                        "annual_site_coincident_demand": 0.0,
-                        "annual_site_non_coincident_demand": 0.0,
-                        "is_regulated": true
-                    },
-                    {
-                        "id": "ELECTRICITY-HEAT_REJECTION",
-                        "type": "HEAT_REJECTION",
-                        "energy_source": "ELECTRICITY",
-                        "annual_site_energy_use": 0.0,
-                        "annual_site_coincident_demand": 0.0,
-                        "annual_site_non_coincident_demand": 0.0,
-                        "is_regulated": true
-                    },
-                    {
-                        "id": "ELECTRICITY-PUMPS",
-                        "type": "PUMPS",
-                        "energy_source": "ELECTRICITY",
-                        "annual_site_energy_use": 8959875434.94693,
-                        "annual_site_coincident_demand": 0.4023065679587258,
-                        "annual_site_non_coincident_demand": 0.4023065679587258,
-                        "is_regulated": true
-                    },
-                    {
-                        "id": "ELECTRICITY-FANS_INTERIOR_VENTILATION",
-                        "type": "FANS_INTERIOR_VENTILATION",
-                        "energy_source": "ELECTRICITY",
-                        "annual_site_energy_use": 63139495790.26792,
-                        "annual_site_coincident_demand": 0.8799423245800866,
-                        "annual_site_non_coincident_demand": 0.8799423245800866,
-                        "is_regulated": true
-                    },
-                    {
-                        "id": "ELECTRICITY-REFRIGERATION_EQUIPMENT",
-                        "type": "REFRIGERATION_EQUIPMENT",
-                        "energy_source": "ELECTRICITY",
-                        "annual_site_energy_use": 0.0,
-                        "annual_site_coincident_demand": 0.0,
-                        "annual_site_non_coincident_demand": 0.0,
-                        "is_regulated": true
-                    },
-                    {
-                        "id": "ELECTRICITY-HEAT_PUMP_SUPPLEMENTAL_HEATING",
-                        "type": "HEAT_PUMP_SUPPLEMENTAL_HEATING",
-                        "energy_source": "ELECTRICITY",
-                        "annual_site_energy_use": 0.0,
-                        "annual_site_coincident_demand": 0.0,
-                        "annual_site_non_coincident_demand": 0.0,
-                        "is_regulated": true
-                    },
-                    {
-                        "id": "ELECTRICITY-SERVICE_WATER_HEATING",
-                        "type": "SERVICE_WATER_HEATING",
-                        "energy_source": "ELECTRICITY",
-                        "annual_site_energy_use": 0.0,
-                        "annual_site_coincident_demand": 0.0,
-                        "annual_site_non_coincident_demand": 0.0,
-                        "is_regulated": true
-                    },
-                    {
                         "id": "NATURAL-GAS-INTERIOR_LIGHTING",
                         "type": "INTERIOR_LIGHTING",
                         "energy_source": "NATURAL_GAS",
@@ -142315,6 +142225,96 @@
                         "annual_site_energy_use": 22915078669.458008,
                         "annual_site_coincident_demand": 235799721.25824654,
                         "annual_site_non_coincident_demand": 235802079.2554784,
+                        "is_regulated": true
+                    },
+                    {
+                        "id": "PURCHASED_HOT_WATER-INTERIOR_LIGHTING",
+                        "type": "INTERIOR_LIGHTING",
+                        "energy_source": "PURCHASED_HOT_WATER",
+                        "annual_site_energy_use": 0.0,
+                        "annual_site_coincident_demand": 0.0,
+                        "annual_site_non_coincident_demand": 0.0,
+                        "is_regulated": true
+                    },
+                    {
+                        "id": "PURCHASED_HOT_WATER-MISC_EQUIPMENT",
+                        "type": "MISC_EQUIPMENT",
+                        "energy_source": "PURCHASED_HOT_WATER",
+                        "annual_site_energy_use": 0.0,
+                        "annual_site_coincident_demand": 0.0,
+                        "annual_site_non_coincident_demand": 0.0,
+                        "is_regulated": false
+                    },
+                    {
+                        "id": "PURCHASED_HOT_WATER-SPACE_HEATING",
+                        "type": "SPACE_HEATING",
+                        "energy_source": "PURCHASED_HOT_WATER",
+                        "annual_site_energy_use": 597438745265.152,
+                        "annual_site_coincident_demand": 89566.35979694445,
+                        "annual_site_non_coincident_demand": 89566.35979694445,
+                        "is_regulated": true
+                    },
+                    {
+                        "id": "PURCHASED_HOT_WATER-SPACE_COOLING",
+                        "type": "SPACE_COOLING",
+                        "energy_source": "PURCHASED_HOT_WATER",
+                        "annual_site_energy_use": 0.0,
+                        "annual_site_coincident_demand": 0.0,
+                        "annual_site_non_coincident_demand": 0.0,
+                        "is_regulated": true
+                    },
+                    {
+                        "id": "PURCHASED_HOT_WATER-HEAT_REJECTION",
+                        "type": "HEAT_REJECTION",
+                        "energy_source": "PURCHASED_HOT_WATER",
+                        "annual_site_energy_use": 0.0,
+                        "annual_site_coincident_demand": 0.0,
+                        "annual_site_non_coincident_demand": 0.0,
+                        "is_regulated": true
+                    },
+                    {
+                        "id": "PURCHASED_HOT_WATER-PUMPS",
+                        "type": "PUMPS",
+                        "energy_source": "PURCHASED_HOT_WATER",
+                        "annual_site_energy_use": 0.0,
+                        "annual_site_coincident_demand": 0.0,
+                        "annual_site_non_coincident_demand": 0.0,
+                        "is_regulated": true
+                    },
+                    {
+                        "id": "PURCHASED_HOT_WATER-FANS_INTERIOR_VENTILATION",
+                        "type": "FANS_INTERIOR_VENTILATION",
+                        "energy_source": "PURCHASED_HOT_WATER",
+                        "annual_site_energy_use": 0.0,
+                        "annual_site_coincident_demand": 0.0,
+                        "annual_site_non_coincident_demand": 0.0,
+                        "is_regulated": true
+                    },
+                    {
+                        "id": "PURCHASED_HOT_WATER-REFRIGERATION_EQUIPMENT",
+                        "type": "REFRIGERATION_EQUIPMENT",
+                        "energy_source": "PURCHASED_HOT_WATER",
+                        "annual_site_energy_use": 0.0,
+                        "annual_site_coincident_demand": 0.0,
+                        "annual_site_non_coincident_demand": 0.0,
+                        "is_regulated": true
+                    },
+                    {
+                        "id": "PURCHASED_HOT_WATER-HEAT_PUMP_SUPPLEMENTAL_HEATING",
+                        "type": "HEAT_PUMP_SUPPLEMENTAL_HEATING",
+                        "energy_source": "PURCHASED_HOT_WATER",
+                        "annual_site_energy_use": 0.0,
+                        "annual_site_coincident_demand": 0.0,
+                        "annual_site_non_coincident_demand": 0.0,
+                        "is_regulated": true
+                    },
+                    {
+                        "id": "PURCHASED_HOT_WATER-SERVICE_WATER_HEATING",
+                        "type": "SERVICE_WATER_HEATING",
+                        "energy_source": "PURCHASED_HOT_WATER",
+                        "annual_site_energy_use": 0.0,
+                        "annual_site_coincident_demand": 0.0,
+                        "annual_site_non_coincident_demand": 0.0,
                         "is_regulated": true
                     }
                 ]

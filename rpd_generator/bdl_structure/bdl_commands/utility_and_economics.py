@@ -362,7 +362,6 @@ class CHWMeter(BaseNode):
 
 
 class Transformer:
-
     def __init__(self, meter):
         self.meter = meter
         self.name = meter.u_name + " Transformer"

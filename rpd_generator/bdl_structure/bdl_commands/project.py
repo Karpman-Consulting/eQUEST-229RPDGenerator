@@ -37,12 +37,12 @@ class SiteParameters(BaseDefinition):
         """Populate schema structure for site parameters object."""
         monthly_ground_temps = self.get_inp(BDL_SiteParameterKeywords.GROUND_T)
         if monthly_ground_temps:
-            self.rmd.weather.setdefault(
-                "ground_temperature_schedule", "Ground Temperature Schedule"
+            self.rmd.weather_obj.ground_temperature_schedule = (
+                "Ground Temperature Schedule"
             )
             self.create_ground_temp_schedule(monthly_ground_temps)
 
-        self.rmd.weather.setdefault("file_name", self.get_single_string_output(1101006))
+        self.rmd.weather_obj.file_name = self.get_single_string_output(1101006)
 
         cz_number = self.get_inp(BDL_SiteParameterKeywords.C_901_CZ_NUMBER)
         cz_letter = self.get_inp(BDL_SiteParameterKeywords.C_901_CZ_LETTER)
@@ -54,7 +54,7 @@ class SiteParameters(BaseDefinition):
             )
 
             if climate_zone in ClimateZoneOptions2019ASHRAE901.get_list():
-                self.rmd.weather.setdefault("climate_zone", climate_zone)
+                self.rmd.weather_obj.climate_zone = climate_zone
 
     def create_ground_temp_schedule(self, monthly_ground_temps):
         """Create ground temperature schedule."""
@@ -157,7 +157,6 @@ class DesignDay(BaseDefinition):
 
 
 class Calendar:
-
     def __init__(self, rmd):
         self.rmd = rmd
 

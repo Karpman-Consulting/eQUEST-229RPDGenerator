@@ -1,4 +1,4 @@
-RULESETS = ["ASHRAE 90.1-2019 PRM", "None"]
+HEADER_FONT = ("Arial", 16, "bold")
 LABEL_FONT = ("Arial", 14, "bold")
 TEXT_FONT = ("Arial", 14)
 NAV_FONT = ("Arial", 12, "bold")

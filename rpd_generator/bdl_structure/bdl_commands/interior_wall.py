@@ -173,7 +173,6 @@ class InteriorWall(
 
 
 class SurfaceOpticalProperties:
-
     def __init__(self, wall):
         self.wall = wall
 

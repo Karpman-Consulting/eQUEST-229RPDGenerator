@@ -1,7 +1,7 @@
 from itertools import islice
 from pathlib import Path
 
-from rpd_generator.doe2_file_readers.model_output_reader import get_string_result
+from rpd_generator.doe2_worker.api import get_string_result_32
 from rpd_generator.config import Config
 
 
@@ -57,11 +57,11 @@ class BaseDefinition:
         :param entry_id: (int) id from NHRList.txt corresponding to the value to retrieve
         :return: value from binary simulation output files
         """
-        return get_string_result(
-            str(Path(Config.EQUEST_INSTALL_PATH) / "D2Result.dll"),
-            self.rmd.doe2_data_path,
-            str(Path(self.rmd.file_path).with_suffix("")),
-            entry_id,
+        return get_string_result_32(
+            d2_result_dll=str(Path(Config.EQUEST_INSTALL_PATH) / "D2Result.dll"),
+            doe2_data_dir=self.rmd.doe2_data_path,
+            project_fname=str(Path(self.rmd.file_path).with_suffix("")),
+            entry_id=entry_id,
         )
 
     @staticmethod

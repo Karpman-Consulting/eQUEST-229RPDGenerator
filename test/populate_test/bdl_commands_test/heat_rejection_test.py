@@ -13,10 +13,6 @@ from rpd_generator.artifacts.ruleset_project_description import (
 )
 from rpd_generator.artifacts.ruleset_model_description import RulesetModelDescription
 from rpd_generator.bdl_structure.bdl_commands.heat_rejection import *
-from rpd_generator.bdl_structure.bdl_commands.pump import (
-    Pump,
-    BDL_PumpKeywords,
-)
 
 
 class TestHeatRejection(unittest.TestCase):

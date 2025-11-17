@@ -185,7 +185,6 @@ class BelowGradeWall(ChildNode):
 
 
 class SurfaceOpticalProperties:
-
     def __init__(self, wall):
         self.wall = wall
 

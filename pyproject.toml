@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "rpd_generator"
+version = "0.1.0"
+description = ""
+authors = ["Jackson Jarboe <122476654+JacksonJ-KC@users.noreply.github.com>"]
+readme = "README.md"
+packages = [
+    { include = "rpd_generator" },
+    { include = "interface" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+customtkinter = "^5.2.2"
+pillow = "^12.0.0"
+tksheet = "^7.5.17"
+pint = "^0.23"
+jsonschema = "^4.25.1"
+jsonpath-ng = "^1.7.0"
+ctktooltip = "^0.8"
+pydash = "^7.0.7"
+numpy = "^1.26.4"
+openpyxl = "^3.1.5"
+ruleset-checking-tool = {path = "C:/Users/JacksonJarboe/Documents/Development/RCT", develop = true}
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^9.0.0"
+black = "^22.8.0"
+xlsxwriter = "^3.2.9"
+pre-commit = "^4.4.0"
+rpdvalidator = "^1.1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

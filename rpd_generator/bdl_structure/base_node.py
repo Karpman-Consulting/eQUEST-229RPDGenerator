@@ -1,27 +1,17 @@
-import os
 import pint
-from itertools import islice
 from pathlib import Path
 
 
-from rpd_generator.doe2_file_readers.model_output_reader import (
-    get_string_result,
-    get_multiple_results,
+from rpd_generator.doe2_worker.api import (
+    get_string_result_32,
+    get_multiple_results_32,
 )
 from rpd_generator.config import Config
 
-
-path_to_ureg = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)),
-    "utilities",
-    "resources",
-    "unit_registry.txt",
-)
-ureg = pint.UnitRegistry(path_to_ureg, autoconvert_offset_to_baseunit=True)
+ureg = Config.ureg
 
 
 class Base:
-
     def populate_data_group_with_prefix(self, prefix):
         attributes = [attr for attr in dir(self) if attr.startswith(prefix)]
         keys = [attr.replace(prefix, "") for attr in attributes]
@@ -57,13 +47,13 @@ class Base:
         :param row_key: (str) to use when KT > 0 and when a report has multiple row where each row provides results for a separate building component or month of the year
         :return: value from binary simulation output files
         """
-        return get_string_result(
-            str(Path(Config.EQUEST_INSTALL_PATH) / "D2Result.dll"),
-            rmd.doe2_data_path,
-            str(Path(rmd.file_path).with_suffix("")),
-            entry_id,
-            report_key,
-            row_key,
+        return get_string_result_32(
+            d2_result_dll=str(Path(Config.EQUEST_INSTALL_PATH) / "D2Result.dll"),
+            doe2_data_dir=rmd.doe2_data_path,
+            project_fname=str(Path(rmd.file_path).with_suffix("")),
+            entry_id=entry_id,
+            report_key=report_key,
+            row_key=row_key,
         )
 
     @staticmethod
@@ -84,11 +74,11 @@ class Base:
             values_list = list(chunk.values())
 
             # Call the function with the current chunk of values
-            chunk_results = get_multiple_results(
-                str(Path(Config.EQUEST_INSTALL_PATH) / "D2Result.dll"),
-                rmd.doe2_data_path,
-                str(Path(rmd.file_path).with_suffix("")),
-                values_list,
+            chunk_results = get_multiple_results_32(
+                d2_result_dll=str(Path(Config.EQUEST_INSTALL_PATH) / "D2Result.dll"),
+                doe2_data_dir=rmd.doe2_data_path,
+                project_fname=str(Path(rmd.file_path).with_suffix("")),
+                requests=values_list,
             )
 
             # Reassociate returned values with their corresponding keys

@@ -1,24 +1,19 @@
-import os
+from pathlib import Path
 import json
 import pint
 from jsonpath_ng.ext import parse
 
+from rpd_generator.config import Config
 
-path_to_ureg = os.path.join(os.path.dirname(__file__), "resources", "unit_registry.txt")
-ureg = pint.UnitRegistry(path_to_ureg, autoconvert_offset_to_baseunit=True)
+# Directory of this file
+BASE_DIR = Path(__file__).resolve().parent
 
-path_to_schema_units = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)),
-    "schema",
-    "resources",
-    "schema_units.json",
-)
-path_to_equest_units = os.path.join(
-    os.path.dirname(__file__), "resources", "equest_units.json"
-)
-path_to_json_paths = os.path.join(
-    os.path.dirname(__file__), "resources", "manual_item_json_paths.json"
-)
+# Paths to resource files
+path_to_schema_units = BASE_DIR.parent / "schema" / "resources" / "schema_units.json"
+path_to_equest_units = BASE_DIR / "resources" / "equest_units.json"
+path_to_json_paths = BASE_DIR / "resources" / "manual_item_json_paths.json"
+
+ureg = Config.ureg
 
 
 def convert_to_schema_units(rpd_json):

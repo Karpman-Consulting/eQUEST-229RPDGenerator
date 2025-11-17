@@ -1,7 +1,6 @@
 import os
-import json
 import unittest
-from ..full_rpd_test import run_full_rpd_tests as rpd_tests
+from test.full_rpd_test.run_full_rpd_tests import *
 
 
 class TestRunFullRPDTests(unittest.TestCase):
@@ -223,11 +222,11 @@ class TestRunFullRPDTests(unittest.TestCase):
             ],
         }
 
-        generated_zones = rpd_tests.get_zones_from_json(generated_json)
-        reference_zones = rpd_tests.get_zones_from_json(self.reference_json)
+        generated_zones = get_zones_from_json(generated_json)
+        reference_zones = get_zones_from_json(self.reference_json)
 
         # Define a map for Zones. ! Maps for other objects will depend on this map !
-        object_id_map = rpd_tests.get_mapping("Zones", generated_zones, reference_zones)
+        object_id_map = get_mapping("Zones", generated_zones, reference_zones)
         self.assertEqual(
             object_id_map,
             {
@@ -277,11 +276,11 @@ class TestRunFullRPDTests(unittest.TestCase):
             ],
         }
 
-        generated_zones = rpd_tests.get_zones_from_json(generated_json)
-        reference_zones = rpd_tests.get_zones_from_json(self.reference_json)
+        generated_zones = get_zones_from_json(generated_json)
+        reference_zones = get_zones_from_json(self.reference_json)
 
         # Define a map for Zones. ! Maps for other objects will depend on this map !
-        object_id_map = rpd_tests.get_mapping("Zones", generated_zones, reference_zones)
+        object_id_map = get_mapping("Zones", generated_zones, reference_zones)
         self.assertEqual(
             object_id_map,
             {
@@ -331,11 +330,11 @@ class TestRunFullRPDTests(unittest.TestCase):
             ],
         }
 
-        generated_zones = rpd_tests.get_zones_from_json(generated_json)
-        reference_zones = rpd_tests.get_zones_from_json(self.reference_json)
+        generated_zones = get_zones_from_json(generated_json)
+        reference_zones = get_zones_from_json(self.reference_json)
 
         # Define a map for Zones. ! Maps for other objects will depend on this map !
-        object_id_map = rpd_tests.get_mapping("Zones", generated_zones, reference_zones)
+        object_id_map = get_mapping("Zones", generated_zones, reference_zones)
         self.assertEqual(
             object_id_map,
             {
@@ -384,7 +383,7 @@ class TestRunFullRPDTests(unittest.TestCase):
             ],
         }
 
-        object_id_map, map_warnings, map_errors = rpd_tests.map_objects(
+        object_id_map, map_warnings, map_errors = map_objects(
             generated_json, self.reference_json
         )
         self.assertEqual(
@@ -573,10 +572,10 @@ class TestRunFullRPDTests(unittest.TestCase):
         warnings = []
         errors = []
 
-        generated_zones = rpd_tests.get_zones_from_json(generated_json)
-        reference_zones = rpd_tests.get_zones_from_json(self.reference_json)
+        generated_zones = get_zones_from_json(generated_json)
+        reference_zones = get_zones_from_json(self.reference_json)
 
-        object_id_map = rpd_tests.get_mapping("Zones", generated_zones, reference_zones)
+        object_id_map = get_mapping("Zones", generated_zones, reference_zones)
 
         if len(object_id_map) != len(reference_zones):
             errors.append(
@@ -594,7 +593,7 @@ class TestRunFullRPDTests(unittest.TestCase):
                 reference_zone_ids.index(reference_zone_id)
             ]
 
-            surface_map = rpd_tests.define_surface_map(
+            surface_map = define_surface_map(
                 generated_zone, reference_zone, generated_json, self.reference_json
             )
             object_id_map.update(surface_map)
@@ -626,7 +625,7 @@ class TestRunFullRPDTests(unittest.TestCase):
             object_id_map,
         )
 
-    def test_map_objects(self):
+    def test_map_e1_objects(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
         correct_answer_path = os.path.join(
@@ -641,9 +640,7 @@ class TestRunFullRPDTests(unittest.TestCase):
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
 
-        object_id_map, warnings, errors = rpd_tests.map_objects(
-            generated_json, reference_json
-        )
+        object_id_map, warnings, errors = map_objects(generated_json, reference_json)
         self.assertEqual(
             {
                 "Perimeter Zone 1 (South)": "Prm Zone 1 (South)",
@@ -651,6 +648,21 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Perimeter Zone 3 (North)": "Prm Zone 3 (North)",
                 "Perimeter Zone 4 (West)": "Prm Zone 4 (West)",
                 "Core Zone 1 (Core)": "Core Zone 1",
+                "BL1 IWall Construction": "Interior Wall",
+                "Built-up roofing": "Built-up Roof",
+                "Builtup roof resistance": "Built-up Roof Thermal Resistance",
+                "Concrete": "Concrete",
+                "Continuous Insulation": "Roof Continuous Insulation 1",
+                "Continuous Insulation_0.346": "Roof Continuous Insulation 2",
+                "Exterior Wall Type 1": "Exterior Wall 1",
+                "Exterior Wall Type 2": "Exterior Wall 2",
+                "Exterior Wall Type 3": "Exterior Wall 3",
+                "Gypsum Board_0.0522": "Gypsum 5/8in",
+                "Gypsum board resistance": "Gypsum Thermal Resistance",
+                "Insulation (Slab on grade)": "Slab Insulation",
+                "Insulation_0.2034": "Wall Continuous Insulation 1",
+                "Insulation_0.588": "Wall Continuous Insulation 2",
+                "Metal Deck": "Metal Deck",
                 "Baseline System 4 (South)": "RPD_Test_System_4_PSZ_HP Prm Zone 1 (South)",
                 "Baseline System 4 (East)": "RPD_Test_System_4_PSZ_HP Prm Zone 2 (East)",
                 "Baseline System 4 (North)": "RPD_Test_System_4_PSZ_HP Prm Zone 3 (North)",
@@ -683,6 +695,12 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Core Space 1 Slab on Grade": "Core Zone 1 Floor",
                 "Core Space 1 Roof": "Core Zone 1 Roof",
                 "Core Zone 1 (Core) MainTerminal": "RPD_Test_System_4_PSZ_HP - Terminal for Core Zone 1",
+                "Roof Type 1": "Exterior Roof 1",
+                "Roof Type 2": "Exterior Roof 2",
+                "Roof Type 3": "Exterior Roof 3",
+                "Slab-on-grade Type 1": "Slab On-grade 1",
+                "Slab-on-grade Type 2": "Slab On-grade 2",
+                "Stucco": "Stucco",
             },
             object_id_map,
         )
@@ -704,14 +722,15 @@ class TestRunFullRPDTests(unittest.TestCase):
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
 
-        object_id_map, warnings, errors = rpd_tests.map_objects(
-            generated_json, reference_json
-        )
+        object_id_map, warnings, errors = map_objects(generated_json, reference_json)
         self.assertEqual(
             {
                 "Baseline System 7 (CHW VAV)": "RPD_Test_System_7_VAV_HW_Reheat",
+                "BL1 IWall Construction": "Interior Wall",
                 "Boiler 1": "Boiler 1",
                 "Boiler 2": "Boiler 2",
+                "Built-up roofing": "Built-up Roof",
+                "Builtup roof resistance": "Built-up Roof Thermal Resistance",
                 "CHW Pump (Primary)": "Primary CHW Pump 1",
                 "CHW Pump (Primary) 1": "Primary CHW Pump 2",
                 "CHW Pump (Secondary)": "Secondary CHW Pump",
@@ -719,17 +738,29 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Chilled Water Loop (Secondary)": "Secondary CHW Loop",
                 "Chiller 1": "Chiller 1",
                 "Chiller 2": "Chiller 2",
+                "Concrete": "Concrete",
                 "Condenser Water Loop": "CW Loop",
                 "Condenser Water Pump": "CW Pump",
+                "Continuous Insulation": "Roof Continuous Insulation 1",
+                "Continuous Insulation_0.346": "Roof Continuous Insulation 2",
                 "Core Space 1 Roof": "Core Zone 1 Roof",
                 "Core Space 1 Slab on Grade": "Core Zone 1 Floor",
                 "Core Zone": "Core Zone 1",
                 "Core Zone MainTerminal": "RPD_Test_System_7_VAV_HW_Reheat - Terminal for "
                 "Core Zone 1",
+                "Exterior Wall Type 1": "Exterior Wall 1",
+                "Exterior Wall Type 2": "Exterior Wall 2",
+                "Exterior Wall Type 3": "Exterior Wall 3",
+                "Gypsum Board_0.0522": "Gypsum 5/8in",
+                "Gypsum board resistance": "Gypsum Thermal Resistance",
                 "Heat Rejection 1": "Cooling Tower 1",
                 "Hot Water Loop": "Boiler Loop 1",
                 "Hot Water Pumps": "HW Pump 1",
                 "Hot Water Pumps 1": "HW Pump 2",
+                "Insulation (Slab on grade)": "Slab Insulation",
+                "Insulation_0.2034": "Wall Continuous Insulation 1",
+                "Insulation_0.588": "Wall Continuous Insulation 2",
+                "Metal Deck": "Metal Deck",
                 "Perimeter Space 1 Ext Wall": "Prm Zone 1 South Wall",
                 "Perimeter Space 1 N Wall": "Core Zone 1 South Wall",
                 "Perimeter Space 1 NE Wall": "Prm Zone 1 East Wall",
@@ -762,6 +793,12 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Perimeter Zone 4 (West)": "Prm Zone 4 (West)",
                 "Perimeter Zone 4 (West) MainTerminal": "RPD_Test_System_7_VAV_HW_Reheat - "
                 "Terminal for Prm Zone 4 (West)",
+                "Roof Type 1": "Exterior Roof 1",
+                "Roof Type 2": "Exterior Roof 2",
+                "Roof Type 3": "Exterior Roof 3",
+                "Slab-on-grade Type 1": "Slab On-grade 1",
+                "Slab-on-grade Type 2": "Slab On-grade 2",
+                "Stucco": "Stucco",
             },
             object_id_map,
         )
@@ -783,20 +820,33 @@ class TestRunFullRPDTests(unittest.TestCase):
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
 
-        object_id_map, warnings, errors = rpd_tests.map_objects(
-            generated_json, reference_json
-        )
+        object_id_map, warnings, errors = map_objects(generated_json, reference_json)
         self.assertEqual(
             {
+                "BL1 IWall Construction": "Interior Wall",
                 "Boiler 1": "Boiler 1",
+                "Built-up roofing": "Built-up Roof",
+                "Builtup roof resistance": "Built-up Roof Thermal Resistance",
+                "Concrete": "Concrete",
+                "Continuous Insulation": "Roof Continuous Insulation 1",
+                "Continuous Insulation_0.346": "Roof Continuous Insulation 2",
                 "Core Space 1 Roof": "Core Zone 1 Roof",
                 "Core Space 1 Slab on Grade": "Core Zone 1 Floor",
                 "Core Zone 1": "Core Zone 1",
                 "Core Zone 1 BaseboardTerminal": "Baseboard - Terminal for Core Zone 1",
                 "Core Zone 1 MainTerminal": "RPD_Test_System_P_PVAV_HW_Reheat_Baseboard - "
                 "Terminal for Core Zone 1",
+                "Exterior Wall Type 1": "Exterior Wall 1",
+                "Exterior Wall Type 2": "Exterior Wall 2",
+                "Exterior Wall Type 3": "Exterior Wall 3",
+                "Gypsum Board_0.0522": "Gypsum 5/8in",
+                "Gypsum board resistance": "Gypsum Thermal Resistance",
                 "Hot Water Loop": "Primary HW Loop",
                 "Hot Water Pumps": "HW Pump 1",
+                "Insulation (Slab on grade)": "Slab Insulation",
+                "Insulation_0.2034": "Wall Continuous Insulation 1",
+                "Insulation_0.588": "Wall Continuous Insulation 2",
+                "Metal Deck": "Metal Deck",
                 "Perimeter Space 1 Ext Wall": "Prm Zone 1 South Wall",
                 "Perimeter Space 1 NE Wall": "Prm Zone 1 East Wall",
                 "Perimeter Space 1 NW Wall": "Prm Zone 4 South Wall",
@@ -838,6 +888,12 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "(West)",
                 "Prm Zone 4 (West) MainTerminal": "RPD_Test_System_P_PVAV_HW_Reheat_Baseboard "
                 "- Terminal for Prm Zone 4 (West)",
+                "Roof Type 1": "Exterior Roof 1",
+                "Roof Type 2": "Exterior Roof 2",
+                "Roof Type 3": "Exterior Roof 3",
+                "Slab-on-grade Type 1": "Slab On-grade 1",
+                "Slab-on-grade Type 2": "Slab On-grade 2",
+                "Stucco": "Stucco",
             },
             object_id_map,
         )
@@ -859,19 +915,32 @@ class TestRunFullRPDTests(unittest.TestCase):
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
 
-        object_id_map, warnings, errors = rpd_tests.map_objects(
-            generated_json, reference_json
-        )
+        object_id_map, warnings, errors = map_objects(generated_json, reference_json)
         self.assertEqual(
             {
+                "BL1 IWall Construction": "Interior Wall",
                 "Boiler 1": "Boiler 1",
+                "Built-up roofing": "Built-up Roof",
+                "Builtup roof resistance": "Built-up Roof Thermal Resistance",
+                "Concrete": "Concrete",
+                "Continuous Insulation": "Roof Continuous Insulation 1",
+                "Continuous Insulation_0.346": "Roof Continuous Insulation 2",
                 "Core Space 1 Roof": "Core Zone 1 Roof",
                 "Core Space 1 Slab on Grade": "Core Zone 1 Floor",
                 "Core Zone 1": "Core Zone 1",
                 "Core Zone 1 MainTerminal": "RPD_Test_System_1_PTAC - Terminal for Core Zone "
                 "1",
+                "Exterior Wall Type 1": "Exterior Wall 1",
+                "Exterior Wall Type 2": "Exterior Wall 2",
+                "Exterior Wall Type 3": "Exterior Wall 3",
+                "Gypsum Board_0.0522": "Gypsum 5/8in",
+                "Gypsum board resistance": "Gypsum Thermal Resistance",
                 "Hot Water Loop": "Boiler Loop 1",
                 "Hot Water Pumps": "HW Pump 1",
+                "Insulation (Slab on grade)": "Slab Insulation",
+                "Insulation_0.2034": "Wall Continuous Insulation 1",
+                "Insulation_0.588": "Wall Continuous Insulation 2",
+                "Metal Deck": "Metal Deck",
                 "PTAC 1": "RPD_Test_System_1_PTAC Core Zone 1",
                 "PTAC 2": "RPD_Test_System_1_PTAC Prm Zone 1 (South)",
                 "PTAC 3": "RPD_Test_System_1_PTAC Prm Zone 2 (East)",
@@ -909,6 +978,12 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Prm Zone 4 (West)": "Prm Zone 4 (West)",
                 "Prm Zone 4 (West) MainTerminal": "RPD_Test_System_1_PTAC - Terminal for Prm "
                 "Zone 4 (West)",
+                "Roof Type 1": "Exterior Roof 1",
+                "Roof Type 2": "Exterior Roof 2",
+                "Roof Type 3": "Exterior Roof 3",
+                "Slab-on-grade Type 1": "Slab On-grade 1",
+                "Slab-on-grade Type 2": "Slab On-grade 2",
+                "Stucco": "Stucco",
             },
             object_id_map,
         )
@@ -930,16 +1005,29 @@ class TestRunFullRPDTests(unittest.TestCase):
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
 
-        object_id_map, warnings, errors = rpd_tests.map_objects(
-            generated_json, reference_json
-        )
+        object_id_map, warnings, errors = map_objects(generated_json, reference_json)
         self.assertEqual(
             {
+                "BL1 IWall Construction": "Interior Wall",
+                "Built-up roofing": "Built-up Roof",
+                "Builtup roof resistance": "Built-up Roof Thermal Resistance",
+                "Concrete": "Concrete",
+                "Continuous Insulation": "Roof Continuous Insulation 1",
+                "Continuous Insulation_0.346": "Roof Continuous Insulation 2",
                 "Core Space 1 Roof": "Core Zone 1 Roof",
                 "Core Space 1 Slab on Grade": "Core Zone 1 Floor",
                 "Core Zone 1": "Core Zone 1",
                 "Core Zone 1 MainTerminal": "RPD_Test_System_2_PTHP - Terminal for Core Zone "
                 "1",
+                "Exterior Wall Type 1": "Exterior Wall 1",
+                "Exterior Wall Type 2": "Exterior Wall 2",
+                "Exterior Wall Type 3": "Exterior Wall 3",
+                "Gypsum Board_0.0522": "Gypsum 5/8in",
+                "Gypsum board resistance": "Gypsum Thermal Resistance",
+                "Insulation (Slab on grade)": "Slab Insulation",
+                "Insulation_0.2034": "Wall Continuous Insulation 1",
+                "Insulation_0.588": "Wall Continuous Insulation 2",
+                "Metal Deck": "Metal Deck",
                 "PTHP 1": "RPD_Test_System_2_PTHP Core Zone 1",
                 "PTHP 2": "RPD_Test_System_2_PTHP Prm Zone 1 (South)",
                 "PTHP 3": "RPD_Test_System_2_PTHP Prm Zone 2 (East)",
@@ -977,6 +1065,12 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Prm Zone 4 (West)": "Prm Zone 4 (West)",
                 "Prm Zone 4 (West) MainTerminal": "RPD_Test_System_2_PTHP - Terminal for Prm "
                 "Zone 4 (West)",
+                "Roof Type 1": "Exterior Roof 1",
+                "Roof Type 2": "Exterior Roof 2",
+                "Roof Type 3": "Exterior Roof 3",
+                "Slab-on-grade Type 1": "Slab On-grade 1",
+                "Slab-on-grade Type 2": "Slab On-grade 2",
+                "Stucco": "Stucco",
             },
             object_id_map,
         )
@@ -998,16 +1092,29 @@ class TestRunFullRPDTests(unittest.TestCase):
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
 
-        object_id_map, warnings, errors = rpd_tests.map_objects(
-            generated_json, reference_json
-        )
+        object_id_map, warnings, errors = map_objects(generated_json, reference_json)
         self.assertEqual(
             {
+                "BL1 IWall Construction": "Interior Wall",
+                "Built-up roofing": "Built-up Roof",
+                "Builtup roof resistance": "Built-up Roof Thermal Resistance",
+                "Concrete": "Concrete",
+                "Continuous Insulation": "Roof Continuous Insulation 1",
+                "Continuous Insulation_0.346": "Roof Continuous Insulation 2",
                 "Core Space 1 Roof": "Core Zone 1 Roof",
                 "Core Space 1 Slab on Grade": "Core Zone 1 Floor",
                 "Core Zone 1": "Core Zone 1",
                 "Core Zone 1 MainTerminal": "RPD_Test_System_3_PSZ_AC_Gas_Furnace - Terminal "
                 "for Core Zone 1",
+                "Exterior Wall Type 1": "Exterior Wall 1",
+                "Exterior Wall Type 2": "Exterior Wall 2",
+                "Exterior Wall Type 3": "Exterior Wall 3",
+                "Gypsum Board_0.0522": "Gypsum 5/8in",
+                "Gypsum board resistance": "Gypsum Thermal Resistance",
+                "Insulation (Slab on grade)": "Slab Insulation",
+                "Insulation_0.2034": "Wall Continuous Insulation 1",
+                "Insulation_0.588": "Wall Continuous Insulation 2",
+                "Metal Deck": "Metal Deck",
                 "PSZ 1": "RPD_Test_System_3_PSZ_AC_Gas_Furnace Core Zone 1",
                 "PSZ 2": "RPD_Test_System_3_PSZ_AC_Gas_Furnace Prm Zone 1 (South)",
                 "PSZ 3": "RPD_Test_System_3_PSZ_AC_Gas_Furnace Prm Zone 2 (East)",
@@ -1045,6 +1152,12 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Prm Zone 4 (West)": "Prm Zone 4 (West)",
                 "Prm Zone 4 (West) MainTerminal": "RPD_Test_System_3_PSZ_AC_Gas_Furnace - "
                 "Terminal for Prm Zone 4 (West)",
+                "Roof Type 1": "Exterior Roof 1",
+                "Roof Type 2": "Exterior Roof 2",
+                "Roof Type 3": "Exterior Roof 3",
+                "Slab-on-grade Type 1": "Slab On-grade 1",
+                "Slab-on-grade Type 2": "Slab On-grade 2",
+                "Stucco": "Stucco",
             },
             object_id_map,
         )
@@ -1066,19 +1179,32 @@ class TestRunFullRPDTests(unittest.TestCase):
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
 
-        object_id_map, warnings, errors = rpd_tests.map_objects(
-            generated_json, reference_json
-        )
+        object_id_map, warnings, errors = map_objects(generated_json, reference_json)
         self.assertEqual(
             {
+                "BL1 IWall Construction": "Interior Wall",
                 "Boiler 1": "Boiler 1",
+                "Built-up roofing": "Built-up Roof",
+                "Builtup roof resistance": "Built-up Roof Thermal Resistance",
+                "Concrete": "Concrete",
+                "Continuous Insulation": "Roof Continuous Insulation 1",
+                "Continuous Insulation_0.346": "Roof Continuous Insulation 2",
                 "Core Space 1 Roof": "Core Zone 1 Roof",
                 "Core Space 1 Slab on Grade": "Core Zone 1 Floor",
                 "Core Zone 1": "Core Zone 1",
                 "Core Zone 1 MainTerminal": "RPD_Test_System_5_PVAV_HW_Reheat - Terminal for "
                 "Core Zone 1",
+                "Exterior Wall Type 1": "Exterior Wall 1",
+                "Exterior Wall Type 2": "Exterior Wall 2",
+                "Exterior Wall Type 3": "Exterior Wall 3",
+                "Gypsum Board_0.0522": "Gypsum 5/8in",
+                "Gypsum board resistance": "Gypsum Thermal Resistance",
                 "HW Loop": "Boiler Loop 1",
                 "HW Pump": "HW Pump 1",
+                "Insulation (Slab on grade)": "Slab Insulation",
+                "Insulation_0.2034": "Wall Continuous Insulation 1",
+                "Insulation_0.588": "Wall Continuous Insulation 2",
+                "Metal Deck": "Metal Deck",
                 "PVAV": "RPD_Test_System_5_PVAV_HW_Reheat",
                 "Perimeter Space 1 Ext Wall": "Prm Zone 1 South Wall",
                 "Perimeter Space 1 NE Wall": "Prm Zone 1 East Wall",
@@ -1112,6 +1238,12 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Prm Zone 4 (West)": "Prm Zone 4 (West)",
                 "Prm Zone 4 (West) MainTerminal": "RPD_Test_System_5_PVAV_HW_Reheat - "
                 "Terminal for Prm Zone 4 (West)",
+                "Roof Type 1": "Exterior Roof 1",
+                "Roof Type 2": "Exterior Roof 2",
+                "Roof Type 3": "Exterior Roof 3",
+                "Slab-on-grade Type 1": "Slab On-grade 1",
+                "Slab-on-grade Type 2": "Slab On-grade 2",
+                "Stucco": "Stucco",
             },
             object_id_map,
         )
@@ -1133,16 +1265,29 @@ class TestRunFullRPDTests(unittest.TestCase):
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
 
-        object_id_map, warnings, errors = rpd_tests.map_objects(
-            generated_json, reference_json
-        )
+        object_id_map, warnings, errors = map_objects(generated_json, reference_json)
         self.assertEqual(
             {
+                "BL1 IWall Construction": "Interior Wall",
+                "Built-up roofing": "Built-up Roof",
+                "Builtup roof resistance": "Built-up Roof Thermal Resistance",
+                "Concrete": "Concrete",
+                "Continuous Insulation": "Roof Continuous Insulation 1",
+                "Continuous Insulation_0.346": "Roof Continuous Insulation 2",
                 "Core Space 1 Roof": "Core Zone 1 Roof",
                 "Core Space 1 Slab on Grade": "Core Zone 1 Floor",
                 "Core Zone 1": "Core Zone 1",
                 "Core Zone 1 MainTerminal": "RPD_Test_System_6_PVAV_Elec_Reheat - Terminal "
                 "for Core Zone 1",
+                "Exterior Wall Type 1": "Exterior Wall 1",
+                "Exterior Wall Type 2": "Exterior Wall 2",
+                "Exterior Wall Type 3": "Exterior Wall 3",
+                "Gypsum Board_0.0522": "Gypsum 5/8in",
+                "Gypsum board resistance": "Gypsum Thermal Resistance",
+                "Insulation (Slab on grade)": "Slab Insulation",
+                "Insulation_0.2034": "Wall Continuous Insulation 1",
+                "Insulation_0.588": "Wall Continuous Insulation 2",
+                "Metal Deck": "Metal Deck",
                 "PVAV PFP": "RPD_Test_System_6_PVAV_Elec_Reheat",
                 "Perimeter Space 1 Ext Wall": "Prm Zone 1 South Wall",
                 "Perimeter Space 1 NE Wall": "Prm Zone 1 East Wall",
@@ -1176,6 +1321,12 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Prm Zone 4 (West)": "Prm Zone 4 (West)",
                 "Prm Zone 4 (West) MainTerminal": "RPD_Test_System_6_PVAV_Elec_Reheat - "
                 "Terminal for Prm Zone 4 (West)",
+                "Roof Type 1": "Exterior Roof 1",
+                "Roof Type 2": "Exterior Roof 2",
+                "Roof Type 3": "Exterior Roof 3",
+                "Slab-on-grade Type 1": "Slab On-grade 1",
+                "Slab-on-grade Type 2": "Slab On-grade 2",
+                "Stucco": "Stucco",
             },
             object_id_map,
         )
@@ -1197,19 +1348,32 @@ class TestRunFullRPDTests(unittest.TestCase):
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
 
-        object_id_map, warnings, errors = rpd_tests.map_objects(
-            generated_json, reference_json
-        )
+        object_id_map, warnings, errors = map_objects(generated_json, reference_json)
         self.assertEqual(
             {
+                "BL1 IWall Construction": "Interior Wall",
+                "Built-up roofing": "Built-up Roof",
+                "Builtup roof resistance": "Built-up Roof Thermal Resistance",
                 "CHW Loop": "CHW Loop 1",
                 "CHW-PUMP": "Chiller Pump 1",
                 "Chiller 1": "Chiller 1",
+                "Concrete": "Concrete",
+                "Continuous Insulation": "Roof Continuous Insulation 1",
+                "Continuous Insulation_0.346": "Roof Continuous Insulation 2",
                 "Core Space 1 Roof": "Core Zone 1 Roof",
                 "Core Space 1 Slab on Grade": "Core Zone 1 Floor",
                 "Core Zone 1": "Core Zone 1",
                 "Core Zone 1 MainTerminal": "RPD_Test_System_8_PFP_Reheat - Terminal for Core "
                 "Zone 1",
+                "Exterior Wall Type 1": "Exterior Wall 1",
+                "Exterior Wall Type 2": "Exterior Wall 2",
+                "Exterior Wall Type 3": "Exterior Wall 3",
+                "Gypsum Board_0.0522": "Gypsum 5/8in",
+                "Gypsum board resistance": "Gypsum Thermal Resistance",
+                "Insulation (Slab on grade)": "Slab Insulation",
+                "Insulation_0.2034": "Wall Continuous Insulation 1",
+                "Insulation_0.588": "Wall Continuous Insulation 2",
+                "Metal Deck": "Metal Deck",
                 "Perimeter Space 1 Ext Wall": "Prm Zone 1 South Wall",
                 "Perimeter Space 1 NE Wall": "Prm Zone 1 East Wall",
                 "Perimeter Space 1 NW Wall": "Prm Zone 4 South Wall",
@@ -1242,6 +1406,12 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Prm Zone 4 (West)": "Prm Zone 4 (West)",
                 "Prm Zone 4 (West) MainTerminal": "RPD_Test_System_8_PFP_Reheat - Terminal "
                 "for Prm Zone 4 (West)",
+                "Roof Type 1": "Exterior Roof 1",
+                "Roof Type 2": "Exterior Roof 2",
+                "Roof Type 3": "Exterior Roof 3",
+                "Slab-on-grade Type 1": "Slab On-grade 1",
+                "Slab-on-grade Type 2": "Slab On-grade 2",
+                "Stucco": "Stucco",
                 "VAV PFP": "RPD_Test_System_8_PFP_Reheat",
             },
             object_id_map,
@@ -1264,16 +1434,23 @@ class TestRunFullRPDTests(unittest.TestCase):
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
 
-        object_id_map, warnings, errors = rpd_tests.map_objects(
-            generated_json, reference_json
-        )
+        object_id_map, warnings, errors = map_objects(generated_json, reference_json)
         self.assertEqual(
             {
+                "BL1 IWall Construction": "Interior Wall",
+                "Built-up roofing": "Built-up Roof",
+                "Builtup roof resistance": "Built-up Roof Thermal Resistance",
+                "Concrete": "Concrete",
+                "Continuous Insulation": "Roof Continuous Insulation 1",
+                "Continuous Insulation_0.346": "Roof Continuous Insulation 2",
                 "Core Space 1 Roof": "Core Zone 1 Roof",
                 "Core Space 1 Slab on Grade": "Core Zone 1 Floor",
                 "Core Zone 1": "Core Zone 1",
                 "Core Zone 1 MainTerminal": "RPD_Test_System_9_Warm_Air_Furnace_Gas - "
                 "Terminal for Core Zone 1",
+                "Exterior Wall Type 1": "Exterior Wall 1",
+                "Exterior Wall Type 2": "Exterior Wall 2",
+                "Exterior Wall Type 3": "Exterior Wall 3",
                 "Gas Unit Heaters": "RPD_Test_System_9_Warm_Air_Furnace_Gas Core Zone 1",
                 "Gas Unit Heaters - Prm Zone 1 (South) Zn": "RPD_Test_System_9_Warm_Air_Furnace_Gas "
                 "Prm Zone 1 (South)",
@@ -1283,6 +1460,12 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Prm Zone 3 (North)",
                 "Gas Unit Heaters - Prm Zone 4 (West)": "RPD_Test_System_9_Warm_Air_Furnace_Gas "
                 "Prm Zone 4 (West)",
+                "Gypsum Board_0.0522": "Gypsum 5/8in",
+                "Gypsum board resistance": "Gypsum Thermal Resistance",
+                "Insulation (Slab on grade)": "Slab Insulation",
+                "Insulation_0.2034": "Wall Continuous Insulation 1",
+                "Insulation_0.588": "Wall Continuous Insulation 2",
+                "Metal Deck": "Metal Deck",
                 "Perimeter Space 1 Ext Wall": "Prm Zone 1 South Wall",
                 "Perimeter Space 1 NE Wall": "Prm Zone 1 East Wall",
                 "Perimeter Space 1 NW Wall": "Prm Zone 4 South Wall",
@@ -1315,6 +1498,12 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Prm Zone 4 (West)": "Prm Zone 4 (West)",
                 "Prm Zone 4 (West) MainTerminal": "RPD_Test_System_9_Warm_Air_Furnace_Gas - "
                 "Terminal for Prm Zone 4 (West)",
+                "Roof Type 1": "Exterior Roof 1",
+                "Roof Type 2": "Exterior Roof 2",
+                "Roof Type 3": "Exterior Roof 3",
+                "Slab-on-grade Type 1": "Slab On-grade 1",
+                "Slab-on-grade Type 2": "Slab On-grade 2",
+                "Stucco": "Stucco",
             },
             object_id_map,
         )
@@ -1336,11 +1525,15 @@ class TestRunFullRPDTests(unittest.TestCase):
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
 
-        object_id_map, warnings, errors = rpd_tests.map_objects(
-            generated_json, reference_json
-        )
+        object_id_map, warnings, errors = map_objects(generated_json, reference_json)
         self.assertEqual(
             {
+                "BL1 IWall Construction": "Interior Wall",
+                "Built-up roofing": "Built-up Roof",
+                "Builtup roof resistance": "Built-up Roof Thermal Resistance",
+                "Concrete": "Concrete",
+                "Continuous Insulation": "Roof Continuous Insulation 1",
+                "Continuous Insulation_0.346": "Roof Continuous Insulation 2",
                 "Core Space 1 Roof": "Core Zone 1 Roof",
                 "Core Space 1 Slab on Grade": "Core Zone 1 Floor",
                 "Core Zone 1": "Core Zone 1",
@@ -1355,6 +1548,15 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Prm Zone 3 (North)",
                 "Elec Unit Heaters - Prm Zone 4 (West)": "RPD_Test_System_10_Warm_air_Furnace_Elec "
                 "Prm Zone 4 (West)",
+                "Exterior Wall Type 1": "Exterior Wall 1",
+                "Exterior Wall Type 2": "Exterior Wall 2",
+                "Exterior Wall Type 3": "Exterior Wall 3",
+                "Gypsum Board_0.0522": "Gypsum 5/8in",
+                "Gypsum board resistance": "Gypsum Thermal Resistance",
+                "Insulation (Slab on grade)": "Slab Insulation",
+                "Insulation_0.2034": "Wall Continuous Insulation 1",
+                "Insulation_0.588": "Wall Continuous Insulation 2",
+                "Metal Deck": "Metal Deck",
                 "Perimeter Space 1 Ext Wall": "Prm Zone 1 South Wall",
                 "Perimeter Space 1 NE Wall": "Prm Zone 1 East Wall",
                 "Perimeter Space 1 NW Wall": "Prm Zone 4 South Wall",
@@ -1387,6 +1589,12 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Prm Zone 4 (West)": "Prm Zone 4 (West)",
                 "Prm Zone 4 (West) MainTerminal": "RPD_Test_System_10_Warm_air_Furnace_Elec - "
                 "Terminal for Prm Zone 4 (West)",
+                "Roof Type 1": "Exterior Roof 1",
+                "Roof Type 2": "Exterior Roof 2",
+                "Roof Type 3": "Exterior Roof 3",
+                "Slab-on-grade Type 1": "Slab On-grade 1",
+                "Slab-on-grade Type 2": "Slab On-grade 2",
+                "Stucco": "Stucco",
             },
             object_id_map,
         )
@@ -1408,19 +1616,32 @@ class TestRunFullRPDTests(unittest.TestCase):
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
 
-        object_id_map, warnings, errors = rpd_tests.map_objects(
-            generated_json, reference_json
-        )
+        object_id_map, warnings, errors = map_objects(generated_json, reference_json)
         self.assertEqual(
             {
+                "BL1 IWall Construction": "Interior Wall",
+                "Built-up roofing": "Built-up Roof",
+                "Builtup roof resistance": "Built-up Roof Thermal Resistance",
                 "CHW Pump (Primary)": "CHW Pump 1",
                 "Chilled Water Loop (Primary)": "CHW Loop 1",
                 "Chiller 1": "Chiller 1",
+                "Concrete": "Concrete",
+                "Continuous Insulation": "Roof Continuous Insulation 1",
+                "Continuous Insulation_0.346": "Roof Continuous Insulation 2",
                 "Core Space 1 Roof": "Core Zone 1 Roof",
                 "Core Space 1 Slab on Grade": "Core Zone 1 Floor",
                 "Core Zone": "Core Zone 1",
                 "Core Zone MainTerminal": "RPD_Test_System_11.1_VAV_SZ - Terminal for Core "
                 "Zone 1",
+                "Exterior Wall Type 1": "Exterior Wall 1",
+                "Exterior Wall Type 2": "Exterior Wall 2",
+                "Exterior Wall Type 3": "Exterior Wall 3",
+                "Gypsum Board_0.0522": "Gypsum 5/8in",
+                "Gypsum board resistance": "Gypsum Thermal Resistance",
+                "Insulation (Slab on grade)": "Slab Insulation",
+                "Insulation_0.2034": "Wall Continuous Insulation 1",
+                "Insulation_0.588": "Wall Continuous Insulation 2",
+                "Metal Deck": "Metal Deck",
                 "Perimeter Space 1 Ext Wall": "Prm Zone 1 South Wall",
                 "Perimeter Space 1 N Wall": "Core Zone 1 South Wall",
                 "Perimeter Space 1 NE Wall": "Prm Zone 1 East Wall",
@@ -1453,6 +1674,12 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Perimeter Zone 4 (West)": "Prm Zone 4 (West)",
                 "Perimeter Zone 4 (West) MainTerminal": "RPD_Test_System_11.1_VAV_SZ - "
                 "Terminal for Prm Zone 4 (West)",
+                "Roof Type 1": "Exterior Roof 1",
+                "Roof Type 2": "Exterior Roof 2",
+                "Roof Type 3": "Exterior Roof 3",
+                "Slab-on-grade Type 1": "Slab On-grade 1",
+                "Slab-on-grade Type 2": "Slab On-grade 2",
+                "Stucco": "Stucco",
                 "SZ VAV 1": "RPD_Test_System_11.1_VAV_SZ Prm Zone 1 (South)",
                 "SZ VAV 2": "RPD_Test_System_11.1_VAV_SZ Prm Zone 2 (East)",
                 "SZ VAV 3": "RPD_Test_System_11.1_VAV_SZ Prm Zone 3 (North)",
@@ -1479,25 +1706,38 @@ class TestRunFullRPDTests(unittest.TestCase):
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
 
-        object_id_map, warnings, errors = rpd_tests.map_objects(
-            generated_json, reference_json
-        )
+        object_id_map, warnings, errors = map_objects(generated_json, reference_json)
         self.assertEqual(
             {
+                "BL1 IWall Construction": "Interior Wall",
                 "Boiler 1": "Boiler 1",
+                "Built-up roofing": "Built-up Roof",
+                "Builtup roof resistance": "Built-up Roof Thermal Resistance",
                 "CHW Pump (Primary)": "Chiller Pump 1",
+                "Concrete": "Concrete",
                 "CW Pump 1": "Condenser Pump 1",
                 "Chilled Water Loop (Primary)": "CHW Loop 1",
                 "Chiller 1": "Chiller 1",
                 "Condenser Water Loop": "CW Loop 1",
+                "Continuous Insulation": "Roof Continuous Insulation 1",
+                "Continuous Insulation_0.346": "Roof Continuous Insulation 2",
                 "Core Space 1 Roof": "Core Zone 1 Roof",
                 "Core Space 1 Slab on Grade": "Core Zone 1 Floor",
                 "Core Zone": "Core Zone 1",
                 "Core Zone MainTerminal": "RPD_Test_System 12_CAV_SZ_HW - Terminal for Core "
                 "Zone 1",
                 "DEFAULT-HW-PUMP": "Boiler Pump 1",
+                "Exterior Wall Type 1": "Exterior Wall 1",
+                "Exterior Wall Type 2": "Exterior Wall 2",
+                "Exterior Wall Type 3": "Exterior Wall 3",
+                "Gypsum Board_0.0522": "Gypsum 5/8in",
+                "Gypsum board resistance": "Gypsum Thermal Resistance",
                 "Heat Rejection 1": "Cooling Tower 1",
                 "Hot Water Loop": "HW Loop 1",
+                "Insulation (Slab on grade)": "Slab Insulation",
+                "Insulation_0.2034": "Wall Continuous Insulation 1",
+                "Insulation_0.588": "Wall Continuous Insulation 2",
+                "Metal Deck": "Metal Deck",
                 "Perimeter Space 1 Ext Wall": "Prm Zone 1 South Wall",
                 "Perimeter Space 1 N Wall": "Core Zone 1 South Wall",
                 "Perimeter Space 1 NE Wall": "Prm Zone 1 East Wall",
@@ -1530,6 +1770,12 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Perimeter Zone 4 (West)": "Prm Zone 4 (West)",
                 "Perimeter Zone 4 (West) MainTerminal": "RPD_Test_System 12_CAV_SZ_HW - "
                 "Terminal for Prm Zone 4 (West)",
+                "Roof Type 1": "Exterior Roof 1",
+                "Roof Type 2": "Exterior Roof 2",
+                "Roof Type 3": "Exterior Roof 3",
+                "Slab-on-grade Type 1": "Slab On-grade 1",
+                "Slab-on-grade Type 2": "Slab On-grade 2",
+                "Stucco": "Stucco",
                 "SZ CV 1": "RPD_Test_System 12_CAV_SZ_HW Prm Zone 1 (South)",
                 "SZ CV 2": "RPD_Test_System 12_CAV_SZ_HW Prm Zone 2 (East)",
                 "SZ CV 3": "RPD_Test_System 12_CAV_SZ_HW Prm Zone 3 (North)",
@@ -1556,19 +1802,32 @@ class TestRunFullRPDTests(unittest.TestCase):
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
 
-        object_id_map, warnings, errors = rpd_tests.map_objects(
-            generated_json, reference_json
-        )
+        object_id_map, warnings, errors = map_objects(generated_json, reference_json)
         self.assertEqual(
             {
+                "BL1 IWall Construction": "Interior Wall",
+                "Built-up roofing": "Built-up Roof",
+                "Builtup roof resistance": "Built-up Roof Thermal Resistance",
                 "CHW Pump (Primary)": "Chiller Pump 1",
                 "Chilled Water Loop (Primary)": "CHW Loop 1",
                 "Chiller 1": "Chiller 1",
+                "Concrete": "Concrete",
+                "Continuous Insulation": "Roof Continuous Insulation 1",
+                "Continuous Insulation_0.346": "Roof Continuous Insulation 2",
                 "Core Space 1 Roof": "Core Zone 1 Roof",
                 "Core Space 1 Slab on Grade": "Core Zone 1 Floor",
                 "Core Zone": "Core Zone 1",
                 "Core Zone MainTerminal": "RPD_Test_System 13_CAV_SZ_ER - Terminal for Core "
                 "Zone 1",
+                "Exterior Wall Type 1": "Exterior Wall 1",
+                "Exterior Wall Type 2": "Exterior Wall 2",
+                "Exterior Wall Type 3": "Exterior Wall 3",
+                "Gypsum Board_0.0522": "Gypsum 5/8in",
+                "Gypsum board resistance": "Gypsum Thermal Resistance",
+                "Insulation (Slab on grade)": "Slab Insulation",
+                "Insulation_0.2034": "Wall Continuous Insulation 1",
+                "Insulation_0.588": "Wall Continuous Insulation 2",
+                "Metal Deck": "Metal Deck",
                 "Perimeter Space 1 Ext Wall": "Prm Zone 1 South Wall",
                 "Perimeter Space 1 N Wall": "Core Zone 1 South Wall",
                 "Perimeter Space 1 NE Wall": "Prm Zone 1 East Wall",
@@ -1601,6 +1860,12 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Perimeter Zone 4 (West)": "Prm Zone 4 (West)",
                 "Perimeter Zone 4 (West) MainTerminal": "RPD_Test_System 13_CAV_SZ_ER - "
                 "Terminal for Prm Zone 4 (West)",
+                "Roof Type 1": "Exterior Roof 1",
+                "Roof Type 2": "Exterior Roof 2",
+                "Roof Type 3": "Exterior Roof 3",
+                "Slab-on-grade Type 1": "Slab On-grade 1",
+                "Slab-on-grade Type 2": "Slab On-grade 2",
+                "Stucco": "Stucco",
                 "SZ CV 1": "RPD_Test_System 13_CAV_SZ_ER Prm Zone 1 (South)",
                 "SZ CV 2": "RPD_Test_System 13_CAV_SZ_ER Prm Zone 2 (East)",
                 "SZ CV 3": "RPD_Test_System 13_CAV_SZ_ER Prm Zone 3 (North)",
@@ -1627,19 +1892,26 @@ class TestRunFullRPDTests(unittest.TestCase):
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
 
-        object_id_map, warnings, errors = rpd_tests.map_objects(
-            generated_json, reference_json
-        )
+        object_id_map, warnings, errors = map_objects(generated_json, reference_json)
         self.assertEqual(
             {
+                "BL1 IWall Construction": "Interior Wall",
                 "Boiler 1": "Boiler 1",
+                "Built-up roofing": "Built-up Roof",
+                "Builtup roof resistance": "Built-up Roof Thermal Resistance",
                 "CHW-PUMP": "Chiller Pump 1",
                 "Chilled Water Loop (Primary)": "CHW Loop 1",
                 "Chiller 1": "Chiller 1",
+                "Concrete": "Concrete",
+                "Continuous Insulation": "Roof Continuous Insulation 1",
+                "Continuous Insulation_0.346": "Roof Continuous Insulation 2",
                 "Core Space 1 Roof": "Core Zone 1 Roof",
                 "Core Space 1 Slab on Grade": "Core Zone 1 Floor",
                 "Core Zone 1": "Core Zone 1",
                 "Core Zone 1 MainTerminal": "RPD_Test_System_P_FCU - Terminal for Core Zone 1",
+                "Exterior Wall Type 1": "Exterior Wall 1",
+                "Exterior Wall Type 2": "Exterior Wall 2",
+                "Exterior Wall Type 3": "Exterior Wall 3",
                 "Fan Coil Units": "RPD_Test_System_P_FCU Core Zone 1",
                 "Fan Coil Units - Prm Zone 1 (South) Zn": "RPD_Test_System_P_FCU Prm Zone 1 "
                 "(South)",
@@ -1649,8 +1921,14 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "(North)",
                 "Fan Coil Units - Prm Zone 4 (West)": "RPD_Test_System_P_FCU Prm Zone 4 "
                 "(West)",
+                "Gypsum Board_0.0522": "Gypsum 5/8in",
+                "Gypsum board resistance": "Gypsum Thermal Resistance",
                 "Hot Water Loop": "HHW Loop 1",
                 "Hot Water Pumps": "HW Pump 1",
+                "Insulation (Slab on grade)": "Slab Insulation",
+                "Insulation_0.2034": "Wall Continuous Insulation 1",
+                "Insulation_0.588": "Wall Continuous Insulation 2",
+                "Metal Deck": "Metal Deck",
                 "Perimeter Space 1 Ext Wall": "Prm Zone 1 South Wall",
                 "Perimeter Space 1 NE Wall": "Prm Zone 1 East Wall",
                 "Perimeter Space 1 NW Wall": "Prm Zone 4 South Wall",
@@ -1683,6 +1961,12 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Prm Zone 4 (West)": "Prm Zone 4 (West)",
                 "Prm Zone 4 (West) MainTerminal": "RPD_Test_System_P_FCU - Terminal for Prm "
                 "Zone 4 (West)",
+                "Roof Type 1": "Exterior Roof 1",
+                "Roof Type 2": "Exterior Roof 2",
+                "Roof Type 3": "Exterior Roof 3",
+                "Slab-on-grade Type 1": "Slab On-grade 1",
+                "Slab-on-grade Type 2": "Slab On-grade 2",
+                "Stucco": "Stucco",
             },
             object_id_map,
         )
@@ -1704,18 +1988,25 @@ class TestRunFullRPDTests(unittest.TestCase):
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
 
-        object_id_map, warnings, errors = rpd_tests.map_objects(
-            generated_json, reference_json
-        )
+        object_id_map, warnings, errors = map_objects(generated_json, reference_json)
         self.assertEqual(
             {
+                "BL1 IWall Construction": "Interior Wall",
+                "Built-up roofing": "Built-up Roof",
+                "Builtup roof resistance": "Built-up Roof Thermal Resistance",
                 "CHW-PUMP": "Chiller Pump 1",
                 "Chilled Water Loop (Primary)": "CHW Loop 1",
+                "Concrete": "Concrete",
+                "Continuous Insulation": "Roof Continuous Insulation 1",
+                "Continuous Insulation_0.346": "Roof Continuous Insulation 2",
                 "Core Space 1 Roof": "Core Zone 1 Roof",
                 "Core Space 1 Slab on Grade": "Core Zone 1 Floor",
                 "Core Zone 1": "Core Zone 1",
                 "Core Zone 1 MainTerminal": "RPD_Test_System_P_FCU_purchased - Terminal for "
                 "Core Zone 1",
+                "Exterior Wall Type 1": "Exterior Wall 1",
+                "Exterior Wall Type 2": "Exterior Wall 2",
+                "Exterior Wall Type 3": "Exterior Wall 3",
                 "Fan Coil Units": "RPD_Test_System_P_FCU_purchased Core Zone 1",
                 "Fan Coil Units - Prm Zone 1 (South) Zn": "RPD_Test_System_P_FCU_purchased "
                 "Prm Zone 1 (South)",
@@ -1725,8 +2016,14 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Zone 3 (North)",
                 "Fan Coil Units - Prm Zone 4 (West)": "RPD_Test_System_P_FCU_purchased Prm "
                 "Zone 4 (West)",
+                "Gypsum Board_0.0522": "Gypsum 5/8in",
+                "Gypsum board resistance": "Gypsum Thermal Resistance",
                 "Hot Water Loop": "HHW Loop 1",
                 "Hot Water Pumps": "HW Pump 1",
+                "Insulation (Slab on grade)": "Slab Insulation",
+                "Insulation_0.2034": "Wall Continuous Insulation 1",
+                "Insulation_0.588": "Wall Continuous Insulation 2",
+                "Metal Deck": "Metal Deck",
                 "Perimeter Space 1 Ext Wall": "Prm Zone 1 South Wall",
                 "Perimeter Space 1 NE Wall": "Prm Zone 1 East Wall",
                 "Perimeter Space 1 NW Wall": "Prm Zone 4 South Wall",
@@ -1759,6 +2056,12 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Prm Zone 4 (West)": "Prm Zone 4 (West)",
                 "Prm Zone 4 (West) MainTerminal": "RPD_Test_System_P_FCU_purchased - Terminal "
                 "for Prm Zone 4 (West)",
+                "Roof Type 1": "Exterior Roof 1",
+                "Roof Type 2": "Exterior Roof 2",
+                "Roof Type 3": "Exterior Roof 3",
+                "Slab-on-grade Type 1": "Slab On-grade 1",
+                "Slab-on-grade Type 2": "Slab On-grade 2",
+                "Stucco": "Stucco",
             },
             object_id_map,
         )
@@ -1780,20 +2083,33 @@ class TestRunFullRPDTests(unittest.TestCase):
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
 
-        object_id_map, warnings, errors = rpd_tests.map_objects(
-            generated_json, reference_json
-        )
+        object_id_map, warnings, errors = map_objects(generated_json, reference_json)
         self.assertEqual(
             {
+                "BL1 IWall Construction": "Interior Wall",
                 "Boiler 1": "Boiler 1",
+                "Built-up roofing": "Built-up Roof",
+                "Builtup roof resistance": "Built-up Roof Thermal Resistance",
                 "CW-PUMP": "Condenser Pump 1",
+                "Concrete": "Concrete",
                 "Condenser Water Loop": "CW Loop 1",
+                "Continuous Insulation": "Roof Continuous Insulation 1",
+                "Continuous Insulation_0.346": "Roof Continuous Insulation 2",
                 "Core Space 1 Roof": "Core Zone 1 Roof",
                 "Core Space 1 Slab on Grade": "Core Zone 1 Floor",
                 "Core Zone 1": "Core Zone 1",
                 "Core Zone 1 MainTerminal": "RPD_Test_System_P_WSHP - Terminal for Core Zone "
                 "1",
+                "Exterior Wall Type 1": "Exterior Wall 1",
+                "Exterior Wall Type 2": "Exterior Wall 2",
+                "Exterior Wall Type 3": "Exterior Wall 3",
+                "Gypsum Board_0.0522": "Gypsum 5/8in",
+                "Gypsum board resistance": "Gypsum Thermal Resistance",
                 "Heat Rejection 1": "Cooling Tower 1",
+                "Insulation (Slab on grade)": "Slab Insulation",
+                "Insulation_0.2034": "Wall Continuous Insulation 1",
+                "Insulation_0.588": "Wall Continuous Insulation 2",
+                "Metal Deck": "Metal Deck",
                 "Perimeter Space 1 Ext Wall": "Prm Zone 1 South Wall",
                 "Perimeter Space 1 NE Wall": "Prm Zone 1 East Wall",
                 "Perimeter Space 1 NW Wall": "Prm Zone 4 South Wall",
@@ -1826,6 +2142,12 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Prm Zone 4 (West)": "Prm Zone 4 (West)",
                 "Prm Zone 4 (West) MainTerminal": "RPD_Test_System_P_WSHP - Terminal for Prm "
                 "Zone 4 (West)",
+                "Roof Type 1": "Exterior Roof 1",
+                "Roof Type 2": "Exterior Roof 2",
+                "Roof Type 3": "Exterior Roof 3",
+                "Slab-on-grade Type 1": "Slab On-grade 1",
+                "Slab-on-grade Type 2": "Slab On-grade 2",
+                "Stucco": "Stucco",
                 "WSHP Units": "RPD_Test_System_P_WSHP Core Zone 1",
                 "WSHP Units - Prm Zone 1 (South) Zn": "RPD_Test_System_P_WSHP Prm Zone 1 "
                 "(South)",
@@ -1854,14 +2176,18 @@ class TestRunFullRPDTests(unittest.TestCase):
         with open(generated_json_path, "r") as f:
             generated_json = json.load(f)
 
-        object_id_map, warnings, errors = rpd_tests.map_objects(
-            generated_json, reference_json
-        )
+        object_id_map, warnings, errors = map_objects(generated_json, reference_json)
         self.assertEqual(
             {
+                "BL1 IWall Construction": "Interior Wall",
                 "Boiler 1": "Boiler 1",
+                "Built-up roofing": "Built-up Roof",
+                "Builtup roof resistance": "Built-up Roof Thermal Resistance",
                 "CW-PUMP": "Condenser Pump 1",
+                "Concrete": "Concrete",
                 "Condenser Water Loop": "CW Loop 1",
+                "Continuous Insulation": "Roof Continuous Insulation 1",
+                "Continuous Insulation_0.346": "Roof Continuous Insulation 2",
                 "Core Space 1 Roof": "Core Zone 1 Roof",
                 "Core Space 1 Slab on Grade": "Core Zone 1 Floor",
                 "Core Zone 1": "Core Zone 1",
@@ -1870,7 +2196,16 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Core Zone 1 MainTerminal": "RPD_Test_System_P_WSHP_no_OA - Terminal for Core "
                 "Zone 1",
                 "DOAS 1": "RPD_Test_System_P_WSHP_DOAS",
+                "Exterior Wall Type 1": "Exterior Wall 1",
+                "Exterior Wall Type 2": "Exterior Wall 2",
+                "Exterior Wall Type 3": "Exterior Wall 3",
+                "Gypsum Board_0.0522": "Gypsum 5/8in",
+                "Gypsum board resistance": "Gypsum Thermal Resistance",
                 "Heat Rejection 1": "Cooling Tower 1",
+                "Insulation (Slab on grade)": "Slab Insulation",
+                "Insulation_0.2034": "Wall Continuous Insulation 1",
+                "Insulation_0.588": "Wall Continuous Insulation 2",
+                "Metal Deck": "Metal Deck",
                 "Perimeter Space 1 Ext Wall": "Prm Zone 1 South Wall",
                 "Perimeter Space 1 NE Wall": "Prm Zone 1 East Wall",
                 "Perimeter Space 1 NW Wall": "Prm Zone 4 South Wall",
@@ -1911,6 +2246,12 @@ class TestRunFullRPDTests(unittest.TestCase):
                 "Prm Zone 4 (West)",
                 "Prm Zone 4 (West) MainTerminal": "RPD_Test_System_P_WSHP_no_OA - Terminal "
                 "for Prm Zone 4 (West)",
+                "Roof Type 1": "Exterior Roof 1",
+                "Roof Type 2": "Exterior Roof 2",
+                "Roof Type 3": "Exterior Roof 3",
+                "Slab-on-grade Type 1": "Slab On-grade 1",
+                "Slab-on-grade Type 2": "Slab On-grade 2",
+                "Stucco": "Stucco",
                 "WSHP Units": "RPD_Test_System_P_WSHP_no_OA Core Zone 1",
                 "WSHP Units - Prm Zone 1 (South) Zn": "RPD_Test_System_P_WSHP_no_OA Prm Zone "
                 "1 (South)",
@@ -1938,7 +2279,7 @@ class TestRunFullRPDTests(unittest.TestCase):
         json_path = (
             "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].zones[*]"
         )
-        result = rpd_tests.find_all(json_path, reference_json)
+        result = find_all(json_path, reference_json)
         self.assertEqual(len(result), 5)
 
     def test_find_all_end_filter(self):
@@ -1951,7 +2292,7 @@ class TestRunFullRPDTests(unittest.TestCase):
             reference_json = json.load(f)
 
         json_path = "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[?(@.adjacent_to == 'EXTERIOR')]"
-        result = rpd_tests.find_all(json_path, reference_json)
+        result = find_all(json_path, reference_json)
         self.assertEqual(9, len(result))
 
     def test_find_all_mid_filter(self):
@@ -1964,7 +2305,7 @@ class TestRunFullRPDTests(unittest.TestCase):
             reference_json = json.load(f)
 
         json_path = '$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*][?(@.adjacent_to = "EXTERIOR")].optical_properties.absorptance_thermal_exterior'
-        result = rpd_tests.find_all(json_path, reference_json)
+        result = find_all(json_path, reference_json)
         self.assertEqual(9, len(result))
 
     def test_find_all_combo_filter(self):
@@ -1977,7 +2318,7 @@ class TestRunFullRPDTests(unittest.TestCase):
             reference_json = json.load(f)
 
         json_path = '$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*][?(@.adjacent_to = "EXTERIOR" and @.id = "Prm Zone 1 South Wall")].optical_properties.absorptance_thermal_exterior'
-        result = rpd_tests.find_all(json_path, reference_json)
+        result = find_all(json_path, reference_json)
         self.assertEqual(1, len(result))
 
     def test_find_all_multi_filter(self):
@@ -1990,5 +2331,5 @@ class TestRunFullRPDTests(unittest.TestCase):
             reference_json = json.load(f)
 
         json_path = '$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*][?(@.id = "Prm Zone 1 (South)")].surfaces[*][?(@.adjacent_to = "EXTERIOR")].optical_properties.absorptance_thermal_exterior'
-        result = rpd_tests.find_all(json_path, reference_json)
+        result = find_all(json_path, reference_json)
         self.assertEqual(2, len(result))

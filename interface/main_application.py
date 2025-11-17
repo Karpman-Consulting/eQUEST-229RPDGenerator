@@ -1,7 +1,7 @@
 import tkinter as tk
 
 from interface.install_config import InstallConfigWindow
-from interface.project_config import ProjectConfigWindow
+from interface.main_app_window import MainAppWindow
 from interface.main_app_data import MainAppData
 
 from rpd_generator.config import Config
@@ -36,7 +36,7 @@ class MainApplication(tk.Tk):
         """
         validate_configuration.find_equest_installation()
         if Config.EQUEST_INSTALL_PATH:
-            self.project_config_window = ProjectConfigWindow(self)
+            self.project_config_window = MainAppWindow(self)
             self.project_config_window.protocol("WM_DELETE_WINDOW", self.quit)
         else:
             self.install_config_window = InstallConfigWindow(self)
@@ -45,8 +45,8 @@ class MainApplication(tk.Tk):
     def install_config_complete(self):
         """
         Called by InstallConfigWindow when the user has successfully configured the installation path. Closes
-        the InstallConfigWindow and opens the ProjectConfigWindow
+        the InstallConfigWindow and opens the MainAppWindow
         """
         self.install_config_window.destroy()
-        self.project_config_window = ProjectConfigWindow(self)
+        self.project_config_window = MainAppWindow(self)
         self.project_config_window.protocol("WM_DELETE_WINDOW", self.quit)

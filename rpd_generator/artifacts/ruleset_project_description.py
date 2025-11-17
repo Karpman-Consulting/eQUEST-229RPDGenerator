@@ -1,5 +1,11 @@
 from time import strftime, gmtime
 
+from rpd_generator.schema.schema_utils import quantify_rmd
+from rpd_generator.utilities.ashrae9012019.get_zone_target_baseline_system import (
+    get_zone_target_baseline_system,
+)
+from rpd_generator.utilities.jsonpath_utils import find_all
+
 
 class RulesetProjectDescription:
     """
@@ -35,6 +41,7 @@ class RulesetProjectDescription:
         """
         Populate the RPD data group (only data elements directly under the RPD Data Group)
         """
+        print("Populating RPD data group...")
         self.rpd_data_structure = {
             "id": f"{self.project_name}",
             "metadata": self.metadata,
@@ -54,6 +61,47 @@ class RulesetProjectDescription:
             value = getattr(self, attr, None)
             if value is not None:
                 self.rpd_data_structure[attr] = value
+
+    def specify_supply_ducting(self):
+        """Determine the expected system types for the baseline RMDs, then populate is_supply_ducted accordingly."""
+        rpd = quantify_rmd(self.rpd_data_structure)
+        rmd_p = next(
+            (
+                rmd
+                for rmd in rpd.get("ruleset_model_descriptions", [])
+                if rmd.get("type", "") == "PROPOSED"
+            ),
+            None,
+        )
+        if not rmd_p:
+            print(
+                "Could not specify supply ducting in baseline models because proposed RMD was not found in the RPD data structure."
+            )
+            return
+        for rmd_b in rpd.get("ruleset_model_descriptions", []):
+            if "BASELINE" in rmd_b.get("type", ""):
+                zone_target_baseline_systems = get_zone_target_baseline_system(
+                    rmd_b, rmd_p, rmd_b.get("weather", {}).get("climate_zone", "")
+                )
+                zones = find_all("$.buildings[*].building_segments[*].zones[*]", rmd_b)
+                for zone in zones:
+                    if zone["id"] not in zone_target_baseline_systems:
+                        continue
+                    expected_system_type = zone_target_baseline_systems[zone["id"]][
+                        "expected_system_type"
+                    ]
+                    if expected_system_type in [
+                        "Sys-3",
+                        "Sys-4",
+                        "Sys-5",
+                        "Sys-6",
+                        "Sys-7",
+                        "Sys-8",
+                        "Sys-12",
+                        "Sys-13",
+                    ]:
+                        for terminal in find_all("$.terminals[*]", zone):
+                            terminal["is_supply_ducted"] = True
 
 
 class Output:

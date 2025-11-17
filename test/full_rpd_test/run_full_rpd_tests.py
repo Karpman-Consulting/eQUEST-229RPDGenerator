@@ -10,7 +10,11 @@ from rpd_generator.utilities.jsonpath_utils import (
     find_all,
     find_all_with_field_value,
     find_all_with_filters,
+)
+from rpd_generator.utilities.get_dict_of_zones_and_terminals_served_by_hvac_sys import (
     get_dict_of_zones_and_terminals_served_by_hvac_sys,
+)
+from rpd_generator.utilities.get_dict_of_surfaces_with_construction_assigned import (
     get_dict_of_surfaces_with_construction_assigned,
 )
 
@@ -519,25 +523,36 @@ def match_constructions_by_surfaces_assigned(generated_values, reference_values)
 def match_sys_by_zones_served(generated_values, reference_values, object_id_map):
     mapping = {}
 
-    # Create a dictionary to map sets of reference zones served to their corresponding HVAC IDs
+    # reference map: frozenset of reference zones -> hvac id
     reference_zones_map = {
-        frozenset(data["zone_list"]): ref_hvac_id
+        frozenset(zone["id"] for zone in data["zones_list"]): ref_hvac_id
         for ref_hvac_id, data in reference_values.items()
     }
 
-    # Match generated HVAC systems by looking up the set of corresponding reference zones
-    for generated_hvac_id, data in generated_values.items():
-        generated_hvac_zones_served = data["zone_list"]
+    # match each generated hvac
+    for gen_hvac_id, gen_data in generated_values.items():
+        generated_zones = gen_data["zones_list"]
+
+        # convert generated zone ids to reference zone ids using zone map
         corresponding_reference_zones = [
-            object_id_map.get(zone_id) for zone_id in generated_hvac_zones_served
+            object_id_map.get(zone["id"]) for zone in generated_zones
         ]
 
-        corresponding_reference_zones_set = frozenset(corresponding_reference_zones)
+        if None in corresponding_reference_zones:
+            # tell us which reference zone is missing
+            print(
+                f"[WARN] Some zones for HVAC {gen_hvac_id} were not mapped: {', '.join([generated_zone['id'] for generated_zone in generated_zones])} -> {corresponding_reference_zones}"
+            )
+            continue
 
-        if corresponding_reference_zones_set in reference_zones_map:
-            mapping[generated_hvac_id] = reference_zones_map[
-                corresponding_reference_zones_set
-            ]
+        key = frozenset(corresponding_reference_zones)
+
+        if key in reference_zones_map:
+            mapping[gen_hvac_id] = reference_zones_map[key]
+        else:
+            print(
+                f"[WARN] No HVAC match found in reference for system serving zones {corresponding_reference_zones}"
+            )
 
     return mapping
 
@@ -851,9 +866,10 @@ def define_local_surface_map(
 def define_hvac_map(generated_json, reference_json, object_id_map):
     errors = []
     hvac_map = {}
-
-    generated_hvacs = get_dict_of_zones_and_terminals_served_by_hvac_sys(generated_json)
-    reference_hvacs = get_dict_of_zones_and_terminals_served_by_hvac_sys(reference_json)
+    generated_rmd = generated_json.get("ruleset_model_descriptions", [{}])[0]
+    reference_rmd = reference_json.get("ruleset_model_descriptions", [{}])[0]
+    generated_hvacs = get_dict_of_zones_and_terminals_served_by_hvac_sys(generated_rmd)
+    reference_hvacs = get_dict_of_zones_and_terminals_served_by_hvac_sys(reference_rmd)
 
     if len(generated_hvacs) != len(reference_hvacs):
         errors.append(

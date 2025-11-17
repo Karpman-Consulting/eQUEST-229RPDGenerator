@@ -33,4 +33,4 @@ class LoadingWindow(ctk.CTkToplevel):
 
     def close(self):
         self.grab_release()
-        self.destroy()
+        self.withdraw()

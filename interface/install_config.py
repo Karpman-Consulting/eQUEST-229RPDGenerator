@@ -12,7 +12,6 @@ class InstallConfigWindow(ctk.CTkToplevel):
         self.main_app = main_app
 
         self.title("eQUEST Installation Configuration")
-        self.license_window = None
         self.disclaimer_window = None
         self.error_window = None
 

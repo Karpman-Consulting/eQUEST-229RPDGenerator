@@ -20,7 +20,6 @@ from rpd_generator.bdl_structure.bdl_commands.schedule import (
     BDL_DayScheduleKeywords,
     WeekSchedulePD,
     BDL_WeekScheduleKeywords,
-    Schedule,
     BDL_ScheduleKeywords,
 )
 from rpd_generator.bdl_structure.bdl_commands.curve_fit import (
@@ -43,7 +42,6 @@ from rpd_generator.artifacts.ruleset_project_description import (
     RulesetProjectDescription,
 )
 from rpd_generator.artifacts.ruleset_model_description import RulesetModelDescription
-from rpd_generator.artifacts.building_segment import BuildingSegment
 from rpd_generator.bdl_structure.bdl_commands.circulation_loop import *
 
 BDL_CurveFitTypes = BDLEnums.bdl_enums["CurveFitTypes"]

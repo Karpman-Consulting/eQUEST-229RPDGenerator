@@ -620,7 +620,6 @@ class FluidLoop:
 
 
 class ServiceWaterPiping:
-
     def __init__(self, loop):
         self.loop = loop
         self.service_water_heating_design_and_control_obj = FluidLoopDesignAndControl(
@@ -707,7 +706,6 @@ class ServiceWaterPiping:
 
 
 class ServiceWaterHeatingDistributionSystem:
-
     def __init__(self, loop):
         self.loop = loop
         self.data_structure = {}

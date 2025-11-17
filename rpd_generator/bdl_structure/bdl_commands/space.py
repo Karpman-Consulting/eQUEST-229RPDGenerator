@@ -495,7 +495,6 @@ class InteriorLighting:
 
 
 class MiscellaneousEquipment:
-
     def __init__(self, parent_space, i, n, schedule, equip_type):
         self.parent_space = parent_space
         self.i = i

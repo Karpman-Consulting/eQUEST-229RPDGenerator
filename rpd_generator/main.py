@@ -1,7 +1,6 @@
 import os
 import sys
 import json
-import shutil
 import tempfile
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -10,8 +9,10 @@ from rpd_generator.artifacts.ruleset_project_description import (
     RulesetProjectDescription,
 )
 from rpd_generator.artifacts.ruleset_model_description import RulesetModelDescription
-from rpd_generator.doe2_file_readers.bdlcio32 import process_input_file
-from rpd_generator.doe2_file_readers.model_input_reader import ModelInputReader
+from rpd_generator.doe2_worker.api import process_inp
+from rpd_generator.doe2_file_io.prepare_inp_for_rpd import prepare_inp
+from rpd_generator.doe2_file_io.copy_to_temp import copy_files_to_temp_dir
+from rpd_generator.doe2_file_io.model_input_reader import ModelInputReader
 from rpd_generator.bdl_structure import *
 from rpd_generator.config import Config
 from rpd_generator.utilities import validate_configuration
@@ -19,57 +20,83 @@ from rpd_generator.utilities import unit_converter
 from rpd_generator.utilities import ensure_valid_rpd
 
 
-def write_rpd_json_from_inp(inp_path_str):
-    inp_path = Path(inp_path_str)
-    # Create a temporary directory to store the files for processing
-    with tempfile.TemporaryDirectory() as temp_dir:
-
-        # Prepare the inp file for processing and save the revised copy to the temporary directory
-        temp_file_path = prepare_inp(inp_path, Path(temp_dir))
-
-        # Copy the model output files to the temporary directory (.erp, .lrp, .srp, .nhk)
-        _copy_files_to_temp_dir(inp_path, Path(temp_dir))
-
-        # Set the paths for the inp file, json file, and the directories
-        temp_inp_path = Path(temp_file_path)
-        bdl_path = temp_inp_path.with_suffix(".BDL")
-        rpd_path = temp_inp_path.with_suffix(".rpd")
-        doe23_path = Path(Config.DOE23_DATA_PATH) / "DOE23"
-        bdlcio32_path = Path(Config.EQUEST_INSTALL_PATH) / "Bdlcio32.dll"
-
-        # Process the inp file to create the BDL file with Diagnostic Comments (defaults and evaluated values) in the temporary directory
-        process_input_file(
-            str(bdlcio32_path),
-            str(doe23_path) + "\\",
-            str(temp_inp_path.parent) + "\\",
-            temp_inp_path.name,
+def write_rpd_json_from_inps(project_name: str, inp_path_specs: list):
+    """
+    This function allows files and model types to be specified together to generate RPD JSON file without the GUI.
+    inp_path_specs may contain:
+        "no_type_model.inp"
+        ("proposed_model.inp", "PROPOSED")
+        ("baseline_model.inp", "BASELINE_0")
+    :param project_name:
+    :param inp_path_specs:
+    :return:
+    """
+    normalized = [
+        (
+            (Path(spec[0]), spec[1])
+            if isinstance(spec, (tuple, list))
+            else (Path(spec), None)
         )
-        shutil.copy(str(bdl_path), inp_path.parent)
-        # Generate the RPD json file in the temporary directory
-        write_rpd_json_from_bdl(str(inp_path.stem), str(bdl_path), str(rpd_path))
+        for spec in inp_path_specs
+    ]
 
-        # Copy the json file from the temporary directory back to the project directory
-        shutil.copy(str(rpd_path), inp_path.parent)
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+
+        bdl_paths = []
+        rmd_types = []
+
+        for inp_path, rmd_type in normalized:
+            temp_inp = Path(prepare_inp(inp_path, tmp))
+            copy_files_to_temp_dir(inp_path, tmp)
+
+            bdl_path = temp_inp.with_suffix(".BDL")
+
+            process_inp(
+                bdlcio_dll=str(Path(Config.EQUEST_INSTALL_PATH) / "Bdlcio32.dll"),
+                doe2_data_dir=str(Path(Config.DOE23_DATA_PATH) / "DOE23") + "\\",
+                work_dir=str(temp_inp.parent) + "\\",
+                file_name=temp_inp.name,
+            )
+
+            bdl_paths.append(str(bdl_path))
+            rmd_types.append(rmd_type)
+
+        rpd = RulesetProjectDescription(project_name)
+        rpd.populate_data_elements()
+
+        rmds = generate_rmd_objects_from_bdls(rpd, ModelInputReader(), bdl_paths)
+        for rmd, rmd_type in zip(rmds, rmd_types):
+            if rmd_type:
+                rmd.type = rmd_type
+            rmd.populate_rmd_data()
+
+        # determine output directory
+        proposed = next((p for p, t in normalized if t == "PROPOSED"), normalized[0][0])
+        output_path = proposed.parent / f"{project_name}.rpd"
+
+        finalize_and_write_rpd(rpd, output_path)
 
 
-def write_rpd_json_from_bdl(project_name: str, bdl_path: str, rpd_file_path: str):
+def write_rpd_json_from_bdls(
+    project_name: str, bdl_path_strs: list[str], rpd_file_path: str
+):
+    """
+    Generate RPD JSON file from commented BDL files that have already been created.
+    :param project_name:
+    :param bdl_path_strs:
+    :param rpd_file_path:
+    :return:
+    """
     bdl_input_reader = ModelInputReader()
     rpd = RulesetProjectDescription(project_name)
     rpd.populate_data_elements()
-    rmds = generate_rmd_structures_from_bdls(rpd, bdl_input_reader, [bdl_path])
+
+    rmds = generate_rmd_objects_from_bdls(rpd, bdl_input_reader, bdl_path_strs)
     for rmd in rmds:
-        # Populate 229 data structures associated with the BDL objects
         rmd.populate_rmd_data()
 
-    rpd.populate_data_group()
-    ensure_valid_rpd.make_ids_unique(rpd.rpd_data_structure)
-    unit_converter.convert_to_schema_units(rpd.rpd_data_structure)
-
-    safe_file_path = safe_path(rpd_file_path)
-    with open(safe_file_path, "w") as rpd_file:
-        json.dump(rpd.rpd_data_structure, rpd_file, indent=4)
-
-    print(f"RPD JSON file created.")
+    finalize_and_write_rpd(rpd, rpd_file_path)
 
 
 def write_rpd_json_from_rpd(
@@ -77,19 +104,18 @@ def write_rpd_json_from_rpd(
     rmds: list[RulesetModelDescription],
     rpd_file_path: str,
 ):
+    """
+    Generate RPD JSON file from RPD and RMD objects. Called from GUI.
+    :param rpd:
+    :param rmds:
+    :param rpd_file_path:
+    :return:
+    """
     for rmd in rmds:
         rmd.populate_all_data_groups()
         rmd.insert_all_to_rpd()
 
-    rpd.populate_data_group()
-    ensure_valid_rpd.make_ids_unique(rpd.rpd_data_structure)
-    unit_converter.convert_to_schema_units(rpd.rpd_data_structure)
-
-    safe_file_path = safe_path(rpd_file_path)
-    with open(safe_file_path, "w") as rpd_file:
-        json.dump(rpd.rpd_data_structure, rpd_file, indent=4)
-
-    print(f"RPD JSON file created.")
+    finalize_and_write_rpd(rpd, rpd_file_path)
 
 
 def safe_path(path):
@@ -102,11 +128,18 @@ def safe_path(path):
     return path
 
 
-def generate_rmd_structures_from_bdls(
+def generate_rmd_objects_from_bdls(
     rpd: RulesetProjectDescription,
     bdl_input_reader: ModelInputReader,
-    selected_models: list,
-):
+    selected_models: list[str],
+) -> list[RulesetModelDescription]:
+    """
+    Generate RMD objects from BDL files. Called during multistep processing.
+    :param rpd:
+    :param bdl_input_reader:
+    :param selected_models:
+    :return:
+    """
     rmds = []
     for model_path_str in selected_models:
         model_path = Path(model_path_str)
@@ -142,93 +175,71 @@ def generate_rmd_structures_from_bdls(
     return rmds
 
 
-def generate_rmd_structure_from_inp(
-    rpd, inp_path_str: str, processing_dir: TemporaryDirectory
-):
-    inp_path = Path(inp_path_str)
-    temp_dir = processing_dir.name
+def generate_rmd_objects_from_inps(
+    rpd, inp_path_strs: list[str], processing_dir: TemporaryDirectory
+) -> list[RulesetModelDescription]:
+    """
+    Generate RMD objects from INP files. Called from GUI to process inp before calling generate_rmd_objects_from_bdls.
+    :param rpd:
+    :param inp_path_strs:
+    :param processing_dir:
+    :return:
+    """
+    temp_dir = Path(processing_dir.name)
 
-    # Prepare the inp file for processing and save the revised copy to the temporary directory
-    temp_file_path = prepare_inp(inp_path, Path(temp_dir))
-
-    # Copy the model output files to the temporary directory (.erp, .lrp, .srp, .nhk)
-    _copy_files_to_temp_dir(inp_path, Path(temp_dir))
-
-    # Set the paths for the inp file, json file, and the directories
-    temp_inp_path = Path(temp_file_path)
-    bdl_path = temp_inp_path.with_suffix(".BDL")
     doe23_path = Path(Config.DOE23_DATA_PATH) / "DOE23"
     bdlcio32_path = Path(Config.EQUEST_INSTALL_PATH) / "Bdlcio32.dll"
 
-    # Process the inp file to create the BDL file with Diagnostic Comments (defaults and evaluated values) in the temporary directory
-    process_input_file(
-        str(bdlcio32_path),
-        str(doe23_path) + "\\",
-        str(temp_inp_path.parent) + "\\",
-        temp_inp_path.name,
-    )
+    bdl_paths = []
 
-    # Generate the RMD object from the BDL file in the temporary directory
+    for inp_path_str in inp_path_strs:
+        inp_path = Path(inp_path_str)
+
+        # Prepare the inp file and copy to temp
+        temp_inp_path = Path(prepare_inp(inp_path, temp_dir))
+        copy_files_to_temp_dir(inp_path, temp_dir)
+
+        # Define BDL path
+        bdl_path = temp_inp_path.with_suffix(".BDL")
+
+        # Process the inp file to generate the BDL
+        process_inp(
+            bdlcio_dll=str(bdlcio32_path),
+            doe2_data_dir=str(doe23_path) + "\\",
+            work_dir=str(temp_inp_path.parent) + "\\",
+            file_name=temp_inp_path.name,
+        )
+
+        bdl_paths.append(str(bdl_path))
+
+    # Generate RMDs for all BDLs at once
     bdl_input_reader = ModelInputReader()
-    rmd = generate_rmd_structures_from_bdls(rpd, bdl_input_reader, [str(bdl_path)])[0]
+    rmds = generate_rmd_objects_from_bdls(rpd, bdl_input_reader, bdl_paths)
 
-    return rmd
-
-
-def prepare_inp(model_path: Path, output_dir: Path = None) -> str:
-    model_dir = model_path.parent
-    model_name = model_path.name
-    base_name = model_path.stem
-    extension = model_path.suffix
-
-    if output_dir:
-        temp_file_path = output_dir / model_name
-    else:
-        temp_file_path = model_dir / f"{base_name}_temp{extension}"
-
-    with Path(model_path).open("r") as inp_file, temp_file_path.open("w") as out_file:
-        lines_after_target = 0
-
-        for line in inp_file:
-
-            if "$              Abort, Diagnostics" in line:
-                lines_after_target = 3
-
-            elif lines_after_target == 1:
-                out_file.write("DIAGNOSTIC COMMENTS ..")
-                lines_after_target = 0
-            elif lines_after_target > 0:
-                lines_after_target -= 1
-
-            elif line.lstrip().startswith("LIGHTING-KW"):
-                line = line.replace("&D", "0")
-
-            elif line.lstrip().startswith("EQUIPMENT-KW"):
-                line = line.replace("&D", "0")
-
-            out_file.write(line)
-    return str(temp_file_path)
+    return rmds
 
 
-def _copy_files_to_temp_dir(inp_path, temp_dir):
-    file_extensions = [".erp", ".lrp", ".srp", ".nhk"]
-    model_dir = inp_path.parent
-    model_name = inp_path.stem
+def finalize_and_write_rpd(rpd: RulesetProjectDescription, rpd_file_path: str):
+    """
+    Finalize RPD object and write to JSON file.
+    :param rpd:
+    :param rpd_file_path:
+    :return:
+    """
+    print("Populating RPD data group...")
+    rpd.populate_data_group()
+    print("Finalizing RPD data structure...")
+    ensure_valid_rpd.make_ids_unique(rpd.rpd_data_structure)
+    print("Converting units to schema units...")
+    unit_converter.convert_to_schema_units(rpd.rpd_data_structure)
+    print("Adding supply ducting specifications...")
+    rpd.specify_supply_ducting()
 
-    for ext in file_extensions:
+    safe_file = safe_path(rpd_file_path)
+    with open(safe_file, "w") as f:
+        json.dump(rpd.rpd_data_structure, f, indent=4)
 
-        model_file = model_dir / f"{model_name}{ext}"
-        alternate_search_file = model_dir / f"{model_name} - Baseline Design{ext}"
-
-        if model_file.exists():
-            shutil.copy2(model_file, temp_dir)
-
-        elif alternate_search_file.exists():
-            destination_file = temp_dir / f"{model_name}{ext}"
-            shutil.copy2(alternate_search_file, destination_file)
-
-        else:
-            print(f"File {model_file} not found in {model_dir}")
+    print(f"RPD JSON file created at: {safe_file}")
 
 
 def _create_obj_instance(u_name, command, command_dict, command_class, rmd):
@@ -274,20 +285,32 @@ if __name__ == "__main__":
 
     # Test generating an RPD JSON file from one of the test BDL files
     validate_configuration.find_equest_installation()
-    # write_rpd_json_from_inp(r"")
-    write_rpd_json_from_bdl(
-        str(
-            Path(__file__).parents[1]
-            / "test"
-            / "full_rpd_test"
-            / "E-1"
-            / "229 Test Case E-1 (PSZHP).BDL"
-        ),
-        str(
-            Path(__file__).parents[1]
-            / "test"
-            / "full_rpd_test"
-            / "E-1"
-            / "229 Test Case E-1 (PSZHP).json"
-        ),
+    write_rpd_json_from_inps(
+        "Briarwood Library",
+        [
+            (
+                r"C:\Users\JacksonJarboe\Karpman Consulting Dropbox\Jackson Jarboe\03_Program Support Projects\ASHRAE 229 RCT\Integrated Tests\Washington Elementary\[BL] WASH ES.inp",
+                "BASELINE_0",
+            ),
+            (
+                r"C:\Users\JacksonJarboe\Karpman Consulting Dropbox\Jackson Jarboe\03_Program Support Projects\ASHRAE 229 RCT\Integrated Tests\Washington Elementary\[PR] WASH ES - 17.inp",
+                "PROPOSED",
+            ),
+        ],
     )
+    # write_rpd_json_from_bdls(
+    #     str(
+    #         Path(__file__).parents[1]
+    #         / "test"
+    #         / "full_rpd_test"
+    #         / "E-1"
+    #         / "229 Test Case E-1 (PSZHP).BDL"
+    #     ),
+    #     str(
+    #         Path(__file__).parents[1]
+    #         / "test"
+    #         / "full_rpd_test"
+    #         / "E-1"
+    #         / "229 Test Case E-1 (PSZHP).json"
+    #     ),
+    # )
