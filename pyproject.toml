@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "rpd_generator"
+name = "equest-rct-toolkit"
 version = "0.1.0"
 description = ""
 authors = ["Jackson Jarboe <122476654+JacksonJ-KC@users.noreply.github.com>"]
 readme = "README.md"
 packages = [
-    { include = "rpd_generator" },
-    { include = "interface" }
+    { include = "interface", from = "src" },
+    { include = "rpd_generator", from = "src" },
 ]
 
 [tool.poetry.dependencies]
@@ -22,6 +22,7 @@ pydash = "^7.0.7"
 numpy = "^1.26.4"
 openpyxl = "^3.1.5"
 ruleset-checking-tool = {path = "C:/Users/JacksonJarboe/Documents/Development/RCT", develop = true}
+rctreportviewer = {path = "C:/Users/JacksonJarboe/Documents/Development/SIMcheck-Report-Viewer", develop = true}
 
 
 [tool.poetry.group.dev.dependencies]

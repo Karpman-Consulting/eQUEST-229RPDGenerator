@@ -393,6 +393,7 @@ class BaselineSystemTypesPanel(ctk.CTkFrame):
         "is_zone_mechanically_heated_and_not_cooled": "Mechanically Heated and Not Cooled",
         "does_zone_meet_g3_1_1f": "Meets G3.1.1f Exception",
         "is_zone_mechanically_oooled": "Mechanically Cooled",
+        "is_system_type_9_or_10": "Is Table G3.1.1 Lookup System Type 9 or 10",
         "does_zone_meet_g3_1_1g": "Meets G3.1.1g Exception",
         "total_computer_zones_peak_cooling_load_b": "Total Computer Zones Peak Cooling Load",
         "zone_is_computer_room_zone": "Is Computer Room Zone",

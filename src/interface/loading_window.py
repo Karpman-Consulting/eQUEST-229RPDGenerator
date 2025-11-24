@@ -32,5 +32,8 @@ class LoadingWindow(ctk.CTkToplevel):
         self.progress.set(value)
 
     def close(self):
-        self.grab_release()
-        self.withdraw()
+        if self.winfo_exists():
+            # hide immediately
+            self.withdraw()
+            # destroy safely shortly after (when idle)
+            self.after(50, lambda: self.winfo_exists() and self.destroy())

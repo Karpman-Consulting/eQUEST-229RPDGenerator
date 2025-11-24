@@ -1254,7 +1254,7 @@ FALLBACK_MAP = {
     "kindergarten": "Classroom Lecture Hall Training Room School",
     "music": "Classroom Lecture Hall Training Room School",
     "science": "Classroom Lecture Hall Training Room School",
-    "art": "Classroom Lecture Hall Training Room School",
+    r"\bart\b": "Classroom Lecture Hall Training Room School",
     "conf": "Conference Meeting Multipurpose Room",
     "conference": "Conference Meeting Multipurpose Room",
     "meeting": "Conference Meeting Multipurpose Room",

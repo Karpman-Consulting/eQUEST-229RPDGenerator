@@ -80,8 +80,16 @@ class RulesetProjectDescription:
             return
         for rmd_b in rpd.get("ruleset_model_descriptions", []):
             if "BASELINE" in rmd_b.get("type", ""):
+                climate_zone = rmd_b.get("weather", {}).get("climate_zone")
+
+                if not climate_zone:
+                    raise ValueError(
+                        "You must set a valid ASHRAE 90.1 climate zone "
+                        "(e.g., '3A', '5B', '2C')."
+                    )
+
                 zone_target_baseline_systems = get_zone_target_baseline_system(
-                    rmd_b, rmd_p, rmd_b.get("weather", {}).get("climate_zone", "")
+                    rmd_b, rmd_p, climate_zone
                 )
                 zones = find_all("$.buildings[*].building_segments[*].zones[*]", rmd_b)
                 for zone in zones:

@@ -283,10 +283,13 @@ def get_zone_target_baseline_system(
         # -------------------------
         # G3.1.1f
         # -------------------------
-        f_diag = get_g3_1_1f_diagnostics(rmd_b, zone_b)
+        f_diag = get_g3_1_1f_diagnostics(
+            rmd_b, zone_b, zs_entry["expected_system_type"]
+        )
         exc_debug["g3_1_1f"] = {
             "does_zone_meet_g3_1_1f": f_diag["meets"],
             "is_zone_mechanically_cooled": f_diag["is_zone_mechanically_cooled"],
+            "is_system_type_9_or_10": f_diag["is_system_type_9_or_10"],
         }
 
         if f_diag["meets"] and zs_entry["expected_system_type"] in (

@@ -113,7 +113,7 @@ class RulesetValuesPanel(ctk.CTkFrame):
             try:
                 return int(float(x))
             except (TypeError, ValueError):
-                return ""
+                return None
 
         if isinstance(raw, list):
             cleaned = list(raw)
@@ -337,12 +337,14 @@ class RulesetValuesPanel(ctk.CTkFrame):
 
         existing = {fp: v for fp, v in per_file.items() if v}
         existing_values = set(existing.values())
+
+        if not existing_values:
+            return "", "missing"
+
         all_have_cz = all(per_file.values())
 
-        if existing_values:
-            merged = next(iter(existing_values)) if len(existing_values) == 1 else ""
-        else:
-            merged = ""
+        # Determine merged value
+        merged = next(iter(existing_values)) if len(existing_values) == 1 else ""
 
         if all_have_cz:
             if merged:
@@ -353,7 +355,6 @@ class RulesetValuesPanel(ctk.CTkFrame):
             if merged:
                 status = "missing"
             else:
-                # Some models missing, and either no CZ anywhere or disagreement
                 status = "missing_conflict"
 
         return merged, status
@@ -746,12 +747,10 @@ class RulesetValuesPanel(ctk.CTkFrame):
 
     def _on_sheet_modified(self, event):
         """
-        Called when the user edits the single 'Value' column.
-        We update merged_spaces[space]['resolved'], mark it unsaved,
-        and apply 'unsaved' overlay highlight (pink).
+        Called when the user edits Building Type (col 1) or Space Type (col 2).
+        Updates merged_spaces, tracks unsaved, and applies highlight.
         """
         payload = self._extract_event_payload(event)
-        self._dbg("_on_sheet_modified payload:", payload)
         if not isinstance(payload, dict):
             return
         changed_cells = payload.get("cells", {}).get("table", {})
@@ -759,31 +758,87 @@ class RulesetValuesPanel(ctk.CTkFrame):
             return
 
         for (r, c), _old in changed_cells.items():
-            # Only allow editing of column 1 (Value)
+            if c not in (1, 2):  # Only Building Type or Space Type
+                continue
+
+            space = self.sheet.get_cell_data(r, 0)
+            if not space:
+                continue
+            info = self.merged_spaces.get(space, {})
+
+            new_val = (self.sheet.get_cell_data(r, c) or "").strip()
+
+            # Determine which field is being updated
+            if c == 1:  # Building Type
+                orig = info.get("bldgtype_original", "")
+                info["bldgtype_resolved"] = new_val
+            else:  # c == 2 → Space Type
+                orig = info.get("original_resolved", "")
+                info["resolved"] = new_val
+
+            # Unsaved or restored?
+            if new_val != orig:
+                self.unsaved_spaces.add((space, c))
+                # Highlight row header + edited cell
+                self.sheet.highlight_cells(
+                    row=r,
+                    column=0,
+                    bg=self.color_unsaved_bg,
+                    fg=self.color_unsaved_fg,
+                    redraw=False,
+                )
+                self.sheet.highlight_cells(
+                    row=r,
+                    column=c,
+                    bg=self.color_unsaved_bg,
+                    fg=self.color_unsaved_fg,
+                    redraw=False,
+                )
+            else:
+                self.unsaved_spaces.discard((space, c))
+                # Restore default styling
+                self.sheet.dehighlight_cells(row=r, column=0, redraw=False)
+                self.sheet.dehighlight_cells(row=r, column=1, redraw=False)
+                self.sheet.dehighlight_cells(row=r, column=2, redraw=False)
+                # Re-apply status colors
+                self._style_bldgtype_cell(space, r)
+                self._style_space_cell(space, r)
+
+        self.sheet.refresh()
+        self._set_idle(f"({len(self.unsaved_spaces)}) modified")
+
+    def _clear_selected_cells(self, event=None):
+        """
+        Delete key clears Building Type (col 1) or Space Type (col 2).
+        """
+        selected = self.sheet.get_selected_cells()
+        for r, c in selected:
             if c not in (1, 2):
                 continue
 
             space = self.sheet.get_cell_data(r, 0)
-            info = self.merged_spaces.get(space, {})
-            if c == 1:
-                # Building type changed
-                new_val = self.sheet.get_cell_data(r, 1) or ""
-                orig = info.get("bldgtype_original", "")
-            elif c == 2:
-                # Space type changed
-                new_val = self.sheet.get_cell_data(r, 2) or ""
-                orig = info.get("original_resolved", "")
-
             if not space:
                 continue
 
-            new_val = new_val.strip()
+            info = self.merged_spaces.get(space, {})
+            current_val = self.sheet.get_cell_data(r, c)
 
-            # Update runtime merged value
-            info["resolved"] = new_val
+            if current_val in ("", None):
+                continue
 
-            # Mark unsaved or restore if unchanged
-            if new_val != orig:
+            # Clear cell
+            self.sheet.set_cell_data(r, c, "", redraw=False)
+
+            # Determine field + original
+            if c == 1:
+                orig = info.get("bldgtype_original", "")
+                info["bldgtype_resolved"] = ""
+            else:
+                orig = info.get("original_resolved", "")
+                info["resolved"] = ""
+
+            # Handle unsaved
+            if "" != orig:
                 self.unsaved_spaces.add((space, c))
                 self.sheet.highlight_cells(
                     row=r,
@@ -800,60 +855,12 @@ class RulesetValuesPanel(ctk.CTkFrame):
                     redraw=False,
                 )
             else:
-                # restore original status highlight
                 self.unsaved_spaces.discard((space, c))
                 self.sheet.dehighlight_cells(row=r, column=0, redraw=False)
-                self.sheet.dehighlight_cells(row=r, column=1, redraw=False)
-                # Status-based highlight on Value column
+                self.sheet.dehighlight_cells(row=r, column=c, redraw=False)
+                # Re-apply status styles
                 self._style_bldgtype_cell(space, r)
-                self._style_row_for_status(space, r)
-
-        self.sheet.refresh()
-        self._set_idle(f"({len(self.unsaved_spaces)}) modified")
-
-    def _clear_selected_cells(self, event=None):
-        """
-        User uses Delete key: clear Value cells.
-        """
-        selected = self.sheet.get_selected_cells()
-        self._dbg("_clear_selected_cells selected:", selected)
-        for r, c in selected:
-            if c != 1:
-                continue
-            space = self.sheet.get_cell_data(r, 0)
-            if not space:
-                continue
-
-            current_val = self.sheet.get_cell_data(r, 1)
-            if current_val not in ("", None):
-                self.sheet.set_cell_data(r, 1, "", redraw=False)
-
-                info = self.merged_spaces.get(space, {})
-                orig = info.get("original_resolved", "")
-
-                info["resolved"] = ""
-
-                if "" != orig:
-                    self.unsaved_spaces.add(space)
-                    self.sheet.highlight_cells(
-                        row=r,
-                        column=0,
-                        bg=self.color_unsaved_bg,
-                        fg=self.color_unsaved_fg,
-                        redraw=False,
-                    )
-                    self.sheet.highlight_cells(
-                        row=r,
-                        column=1,
-                        bg=self.color_unsaved_bg,
-                        fg=self.color_unsaved_fg,
-                        redraw=False,
-                    )
-                else:
-                    self.unsaved_spaces.discard(space)
-                    self.sheet.dehighlight_cells(row=r, column=0, redraw=False)
-                    self.sheet.dehighlight_cells(row=r, column=1, redraw=False)
-                    self._style_row_for_status(space, r)
+                self._style_space_cell(space, r)
 
         self.sheet.refresh()
         return "break"
@@ -944,7 +951,7 @@ class RulesetValuesPanel(ctk.CTkFrame):
                 orig = info.get("original_resolved", "")
                 info["resolved"] = guess
                 if guess != orig:
-                    self.unsaved_spaces.add(space)
+                    self.unsaved_spaces.add((space, 2))
                     self.sheet.highlight_cells(
                         row=r,
                         column=0,
@@ -960,7 +967,7 @@ class RulesetValuesPanel(ctk.CTkFrame):
                         redraw=False,
                     )
                 else:
-                    self.unsaved_spaces.discard(space)
+                    self.unsaved_spaces.discard((space, 2))
                     self.sheet.dehighlight_cells(row=r, column=0, redraw=False)
                     self.sheet.dehighlight_cells(row=r, column=2, redraw=False)
                     self._style_row_for_status(space, r)
@@ -1028,16 +1035,39 @@ class RulesetValuesPanel(ctk.CTkFrame):
             (best_display_name:str or None, confidence:int)
         """
         s = self._normalize_name(space_name)
-        matches = []
 
-        # --- FALLBACK_MAP keyword matches (your original logic) ---
+        # -----------------------------
+        # Helper: turn token into regex
+        # -----------------------------
+        def token_to_regex(tok: str) -> str:
+            """
+            Convert a plain token into a safe word-boundary regex.
+            If the token already looks like a regex (contains \b, (), [], |, etc.),
+            we assume the author intended a regex and leave it as-is.
+            """
+            if any(
+                sym in tok for sym in ("\\b", "(", "[", "|", "+", "?", "*", "$", "^")
+            ):
+                return tok
+            return rf"\b{re.escape(tok)}\b"
+
+        # -----------------------------
+        # FALLBACK_MAP keyword matches
+        # -----------------------------
+        matches = []
         for kw, target in FALLBACK_MAP.items():
-            if kw in s:
-                matches.append((kw, target))
+            try:
+                # kw is treated as a regex pattern
+                if re.search(kw, s):
+                    matches.append((kw, target))
+            except re.error:
+                # If invalid regex, fall back to simple substring
+                if kw in s:
+                    matches.append((kw, target))
 
         if matches:
             # Specificity scoring — your original scoring rules
-            def specificity_score(kw):
+            def specificity_score(kw: str) -> int:
                 length_score = len(kw)
                 generic_penalty = 0
                 if any(
@@ -1062,39 +1092,88 @@ class RulesetValuesPanel(ctk.CTkFrame):
             if final:
                 return final, 100
 
-        # --- SUGGESTION_RULES (weighted hits) ---
-        best = (0, -1, None)
+        # -----------------------------
+        # SUGGESTION_RULES (weighted)
+        # -----------------------------
+        best_score = 0
+        best_phrase_hits = -1
+        best_target = None
+
         for rule in SUGGESTION_RULES:
-            target = self._normalize_target_display(rule.get("target"))
+            raw_target = rule.get("target")
+            target = self._normalize_target_display(raw_target)
             if not target:
                 continue
 
-            score = rule.get("weight", 0)
+            base_weight = rule.get("weight", 0) or 0
+            score = base_weight
 
-            # all-must-hit
-            if not all(k in s for k in rule.get("all", [])):
+            # ---- all-must-hit (regex with word boundaries) ----
+            all_tokens = rule.get("all", []) or []
+            if all_tokens:
+                all_ok = True
+                for tok in all_tokens:
+                    pattern = token_to_regex(tok)
+                    try:
+                        if not re.search(pattern, s):
+                            all_ok = False
+                            break
+                    except re.error:
+                        # If regex is broken, fall back to simple substring
+                        if tok not in s:
+                            all_ok = False
+                            break
+                if not all_ok:
+                    continue
+
+            # ---- none-must-NOT-hit ----
+            none_tokens = rule.get("none", []) or []
+            none_bad = False
+            for tok in none_tokens:
+                pattern = token_to_regex(tok)
+                try:
+                    if re.search(pattern, s):
+                        none_bad = True
+                        break
+                except re.error:
+                    if tok in s:
+                        none_bad = True
+                        break
+            if none_bad:
                 continue
-            # exclude if any forbidden
-            if any(k in s for k in rule.get("none", [])):
+
+            # ---- any-hits (word-boundary regex) ----
+            any_hits = 0
+            for tok in rule.get("any", []) or []:
+                pattern = token_to_regex(tok)
+                try:
+                    if re.search(pattern, s):
+                        any_hits += 1
+                except re.error:
+                    if tok in s:
+                        any_hits += 1
+
+            # ---- phrase_hits (keep as plain substring; often multi-word) ----
+            phrase_hits = sum(
+                1 for ph in (rule.get("phrases", []) or []) if ph and ph in s
+            )
+
+            # If no “all” requirements, and no any/phrase signals, skip
+            if not all_tokens and any_hits == 0 and phrase_hits == 0:
                 continue
 
-            # any
-            any_hits = sum(1 for k in rule.get("any", []) if k in s)
-            # phrases
-            phrase_hits = sum(1 for ph in rule.get("phrases", []) if ph in s)
+            score += any_hits + phrase_hits * 2
 
-            # If no signals, skip
-            if not rule.get("all") and any_hits == 0 and phrase_hits == 0:
-                continue
+            if score > best_score or (
+                score == best_score and phrase_hits > best_phrase_hits
+            ):
+                best_score = score
+                best_phrase_hits = phrase_hits
+                best_target = target
 
-            score += any_hits + (phrase_hits * 2)
-
-            if score > best[0] or (score == best[0] and phrase_hits > best[1]):
-                best = (score, phrase_hits, target)
-
-        if best[2]:
-            score_norm = min(100, max(50, best[0] * 7))
-            return best[2], score_norm
+        if best_target:
+            score_norm = min(100, max(50, best_score * 7))
+            return best_target, score_norm
 
         # --- Nothing matched ---
         return None, 0
@@ -1127,30 +1206,28 @@ class RulesetValuesPanel(ctk.CTkFrame):
             self.unsaved_climate_zone,
         )
 
-        # Nothing to save
         if not self.unsaved_spaces and not self.unsaved_climate_zone:
             self.status_var.set("No changes to save")
             return
 
-        # -------------------------
-        # CLIMATE ZONE
-        # -------------------------
-        merged_cz = (self.merged_cz_runtime or "").strip()
-
         file_to_edits = {}
 
-        # Store per-file CZ edits
+        # -----------------------------
+        # CLIMATE ZONE SAVE LOGIC
+        # -----------------------------
+        merged_cz = (self.merged_cz_runtime or "").strip()
+
         for fp in self.model_files:
             orig = self.climate_zone_values.get(fp, "")
             if merged_cz != orig:
                 edits = []
+
                 if merged_cz:
                     m = re.match(r"^CZ(\d)([ABC])?$", merged_cz, flags=re.I)
                     if m:
                         num = int(m.group(1))
                         letter = m.group(2)
 
-                        # C-901-CZ-NUMBER
                         edits.append(
                             INPEdits(
                                 unique_id=self.site_uid_map.get(fp),
@@ -1160,7 +1237,6 @@ class RulesetValuesPanel(ctk.CTkFrame):
                                 command="",
                             )
                         )
-                        # C-901-CZ-LETTER
                         if letter:
                             letter_num = self.cz_letter_rev[letter.upper()]
                             edits.append(
@@ -1183,57 +1259,55 @@ class RulesetValuesPanel(ctk.CTkFrame):
                                 )
                             )
                 else:
-                    # Clear to defaults
-                    edits.append(
-                        INPEdits(
-                            unique_id=self.site_uid_map.get(fp),
-                            change_type="restore_default",
-                            keyword="C-901-CZ-NUMBER",
-                            value="",
-                            command="",
-                        )
+                    # Reset to defaults
+                    edits.extend(
+                        [
+                            INPEdits(
+                                unique_id=self.site_uid_map.get(fp),
+                                change_type="restore_default",
+                                keyword="C-901-CZ-NUMBER",
+                                value="",
+                            ),
+                            INPEdits(
+                                unique_id=self.site_uid_map.get(fp),
+                                change_type="restore_default",
+                                keyword="C-901-CZ-LETTER",
+                                value="",
+                            ),
+                        ]
                     )
-                    edits.append(
-                        INPEdits(
-                            unique_id=self.site_uid_map.get(fp),
-                            change_type="restore_default",
-                            keyword="C-901-CZ-LETTER",
-                            value="",
-                            command="",
-                        )
-                    )
+
                 file_to_edits.setdefault(fp, []).extend(edits)
 
-        # -------------------------
-        # SPACE-TYPE ASSIGNMENTS
-        # -------------------------
-        data = self.sheet.get_sheet_data()
-        for r, row in enumerate(data):
-            if r >= len(data):
-                break
-            space = row[0]
-            info = self.merged_spaces.get(space, {})
-            orig = info.get("original_resolved", "")
-            new_val = info.get("resolved", "") or ""
-
-            new_bldg = info["bldgtype_resolved"]
-            orig_bldg = info["bldgtype_original"]
-
-            if space not in self.unsaved_spaces:
+        # -----------------------------
+        # SPACE TYPE + BUILDING TYPE SAVE
+        # -----------------------------
+        for r in range(self.sheet.get_total_rows()):
+            space = self.sheet.get_cell_data(r, 0)
+            if not space:
                 continue
+
+            # Was this space modified at all?
+            if not any(s == space for (s, col) in self.unsaved_spaces):
+                continue
+
+            info = self.merged_spaces.get(space, {})
+
+            # ----- BUILDING TYPE -----
+            new_bldg = info.get("bldgtype_resolved", "")
+            orig_bldg = info.get("bldgtype_original", "")
 
             if new_bldg != orig_bldg:
                 for fp in info["exists_in"]:
                     edits = []
-
                     if new_bldg:
-                        val = str(self.building_display_to_key[new_bldg])
+                        key = self.building_area_display_to_key[new_bldg]
                         edits.append(
                             INPEdits(
                                 unique_id=space,
                                 change_type="modify",
                                 keyword="C-901-BLDG-TYPE",
-                                value=val,
+                                value=str(key),
                             )
                         )
                     else:
@@ -1244,44 +1318,41 @@ class RulesetValuesPanel(ctk.CTkFrame):
                                 keyword="C-901-BLDG-TYPE",
                             )
                         )
-
                     file_to_edits.setdefault(fp, []).extend(edits)
 
-            # Apply only to models where space exists
-            for fp in info["exists_in"]:
-                edits = []
+            # ----- SPACE TYPE -----
+            new_val = info.get("resolved", "")
+            orig_val = info.get("original_resolved", "")
 
-                if new_val != "":
-                    # convert back to key
-                    if new_val not in self.space_type_display_to_key:
-                        print(f"WARNING: Unknown space type '{new_val}'", flush=True)
-                        continue
-                    val = str(self.space_type_display_to_key[new_val])
-                    edits.append(
-                        INPEdits(
-                            unique_id=space,
-                            change_type="modify",
-                            keyword="C-901-OCC-TYPE",
-                            value=val,
-                            command="",
+            if new_val != orig_val:
+                for fp in info["exists_in"]:
+                    edits = []
+                    if new_val:
+                        key = self.space_type_display_to_key[new_val]
+                        edits.append(
+                            INPEdits(
+                                unique_id=space,
+                                change_type="modify",
+                                keyword="C-901-OCC-TYPE",
+                                value=str(key),
+                                command="",
+                            )
                         )
-                    )
-                else:
-                    edits.append(
-                        INPEdits(
-                            unique_id=space,
-                            change_type="restore_default",
-                            keyword="C-901-OCC-TYPE",
-                            value="",
-                            command="",
+                    else:
+                        edits.append(
+                            INPEdits(
+                                unique_id=space,
+                                change_type="restore_default",
+                                keyword="C-901-OCC-TYPE",
+                                value="",
+                                command="",
+                            )
                         )
-                    )
+                    file_to_edits.setdefault(fp, []).extend(edits)
 
-                file_to_edits.setdefault(fp, []).extend(edits)
-
-        # -------------------------
-        # Write to disk (threaded)
-        # -------------------------
+        # -----------------------------
+        # Write to disk in a thread
+        # -----------------------------
         self._set_busy("Saving…")
         threading.Thread(
             target=self._save_worker, args=(file_to_edits,), daemon=True
@@ -1320,6 +1391,7 @@ class RulesetValuesPanel(ctk.CTkFrame):
             info = self.merged_spaces.get(space, {})
             self.sheet.dehighlight_cells(row=r, column=0, redraw=False)
             self.sheet.dehighlight_cells(row=r, column=1, redraw=False)
+            self.sheet.dehighlight_cells(row=r, column=2, redraw=False)
             self._style_row_for_status(space, r)
 
         self.unsaved_spaces.clear()
@@ -1419,47 +1491,48 @@ class RulesetValuesPanel(ctk.CTkFrame):
             messagebox.showerror("Error", f"Failed to open Excel file:\n{e}")
             return
 
-        sheet_headers = self.sheet.headers()
-        excel_headers = [cell.value for cell in ws[1]]
-
-        if sheet_headers != excel_headers:
-            self._dbg("  header mismatch:", sheet_headers, "vs", excel_headers)
-            messagebox.showwarning(
-                "Header Mismatch",
-                "Column headers in Excel do not match current sheet.\nImport may skip unknown columns.",
-            )
-
+        # EXPECTED columns: Space Name | Building Type | Space Type | (Confidence?)
         for row_idx in range(2, ws.max_row + 1):
             space = ws.cell(row=row_idx, column=1).value
             if not space:
                 continue
 
-            # Find row
             row_in_sheet = self._find_row(space)
             if row_in_sheet < 0:
                 continue
 
-            # Excel column 3 = Space Type
-            new_val = ws.cell(row=row_idx, column=3).value or ""
-            new_val = str(new_val).strip()
-
             info = self.merged_spaces.get(space, {})
-            orig = info.get("original_resolved", "")
 
-            info["resolved"] = new_val
+            # -----------------
+            # Building Type (col 2)
+            # -----------------
+            new_bldg = (ws.cell(row=row_idx, column=2).value or "").strip()
+            orig_bldg = info.get("bldgtype_original", "")
 
-            # Sheet column 2 = Space Type
-            self.sheet.set_cell_data(row_in_sheet, 2, new_val, redraw=False)
-
-            if new_val != orig:
-                self.unsaved_spaces.add((space, 2))
+            if new_bldg != orig_bldg:
+                info["bldgtype_resolved"] = new_bldg
+                self.sheet.set_cell_data(row_in_sheet, 1, new_bldg, redraw=False)
+                self.unsaved_spaces.add((space, 1))
                 self.sheet.highlight_cells(
                     row=row_in_sheet,
-                    column=0,
+                    column=1,
                     bg=self.color_unsaved_bg,
                     fg=self.color_unsaved_fg,
                     redraw=False,
                 )
+            else:
+                info["bldgtype_resolved"] = orig_bldg
+
+            # -----------------
+            # Space Type (col 3)
+            # -----------------
+            new_val = (ws.cell(row=row_idx, column=3).value or "").strip()
+            orig_val = info.get("original_resolved", "")
+
+            if new_val != orig_val:
+                info["resolved"] = new_val
+                self.sheet.set_cell_data(row_in_sheet, 2, new_val, redraw=False)
+                self.unsaved_spaces.add((space, 2))
                 self.sheet.highlight_cells(
                     row=row_in_sheet,
                     column=2,
@@ -1468,10 +1541,19 @@ class RulesetValuesPanel(ctk.CTkFrame):
                     redraw=False,
                 )
             else:
-                self.unsaved_spaces.discard((space, 2))
+                info["resolved"] = orig_val
+
+            # Always highlight row header when anything in row unsaved
+            if any((space == s) for (s, col) in self.unsaved_spaces):
+                self.sheet.highlight_cells(
+                    row=row_in_sheet,
+                    column=0,
+                    bg=self.color_unsaved_bg,
+                    fg=self.color_unsaved_fg,
+                    redraw=False,
+                )
+            else:
                 self.sheet.dehighlight_cells(row=row_in_sheet, column=0, redraw=False)
-                self.sheet.dehighlight_cells(row=row_in_sheet, column=2, redraw=False)
-                self._style_row_for_status(space, row_in_sheet)
 
         self.sheet.refresh()
         self._autosize_columns()

@@ -1490,7 +1490,10 @@ class Fan:
                 curve = self.parent.get_obj(
                     self.parent.get_inp(BDL_SystemKeywords.FAN_EIR_FPLR)
                 )
-                curve_coeffs = curve.coefficients
+                if curve is not None:
+                    curve_coeffs = curve.coefficients
+                else:
+                    curve_coeffs = None
 
         elif fan_type == "Terminal":
             fan_control_method = self.parent.get_inp(BDL_ZoneKeywords.ZONE_FAN_CTRL)
@@ -1540,14 +1543,21 @@ class Fan:
                 electric_input_ratio = calculate_cubic(
                     curve_coeffs, airflow_ratio, 0, 1
                 )
-                self.operating_points.append(
-                    {
-                        "airflow": self.design_airflow * airflow_ratio,
-                        "power": self.design_electric_power
-                        * electric_input_ratio
-                        * multiplier,
-                    }
-                )
+                if None not in (
+                    self.design_airflow,
+                    self.design_electric_power,
+                    airflow_ratio,
+                    electric_input_ratio,
+                    multiplier,
+                ):
+                    self.operating_points.append(
+                        {
+                            "airflow": self.design_airflow * airflow_ratio,
+                            "power": self.design_electric_power
+                            * electric_input_ratio
+                            * multiplier,
+                        }
+                    )
 
 
 class HeatingSystem:

@@ -5,6 +5,7 @@ import tempfile
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from rpd_generator.config import Config
 from rpd_generator.artifacts.ruleset_project_description import (
     RulesetProjectDescription,
 )
@@ -14,7 +15,6 @@ from rpd_generator.doe2_file_io.prepare_inp_for_rpd import prepare_inp
 from rpd_generator.doe2_file_io.copy_to_temp import copy_files_to_temp_dir
 from rpd_generator.doe2_file_io.model_input_reader import ModelInputReader
 from rpd_generator.bdl_structure import *
-from rpd_generator.config import Config
 from rpd_generator.utilities import validate_configuration
 from rpd_generator.utilities import unit_converter
 from rpd_generator.utilities import ensure_valid_rpd
@@ -289,11 +289,11 @@ if __name__ == "__main__":
         "Briarwood Library",
         [
             (
-                r"C:\Users\JacksonJarboe\Karpman Consulting Dropbox\Jackson Jarboe\03_Program Support Projects\ASHRAE 229 RCT\Integrated Tests\Washington Elementary\[BL] WASH ES.inp",
+                r"C:\Users\JacksonJarboe\Documents\Local Models\245 Clarkson Ave\245 Clarkson BLr8.inp",
                 "BASELINE_0",
             ),
             (
-                r"C:\Users\JacksonJarboe\Karpman Consulting Dropbox\Jackson Jarboe\03_Program Support Projects\ASHRAE 229 RCT\Integrated Tests\Washington Elementary\[PR] WASH ES - 17.inp",
+                r"C:\Users\JacksonJarboe\Documents\Local Models\245 Clarkson Ave\245 Clarkson PRr2 - 42.inp",
                 "PROPOSED",
             ),
         ],

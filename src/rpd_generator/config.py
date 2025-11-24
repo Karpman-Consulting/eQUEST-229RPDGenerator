@@ -1,5 +1,6 @@
-from pathlib import Path
 import pint
+import sys
+from pathlib import Path
 
 from rpd_generator.schema.ruleset import Ruleset
 from rpd_generator.schema.schema_enums import SchemaEnums
@@ -16,7 +17,10 @@ class Config:
             "output_filename": "Output2019ASHRAE901.schema.json",
         }
     }
-    PYTHON32_PATH = Path(__file__).parent / "python32" / "python.exe"
+    if getattr(sys, "frozen", False):
+        PYTHON32_PATH = None  # not used in frozen builds
+    else:
+        PYTHON32_PATH = Path(__file__).parents[2] / "python32" / "python.exe"
     EQUEST_INSTALL_PATH = None
     DOE22_DATA_PATH = None
     DOE23_DATA_PATH = None

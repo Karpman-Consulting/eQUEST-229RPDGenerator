@@ -1,13 +1,6 @@
 import sys
 import ctypes
-import subprocess
-import json
 from pathlib import Path
-
-from rpd_generator.config import Config
-
-BDL_PY = Path(Config.PYTHON32_PATH)
-BDL_WORKER = Path(__file__).parent / "bdl_worker.py"
 
 
 def process_input_file(
@@ -73,30 +66,3 @@ def process_input_file(
         print(f"Error processing INP file to BDL: {e}", file=sys.stderr)
 
     return
-
-
-def process_inp_to_bdl(bdlcio32, doe2_data, work_dir, file_name):
-    payload = {
-        "command": "process_inp",
-        "bdlcio_dll": str(bdlcio32),
-        "doe2_data_dir": str(doe2_data),
-        "work_dir": str(work_dir),
-        "file_name": file_name,
-    }
-
-    proc = subprocess.Popen(
-        [str(BDL_PY), str(BDL_WORKER)],
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-        encoding="utf-8",
-        bufsize=1,
-    )
-    stdout, stderr = proc.communicate(json.dumps(payload))
-    if stderr.strip():
-        raise RuntimeError(stderr)
-    result = json.loads(stdout)
-    if result["status"] != "ok":
-        raise RuntimeError(result["message"])
-    return result.get("results")

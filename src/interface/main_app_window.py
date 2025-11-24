@@ -8,12 +8,13 @@ from rpd_generator.artifacts.ruleset_project_description import (
     RulesetProjectDescription,
 )
 from rpd_generator.doe2_file_io.model_input_reader import ModelInputReader
-from interface.assignments_panel import RulesetValuesPanel
-from interface.generate_rpd_panel import GenerateRPDPanel
-from interface.systems_panel import BaselineSystemTypesPanel
-from interface.rct_panel import RCTPanel
+from interface.panel_assignments import RulesetValuesPanel
+from interface.panel_generate_rpd import GenerateRPDPanel
+from interface.panel_systems import BaselineSystemTypesPanel
+from interface.panel_rct import RCTPanel
+from interface.panel_evaluation_summary import EvaluationSummaryPanel
+from interface.panel_model_summary import ModelSummaryPanel
 from interface.CTkToolTip import CTkToolTip
-from interface.loading_window import LoadingWindow
 from interface.error_window import ErrorWindow
 from interface.constants import *
 
@@ -85,9 +86,8 @@ class MainAppWindow(ctk.CTkToplevel):
         super().__init__()
         self.main_app = main_app
         self.title("Karpman Consulting Ruleset Compliance Toolkit")
-        # Make the window slimmer than before
-        self.geometry("1120x720")
-        self.minsize(980, 640)
+        self.geometry("1520x920")
+        self.minsize(1120, 720)
 
         # State
         self.current_view = None
@@ -164,7 +164,7 @@ class MainAppWindow(ctk.CTkToplevel):
             "generate": "#D66A5D",  # warm coral
             "rct": "#4F6FB5",  # royal blue
             "eval_summary": "#8B5FA7",  # mulberry purple
-            "model_summary": "#5A6A72",  # slate graphite
+            "model_summary": "#738C94",  # slate graphite
         }
 
         self.NAV_HOVER_COLORS = {
@@ -173,7 +173,7 @@ class MainAppWindow(ctk.CTkToplevel):
             "generate": "#B1554C",  # darker coral
             "rct": "#3E5B99",  # darker royal blue
             "eval_summary": "#6F4D84",  # darker mulberry
-            "model_summary": "#46545B",  # darker slate graphite
+            "model_summary": "#5D7178",  # darker slate graphite
         }
 
         # Construct buttons
@@ -230,14 +230,14 @@ class MainAppWindow(ctk.CTkToplevel):
         self.nav_buttons["assignments"].grid(
             row=0, column=0, padx=8, pady=8, sticky="ew"
         )
-        self.nav_buttons["systems"].grid(row=0, column=2, padx=8, pady=8, sticky="ew")
         self.nav_buttons["generate"].grid(row=0, column=1, padx=8, pady=8, sticky="ew")
-
-        self.nav_buttons["rct"].grid(row=1, column=0, padx=8, pady=8, sticky="ew")
-        self.nav_buttons["eval_summary"].grid(
-            row=1, column=1, padx=8, pady=8, sticky="ew"
-        )
         self.nav_buttons["model_summary"].grid(
+            row=0, column=2, padx=8, pady=8, sticky="ew"
+        )
+
+        self.nav_buttons["systems"].grid(row=1, column=0, padx=8, pady=8, sticky="ew")
+        self.nav_buttons["rct"].grid(row=1, column=1, padx=8, pady=8, sticky="ew")
+        self.nav_buttons["eval_summary"].grid(
             row=1, column=2, padx=8, pady=8, sticky="ew"
         )
 
@@ -279,10 +279,10 @@ class MainAppWindow(ctk.CTkToplevel):
             "Before using any tools, you must select the required files in the right panel:\n"
             "  • Assign Ruleset Values - Proposed and Baseline INP are required.\n"
             "  • Generate RPD - Proposed and Baseline INP are required.\n"
+            "  • Summarize Model - RPD is required.\n"
             "  • Check 90.1 Baseline Systems - RPD is required.\n"
             "  • Run RCT - RPD is required.\n"
-            "  • Summarize Evaluation - Detailed Evaluation Report is required.\n"
-            "  • Summarize Model - RPD is required.\n\n"
+            "  • Summarize Evaluation - Detailed Evaluation Report is required.\n\n"
             "Once the required files are selected, tools and\n"
             "navigation options will automatically unlock."
         )
@@ -318,21 +318,15 @@ class MainAppWindow(ctk.CTkToplevel):
             self.views_container, controller=self, main_app=self.main_app
         )
 
-        # --- Placeholder Evaluation Summary ---
-        self.view_eval = ctk.CTkFrame(self.views_container)
-        ctk.CTkLabel(
-            self.view_eval,
-            text="Evaluation Summary UI goes here.\n",
-            font=TEXT_FONT,
-        ).pack(padx=16, pady=16)
+        # --- Evaluation Summary View ---
+        self.view_eval = EvaluationSummaryPanel(
+            self.views_container, controller=self, main_app=self.main_app
+        )
 
-        # --- Placeholder Model Summary ---
-        self.view_model = ctk.CTkFrame(self.views_container)
-        ctk.CTkLabel(
-            self.view_model,
-            text="Model Summary UI goes here.\n",
-            font=TEXT_FONT,
-        ).pack(padx=16, pady=16)
+        # --- Model Summary View ---
+        self.view_model = ModelSummaryPanel(
+            self.views_container, controller=self, main_app=self.main_app
+        )
 
         # Hide all frames initially — only _show_view() should display one
         for view in (
@@ -512,6 +506,9 @@ class MainAppWindow(ctk.CTkToplevel):
             self.main_app.data.active_rct_report_path = path
             self._compose_rct_panel()
             self._refresh_nav_button_states()
+
+            if hasattr(self, "view_eval"):
+                self.view_eval.refresh_panel()
 
     def _on_ruleset_change(self, _):
         """Handle when user changes selected ruleset from dropdown."""
@@ -771,7 +768,7 @@ class MainAppWindow(ctk.CTkToplevel):
                 self.main_app.data.model_issues[model_name] = [f"[ERROR] {e}"]
                 self.after(
                     0,
-                    lambda: self._on_model_load_failure(
+                    lambda e=e: self._on_model_load_failure(
                         model_name, f"Failed to load model:\n\n{e}"
                     ),
                 )
@@ -832,6 +829,9 @@ class MainAppWindow(ctk.CTkToplevel):
             self.rpd_path_var.set(path)
             self._compose_rpd_panel()
             self._refresh_nav_button_states()
+
+            if hasattr(self, "view_model"):
+                self.view_model.refresh_panel()
 
         except Exception as e:
             import traceback
@@ -928,12 +928,18 @@ class MainAppWindow(ctk.CTkToplevel):
             self._compose_rpd_panel()
             self._refresh_nav_button_states()
 
+            if hasattr(self, "view_model"):
+                self.view_model.refresh_panel()
+
     def refresh_rct_panel_after_evaluation(self):
         # Reflect a new RCT evaluation on the right panel
         if self.main_app.data.active_rct_report_path:
             self.rct_path_var.set(self.main_app.data.active_rct_report_path)
             self._compose_rct_panel()
             self._refresh_nav_button_states()
+
+            if hasattr(self, "view_eval"):
+                self.view_eval.refresh_panel()
 
     def on_generation_complete(self, success: bool, msg: str = ""):
         self._rebuild_model_rows()
