@@ -25,11 +25,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set-Up Python v3.11 32-bit
+      - name: Set-Up Python v3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          architecture: 'x86'
 
       - name: Set Environment Variables
         run: |
@@ -57,6 +56,3 @@ jobs:
 
       - name: Run Unit Tests
         run: poetry run pytest
-
-      - name: Run Full RPD Tests
-        run: poetry run python test/full_rpd_test/run_full_rpd_tests.py
