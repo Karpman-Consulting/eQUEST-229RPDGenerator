@@ -22,12 +22,21 @@ jobs:
           virtualenvs-in-project: true
           installer-parallel: true
 
-      - name: Add Poetry to PATH
-        shell: powershell
+      - name: Add Poetry to PATH (Windows runner)
+        shell: pwsh
         run: |
-          echo "$env:APPDATA\Python\Scripts" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          $paths = @(
+            "$env:APPDATA\Python\Scripts",
+            "$env:USERPROFILE\.poetry\bin"
+          )
+          foreach ($p in $paths) {
+            if (Test-Path $p) {
+              Write-Host "Adding $p to PATH"
+              $p | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+            }
+          }
 
-      - name: Cache Poetry Environment
+      - name: Cache Poetry Virtualenv
         uses: actions/cache@v4
         id: cache-poetry-black
         with:
@@ -36,7 +45,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-poetry-
 
-      - name: Install Dependencies
+      - name: Install Dependencies (No Root Package)
         if: steps.cache-poetry-black.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root
 
@@ -64,22 +73,31 @@ jobs:
           virtualenvs-in-project: true
           installer-parallel: true
 
-      - name: Add Poetry to PATH
-        shell: powershell
+      - name: Add Poetry to PATH (Windows runner)
+        shell: pwsh
         run: |
-          echo "$env:APPDATA\Python\Scripts" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          $paths = @(
+            "$env:APPDATA\Python\Scripts",
+            "$env:USERPROFILE\.poetry\bin"
+          )
+          foreach ($p in $paths) {
+            if (Test-Path $p) {
+              Write-Host "Adding $p to PATH"
+              $p | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+            }
+          }
 
-      - name: Cache Poetry Environment
+      - name: Cache Poetry Virtualenv
         uses: actions/cache@v4
-        id: cache-poetry-test
+        id: cache-poetry-tests
         with:
           path: .venv
           key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
           restore-keys: |
             ${{ runner.os }}-poetry-
 
-      - name: Install Dependencies
-        if: steps.cache-poetry-test.outputs.cache-hit != 'true'
+      - name: Install Dependencies (No Root Package)
+        if: steps.cache-poetry-tests.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root
 
       - name: Install Project (editable)
