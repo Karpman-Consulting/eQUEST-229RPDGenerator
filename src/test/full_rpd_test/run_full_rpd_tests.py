@@ -149,9 +149,9 @@ def compare_json_values(
 
         elif isinstance(reference_value, list):
             # Reference value is a list. Set EvaluationCriteriaOptions to QUANTITY
-            specification_test["evaluation_criteria"] = (
-                EvaluationCriteriaOptions.QUANTITY.value
-            )
+            specification_test[
+                "evaluation_criteria"
+            ] = EvaluationCriteriaOptions.QUANTITY.value
 
             if len(generated_value) != len(reference_value):
                 notes = f"List length mismatch at '{generated_ids[i]}' for key '{json_key_path.split('.')[-1]}'. Expected: {len(reference_value)}; got: {len(generated_value)}"
@@ -173,9 +173,9 @@ def compare_json_values(
 
             if compare_value:
                 # Reference value is a list with value comparisons. Combine QUANTITY and VALUE
-                specification_test["evaluation_criteria"] = (
-                    EvaluationCriteriaOptions.VALUE.value
-                )
+                specification_test[
+                    "evaluation_criteria"
+                ] = EvaluationCriteriaOptions.VALUE.value
 
                 for j, (gen_item, ref_item) in enumerate(
                     zip(generated_value, reference_value)
@@ -192,9 +192,9 @@ def compare_json_values(
                 continue
 
         elif isinstance(reference_value, str) and not compare_value:
-            specification_test["evaluation_criteria"] = (
-                EvaluationCriteriaOptions.REFERENCE.value
-            )
+            specification_test[
+                "evaluation_criteria"
+            ] = EvaluationCriteriaOptions.REFERENCE.value
 
             if (
                 generated_value in object_id_map
@@ -240,9 +240,9 @@ def compare_json_values(
             continue  # Both values are None, no need to compare
 
         # Evaluate based on value comparison
-        specification_test["evaluation_criteria"] = (
-            EvaluationCriteriaOptions.VALUE.value
-        )
+        specification_test[
+            "evaluation_criteria"
+        ] = EvaluationCriteriaOptions.VALUE.value
         test_outcome = TestOutcomeOptions.NOT_IMPLEMENTED.value
 
         # Else: the values are strings, ints, or floats, and we need to compare them
@@ -1108,9 +1108,9 @@ def define_heat_rejection_map(generated_json, reference_json, object_id_map):
     if len(generated_heat_rejections) == 1:
         generated_heat_rejection_data = generated_heat_rejections[0]
         reference_heat_rejection_data = reference_heat_rejections[0]
-        heat_rejection_map[generated_heat_rejection_data["id"]] = (
-            reference_heat_rejection_data["id"]
-        )
+        heat_rejection_map[
+            generated_heat_rejection_data["id"]
+        ] = reference_heat_rejection_data["id"]
         return heat_rejection_map, errors
 
     else:
@@ -1910,9 +1910,9 @@ def handle_ordered_comparisons(
                 None,
             )
 
-            aligned_reference_values[generated_construction_id] = (
-                aligned_reference_value
-            )
+            aligned_reference_values[
+                generated_construction_id
+            ] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
             notes = f"Missing key {json_key_path.split('.')[-1]}"
@@ -2213,9 +2213,9 @@ def handle_ordered_comparisons(
                 None,
             )
 
-            aligned_reference_values[generated_heat_rejection_id] = (
-                aligned_reference_value
-            )
+            aligned_reference_values[
+                generated_heat_rejection_id
+            ] = aligned_reference_value
 
         if all(value is None for value in aligned_generated_values.values()):
             notes = f"Missing key {json_key_path.split('.')[-1]}"

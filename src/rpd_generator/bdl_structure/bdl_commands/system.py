@@ -1134,13 +1134,13 @@ class FanSystem:
                 self.parent_system.relief_fan.data_structure
             ]
         if self.parent_system.air_energy_recovery:
-            self.data_structure["air_energy_recovery"] = (
-                self.parent_system.air_energy_recovery.data_structure
-            )
+            self.data_structure[
+                "air_energy_recovery"
+            ] = self.parent_system.air_energy_recovery.data_structure
         if self.parent_system.air_economizer:
-            self.data_structure["air_economizer"] = (
-                self.parent_system.air_economizer.data_structure
-            )
+            self.data_structure[
+                "air_economizer"
+            ] = self.parent_system.air_economizer.data_structure
 
         fan_system_data_elements = [
             "reporting_name",

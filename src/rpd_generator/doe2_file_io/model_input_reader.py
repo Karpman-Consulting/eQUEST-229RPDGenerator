@@ -232,9 +232,9 @@ class ModelInputReader:
                         if ")" in multiline_value:
                             # Finalize the multiline value.
                             final_value = multiline_value
-                            special_data[multiline_key] = (
-                                self._parse_parentheses_values(final_value)
-                            )
+                            special_data[
+                                multiline_key
+                            ] = self._parse_parentheses_values(final_value)
 
                             # Reset multiline accumulators.
                             multiline_key = None

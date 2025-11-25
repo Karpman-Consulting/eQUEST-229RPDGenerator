@@ -1680,9 +1680,9 @@ class SourceResult:
             source_results["INTERIOR_LIGHTING"]["coincident_demand"] = output_data.get(
                 "Elec (all meters) - Coincident Peak - Lights"
             )
-            source_results["INTERIOR_LIGHTING"]["non_coincident_demand"] = (
-                output_data.get("Elec (all meters) - Peak - Lights")
-            )
+            source_results["INTERIOR_LIGHTING"][
+                "non_coincident_demand"
+            ] = output_data.get("Elec (all meters) - Peak - Lights")
 
             source_results["MISC_EQUIPMENT"]["site_energy_use"] = output_data.get(
                 "Elec (all meters) - Elec Use - Misc Equip"
@@ -1734,55 +1734,55 @@ class SourceResult:
                 "Elec (all meters) - Peak - Pumps & Aux"
             )
 
-            source_results["FANS_INTERIOR_VENTILATION"]["site_energy_use"] = (
-                output_data.get("Elec (all meters) - Elec Use - Ventilation Fans")
+            source_results["FANS_INTERIOR_VENTILATION"][
+                "site_energy_use"
+            ] = output_data.get("Elec (all meters) - Elec Use - Ventilation Fans")
+            source_results["FANS_INTERIOR_VENTILATION"][
+                "coincident_demand"
+            ] = output_data.get(
+                "Elec (all meters) - Coincident Peak - Ventilation Fans"
             )
-            source_results["FANS_INTERIOR_VENTILATION"]["coincident_demand"] = (
-                output_data.get(
-                    "Elec (all meters) - Coincident Peak - Ventilation Fans"
-                )
-            )
-            source_results["FANS_INTERIOR_VENTILATION"]["non_coincident_demand"] = (
-                output_data.get("Elec (all meters) - Peak - Ventilation Fans")
-            )
+            source_results["FANS_INTERIOR_VENTILATION"][
+                "non_coincident_demand"
+            ] = output_data.get("Elec (all meters) - Peak - Ventilation Fans")
 
-            source_results["REFRIGERATION_EQUIPMENT"]["site_energy_use"] = (
-                output_data.get("Elec (all meters) - Elec Use - Refrigeration Display")
+            source_results["REFRIGERATION_EQUIPMENT"][
+                "site_energy_use"
+            ] = output_data.get("Elec (all meters) - Elec Use - Refrigeration Display")
+            source_results["REFRIGERATION_EQUIPMENT"][
+                "coincident_demand"
+            ] = output_data.get(
+                "Elec (all meters) - Coincident Peak - Refrigeration Display"
             )
-            source_results["REFRIGERATION_EQUIPMENT"]["coincident_demand"] = (
-                output_data.get(
-                    "Elec (all meters) - Coincident Peak - Refrigeration Display"
-                )
-            )
-            source_results["REFRIGERATION_EQUIPMENT"]["non_coincident_demand"] = (
-                output_data.get("Elec (all meters) - Peak - Refrigeration Display")
-            )
+            source_results["REFRIGERATION_EQUIPMENT"][
+                "non_coincident_demand"
+            ] = output_data.get("Elec (all meters) - Peak - Refrigeration Display")
 
-            source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"]["site_energy_use"] = (
-                output_data.get(
-                    "Elec (all meters) - Elec Use - Ht Pump Supplemental Heat"
-                )
+            source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"][
+                "site_energy_use"
+            ] = output_data.get(
+                "Elec (all meters) - Elec Use - Ht Pump Supplemental Heat"
             )
-            source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"]["coincident_demand"] = (
-                output_data.get(
-                    "Elec (all meters) - Coincident Peak - Ht Pump Supplemental Heat"
-                )
+            source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"][
+                "coincident_demand"
+            ] = output_data.get(
+                "Elec (all meters) - Coincident Peak - Ht Pump Supplemental Heat"
             )
             source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"][
                 "non_coincident_demand"
             ] = output_data.get("Elec (all meters) - Peak - Ht Pump Supplemental Heat")
 
-            source_results["SERVICE_WATER_HEATING"]["site_energy_use"] = (
-                output_data.get("Elec (all meters) - Elec Use - Domestic Hot Water")
+            source_results["SERVICE_WATER_HEATING"][
+                "site_energy_use"
+            ] = output_data.get("Elec (all meters) - Elec Use - Domestic Hot Water")
+            source_results["SERVICE_WATER_HEATING"][
+                "coincident_demand"
+            ] = output_data.get(
+                "Elec (all meters) - Coincident Peak - Domestic Hot Water"
             )
-            source_results["SERVICE_WATER_HEATING"]["coincident_demand"] = (
-                output_data.get(
-                    "Elec (all meters) - Coincident Peak - Domestic Hot Water"
-                )
-            )
-            source_results["SERVICE_WATER_HEATING"]["non_coincident_demand"] = (
-                output_data.get("Elec (all meters) - Peak - Domestic Hot Water")
-            )
+            source_results["SERVICE_WATER_HEATING"][
+                "non_coincident_demand"
+            ] = output_data.get("Elec (all meters) - Peak - Domestic Hot Water")
 
             for category in source_results:
                 for metric in source_results[category]:
@@ -1811,9 +1811,9 @@ class SourceResult:
             source_results["INTERIOR_LIGHTING"]["coincident_demand"] = output_data.get(
                 "Steam (all meters) - Coincident Peak - Lights"
             )
-            source_results["INTERIOR_LIGHTING"]["non_coincident_demand"] = (
-                output_data.get("Steam (all meters) - Peak - Lights")
-            )
+            source_results["INTERIOR_LIGHTING"][
+                "non_coincident_demand"
+            ] = output_data.get("Steam (all meters) - Peak - Lights")
 
             source_results["MISC_EQUIPMENT"]["site_energy_use"] = output_data.get(
                 "Steam (all meters) - Energy - Misc Equip"
@@ -1865,55 +1865,55 @@ class SourceResult:
                 "Steam (all meters) - Peak - Pumps & Aux"
             )
 
-            source_results["FANS_INTERIOR_VENTILATION"]["site_energy_use"] = (
-                output_data.get("Steam (all meters) - Energy - Ventilation Fans")
+            source_results["FANS_INTERIOR_VENTILATION"][
+                "site_energy_use"
+            ] = output_data.get("Steam (all meters) - Energy - Ventilation Fans")
+            source_results["FANS_INTERIOR_VENTILATION"][
+                "coincident_demand"
+            ] = output_data.get(
+                "Steam (all meters) - Coincident Peak - Ventilation Fans"
             )
-            source_results["FANS_INTERIOR_VENTILATION"]["coincident_demand"] = (
-                output_data.get(
-                    "Steam (all meters) - Coincident Peak - Ventilation Fans"
-                )
-            )
-            source_results["FANS_INTERIOR_VENTILATION"]["non_coincident_demand"] = (
-                output_data.get("Steam (all meters) - Peak - Ventilation Fans")
-            )
+            source_results["FANS_INTERIOR_VENTILATION"][
+                "non_coincident_demand"
+            ] = output_data.get("Steam (all meters) - Peak - Ventilation Fans")
 
-            source_results["REFRIGERATION_EQUIPMENT"]["site_energy_use"] = (
-                output_data.get("Steam (all meters) - Energy - Refrigeration Display")
+            source_results["REFRIGERATION_EQUIPMENT"][
+                "site_energy_use"
+            ] = output_data.get("Steam (all meters) - Energy - Refrigeration Display")
+            source_results["REFRIGERATION_EQUIPMENT"][
+                "coincident_demand"
+            ] = output_data.get(
+                "Steam (all meters) - Coincident Peak - Refrigeration Display"
             )
-            source_results["REFRIGERATION_EQUIPMENT"]["coincident_demand"] = (
-                output_data.get(
-                    "Steam (all meters) - Coincident Peak - Refrigeration Display"
-                )
-            )
-            source_results["REFRIGERATION_EQUIPMENT"]["non_coincident_demand"] = (
-                output_data.get("Steam (all meters) - Peak - Refrigeration Display")
-            )
+            source_results["REFRIGERATION_EQUIPMENT"][
+                "non_coincident_demand"
+            ] = output_data.get("Steam (all meters) - Peak - Refrigeration Display")
 
-            source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"]["site_energy_use"] = (
-                output_data.get(
-                    "Steam (all meters) - Energy - Ht Pump Supplemental Heat"
-                )
+            source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"][
+                "site_energy_use"
+            ] = output_data.get(
+                "Steam (all meters) - Energy - Ht Pump Supplemental Heat"
             )
-            source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"]["coincident_demand"] = (
-                output_data.get(
-                    "Steam (all meters) - Coincident Peak - Ht Pump Supplemental Heat"
-                )
+            source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"][
+                "coincident_demand"
+            ] = output_data.get(
+                "Steam (all meters) - Coincident Peak - Ht Pump Supplemental Heat"
             )
             source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"][
                 "non_coincident_demand"
             ] = output_data.get("Steam (all meters) - Peak - Ht Pump Supplemental Heat")
 
-            source_results["SERVICE_WATER_HEATING"]["site_energy_use"] = (
-                output_data.get("Steam (all meters) - Energy - Domestic Hot Water")
+            source_results["SERVICE_WATER_HEATING"][
+                "site_energy_use"
+            ] = output_data.get("Steam (all meters) - Energy - Domestic Hot Water")
+            source_results["SERVICE_WATER_HEATING"][
+                "coincident_demand"
+            ] = output_data.get(
+                "Steam (all meters) - Coincident Peak - Domestic Hot Water"
             )
-            source_results["SERVICE_WATER_HEATING"]["coincident_demand"] = (
-                output_data.get(
-                    "Steam (all meters) - Coincident Peak - Domestic Hot Water"
-                )
-            )
-            source_results["SERVICE_WATER_HEATING"]["non_coincident_demand"] = (
-                output_data.get("Steam (all meters) - Peak - Domestic Hot Water")
-            )
+            source_results["SERVICE_WATER_HEATING"][
+                "non_coincident_demand"
+            ] = output_data.get("Steam (all meters) - Peak - Domestic Hot Water")
 
         elif self.energy_source_type == EnergySourceOptions.PURCHASED_CHILLED_WATER:
             source_results["Consumption"]["site_energy_use"] = output_data.get(
@@ -1937,9 +1937,9 @@ class SourceResult:
             source_results["INTERIOR_LIGHTING"]["coincident_demand"] = output_data.get(
                 "Chilled Water (all meters) - Coincident Peak - Lights"
             )
-            source_results["INTERIOR_LIGHTING"]["non_coincident_demand"] = (
-                output_data.get("Chilled Water (all meters) - Peak - Lights")
-            )
+            source_results["INTERIOR_LIGHTING"][
+                "non_coincident_demand"
+            ] = output_data.get("Chilled Water (all meters) - Peak - Lights")
 
             source_results["MISC_EQUIPMENT"]["site_energy_use"] = output_data.get(
                 "Chilled Water (all meters) - Energy - Misc Equip"
@@ -1991,45 +1991,45 @@ class SourceResult:
                 "Chilled Water (all meters) - Peak - Pumps & Aux"
             )
 
-            source_results["FANS_INTERIOR_VENTILATION"]["site_energy_use"] = (
-                output_data.get(
-                    "Chilled Water (all meters) - Energy - Ventilation Fans"
-                )
+            source_results["FANS_INTERIOR_VENTILATION"][
+                "site_energy_use"
+            ] = output_data.get(
+                "Chilled Water (all meters) - Energy - Ventilation Fans"
             )
-            source_results["FANS_INTERIOR_VENTILATION"]["coincident_demand"] = (
-                output_data.get(
-                    "Chilled Water (all meters) - Coincident Peak - Ventilation Fans"
-                )
+            source_results["FANS_INTERIOR_VENTILATION"][
+                "coincident_demand"
+            ] = output_data.get(
+                "Chilled Water (all meters) - Coincident Peak - Ventilation Fans"
             )
-            source_results["FANS_INTERIOR_VENTILATION"]["non_coincident_demand"] = (
-                output_data.get("Chilled Water (all meters) - Peak - Ventilation Fans")
+            source_results["FANS_INTERIOR_VENTILATION"][
+                "non_coincident_demand"
+            ] = output_data.get("Chilled Water (all meters) - Peak - Ventilation Fans")
+
+            source_results["REFRIGERATION_EQUIPMENT"][
+                "site_energy_use"
+            ] = output_data.get(
+                "Chilled Water (all meters) - Energy - Refrigeration Display"
+            )
+            source_results["REFRIGERATION_EQUIPMENT"][
+                "coincident_demand"
+            ] = output_data.get(
+                "Chilled Water (all meters) - Coincident Peak - Refrigeration Display"
+            )
+            source_results["REFRIGERATION_EQUIPMENT"][
+                "non_coincident_demand"
+            ] = output_data.get(
+                "Chilled Water (all meters) - Peak - Refrigeration Display"
             )
 
-            source_results["REFRIGERATION_EQUIPMENT"]["site_energy_use"] = (
-                output_data.get(
-                    "Chilled Water (all meters) - Energy - Refrigeration Display"
-                )
+            source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"][
+                "site_energy_use"
+            ] = output_data.get(
+                "Chilled Water (all meters) - Energy - Ht Pump Supplemental Heat"
             )
-            source_results["REFRIGERATION_EQUIPMENT"]["coincident_demand"] = (
-                output_data.get(
-                    "Chilled Water (all meters) - Coincident Peak - Refrigeration Display"
-                )
-            )
-            source_results["REFRIGERATION_EQUIPMENT"]["non_coincident_demand"] = (
-                output_data.get(
-                    "Chilled Water (all meters) - Peak - Refrigeration Display"
-                )
-            )
-
-            source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"]["site_energy_use"] = (
-                output_data.get(
-                    "Chilled Water (all meters) - Energy - Ht Pump Supplemental Heat"
-                )
-            )
-            source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"]["coincident_demand"] = (
-                output_data.get(
-                    "Chilled Water (all meters) - Coincident Peak - Ht Pump Supplemental Heat"
-                )
+            source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"][
+                "coincident_demand"
+            ] = output_data.get(
+                "Chilled Water (all meters) - Coincident Peak - Ht Pump Supplemental Heat"
             )
             source_results["HEAT_PUMP_SUPPLEMENTAL_HEATING"][
                 "non_coincident_demand"
@@ -2037,20 +2037,20 @@ class SourceResult:
                 "Chilled Water (all meters) - Peak - Ht Pump Supplemental Heat"
             )
 
-            source_results["SERVICE_WATER_HEATING"]["site_energy_use"] = (
-                output_data.get(
-                    "Chilled Water (all meters) - Energy - Domestic Hot Water"
-                )
+            source_results["SERVICE_WATER_HEATING"][
+                "site_energy_use"
+            ] = output_data.get(
+                "Chilled Water (all meters) - Energy - Domestic Hot Water"
             )
-            source_results["SERVICE_WATER_HEATING"]["coincident_demand"] = (
-                output_data.get(
-                    "Chilled Water (all meters) - Coincident Peak - Domestic Hot Water"
-                )
+            source_results["SERVICE_WATER_HEATING"][
+                "coincident_demand"
+            ] = output_data.get(
+                "Chilled Water (all meters) - Coincident Peak - Domestic Hot Water"
             )
-            source_results["SERVICE_WATER_HEATING"]["non_coincident_demand"] = (
-                output_data.get(
-                    "Chilled Water (all meters) - Peak - Domestic Hot Water"
-                )
+            source_results["SERVICE_WATER_HEATING"][
+                "non_coincident_demand"
+            ] = output_data.get(
+                "Chilled Water (all meters) - Peak - Domestic Hot Water"
             )
 
         elif self.energy_source_type == EnergySourceOptions.ON_SITE_RENEWABLES:

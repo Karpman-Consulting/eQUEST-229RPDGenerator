@@ -193,9 +193,9 @@ def get_zone_target_baseline_system(
                             "zone_ids"
                         ]
                     ):
-                        zones_and_systems_b[zone_id_b]["expected_system_type"] = (
-                            secondary_system_type_b["expected_system_type"]
-                        )
+                        zones_and_systems_b[zone_id_b][
+                            "expected_system_type"
+                        ] = secondary_system_type_b["expected_system_type"]
                         zones_and_systems_b[zone_id_b][
                             "system_origin"
                         ] = SYSTEMORIGIN.G311B
@@ -298,14 +298,16 @@ def get_zone_target_baseline_system(
         ):
             zone_hvac_bat_dict_b = get_zone_hvac_bat_dict(zone_b)
             zs_entry["system_origin"] = SYSTEMORIGIN.G311F
-            zs_entry["expected_system_type"] = (
-                expected_system_type_from_table_g3_1_1_dict(
-                    max(zone_hvac_bat_dict_b, key=zone_hvac_bat_dict_b.get),
-                    climate_zone_b,
-                    num_floors_b,
-                    floor_area_b,
-                )["expected_system_type"]
-            )
+            zs_entry[
+                "expected_system_type"
+            ] = expected_system_type_from_table_g3_1_1_dict(
+                max(zone_hvac_bat_dict_b, key=zone_hvac_bat_dict_b.get),
+                climate_zone_b,
+                num_floors_b,
+                floor_area_b,
+            )[
+                "expected_system_type"
+            ]
 
         # -------------------------
         # G3.1.1g
