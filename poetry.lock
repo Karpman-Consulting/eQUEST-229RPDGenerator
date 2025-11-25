@@ -901,14 +901,16 @@ description = "SIMcheck Report Viewer"
 optional = false
 python-versions = "^3.11"
 files = []
-develop = true
+develop = false
 
 [package.dependencies]
 pint = "*"
 
 [package.source]
-type = "directory"
-url = "../SIMcheck-Report-Viewer"
+type = "git"
+url = "https://github.com/Karpman-Consulting/RECI-ReportProjectEval.git"
+reference = "major-refactoring"
+resolved_reference = "416bd6a8f63132ddf3bb1e3ec8010c56157e0629"
 
 [[package]]
 name = "referencing"
@@ -1170,7 +1172,7 @@ description = "PNNL ruleset checking tool"
 optional = false
 python-versions = "^3.10"
 files = []
-develop = true
+develop = false
 
 [package.dependencies]
 black = "^22.6.0"
@@ -1190,8 +1192,10 @@ regex = "^2022.1.18"
 xlrd = "^1.2"
 
 [package.source]
-type = "directory"
-url = "../RCT"
+type = "git"
+url = "https://github.com/pnnl/ruleset-checking-tool.git"
+reference = "develop"
+resolved_reference = "5f1d68340a94c0729bef35b44592f49ed5b036b9"
 
 [[package]]
 name = "six"
@@ -1282,4 +1286,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "dd2af2f9cd4ed6d2cee38b110729cdd30ad217578f4c5109cc1ea4c8d6917ce5"
+content-hash = "3eb634fa325988ac1b80e14c8b4a2cf57655ab3c8ff74ffcff8a989776f10676"
