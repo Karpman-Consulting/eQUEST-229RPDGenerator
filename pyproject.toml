@@ -22,7 +22,7 @@ pydash = "^7.0.7"
 numpy = "^1.26.4"
 openpyxl = "^3.1.5"
 ruleset-checking-tool = {git = "https://github.com/pnnl/ruleset-checking-tool.git", branch="develop"}
-rctreportviewer = {git = "https://github.com/Karpman-Consulting/RECI-ReportProjectEval.git", branch="main"}
+rctreportviewer = {git = "https://github.com/Karpman-Consulting/RECI-ReportProjectEval.git", branch="major-refactoring"}
 
 
 [tool.poetry.group.dev.dependencies]
