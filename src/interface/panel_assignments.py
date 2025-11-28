@@ -234,6 +234,8 @@ class RulesetValuesPanel(ctk.CTkFrame):
         self.sheet.bind("<<SheetModified>>", self._on_sheet_modified)
         self.sheet.bind("<Delete>", self._clear_selected_cells)
         self.sheet.bind("<BackSpace>", self._clear_selected_cells)
+        self.sheet.bind("<Control-Shift-Down>", self._select_to_bottom)
+        self.sheet.bind("<Control-Shift-Up>", self._select_to_top)
 
         self.sheet.enable_bindings(
             (
@@ -555,7 +557,6 @@ class RulesetValuesPanel(ctk.CTkFrame):
             "resolved": occ_resolved,
             "status": occ_status,
             "original_resolved": occ_resolved,
-            # NEW FIELDS:
             "bldgtype_values": {fp: per_file[fp]["bldg"] for fp in exists_in},
             "bldgtype_resolved": bldg_resolved,
             "bldgtype_original": bldg_resolved,
@@ -864,6 +865,42 @@ class RulesetValuesPanel(ctk.CTkFrame):
 
         self.sheet.refresh()
         return "break"
+
+    def _get_active_cell(self):
+        sel = self.sheet.get_currently_selected()
+        if sel is None:
+            return 0, 0
+
+        # Namedtuple → use attributes
+        r = sel.row
+        c = sel.column
+
+        if r is None or c is None:
+            return 0, 0
+
+        return r, c
+
+    def _select_to_bottom(self, event=None):
+        r, c = self._get_active_cell()
+        last_row = self.sheet.total_rows()
+
+        # Clear existing selection boxes
+        self.sheet.deselect("all", redraw=False)
+
+        # Create new selection box from active cell to bottom
+        self.sheet.create_selection_box(r, c, last_row, c + 1, type_="cells")
+
+        # Set anchor cell (so arrow keys behave correctly)
+        self.sheet.set_currently_selected(row=r, column=c)
+
+        self.sheet.redraw()
+
+    def _select_to_top(self, event=None):
+        r, c = self._get_active_cell()
+        self.sheet.deselect("all", redraw=False)
+        self.sheet.create_selection_box(0, c, r, c + 1, type_="cells")
+        self.sheet.set_currently_selected(row=r, column=c)
+        self.sheet.redraw()
 
     @staticmethod
     def _extract_event_payload(event):
@@ -1182,17 +1219,27 @@ class RulesetValuesPanel(ctk.CTkFrame):
     # Confidence coloring
     # ------------------------------
     def _apply_confidence_color(self, row, col, conf):
+        """Color cell by confidence without writing value."""
         conf = int(conf or 0)
-        if conf >= 85:
-            bg = "#c8e6c9"  # green
-        elif conf >= 60:
-            bg = "#fff3cd"  # soft yellow
-        elif conf >= 30:
-            bg = "#ffcc80"  # orange-ish
-        else:
-            bg = "#ef9a9a"  # red-ish
+
+        # Color scale:
+        # More green as confidence increases, more red as it decreases.
+        # (0 = red, 100 = green)
+        # Linear interpolation on RGB.
+        r = int(255 - (conf * 1.5))  # 255→105
+        g = int(105 + (conf * 1.5))  # 105→255
+        b = 120  # constant blue for smoother scale
+
+        # Clamp values
+        r = max(0, min(255, r))
+        g = max(0, min(255, g))
+
+        bg = f"#{r:02x}{g:02x}{b:02x}"
         fg = "#000000"
-        self.sheet.set_cell_data(row, col, str(conf), redraw=False)
+
+        # Don't write confidence number anymore
+        # self.sheet.set_cell_data(row, col, str(conf), redraw=False)
+
         self.sheet.highlight_cells(row=row, column=col, bg=bg, fg=fg, redraw=False)
 
     # ------------------------------
@@ -1438,12 +1485,28 @@ class RulesetValuesPanel(ctk.CTkFrame):
             for c, cell_value in enumerate(row, start=1):
                 ws.cell(row=r, column=c, value=cell_value)
 
-        # Dropdown for Value column
-        dv_list = ",".join(self.space_type_options)
-        dv = DataValidation(type="list", formula1=f'"{dv_list}"', allow_blank=True)
         last_row = len(data) + 1
-        dv.add(f"B2:B{last_row}")
-        ws.add_data_validation(dv)
+        # -------------------------
+        # BUILDING TYPE DROPDOWN (column B)
+        # -------------------------
+        bldg_list = ",".join(self.building_type_options)
+        dv_bldg = DataValidation(
+            type="list", formula1=f'"{bldg_list}"', allow_blank=True
+        )
+
+        ws.add_data_validation(dv_bldg)
+        dv_bldg.add(f"B2:B{last_row}")
+
+        # -------------------------
+        # SPACE TYPE DROPDOWN (column C)
+        # -------------------------
+        space_list = ",".join(self.space_type_options)
+        dv_space = DataValidation(
+            type="list", formula1=f'"{space_list}"', allow_blank=True
+        )
+
+        ws.add_data_validation(dv_space)
+        dv_space.add(f"C2:C{last_row}")
 
         # Autosize
         for col in range(1, ws.max_column + 1):
