@@ -39,6 +39,8 @@ class Material(BaseNode):
             self.thickness = self.try_float(
                 self.get_inp(BDL_MaterialKeywords.THICKNESS)
             )
+            if self.thickness == 0:
+                self.thickness = 0.000001
 
             self.thermal_conductivity = self.try_float(
                 self.get_inp(BDL_MaterialKeywords.CONDUCTIVITY)
@@ -139,7 +141,9 @@ class Layer(BaseDefinition):
                     original_material.thickness is not None
                     and true_thickness != original_material.thickness
                 ):
-                    # Need to clone
+                    # Need to clone but prevent 0 thickness materials
+                    if true_thickness == 0:
+                        true_thickness = 0.000001
                     new_material = original_material.clone_with_thickness(
                         true_thickness
                     )
