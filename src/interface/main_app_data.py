@@ -221,24 +221,24 @@ class MainAppData:
         """
         for boiler in rmd.boiler_names:
             boiler_obj = rmd.get_obj(boiler)
-            heat_input_ratio = boiler_obj.get_inp("HEAT-INPUT-RATIO").strip()
-            if heat_input_ratio is not None and float(heat_input_ratio) <= 1:
+            heat_input_ratio = boiler_obj.get_inp("HEAT-INPUT-RATIO")
+            if heat_input_ratio is not None and float(heat_input_ratio.strip()) <= 1:
                 self.warnings.append(
-                    f"{rmd.type} model, boiler '{boiler}' has a heat input ratio of {heat_input_ratio} which implies an efficiency greater than 100%"
+                    f"{rmd.type} model, boiler '{boiler}' has a heat input ratio of {float(heat_input_ratio.strip())} which implies an efficiency greater than 100%"
                 )
         for domestic_water_heater in rmd.domestic_water_heater_names:
             domestic_water_heater_obj = rmd.get_obj(domestic_water_heater)
             heat_input_ratio = domestic_water_heater_obj.get_inp("HEAT-INPUT-RATIO")
-            if heat_input_ratio is not None and float(heat_input_ratio) <= 1:
+            if heat_input_ratio is not None and float(heat_input_ratio.strip()) <= 1:
                 self.warnings.append(
-                    f"{rmd.type} model, domestic water heater '{domestic_water_heater}' has a heat input ratio of {heat_input_ratio} which implies an efficiency greater than 100%"
+                    f"{rmd.type} model, domestic water heater '{domestic_water_heater}' has a heat input ratio of {float(heat_input_ratio.strip())} which implies an efficiency greater than 100%"
                 )
         for system in rmd.system_names:
             system_obj = rmd.get_obj(system)
             heat_input_ratio = system_obj.get_inp("FURNACE-HIR")
-            if heat_input_ratio is not None and float(heat_input_ratio) <= 1:
+            if heat_input_ratio is not None and float(heat_input_ratio.strip()) <= 1:
                 self.warnings.append(
-                    f"{rmd.type} model, HVAC system '{system}' has a heat input ratio of {heat_input_ratio} which implies an efficiency greater than 100%"
+                    f"{rmd.type} model, HVAC system '{system}' has a heat input ratio of {float(heat_input_ratio.strip())} which implies an efficiency greater than 100%"
                 )
 
     def check_space_and_zone_data(self, rmd):
