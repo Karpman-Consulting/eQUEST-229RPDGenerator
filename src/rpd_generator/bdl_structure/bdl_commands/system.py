@@ -32,7 +32,6 @@ HeatpumpAuxiliaryHeatOptions = SchemaEnums.schema_enums["HeatpumpAuxiliaryHeatOp
 CoolingMetricOptions = SchemaEnums.schema_enums["CoolingMetricOptions"]
 HeatingMetricOptions = SchemaEnums.schema_enums["HeatingMetricOptions"]
 
-
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_SystemKeywords = BDLEnums.bdl_enums["SystemKeywords"]
 BDL_ZoneKeywords = BDLEnums.bdl_enums["ZoneKeywords"]
@@ -216,6 +215,15 @@ class System(ParentNode):
             self.is_zonal_system = True
             if not self.is_derived_system:
                 self.create_zonal_systems()
+
+        if len(self.children) == 1 and self.children[0].get_inp(
+            BDL_ZoneKeywords.TYPE
+        ) in [
+            BDL_ZoneTypeOptions.UNCONDITIONED,
+            BDL_ZoneTypeOptions.PLENUM,
+        ]:
+            self.omit = True
+            return
 
         self.update_system_mapping()
         heat_type = HeatingSystem.heat_type_map.get(
@@ -965,7 +973,6 @@ class System(ParentNode):
 
 
 class FanSystem:
-
     supply_fan_control_map = {
         BDL_SystemFanControlOptions.CONSTANT_VOLUME: FanSystemSupplyFanControlOptions.CONSTANT,
         BDL_SystemFanControlOptions.SPEED: FanSystemSupplyFanControlOptions.VARIABLE_SPEED_DRIVE,
@@ -1561,7 +1568,6 @@ class Fan:
 
 
 class HeatingSystem:
-
     BDL_output_heat_type_map = {
         BDL_SystemHeatingTypes.HEAT_PUMP: None,  # Mapping updated based on condenser type
         BDL_SystemHeatingTypes.FURNACE: BDL_OutputHeatingTypes.FURNACE,
@@ -2087,7 +2093,6 @@ class CoolingSystem:
 
 
 class PreheatSystem:
-
     heat_type_map = {
         BDL_SystemHeatingTypes.NONE: HeatingSystemOptions.NONE,
         BDL_SystemHeatingTypes.ELECTRIC: HeatingSystemOptions.ELECTRIC_RESISTANCE,
@@ -2218,7 +2223,6 @@ class PreheatSystem:
 
 
 class AirEconomizer:
-
     economizer_map = {
         BDL_EconomizerOptions.FIXED: AirEconomizerOptions.FIXED_FRACTION,
         BDL_EconomizerOptions.OA_TEMP: AirEconomizerOptions.TEMPERATURE,
@@ -2273,7 +2277,6 @@ class AirEconomizer:
 
 
 class AirEnergyRecovery:
-
     has_recovery_map = {
         BDL_EnergyRecoveryOptions.NO: EnergyRecoveryOperationOptions.NONE,
         BDL_EnergyRecoveryOptions.RELIEF_ONLY: None,  # Mapping updated in populate_air_energy_recovery method
