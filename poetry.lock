@@ -909,8 +909,8 @@ pint = "*"
 [package.source]
 type = "git"
 url = "https://github.com/Karpman-Consulting/RECI-ReportProjectEval.git"
-reference = "major-refactoring"
-resolved_reference = "416bd6a8f63132ddf3bb1e3ec8010c56157e0629"
+reference = "main"
+resolved_reference = "d969f09bdac633d99715c624c886d79e59c600b4"
 
 [[package]]
 name = "referencing"
@@ -1286,4 +1286,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "3eb634fa325988ac1b80e14c8b4a2cf57655ab3c8ff74ffcff8a989776f10676"
+content-hash = "0d458e7d822526a15045d341f93cf1c735e00f3c29c8ae9ca65632fae9819317"
