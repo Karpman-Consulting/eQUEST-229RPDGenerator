@@ -986,10 +986,15 @@ class ServiceWaterHeatingUse:
         self.use_multiplier_schedule = self.loop.try_access_index(
             self.loop.get_inp(BDL_CirculationLoopKeywords.PROCESS_SCH), self.n - 1
         )
+        process_t = self.loop.try_access_index(
+            self.loop.get_inp(BDL_CirculationLoopKeywords.PROCESS_T),
+            self.n - 1,
+        )
+
         self.temperature_at_fixture = self.loop.try_float(
-            self.loop.try_access_index(
-                self.loop.get_inp(BDL_CirculationLoopKeywords.PROCESS_T), self.n - 1
-            )
+            process_t
+        ) or self.loop.try_float(
+            self.loop.get_inp(BDL_CirculationLoopKeywords.HEAT_SETPT_T)
         )
 
         if (
