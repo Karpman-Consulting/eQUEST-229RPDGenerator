@@ -1,11 +1,12 @@
 import customtkinter as ctk
-import threading
-import subprocess
-import sys
 import re
+import io
+import traceback
+import threading
+from contextlib import redirect_stdout
 from tkinter import filedialog
 from pathlib import Path
-from rct229.web_application import run_project_evaluation as run
+from rct229.web_application import run_project_evaluation
 from rct229.utils.file import deserialize_rpd_file
 
 from interface.error_window import ErrorWindow
@@ -13,10 +14,18 @@ from interface.loading_window import LoadingWindow
 from interface.constants import HEADER_FONT, LABEL_FONT, TEXT_FONT
 
 
-def get_python():
-    if getattr(sys, "frozen", False):
-        return str(Path(sys._MEIPASS) / "python.exe")
-    return sys.executable
+class StdoutInterceptor(io.StringIO):
+    def __init__(self, on_line):
+        super().__init__()
+        self.on_line = on_line
+        self._buffer = ""
+
+    def write(self, s):
+        self._buffer += s
+        while "\n" in self._buffer:
+            line, self._buffer = self._buffer.split("\n", 1)
+            self.on_line(line.rstrip())
+        return len(s)
 
 
 class RCTPanel(ctk.CTkFrame):
@@ -110,19 +119,32 @@ class RCTPanel(ctk.CTkFrame):
 
         loading = LoadingWindow(self.controller, "Starting RCT evaluation...")
         loading.set_progress(0.0)
+        loading.update_idletasks()
 
         def worker():
             try:
                 # Load the RPD file
                 rpd = deserialize_rpd_file(data.active_rpd_path)
 
-                # Run the evaluation directly (no subprocess)
-                run(
-                    [rpd],  # single-model list
-                    "ashrae9012019",  # ruleset
-                    ["ASHRAE9012019DetailReport"],
-                    saving_dir=out_dir,
-                )
+                def handle_line(line: str):
+                    # forward text to loading window
+                    self.after(0, lambda l=line: loading.set_message(l))
+
+                    # parse progress if present
+                    m = re.search(r"progress:\s*(\d+)%", line, re.I)
+                    if m:
+                        pct = int(m.group(1))
+                        self.after(0, lambda p=pct: loading.set_progress(p / 100.0))
+
+                interceptor = StdoutInterceptor(handle_line)
+
+                with redirect_stdout(interceptor):
+                    run_project_evaluation(
+                        [rpd],
+                        "ashrae9012019",
+                        ["ASHRAE9012019DetailReport"],
+                        saving_dir=out_dir,
+                    )
 
                 # Update UI on success
                 self.after(0, lambda: loading.set_progress(1.0))
@@ -137,10 +159,13 @@ class RCTPanel(ctk.CTkFrame):
                     ),
                 )
 
-            except Exception as e:
+            except Exception:
+                tb = traceback.format_exc()
+                msg = "RCT failed with an exception:\n\n" f"{tb}"
+
                 self.after(
                     0,
-                    lambda: ErrorWindow(self.controller, f"RCT failed:\n\n{e}"),
+                    lambda m=msg: ErrorWindow(self.controller, m),
                 )
 
             finally:
