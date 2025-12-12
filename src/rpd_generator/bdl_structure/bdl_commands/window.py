@@ -129,7 +129,6 @@ class Window(ChildNode):
             opaque_conductance = self.try_float(
                 self.get_inp(BDL_WindowKeywords.FRAME_CONDUCT)
             )
-            int_air_film_resistance = 0.68
 
         elif (
             specification_method == BDL_GlassTypeOptions.SHADING_COEF
@@ -137,7 +136,6 @@ class Window(ChildNode):
             opaque_conductance = self.try_float(
                 self.get_inp(BDL_WindowKeywords.CURB_CONDUCT)
             )
-            int_air_film_resistance = 0.61
 
         elif (
             self.get_inp(BDL_WindowKeywords.WINDOW_TYPE) == BDL_WindowTypes.STANDARD
@@ -146,14 +144,12 @@ class Window(ChildNode):
                 self.get_inp(BDL_WindowKeywords.FRAME_CONDUCT)
             )
             glass_conductance = output_data.get("Window - Input - Glass center u-value")
-            int_air_film_resistance = 0.68
 
         else:  # Glass Type is from the Glass Library and Window Type is a type of Skylight
             opaque_conductance = self.try_float(
                 self.get_inp(BDL_WindowKeywords.CURB_CONDUCT)
             )
             glass_conductance = output_data.get("Window - Input - Glass center u-value")
-            int_air_film_resistance = 0.61
 
         if not self.glazed_area and not self.opaque_area:
             return
@@ -161,7 +157,7 @@ class Window(ChildNode):
         if not glass_conductance:
             glass_resistance = float("inf")
         else:
-            glass_resistance = 1 / glass_conductance + int_air_film_resistance
+            glass_resistance = 1 / glass_conductance + ext_air_film_resistance
 
         if not opaque_conductance:
             opaque_resistance = float("inf")

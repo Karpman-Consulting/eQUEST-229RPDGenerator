@@ -30,6 +30,8 @@ from rpd_generator.bdl_structure.bdl_commands.zone import (
     Zone,
     BDL_ZoneCWValveOptions,
 )
+from rpd_generator.bdl_structure.bdl_commands.floor import Floor
+from rpd_generator.bdl_structure.bdl_commands.space import Space
 from rpd_generator.bdl_structure.bdl_commands.project import (
     RunPeriod,
     Holidays,
@@ -62,6 +64,10 @@ class TestCHWLoop(unittest.TestCase):
         self.pump = Pump("Pump 1", self.rmd)
         self.system = System("System 1", self.rmd)
         self.zone = Zone("Zone 1", self.system, self.rmd)
+        self.floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.zone
+        self.space = Space("Space 1", self.floor, self.rmd)
+        self.zone.space = self.space
         self.eir_f_t = CurveFit("EIR-fT Curve", self.rmd)
         self.eir_f_plr = CurveFit("EIR-fPLR Curve", self.rmd)
         self.cap_f_t = CurveFit("CAP-fT Curve", self.rmd)
@@ -103,7 +109,9 @@ class TestCHWLoop(unittest.TestCase):
             BDL_HolidayKeywords.TYPE: BDL_HolidayTypes.OFFICIAL_US,
         }
         self.pump.keyword_value_pairs = {BDL_PumpKeywords.NUMBER: "1"}
-
+        self.zone.keyword_value_pairs = {
+            BDL_ZoneKeywords.SPACE: "Space 1",
+        }
         self.loop_operation_day_schedule.keyword_value_pairs = {
             BDL_DayScheduleKeywords.TYPE: BDL_ScheduleTypes.ON_OFF,
             BDL_DayScheduleKeywords.VALUES: [i % 2 for i in range(24)],
@@ -924,10 +932,12 @@ class TestCHWLoop(unittest.TestCase):
             - Zone HW-VALVE-TYPE TWO-WAY
         """
         mock_get_output_data.return_value = {}
-        self.zone.keyword_value_pairs = {
-            BDL_ZoneKeywords.HW_LOOP: "Circulation Loop 1",
-            BDL_ZoneKeywords.HW_VALVE_TYPE: BDL_SystemHeatingValveTypes.TWO_WAY,
-        }
+        self.zone.keyword_value_pairs.update(
+            {
+                BDL_ZoneKeywords.HW_LOOP: "Circulation Loop 1",
+                BDL_ZoneKeywords.HW_VALVE_TYPE: BDL_SystemHeatingValveTypes.TWO_WAY,
+            }
+        )
         self.circulation_loop.keyword_value_pairs = {
             BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.HW
         }
@@ -975,10 +985,12 @@ class TestCHWLoop(unittest.TestCase):
             - HP SYSTEM CW-VALVE YES
         """
         mock_get_output_data.return_value = {}
-        self.zone.keyword_value_pairs = {
-            BDL_ZoneKeywords.CW_LOOP: "Circulation Loop 1",
-            BDL_ZoneKeywords.CW_VALVE: BDL_ZoneCWValveOptions.YES,
-        }
+        self.zone.keyword_value_pairs.update(
+            {
+                BDL_ZoneKeywords.CW_LOOP: "Circulation Loop 1",
+                BDL_ZoneKeywords.CW_VALVE: BDL_ZoneCWValveOptions.YES,
+            }
+        )
         self.circulation_loop.keyword_value_pairs = {
             BDL_CirculationLoopKeywords.TYPE: BDL_CirculationLoopTypes.WLHP
         }
@@ -1081,7 +1093,15 @@ class TestCHWLoop(unittest.TestCase):
             BDL_CirculationLoopKeywords.PROCESS_FLOW: "10.0",
         }
         self.rmd.building_area_types = {0}
-        self.circulation_loop.populate_service_water_heating_uses(testing=True)
+        self.circulation_loop.populate_service_water_heating_uses()
+        swh_use = next(
+            obj
+            for obj in self.rmd.bdl_obj_instances.values()
+            if isinstance(obj, ServiceWaterHeatingUse)
+        )
+        swh_use.populate_data_group()
+        swh_use.insert_to_rpd()
+
         expected_data_structure = [
             {
                 "id": "Circulation Loop 1 Load1",
@@ -1114,7 +1134,14 @@ class TestCHWLoop(unittest.TestCase):
             BDL_CirculationLoopKeywords.PROCESS_SCH: "Load1",
         }
         self.rmd.building_area_types = {0}
-        self.circulation_loop.populate_service_water_heating_uses(testing=True)
+        self.circulation_loop.populate_service_water_heating_uses()
+        swh_use = next(
+            obj
+            for obj in self.rmd.bdl_obj_instances.values()
+            if isinstance(obj, ServiceWaterHeatingUse)
+        )
+        swh_use.populate_data_group()
+        swh_use.insert_to_rpd()
         expected_data_structure = [
             {
                 "id": "Circulation Loop 1 Load1",
@@ -1147,7 +1174,7 @@ class TestCHWLoop(unittest.TestCase):
             BDL_CirculationLoopKeywords.PROCESS_SCH: ["Load1", "Load2"],
         }
         self.rmd.building_area_types = {0}
-        self.circulation_loop.populate_service_water_heating_uses(testing=True)
+        self.circulation_loop.populate_service_water_heating_uses()
         swh_uses = [
             obj
             for obj in self.rmd.bdl_obj_instances.values()

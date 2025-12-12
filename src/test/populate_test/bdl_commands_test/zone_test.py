@@ -264,6 +264,7 @@ class TestZones(unittest.TestCase):
             BDL_SystemKeywords.COOLING_CAPACITY: "14",
         }
         self.test_zone.keyword_value_pairs = {
+            BDL_ZoneKeywords.SPACE: "Space 1",
             BDL_ZoneKeywords.BASEBOARD_CTRL: BDL_BaseboardControlOptions.NONE,
             BDL_ZoneKeywords.DESIGN_COOL_T: "85",
             BDL_ZoneKeywords.COOL_TEMP_SCH: "Thermostat Annual Schedule",
@@ -272,13 +273,19 @@ class TestZones(unittest.TestCase):
             BDL_ZoneKeywords.OUTSIDE_AIR_FLOW: "200",
             BDL_ZoneKeywords.MIN_AIR_SCH: "Flow Annual Schedule",
         }
+        self.test_floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        self.test_space = Space("Space 1", self.test_floor, self.rmd)
+        self.test_zone.space = self.test_space
 
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "Zone 1",
+            "floor_name": "Floor 1",
+            "volume": 0,
             "design_thermostat_cooling_setpoint": 85.0,
             "design_thermostat_heating_setpoint": 45.0,
-            "infiltration": {},
+            "infiltration": {"id": "Zone 1 Infil", "modeling_method": "WEATHER_DRIVEN"},
             "spaces": [],
             "surfaces": [],
             "terminals": [
@@ -342,6 +349,7 @@ class TestZones(unittest.TestCase):
             BDL_SystemKeywords.HW_LOOP: "HW Circulation Loop",
         }
         self.test_zone.keyword_value_pairs = {
+            BDL_ZoneKeywords.SPACE: "Space 1",
             BDL_ZoneKeywords.BASEBOARD_CTRL: BDL_BaseboardControlOptions.NONE,
             BDL_ZoneKeywords.DESIGN_COOL_T: "85",
             BDL_ZoneKeywords.COOL_TEMP_SCH: "Thermostat Annual Schedule",
@@ -351,13 +359,19 @@ class TestZones(unittest.TestCase):
             BDL_ZoneKeywords.MIN_AIR_SCH: "Flow Annual Schedule",
             BDL_ZoneKeywords.MIN_FLOW_RATIO: "0.6",
         }
+        self.test_floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        self.test_space = Space("Space 1", self.test_floor, self.rmd)
+        self.test_zone.space = self.test_space
 
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "Zone 1",
+            "floor_name": "Floor 1",
+            "volume": 0,
             "design_thermostat_cooling_setpoint": 85.0,
             "design_thermostat_heating_setpoint": 45.0,
-            "infiltration": {},
+            "infiltration": {"id": "Zone 1 Infil", "modeling_method": "WEATHER_DRIVEN"},
             "spaces": [],
             "surfaces": [],
             "terminals": [
@@ -374,7 +388,6 @@ class TestZones(unittest.TestCase):
                     "minimum_outdoor_airflow_multiplier_schedule": "Flow Annual Schedule",
                     "primary_airflow": 10000,
                     "secondary_airflow": 0,
-                    "served_by_heating_ventilating_air_conditioning_system": "System 1",
                     "supply_design_cooling_setpoint_temperature": 50.0,
                     "supply_design_heating_setpoint_temperature": 70.0,
                     "temperature_control": "CONSTANT",
@@ -432,6 +445,7 @@ class TestZones(unittest.TestCase):
             BDL_SystemKeywords.HW_LOOP: "HW Circulation Loop",
         }
         self.test_zone.keyword_value_pairs = {
+            BDL_ZoneKeywords.SPACE: "Space 1",
             BDL_ZoneKeywords.BASEBOARD_CTRL: BDL_BaseboardControlOptions.NONE,
             BDL_ZoneKeywords.DESIGN_COOL_T: "85",
             BDL_ZoneKeywords.COOL_TEMP_SCH: "Thermostat Annual Schedule",
@@ -443,13 +457,19 @@ class TestZones(unittest.TestCase):
             BDL_ZoneKeywords.MIN_AIR_SCH: "Flow Annual Schedule",
             BDL_ZoneKeywords.MIN_FLOW_RATIO: "0.6",
         }
+        self.test_floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        self.test_space = Space("Space 1", self.test_floor, self.rmd)
+        self.test_zone.space = self.test_space
 
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "Zone 1",
+            "floor_name": "Floor 1",
+            "volume": 0,
             "design_thermostat_cooling_setpoint": 85.0,
             "design_thermostat_heating_setpoint": 45.0,
-            "infiltration": {},
+            "infiltration": {"id": "Zone 1 Infil", "modeling_method": "WEATHER_DRIVEN"},
             "spaces": [],
             "surfaces": [],
             "terminals": [
@@ -488,11 +508,20 @@ class TestZones(unittest.TestCase):
             BDL_SystemKeywords.FAN_SCHEDULE: "Fan Annual Schedule",
             BDL_SystemKeywords.TYPE: BDL_SystemTypes.SUM,
         }
+        self.test_zone.keyword_value_pairs = {
+            BDL_ZoneKeywords.SPACE: "Space 1",
+        }
+        self.test_floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        self.test_space = Space("Space 1", self.test_floor, self.rmd)
+        self.test_zone.space = self.test_space
 
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "Zone 1",
-            "infiltration": {},
+            "floor_name": "Floor 1",
+            "volume": 0,
+            "infiltration": {"id": "Zone 1 Infil", "modeling_method": "WEATHER_DRIVEN"},
             "spaces": [],
             "surfaces": [],
             "terminals": [],
@@ -514,16 +543,23 @@ class TestZones(unittest.TestCase):
             BDL_SystemKeywords.FAN_CONTROL: BDL_SystemFanControlOptions.CONSTANT_VOLUME,
         }
         self.test_zone.keyword_value_pairs = {
+            BDL_ZoneKeywords.SPACE: "Space 1",
             BDL_ZoneKeywords.EXHAUST_FLOW: "150",
             BDL_ZoneKeywords.EXHAUST_FAN_SCH: "Fan Annual Schedule",
             BDL_ZoneKeywords.EXHAUST_STATIC: "2",
             BDL_ZoneKeywords.EXHAUST_EFF: "0.8",
         }
+        self.test_floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        self.test_space = Space("Space 1", self.test_floor, self.rmd)
+        self.test_zone.space = self.test_space
 
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "Zone 1",
-            "infiltration": {},
+            "volume": 0,
+            "floor_name": "Floor 1",
+            "infiltration": {"id": "Zone 1 Infil", "modeling_method": "WEATHER_DRIVEN"},
             "spaces": [],
             "surfaces": [],
             "terminals": [
@@ -568,14 +604,21 @@ class TestZones(unittest.TestCase):
             BDL_SystemKeywords.FAN_CONTROL: BDL_SystemFanControlOptions.CONSTANT_VOLUME,
         }
         self.test_zone.keyword_value_pairs = {
+            BDL_ZoneKeywords.SPACE: "Space 1",
             BDL_ZoneKeywords.BASEBOARD_CTRL: BDL_BaseboardControlOptions.NONE,
             BDL_ZoneKeywords.TERMINAL_TYPE: BDL_TerminalTypes.TERMINAL_IU,
         }
+        self.test_floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        self.test_space = Space("Space 1", self.test_floor, self.rmd)
+        self.test_zone.space = self.test_space
 
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "Zone 1",
-            "infiltration": {},
+            "floor_name": "Floor 1",
+            "volume": 0,
+            "infiltration": {"id": "Zone 1 Infil", "modeling_method": "WEATHER_DRIVEN"},
             "spaces": [],
             "surfaces": [],
             "terminals": [
@@ -601,7 +644,8 @@ class TestZones(unittest.TestCase):
         """
         self.doas = System("DOAS 1", self.rmd)
         self.doas.keyword_value_pairs = {
-            BDL_SystemKeywords.FAN_SCHEDULE: "Fan Annual Schedule"
+            BDL_SystemKeywords.TYPE: BDL_SystemTypes.DOAS,
+            BDL_SystemKeywords.FAN_SCHEDULE: "Fan Annual Schedule",
         }
         mock_get_output_data.return_value = {}
         self.system.keyword_value_pairs = {
@@ -610,12 +654,20 @@ class TestZones(unittest.TestCase):
             BDL_SystemKeywords.FAN_CONTROL: BDL_SystemFanControlOptions.CONSTANT_VOLUME,
             BDL_SystemKeywords.DOA_SYSTEM: "DOAS 1",
         }
-        self.test_zone.keyword_value_pairs = {}
+        self.test_zone.keyword_value_pairs = {
+            BDL_ZoneKeywords.SPACE: "Space 1",
+        }
+        self.test_floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        self.test_space = Space("Space 1", self.test_floor, self.rmd)
+        self.test_zone.space = self.test_space
 
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "Zone 1",
-            "infiltration": {},
+            "floor_name": "Floor 1",
+            "volume": 0,
+            "infiltration": {"id": "Zone 1 Infil", "modeling_method": "WEATHER_DRIVEN"},
             "spaces": [],
             "surfaces": [],
             "terminals": [
@@ -665,14 +717,21 @@ class TestZones(unittest.TestCase):
             BDL_SystemKeywords.BBRD_LOOP: "HW Baseboard Loop",
         }
         self.test_zone.keyword_value_pairs = {
+            BDL_ZoneKeywords.SPACE: "Space 1",
             BDL_ZoneKeywords.BASEBOARD_CTRL: BDL_BaseboardControlOptions.THERMOSTATIC,
             BDL_ZoneKeywords.BASEBOARD_RATING: "-6000",
         }
+        self.test_floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        self.test_space = Space("Space 1", self.test_floor, self.rmd)
+        self.test_zone.space = self.test_space
 
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "Zone 1",
-            "infiltration": {},
+            "floor_name": "Floor 1",
+            "volume": 0,
+            "infiltration": {"id": "Zone 1 Infil", "modeling_method": "WEATHER_DRIVEN"},
             "spaces": [],
             "surfaces": [],
             "terminals": [
@@ -719,16 +778,23 @@ class TestZones(unittest.TestCase):
             BDL_SystemKeywords.ZONE_OA_METHOD: BDL_ZoneOAMethodsOptions.SUM_OCC_AND_AREA,
         }
         self.test_zone.keyword_value_pairs = {
+            BDL_ZoneKeywords.SPACE: "Space 1",
             BDL_ZoneKeywords.BASEBOARD_CTRL: BDL_BaseboardControlOptions.NONE,
             BDL_ZoneKeywords.OA_FLOW_PER: "5",
             BDL_ZoneKeywords.TERMINAL_TYPE: BDL_TerminalTypes.SVAV,
             BDL_ZoneKeywords.MIN_FLOW_CTRL: BDL_MinFlowControlOptions.DCV_RESET_DOWN,
         }
+        self.test_floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.test_zone
+        self.test_space = Space("Space 1", self.test_floor, self.rmd)
+        self.test_zone.space = self.test_space
 
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "Zone 1",
-            "infiltration": {},
+            "floor_name": "Floor 1",
+            "volume": 0,
+            "infiltration": {"id": "Zone 1 Infil", "modeling_method": "WEATHER_DRIVEN"},
             "spaces": [],
             "surfaces": [],
             "terminals": [
@@ -756,6 +822,7 @@ class TestZones(unittest.TestCase):
         self.rmd.space_map["Space 1"] = self.test_zone
         self.floor = Floor("Floor 1", self.rmd)
         self.space = Space("Space 1", self.floor, self.rmd)
+        self.test_zone.space = self.space
 
         self.space.keyword_value_pairs = {
             BDL_SpaceKeywords.PEOPLE_SCHEDULE: "People Annual Schedule",
@@ -813,6 +880,7 @@ class TestZones(unittest.TestCase):
         self.rmd.space_map["Space 1"] = self.test_zone
         self.floor = Floor("Floor 1", self.rmd)
         self.space = Space("Space 1", self.floor, self.rmd)
+        self.test_zone.space = self.space
 
         self.space.keyword_value_pairs = {}
         self.system.keyword_value_pairs = {
@@ -835,6 +903,7 @@ class TestZones(unittest.TestCase):
         self.rmd.populate_rmd_data(testing=True)
         expected_data_structure = {
             "id": "Zone 1",
+            "volume": 0,
             "floor_name": "Floor 1",
             "infiltration": {
                 "id": "Zone 1 Infil",

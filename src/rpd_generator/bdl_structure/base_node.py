@@ -261,6 +261,16 @@ class BaseNode(Base):
 
         return data
 
+    def increment_ids(self, obj, suffix):
+        if isinstance(obj, dict):
+            if "id" in obj and isinstance(obj["id"], str):
+                obj["id"] = f"{obj['id']} - {suffix}"
+            for v in obj.values():
+                self.increment_ids(v, suffix)
+        elif isinstance(obj, list):
+            for item in obj:
+                self.increment_ids(item, suffix)
+
 
 def _chunked_dict(d, n):
     """Yield successive n-sized chunks from dictionary d."""

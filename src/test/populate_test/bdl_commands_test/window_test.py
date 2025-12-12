@@ -69,7 +69,7 @@ class TestWindows(unittest.TestCase):
             "has_shading_sidefins": True,
             "depth_of_overhang": 1.5,
             "has_shading_overhang": True,
-            "u_factor": 0.5632360471070148,
+            "u_factor": 0.7609219590786412,
             "visible_transmittance": 2.0,
             "solar_heat_gain_coefficient": 2.0,
         }
@@ -98,7 +98,7 @@ class TestWindows(unittest.TestCase):
             "id": "Window 1",
             "glazed_area": 12.0,
             "opaque_area": 3.75,
-            "u_factor": 0.5632360471070148,
+            "u_factor": 0.7609219590786412,
             "has_shading_overhang": False,
             "has_shading_sidefins": False,
         }
@@ -168,7 +168,7 @@ class TestWindows(unittest.TestCase):
             "id": "Window 1",
             "glazed_area": 12.0,
             "opaque_area": 3.75,
-            "u_factor": 0.5829540792474073,
+            "u_factor": 0.7609219590786412,
             "has_shading_overhang": False,
             "has_shading_sidefins": False,
         }

@@ -333,6 +333,15 @@ def get_mapping(
             ["area", "azimuth"],
         )
 
+    elif match_type == "Subsurfaces":
+        mapping = match_by_attributes(
+            generated_values,
+            reference_values,
+            generated_zone_id,
+            reference_zone_id,
+            ["area", "azimuth", "classification"],
+        )
+
     elif match_type == "HVAC Systems":
         mapping = match_sys_by_zones_served(
             generated_values, reference_values, object_id_map
@@ -784,6 +793,7 @@ def define_surface_map(generated_zone, reference_zone, generated_json, reference
     generated_zone_id = generated_zone["id"]
     reference_zone_id = reference_zone["id"]
     surface_map = {}
+    errors = []
 
     surface_types = [
         ("Exterior Wall", {"classification": "WALL", "adjacent_to": "EXTERIOR"}),
@@ -819,17 +829,18 @@ def define_surface_map(generated_zone, reference_zone, generated_json, reference
                 )
             )
 
-        local_surface_map = define_local_surface_map(
+        local_surface_map, local_surface_map_errors = define_local_surface_map(
             generated_zone_id,
             reference_zone_id,
             surface_type,
             generated_surfaces,
             reference_surfaces,
-        )[0]
+        )
 
         surface_map.update(local_surface_map)
+        errors.extend(local_surface_map_errors)
 
-    return surface_map
+    return surface_map, errors
 
 
 def define_local_surface_map(
@@ -861,6 +872,52 @@ def define_local_surface_map(
             reference_zone_id=reference_zone_id,
         )
         return local_surface_map, errors
+
+
+def define_local_subsurface_map(surface_map, generated_json, reference_json):
+    errors = []
+    subsurface_map = {}
+
+    for generated_surface_id, reference_surface_id in surface_map.items():
+        generated_surface = find_one(
+            f"$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[?(@.id=='{generated_surface_id}')]",
+            generated_json,
+        )
+        reference_surface = find_one(
+            f"$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[?(@.id=='{reference_surface_id}')]",
+            reference_json,
+        )
+
+        generated_subsurfaces = find_all(
+            "$.subsurfaces[*]",
+            generated_surface,
+        )
+        reference_subsurfaces = find_all(
+            "$.subsurfaces[*]",
+            reference_surface,
+        )
+
+        if len(generated_subsurfaces) != len(reference_subsurfaces):
+            errors.append(
+                f"Subsurface count mismatch in surface id '{generated_surface_id}'. Expected: {len(reference_subsurfaces)}; got: {len(generated_subsurfaces)}"
+            )
+            continue
+
+        if len(generated_subsurfaces) == 1:
+            subsurface_map[generated_subsurfaces[0]["id"]] = reference_subsurfaces[0][
+                "id"
+            ]
+            continue
+
+        else:
+            local_subsurface_map = get_mapping(
+                "Subsurfaces",
+                generated_subsurfaces,
+                reference_subsurfaces,
+            )
+            subsurface_map.update(local_subsurface_map)
+
+    return subsurface_map, errors
 
 
 def define_hvac_map(generated_json, reference_json, object_id_map):
@@ -1240,10 +1297,18 @@ def map_objects(generated_json, reference_json):
         reference_zone = reference_zones[reference_zone_ids.index(reference_zone_id)]
 
         # Define maps for surfaces
-        surface_map = define_surface_map(
+        surface_map, surface_map_errors = define_surface_map(
             generated_zone, reference_zone, generated_json, reference_json
         )
         object_id_map.update(surface_map)
+        errors.extend(surface_map_errors)
+
+        # Define maps for subsurfaces
+        subsurface_map, subsurface_map_errors = define_local_subsurface_map(
+            surface_map, generated_json, reference_json
+        )
+        object_id_map.update(subsurface_map)
+        errors.extend(subsurface_map_errors)
 
         # Define maps for terminals
         terminal_map, terminal_map_errors = define_terminal_map(

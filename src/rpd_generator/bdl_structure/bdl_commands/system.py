@@ -1,3 +1,4 @@
+import copy
 from rpd_generator.bdl_structure.parent_node import ParentNode
 from rpd_generator.utilities.curve_funcs import calculate_cubic
 from rpd_generator.schema.schema_enums import SchemaEnums
@@ -35,6 +36,7 @@ HeatingMetricOptions = SchemaEnums.schema_enums["HeatingMetricOptions"]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_SystemKeywords = BDLEnums.bdl_enums["SystemKeywords"]
 BDL_ZoneKeywords = BDLEnums.bdl_enums["ZoneKeywords"]
+BDL_SpaceKeywords = BDLEnums.bdl_enums["SpaceKeywords"]
 BDL_MasterMeterKeywords = BDLEnums.bdl_enums["MasterMeterKeywords"]
 BDL_SystemTypes = BDLEnums.bdl_enums["SystemTypes"]
 BDL_SystemHeatingTypes = BDLEnums.bdl_enums["SystemHeatingTypes"]
@@ -149,14 +151,20 @@ class System(ParentNode):
             self.rmd.bdl_obj_instances[u_name] = self
 
         # used to store the unique 229 schema ID for zonal systems, so that the original BDL u_name may be preserved
-        self.sys_id = None
+        self.sys_id = u_name
 
         self.system_data_structure = {}
 
         self.omit = False
         self.is_terminal = False
         self.is_zonal_system = False
+        self.number_of_units = None
+        self.floor_multiplier = None
+        self.replications = 0
         self.is_derived_system = False
+        self.is_system_per_floor = False
+        self.is_multiple_floors_per_system = False
+        self.is_multiple_system_zone = False
         self.bdl_output_cool_type = None
         self.bdl_output_heat_type = None
         self.preheat_system_type = None
@@ -190,17 +198,20 @@ class System(ParentNode):
             ]:
                 continue
 
-            sys_id = f"{self.u_name} - {zone.u_name}"
+            # ------------------------
+            # Primary derived system
+            # ------------------------
+            base_sys_id = f"{self.u_name} - {zone.u_name}"
             zone_system = System(self.u_name, self.rmd)
-            zone_system.sys_id = sys_id
+            zone_system.sys_id = base_sys_id
             zone_system.add_child(zone)
             zone.parent = zone_system
             zone_system.is_derived_system = True
             zone_system.keyword_value_pairs = self.keyword_value_pairs.copy()
             zone_system.populate_data_elements()
-            self.rmd.bdl_obj_instances[sys_id] = zone_system
+            self.rmd.bdl_obj_instances[base_sys_id] = zone_system
 
-        # Remove zones after processing
+        # Keep only the first zone under the original system
         self.children = self.children[:1]
 
     def populate_data_elements(self):
@@ -211,8 +222,18 @@ class System(ParentNode):
             self.omit = True
             return
 
+        if system_type != BDL_SystemTypes.DOAS and len(self.children) == 0:
+            self.omit = True
+            return
+
         if system_type in self.zonal_system_types:
             self.is_zonal_system = True
+            multiplier = self.try_int(
+                self.children[0].space.get_inp(BDL_SpaceKeywords.FLOOR_MULTIPLIER, "1")
+            )
+            self.replications = multiplier - 1
+            self.children[0].replications = multiplier - 1
+            self.children[0].reassign_terminals = True
             if not self.is_derived_system:
                 self.create_zonal_systems()
 
@@ -315,6 +336,15 @@ class System(ParentNode):
             self.preheat_system.populate_data_elements(output_data)
             self.preheat_system.populate_data_group()
 
+        if has_energy_recovery:
+            self.air_energy_recovery = AirEnergyRecovery(self)
+            self.air_energy_recovery.populate_data_elements()
+            self.air_energy_recovery.populate_data_group()
+            if self.air_energy_recovery.outdoor_airflow is None:
+                self.air_energy_recovery.outdoor_airflow = (
+                    self.fan_system.minimum_outdoor_airflow
+                )
+
         if has_economizer:
             self.air_economizer = AirEconomizer(self)
             self.air_economizer.populate_data_elements()
@@ -325,15 +355,6 @@ class System(ParentNode):
             self.fan_system.maximum_outdoor_airflow = (
                 self.fan_system.minimum_outdoor_airflow
             )
-
-        if has_energy_recovery:
-            self.air_energy_recovery = AirEnergyRecovery(self)
-            self.air_energy_recovery.populate_data_elements()
-            self.air_energy_recovery.populate_data_group()
-            if self.air_energy_recovery.outdoor_airflow is None:
-                self.air_energy_recovery.outdoor_airflow = (
-                    self.fan_system.minimum_outdoor_airflow
-                )
 
     def get_output_requests(self):
         """Get the output requests for the system dependent on various system component types."""
@@ -638,12 +659,6 @@ class System(ParentNode):
             if self.parent_building_segment is None:
                 self.parent_building_segment = self.rmd.default_building_segment
 
-            for attr in dir(self):
-                value = getattr(self, attr, None)
-
-                if value is None:
-                    continue
-
             if self.is_derived_system:
                 self.system_data_structure["id"] = self.sys_id
             else:
@@ -671,7 +686,13 @@ class System(ParentNode):
         """Insert system data structure into the rpd data structure."""
         if self.omit:
             return
+
         self.parent_building_segment.hvac_systems.append(self.system_data_structure)
+
+        for i in range(1, self.replications + 1):
+            clone_data_structure = copy.deepcopy(self.system_data_structure)
+            self.increment_ids(clone_data_structure, i)
+            self.parent_building_segment.hvac_systems.append(clone_data_structure)
 
     def update_system_mapping(self):
         """Update various system mapping based on the system component types."""
@@ -747,6 +768,89 @@ class System(ParentNode):
                 self.get_inp(BDL_SystemKeywords.TYPE)
             )
         )
+        # --- Multiplier bookkeeping ---
+        number_of_units = self.try_int(
+            self.get_inp(BDL_SystemKeywords.NUMBER_OF_UNITS, 1)
+        )
+        self.number_of_units = number_of_units
+
+        if self.get_inp(BDL_SystemKeywords.TYPE) == BDL_SystemTypes.DOAS:
+            return
+
+        # Floor multiplier: only trust a single value if all zones agree
+        if all(
+            zone.space.get_inp(BDL_SpaceKeywords.FLOOR_MULTIPLIER, 1)
+            == self.children[0].space.get_inp(BDL_SpaceKeywords.FLOOR_MULTIPLIER, 1)
+            for zone in self.children
+        ):
+            floor_multiplier = self.try_int(
+                self.children[0].space.get_inp(BDL_SpaceKeywords.FLOOR_MULTIPLIER, 1)
+            )
+        else:
+            floor_multiplier = None
+
+        self.floor_multiplier = floor_multiplier
+
+        # -----------------------------------------
+        # CASE 1 — ZONAL SYSTEMS
+        # Replicate one system per zone served
+        # (and per floor multiplier)
+        # -----------------------------------------
+        if self.is_zonal_system:
+            # Already partially handled in populate_data_elements() via self.replications
+            # Nothing more to do here
+            return
+
+        # -----------------------------------------
+        # CASE 2 — SYSTEM PER FLOOR
+        # number_of_units == floor_multiplier
+        # -----------------------------------------
+        if (
+            floor_multiplier is not None
+            and number_of_units > 1
+            and number_of_units == floor_multiplier
+        ):
+            self.is_system_per_floor = True
+            self.replications = number_of_units - 1
+            for zone in self.children:
+                zone.replications = floor_multiplier - 1
+                zone.reassign_terminals = True
+            return
+
+        # -----------------------------------------
+        # CASE 3 — MULTIPLE FLOORS PER SYSTEM
+        # floor_multiplier is divisible by number_of_units
+        # (e.g., 6 floors / 3 units → each system serves 2 floors)
+        # -----------------------------------------
+        if (
+            floor_multiplier is not None
+            and number_of_units > 1
+            and floor_multiplier % number_of_units == 0
+        ):
+            self.is_multiple_floors_per_system = True
+            self.replications = number_of_units - 1
+            for zone in self.children:
+                zone.replications = floor_multiplier - 1
+                zone.floors_per_system = floor_multiplier / number_of_units
+                zone.reassign_terminals = True
+            return
+
+        # -----------------------------------------
+        # CASE 4 — MULTIPLE SYSTEMS SERVING THE SAME ZONE(S)
+        # Default multi-unit behavior
+        #
+        # Applies when:
+        #   * non-zonal
+        #   * not per-floor
+        #   * not multi-floor-per-system
+        #   * system serves one or many zones but multipliers do not create floors
+        # -----------------------------------------
+        if number_of_units > 1:
+            self.is_multiple_system_zone = True
+            self.replications = number_of_units - 1
+            for zone in self.children:
+                zone.reassign_terminals = True
+            return
 
     def get_loop_energy_source(self, loop):
         """Get the energy source type for the loop. Used to populate the energy_source_type."""

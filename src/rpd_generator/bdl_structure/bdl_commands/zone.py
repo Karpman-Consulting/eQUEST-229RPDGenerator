@@ -1,3 +1,5 @@
+import copy
+from math import floor
 from rpd_generator.bdl_structure.child_node import ChildNode
 from rpd_generator.schema.schema_enums import SchemaEnums
 from rpd_generator.bdl_structure.bdl_commands.system import FanSystem, Fan
@@ -57,7 +59,9 @@ class Zone(ChildNode):
 
         # On initialization the parent building segment is not known. It is set in the Space object methods.
         self.parent_building_segment = self.get_obj("Default Building Segment")
-
+        self.replications = 0
+        self.reassign_terminals = False
+        self.floors_per_system = 1
         self.zone_data_structure = {}
 
         # data elements with children
@@ -89,6 +93,7 @@ class Zone(ChildNode):
         self.aggregation_factor = None
 
         # Store object instances for easy access
+        self.space = None
         self.main_terminal = None
         self.baseboard_terminal = None
         self.doas_terminal = None
@@ -112,14 +117,17 @@ class Zone(ChildNode):
         ):
             has_dcv = self.determine_if_dcv()
 
-        space = self.get_obj(self.get_inp(BDL_ZoneKeywords.SPACE))
-
         # Populate zone data elements that originate from Space data
         self.volume = (
-            self.try_float(space.get_inp(BDL_SpaceKeywords.VOLUME)) if space else None
+            (self.try_float(self.space.get_inp(BDL_SpaceKeywords.VOLUME)) or 0)
+            * (
+                self.try_float(self.space.get_inp(BDL_SpaceKeywords.FLOOR_MULTIPLIER))
+                or 1
+            )
+            * (self.try_float(self.space.get_inp(BDL_SpaceKeywords.MULTIPLIER)) or 1)
         )
 
-        self.floor_name = space.parent.u_name if space else None
+        self.floor_name = self.space.parent.u_name if self.space else None
 
         self.design_thermostat_cooling_setpoint = self.try_float(
             self.get_inp(BDL_ZoneKeywords.DESIGN_COOL_T)
@@ -699,9 +707,50 @@ class Zone(ChildNode):
 
         return requests
 
+    def reassign_terminal_hvacs(self, zone_data_structure, replication_index):
+        """Reassign terminal served_by_heating_ventilating_air_conditioning_system for replicated zones."""
+        for terminal in zone_data_structure.get("terminals", []):
+            served = terminal.get(
+                "served_by_heating_ventilating_air_conditioning_system"
+            )
+            # Match base name OR the replicated forms
+            if served and served.startswith(self.parent.u_name):
+                terminal_suffix = (
+                    " - " + str(floor(replication_index / self.floors_per_system))
+                ).replace(" - 0", "")
+                terminal[
+                    "served_by_heating_ventilating_air_conditioning_system"
+                ] = f"{self.parent.sys_id}{terminal_suffix}"
+
+    @staticmethod
+    def increment_floor_name(zone_data_structure, replication_index):
+        """Increment floor name for replicated zones."""
+        if "floor_name" in zone_data_structure:
+            zone_data_structure[
+                "floor_name"
+            ] = f"{zone_data_structure['floor_name']} - {replication_index}"
+
     def insert_to_rpd(self):
         """Insert zone object into the rpd data structure."""
+        self.spaces.append(self.space.space_data_structure)
+        for i in range(1, self.space.replications + 1):
+            clone_data_structure = copy.deepcopy(self.space.space_data_structure)
+            self.increment_ids(clone_data_structure, i)
+            self.spaces.append(clone_data_structure)
+
         self.parent_building_segment.zones.append(self.zone_data_structure)
+        if not self.replications:
+            self.replications = (
+                self.try_int(self.space.get_inp(BDL_SpaceKeywords.FLOOR_MULTIPLIER, 1))
+                - 1
+            )
+        for i in range(1, self.replications + 1):
+            clone_zone_data_structure = copy.deepcopy(self.zone_data_structure)
+            self.increment_ids(clone_zone_data_structure, i)
+            if self.reassign_terminals:
+                self.reassign_terminal_hvacs(clone_zone_data_structure, i)
+            self.increment_floor_name(clone_zone_data_structure, i)
+            self.parent_building_segment.zones.append(clone_zone_data_structure)
 
     def determine_if_dcv(self):
         # Default flag values
@@ -723,13 +772,13 @@ class Zone(ChildNode):
             self.parent.get_inp(BDL_SystemKeywords.ZONE_OA_METHOD)
             == BDL_ZoneOAMethodsOptions.MAX_OCC_OR_AREA
         ):
-            space = self.get_obj(self.get_inp(BDL_ZoneKeywords.SPACE))
-            space_occ_sch = space.get_obj(
-                space.get_inp(BDL_SpaceKeywords.PEOPLE_SCHEDULE)
+
+            space_occ_sch = self.space.get_obj(
+                self.space.get_inp(BDL_SpaceKeywords.PEOPLE_SCHEDULE)
             )
             max_occ_fraction = self.try_max(space_occ_sch.hourly_values)
             space_number_of_people = self.try_float(
-                space.get_inp(BDL_SpaceKeywords.NUMBER_OF_PEOPLE)
+                self.space.get_inp(BDL_SpaceKeywords.NUMBER_OF_PEOPLE)
             )
 
             # Calculate the total cfm for each scenario
@@ -742,7 +791,7 @@ class Zone(ChildNode):
             )
             ach_based_cfm = (
                 (
-                    self.try_float(space.get_inp(BDL_SpaceKeywords.VOLUME))
+                    self.try_float(self.space.get_inp(BDL_SpaceKeywords.VOLUME))
                     * self.try_float(self.get_inp(BDL_ZoneKeywords.OA_CHANGES))
                 )
                 / 60
@@ -750,7 +799,7 @@ class Zone(ChildNode):
                 else 0
             )
             area_based_cfm = (
-                self.try_float(space.get_inp(BDL_SpaceKeywords.AREA))
+                self.try_float(self.space.get_inp(BDL_SpaceKeywords.AREA))
                 * self.try_float(self.get_inp(BDL_ZoneKeywords.OA_FLOW_AREA))
                 if self.try_float(self.get_inp(BDL_ZoneKeywords.OA_FLOW_AREA))
                 else 0
@@ -969,9 +1018,7 @@ class Terminal:
         if terminal_type == "main":
             self.name = self.zone.u_name + " MainTerminal"
             self.type = self.populate_main_terminal_type()
-            self.served_by_heating_ventilating_air_conditioning_system = (
-                self.zone.parent.u_name
-            )
+
             self.supply_design_heating_setpoint_temperature = self.zone.try_float(
                 self.zone.parent.get_inp(BDL_SystemKeywords.MAX_SUPPLY_T)
             )
@@ -1326,6 +1373,15 @@ class Terminal:
 
     def insert_to_rpd(self):
         self.zone.terminals.append(self.data_structure)
+
+        if self.zone.parent.is_multiple_system_zone:
+            for i in range(1, self.zone.parent.replications + 1):
+                clone_terminal_data_structure = copy.deepcopy(self.data_structure)
+                clone_terminal_data_structure["id"] = f"{self.name} - {i}"
+                clone_terminal_data_structure[
+                    "served_by_heating_ventilating_air_conditioning_system"
+                ] = f"{self.served_by_heating_ventilating_air_conditioning_system} - {i}"
+                self.zone.terminals.append(clone_terminal_data_structure)
 
     def populate_main_terminal_type(self):
         system_min_flow_ratio = self.zone.try_float(

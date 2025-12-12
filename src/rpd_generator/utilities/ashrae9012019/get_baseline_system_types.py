@@ -135,7 +135,7 @@ def get_baseline_system_types(rmd_b: dict) -> dict[str, list[str]]:
         chiller_loop_id_list = list(
             {
                 m.value
-                for m in parse("$.chillers[*].loop").find(rmd_b)
+                for m in parse("$.chillers[*].cooling_loop").find(rmd_b)
                 if m.value in cooling_loop_id_set
             }
         )

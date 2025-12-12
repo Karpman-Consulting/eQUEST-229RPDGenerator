@@ -199,7 +199,7 @@ class CirculationLoop(BaseNode):
         else:
             return "SecondaryFluidLoop"
 
-    def populate_service_water_heating_uses(self, testing=False):
+    def populate_service_water_heating_uses(self):
         process_flows = self.get_inp(BDL_CirculationLoopKeywords.PROCESS_FLOW)
         process_schedules = self.get_inp(BDL_CirculationLoopKeywords.PROCESS_SCH)
         process_outlet_temps = self.get_inp(BDL_CirculationLoopKeywords.PROCESS_T)
@@ -225,9 +225,6 @@ class CirculationLoop(BaseNode):
         ):
             swh_use = ServiceWaterHeatingUse(i, self)
             swh_use.populate_data_elements()
-            if testing:
-                swh_use.populate_data_group()
-                swh_use.insert_to_rpd()
 
     def populate_pump_data_elements(self, pump_name):
         pump = self.get_obj(pump_name)

@@ -5,10 +5,18 @@ import sys
 import re
 from tkinter import filedialog
 from pathlib import Path
+from rct229.web_application import run_project_evaluation as run
+from rct229.utils.file import deserialize_rpd_file
 
 from interface.error_window import ErrorWindow
 from interface.loading_window import LoadingWindow
 from interface.constants import HEADER_FONT, LABEL_FONT, TEXT_FONT
+
+
+def get_python():
+    if getattr(sys, "frozen", False):
+        return str(Path(sys._MEIPASS) / "python.exe")
+    return sys.executable
 
 
 class RCTPanel(ctk.CTkFrame):
@@ -87,7 +95,7 @@ class RCTPanel(ctk.CTkFrame):
 
         if not getattr(data, "active_rpd_path", None):
             ErrorWindow(
-                self.controller,  # <-- attach ErrorWindow to main window
+                self.controller,
                 "No RPD selected.\n\nUse the right panel to choose or generate an RPD.",
             )
             return
@@ -97,23 +105,7 @@ class RCTPanel(ctk.CTkFrame):
             ErrorWindow(self.controller, "Please select an Output Directory first.")
             return
 
-        # Build the RCT command
-        cmd = [
-            sys.executable,
-            "-m",
-            "rct229.cli",
-            "evaluate",
-            "-f",
-            data.active_rpd_path,
-            "-rs",
-            "ashrae9012019",
-            "-r",
-            "ASHRAE9012019DetailReport",
-            "-rd",
-            out_dir,
-        ]
-
-        # Disable during run
+        # Disable button
         self.run_button.configure(state="disabled", text="Running RCT...")
 
         loading = LoadingWindow(self.controller, "Starting RCT evaluation...")
@@ -121,59 +113,34 @@ class RCTPanel(ctk.CTkFrame):
 
         def worker():
             try:
-                proc = subprocess.Popen(
-                    cmd,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.STDOUT,
-                    text=True,
-                    bufsize=1,
+                # Load the RPD file
+                rpd = deserialize_rpd_file(data.active_rpd_path)
+
+                # Run the evaluation directly (no subprocess)
+                run(
+                    [rpd],  # single-model list
+                    "ashrae9012019",  # ruleset
+                    ["ASHRAE9012019DetailReport"],
+                    saving_dir=out_dir,
                 )
 
-                output_lines = []
+                # Update UI on success
+                self.after(0, lambda: loading.set_progress(1.0))
 
-                for line in proc.stdout:
-                    line = line.rstrip("\n")
-                    output_lines.append(line)
+                report_path = Path(out_dir) / "ASHRAE9012019DetailReport.json"
+                self.main_app.data.active_rct_report_path = str(report_path)
 
-                    # Update loading window text
-                    self.after(0, lambda s=line: loading.set_message(s))
-
-                    # Parse "progress: XX%"
-                    m = re.search(r"progress:\s*(\d+)%", line, flags=re.I)
-                    if m:
-                        pct = max(0, min(100, int(m.group(1))))
-                        self.after(0, lambda p=pct: loading.set_progress(p / 100.0))
-
-                proc.wait()
-                rc = proc.returncode
-
-                if rc == 0:
-                    self.after(0, lambda: loading.set_progress(1.0))
-
-                    # Update right panel & nav state through controller
-                    report_path = Path(out_dir) / "ASHRAE9012019DetailReport.json"
-                    self.main_app.data.active_rct_report_path = str(report_path)
-                    self.after(
-                        0,
-                        lambda: self.controller.on_evaluation_complete(
-                            True, f"Results saved to:\n{out_dir}"
-                        ),
-                    )
-
-                else:
-                    # Show last output lines
-                    full_msg = "\n".join(output_lines[-50:])
-                    self.after(
-                        0,
-                        lambda msg=full_msg: ErrorWindow(
-                            self.controller,
-                            f"RCT failed (exit code {rc}).\n\nLast output:\n\n{msg}",
-                        ),
-                    )
+                self.after(
+                    0,
+                    lambda: self.controller.on_evaluation_complete(
+                        True, f"Results saved to:\n{out_dir}"
+                    ),
+                )
 
             except Exception as e:
                 self.after(
-                    0, lambda e=e: ErrorWindow(self.controller, f"RCT failed:\n\n{e}")
+                    0,
+                    lambda: ErrorWindow(self.controller, f"RCT failed:\n\n{e}"),
                 )
 
             finally:

@@ -28,7 +28,9 @@ from rpd_generator.bdl_structure.bdl_commands.utility_and_economics import (
     BDL_FuelMeterKeywords,
     BDL_FuelTypes,
 )
-from rpd_generator.bdl_structure.bdl_commands.zone import Zone
+from rpd_generator.bdl_structure.bdl_commands.zone import Zone, BDL_ZoneKeywords
+from rpd_generator.bdl_structure.bdl_commands.floor import Floor
+from rpd_generator.bdl_structure.bdl_commands.space import Space, BDL_SpaceKeywords
 from rpd_generator.bdl_structure.bdl_commands.condenser import Condenser
 from rpd_generator.bdl_structure.bdl_commands.circulation_loop import (
     CirculationLoop,
@@ -55,13 +57,20 @@ class TestSystems(unittest.TestCase):
         self.rmd.doe2_version = "DOE-2.3"
         self.rmd.doe2_data_path = Config.DOE23_DATA_PATH
         self.system = System("System 1", self.rmd)
-        self.zone1 = Zone("Zone 1", self.system, self.rmd)
+        self.zone = Zone("Zone 1", self.system, self.rmd)
+        self.floor = Floor("Floor 1", self.rmd)
+        self.rmd.space_map["Space 1"] = self.zone
+        self.space = Space("Space 1", self.floor, self.rmd)
+        self.zone.space = self.space
         self.run_period = RunPeriod("Run Period 1", self.rmd)
         self.holidays = Holidays("Holidays 1", self.rmd)
         self.master_meter = MasterMeters("Master Meters", self.rmd)
         self.fuel_meter = FuelMeter("Fuel Meter", self.rmd)
         self.circ_loop = CirculationLoop("Circulation Loop", self.rmd)
 
+        self.zone.keyword_value_pairs = {
+            BDL_ZoneKeywords.SPACE: "Space 1",
+        }
         # Create System Fan Schedules
         self.fan_schedule_day_schedule = DaySchedulePD("Fan Day Schedule", self.rmd)
         self.fan_schedule_week_schedule = WeekSchedulePD("Fan Week Schedule", self.rmd)
@@ -93,6 +102,26 @@ class TestSystems(unittest.TestCase):
             BDL_ScheduleKeywords.MONTH: "12",
             BDL_ScheduleKeywords.DAY: "31",
         }
+
+    def get_zones_served_by_system(self, system_id: str) -> list[dict]:
+        """
+        Return all zone data-structure dictionaries served by a system.
+        A system serves a zone if any terminal in that zone lists the system_id
+        under 'served_by_heating_ventilating_air_conditioning_system'.
+        """
+        zones = self.rmd.default_building_segment.zones
+        served_zones = []
+
+        for z in zones:
+            terminals = z.get("terminals", [])
+            for t in terminals:
+                if (
+                    t.get("served_by_heating_ventilating_air_conditioning_system")
+                    == system_id
+                ):
+                    served_zones.append(z)
+                    break  # Avoid double-counting same zone
+        return served_zones
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
     def test_populate_system_multizone_vav(self, mock_get_output_data):
@@ -415,6 +444,9 @@ class TestSystems(unittest.TestCase):
             "Supply Fan - Power": 13,
         }
         self.zone2 = Zone("Zone 2", self.system, self.rmd)
+        self.rmd.space_map["Space 2"] = self.zone2
+        self.space2 = Space("Space 2", self.floor, self.rmd)
+        self.zone2.space = self.space2
         self.fan_schedule_day_schedule.keyword_value_pairs = {
             BDL_DayScheduleKeywords.TYPE: BDL_ScheduleTypes.ON_OFF,
             BDL_DayScheduleKeywords.VALUES: ["-999"] + (["0"] * 23),
@@ -432,6 +464,9 @@ class TestSystems(unittest.TestCase):
             BDL_SystemKeywords.ECONO_LIMIT_T: "70",
             BDL_SystemKeywords.SUPPLY_FLOW: "100",
             BDL_SystemKeywords.NIGHT_CYCLE_CTRL: BDL_NightCycleControlOptions.CYCLE_ON_ANY,
+        }
+        self.zone2.keyword_value_pairs = {
+            BDL_ZoneKeywords.SPACE: "Space 2",
         }
 
         self.rmd.populate_rmd_data(testing=True)
@@ -968,3 +1003,379 @@ class TestSystems(unittest.TestCase):
 
         self.rmd.populate_rmd_data(testing=True)
         self.assertEqual(expected_data_structure, self.system.system_data_structure)
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_system_multiplier_population_for_single_zone_system(
+        self, mock_get_output_data
+    ):
+        """
+        Test system multiplier population for a single zone system with multiple units and space multipliers.
+        - There should be 2 systems
+        - There should be 2 zones
+        - Each system should serve 1 zone
+        - Each zone should have 2 spaces
+        """
+        mock_get_output_data.return_value = {"Supply Fan - Power": 13}
+
+        self.system.keyword_value_pairs = {
+            BDL_SystemKeywords.TYPE: BDL_SystemTypes.PSZ,
+            BDL_SystemKeywords.NUMBER_OF_UNITS: "2",
+        }
+        self.space.keyword_value_pairs = {
+            BDL_SpaceKeywords.FLOOR_MULTIPLIER: "2",
+            BDL_SpaceKeywords.MULTIPLIER: "2",
+        }
+
+        self.rmd.populate_rmd_data(testing=True)
+        self.system.insert_to_rpd()
+        self.zone.insert_to_rpd()
+        self.space.insert_to_rpd()
+
+        systems = self.rmd.default_building_segment.hvac_systems
+        zones = self.rmd.default_building_segment.zones
+
+        # Assertions required by docstring
+        self.assertEqual(len(systems), 2)
+        self.assertEqual(len(zones), 2)
+
+        for sys_ds in systems:
+            served = self.get_zones_served_by_system(sys_ds["id"])
+            self.assertEqual(len(served), 1)
+
+        for z in zones:
+            self.assertEqual(len(z.get("spaces", [])), 2)
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_system_multiplier_population_for_multizone_system_with_varied_floor_multipliers(
+        self, mock_get_output_data
+    ):
+        """
+        Test system multiplier population for a multizone system with varied floor multipliers and space multipliers.
+        - There should be 1 system
+        - There should be 5 zones
+        - The system should serve 5 zones
+        - All zones should be assigned to the same system
+        - Zone 1 should have 2 spaces and should be replicated 2 times (4 spaces)
+        - Zone 2 should have 1 space and should be replicated 3 times (3 spaces)
+        """
+        mock_get_output_data.return_value = {}
+
+        self.zone2 = Zone("Zone 2", self.system, self.rmd)
+        self.rmd.space_map["Space 2"] = self.zone2
+        self.space2 = Space("Space 2", self.floor, self.rmd)
+        self.zone2.space = self.space2
+
+        self.system.keyword_value_pairs = {
+            BDL_SystemKeywords.TYPE: BDL_SystemTypes.VAVS
+        }
+        self.space.keyword_value_pairs = {
+            BDL_SpaceKeywords.FLOOR_MULTIPLIER: "2",
+            BDL_SpaceKeywords.MULTIPLIER: "2",
+        }
+        self.space2.keyword_value_pairs = {
+            BDL_SpaceKeywords.FLOOR_MULTIPLIER: "3",
+            BDL_SpaceKeywords.MULTIPLIER: "1",
+        }
+
+        self.rmd.populate_rmd_data(testing=True)
+        self.system.insert_to_rpd()
+        self.zone.insert_to_rpd()
+        self.zone2.insert_to_rpd()
+        self.space.insert_to_rpd()
+        self.space2.insert_to_rpd()
+
+        systems = self.rmd.default_building_segment.hvac_systems
+        zones = self.rmd.default_building_segment.zones
+
+        self.assertEqual(len(systems), 1)
+        self.assertEqual(len(zones), 5)
+
+        served = self.get_zones_served_by_system(systems[0]["id"])
+        self.assertEqual(len(served), 5)
+
+        # Space replication checks
+        expected = {
+            "Zone 1": 2,
+            "Zone 1 - 1": 2,
+            "Zone 2": 1,
+            "Zone 2 - 1": 1,
+            "Zone 2 - 2": 1,
+        }
+        for z in zones:
+            self.assertEqual(len(z.get("spaces", [])), expected[z["id"]])
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_system_multiplier_population_for_zonal_system_with_varied_floor_multipliers(
+        self, mock_get_output_data
+    ):
+        """
+        Test system multiplier population for a zonal system with varied floor multipliers and space multipliers.
+        - There should be 5 systems
+        - There should be 5 zones
+        - Each system should serve 1 zone
+        - Zone 1 should have 2 spaces and should be replicated 2 times (4 spaces)
+        - Zone 2 should have 1 space and should be replicated 3 times (3 spaces)
+        """
+        mock_get_output_data.return_value = {"Supply Fan - Power": 13}
+
+        self.zone2 = Zone("Zone 2", self.system, self.rmd)
+        self.rmd.space_map["Space 2"] = self.zone2
+        self.space2 = Space("Space 2", self.floor, self.rmd)
+        self.zone2.space = self.space2
+
+        self.system.keyword_value_pairs = {BDL_SystemKeywords.TYPE: BDL_SystemTypes.HP}
+        self.space.keyword_value_pairs = {
+            BDL_SpaceKeywords.FLOOR_MULTIPLIER: "2",
+            BDL_SpaceKeywords.MULTIPLIER: "2",
+        }
+        self.space2.keyword_value_pairs = {
+            BDL_SpaceKeywords.FLOOR_MULTIPLIER: "3",
+            BDL_SpaceKeywords.MULTIPLIER: "1",
+        }
+
+        self.rmd.populate_rmd_data(testing=True)
+        derived_system2 = self.rmd.bdl_obj_instances.get("System 1 - Zone 2")
+
+        self.system.insert_to_rpd()
+        derived_system2.insert_to_rpd()
+        self.zone.insert_to_rpd()
+        self.zone2.insert_to_rpd()
+        self.space.insert_to_rpd()
+        self.space2.insert_to_rpd()
+
+        systems = self.rmd.default_building_segment.hvac_systems
+        zones = self.rmd.default_building_segment.zones
+
+        self.assertEqual(len(systems), 5)
+        self.assertEqual(len(zones), 5)
+
+        for sys_ds in systems:
+            served = self.get_zones_served_by_system(sys_ds["id"])
+            self.assertEqual(len(served), 1)
+
+        # Count zone-space patterns
+        zones_with_2 = sum(1 for z in zones if len(z.get("spaces", [])) == 2)
+        zones_with_1 = sum(1 for z in zones if len(z.get("spaces", [])) == 1)
+
+        self.assertEqual(zones_with_2, 2)
+        self.assertEqual(zones_with_1, 3)
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_single_zone_multiple_systems_multiterminal(self, mock_get_output_data):
+        """
+        Test single zone system with multiple units and space multipliers.
+        - There should be 2 systems
+        - There should be 1 zone
+        - Each system should serve the same zone
+        - The zone should have 2 terminals
+        """
+        mock_get_output_data.return_value = {"Supply Fan - Power": 13}
+
+        self.system.keyword_value_pairs = {
+            BDL_SystemKeywords.TYPE: BDL_SystemTypes.PSZ,
+            BDL_SystemKeywords.NUMBER_OF_UNITS: "2",
+        }
+        self.space.keyword_value_pairs = {BDL_SpaceKeywords.FLOOR_MULTIPLIER: "1"}
+
+        self.rmd.populate_rmd_data(testing=True)
+        self.system.insert_to_rpd()
+        self.zone.insert_to_rpd()
+        self.space.insert_to_rpd()
+
+        systems = self.rmd.default_building_segment.hvac_systems
+        zones = self.rmd.default_building_segment.zones
+
+        self.assertEqual(len(systems), 2)
+        self.assertEqual(len(zones), 1)
+
+        served_ids = {
+            t.get("served_by_heating_ventilating_air_conditioning_system")
+            for t in zones[0].get("terminals", [])
+        }
+
+        for sys_ds in systems:
+            self.assertIn(sys_ds["id"], served_ids)
+
+        self.assertEqual(len(zones[0].get("terminals", [])), 2)
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_multizone_multiple_systems_multiterminal(self, mock_get_output_data):
+        """
+        Test multizone system with multiple units and space multipliers.
+        - There should be 2 systems
+        - There should be 2 zones
+        - Each system should serve 1 zone
+        - Each zone should have 1 terminal
+        """
+        mock_get_output_data.return_value = {}
+
+        self.system.keyword_value_pairs = {
+            BDL_SystemKeywords.TYPE: BDL_SystemTypes.VAVS,
+            BDL_SystemKeywords.NUMBER_OF_UNITS: "2",
+            BDL_SystemKeywords.HEAT_SOURCE: BDL_SystemHeatingTypes.HOT_WATER,
+            BDL_SystemKeywords.COOL_SOURCE: BDL_SystemCoolingTypes.CHILLED_WATER,
+        }
+        self.space.keyword_value_pairs = {BDL_SpaceKeywords.FLOOR_MULTIPLIER: "1"}
+
+        self.rmd.populate_rmd_data(testing=True)
+        self.system.insert_to_rpd()
+        self.zone.insert_to_rpd()
+        self.space.insert_to_rpd()
+
+        systems = sorted(
+            self.rmd.default_building_segment.hvac_systems, key=lambda s: s["id"]
+        )
+        zones = self.rmd.default_building_segment.zones
+
+        self.assertEqual(len(systems), 2)
+
+        all_terminals = []
+        for z in zones:
+            all_terminals.extend(z.get("terminals", []))
+
+        self.assertEqual(len(all_terminals), 2)
+
+        served_by = [
+            t.get("served_by_heating_ventilating_air_conditioning_system")
+            for t in all_terminals
+        ]
+
+        for sys_ds in systems:
+            self.assertEqual(served_by.count(sys_ds["id"]), 1)
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_zonal_terminals_with_floor_multiplier(self, mock_get_output_data):
+        """
+        Test zonal system with floor multipliers.
+        - There should be 0 systems
+        - There should be 2 zones
+        - Each zone should have 1 space
+        - Each zone should have 1 terminal but no served_by_hvac_system
+        """
+        mock_get_output_data.return_value = {}
+
+        self.system.keyword_value_pairs = {
+            BDL_SystemKeywords.TYPE: BDL_SystemTypes.FC,
+            BDL_SystemKeywords.HEAT_SOURCE: BDL_SystemHeatingTypes.HOT_WATER,
+            BDL_SystemKeywords.COOL_SOURCE: BDL_SystemCoolingTypes.CHILLED_WATER,
+        }
+        self.space.keyword_value_pairs = {BDL_SpaceKeywords.FLOOR_MULTIPLIER: "2"}
+
+        self.rmd.populate_rmd_data(testing=True)
+        self.system.insert_to_rpd()
+        self.zone.insert_to_rpd()
+        self.space.insert_to_rpd()
+
+        systems = self.rmd.default_building_segment.hvac_systems
+        zones = self.rmd.default_building_segment.zones
+
+        self.assertEqual(len(systems), 0)
+        self.assertEqual(len(zones), 2)
+
+        for z in zones:
+            self.assertEqual(len(z.get("spaces", [])), 1)
+            self.assertEqual(len(z.get("terminals", [])), 1)
+            for t in z["terminals"]:
+                self.assertIsNone(
+                    t.get("served_by_heating_ventilating_air_conditioning_system")
+                )
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_zonal_multiple_spaces_imply_one_system(self, mock_get_output_data):
+        """
+        Test zonal system with multiple spaces implying one system.
+        - There should be 1 system
+        - There should be 1 zone
+        - The zone should have 2 spaces
+        """
+        mock_get_output_data.return_value = {"Supply Fan - Power": 13}
+
+        self.system.keyword_value_pairs = {BDL_SystemKeywords.TYPE: BDL_SystemTypes.HP}
+        self.space.keyword_value_pairs = {BDL_SpaceKeywords.MULTIPLIER: "2"}
+
+        self.rmd.populate_rmd_data(testing=True)
+        self.system.insert_to_rpd()
+        self.zone.insert_to_rpd()
+        self.space.insert_to_rpd()
+
+        systems = self.rmd.default_building_segment.hvac_systems
+        zones = self.rmd.default_building_segment.zones
+
+        self.assertEqual(len(systems), 1)
+        self.assertEqual(len(zones), 1)
+
+        self.assertEqual(len(zones[0].get("spaces", [])), 2)
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_system_per_floor_pattern(self, mock_get_output_data):
+        """
+        Test system multiplier population where there is one system per floor.
+        - There should be 3 systems
+        - There should be 3 zones, each on its own floor
+        - There should be 1 space in each zone
+        - Each system should serve 1 zone
+        """
+        mock_get_output_data.return_value = {}
+
+        self.system.keyword_value_pairs = {
+            BDL_SystemKeywords.TYPE: BDL_SystemTypes.VAVS,
+            BDL_SystemKeywords.NUMBER_OF_UNITS: "3",
+            BDL_SystemKeywords.HEAT_SOURCE: BDL_SystemHeatingTypes.HOT_WATER,
+            BDL_SystemKeywords.COOL_SOURCE: BDL_SystemCoolingTypes.CHILLED_WATER,
+        }
+        self.space.keyword_value_pairs = {BDL_SpaceKeywords.FLOOR_MULTIPLIER: "3"}
+
+        self.rmd.populate_rmd_data(testing=True)
+        self.system.insert_to_rpd()
+        self.zone.insert_to_rpd()
+        self.space.insert_to_rpd()
+
+        systems = sorted(
+            self.rmd.default_building_segment.hvac_systems, key=lambda s: s["id"]
+        )
+        zones = self.rmd.default_building_segment.zones
+
+        self.assertTrue(self.system.is_system_per_floor)
+        self.assertEqual(len(systems), 3)
+        self.assertEqual(len(zones), 3)
+
+        for sys_ds in systems:
+            served = self.get_zones_served_by_system(sys_ds["id"])
+            self.assertEqual(len(served), 1)
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_multiple_floors_grouped_into_fewer_systems(self, mock_get_output_data):
+        """
+        Test system multiplier population where multiple floors are grouped into fewer systems.
+        - There should be 3 systems
+        - There should be 6 zones, each on its own floor
+        - There should be 1 space in each zone
+        - Each system should serve 2 zones
+        """
+        mock_get_output_data.return_value = {}
+
+        self.system.keyword_value_pairs = {
+            BDL_SystemKeywords.TYPE: BDL_SystemTypes.VAVS,
+            BDL_SystemKeywords.NUMBER_OF_UNITS: "3",
+            BDL_SystemKeywords.HEAT_SOURCE: BDL_SystemHeatingTypes.HOT_WATER,
+            BDL_SystemKeywords.COOL_SOURCE: BDL_SystemCoolingTypes.CHILLED_WATER,
+        }
+        self.space.keyword_value_pairs = {BDL_SpaceKeywords.FLOOR_MULTIPLIER: "6"}
+
+        self.rmd.populate_rmd_data(testing=True)
+        self.system.insert_to_rpd()
+        self.zone.insert_to_rpd()
+        self.space.insert_to_rpd()
+
+        systems = sorted(
+            self.rmd.default_building_segment.hvac_systems, key=lambda s: s["id"]
+        )
+        zones = self.rmd.default_building_segment.zones
+
+        self.assertTrue(self.system.is_multiple_floors_per_system)
+        self.assertEqual(len(systems), 3)
+        self.assertEqual(len(zones), 6)
+
+        for sys_ds in systems:
+            served = self.get_zones_served_by_system(sys_ds["id"])
+            self.assertEqual(len(served), 2)

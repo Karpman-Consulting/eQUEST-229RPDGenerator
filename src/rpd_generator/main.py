@@ -79,13 +79,17 @@ def write_rpd_json_from_inps(project_name: str, inp_path_specs: list):
 
 
 def write_rpd_json_from_bdls(
-    project_name: str, bdl_path_strs: list[str], rpd_file_path: str
+    project_name: str,
+    bdl_path_strs: list[str],
+    rpd_file_path: str,
+    rpd_testing: bool = False,
 ):
     """
     Generate RPD JSON file from commented BDL files that have already been created.
     :param project_name:
     :param bdl_path_strs:
     :param rpd_file_path:
+    :param rpd_testing: bool
     :return:
     """
     bdl_input_reader = ModelInputReader()
@@ -96,7 +100,7 @@ def write_rpd_json_from_bdls(
     for rmd in rmds:
         rmd.populate_rmd_data()
 
-    finalize_and_write_rpd(rpd, rpd_file_path)
+    finalize_and_write_rpd(rpd, rpd_file_path, rpd_testing=rpd_testing)
 
 
 def write_rpd_json_from_rpd(
@@ -161,8 +165,12 @@ def generate_rmd_objects_from_bdls(
             if command == "ZONE":
                 special_handling[
                     "ZONE"
-                ] = lambda obj, cmd_dict: rmd.space_map.setdefault(
+                ] = lambda obj, cmd_dict, u_name: rmd.space_map.setdefault(
                     cmd_dict["SPACE"], obj
+                )
+            if command == "SPACE":
+                special_handling["SPACE"] = lambda obj, cmd_dict, u_name: setattr(
+                    rmd.space_map[u_name], "space", obj
                 )
             _process_command_group(
                 command,
@@ -219,11 +227,14 @@ def generate_rmd_objects_from_inps(
     return rmds
 
 
-def finalize_and_write_rpd(rpd: RulesetProjectDescription, rpd_file_path: str):
+def finalize_and_write_rpd(
+    rpd: RulesetProjectDescription, rpd_file_path: str, rpd_testing: bool = False
+):
     """
     Finalize RPD object and write to JSON file.
     :param rpd:
     :param rpd_file_path:
+    :param rpd_testing: bool
     :return:
     """
     print("Populating RPD data group...")
@@ -232,8 +243,9 @@ def finalize_and_write_rpd(rpd: RulesetProjectDescription, rpd_file_path: str):
     ensure_valid_rpd.make_ids_unique(rpd.rpd_data_structure)
     print("Converting units to schema units...")
     unit_converter.convert_to_schema_units(rpd.rpd_data_structure)
-    print("Adding supply ducting specifications...")
-    rpd.specify_supply_ducting()
+    if not rpd_testing:
+        print("Adding supply ducting specifications...")
+        rpd.specify_supply_ducting()
 
     safe_file = safe_path(rpd_file_path)
     with open(safe_file, "w") as f:
@@ -276,20 +288,19 @@ def _process_command_group(
         cmd_dict = file_bdl_commands[command_group][u_name]
         obj = _create_obj_instance(u_name, command_group, cmd_dict, cmd_class, rmd)
         if special_handling and command_group in special_handling:
-            special_handling[command_group](obj, cmd_dict)
+            special_handling[command_group](obj, cmd_dict, u_name)
         obj.add_inputs(cmd_dict)
         rmd.bdl_obj_instances[u_name] = obj
 
 
 if __name__ == "__main__":
-
     # Test generating an RPD JSON file from one of the test BDL files
     validate_configuration.find_equest_installation()
     write_rpd_json_from_inps(
-        "Briarwood Library",
+        "245 Clarkson Ave",
         [
             (
-                r"C:\Users\JacksonJarboe\Documents\Local Models\245 Clarkson Ave\245 Clarkson BLr8.inp",
+                r"C:\Users\JacksonJarboe\Documents\Local Models\245 Clarkson Ave\245 Clarkson BLr9 FCs multiplied.inp",
                 "BASELINE_0",
             ),
             (

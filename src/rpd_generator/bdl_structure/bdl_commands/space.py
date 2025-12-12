@@ -1,3 +1,4 @@
+import copy
 from rpd_generator.bdl_structure.parent_node import ParentNode
 from rpd_generator.bdl_structure.child_node import ChildNode
 from rpd_generator.artifacts.building_segment import BuildingSegment
@@ -21,7 +22,8 @@ BDL_DaylightingControlOptions = BDLEnums.bdl_enums["DaylightingControlOptions"]
 
 
 class Space(ChildNode, ParentNode):
-    """Space objects represent the spaces in the building model and populate the Space data group in the 229 schema.
+    """
+    Space objects represent the spaces in the building model and populate the Space data group in the 229 schema.
     Derived from ChildNode to access the parent FLOOR object through the 'parent' attribute.
     Derived from ParentNode to access the child INTERIOR-WALL, EXTERIOR-WALL, UNDERGROUND-WALL object(s) through the 'children' attribute.
     """
@@ -147,6 +149,7 @@ class Space(ChildNode, ParentNode):
         ParentNode.__init__(self, u_name, rmd)
         self.rmd.bdl_obj_instances[u_name] = self
 
+        self.replications = 0
         self.space_data_structure = {}
 
         # data elements with children
@@ -261,6 +264,11 @@ class Space(ChildNode, ParentNode):
                 first_occ, self.lighting_space_type
             )
 
+        # Determine number of replications for the space within the parent zone
+        self.replications = (
+            self.try_int(self.get_inp(BDL_SpaceKeywords.MULTIPLIER, 1)) - 1
+        )
+
     def populate_data_group(self):
         """Populate schema structure for space object."""
 
@@ -292,11 +300,6 @@ class Space(ChildNode, ParentNode):
             value = getattr(self, attr, None)
             if value is not None:
                 self.space_data_structure[attr] = value
-
-    def insert_to_rpd(self):
-        """Insert space object into the rpd data structure."""
-        # find the zone that has the "SPACE" attribute value equal to the space object's u_name
-        self.zone.spaces.append(self.space_data_structure)
 
     def populate_interior_lighting_data_elements(self):
         space_ltg_scheds = self.get_inp(BDL_SpaceKeywords.LIGHTING_SCHEDUL)

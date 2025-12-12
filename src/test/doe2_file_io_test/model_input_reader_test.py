@@ -33,7 +33,7 @@ class TestModelInputReader(unittest.TestCase):
 
     def test_read_material_commands(self):
         data = self.model_input_reader.read_input_bdl_file(self.test_file)
-        self.assertEqual(25, len(data["file_commands"]["MATERIAL"]))
+        self.assertEqual(10, len(data["file_commands"]["MATERIAL"]))
 
     def test_read_schedule_commands(self):
         data = self.model_input_reader.read_input_bdl_file(self.test_file)
@@ -43,11 +43,17 @@ class TestModelInputReader(unittest.TestCase):
         data = self.model_input_reader.read_input_bdl_file(self.test_file)
         self.assertDictEqual(
             {
-                "command": "MATERIAL",
-                "TYPE": "RESISTANCE",
-                "RESISTANCE": "                      0.7500",
+                "command": "CONSTRUCTION",
+                "TYPE": "U-VALUE",
+                "U-VALUE": "                      2.0800",
+                "ABSORPTANCE": "                      0.7000",
+                "C-C-U": "                      1.0000",
+                "C-RIGID-INS-RVAL": "                      0.0000",
+                "C-USER-INP-ABS": "                      0.7000",
+                "C-WALL-TYPE": "                      0.0000",
+                "ROUGHNESS": "                      3.0000",
             },
-            data["file_commands"]["MATERIAL"]["Carpet & No Pad"],
+            data["file_commands"]["CONSTRUCTION"]["Sgl Lyr Unins Mtl Door"],
         )
 
     def test_raw_read_library_curve_fit_coef(self):

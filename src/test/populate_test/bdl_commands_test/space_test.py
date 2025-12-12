@@ -38,9 +38,10 @@ class TestSpaces(unittest.TestCase):
         self.rmd.doe2_data_path = Config.DOE23_DATA_PATH
         self.system = System("System 1", self.rmd)
         self.zone = Zone("Zone 1", self.system, self.rmd)
-        self.rmd.space_map = {"Space 1": self.zone}
+        self.rmd.space_map["Space 1"] = self.zone
         self.floor = Floor("Floor 1", self.rmd)
         self.space = Space("Space 1", self.floor, self.rmd)
+        self.zone.space = self.space
         self.daySchedule = DaySchedulePD("Day Schedule Non-continuous", self.rmd)
         self.weekSchedule = WeekSchedulePD("Week Schedule Non-continuous", self.rmd)
         self.run_period = RunPeriod("Run Period 1", self.rmd)
@@ -67,6 +68,9 @@ class TestSpaces(unittest.TestCase):
             BDL_ScheduleKeywords.WEEK_SCHEDULES: "Week Schedule Non-continuous",
             BDL_ScheduleKeywords.MONTH: "12",
             BDL_ScheduleKeywords.DAY: "31",
+        }
+        self.zone.keyword_value_pairs = {
+            BDL_ZoneKeywords.SPACE: "Space 1",
         }
 
     @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
@@ -356,3 +360,81 @@ class TestSpaces(unittest.TestCase):
             "occupant_latent_heat_gain": 3.0,
         }
         self.assertEqual(expected_data_structure, self.space.space_data_structure)
+
+    @patch("rpd_generator.bdl_structure.base_node.BaseNode.get_output_data")
+    def test_populate_space_with_multipliers(self, mock_get_output_data):
+        """Tests that the space data structure is populated correctly, given multipliers for lighting and equipment."""
+        mock_get_output_data.return_value = {}
+        self.space.keyword_value_pairs = {
+            BDL_SpaceKeywords.FLOOR_MULTIPLIER: "2",
+            BDL_SpaceKeywords.MULTIPLIER: "3",
+            BDL_SpaceKeywords.VOLUME: "4000",
+            BDL_SpaceKeywords.AREA: "400",
+            BDL_SpaceKeywords.LIGHTING_SCHEDUL: "Annual Schedule 1",
+            BDL_SpaceKeywords.LIGHTING_W_AREA: "20.1",
+            BDL_SpaceKeywords.LIGHTING_KW: "30.1",
+            BDL_SpaceKeywords.EQUIP_SCHEDULE: "Annual Schedule 1",
+            BDL_SpaceKeywords.EQUIPMENT_W_AREA: "40.1",
+            BDL_SpaceKeywords.EQUIPMENT_KW: "50.1",
+            BDL_SpaceKeywords.EQUIP_SENSIBLE: "0.4",
+            BDL_SpaceKeywords.EQUIP_LATENT: "0.5",
+            BDL_SpaceKeywords.NUMBER_OF_PEOPLE: "10",
+            BDL_SpaceKeywords.PEOPLE_SCHEDULE: "Annual Schedule 1",
+            BDL_SpaceKeywords.PEOPLE_HG_SENS: "2",
+            BDL_SpaceKeywords.PEOPLE_HG_LAT: "3",
+        }
+        self.rmd.populate_rmd_data(testing=True)
+        self.zone.insert_to_rpd()
+
+        for i in range(1, 3):
+            zone1_space = self.zone.spaces[i]
+
+            self.assertEqual(zone1_space["id"], f"Space 1 - {i}")
+
+            int_ltg = zone1_space["interior_lighting"][0]
+            self.assertTrue(int_ltg["id"].startswith("Space 1 IntLtg1"))
+            self.assertTrue(int_ltg["id"].endswith(f"- {i}"))
+
+            misc = zone1_space["miscellaneous_equipment"][0]
+            self.assertTrue(misc["id"].startswith("Space 1 MiscEqp1"))
+            self.assertTrue(misc["id"].endswith(f"- {i}"))
+
+            zones = self.rmd.default_building_segment.zones
+
+            # zone 0: original zone
+            zone0 = zones[0]
+            zone0_spaces = zone0["spaces"]
+
+            # must contain base + replicated spaces
+            self.assertGreaterEqual(len(zone0_spaces), 3)
+
+            # replicated space i exists in zone 0
+            z0_space = next(s for s in zone0_spaces if s["id"] == f"Space 1 - {i}")
+            self.assertEqual(z0_space["floor_area"], 400.0)
+            self.assertEqual(z0_space["number_of_occupants"], 10.0)
+
+            z0_ltg = z0_space["interior_lighting"][0]
+            self.assertTrue(z0_ltg["id"].endswith(f"- {i}"))
+
+            z0_misc = z0_space["miscellaneous_equipment"][0]
+            self.assertTrue(z0_misc["id"].endswith(f"- {i}"))
+
+            # zone 1: replicated zone
+            zone1 = zones[1]
+            zone1_spaces = zone1["spaces"]
+
+            # must contain nested replicated spaces
+            nested_space = next(
+                s for s in zone1_spaces if s["id"].endswith(f"- {i} - 1")
+            )
+
+            self.assertEqual(nested_space["floor_area"], 400.0)
+            self.assertEqual(nested_space["number_of_occupants"], 10.0)
+
+            n_ltg = nested_space["interior_lighting"][0]
+            self.assertTrue(n_ltg["id"].startswith("Space 1 IntLtg1"))
+            self.assertTrue(n_ltg["id"].endswith(f"- {i} - 1"))
+
+            n_misc = nested_space["miscellaneous_equipment"][0]
+            self.assertTrue(n_misc["id"].startswith("Space 1 MiscEqp1"))
+            self.assertTrue(n_misc["id"].endswith(f"- {i} - 1"))

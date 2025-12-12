@@ -659,6 +659,8 @@ class BDLEnums:
                 "Z",
                 "VOLUME",
                 "AREA",
+                "MULTIPLIER",
+                "FLOOR-MULTIPLIER",
                 "LIGHTING-SCHEDUL",
                 "EQUIP-SCHEDULE",
                 "SOURCE-SCHEDULE",
@@ -950,6 +952,7 @@ class BDLEnums:
         "SystemKeywords": _ListEnum(
             [
                 "TYPE",
+                "NUMBER-OF-UNITS",
                 "SIZING-RATIO",
                 "HEAT-SOURCE",
                 "WLHP-CATEGORY",
