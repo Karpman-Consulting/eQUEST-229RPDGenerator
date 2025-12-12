@@ -1,3 +1,4 @@
+import copy
 from rpd_generator.bdl_structure.parent_node import ParentNode
 from rpd_generator.bdl_structure.child_node import ChildNode
 from rpd_generator.schema.schema_enums import SchemaEnums
@@ -143,8 +144,64 @@ class InteriorWall(
 
     def insert_to_rpd(self):
         """Insert interior wall object into the rpd data structure."""
-        zone = self.rmd.space_map.get(self.parent.u_name)
-        zone.surfaces.append(self.interior_wall_data_structure)
+        base_zone = self.rmd.space_map.get(self.parent.u_name)
+        if not base_zone:
+            return
+
+        # Space-level replication
+        space_multiplier = (
+            self.try_int(self.parent.get_inp(BDL_SpaceKeywords.MULTIPLIER, 1)) or 1
+        )
+        space_replications = space_multiplier - 1
+
+        # Zone-level replication (floor multiplier)
+        zone_replications = base_zone.replications or 0
+
+        building_segment = base_zone.parent_building_segment
+
+        def find_zone_data_structure(zone_id):
+            for z in building_segment.zones:
+                if z.get("id") == zone_id:
+                    return z
+            return None
+
+        # Helper to append surface with optional replication index
+        def append_surface(zone_data_structure, zone_rep_idx=0, space_rep_idx=0):
+            if zone_rep_idx == 0 and space_rep_idx == 0:
+                zone_data_structure["surfaces"].append(
+                    self.interior_wall_data_structure
+                )
+                return
+
+            clone = copy.deepcopy(self.interior_wall_data_structure)
+            # First increment by space replication
+            if space_rep_idx:
+                self.increment_ids(clone, space_rep_idx)
+            # Then increment by zone replication
+            if zone_rep_idx:
+                self.increment_ids(clone, zone_rep_idx)
+
+            zone_data_structure["surfaces"].append(clone)
+
+        # Base zone
+        base_zone_data_structure = find_zone_data_structure(base_zone.u_name)
+        if base_zone_data_structure:
+            append_surface(base_zone_data_structure)
+
+            for s in range(1, space_replications + 1):
+                append_surface(base_zone_data_structure, space_rep_idx=s)
+
+        # Replicated zones
+        for z in range(1, zone_replications + 1):
+            zone_id = f"{base_zone.u_name} - {z}"
+            zone_data_structure = find_zone_data_structure(zone_id)
+            if not zone_data_structure:
+                continue
+
+            append_surface(zone_data_structure, zone_rep_idx=z)
+
+            for s in range(1, space_replications + 1):
+                append_surface(zone_data_structure, zone_rep_idx=z, space_rep_idx=s)
 
     def determine_surface_area(self):
         area = self.try_float(self.get_inp(BDL_InteriorWallKeywords.AREA))

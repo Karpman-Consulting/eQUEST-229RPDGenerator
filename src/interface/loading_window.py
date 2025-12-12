@@ -7,8 +7,7 @@ class LoadingWindow(ctk.CTkToplevel):
         self.title("Please wait")
         self.resizable(False, False)
         self.transient(parent)
-        self.grab_set()
-
+        self.update_idletasks()
         self.geometry(
             "350x100+%d+%d"
             % (

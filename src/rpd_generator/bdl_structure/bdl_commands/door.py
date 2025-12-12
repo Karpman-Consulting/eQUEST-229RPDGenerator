@@ -1,3 +1,4 @@
+import copy
 from rpd_generator.bdl_structure.child_node import ChildNode
 from rpd_generator.schema.schema_enums import SchemaEnums
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
@@ -23,6 +24,7 @@ BDL_ConstructionKeywords = BDLEnums.bdl_enums["ConstructionKeywords"]
 BDL_ConstructionTypes = BDLEnums.bdl_enums["ConstructionTypes"]
 BDL_WallLocationOptions = BDLEnums.bdl_enums["WallLocationOptions"]
 BDL_ExteriorWallKeywords = BDLEnums.bdl_enums["ExteriorWallKeywords"]
+BDL_SpaceKeywords = BDLEnums.bdl_enums["SpaceKeywords"]
 
 
 class Door(ChildNode):
@@ -119,9 +121,58 @@ class Door(ChildNode):
                 self.door_data_structure[attr] = value
 
     def insert_to_rpd(self):
-        """Insert window object into the rpd data structure."""
-        surface = self.get_obj(self.parent.u_name)
-        surface.subsurfaces.append(self.door_data_structure)
+        """Insert door object into the rpd data structure."""
+        # Parent wall (Python object)
+        wall_obj = self.get_obj(self.parent.u_name)
+        if not wall_obj:
+            return
+
+        # Resolve base zone via space
+        base_zone = self.rmd.space_map.get(wall_obj.parent.u_name)
+        if not base_zone:
+            return
+
+        building_segment = base_zone.parent_building_segment
+
+        # Space-level replication
+        space_multiplier = (
+            self.try_int(wall_obj.parent.get_inp(BDL_SpaceKeywords.MULTIPLIER, 1)) or 1
+        )
+        space_replications = space_multiplier - 1
+
+        # Zone-level replication
+        zone_replications = base_zone.replications or 0
+
+        # Find all wall data structures this door belongs to
+        def matching_wall_dicts():
+            results = []
+            for zone_ds in building_segment.zones:
+                for surface in zone_ds.get("surfaces", []):
+                    if surface.get("id", "").startswith(self.parent.u_name):
+                        results.append(surface)
+            return results
+
+        wall_dicts = matching_wall_dicts()
+        if not wall_dicts:
+            return
+
+        # Append door (and replicas) to each wall dict
+        for wall_rep_idx, wall_ds in enumerate(wall_dicts):
+            # Base door
+            if wall_rep_idx == 0:
+                wall_ds["subsurfaces"].append(self.door_data_structure)
+            else:
+                clone = copy.deepcopy(self.door_data_structure)
+                self.increment_ids(clone, wall_rep_idx)
+                wall_ds["subsurfaces"].append(clone)
+
+            # Space replications
+            for s in range(1, space_replications + 1):
+                clone = copy.deepcopy(self.door_data_structure)
+                self.increment_ids(clone, s)
+                if wall_rep_idx:
+                    self.increment_ids(clone, wall_rep_idx)
+                wall_ds["subsurfaces"].append(clone)
 
     def calc_u_factor(self):
         """Calculate the U-factor for the door."""

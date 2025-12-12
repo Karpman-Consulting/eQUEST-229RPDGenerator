@@ -1195,7 +1195,7 @@ xlrd = "^1.2"
 type = "git"
 url = "https://github.com/pnnl/ruleset-checking-tool.git"
 reference = "develop"
-resolved_reference = "5f1d68340a94c0729bef35b44592f49ed5b036b9"
+resolved_reference = "f019fb660c4f6aeeb63ca0819b4cda6e87e7dd7c"
 
 [[package]]
 name = "six"
