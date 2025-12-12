@@ -7,7 +7,7 @@
         "schema_url": "https://github.com/open229/ruleset-model-description-schema",
         "author": "Jackson Jarboe, Karpman Consulting LLC",
         "description": "DOE2.3 Ruleset Project Description (RPD)",
-        "time_of_creation": "2025-10-13T00:08Z",
+        "time_of_creation": "2025-12-12T05:17Z",
         "version": "1.1.1",
         "source": "DOE-2.3 Energy Model .INP, .LRP, .SRP, .ERP, .NHR files",
         "disclaimer": "\n        Acknowledgment: This material is based upon work supported by the U.S. Department of Energy\u2019s Office of Energy Efficiency and Renewable Energy (EERE) under the Building Technologies Office - DE-FOA-0002813 - Bipartisan Infrastructure Law Resilient and Efficient Codes Implementation.\n        Award Number: DE-EE0010949\n        Abridged Disclaimer: The views expressed herein do not necessarily represent the view of the U.S. Department of Energy or the United States Government.\n        "
@@ -21,8 +21,7 @@
             "type": "USER",
             "weather": {
                 "ground_temperature_schedule": "Ground Temperature Schedule",
-                "file_name": "DENVER INTL AP    CO",
-                "climate_zone": "CZ5B"
+                "file_name": "DENVER INTL AP    CO"
             },
             "calendar": {
                 "day_of_week_for_january_1": "FRIDAY"
@@ -179,7 +178,7 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 21.4564216032,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.358949382776455,
+                                                    "u_factor": 2.177386105230217,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
@@ -190,7 +189,7 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 21.4564216032,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.358949382776455,
+                                                    "u_factor": 2.177386105230217,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
@@ -201,7 +200,7 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 21.4564216032,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.358949382776455,
+                                                    "u_factor": 2.177386105230217,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
@@ -404,7 +403,7 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 41.8379550336,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.358949382776455,
+                                                    "u_factor": 2.177386105230217,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
@@ -415,7 +414,7 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 1.653674112,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.358949382776455,
+                                                    "u_factor": 2.177386105230217,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
@@ -593,7 +592,7 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 21.4564216032,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.358949382776455,
+                                                    "u_factor": 2.177386105230217,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
@@ -604,7 +603,7 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 21.4564216032,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.358949382776455,
+                                                    "u_factor": 2.177386105230217,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
@@ -615,7 +614,7 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 21.4564216032,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.358949382776455,
+                                                    "u_factor": 2.177386105230217,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
@@ -801,7 +800,7 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 41.8379550336,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.358949382776455,
+                                                    "u_factor": 2.177386105230217,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
@@ -812,7 +811,7 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 1.653674112,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.358949382776455,
+                                                    "u_factor": 2.177386105230217,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
@@ -963,7 +962,7 @@
                                         "type": "HEAT_PUMP",
                                         "energy_source_type": "ELECTRICITY",
                                         "water_source_heat_pump_loop": "Condenser Water Loop",
-                                        "design_capacity": 17717.964333784723,
+                                        "design_capacity": 17716.061661180556,
                                         "rated_capacity": 17584.266666666666,
                                         "is_calculated_size": false,
                                         "heating_coil_setpoint": 32.222222222222285,
@@ -1072,7 +1071,7 @@
                                         "type": "HEAT_PUMP",
                                         "energy_source_type": "ELECTRICITY",
                                         "water_source_heat_pump_loop": "Condenser Water Loop",
-                                        "design_capacity": 17667.02605609375,
+                                        "design_capacity": 17651.718814583335,
                                         "rated_capacity": 17584.266666666666,
                                         "is_calculated_size": false,
                                         "heating_coil_setpoint": 32.222222222222285,
@@ -1129,7 +1128,7 @@
                                         "type": "HEAT_PUMP",
                                         "energy_source_type": "ELECTRICITY",
                                         "water_source_heat_pump_loop": "Condenser Water Loop",
-                                        "design_capacity": 17540.185795052083,
+                                        "design_capacity": 17525.673051006946,
                                         "rated_capacity": 17584.266666666666,
                                         "is_calculated_size": false,
                                         "heating_coil_setpoint": 32.222222222222285,
@@ -1186,7 +1185,7 @@
                                         "type": "HEAT_PUMP",
                                         "energy_source_type": "ELECTRICITY",
                                         "water_source_heat_pump_loop": "Condenser Water Loop",
-                                        "design_capacity": 17567.520400208334,
+                                        "design_capacity": 17538.588786458335,
                                         "rated_capacity": 17584.266666666666,
                                         "is_calculated_size": false,
                                         "heating_coil_setpoint": 32.222222222222285,
@@ -1243,7 +1242,7 @@
                                         "type": "HEAT_PUMP",
                                         "energy_source_type": "ELECTRICITY",
                                         "water_source_heat_pump_loop": "Condenser Water Loop",
-                                        "design_capacity": 17495.88397529514,
+                                        "design_capacity": 17487.799333940973,
                                         "rated_capacity": 17584.266666666666,
                                         "is_calculated_size": false,
                                         "heating_coil_setpoint": 32.222222222222285,
@@ -132876,16 +132875,6 @@
                     "u_factor": 0.35783047909715215
                 },
                 {
-                    "id": "BL1 Ceilg Construction",
-                    "primary_layers": [
-                        "AcousTile 1/2in (AC02)"
-                    ],
-                    "framing_layers": [],
-                    "insulation_locations": [],
-                    "r_values": [],
-                    "u_factor": 2.9214668971004607
-                },
-                {
                     "id": "BL1 IWall Construction",
                     "primary_layers": [],
                     "framing_layers": [],
@@ -132913,45 +132902,6 @@
                     "insulation_locations": [],
                     "r_values": [],
                     "u_factor": 4.8554836612451
-                },
-                {
-                    "id": "BL1 UFCons (G.S1.U2)",
-                    "primary_layers": [
-                        "BL1 UFMat (G.S1.U2.M1)",
-                        "Light Soil, Damp 12in",
-                        "Conc HW 140lb 6in (HF-C13)",
-                        "Carpet & No Pad"
-                    ],
-                    "framing_layers": [],
-                    "insulation_locations": [],
-                    "r_values": [],
-                    "u_factor": 0.13741399205020632
-                },
-                {
-                    "id": "BL1 UFCons (G.E2.U3)",
-                    "primary_layers": [
-                        "BL1 UFMat (G.E2.U3.M1)",
-                        "Light Soil, Damp 12in",
-                        "Conc HW 140lb 6in (HF-C13)",
-                        "Carpet & No Pad"
-                    ],
-                    "framing_layers": [],
-                    "insulation_locations": [],
-                    "r_values": [],
-                    "u_factor": 0.14422790901137358
-                },
-                {
-                    "id": "BL1 UFCons (G.C5.U6)",
-                    "primary_layers": [
-                        "BL1 UFMat (G.C5.U6.M1)",
-                        "Light Soil, Damp 12in",
-                        "Conc HW 140lb 6in (HF-C13)",
-                        "Carpet & No Pad"
-                    ],
-                    "framing_layers": [],
-                    "insulation_locations": [],
-                    "r_values": [],
-                    "u_factor": 0.054511335689338046
                 },
                 {
                     "id": "Exterior Wall Type 3",
@@ -132983,37 +132933,6 @@
                 }
             ],
             "materials": [
-                {
-                    "id": "Roof Type 2 M1",
-                    "r_value": 0.05934912361050029
-                },
-                {
-                    "id": "Exterior Wall Type 2 M2",
-                    "r_value": 0.09950223988110582
-                },
-                {
-                    "id": "Roof Type 3 FRV",
-                    "r_value": 1.2058262592317375
-                },
-                {
-                    "id": "BL1 UFMat (G.S1.U2.M1)",
-                    "r_value": 6.556933442926252
-                },
-                {
-                    "id": "BL1 UFMat (G.E2.U3.M1)",
-                    "r_value": 6.190412979845618
-                },
-                {
-                    "id": "BL1 UFMat (G.C5.U6.M1)",
-                    "r_value": 17.611015908160326
-                },
-                {
-                    "id": "Conc LW 30lb 4in (CC34)",
-                    "thickness": 0.10158983999999999,
-                    "thermal_conductivity": 0.12997819160104987,
-                    "density": 480.55390121880436,
-                    "specific_heat": 837.3601169702214
-                },
                 {
                     "id": "Metal Deck",
                     "thickness": 0.0007924799999999998,
@@ -133077,53 +132996,6 @@
                     "thermal_conductivity": 0.04326837270341208,
                     "density": 91.30524123157284,
                     "specific_heat": 837.3601169702214
-                },
-                {
-                    "id": "exterior wall type3",
-                    "r_value": 1.9460172578517159
-                },
-                {
-                    "id": "Roof Type 3lyr",
-                    "r_value": 2.6575023005413927
-                },
-                {
-                    "id": "Surface to Surface",
-                    "thickness": 0.0,
-                    "thermal_conductivity": 0.1142285039370079,
-                    "density": 0.0,
-                    "specific_heat": 0.0
-                },
-                {
-                    "id": "Surface to surface wall",
-                    "thickness": 0.0,
-                    "thermal_conductivity": 0.15576614173228348,
-                    "density": 0.0,
-                    "specific_heat": 0.0
-                },
-                {
-                    "id": "AcousTile 1/2in (AC02)",
-                    "thickness": 0.012710159999999998,
-                    "thermal_conductivity": 0.05711425196850395,
-                    "density": 288.3323407312826,
-                    "specific_heat": 1339.7761871523542
-                },
-                {
-                    "id": "Light Soil, Damp 12in",
-                    "thickness": 0.30479999999999996,
-                    "thermal_conductivity": 0.8653674540682416,
-                    "density": 1601.8463373960144,
-                    "specific_heat": 1046.7001462127766
-                },
-                {
-                    "id": "Conc HW 140lb 6in (HF-C13)",
-                    "thickness": 0.15239999999999998,
-                    "thermal_conductivity": 1.7307349081364831,
-                    "density": 2242.5848723544204,
-                    "specific_heat": 837.3601169702214
-                },
-                {
-                    "id": "Carpet & No Pad",
-                    "r_value": 0.13208261931120244
                 },
                 {
                     "id": "Stucco_0.0833",
@@ -133293,25 +133165,25 @@
             "external_fluid_sources": [],
             "model_output": {
                 "id": "229 Test Case F-240 (WSHP DOAS) Output",
-                "unmet_load_hours_heating": 3325.0,
+                "unmet_load_hours_heating": 3318.0,
                 "unmet_load_hours_cooling": 0.0,
                 "annual_source_results": [
                     {
                         "id": "ELECTRICITY",
                         "energy_source": "ELECTRICITY",
-                        "annual_consumption": 666370583964.7671,
-                        "annual_demand": 45465.5251155039,
-                        "annual_cost": 12954.0
+                        "annual_consumption": 661446895238.6606,
+                        "annual_demand": 44961.74073798251,
+                        "annual_cost": 12858.0
                     },
                     {
                         "id": "NATURAL-GAS",
                         "energy_source": "NATURAL_GAS",
-                        "annual_consumption": 1137592907240.625,
-                        "annual_demand": 10670378460.38889,
-                        "annual_cost": 5391.0
+                        "annual_consumption": 1108335812835.9375,
+                        "annual_demand": 10474029974.416666,
+                        "annual_cost": 5252.0
                     }
                 ],
-                "building_peak_cooling_load": 101.0267562866211,
+                "building_peak_cooling_load": 97.82678985595703,
                 "annual_end_use_results": [
                     {
                         "id": "ELECTRICITY-INTERIOR_LIGHTING",
@@ -133335,36 +133207,36 @@
                         "id": "ELECTRICITY-SPACE_HEATING",
                         "type": "SPACE_HEATING",
                         "energy_source": "ELECTRICITY",
-                        "annual_site_energy_use": 144051498706.65472,
-                        "annual_site_coincident_demand": 3.348897886598375,
-                        "annual_site_non_coincident_demand": 3.9189529706319175,
+                        "annual_site_energy_use": 139379125662.20352,
+                        "annual_site_coincident_demand": 3.2163946264648438,
+                        "annual_site_non_coincident_demand": 3.8550949305343627,
                         "is_regulated": true
                     },
                     {
                         "id": "ELECTRICITY-SPACE_COOLING",
                         "type": "SPACE_COOLING",
                         "energy_source": "ELECTRICITY",
-                        "annual_site_energy_use": 23607340033.210644,
+                        "annual_site_energy_use": 23688964530.92406,
                         "annual_site_coincident_demand": 0.0,
-                        "annual_site_non_coincident_demand": 2.3932987360551623,
+                        "annual_site_non_coincident_demand": 2.3690819444995457,
                         "is_regulated": true
                     },
                     {
                         "id": "ELECTRICITY-HEAT_REJECTION",
                         "type": "HEAT_REJECTION",
                         "energy_source": "ELECTRICITY",
-                        "annual_site_energy_use": 16033936.363239845,
+                        "annual_site_energy_use": 15335257.768817862,
                         "annual_site_coincident_demand": 0.0,
-                        "annual_site_non_coincident_demand": 0.01060893456975619,
+                        "annual_site_non_coincident_demand": 0.010444468496955104,
                         "is_regulated": true
                     },
                     {
                         "id": "ELECTRICITY-PUMPS",
                         "type": "PUMPS",
                         "energy_source": "ELECTRICITY",
-                        "annual_site_energy_use": 14640416696.336172,
-                        "annual_site_coincident_demand": 0.31351242255210876,
-                        "annual_site_non_coincident_demand": 0.424686836804284,
+                        "annual_site_energy_use": 14308196515.929502,
+                        "annual_site_coincident_demand": 0.298406798792945,
+                        "annual_site_non_coincident_demand": 0.41716284778383045,
                         "is_regulated": true
                     },
                     {
@@ -133425,9 +133297,9 @@
                         "id": "NATURAL-GAS-SPACE_HEATING",
                         "type": "SPACE_HEATING",
                         "energy_source": "NATURAL_GAS",
-                        "annual_site_energy_use": 1108843249437.5,
-                        "annual_site_coincident_demand": 10651605424.027779,
-                        "annual_site_non_coincident_demand": 10651711940.081057,
+                        "annual_site_energy_use": 1079586052000.0,
+                        "annual_site_coincident_demand": 10455260601.444445,
+                        "annual_site_non_coincident_demand": 10455365154.049623,
                         "is_regulated": true
                     },
                     {
@@ -133488,9 +133360,9 @@
                         "id": "NATURAL-GAS-SERVICE_WATER_HEATING",
                         "type": "SERVICE_WATER_HEATING",
                         "energy_source": "NATURAL_GAS",
-                        "annual_site_energy_use": 22845684460.351562,
-                        "annual_site_coincident_demand": 18060653.900878906,
-                        "annual_site_non_coincident_demand": 235657545.67042977,
+                        "annual_site_energy_use": 22845555669.335938,
+                        "annual_site_coincident_demand": 18056672.111979168,
+                        "annual_site_non_coincident_demand": 235656243.43705934,
                         "is_regulated": true
                     }
                 ]

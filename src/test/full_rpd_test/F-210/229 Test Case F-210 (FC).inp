@@ -82,33 +82,6 @@ $ ---------------------------------------------------------
 $              Materials / Layers / Constructions
 $ ---------------------------------------------------------
 
-"Roof Type 2 M1" = MATERIAL        
-   TYPE             = RESISTANCE
-   RESISTANCE       = 0.337
-   ..
-"Exterior Wall Type 2 M2" = MATERIAL        
-   TYPE             = RESISTANCE
-   RESISTANCE       = 0.565
-   ..
-"Roof Type 3 FRV" = MATERIAL        
-   TYPE             = RESISTANCE
-   RESISTANCE       = 6.84701
-   ..
-"BL1 UFMat (G.S1.U2.M1)" = MATERIAL        
-   TYPE             = RESISTANCE
-   RESISTANCE       = 37.232
-   ..
-"BL1 UFMat (G.E2.U3.M1)" = MATERIAL        
-   TYPE             = RESISTANCE
-   RESISTANCE       = 35.1508
-   ..
-"BL1 UFMat (G.C5.U6.M1)" = MATERIAL        
-   TYPE             = RESISTANCE
-   RESISTANCE       = 100
-   ..
-"Conc LW 30lb 4in (CC34)" = MATERIAL        
-   LIBRARY-ENTRY "Conc LW 30lb 4in (CC34)"
-   ..
 "Metal Deck" = MATERIAL        
    TYPE             = PROPERTIES
    THICKNESS        = {.002625}
@@ -173,28 +146,6 @@ $ ---------------------------------------------------------
    DENSITY          = 5.7
    SPECIFIC-HEAT    = 0.2
    ..
-"exterior wall type3" = MATERIAL        
-   TYPE             = RESISTANCE
-   RESISTANCE       = 11.05
-   ..
-"Roof Type 3lyr" = MATERIAL        
-   TYPE             = RESISTANCE
-   RESISTANCE       = 15.09
-   ..
-"Surface to Surface" = MATERIAL        
-   TYPE             = PROPERTIES
-   THICKNESS        = 0
-   CONDUCTIVITY     = 0.066
-   DENSITY          = 0
-   SPECIFIC-HEAT    = 0
-   ..
-"Surface to surface wall" = MATERIAL        
-   TYPE             = PROPERTIES
-   THICKNESS        = 0
-   CONDUCTIVITY     = 0.09
-   DENSITY          = 0
-   SPECIFIC-HEAT    = 0
-   ..
 
 "Roof Construction Lyr" = LAYERS          
    INSIDE-FILM-RES  = 0.61
@@ -219,27 +170,9 @@ $ ---------------------------------------------------------
          "Gypsum board resistance" )
    THICKNESS        = ( &D, &D, 0.588 )
    ..
-"BL1 Ceilg Cons Layers" = LAYERS          
-   MATERIAL         = ( "AcousTile 1/2in (AC02)" )
-   ..
 "BL1 IFlr Cons Layers Type 1" = LAYERS          
    INSIDE-FILM-RES  = 0.92
    MATERIAL         = ( "Concrete" )
-   ..
-"BL1 UFLyrs (G.S1.U2)" = LAYERS          
-   INSIDE-FILM-RES  = 0.92
-   MATERIAL         = ( "BL1 UFMat (G.S1.U2.M1)", "Light Soil, Damp 12in", 
-         "Conc HW 140lb 6in (HF-C13)", "Carpet & No Pad" )
-   ..
-"BL1 UFLyrs (G.E2.U3)" = LAYERS          
-   INSIDE-FILM-RES  = 0.92
-   MATERIAL         = ( "BL1 UFMat (G.E2.U3.M1)", "Light Soil, Damp 12in", 
-         "Conc HW 140lb 6in (HF-C13)", "Carpet & No Pad" )
-   ..
-"BL1 UFLyrs (G.C5.U6)" = LAYERS          
-   INSIDE-FILM-RES  = 0.92
-   MATERIAL         = ( "BL1 UFMat (G.C5.U6.M1)", "Light Soil, Damp 12in", 
-         "Conc HW 140lb 6in (HF-C13)", "Carpet & No Pad" )
    ..
 "BL1 IFlr Layer Type 2" = LAYERS          
    INSIDE-FILM-RES  = 0.92
@@ -266,10 +199,6 @@ $ ---------------------------------------------------------
    TYPE             = U-VALUE
    U-VALUE          = {0.063694}
    ..
-"BL1 Ceilg Construction" = CONSTRUCTION    
-   TYPE             = LAYERS
-   LAYERS           = "BL1 Ceilg Cons Layers"
-   ..
 "BL1 IWall Construction" = CONSTRUCTION    
    TYPE             = U-VALUE
    U-VALUE          = {.2985}
@@ -281,18 +210,6 @@ $ ---------------------------------------------------------
 "BL1 IFlSP Construction" = CONSTRUCTION    
    TYPE             = LAYERS
    LAYERS           = "BL1 IFlr Cons Layers Type 1"
-   ..
-"BL1 UFCons (G.S1.U2)" = CONSTRUCTION    
-   TYPE             = LAYERS
-   LAYERS           = "BL1 UFLyrs (G.S1.U2)"
-   ..
-"BL1 UFCons (G.E2.U3)" = CONSTRUCTION    
-   TYPE             = LAYERS
-   LAYERS           = "BL1 UFLyrs (G.E2.U3)"
-   ..
-"BL1 UFCons (G.C5.U6)" = CONSTRUCTION    
-   TYPE             = LAYERS
-   LAYERS           = "BL1 UFLyrs (G.C5.U6)"
    ..
 "Exterior Wall Type 3" = CONSTRUCTION    
    TYPE             = U-VALUE
@@ -317,7 +234,7 @@ $ ---------------------------------------------------------
 "BL1 Window Type #1 GT" = GLASS-TYPE      
    TYPE             = SHADING-COEF
    SHADING-COEF     = 0.44
-   GLASS-CONDUCT    = 0.579
+   GLASS-CONDUCT    = {1/(1/0.3835-0.17)}
    VIS-TRANS        = 0.417
    ..
 

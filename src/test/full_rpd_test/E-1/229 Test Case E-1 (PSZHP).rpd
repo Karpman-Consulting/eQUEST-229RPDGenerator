@@ -7,7 +7,7 @@
         "schema_url": "https://github.com/open229/ruleset-model-description-schema",
         "author": "Jackson Jarboe, Karpman Consulting LLC",
         "description": "DOE2.3 Ruleset Project Description (RPD)",
-        "time_of_creation": "2025-10-13T00:08Z",
+        "time_of_creation": "2025-12-12T05:17Z",
         "version": "1.1.1",
         "source": "DOE-2.3 Energy Model .INP, .LRP, .SRP, .ERP, .NHR files",
         "disclaimer": "\n        Acknowledgment: This material is based upon work supported by the U.S. Department of Energy\u2019s Office of Energy Efficiency and Renewable Energy (EERE) under the Building Technologies Office - DE-FOA-0002813 - Bipartisan Infrastructure Law Resilient and Efficient Codes Implementation.\n        Award Number: DE-EE0010949\n        Abridged Disclaimer: The views expressed herein do not necessarily represent the view of the U.S. Department of Energy or the United States Government.\n        "
@@ -21,8 +21,7 @@
             "type": "USER",
             "weather": {
                 "ground_temperature_schedule": "Ground Temperature Schedule",
-                "file_name": "DENVER INTL AP    CO",
-                "climate_zone": "CZ5B"
+                "file_name": "DENVER INTL AP    CO"
             },
             "calendar": {
                 "day_of_week_for_january_1": "FRIDAY"
@@ -74,7 +73,7 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 21.4564216032,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.358949382776455,
+                                                    "u_factor": 2.177386105230217,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
@@ -85,7 +84,7 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 21.4564216032,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.358949382776455,
+                                                    "u_factor": 2.177386105230217,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
@@ -96,7 +95,7 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 21.4564216032,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.358949382776455,
+                                                    "u_factor": 2.177386105230217,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
@@ -224,11 +223,11 @@
                                             "id": "Perimeter Zone 1 (South) MainTerminal",
                                             "type": "CONSTANT_AIR_VOLUME",
                                             "served_by_heating_ventilating_air_conditioning_system": "Baseline System 4 (South)",
-                                            "primary_airflow": 5598.571948398223,
+                                            "primary_airflow": 5371.767096363673,
                                             "secondary_airflow": 0.0,
                                             "supply_design_heating_setpoint_temperature": 32.222222222222285,
                                             "supply_design_cooling_setpoint_temperature": 12.777777777777828,
-                                            "minimum_airflow": 5598.571948398223,
+                                            "minimum_airflow": 5371.767096363673,
                                             "minimum_outdoor_airflow": 126.41062144740464,
                                             "heating_capacity": 0.0,
                                             "cooling_capacity": 0.0,
@@ -289,7 +288,7 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 41.8379550336,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.358949382776455,
+                                                    "u_factor": 2.177386105230217,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
@@ -300,7 +299,7 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 1.653674112,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.358949382776455,
+                                                    "u_factor": 2.177386105230217,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
@@ -403,11 +402,11 @@
                                             "id": "Perimeter Zone 2 (East) MainTerminal",
                                             "type": "CONSTANT_AIR_VOLUME",
                                             "served_by_heating_ventilating_air_conditioning_system": "Baseline System 4 (East)",
-                                            "primary_airflow": 3428.614063121061,
+                                            "primary_airflow": 3271.228808537361,
                                             "secondary_airflow": 0.0,
                                             "supply_design_heating_setpoint_temperature": 32.222222222222285,
                                             "supply_design_cooling_setpoint_temperature": 12.777777777777828,
-                                            "minimum_airflow": 3428.614063121061,
+                                            "minimum_airflow": 3271.228808537361,
                                             "minimum_outdoor_airflow": 80.02608621766872,
                                             "heating_capacity": 0.0,
                                             "cooling_capacity": 0.0,
@@ -468,7 +467,7 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 21.4564216032,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.358949382776455,
+                                                    "u_factor": 2.177386105230217,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
@@ -479,7 +478,7 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 21.4564216032,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.358949382776455,
+                                                    "u_factor": 2.177386105230217,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
@@ -490,7 +489,7 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 21.4564216032,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.358949382776455,
+                                                    "u_factor": 2.177386105230217,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
@@ -600,11 +599,11 @@
                                             "id": "Perimeter Zone 3 (North) MainTerminal",
                                             "type": "CONSTANT_AIR_VOLUME",
                                             "served_by_heating_ventilating_air_conditioning_system": "Baseline System 4 (North)",
-                                            "primary_airflow": 3761.7469688297238,
+                                            "primary_airflow": 3452.7566636260863,
                                             "secondary_airflow": 0.0,
                                             "supply_design_heating_setpoint_temperature": 32.222222222222285,
                                             "supply_design_cooling_setpoint_temperature": 12.777777777777828,
-                                            "minimum_airflow": 3761.7469688297238,
+                                            "minimum_airflow": 3452.7566636260863,
                                             "minimum_outdoor_airflow": 126.41062144740464,
                                             "heating_capacity": 0.0,
                                             "cooling_capacity": 0.0,
@@ -666,7 +665,7 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 41.8379550336,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.358949382776455,
+                                                    "u_factor": 2.177386105230217,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
@@ -677,7 +676,7 @@
                                                     "classification": "WINDOW",
                                                     "glazed_area": 1.653674112,
                                                     "opaque_area": 0.0,
-                                                    "u_factor": 2.358949382776455,
+                                                    "u_factor": 2.177386105230217,
                                                     "solar_heat_gain_coefficient": 0.3826086956521739,
                                                     "visible_transmittance": 0.417,
                                                     "has_shading_overhang": false,
@@ -762,11 +761,11 @@
                                             "id": "Perimeter Zone 4 (West) MainTerminal",
                                             "type": "CONSTANT_AIR_VOLUME",
                                             "served_by_heating_ventilating_air_conditioning_system": "Baseline System 4 (West)",
-                                            "primary_airflow": 3599.448206734349,
+                                            "primary_airflow": 3346.108985389611,
                                             "secondary_airflow": 0.0,
                                             "supply_design_heating_setpoint_temperature": 32.222222222222285,
                                             "supply_design_cooling_setpoint_temperature": 12.777777777777828,
-                                            "minimum_airflow": 3599.448206734349,
+                                            "minimum_airflow": 3346.108985389611,
                                             "minimum_outdoor_airflow": 80.02608621766872,
                                             "heating_capacity": 0.0,
                                             "cooling_capacity": 0.0,
@@ -858,11 +857,11 @@
                                             "id": "Core Zone 1 (Core) MainTerminal",
                                             "type": "CONSTANT_AIR_VOLUME",
                                             "served_by_heating_ventilating_air_conditioning_system": "Baseline System 4 (Core)",
-                                            "primary_airflow": 12389.969858720395,
+                                            "primary_airflow": 12389.977232899195,
                                             "secondary_airflow": 0.0,
                                             "supply_design_heating_setpoint_temperature": 32.222222222222285,
                                             "supply_design_cooling_setpoint_temperature": 12.777777777777828,
-                                            "minimum_airflow": 12389.969858720395,
+                                            "minimum_airflow": 12389.977232899195,
                                             "minimum_outdoor_airflow": 600.1650553126498,
                                             "heating_capacity": 0.0,
                                             "cooling_capacity": 0.0,
@@ -893,10 +892,10 @@
                                         "supply_fans": [
                                             {
                                                 "id": "Baseline System 4 (South) SupplyFan",
-                                                "design_airflow": 5598.571948398223,
+                                                "design_airflow": 5371.767096363673,
                                                 "is_airflow_calculated": true,
                                                 "specification_method": "SIMPLE",
-                                                "design_electric_power": 3558.69197845459
+                                                "design_electric_power": 3414.525270462036
                                             }
                                         ],
                                         "air_energy_recovery": {
@@ -917,9 +916,9 @@
                                         "operation_during_unoccupied": "CYCLING",
                                         "fan_control": "CONSTANT",
                                         "operating_schedule": "S1 Sys1 (PSZ) Fan Sch",
-                                        "minimum_airflow": 1679.5716512596453,
-                                        "minimum_outdoor_airflow": 126.4106219313974,
-                                        "maximum_outdoor_airflow": 5598.571948398223,
+                                        "minimum_airflow": 1611.5301929455559,
+                                        "minimum_outdoor_airflow": 126.4106215511779,
+                                        "maximum_outdoor_airflow": 5371.767096363673,
                                         "has_fully_ducted_return": true,
                                         "demand_control_ventilation_control": "NONE"
                                     },
@@ -927,8 +926,8 @@
                                         "id": "Baseline System 4 (South) HeatSys",
                                         "type": "HEAT_PUMP",
                                         "energy_source_type": "ELECTRICITY",
-                                        "design_capacity": 14800.419671302083,
-                                        "rated_capacity": 93865.46571819445,
+                                        "design_capacity": 14200.838535902778,
+                                        "rated_capacity": 90062.86805152778,
                                         "oversizing_factor": 0.25,
                                         "is_calculated_size": true,
                                         "heating_coil_setpoint": 32.222222222222285,
@@ -945,10 +944,10 @@
                                     "cooling_system": {
                                         "id": "Baseline System 4 (South) CoolSys",
                                         "type": "DIRECT_EXPANSION",
-                                        "design_total_cool_capacity": 95778.99111194444,
-                                        "design_sensible_cool_capacity": 71067.03363501048,
-                                        "rated_total_cool_capacity": 104294.96903236111,
-                                        "rated_sensible_cool_capacity": 77385.80231569022,
+                                        "design_total_cool_capacity": 91898.87613638889,
+                                        "design_sensible_cool_capacity": 68188.02793371608,
+                                        "rated_total_cool_capacity": 100069.85440819444,
+                                        "rated_sensible_cool_capacity": 74250.81039709211,
                                         "oversizing_factor": 0.1499999999999999,
                                         "is_calculated_size": true,
                                         "efficiency_metric_values": [
@@ -968,10 +967,10 @@
                                         "supply_fans": [
                                             {
                                                 "id": "Baseline System 4 (East) SupplyFan",
-                                                "design_airflow": 3428.614063121061,
+                                                "design_airflow": 3271.228808537361,
                                                 "is_airflow_calculated": true,
                                                 "specification_method": "SIMPLE",
-                                                "design_electric_power": 2179.3739795684814
+                                                "design_electric_power": 2079.3330669403076
                                             }
                                         ],
                                         "air_energy_recovery": {
@@ -992,9 +991,9 @@
                                         "operation_during_unoccupied": "CYCLING",
                                         "fan_control": "CONSTANT",
                                         "operating_schedule": "S1 Sys1 (PSZ) Fan Sch",
-                                        "minimum_airflow": 1028.584259808583,
-                                        "minimum_outdoor_airflow": 80.02608688548725,
-                                        "maximum_outdoor_airflow": 3428.614063121061,
+                                        "minimum_airflow": 981.3686815572946,
+                                        "minimum_outdoor_airflow": 80.02608643934732,
+                                        "maximum_outdoor_airflow": 3271.228808537361,
                                         "has_fully_ducted_return": true,
                                         "demand_control_ventilation_control": "NONE"
                                     },
@@ -1002,8 +1001,8 @@
                                         "id": "Baseline System 4 (East) HeatSys",
                                         "type": "HEAT_PUMP",
                                         "energy_source_type": "ELECTRICITY",
-                                        "design_capacity": 9063.905844887153,
-                                        "rated_capacity": 57484.03011611111,
+                                        "design_capacity": 8647.841031067708,
+                                        "rated_capacity": 54845.313995625,
                                         "oversizing_factor": 0.25,
                                         "is_calculated_size": true,
                                         "heating_coil_setpoint": 32.222222222222285,
@@ -1020,10 +1019,10 @@
                                     "cooling_system": {
                                         "id": "Baseline System 4 (East) CoolSys",
                                         "type": "DIRECT_EXPANSION",
-                                        "design_total_cool_capacity": 58655.88411236111,
-                                        "design_sensible_cool_capacity": 43522.06721651923,
-                                        "rated_total_cool_capacity": 63871.14406465278,
-                                        "rated_sensible_cool_capacity": 47391.73686058185,
+                                        "design_total_cool_capacity": 55963.37570527778,
+                                        "design_sensible_cool_capacity": 41524.25346522281,
+                                        "rated_total_cool_capacity": 60939.23777291667,
+                                        "rated_sensible_cool_capacity": 45216.29232279193,
                                         "oversizing_factor": 0.1499999999999999,
                                         "is_calculated_size": true,
                                         "efficiency_metric_values": [
@@ -1043,10 +1042,10 @@
                                         "supply_fans": [
                                             {
                                                 "id": "Baseline System 4 (North) SupplyFan",
-                                                "design_airflow": 3761.7469688297238,
+                                                "design_airflow": 3452.7566636260863,
                                                 "is_airflow_calculated": true,
                                                 "specification_method": "SIMPLE",
-                                                "design_electric_power": 2391.127347946167
+                                                "design_electric_power": 2194.7200298309326
                                             }
                                         ],
                                         "air_energy_recovery": {
@@ -1067,9 +1066,9 @@
                                         "operation_during_unoccupied": "CYCLING",
                                         "fan_control": "CONSTANT",
                                         "operating_schedule": "S1 Sys1 (PSZ) Fan Sch",
-                                        "minimum_airflow": 1128.5241354924353,
-                                        "minimum_outdoor_airflow": 126.41062710852326,
-                                        "maximum_outdoor_airflow": 3761.7469688297238,
+                                        "minimum_airflow": 1035.8270402478927,
+                                        "minimum_outdoor_airflow": 126.41061734578648,
+                                        "maximum_outdoor_airflow": 3452.7566636260863,
                                         "has_fully_ducted_return": true,
                                         "demand_control_ventilation_control": "NONE"
                                     },
@@ -1077,8 +1076,8 @@
                                         "id": "Baseline System 4 (North) HeatSys",
                                         "type": "HEAT_PUMP",
                                         "energy_source_type": "ELECTRICITY",
-                                        "design_capacity": 9944.577092517362,
-                                        "rated_capacity": 63069.31982159722,
+                                        "design_capacity": 9127.729520590277,
+                                        "rated_capacity": 57888.80253368056,
                                         "oversizing_factor": 0.25,
                                         "is_calculated_size": true,
                                         "heating_coil_setpoint": 32.222222222222285,
@@ -1095,10 +1094,10 @@
                                     "cooling_system": {
                                         "id": "Baseline System 4 (North) CoolSys",
                                         "type": "DIRECT_EXPANSION",
-                                        "design_total_cool_capacity": 64355.03652375,
-                                        "design_sensible_cool_capacity": 47750.78012536418,
-                                        "rated_total_cool_capacity": 70077.025585625,
-                                        "rated_sensible_cool_capacity": 51996.437595739444,
+                                        "design_total_cool_capacity": 59068.908313402775,
+                                        "design_sensible_cool_capacity": 43828.52343650922,
+                                        "rated_total_cool_capacity": 64320.89373930555,
+                                        "rated_sensible_cool_capacity": 47725.446527856664,
                                         "oversizing_factor": 0.1499999999999999,
                                         "is_calculated_size": true,
                                         "efficiency_metric_values": [
@@ -1118,10 +1117,10 @@
                                         "supply_fans": [
                                             {
                                                 "id": "Baseline System 4 (West) SupplyFan",
-                                                "design_airflow": 3599.448206734349,
+                                                "design_airflow": 3346.108985389611,
                                                 "is_airflow_calculated": true,
                                                 "specification_method": "SIMPLE",
-                                                "design_electric_power": 2287.963390350342
+                                                "design_electric_power": 2126.9302368164062
                                             }
                                         ],
                                         "air_energy_recovery": {
@@ -1142,9 +1141,9 @@
                                         "operation_during_unoccupied": "CYCLING",
                                         "fan_control": "CONSTANT",
                                         "operating_schedule": "S1 Sys1 (PSZ) Fan Sch",
-                                        "minimum_airflow": 1079.8345049290708,
-                                        "minimum_outdoor_airflow": 80.02608286971454,
-                                        "maximum_outdoor_airflow": 3599.448206734349,
+                                        "minimum_airflow": 1003.8327355056108,
+                                        "minimum_outdoor_airflow": 80.02608640609716,
+                                        "maximum_outdoor_airflow": 3346.108985389611,
                                         "has_fully_ducted_return": true,
                                         "demand_control_ventilation_control": "NONE"
                                     },
@@ -1152,8 +1151,8 @@
                                         "id": "Baseline System 4 (West) HeatSys",
                                         "type": "HEAT_PUMP",
                                         "energy_source_type": "ELECTRICITY",
-                                        "design_capacity": 9515.523847873264,
-                                        "rated_capacity": 60348.22782270834,
+                                        "design_capacity": 8845.795111701389,
+                                        "rated_capacity": 56100.75278861111,
                                         "oversizing_factor": 0.25,
                                         "is_calculated_size": true,
                                         "heating_coil_setpoint": 32.222222222222285,
@@ -1170,10 +1169,10 @@
                                     "cooling_system": {
                                         "id": "Baseline System 4 (West) CoolSys",
                                         "type": "DIRECT_EXPANSION",
-                                        "design_total_cool_capacity": 61578.47165861111,
-                                        "design_sensible_cool_capacity": 45690.59734028987,
-                                        "rated_total_cool_capacity": 67053.5895225,
-                                        "rated_sensible_cool_capacity": 49753.0789019704,
+                                        "design_total_cool_capacity": 57244.40784888889,
+                                        "design_sensible_cool_capacity": 42474.76282619631,
+                                        "rated_total_cool_capacity": 62334.169256319445,
+                                        "rated_sensible_cool_capacity": 46251.31724316988,
                                         "oversizing_factor": 0.1499999999999999,
                                         "is_calculated_size": true,
                                         "efficiency_metric_values": [
@@ -1193,10 +1192,10 @@
                                         "supply_fans": [
                                             {
                                                 "id": "Baseline System 4 (Core) SupplyFan",
-                                                "design_airflow": 12389.969858720395,
+                                                "design_airflow": 12389.977232899195,
                                                 "is_airflow_calculated": true,
                                                 "specification_method": "SIMPLE",
-                                                "design_electric_power": 7875.595569610596
+                                                "design_electric_power": 7875.5998611450195
                                             }
                                         ],
                                         "air_energy_recovery": {
@@ -1217,9 +1216,9 @@
                                         "operation_during_unoccupied": "CYCLING",
                                         "fan_control": "CONSTANT",
                                         "operating_schedule": "S1 Sys1 (PSZ) Fan Sch",
-                                        "minimum_airflow": 3716.991105316069,
-                                        "minimum_outdoor_airflow": 600.165040216837,
-                                        "maximum_outdoor_airflow": 12389.969858720395,
+                                        "minimum_airflow": 3716.993317569797,
+                                        "minimum_outdoor_airflow": 600.165074325189,
+                                        "maximum_outdoor_airflow": 12389.977232899195,
                                         "has_fully_ducted_return": true,
                                         "demand_control_ventilation_control": "NONE"
                                     },
@@ -1227,8 +1226,8 @@
                                         "id": "Baseline System 4 (Core) HeatSys",
                                         "type": "HEAT_PUMP",
                                         "energy_source_type": "ELECTRICITY",
-                                        "design_capacity": 32754.20436152778,
-                                        "rated_capacity": 207729.82930444446,
+                                        "design_capacity": 32754.220388854166,
+                                        "rated_capacity": 207729.93920611113,
                                         "oversizing_factor": 0.25,
                                         "is_calculated_size": true,
                                         "heating_coil_setpoint": 32.222222222222285,
@@ -1245,10 +1244,10 @@
                                     "cooling_system": {
                                         "id": "Baseline System 4 (Core) CoolSys",
                                         "type": "DIRECT_EXPANSION",
-                                        "design_total_cool_capacity": 328111.7189044444,
-                                        "design_sensible_cool_capacity": 243455.54586359928,
-                                        "rated_total_cool_capacity": 230810.91941416668,
-                                        "rated_sensible_cool_capacity": 171259.3459474087,
+                                        "design_total_cool_capacity": 328111.90207388886,
+                                        "design_sensible_cool_capacity": 243455.68177345715,
+                                        "rated_total_cool_capacity": 230811.04763277777,
+                                        "rated_sensible_cool_capacity": 171259.44108430922,
                                         "oversizing_factor": 0.1499999999999999,
                                         "is_calculated_size": true,
                                         "efficiency_metric_values": [
@@ -115318,16 +115317,6 @@
                     "u_factor": 0.35783047909715215
                 },
                 {
-                    "id": "BL1 Ceilg Construction",
-                    "primary_layers": [
-                        "AcousTile 1/2in (AC02)"
-                    ],
-                    "framing_layers": [],
-                    "insulation_locations": [],
-                    "r_values": [],
-                    "u_factor": 2.9214668971004607
-                },
-                {
                     "id": "BL1 IWall Construction",
                     "primary_layers": [],
                     "framing_layers": [],
@@ -115345,55 +115334,6 @@
                     "r_values": [],
                     "u_factor": 4.8554836612451,
                     "f_factor": 39.317355313145285
-                },
-                {
-                    "id": "BL1 IFlSP Construction",
-                    "primary_layers": [
-                        "Concrete"
-                    ],
-                    "framing_layers": [],
-                    "insulation_locations": [],
-                    "r_values": [],
-                    "u_factor": 4.8554836612451
-                },
-                {
-                    "id": "BL1 UFCons (G.S1.U2)",
-                    "primary_layers": [
-                        "BL1 UFMat (G.S1.U2.M1)",
-                        "Light Soil, Damp 12in",
-                        "Conc HW 140lb 6in (HF-C13)",
-                        "Carpet & No Pad"
-                    ],
-                    "framing_layers": [],
-                    "insulation_locations": [],
-                    "r_values": [],
-                    "u_factor": 0.13741399205020632
-                },
-                {
-                    "id": "BL1 UFCons (G.E2.U3)",
-                    "primary_layers": [
-                        "BL1 UFMat (G.E2.U3.M1)",
-                        "Light Soil, Damp 12in",
-                        "Conc HW 140lb 6in (HF-C13)",
-                        "Carpet & No Pad"
-                    ],
-                    "framing_layers": [],
-                    "insulation_locations": [],
-                    "r_values": [],
-                    "u_factor": 0.14422790901137358
-                },
-                {
-                    "id": "BL1 UFCons (G.C5.U6)",
-                    "primary_layers": [
-                        "BL1 UFMat (G.C5.U6.M1)",
-                        "Light Soil, Damp 12in",
-                        "Conc HW 140lb 6in (HF-C13)",
-                        "Carpet & No Pad"
-                    ],
-                    "framing_layers": [],
-                    "insulation_locations": [],
-                    "r_values": [],
-                    "u_factor": 0.054511335689338046
                 },
                 {
                     "id": "Exterior Wall Type 3",
@@ -115425,37 +115365,6 @@
                 }
             ],
             "materials": [
-                {
-                    "id": "Roof Type 2 M1",
-                    "r_value": 0.05934912361050029
-                },
-                {
-                    "id": "Exterior Wall Type 2 M2",
-                    "r_value": 0.09950223988110582
-                },
-                {
-                    "id": "Roof Type 3 FRV",
-                    "r_value": 1.2058262592317375
-                },
-                {
-                    "id": "BL1 UFMat (G.S1.U2.M1)",
-                    "r_value": 6.556933442926252
-                },
-                {
-                    "id": "BL1 UFMat (G.E2.U3.M1)",
-                    "r_value": 6.190412979845618
-                },
-                {
-                    "id": "BL1 UFMat (G.C5.U6.M1)",
-                    "r_value": 17.611015908160326
-                },
-                {
-                    "id": "Conc LW 30lb 4in (CC34)",
-                    "thickness": 0.10158983999999999,
-                    "thermal_conductivity": 0.12997819160104987,
-                    "density": 480.55390121880436,
-                    "specific_heat": 837.3601169702214
-                },
                 {
                     "id": "Metal Deck",
                     "thickness": 0.0007924799999999998,
@@ -115519,53 +115428,6 @@
                     "thermal_conductivity": 0.04326837270341208,
                     "density": 91.30524123157284,
                     "specific_heat": 837.3601169702214
-                },
-                {
-                    "id": "exterior wall type3",
-                    "r_value": 1.9460172578517159
-                },
-                {
-                    "id": "Roof Type 3lyr",
-                    "r_value": 2.6575023005413927
-                },
-                {
-                    "id": "Surface to Surface",
-                    "thickness": 0.0,
-                    "thermal_conductivity": 0.1142285039370079,
-                    "density": 0.0,
-                    "specific_heat": 0.0
-                },
-                {
-                    "id": "Surface to surface wall",
-                    "thickness": 0.0,
-                    "thermal_conductivity": 0.15576614173228348,
-                    "density": 0.0,
-                    "specific_heat": 0.0
-                },
-                {
-                    "id": "AcousTile 1/2in (AC02)",
-                    "thickness": 0.012710159999999998,
-                    "thermal_conductivity": 0.05711425196850395,
-                    "density": 288.3323407312826,
-                    "specific_heat": 1339.7761871523542
-                },
-                {
-                    "id": "Light Soil, Damp 12in",
-                    "thickness": 0.30479999999999996,
-                    "thermal_conductivity": 0.8653674540682416,
-                    "density": 1601.8463373960144,
-                    "specific_heat": 1046.7001462127766
-                },
-                {
-                    "id": "Conc HW 140lb 6in (HF-C13)",
-                    "thickness": 0.15239999999999998,
-                    "thermal_conductivity": 1.7307349081364831,
-                    "density": 2242.5848723544204,
-                    "specific_heat": 837.3601169702214
-                },
-                {
-                    "id": "Carpet & No Pad",
-                    "r_value": 0.13208261931120244
                 },
                 {
                     "id": "Stucco_0.0833",
@@ -115670,9 +115532,9 @@
                     {
                         "id": "ELECTRICITY",
                         "energy_source": "ELECTRICITY",
-                        "annual_consumption": 1343920756208.4631,
-                        "annual_demand": 124103.23989417985,
-                        "annual_cost": 26125.0
+                        "annual_consumption": 1311847209479.1743,
+                        "annual_demand": 120852.03121121154,
+                        "annual_cost": 25502.0
                     },
                     {
                         "id": "NATURAL-GAS",
@@ -115682,7 +115544,7 @@
                         "annual_cost": 168.0
                     }
                 ],
-                "building_peak_cooling_load": 101.11782836914062,
+                "building_peak_cooling_load": 97.91839599609375,
                 "annual_end_use_results": [
                     {
                         "id": "ELECTRICITY-INTERIOR_LIGHTING",
@@ -115706,18 +115568,18 @@
                         "id": "ELECTRICITY-SPACE_HEATING",
                         "type": "SPACE_HEATING",
                         "energy_source": "ELECTRICITY",
-                        "annual_site_energy_use": 333268618455.66534,
-                        "annual_site_coincident_demand": 10.918500950741238,
-                        "annual_site_non_coincident_demand": 21.370436323784723,
+                        "annual_site_energy_use": 323577850887.57117,
+                        "annual_site_coincident_demand": 10.52719874077691,
+                        "annual_site_non_coincident_demand": 20.75124221279568,
                         "is_regulated": true
                     },
                     {
                         "id": "ELECTRICITY-SPACE_COOLING",
                         "type": "SPACE_COOLING",
                         "energy_source": "ELECTRICITY",
-                        "annual_site_energy_use": 42386857575.73887,
+                        "annual_site_energy_use": 40605476407.54305,
                         "annual_site_coincident_demand": 0.0,
-                        "annual_site_non_coincident_demand": 7.659814350925021,
+                        "annual_site_non_coincident_demand": 7.322824609103733,
                         "is_regulated": true
                     },
                     {
@@ -115733,18 +115595,18 @@
                         "id": "ELECTRICITY-PUMPS",
                         "type": "PUMPS",
                         "energy_source": "ELECTRICITY",
-                        "annual_site_energy_use": 7914262.28572636,
+                        "annual_site_energy_use": 7785853.301886786,
                         "annual_site_coincident_demand": 0.0,
-                        "annual_site_non_coincident_demand": 0.2587170579740736,
+                        "annual_site_non_coincident_demand": 0.2549136458886994,
                         "is_regulated": true
                     },
                     {
                         "id": "ELECTRICITY-FANS_INTERIOR_VENTILATION",
                         "type": "FANS_INTERIOR_VENTILATION",
                         "energy_source": "ELECTRICITY",
-                        "annual_site_energy_use": 610306777314.7307,
-                        "annual_site_coincident_demand": 16.95801364532471,
-                        "annual_site_non_coincident_demand": 16.95801364532471,
+                        "annual_site_energy_use": 589709553381.6483,
+                        "annual_site_coincident_demand": 16.39671288462321,
+                        "annual_site_non_coincident_demand": 16.39671288462321,
                         "is_regulated": true
                     },
                     {
@@ -115760,9 +115622,9 @@
                         "id": "ELECTRICITY-HEAT_PUMP_SUPPLEMENTAL_HEATING",
                         "type": "HEAT_PUMP_SUPPLEMENTAL_HEATING",
                         "energy_source": "ELECTRICITY",
-                        "annual_site_energy_use": 174521726.42863297,
+                        "annual_site_energy_use": 172098817.83362514,
                         "annual_site_coincident_demand": 0.0,
-                        "annual_site_non_coincident_demand": 0.27281243178659015,
+                        "annual_site_non_coincident_demand": 0.26730207757843866,
                         "is_regulated": true
                     },
                     {

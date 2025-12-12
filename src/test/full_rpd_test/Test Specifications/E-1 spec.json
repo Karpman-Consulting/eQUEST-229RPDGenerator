@@ -223,6 +223,35 @@
         "compare-value": true
         },
         {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*].subsurfaces[*].classification",
+        "compare-value": true
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*].subsurfaces[*].glazed_area",
+        "compare-value": true,
+        "tolerance": 0.1
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*].subsurfaces[*].opaque_area",
+        "compare-value": true,
+        "tolerance": 0.1
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*].subsurfaces[*].u_factor",
+        "compare-value": true,
+        "tolerance": 0.01
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*].subsurfaces[*].solar_heat_gain_coefficient",
+        "compare-value": true,
+        "tolerance": 0.01
+        },
+        {
+        "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[*].subsurfaces[*].visible_transmittance",
+        "compare-value": true,
+        "tolerance": 0.01
+        },
+        {
         "json-key-path": "$.ruleset_model_descriptions[0].buildings[0].building_segments[0].zones[*].surfaces[?(@.adjacent_to == \"EXTERIOR\")].optical_properties.absorptance_thermal_exterior",
         "compare-value": true,
         "tolerance": 0.01
