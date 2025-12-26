@@ -316,11 +316,6 @@ class System(ParentNode):
             self.get_inp(BDL_SystemKeywords.HUMIDIFIER_TYPE)
         )
 
-        self.fan_system = FanSystem(self)
-        self.fan_system.populate_data_elements(output_data)
-
-        self.populate_fans(output_data)
-
         if has_cool:
             self.cooling_system = CoolingSystem(self)
             self.cooling_system.populate_data_elements(output_data)
@@ -335,6 +330,12 @@ class System(ParentNode):
             self.preheat_system = PreheatSystem(self)
             self.preheat_system.populate_data_elements(output_data)
             self.preheat_system.populate_data_group()
+
+        # Populate Heating and Cooling before FanSystem
+        self.fan_system = FanSystem(self)
+        self.fan_system.populate_data_elements(output_data)
+
+        self.populate_fans(output_data)
 
         if has_energy_recovery:
             self.air_energy_recovery = AirEnergyRecovery(self)
@@ -1281,12 +1282,17 @@ class FanSystem:
 
     def get_temperature_control(self):
         system_type = self.parent_system.get_inp(BDL_SystemKeywords.TYPE)
+        has_heat = self.parent_system.heating_system is not None
+        has_cool = self.parent_system.cooling_system is not None
         cool_control = self.parent_system.get_inp(BDL_SystemKeywords.COOL_CONTROL)
         cool_set_t = self.parent_system.try_float(
             self.parent_system.get_inp(BDL_SystemKeywords.COOL_SET_T)
         )
         cool_max_reset_t = self.parent_system.try_float(
             self.parent_system.get_inp(BDL_SystemKeywords.COOL_MAX_RESET_T)
+        )
+        cool_min_reset_t = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.COOL_MIN_RESET_T)
         )
         heat_control = self.parent_system.get_inp(BDL_SystemKeywords.HEAT_CONTROL)
         heat_set_t = self.parent_system.try_float(
@@ -1295,51 +1301,107 @@ class FanSystem:
         heat_max_reset_t = self.parent_system.try_float(
             self.parent_system.get_inp(BDL_SystemKeywords.HEAT_MAX_RESET_T)
         )
+        heat_min_reset_t = self.parent_system.try_float(
+            self.parent_system.get_inp(BDL_SystemKeywords.HEAT_MIN_RESET_T)
+        )
         min_flow_ratio = self.parent_system.try_float(
             self.parent_system.get_inp(BDL_SystemKeywords.MIN_FLOW_RATIO)
         )
 
+        # Multi-duct systems are always categorized as OTHER
         if system_type in self.multi_duct_system_types:
             return FanSystemTemperatureControlOptions.OTHER
 
+        # Single-duct systems
         elif system_type in self.single_duct_system_types:
 
-            if (
-                cool_control == BDL_CoolControlOptions.CONSTANT
-                and heat_control == BDL_HeatControlOptions.CONSTANT
-            ):
-                if heat_set_t and cool_set_t and heat_set_t >= cool_set_t:
-                    return FanSystemTemperatureControlOptions.CONSTANT
-                else:
-                    return FanSystemTemperatureControlOptions.OTHER
-
-            elif cool_control == BDL_CoolControlOptions.WARMEST:
-                if heat_set_t and cool_max_reset_t and heat_set_t >= cool_max_reset_t:
-                    return FanSystemTemperatureControlOptions.ZONE_RESET
-                elif (
-                    heat_max_reset_t
-                    and cool_max_reset_t
-                    and heat_max_reset_t >= cool_max_reset_t
+            # Heating + cooling
+            if has_heat and has_cool:
+                # Constant heating and cooling control
+                if (
+                    cool_control == BDL_CoolControlOptions.CONSTANT
+                    and heat_control == BDL_HeatControlOptions.CONSTANT
                 ):
-                    return FanSystemTemperatureControlOptions.ZONE_RESET
-                else:
-                    return FanSystemTemperatureControlOptions.OTHER
+                    if heat_set_t and cool_set_t and heat_set_t >= cool_set_t:
+                        return FanSystemTemperatureControlOptions.CONSTANT
+                    else:
+                        return FanSystemTemperatureControlOptions.OTHER
 
-            elif cool_control == BDL_CoolControlOptions.SCHEDULED:
-                return FanSystemTemperatureControlOptions.SCHEDULED
+                elif cool_control == BDL_CoolControlOptions.WARMEST:
+                    if (
+                        heat_set_t
+                        and cool_max_reset_t
+                        and heat_set_t >= cool_max_reset_t
+                    ):
+                        return FanSystemTemperatureControlOptions.ZONE_RESET
+                    elif (
+                        heat_max_reset_t
+                        and cool_max_reset_t
+                        and heat_max_reset_t >= cool_max_reset_t
+                    ):
+                        return FanSystemTemperatureControlOptions.ZONE_RESET
+                    else:
+                        return FanSystemTemperatureControlOptions.OTHER
 
-            elif cool_control == BDL_CoolControlOptions.RESET:
-                return FanSystemTemperatureControlOptions.OUTDOOR_AIR_RESET
+                elif cool_control == BDL_CoolControlOptions.SCHEDULED:
+                    return FanSystemTemperatureControlOptions.SCHEDULED
 
-        elif system_type in self.single_zone_system_types:
-            if min_flow_ratio and min_flow_ratio < 1:
-                if cool_set_t and heat_set_t and cool_set_t == heat_set_t:
+                elif cool_control == BDL_CoolControlOptions.RESET:
+                    return FanSystemTemperatureControlOptions.OUTDOOR_AIR_RESET
+
+            # Cooling only
+            elif has_cool and not has_heat:
+                if cool_control == BDL_CoolControlOptions.WARMEST:
+                    if (
+                        cool_max_reset_t is not None
+                        and cool_min_reset_t is not None
+                        and cool_max_reset_t > cool_min_reset_t
+                    ):
+                        return FanSystemTemperatureControlOptions.ZONE_RESET
                     return FanSystemTemperatureControlOptions.CONSTANT
+
+                if cool_control == BDL_CoolControlOptions.SCHEDULED:
+                    return FanSystemTemperatureControlOptions.SCHEDULED
+
+                if cool_control == BDL_CoolControlOptions.RESET:
+                    return FanSystemTemperatureControlOptions.OUTDOOR_AIR_RESET
+
+            # Heating only
+            elif has_heat and not has_cool:
+                if heat_control == BDL_HeatControlOptions.WARMEST:
+                    if (
+                        heat_max_reset_t is not None
+                        and heat_min_reset_t is not None
+                        and heat_max_reset_t > heat_min_reset_t
+                    ):
+                        return FanSystemTemperatureControlOptions.ZONE_RESET
+                    return FanSystemTemperatureControlOptions.CONSTANT
+
+                if heat_control == BDL_HeatControlOptions.SCHEDULED:
+                    return FanSystemTemperatureControlOptions.SCHEDULED
+
+                if heat_control == BDL_HeatControlOptions.RESET:
+                    return FanSystemTemperatureControlOptions.OUTDOOR_AIR_RESET
+
+        # Single-zone systems
+        elif system_type in self.single_zone_system_types:
+            # Heating + cooling
+            if has_heat and has_cool:
+                if min_flow_ratio and min_flow_ratio < 1:
+                    if cool_set_t and heat_set_t and cool_set_t == heat_set_t:
+                        return FanSystemTemperatureControlOptions.CONSTANT
+                    else:
+                        return FanSystemTemperatureControlOptions.OTHER
                 else:
-                    return FanSystemTemperatureControlOptions.OTHER
-            else:
+                    return FanSystemTemperatureControlOptions.ZONE_RESET
+
+            # Cooling only or heating only
+            elif (has_cool and not has_heat) or (has_heat and not has_cool):
+                if min_flow_ratio is not None and min_flow_ratio < 1:
+                    return FanSystemTemperatureControlOptions.CONSTANT
                 return FanSystemTemperatureControlOptions.ZONE_RESET
 
+        # DOAS systems
         elif system_type == BDL_SystemTypes.DOAS:
             pass
 
