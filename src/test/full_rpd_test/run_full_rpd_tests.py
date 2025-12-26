@@ -534,17 +534,17 @@ def match_sys_by_zones_served(generated_values, reference_values, object_id_map)
 
     # reference map: frozenset of reference zones -> hvac id
     reference_zones_map = {
-        frozenset(zone["id"] for zone in data["zones_list"]): ref_hvac_id
+        frozenset(zone for zone in data["zone_list"]): ref_hvac_id
         for ref_hvac_id, data in reference_values.items()
     }
 
     # match each generated hvac
     for gen_hvac_id, gen_data in generated_values.items():
-        generated_zones = gen_data["zones_list"]
+        generated_zones = gen_data["zone_list"]
 
         # convert generated zone ids to reference zone ids using zone map
         corresponding_reference_zones = [
-            object_id_map.get(zone["id"]) for zone in generated_zones
+            object_id_map.get(zone) for zone in generated_zones
         ]
 
         if None in corresponding_reference_zones:
@@ -1864,6 +1864,80 @@ def handle_ordered_comparisons(
         warnings.extend(general_comparison_warnings)
         errors.extend(general_comparison_errors)
 
+    elif "subsurfaces[" in json_key_path:
+        # Handle comparison of data derived from subsurfaces which may not be in the same order as the reference subsurfaces
+        aligned_generated_values = {}
+        aligned_reference_values = {}
+
+        # Populate data for each subsurface individually and ensure correct alignment via object mapping
+        generated_subsurfaces = find_all(
+            # Extract the key path for the subsurface (everything before subsurfaces[]. )
+            json_key_path[
+                : json_key_path.index("].", json_key_path.index("subsurfaces")) + 1
+            ],
+            generated_json,
+        )
+        generated_subsurface_ids = [
+            subsurface["id"] for subsurface in generated_subsurfaces
+        ]
+
+        for generated_subsurface in generated_subsurfaces:
+            generated_subsurface_id = generated_subsurface["id"]
+            reference_subsurface_id = object_id_map.get(generated_subsurface_id)
+
+            # Extract the key path for the subsurface data (everything after subsurfaces[]. )
+            generated_value = find_one(
+                json_key_path[
+                    json_key_path.index("].", json_key_path.index("subsurfaces")) + 2 :
+                ],
+                generated_subsurface,
+            )
+            aligned_generated_values[generated_subsurface_id] = generated_value
+
+            # Extract values from aligned subsurfaces using the specified key path
+            if "subsurfaces[?(@" in json_key_path:
+                aligned_reference_value = find_one(
+                    json_key_path.replace(
+                        "subsurfaces[?(",
+                        f"subsurfaces[?(@.id == '{reference_subsurface_id}' & ",
+                    ),
+                    reference_json,
+                    None,
+                )
+            else:
+                aligned_reference_value = find_one(
+                    json_key_path.replace(
+                        "subsurfaces[*]",
+                        f"subsurfaces[?(@.id == '{reference_subsurface_id}')]",
+                    ),
+                    reference_json,
+                    None,
+                )
+
+            aligned_reference_values[generated_subsurface_id] = aligned_reference_value
+
+        if all(value is None for value in aligned_generated_values.values()):
+            notes = f"Missing key {json_key_path.split('.')[-1]}"
+            add_test_result(
+                specification_test,
+                None,
+                None,
+                TestOutcomeOptions.NOT_IMPLEMENTED.value,
+            )
+            warnings.append(notes)
+            return warnings, errors
+
+        general_comparison_warnings, general_comparison_errors = compare_json_values(
+            path_spec,
+            aligned_generated_values,
+            aligned_reference_values,
+            generated_subsurface_ids,
+            specification_test,
+            object_id_map,
+        )
+        warnings.extend(general_comparison_warnings)
+        errors.extend(general_comparison_errors)
+
     elif "terminals[" in json_key_path:
         # Handle comparison of data derived from surfaces which may not be in the same order as the reference surfaces
         aligned_generated_values = {}
@@ -2533,6 +2607,7 @@ def run_file_comparison(
                     "materials[",
                     "zones[",
                     "surfaces[",
+                    "subsurfaces[",
                     "terminals[",
                     "heating_ventilating_air_conditioning_systems[",
                     "boilers[",
