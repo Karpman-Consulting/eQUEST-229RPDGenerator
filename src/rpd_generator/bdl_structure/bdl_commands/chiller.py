@@ -220,7 +220,7 @@ class Chiller(BaseNode):
             self.get_inp(BDL_ChillerKeywords.CW_PUMP)
         )
 
-        # Assign pump data elements populated from the boiler keyword value pairs
+        # Assign pump data elements populated from the chiller keyword value pairs
         chw_pump_name = self.get_inp(BDL_ChillerKeywords.CHW_PUMP)
         if chw_pump_name is not None:
             pump = self.get_obj(chw_pump_name)
