@@ -534,17 +534,17 @@ def match_sys_by_zones_served(generated_values, reference_values, object_id_map)
 
     # reference map: frozenset of reference zones -> hvac id
     reference_zones_map = {
-        frozenset(zone for zone in data["zone_list"]): ref_hvac_id
+        frozenset(zone["id"] for zone in data["zones_list"]): ref_hvac_id
         for ref_hvac_id, data in reference_values.items()
     }
 
     # match each generated hvac
     for gen_hvac_id, gen_data in generated_values.items():
-        generated_zones = gen_data["zone_list"]
+        generated_zones = gen_data["zones_list"]
 
         # convert generated zone ids to reference zone ids using zone map
         corresponding_reference_zones = [
-            object_id_map.get(zone) for zone in generated_zones
+            object_id_map.get(zone["id"]) for zone in generated_zones
         ]
 
         if None in corresponding_reference_zones:

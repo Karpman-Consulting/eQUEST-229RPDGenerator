@@ -5,7 +5,7 @@ from rpd_generator.utilities.jsonpath_utils import find_all
 
 class HVACZoneListArea(TypedDict):
     total_area: float
-    zone_list: list[str]
+    zones_list: list[str]
 
 
 def get_hvac_zone_list_w_area_by_rmd_dict(rmd: dict) -> dict[str, HVACZoneListArea]:

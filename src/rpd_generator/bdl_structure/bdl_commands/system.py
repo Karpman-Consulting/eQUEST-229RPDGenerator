@@ -1282,7 +1282,10 @@ class FanSystem:
 
     def get_temperature_control(self):
         system_type = self.parent_system.get_inp(BDL_SystemKeywords.TYPE)
-        has_heat = self.parent_system.heating_system is not None
+        has_heat = (
+            self.parent_system.heating_system is not None
+            or self.parent_system.preheat_system is not None
+        )
         has_cool = self.parent_system.cooling_system is not None
         cool_control = self.parent_system.get_inp(BDL_SystemKeywords.COOL_CONTROL)
         cool_set_t = self.parent_system.try_float(
