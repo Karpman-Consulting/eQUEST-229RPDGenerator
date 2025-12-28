@@ -4,11 +4,11 @@ from rpd_generator.utilities.ashrae9012019.data import data
 from rpd_generator.utilities.ashrae9012019.data_fns.table_utils import (
     find_osstd_table_entry,
 )
+from rpd_generator.config import Config
 
+ureg = Config.ureg
 # Path to this file → resolve parent directories cleanly
 BASE_UTILITIES_DIR = Path(__file__).resolve().parents[2]
-
-from rct229.schema.config import ureg
 
 table_3_2_climate_zone_enumeration_to_climate_zone_map = {
     "CZ0A": "0",

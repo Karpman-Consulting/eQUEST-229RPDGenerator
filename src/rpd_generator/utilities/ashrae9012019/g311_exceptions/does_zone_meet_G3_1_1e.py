@@ -1,7 +1,9 @@
 from typing import TypedDict
 from pydash import filter_, flat_map
-from rct229.schema.config import ureg
-from rct229.utils.pint_utils import ZERO
+from rpd_generator.config import Config
+
+ureg = Config.ureg
+from rpd_generator.utilities.pint_utils import ZERO
 
 from rpd_generator.utilities.ashrae9012019.g311_exceptions.g311_sub_functions.get_zones_on_same_floor_list import (
     get_zones_on_same_floor_list,

@@ -9,7 +9,9 @@ from rpd_generator.utilities.ashrae9012019.g311_exceptions.g311_sub_functions.ge
 )
 from rpd_generator.utilities.pint_utils import ZERO
 
-from rct229.schema.config import ureg
+from rpd_generator.config import Config
+
+ureg = Config.ureg
 
 COMPUTER_ZONE_PEAK_COOLING_LOAD_THRESHOLD = 600_000 * ureg("Btu/hr")
 

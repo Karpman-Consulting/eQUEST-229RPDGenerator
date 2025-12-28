@@ -2,8 +2,10 @@ import numpy as np
 from pydash import map_
 from typing import TypedDict
 from pint import Quantity
-from rct229.utils.pint_utils import ZERO
-from rct229.schema.config import ureg
+from rpd_generator.utilities.pint_utils import ZERO
+from rpd_generator.config import Config
+
+ureg = Config.ureg
 
 from rpd_generator.utilities.ashrae9012019.baseline_system_type_compare import (
     baseline_system_type_compare,

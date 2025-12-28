@@ -4,8 +4,10 @@ from rpd_generator.utilities.schedule_utils import (
     get_max_schedule_multiplier_hourly_value_or_default,
 )
 
-from rct229.utils.pint_utils import ZERO
-from rct229.schema.config import ureg
+from rpd_generator.utilities.pint_utils import ZERO
+from rpd_generator.config import Config
+
+ureg = Config.ureg
 
 COMPUTER_ROOM_MISC_POWER_DENSITY_THRESHOLD = 20 * ureg("watt/ft2")
 

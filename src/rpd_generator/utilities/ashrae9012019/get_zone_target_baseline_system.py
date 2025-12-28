@@ -46,7 +46,9 @@ from rpd_generator.utilities.ashrae9012019.is_cz_0_to_3a_bool import (
 )
 from rpd_generator.utilities.jsonpath_utils import find_all
 
-from rct229.schema.config import ureg
+from rpd_generator.config import Config
+
+ureg = Config.ureg
 
 BUILDING_AREA_20000_ft2 = 20000 * ureg("ft2")
 BUILDING_AREA_40000_ft2 = 40000 * ureg("ft2")

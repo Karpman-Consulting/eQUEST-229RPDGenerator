@@ -16,7 +16,9 @@ from rpd_generator.utilities.get_list_hvac_systems_associated_with_zone import (
 from rpd_generator.utilities.jsonpath_utils import find_all
 from rpd_generator.utilities.pint_utils import ZERO
 
-from rct229.schema.config import ureg
+from rpd_generator.config import Config
+
+ureg = Config.ureg
 
 BUILDING_TOTAL_LAB_EXHAUST_CFM_THRESHOLD = 15_000 * ureg("cfm")
 

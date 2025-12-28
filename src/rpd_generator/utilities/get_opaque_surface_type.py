@@ -1,4 +1,6 @@
-from rct229.schema.config import ureg
+from rpd_generator.config import Config
+
+ureg = Config.ureg
 
 DEGREES = ureg("degrees")
 MIN_FLOOR_TILT = 120 * DEGREES

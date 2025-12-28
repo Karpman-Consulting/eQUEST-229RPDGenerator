@@ -1,12 +1,11 @@
+import time
 import threading
 import traceback
 import customtkinter as ctk
 from jsonpath_ng.ext import parse
-from rct229.schema.schema_store import SchemaStore
 
 from interface.constants import HEADER_FONT, TEXT_FONT
 from interface.error_window import ErrorWindow
-from rpd_generator.config import Config
 from rpd_generator.schema.schema_utils import quantify_rmd
 from rpd_generator.utilities.ashrae9012019.get_baseline_system_types import (
     get_baseline_system_types,
@@ -114,7 +113,42 @@ class BaselineSystemTypesPanel(ctk.CTkFrame):
                 }
             ]
         """
+        t_start = time.perf_counter()
 
+        rpd = self.main_app.data.rpd.rpd_data_structure
+
+        t0 = time.perf_counter()
+        rpd = quantify_rmd(rpd)
+        print("quantify_rmd:", time.perf_counter() - t0)
+
+        t1 = time.perf_counter()
+        rmd_p = next(
+            rmd
+            for rmd in rpd.get("ruleset_model_descriptions", [])
+            if rmd.get("type", "").upper() == "PROPOSED"
+        )
+        print("find proposed:", time.perf_counter() - t1)
+
+        for rmd_b in rpd.get("ruleset_model_descriptions", []):
+            if not rmd_b.get("type", "").upper().startswith("BASELINE"):
+                continue
+
+            t2 = time.perf_counter()
+            zones_b = [
+                m.value
+                for m in parse("$.buildings[*].building_segments[*].zones[*]").find(
+                    rmd_b
+                )
+            ]
+            print("zones jsonpath:", time.perf_counter() - t2)
+
+            t3 = time.perf_counter()
+            zone_target_baseline_systems = get_zone_target_baseline_system(
+                rmd_b, rmd_p, rmd_b.get("weather", {}).get("climate_zone", "")
+            )
+            print("baseline system calc:", time.perf_counter() - t3)
+
+        print("TOTAL:", time.perf_counter() - t_start)
         try:
             rpd = self.main_app.data.rpd.rpd_data_structure
         except Exception:

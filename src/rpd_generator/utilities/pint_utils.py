@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 from pint import Quantity
 
-from rct229.schema.config import ureg
+from rpd_generator.config import Config
+
+ureg = Config.ureg
 
 
 class UNIT_SYSTEM:

@@ -15,7 +15,11 @@ class Config:
         "ASHRAE 90.1-2019 PRM": {
             "enum_filename": "Enumerations2019ASHRAE901.schema.json",
             "output_filename": "Output2019ASHRAE901.schema.json",
-        }
+        },
+        "ASHRAE 90.1-2022 PRM": {
+            "enum_filename": "Enumerations2022ASHRAE901.schema.json",
+            "output_filename": "Output2022ASHRAE901.schema.json",
+        },
     }
     if getattr(sys, "frozen", False):
         PYTHON32_PATH = None  # not used in frozen builds
@@ -32,7 +36,7 @@ class Config:
     )
     SchemaEnums.update_schema_enum(ACTIVE_RULESET)
 
-    # Base directory of the package (two parents up from this file)
+    # Base directory of the package
     BASE_DIR = Path(__file__).resolve().parent
 
     # Path to unit registry file

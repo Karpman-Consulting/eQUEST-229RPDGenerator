@@ -10,9 +10,11 @@ from rpd_generator.utilities.get_opaque_surface_type import (
     get_opaque_surface_type,
 )
 from rpd_generator.utilities.jsonpath_utils import find_all, find_one
-from rct229.utils.pint_utils import ZERO
+from rpd_generator.utilities.pint_utils import ZERO
 
-from rct229.schema.config import ureg
+from rpd_generator.config import Config
+
+ureg = Config.ureg
 
 CAPACITY_THRESHOLD = 3.4 * ureg("Btu/(hr * ft2)")
 CRAWLSPACE_HEIGHT_THRESHOLD = 7 * ureg("ft")

@@ -7,8 +7,27 @@ from copy import deepcopy
 from jsonpath_ng.ext import parse as parse_jsonpath
 from pydash.objects import set_
 
-import rct229.schema.config as config
-from rct229.schema.schema_store import SchemaStore
+from rpd_generator.config import Config
+
+
+def get_schema_definitions_dictionary():
+    """Returns ASHRAE229 schema definition JSON object as a dictionary
+
+     Returns
+    -------
+    schema_dictionary: dict
+        ASHRAE229 schema definition JSON object as a dictionary as defined in ASHRAE229.schema.json
+
+    """
+
+    file_dir = os.path.dirname(__file__)
+    json_schema_path = os.path.join(file_dir, "ASHRAE229.schema.json")
+
+    with open(json_schema_path) as f:
+        schema_dictionary = json.load(f)
+        schema_dictionary = schema_dictionary["definitions"]
+
+    return schema_dictionary
 
 
 def clean_schema_units(schema_unit_str):
@@ -66,8 +85,8 @@ def find_schema_unit_for_json_path(key_list):
 
     root_key = "RulesetProjectDescription"
 
-    secondary_schema_files = [SchemaStore.get_output_schema_by_ruleset()]
-    schema_dict = config.schema_dict
+    secondary_schema_files = [Config.ACTIVE_RULESET_DICT.get("output_filename")]
+    schema_dict = get_schema_definitions_dictionary()
 
     # Initialize first reference to top level key
     dict_ref = schema_dict[root_key]
@@ -140,7 +159,6 @@ def quantify_rmd(rmd):
         A copy of the original rmd dictionary with all numbers that have units
         in the schema replaced with their corresponding pint quantities
     """
-    SchemaStore.set_ruleset("ashrae9012019")
     rmd = deepcopy(rmd)
 
     # Match all rmd field items
@@ -182,11 +200,11 @@ def quantify_rmd(rmd):
             val = number_rmd_item_match.value
             if isinstance(val, Sequence) and not isinstance(val, str):
                 # Replace each number in the list with a pint quantity
-                pint_qty_list = [v * config.ureg(pint_unit_str) for v in val]
+                pint_qty_list = [v * Config.ureg(pint_unit_str) for v in val]
                 set_(rmd, full_path, pint_qty_list)
             else:
                 # Create the pint quantity to replace the number
-                pint_qty = number_rmd_item_match.value * config.ureg(pint_unit_str)
+                pint_qty = number_rmd_item_match.value * Config.ureg(pint_unit_str)
                 # Replace the number with the appropriate pint quantity
                 set_(rmd, full_path, pint_qty)
     return rmd
@@ -243,7 +261,7 @@ def return_json_schema_reference(object_dict, key):
 
             # If it's actually just referencing the main schema, return the reference (the last element separated by
             # the '/'s)
-            elif secondary_json == SchemaStore.SCHEMA_KEY:
+            elif secondary_json == "ASHRAE229.schema.json":
                 return properties_dict["oneOf"][0]["$ref"].split("/")[-1]
 
             else:

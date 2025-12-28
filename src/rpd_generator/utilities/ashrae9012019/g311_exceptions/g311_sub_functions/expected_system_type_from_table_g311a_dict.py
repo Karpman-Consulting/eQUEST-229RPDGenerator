@@ -1,7 +1,9 @@
 import pydash
 from typing import Literal
 from pint import Quantity
-from rct229.schema.config import ureg
+from rpd_generator.config import Config
+
+ureg = Config.ureg
 
 from rpd_generator.utilities.ashrae9012019.baseline_systems.baseline_system_util import (
     HVAC_SYS,
