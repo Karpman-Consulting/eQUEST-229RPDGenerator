@@ -50,7 +50,7 @@ from rpd_generator.utilities.get_dict_of_zones_and_terminals_served_by_hvac_sys 
     get_dict_of_zones_and_terminals_served_by_hvac_sys,
 )
 from rpd_generator.schema.schema_enums import SchemaEnums
-from rpd_generator.utilities.jsonpath_utils import find_all, find_one
+from rpd_generator.utilities.jsonpath_utils import find_all
 
 EXTERNAL_FLUID_SOURCE = SchemaEnums.schema_enums["ExternalFluidSourceOptions"]
 FLUID_LOOP = SchemaEnums.schema_enums["FluidLoopOptions"]
@@ -74,8 +74,6 @@ def get_baseline_system_types(rmd_b: dict) -> dict[str, list[str]]:
         is_baseline_system_6,
         is_baseline_system_7,
         is_baseline_system_8,
-        is_baseline_system_9,
-        is_baseline_system_10,
         is_baseline_system_11_1,
         is_baseline_system_11_2,
         is_baseline_system_12,
