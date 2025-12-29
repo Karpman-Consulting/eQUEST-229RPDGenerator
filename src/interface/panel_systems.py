@@ -6,7 +6,7 @@ from jsonpath_ng.ext import parse
 
 from interface.constants import HEADER_FONT, TEXT_FONT
 from interface.error_window import ErrorWindow
-from rpd_generator.schema.schema_utils import quantify_rmd
+from rpd_generator.schema.schema_utils import quantify_only_needed_rmds
 from rpd_generator.utilities.ashrae9012019.get_baseline_system_types import (
     get_baseline_system_types,
 )
@@ -115,46 +115,17 @@ class BaselineSystemTypesPanel(ctk.CTkFrame):
         """
         t_start = time.perf_counter()
 
-        rpd = self.main_app.data.rpd.rpd_data_structure
-
-        t0 = time.perf_counter()
-        rpd = quantify_rmd(rpd)
-        print("quantify_rmd:", time.perf_counter() - t0)
-
-        t1 = time.perf_counter()
-        rmd_p = next(
-            rmd
-            for rmd in rpd.get("ruleset_model_descriptions", [])
-            if rmd.get("type", "").upper() == "PROPOSED"
-        )
-        print("find proposed:", time.perf_counter() - t1)
-
-        for rmd_b in rpd.get("ruleset_model_descriptions", []):
-            if not rmd_b.get("type", "").upper().startswith("BASELINE"):
-                continue
-
-            t2 = time.perf_counter()
-            zones_b = [
-                m.value
-                for m in parse("$.buildings[*].building_segments[*].zones[*]").find(
-                    rmd_b
-                )
-            ]
-            print("zones jsonpath:", time.perf_counter() - t2)
-
-            t3 = time.perf_counter()
-            zone_target_baseline_systems = get_zone_target_baseline_system(
-                rmd_b, rmd_p, rmd_b.get("weather", {}).get("climate_zone", "")
-            )
-            print("baseline system calc:", time.perf_counter() - t3)
-
-        print("TOTAL:", time.perf_counter() - t_start)
         try:
             rpd = self.main_app.data.rpd.rpd_data_structure
         except Exception:
             return {"error": "RPD structure unavailable."}
 
-        rpd = quantify_rmd(rpd)
+        rpd = quantify_only_needed_rmds(
+            rpd,
+            needed_types={"PROPOSED", "BASELINE_0"},
+        )
+        t_quantified = time.perf_counter()
+        print("quantify_rmd:", t_quantified - t_start)
         results = {}
 
         # -----------------------------
@@ -172,11 +143,11 @@ class BaselineSystemTypesPanel(ctk.CTkFrame):
             return {"error": "Proposed RMD not found"}
 
         # -----------------------------
-        # Process each Baseline RMD
+        # Process the Baseline_0 RMD
         # -----------------------------
         for rmd_b in rpd.get("ruleset_model_descriptions", []):
             rmd_type = rmd_b.get("type", "")
-            if not rmd_type.upper().startswith("BASELINE"):
+            if not rmd_type == "BASELINE_0":
                 continue
 
             # ---- Zones ----
@@ -190,15 +161,16 @@ class BaselineSystemTypesPanel(ctk.CTkFrame):
             # ---- HVAC IDs per zone ----
             hvacs_serving_zones = {}
             for zone in zones_b:
-                hvacs_serving_zones[zone["id"]] = list(
-                    {
-                        m.value
-                        for m in parse(
-                            "$.terminals[*].served_by_heating_ventilating_air_conditioning_system"
-                        ).find(zone)
-                    }
-                )
-
+                hvacs = set()
+                for terminal in zone.get("terminals", []):
+                    hvac_id = terminal.get(
+                        "served_by_heating_ventilating_air_conditioning_system"
+                    )
+                    if hvac_id:
+                        hvacs.add(hvac_id)
+                hvacs_serving_zones[zone["id"]] = list(hvacs)
+            t_setup = time.perf_counter()
+            print("hvacs serving zones:", t_setup - t_quantified)
             # ---- Modeled baseline types ----
             baseline_system_types = get_baseline_system_types(rmd_b)
             baseline_type_by_hvac_id = {
@@ -206,11 +178,18 @@ class BaselineSystemTypesPanel(ctk.CTkFrame):
                 for sys_type, hvac_list in baseline_system_types.items()
                 for hvac_id in hvac_list
             }
+            t_modeled_system_types = time.perf_counter()
+            print("modeled baseline types:", t_modeled_system_types - t_setup)
 
             # ---- Expected baseline types & debug ----
             climate_zone = rmd_b.get("weather", {}).get("climate_zone", "")
             zone_target_baseline_systems = get_zone_target_baseline_system(
                 rmd_b, rmd_p, climate_zone
+            )
+            t_expected_system_types = time.perf_counter()
+            print(
+                "expected baseline types:",
+                t_expected_system_types - t_modeled_system_types,
             )
 
             rmd_results = []
@@ -250,7 +229,8 @@ class BaselineSystemTypesPanel(ctk.CTkFrame):
                 )
 
             results[rmd_type] = rmd_results
-
+            t_comparisons = time.perf_counter()
+            print("zone comparisons:", t_comparisons - t_expected_system_types)
         return results
 
     # ------------------------------------------------------------------

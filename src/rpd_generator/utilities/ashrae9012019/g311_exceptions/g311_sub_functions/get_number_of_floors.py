@@ -10,7 +10,9 @@ LightingSpaceOptions2019ASHRAE901TG37 = SchemaEnums.schema_enums[
 ]
 
 
-def get_number_of_floors(climate_zone: str, rmd: dict) -> int:
+def get_number_of_floors(
+    climate_zone: str, rmd: dict, zone_conditioning_category_dict: dict | None = None
+) -> int:
     """
     gets the number of floors in the building. Parking Garages are not counted
 
@@ -20,6 +22,8 @@ def get_number_of_floors(climate_zone: str, rmd: dict) -> int:
         One of the ClimateZoneOptions2019ASHRAE901 enumerated values
     rmd: dict
         A dictionary representing a ruleset model description as defined by the ASHRAE229 schema
+    zone_conditioning_category_dict: dict, optional
+        A dictionary mapping zone IDs to their conditioning categories. If not provided, it will be generated within the function.
 
     Returns
     -------
@@ -31,19 +35,23 @@ def get_number_of_floors(climate_zone: str, rmd: dict) -> int:
         [
             building.get("number_of_floors_above_grade", 0)
             + building.get("number_of_floors_below_grade", 0)
-            for building in find_all("$.buildings[*]", rmd)
+            for building in rmd.get("buildings", [])
         ]
     )
 
     if number_of_floors <= 0:
-        zone_conditioning_category_dict = get_zone_conditioning_category_rmd_dict(
-            climate_zone, rmd
-        )
+        # -----------------------------
+        # Use precomputed dict if provided
+        # -----------------------------
+        if zone_conditioning_category_dict is None:
+            zone_conditioning_category_dict = get_zone_conditioning_category_rmd_dict(
+                climate_zone, rmd
+            )
 
         def is_zone_conditioned(zone):
             """
             Function returns a boolean. True if a zone is conditioned mixed, conditioned residential
-            conditioned non residential or semi-heated
+            conditioned nonresidential or semi-heated
             """
             zcc = zone_conditioning_category_dict[zone["id"]]
             return (
