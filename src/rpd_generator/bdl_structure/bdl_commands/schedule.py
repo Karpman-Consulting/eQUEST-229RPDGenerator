@@ -10,6 +10,7 @@ PrescribedScheduleOptions = SchemaEnums.schema_enums[
 ]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_ScheduleTypes = BDLEnums.bdl_enums["ScheduleTypes"]
+BDL_DesignDayTypes = BDLEnums.bdl_enums["DesignDayTypes"]
 BDL_DayScheduleKeywords = BDLEnums.bdl_enums["DayScheduleKeywords"]
 BDL_WeekScheduleKeywords = BDLEnums.bdl_enums["WeekScheduleKeywords"]
 BDL_ScheduleKeywords = BDLEnums.bdl_enums["ScheduleKeywords"]
@@ -144,6 +145,8 @@ class Schedule(BaseNode):
         self.purpose = None
         self.sequence_type = None
         self.hourly_values = None
+        self.hourly_heating_design_year = None
+        self.hourly_cooling_design_year = None
         self.hourly_heating_design_day = None
         self.hourly_cooling_design_day = None
         self.event_times = None
@@ -218,6 +221,88 @@ class Schedule(BaseNode):
                     )
                 self.hourly_values = hourly_values
 
+                heating_design_year = [None] * 8760
+                cooling_design_year = [None] * 8760
+
+                # Collect DESIGN-DAY objects
+                design_days = [
+                    self.rmd.get_obj(design_day_name)
+                    for design_day_name in self.rmd.design_day_names
+                ]
+
+                for design_day in design_days:
+
+                    start_key = f"{design_day.month}/{design_day.day}"
+                    if start_key not in proj_calendar:
+                        continue
+
+                    start_day_index = list(proj_calendar.keys()).index(start_key)
+
+                    wk_sch_index = 0
+
+                    for d in range(design_day.number_of_days):
+                        day_index = start_day_index + d
+                        if day_index >= len(proj_calendar):
+                            break
+
+                        # Advance week schedule if needed
+                        if (
+                            day_index in schedule_change_indices
+                            and day_index != LAST_DAY
+                        ):
+                            wk_sch_index += 1
+
+                        wk_schedule_pd = self.get_obj(week_schedules[wk_sch_index])
+                        day_type = list(proj_calendar.values())[day_index]
+
+                        is_weekend = day_type in (6, 7)
+
+                        if design_day.design_day_type == BDL_DesignDayTypes.HEATING:
+                            # HDD = 9, HDDW = 11, fallback = Monday (1)
+                            week_schedule_idx = (
+                                10
+                                if is_weekend
+                                and len(wk_schedule_pd.day_type_hourly_values) >= 11
+                                else 8
+                            )
+                            if week_schedule_idx >= len(
+                                wk_schedule_pd.day_type_hourly_values
+                            ):
+                                week_schedule_idx = 0
+                            dd_hourly_values = wk_schedule_pd.day_type_hourly_values[
+                                week_schedule_idx
+                            ]
+
+                            base_hour = day_index * 24
+                            for h in range(24):
+                                heating_design_year[base_hour + h] = dd_hourly_values[h]
+
+                        elif design_day.design_day_type == BDL_DesignDayTypes.COOLING:
+                            # CDD = 10, CDDW = 12, fallback = Monday (1)
+                            week_schedule_idx = (
+                                11
+                                if is_weekend
+                                and len(wk_schedule_pd.day_type_hourly_values) >= 12
+                                else 9
+                            )
+                            if week_schedule_idx >= len(
+                                wk_schedule_pd.day_type_hourly_values
+                            ):
+                                week_schedule_idx = 0
+                            dd_hourly_values = wk_schedule_pd.day_type_hourly_values[
+                                week_schedule_idx
+                            ]
+
+                            base_hour = day_index * 24
+                            for h in range(24):
+                                cooling_design_year[base_hour + h] = dd_hourly_values[h]
+
+                if any(v is not None for v in heating_design_year):
+                    self.hourly_heating_design_year = heating_design_year
+
+                if any(v is not None for v in cooling_design_year):
+                    self.hourly_cooling_design_year = cooling_design_year
+
             elif ann_sch_type == BDL_ScheduleTypes.RESET_TEMP:
                 outdoor_high_for_loop_supply_reset_temperature = set()
                 outdoor_low_for_loop_supply_reset_temperature = set()
@@ -278,6 +363,8 @@ class Schedule(BaseNode):
             "purpose",
             "sequence_type",
             "hourly_values",
+            "hourly_heating_design_year",
+            "hourly_cooling_design_year",
             "hourly_heating_design_day",
             "hourly_cooling_design_day",
             "event_times",

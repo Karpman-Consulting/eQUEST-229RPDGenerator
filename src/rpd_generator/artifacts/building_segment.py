@@ -266,9 +266,9 @@ class BuildingSegment:
         self.area_type_vertical_fenestration = (
             self.vertical_fenestration_building_area_map.get(self.building_type)
         )
-        self.area_type_heating_ventilating_air_conditioning_system = (
-            self.hvac_building_area_map.get(self.building_type)
-        )
+        # self.area_type_heating_ventilating_air_conditioning_system = (
+        #     self.hvac_building_area_map.get(self.building_type)
+        # )
         self.service_water_heating_area_type = (
             self.service_water_heating_building_area_map.get(self.building_type)
         )

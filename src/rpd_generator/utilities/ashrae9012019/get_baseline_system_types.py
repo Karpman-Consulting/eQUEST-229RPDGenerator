@@ -74,6 +74,8 @@ def get_baseline_system_types(rmd_b: dict) -> dict[str, list[str]]:
         is_baseline_system_6,
         is_baseline_system_7,
         is_baseline_system_8,
+        is_baseline_system_9,
+        is_baseline_system_10,
         is_baseline_system_11_1,
         is_baseline_system_11_2,
         is_baseline_system_12,

@@ -62,6 +62,7 @@ class RulesetModelDescription(Base):
         "RUN-PERIOD-PD",
         "SITE-PARAMETERS",
         "BUILD-PARAMETERS",
+        "DESIGN-DAY",  # Design days must populate before Schedules
         # Building Parameters must populate before Exterior-Walls, Interior-Walls, Underground-Walls, Windows, Doors
         "MASTER-METERS",
         # Master meters must populate bofore other meters and before Systems, Boilers, DW-Heaters, Chillers
@@ -129,6 +130,7 @@ class RulesetModelDescription(Base):
         self.weather_obj = Weather(self)
 
         self.master_meters = None
+        self.design_day_names = []
         self.electric_meter_names = []
         self.fuel_meter_names = []
         self.steam_meter_names = []

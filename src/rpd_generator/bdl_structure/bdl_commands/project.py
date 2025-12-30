@@ -12,6 +12,7 @@ BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_SiteParameterKeywords = BDLEnums.bdl_enums["SiteParameterKeywords"]
 BDL_RunPeriodKeywords = BDLEnums.bdl_enums["RunPeriodKeywords"]
 BDL_HolidayKeywords = BDLEnums.bdl_enums["HolidayKeywords"]
+BDL_DesignDayKeywords = BDLEnums.bdl_enums["DesignDayKeywords"]
 BDL_HolidayTypes = BDLEnums.bdl_enums["HolidayTypes"]
 BDL_ScheduleTypes = BDLEnums.bdl_enums["ScheduleTypes"]
 
@@ -151,6 +152,21 @@ class DesignDay(BaseDefinition):
     def __init__(self, u_name, rmd):
         super().__init__(u_name, rmd)
         self.rmd.bdl_obj_instances[u_name] = self
+        self.rmd.design_day_names.append(u_name)
+
+        self.design_day_type = None
+        self.month = None
+        self.day = None
+        self.number_of_days = None
+
+    def populate_data_elements(self):
+        """Populate schema structure for design day object."""
+        self.design_day_type = self.get_inp(BDL_DesignDayKeywords.TYPE)
+        self.month = self.try_int(self.get_inp(BDL_DesignDayKeywords.MONTH))
+        self.day = self.try_int(self.get_inp(BDL_DesignDayKeywords.DAY))
+        self.number_of_days = self.try_int(
+            self.get_inp(BDL_DesignDayKeywords.NUMBER_OF_DAYS)
+        )
 
     def __repr__(self):
         return f"DesignDay(u_name='{self.u_name}')"

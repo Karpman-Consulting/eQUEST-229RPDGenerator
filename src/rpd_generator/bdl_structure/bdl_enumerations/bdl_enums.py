@@ -109,6 +109,20 @@ class BDLEnums:
                 "HW-CONDENSING",
             ]
         ),
+        "DesignDayKeywords": _ListEnum(
+            [
+                "TYPE",
+                "MONTH",
+                "DAY",
+                "NUMBER-OF-DAYS",
+            ]
+        ),
+        "DesignDayTypes": _ListEnum(
+            [
+                "HEATING",
+                "COOLING",
+            ]
+        ),
         "BoilerKeywords": _ListEnum(
             [
                 "TYPE",
