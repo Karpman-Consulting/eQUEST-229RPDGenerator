@@ -99,3 +99,75 @@ def is_baseline_system_13(
             baseline_system_type = HVAC_SYS.SYS_13A
 
     return baseline_system_type
+
+
+def diagnose_baseline_system_13(
+    hvac,
+    terminals_list,
+    zones_list,
+    chiller_loop_id_list,
+    purchased_cooling_loop_id_list,
+):
+    """
+    Diagnostic wrapper for is_baseline_system_13
+    (Single-Zone CV with CHW and Electric Resistance Heating).
+
+    Mirrors logic exactly and exposes all failure points and branch decisions.
+    """
+
+    diagnostics = {}
+
+    # Required system existence
+    diagnostics["has_no_preheat_system"] = not has_preheat_system(hvac)
+
+    # Core eligibility checks
+    diagnostics[
+        "heating_type_elec_resistance"
+    ] = is_hvac_sys_heating_type_elec_resistance(hvac)
+    diagnostics["cooling_type_fluid_loop"] = is_hvac_sys_cooling_type_fluid_loop(hvac)
+    diagnostics["fan_system_cv"] = is_hvac_sys_fan_sys_cv(hvac)
+    diagnostics["serves_single_zone"] = does_hvac_sys_serve_single_zone(zones_list)
+    diagnostics["one_terminal_per_zone"] = does_each_zone_have_only_one_terminal(
+        zones_list
+    )
+    diagnostics[
+        "no_terminal_heat_sources"
+    ] = are_all_terminal_heat_sources_none_or_null(terminals_list)
+    diagnostics[
+        "no_terminal_cool_sources"
+    ] = are_all_terminal_cool_sources_none_or_null(terminals_list)
+    diagnostics["no_terminal_fans"] = are_all_terminal_fans_null(terminals_list)
+    diagnostics["terminal_types_cav"] = are_all_terminal_types_cav(terminals_list)
+
+    passed_core = all(diagnostics.values())
+
+    # Branch diagnostics
+    branch = {}
+
+    branch[
+        "cooling_loop_attached_to_chiller"
+    ] = is_hvac_sys_fluid_loop_attached_to_chiller(hvac, chiller_loop_id_list)
+    branch["cooling_loop_purchased_chw"] = is_hvac_sys_fluid_loop_purchased_chw(
+        hvac, purchased_cooling_loop_id_list
+    )
+
+    matched_system = HVAC_SYS.UNMATCHED
+
+    if passed_core:
+        if branch["cooling_loop_attached_to_chiller"]:
+            matched_system = HVAC_SYS.SYS_13
+        elif branch["cooling_loop_purchased_chw"]:
+            matched_system = HVAC_SYS.SYS_13A
+
+    passed = matched_system != HVAC_SYS.UNMATCHED
+
+    failed_checks = [k for k, ok in diagnostics.items() if not ok]
+
+    return {
+        "expected_system": "SYS_13",
+        "matched_system": matched_system,
+        "passed": passed,
+        "failed_checks": failed_checks,
+        "diagnostics": diagnostics,
+        "branch_info": branch,
+    }

@@ -245,7 +245,7 @@ def finalize_and_write_rpd(
     unit_converter.convert_to_schema_units(rpd.rpd_data_structure)
     if not rpd_testing:
         print("Adding supply ducting specifications...")
-        rpd.specify_supply_ducting()
+        # rpd.specify_supply_ducting()
 
     safe_file = safe_path(rpd_file_path)
     with open(safe_file, "w") as f:
@@ -300,11 +300,11 @@ if __name__ == "__main__":
         "245 Clarkson Ave",
         [
             (
-                r"C:\Users\JacksonJarboe\Documents\Local Models\245 Clarkson Ave\245 Clarkson BLr9 FCs multiplied.inp",
+                r"C:\Users\JacksonJarboe\Karpman Consulting Dropbox\Jackson Jarboe\Test Project\Project 3.inp",
                 "BASELINE_0",
             ),
             (
-                r"C:\Users\JacksonJarboe\Documents\Local Models\245 Clarkson Ave\245 Clarkson PRr2 - 42.inp",
+                r"C:\Users\JacksonJarboe\Karpman Consulting Dropbox\Jackson Jarboe\Test Project\Project 3.inp",
                 "PROPOSED",
             ),
         ],

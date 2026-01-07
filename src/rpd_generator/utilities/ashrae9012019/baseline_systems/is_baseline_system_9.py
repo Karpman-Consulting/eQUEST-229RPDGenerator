@@ -100,3 +100,78 @@ def is_baseline_system_9(
             baseline_system_type = HVAC_SYS.SYS_9
 
     return baseline_system_type
+
+
+def diagnose_baseline_system_9(
+    hvac,
+    terminals_list,
+    zones_list,
+    purchased_cooling_loop_id_list,
+    purchased_heating_loop_id_list,
+):
+    """
+    Diagnostic wrapper for is_baseline_system_9 (Heating & Ventilation).
+    Mirrors logic exactly and exposes all failure points and branch decisions.
+    """
+
+    diagnostics = {}
+    branch = {}
+
+    # -------------------------------------------------
+    # Sys-9B override check (evaluated first by design)
+    # -------------------------------------------------
+    branch["passes_sys_9b"] = is_baseline_system_9b(
+        hvac,
+        terminals_list,
+        zones_list,
+        purchased_cooling_loop_id_list,
+        purchased_heating_loop_id_list,
+    )
+
+    if branch["passes_sys_9b"]:
+        return {
+            "expected_system": "SYS_9",
+            "matched_system": HVAC_SYS.SYS_9B,
+            "passed": True,
+            "failed_checks": [],
+            "diagnostics": {},
+            "branch_info": branch,
+        }
+
+    # -------------------------------------------------
+    # Sys-9 base eligibility
+    # -------------------------------------------------
+
+    diagnostics["has_no_preheat_system"] = not has_preheat_system(hvac)
+    diagnostics["fan_system_cv"] = is_hvac_sys_fan_sys_cv(hvac)
+    diagnostics["serves_single_zone"] = does_hvac_sys_serve_single_zone(zones_list)
+    diagnostics["one_terminal_per_zone"] = does_each_zone_have_only_one_terminal(
+        zones_list
+    )
+    diagnostics[
+        "no_terminal_heat_sources"
+    ] = are_all_terminal_heat_sources_none_or_null(terminals_list)
+    diagnostics[
+        "no_terminal_cool_sources"
+    ] = are_all_terminal_cool_sources_none_or_null(terminals_list)
+    diagnostics["no_terminal_fans"] = are_all_terminal_fans_null(terminals_list)
+    diagnostics["terminal_types_cav"] = are_all_terminal_types_cav(terminals_list)
+    diagnostics[
+        "cooling_none_or_non_mechanical"
+    ] = is_hvac_sys_cooling_type_none_or_non_mechanical(hvac)
+    diagnostics["heating_type_furnace"] = is_hvac_sys_heating_type_furnace(hvac)
+
+    passed_core = all(diagnostics.values())
+
+    matched_system = HVAC_SYS.SYS_9 if passed_core else HVAC_SYS.UNMATCHED
+
+    failed_checks = [k for k, ok in diagnostics.items() if not ok]
+
+    return {
+        "expected_system": "SYS_9",
+        "matched_system": matched_system,
+        "passed": matched_system != HVAC_SYS.UNMATCHED,
+        "failed_checks": failed_checks,
+        "diagnostics": diagnostics,
+        "branch_info": branch,
+    }

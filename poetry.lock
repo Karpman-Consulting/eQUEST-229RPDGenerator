@@ -921,7 +921,7 @@ pint = "*"
 type = "git"
 url = "https://github.com/Karpman-Consulting/RECI-ReportProjectEval.git"
 reference = "main"
-resolved_reference = "296d9d163071faf7c2f69fe795b11e96f3f6ef64"
+resolved_reference = "e21823ad65d9944a11f9ecd6ae326d5d3f5bb8de"
 
 [[package]]
 name = "referencing"
@@ -1183,7 +1183,7 @@ description = "PNNL ruleset checking tool"
 optional = false
 python-versions = "^3.10"
 files = []
-develop = false
+develop = true
 
 [package.dependencies]
 astor = "^0.8.1"
@@ -1207,10 +1207,8 @@ xlrd = "^1.2"
 ashrae9012022 = []
 
 [package.source]
-type = "git"
-url = "https://github.com/pnnl/ruleset-checking-tool.git"
-reference = "develop"
-resolved_reference = "46d3dd18d43cd5700b1b0342e68349293af94f10"
+type = "directory"
+url = "../RCT"
 
 [[package]]
 name = "six"
@@ -1301,4 +1299,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "0d458e7d822526a15045d341f93cf1c735e00f3c29c8ae9ca65632fae9819317"
+content-hash = "04f3e000ef8330234aa6a897388742f2c6230f7e221b6ead49450c02637bd126"

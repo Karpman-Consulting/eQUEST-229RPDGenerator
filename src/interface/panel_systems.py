@@ -398,6 +398,8 @@ class BaselineSystemTypesPanel(ctk.CTkFrame):
         "avg_eflh": "Average EFLH",
         "load_diff": "Internal Load Difference",
         "eflh_diff": "EFLH Difference",
+        "load_diff_threshold": "Internal Load Difference Threshold",
+        "eflh_diff_threshold": "EFLH Difference Threshold",
         "does_zone_meet_g3_1_1d": "Meets G3.1.1d Exception",
         "building_total_lab_exhaust": "Building Total Lab Exhaust",
         "zone_is_lab_zone": "Is Lab Zone",
@@ -417,6 +419,7 @@ class BaselineSystemTypesPanel(ctk.CTkFrame):
         "zone_internal_load_per_area": "Btu/hr/ft2",
         "avg_internal_load_area": "Btu/hr/ft2",
         "load_diff": "Btu/hr/ft2",
+        "load_diff_threshold": "Btu/hr/ft2",
         "building_total_lab_exhaust": "cfm",
         "total_computer_zones_peak_cooling_load_b": "Btu/hr",
     }

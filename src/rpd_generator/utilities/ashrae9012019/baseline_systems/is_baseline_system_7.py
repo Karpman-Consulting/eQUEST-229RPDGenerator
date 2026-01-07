@@ -143,3 +143,129 @@ def is_baseline_system_7(
                 baseline_system_type = HVAC_SYS.SYS_7C
 
     return baseline_system_type
+
+
+def diagnose_baseline_system_7(
+    hvac,
+    terminals_list,
+    zones_list,
+    boiler_loop_id_list,
+    purchased_heating_loop_id_list,
+    chiller_loop_id_list,
+    purchased_cooling_loop_id_list,
+):
+    """
+    Diagnostic wrapper for is_baseline_system_7 (VAV with Reheat).
+    Mirrors logic exactly and exposes all failure points and branch decisions.
+    """
+
+    diagnostics = {}
+
+    # Required system existence
+    diagnostics["has_preheat_system"] = has_preheat_system(hvac)
+    diagnostics["has_no_heating_system"] = not has_heating_system(hvac)
+    diagnostics["has_cooling_system"] = has_cooling_system(hvac)
+
+    has_required_sys = (
+        diagnostics["has_preheat_system"]
+        and diagnostics["has_no_heating_system"]
+        and diagnostics["has_cooling_system"]
+    )
+    diagnostics["has_required_sys"] = has_required_sys
+
+    # Core eligibility checks
+    diagnostics["preheat_type_fluid_loop"] = is_hvac_sys_preheating_type_fluid_loop(
+        hvac
+    )
+    diagnostics["cooling_type_fluid_loop"] = is_hvac_sys_cooling_type_fluid_loop(hvac)
+    diagnostics["fan_system_vsd"] = is_hvac_sys_fan_sys_vsd(hvac)
+    diagnostics["one_terminal_per_zone"] = does_each_zone_have_only_one_terminal(
+        zones_list
+    )
+    diagnostics[
+        "terminal_heat_sources_hot_water"
+    ] = are_all_terminal_heat_sources_hot_water(terminals_list)
+    diagnostics[
+        "no_terminal_cool_sources"
+    ] = are_all_terminal_cool_sources_none_or_null(terminals_list)
+    diagnostics["no_terminal_fans"] = are_all_terminal_fans_null(terminals_list)
+    diagnostics["terminal_types_vav"] = are_all_terminal_types_vav(terminals_list)
+
+    passed_core = all(
+        diagnostics[k]
+        for k in [
+            "has_required_sys",
+            "preheat_type_fluid_loop",
+            "cooling_type_fluid_loop",
+            "fan_system_vsd",
+            "one_terminal_per_zone",
+            "terminal_heat_sources_hot_water",
+            "no_terminal_cool_sources",
+            "no_terminal_fans",
+            "terminal_types_vav",
+        ]
+    )
+
+    # Branch diagnostics
+    branch = {}
+
+    branch[
+        "cooling_loop_attached_to_chiller"
+    ] = is_hvac_sys_fluid_loop_attached_to_chiller(hvac, chiller_loop_id_list)
+    branch["cooling_loop_purchased_chw"] = is_hvac_sys_fluid_loop_purchased_chw(
+        hvac, purchased_cooling_loop_id_list
+    )
+
+    branch[
+        "preheat_loop_attached_to_boiler"
+    ] = is_hvac_sys_preheat_fluid_loop_attached_to_boiler(hvac, boiler_loop_id_list)
+    branch[
+        "terminal_loops_attached_to_boiler"
+    ] = are_all_terminal_heating_loops_attached_to_boiler(
+        terminals_list, boiler_loop_id_list
+    )
+
+    branch[
+        "preheat_loop_purchased_heating"
+    ] = is_hvac_sys_preheat_fluid_loop_purchased_heating(
+        hvac, purchased_heating_loop_id_list
+    )
+    branch[
+        "terminal_loops_purchased_heating"
+    ] = are_all_terminal_heating_loops_purchased_heating(
+        terminals_list, purchased_heating_loop_id_list
+    )
+
+    matched_system = HVAC_SYS.UNMATCHED
+
+    if passed_core:
+        if (
+            branch["preheat_loop_attached_to_boiler"]
+            and branch["terminal_loops_attached_to_boiler"]
+        ):
+            if branch["cooling_loop_attached_to_chiller"]:
+                matched_system = HVAC_SYS.SYS_7
+            elif branch["cooling_loop_purchased_chw"]:
+                matched_system = HVAC_SYS.SYS_7A
+
+        elif (
+            branch["preheat_loop_purchased_heating"]
+            and branch["terminal_loops_purchased_heating"]
+        ):
+            if branch["cooling_loop_attached_to_chiller"]:
+                matched_system = HVAC_SYS.SYS_7B
+            elif branch["cooling_loop_purchased_chw"]:
+                matched_system = HVAC_SYS.SYS_7C
+
+    passed = matched_system != HVAC_SYS.UNMATCHED
+
+    failed_checks = [k for k, ok in diagnostics.items() if not ok]
+
+    return {
+        "expected_system": "SYS_7",
+        "matched_system": matched_system,
+        "passed": passed,
+        "failed_checks": failed_checks,
+        "diagnostics": diagnostics,
+        "branch_info": branch,
+    }

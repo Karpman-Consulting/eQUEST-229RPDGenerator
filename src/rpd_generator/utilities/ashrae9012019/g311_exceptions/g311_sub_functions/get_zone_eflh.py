@@ -1,9 +1,6 @@
-from pydash import flow
-
 from rpd_generator.utilities.get_list_hvac_systems_associated_with_zone import (
     get_list_hvac_systems_associated_with_zone,
 )
-from rpd_generator.utilities.jsonpath_utils import find_all, find_one
 from rpd_generator.utilities.schedule_utils import (
     get_max_schedule_multiplier_cooling_design_hourly_value_or_default,
     get_max_schedule_multiplier_heating_design_hourly_value_or_default,
@@ -20,139 +17,95 @@ class LeapYear:
 
 
 def get_zone_eflh(rmd: dict, zone: dict) -> int:
-    """
-    provides the equivalent full load hours of the zone. Equivalent full load hours are defined as: any hour when
-    the occupancy fraction is greater than 5% AND the HVAC system is in occupied mode. For this function,
-    we are recognizing the HVAC system as being in occupied mode if ANY of the HVAC systems serving the zone are in
-    occupied mode.
-
-    Applicability Note: hvac_system.fan_system.operation_schedule is being used as the HVAC operation
-    schedule. Therefore, this check will not work for radiant systems or other systems that do not include a fan
-
-    Parameters
-    ----------
-    rmd dict
-        A dictionary representing a ruleset model description as defined by the ASHRAE229 schema
-    zone dict
-        zone data group
-
-    Returns
-    -------
-    flh int a number equal to the total equivalent full load hours for the year
-    """
     hvac_systems_list = get_list_hvac_systems_associated_with_zone(rmd, zone)
+    schedules_map = {sch.get("id"): sch for sch in rmd.get("schedules", [])}
 
     num_hours = None
+
+    # Determine number of hours from HVAC fan schedules
     for hvac in hvac_systems_list:
-        sched_id = find_one("$.fan_system.operating_schedule", hvac)
-        values = find_one(f'$.schedules[*][?(@.id="{sched_id}")].hourly_values', rmd)
+        sched_id = hvac.get("fan_system", {}).get("operating_schedule")
+        values = schedules_map.get(sched_id, {}).get("hourly_values")
         if values:
             num_hours = len(values)
             break
 
+    # Fallback: determine number of hours from space occupant schedules
     if num_hours is None:
-        for space in find_all("$.spaces[*]", zone):
+        for space in zone.get("spaces", []):
             sched_id = space.get("occupant_multiplier_schedule")
-            values = find_one(
-                f'$.schedules[*][?(@.id="{sched_id}")].hourly_values', rmd
-            )
+            values = schedules_map.get(sched_id, {}).get("hourly_values")
             if values:
                 num_hours = len(values)
                 break
 
     if num_hours is None:
-        num_hours = 8760  # fallback default
+        num_hours = 8760  # final fallback
 
-    # 2. functions
-    # get fan operation schedule from an HVAC,
-    # missing data (fan) is handled and return as [1.0] * num_hours
-    get_fan_operation_schedule_func = flow(
-        lambda hvac_sys: find_one("$.fan_system.operating_schedule", hvac_sys),
-        lambda operation_schedule_id: find_one(
-            f'$.schedules[*][?(@.id="{operation_schedule_id}")].hourly_values', rmd
-        ),
-        lambda hourly_values: hourly_values if hourly_values else [1.0] * num_hours,
-    )
+    # Fan operation schedule per HVAC system
+    def get_fan_operation_schedule(hvac_sys):
+        sched_id = hvac_sys.get("fan_system", {}).get("operating_schedule")
+        hourly_values = schedules_map.get(sched_id, {}).get("hourly_values")
+        return hourly_values if hourly_values else [1.0] * num_hours
 
-    # 3. Calculating values
-    # list of lists of HVAC annual operation schedule
-    # [[0,0,0,1,1,1,...], [0,0,0,1,1,1,...]...]
-    hvac_operation_schedule_list = list(
-        map(lambda hvac_id: get_fan_operation_schedule_func(hvac_id), hvac_systems_list)
-    )
+    hvac_operation_schedule_list = [
+        get_fan_operation_schedule(hvac) for hvac in hvac_systems_list
+    ]
 
-    # make sure all operation schedule has the same hours, and they are equal to num_hours
     assert all(
-        map(
-            lambda schedule: len(schedule) == num_hours,
-            hvac_operation_schedule_list,
-        )
-    ), f"Not all HVAC operation schedules have ${num_hours} hours"
+        len(schedule) == num_hours for schedule in hvac_operation_schedule_list
+    ), f"Not all HVAC operation schedules have {num_hours} hours"
 
-    # list of integers that contains the maximum number of occupants per space.
-    # [10,12,22...]
-    num_of_occupant_per_space_list = list(
-        map(
-            lambda spc: max(
-                get_max_schedule_multiplier_hourly_value_or_default(
-                    rmd, find_one("$.occupant_multiplier_schedule", spc), 1.0
-                ),
-                get_max_schedule_multiplier_heating_design_hourly_value_or_default(
-                    rmd, find_one("$.occupant_multiplier_schedule", spc), 1.0
-                ),
-                get_max_schedule_multiplier_cooling_design_hourly_value_or_default(
-                    rmd, find_one("$.occupant_multiplier_schedule", spc), 1.0
-                ),
-                1.0,
-            )
-            * find_one("$.number_of_occupants", spc, 0.0),
-            find_all("$.spaces[*]", zone),
-        )
-    )
+    # Maximum occupants per space
+    num_of_occupant_per_space_list = []
+    for spc in zone.get("spaces", []):
+        sched_id = spc.get("occupant_multiplier_schedule")
+        base_occupants = spc.get("number_of_occupants", 0.0)
 
-    # sum of the maximum number of occupants
+        max_multiplier = max(
+            get_max_schedule_multiplier_hourly_value_or_default(rmd, sched_id, 1.0),
+            get_max_schedule_multiplier_heating_design_hourly_value_or_default(
+                rmd, sched_id, 1.0
+            ),
+            get_max_schedule_multiplier_cooling_design_hourly_value_or_default(
+                rmd, sched_id, 1.0
+            ),
+            1.0,
+        )
+
+        num_of_occupant_per_space_list.append(max_multiplier * base_occupants)
+
     total_zone_occupants = sum(num_of_occupant_per_space_list)
 
-    # list of lists of annual hourly_values per space.
-    # this shall guarantee the num_hours length per hourly_values list.
-    # [[0,0,0.2,0.2...], [0,0,0.2,0.2...]...]
-    occupant_annual_hourly_value_per_space_list = list(
-        map(
-            lambda spc: get_schedule_multiplier_hourly_value_or_default(
-                rmd, spc.get("occupant_multiplier_schedule"), [1.0] * num_hours
-            ),
-            find_all("$.spaces[*]", zone),
+    # Hourly occupant multipliers per space
+    occupant_annual_hourly_value_per_space_list = [
+        get_schedule_multiplier_hourly_value_or_default(
+            rmd,
+            spc.get("occupant_multiplier_schedule"),
+            [1.0] * num_hours,
         )
-    )
+        for spc in zone.get("spaces", [])
+    ]
 
-    # make sure all operation schedules have the same hours
     assert all(
-        map(
-            lambda schedule: len(schedule) == num_hours,
-            occupant_annual_hourly_value_per_space_list,
-        )
+        len(schedule) == num_hours
+        for schedule in occupant_annual_hourly_value_per_space_list
     ), f"Not all occupant schedules have {num_hours} hours"
 
     flh = 0
     for hour in range(num_hours):
-        # at this hour, the total number of occupants from spaces.
         occupants_this_hour = sum(
-            [
-                num_occupant * hourly_values[hour]
-                for num_occupant, hourly_values in zip(
-                    num_of_occupant_per_space_list,
-                    occupant_annual_hourly_value_per_space_list,
-                )
-            ]
+            num_occupant * hourly_values[hour]
+            for num_occupant, hourly_values in zip(
+                num_of_occupant_per_space_list,
+                occupant_annual_hourly_value_per_space_list,
+            )
         )
 
-        # 0.0 is falsy, 1.0 is truthy
         hvac_systems_operational_this_hour = any(
-            map(lambda schedule: schedule[hour], hvac_operation_schedule_list)
+            schedule[hour] for schedule in hvac_operation_schedule_list
         )
 
-        # Allow plenum as indirectly conditioned zone but has 0.0 occupants.
-        # In such case, we do not add flh value
         if (
             total_zone_occupants > 0
             and occupants_this_hour / total_zone_occupants
@@ -160,4 +113,5 @@ def get_zone_eflh(rmd: dict, zone: dict) -> int:
             and hvac_systems_operational_this_hour
         ):
             flh += 1
+
     return flh

@@ -1,5 +1,3 @@
-import numpy as np
-from pydash import map_
 from typing import TypedDict
 from pint import Quantity
 from rpd_generator.utilities.pint_utils import ZERO
@@ -41,6 +39,8 @@ class G311CDiagnostics(TypedDict):
     avg_eflh: float
     load_diff: Quantity
     eflh_diff: float
+    load_diff_threshold: Quantity
+    eflh_diff_threshold: float
 
 
 ELIGIBLE_PRIMARY_SYSTEM_TYPES = [
@@ -75,104 +75,86 @@ def get_g3_1_1c_diagnostics(
     zone: dict,
     zones_and_systems: dict[str, ZoneandSystem],
 ) -> G311CDiagnostics:
-    """
-    Full diagnostics for G3.1.1c, including loads, EFLH, and differences.
-    """
+
     num_hours = _infer_num_hours_per_year(rmd)
     num_weeks = num_hours / 168.0
 
-    expected_system_type = zones_and_systems[zone["id"]]["expected_system_type"]
-    system_matched = any(
-        baseline_system_type_compare(
-            expected_system_type, target_system_type, exact_match=False
-        )
-        for target_system_type in ELIGIBLE_PRIMARY_SYSTEM_TYPES
+    zone_internal = get_zone_peak_internal_load_floor_area_dict(rmd, zone)
+    zone_eflh = _get_zone_weekly_eflh(rmd, zone, num_weeks)
+
+    zone_load_per_area = (
+        zone_internal["peak"] / zone_internal["area"]
+        if zone_internal["area"] != ZERO.AREA
+        else ZERO.POWER_PER_AREA
     )
 
-    # Defaults for diagnostics
-    zone_load_per_area = ZERO.POWER_PER_AREA
-    avg_internal_load_area = ZERO.POWER_PER_AREA
-    zone_eflh = 0.0
-    avg_eflh = 0.0
-    load_diff = ZERO.POWER_PER_AREA
-    eflh_diff = 0.0
-    meet_g3_1_1c_flag = False
+    expected_system_type = zones_and_systems[zone["id"]]["expected_system_type"]
 
-    if system_matched:
-        zones_on_same_floor = get_zones_on_same_floor_list(rmd, zone)
-        zones_on_same_floor = [
-            z for z in zones_on_same_floor if z.get("id") != zone.get("id")
-        ]
+    system_matched = any(
+        baseline_system_type_compare(expected_system_type, sys_type, exact_match=False)
+        for sys_type in ELIGIBLE_PRIMARY_SYSTEM_TYPES
+    )
 
-        # Keep only zones with same expected system type
-        zones_same_floor_same_system_type = [
-            other_zone
-            for other_zone in zones_on_same_floor
-            if (
-                zones_and_systems.get(other_zone["id"])
-                and zones_and_systems[other_zone["id"]]["expected_system_type"]
-                == expected_system_type
-            )
-        ]
+    zones_on_same_floor = [
+        z
+        for z in get_zones_on_same_floor_list(rmd, zone)
+        if z.get("id") != zone.get("id")
+        and zones_and_systems.get(z.get("id"))
+        and zones_and_systems[z["id"]]["expected_system_type"] == expected_system_type
+    ]
 
-        zone_internal_loads = get_zone_peak_internal_load_floor_area_dict(rmd, zone)
-        zone_eflh = _get_zone_weekly_eflh(rmd, zone, num_weeks)
+    comparison_zones = zones_on_same_floor or [zone]
 
-        if zone_internal_loads["area"] != ZERO.AREA:
-            zone_load_per_area = (
-                zone_internal_loads["peak"] / zone_internal_loads["area"]
-            )
-        else:
-            zone_load_per_area = ZERO.POWER_PER_AREA
-
-        if zones_same_floor_same_system_type:
-            zone_load_and_eflh_list = [
-                (
-                    get_zone_peak_internal_load_floor_area_dict(rmd, other_match_zone),
-                    _get_zone_weekly_eflh(rmd, other_match_zone, num_weeks),
-                )
-                for other_match_zone in zones_same_floor_same_system_type
-            ]
-        else:
-            # Only zone on floor with this system type: compare to itself
-            zone_load_and_eflh_list = [(zone_internal_loads, zone_eflh)]
-
-        system_total_area: Quantity = sum(
-            map_(zone_load_and_eflh_list, "0.area"), ZERO.AREA
+    zone_load_eflh_pairs = [
+        (
+            get_zone_peak_internal_load_floor_area_dict(rmd, z),
+            _get_zone_weekly_eflh(rmd, z, num_weeks),
         )
-        system_total_load: Quantity = sum(
-            map_(zone_load_and_eflh_list, "0.peak"), ZERO.POWER
-        )
+        for z in comparison_zones
+    ]
 
-        if system_total_area != ZERO.AREA:
-            avg_eflh = (
-                np.dot(
-                    map_(zone_load_and_eflh_list, lambda zl: zl[1]),
-                    map_(zone_load_and_eflh_list, lambda zl: zl[0]["area"].magnitude),
-                )
-                / system_total_area.magnitude
-            )
-            avg_internal_load_area = system_total_load / system_total_area
-        else:
-            avg_eflh = 0.0
-            avg_internal_load_area = ZERO.POWER_PER_AREA
+    total_area: Quantity = sum(
+        (zl["area"] for zl, _ in zone_load_eflh_pairs), ZERO.AREA
+    )
+    total_load: Quantity = sum(
+        (zl["peak"] for zl, _ in zone_load_eflh_pairs), ZERO.POWER
+    )
 
-        load_diff = abs(zone_load_per_area - avg_internal_load_area)
-        eflh_diff = zone_eflh - avg_eflh
+    if total_area != ZERO.AREA:
 
-        meet_g3_1_1c_flag = load_diff > LOAD_THRESHOLD or eflh_diff > EFLH_THRESHOLD
+        weighted_terms = []
+        for zl, eflh in zone_load_eflh_pairs:
+            # FIX: force consistent units before stripping magnitude
+            area_frac = zl["area"].to(total_area.units).magnitude / total_area.magnitude
+            contribution = eflh * area_frac
+            weighted_terms.append(contribution)
 
-        if meet_g3_1_1c_flag:
-            meet_g3_1_1c_flag = zone["id"] not in get_zone_computer_rooms(rmd)
+        avg_internal_load_area = total_load / total_area
+        avg_eflh = sum(weighted_terms)
+
+    else:
+        avg_internal_load_area = ZERO.POWER_PER_AREA
+        avg_eflh = 0.0
+
+    load_diff = abs(zone_load_per_area - avg_internal_load_area)
+    eflh_diff = abs(zone_eflh - avg_eflh)
+
+    meets = (
+        system_matched
+        and (load_diff > LOAD_THRESHOLD or eflh_diff > EFLH_THRESHOLD)
+        and zone["id"] not in get_zone_computer_rooms(rmd)
+    )
 
     return G311CDiagnostics(
-        meets=meet_g3_1_1c_flag,
+        meets=meets,
         zone_load_per_area=zone_load_per_area,
         avg_internal_load_area=avg_internal_load_area,
         zone_eflh=zone_eflh,
         avg_eflh=avg_eflh,
         load_diff=load_diff,
         eflh_diff=eflh_diff,
+        load_diff_threshold=LOAD_THRESHOLD,
+        eflh_diff_threshold=EFLH_THRESHOLD,
     )
 
 

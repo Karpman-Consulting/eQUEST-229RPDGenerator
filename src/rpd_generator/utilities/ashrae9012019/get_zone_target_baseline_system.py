@@ -229,6 +229,8 @@ def get_zone_target_baseline_system(
             "avg_eflh": c_diag["avg_eflh"],
             "load_diff": c_diag["load_diff"],
             "eflh_diff": c_diag["eflh_diff"],
+            "load_diff_threshold": c_diag["load_diff_threshold"],
+            "eflh_diff_threshold": c_diag["eflh_diff_threshold"],
         }
 
         if c_diag["meets"]:

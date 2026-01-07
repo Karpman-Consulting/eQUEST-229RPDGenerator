@@ -141,6 +141,9 @@ class ModelInputReader:
 
             for line in bdl_file:
 
+                if line.startswith("*WARNING"):
+                    continue
+
                 # Skip comment lines or initial declarations of library-entries (subsequent line with $LIBRARY-ENTRY will be read)
                 if line[12:15] == " $ " or " LIBRARY-ENTRY" in line:
                     continue

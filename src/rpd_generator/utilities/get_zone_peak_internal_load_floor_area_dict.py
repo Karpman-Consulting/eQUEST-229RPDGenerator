@@ -1,7 +1,10 @@
 from typing import Literal
 
 from pint import Quantity
-from rpd_generator.utilities.jsonpath_utils import find_all, find_one
+from rpd_generator.utilities.pint_utils import ZERO
+from rpd_generator.config import Config
+
+ureg = Config.ureg
 
 
 def get_zone_peak_internal_load_floor_area_dict(
@@ -26,47 +29,84 @@ def get_zone_peak_internal_load_floor_area_dict(
     result: dict
     a dictionary that contains two keys, peak, and area.
     """
-    zone_area = 0
-    zone_load = 0
-
-    for space in find_all("$.spaces[*]", zone):
-        space_area = space.get("floor_area", 0)
+    zone_area = ZERO.AREA
+    zone_load = ZERO.POWER
+    schedules_map = {sch["id"]: sch for sch in rmd.get("schedules", [])}
+    for space in zone.get("spaces", []):
+        space_area = space.get("floor_area", ZERO.AREA)
         zone_area += space_area
-        for light in find_all("$.interior_lighting[*]", space):
-            lighting_design_schedule = find_one(
-                f'$.schedules[?(@.id=="{light["lighting_multiplier_schedule"]}")]', rmd
-            )
-            lighting_max_schedule_fraction = max(
-                lighting_design_schedule.get("hourly_cooling_design_day", []), default=0
-            )
+
+        for light in space.get("interior_lighting", []):
+            lighting_schedule_id = light.get("lighting_multiplier_schedule")
+            lighting_schedule = schedules_map.get(lighting_schedule_id, {})
+            cooling_design_values = [
+                v
+                for v in (
+                    lighting_schedule.get("hourly_cooling_design_year")
+                    or lighting_schedule.get("hourly_cooling_design_day")
+                    or []
+                )
+                if v is not None
+            ]
+            if cooling_design_values:
+                lighting_design_schedule_max_fraction = max(
+                    cooling_design_values, default=0
+                )
+            else:
+                lighting_design_schedule_max_fraction = 0.0
             zone_load += (
-                light.get("power_per_area", 0)
+                light.get("power_per_area", ZERO.POWER_PER_AREA)
                 * space_area
-                * lighting_max_schedule_fraction
+                * lighting_design_schedule_max_fraction
             )
 
-        for equipment in find_all("$.miscellaneous_equipment[*]", space):
-            equipment_design_schedule = find_one(
-                f'$.schedules[?(@.id=="{equipment["multiplier_schedule"]}")]', rmd
+        for equipment in space.get("miscellaneous_equipment", []):
+            equipment_schedule_id = equipment.get("multiplier_schedule")
+            equipment_schedule = schedules_map.get(equipment_schedule_id, {})
+            cooling_design_values = [
+                v
+                for v in (
+                    equipment_schedule.get("hourly_cooling_design_year")
+                    or equipment_schedule.get("hourly_cooling_design_day")
+                    or []
+                )
+                if v is not None
+            ]
+            if cooling_design_values:
+                equipment_design_schedule_max_fraction = max(
+                    cooling_design_values, default=0
+                )
+            else:
+                equipment_design_schedule_max_fraction = 0.0
+            zone_load += (
+                equipment.get("power", ZERO.POWER)
+                * equipment_design_schedule_max_fraction
             )
-            equipment_max_schedule_fraction = max(
-                equipment_design_schedule.get("hourly_cooling_design_day", []),
-                default=0,
-            )
-            zone_load += equipment.get("power", 0) * equipment_max_schedule_fraction
 
         # allows no occupants data in a zone
-        occupant_max_schedule_fraction = 0.0
+        occupant_design_schedule_max_fraction = 0.0
         if space.get("occupant_multiplier_schedule"):
-            occupant_design_schedule = find_one(
-                f'$.schedules[?(@.id=="{space["occupant_multiplier_schedule"]}")]', rmd
-            )
-            occupant_max_schedule_fraction = max(
-                occupant_design_schedule.get("hourly_cooling_design_day", []), default=0
-            )
+            occupant_schedule_id = space.get("occupant_multiplier_schedule")
+            occupant_schedule = schedules_map.get(occupant_schedule_id, {})
+            cooling_design_values = [
+                v
+                for v in (
+                    occupant_schedule.get("hourly_cooling_design_year")
+                    or occupant_schedule.get("hourly_cooling_design_day")
+                    or []
+                )
+                if v is not None
+            ]
+            if cooling_design_values:
+                occupant_design_schedule_max_fraction = max(
+                    cooling_design_values, default=0
+                )
+            else:
+                occupant_design_schedule_max_fraction = 0.0
+
         zone_load += (
-            space.get("occupant_sensible_heat_gain", 0)
-            + space.get("occupant_latent_heat_gain", 0)
-        ) * occupant_max_schedule_fraction
+            space.get("occupant_sensible_heat_gain", ZERO.POWER)
+            + space.get("occupant_latent_heat_gain", ZERO.POWER)
+        ) * occupant_design_schedule_max_fraction
 
     return {"peak": zone_load, "area": zone_area}

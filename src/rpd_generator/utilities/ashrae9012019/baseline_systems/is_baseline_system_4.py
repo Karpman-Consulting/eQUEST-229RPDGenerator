@@ -78,3 +78,49 @@ def is_baseline_system_4(hvac, terminals_list, zones_list):
     )
 
     return HVAC_SYS.SYS_4 if are_sys_data_matched else HVAC_SYS.UNMATCHED
+
+
+def diagnose_baseline_system_4(hvac, terminals_list, zones_list):
+    """
+    Diagnostic wrapper for is_baseline_system_4 (PSZ-HP).
+    Mirrors logic exactly and reports which checks failed.
+    """
+
+    diagnostics = {}
+
+    # Required system existence
+    diagnostics["has_no_preheat_system"] = not has_preheat_system(hvac)
+
+    # Core system checks (order preserved)
+    diagnostics["heating_type_heat_pump"] = is_hvac_sys_heating_type_heat_pump(hvac)
+    diagnostics["cooling_type_dx"] = is_hvac_sys_cooling_type_dx(hvac)
+    diagnostics["fan_system_cv"] = is_hvac_sys_fan_sys_cv(hvac)
+    diagnostics["serves_single_zone"] = does_hvac_sys_serve_single_zone(zones_list)
+    diagnostics["one_terminal_per_zone"] = does_each_zone_have_only_one_terminal(
+        zones_list
+    )
+    diagnostics[
+        "no_terminal_heat_sources"
+    ] = are_all_terminal_heat_sources_none_or_null(terminals_list)
+    diagnostics[
+        "no_terminal_cool_sources"
+    ] = are_all_terminal_cool_sources_none_or_null(terminals_list)
+    diagnostics["no_terminal_fans"] = are_all_terminal_fans_null(terminals_list)
+    diagnostics["terminal_supplies_ducted"] = are_all_terminal_supplies_ducted(
+        terminals_list
+    )
+    diagnostics["terminal_types_cav"] = are_all_terminal_types_cav(terminals_list)
+
+    passed = all(diagnostics.values())
+
+    matched_system = HVAC_SYS.SYS_4 if passed else HVAC_SYS.UNMATCHED
+
+    failed_checks = [name for name, ok in diagnostics.items() if not ok]
+
+    return {
+        "expected_system": "SYS_4",
+        "matched_system": matched_system,
+        "passed": passed,
+        "failed_checks": failed_checks,
+        "diagnostics": diagnostics,
+    }

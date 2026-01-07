@@ -65,7 +65,6 @@ def generate_year_calendar(year: int, first_day: str) -> dict:
     ].index(first_day) + 1
     day_types_365 = {}
     day_types = [7, 1, 2, 3, 4, 5, 6]
-    day_type = None
 
     month_days = [
         31,
