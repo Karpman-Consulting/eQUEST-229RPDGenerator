@@ -142,55 +142,56 @@ def get_baseline_system_types(rmd_b: dict) -> dict[str, list[str]]:
     # -----------------------------
     # HVAC iteration
     # -----------------------------
-    for hvac_b in find_all(
-        "$.buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*]",
-        rmd_b,
-    ):
-        hvac_b_id = hvac_b["id"]
+    for b in rmd_b.get("buildings", []):
+        for seg in b.get("building_segments", []):
+            for hvac_b in seg.get("heating_ventilating_air_conditioning_systems", []):
+                hvac_b_id = hvac_b["id"]
 
-        served = dict_of_zones_and_terminal_units_served_by_hvac_sys.get(hvac_b_id, {})
-        terminals_list = served.get("terminals_list", [])
-        zones_list = served.get("zones_list", [])
+                served = dict_of_zones_and_terminal_units_served_by_hvac_sys.get(
+                    hvac_b_id, {}
+                )
+                terminals_list = served.get("terminals_list", [])
+                zones_list = served.get("zones_list", [])
 
-        # -----------------------------
-        # Cheap early pruning
-        # -----------------------------
-        has_cooling = "cooling_system" in hvac_b
+                # -----------------------------
+                # Cheap early pruning
+                # -----------------------------
+                has_cooling = "cooling_system" in hvac_b
 
-        # If NO cooling exists → only Sys 9 / 10 / unmatched are possible
-        if not has_cooling:
-            candidate_checks = (
-                is_baseline_system_9,
-                is_baseline_system_10,
-            )
-        else:
-            candidate_checks = baseline_system_type_checks
+                # If NO cooling exists → only Sys 9 / 10 / unmatched are possible
+                if not has_cooling:
+                    candidate_checks = (
+                        is_baseline_system_9,
+                        is_baseline_system_10,
+                    )
+                else:
+                    candidate_checks = baseline_system_type_checks
 
-        # -----------------------------
-        # System classification
-        # -----------------------------
-        available_args = {
-            "rmd_b": rmd_b,
-            "hvac": hvac_b,
-            "terminals_list": terminals_list,
-            "zones_list": zones_list,
-            "chiller_loop_id_list": chiller_loop_id_list,
-            "boiler_loop_id_list": boiler_loop_id_list,
-            "purchased_cooling_loop_id_list": purchased_cooling_loop_id_list,
-            "purchased_heating_loop_id_list": purchased_heating_loop_id_list,
-        }
+                # -----------------------------
+                # System classification
+                # -----------------------------
+                available_args = {
+                    "rmd_b": rmd_b,
+                    "hvac": hvac_b,
+                    "terminals_list": terminals_list,
+                    "zones_list": zones_list,
+                    "chiller_loop_id_list": chiller_loop_id_list,
+                    "boiler_loop_id_list": boiler_loop_id_list,
+                    "purchased_cooling_loop_id_list": purchased_cooling_loop_id_list,
+                    "purchased_heating_loop_id_list": purchased_heating_loop_id_list,
+                }
 
-        matched = False
-        for sys_check in candidate_checks:
-            params = SYSTEM_CHECK_PARAMS[sys_check]
-            hvac_sys = sys_check(**{k: available_args[k] for k in params})
+                matched = False
+                for sys_check in candidate_checks:
+                    params = SYSTEM_CHECK_PARAMS[sys_check]
+                    hvac_sys = sys_check(**{k: available_args[k] for k in params})
 
-            if hvac_sys != HVAC_SYS.UNMATCHED:
-                baseline_hvac_system_dict[hvac_sys].append(hvac_b_id)
-                matched = True
-                break
+                    if hvac_sys != HVAC_SYS.UNMATCHED:
+                        baseline_hvac_system_dict[hvac_sys].append(hvac_b_id)
+                        matched = True
+                        break
 
-        if not matched:
-            baseline_hvac_system_dict[HVAC_SYS.UNMATCHED].append(hvac_b_id)
+                if not matched:
+                    baseline_hvac_system_dict[HVAC_SYS.UNMATCHED].append(hvac_b_id)
 
     return baseline_hvac_system_dict

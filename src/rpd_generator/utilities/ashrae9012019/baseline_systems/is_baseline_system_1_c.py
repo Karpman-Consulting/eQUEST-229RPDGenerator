@@ -83,3 +83,51 @@ def is_baseline_system_1_c(
             terminals_list, purchased_cooling_loop_id_list
         )
     )
+
+
+def diagnose_baseline_system_1_c(
+    hvac,
+    terminals_list,
+    zones_list,
+    purchased_cooling_loop_id_list,
+    purchased_heating_loop_id_list,
+):
+    diagnostics = {}
+
+    diagnostics["has_no_preheat_heating_fan_systems"] = not (
+        has_preheat_system(hvac) and has_heating_system(hvac) and has_fan_system(hvac)
+    )
+    diagnostics["cooling_type_none"] = is_hvac_sys_cooling_type_none(hvac)
+    diagnostics["one_terminal_per_zone"] = does_each_zone_have_only_one_terminal(
+        zones_list
+    )
+    diagnostics["terminal_heat_sources_hw"] = are_all_terminal_heat_sources_hot_water(
+        terminals_list
+    )
+    diagnostics[
+        "terminal_cool_sources_chw"
+    ] = are_all_terminal_cool_sources_chilled_water(terminals_list)
+    diagnostics["terminals_have_one_fan"] = do_all_terminals_have_one_fan(
+        terminals_list
+    )
+    diagnostics[
+        "terminal_types_cav"
+    ] = are_all_terminal_types_cav_with_none_equal_to_null(terminals_list)
+    diagnostics[
+        "terminal_heating_loops_purchased"
+    ] = are_all_terminal_heating_loops_purchased_heating(
+        terminals_list, purchased_heating_loop_id_list
+    )
+    diagnostics[
+        "terminal_chw_loops_purchased"
+    ] = are_all_terminal_chw_loops_purchased_cooling(
+        terminals_list, purchased_cooling_loop_id_list
+    )
+
+    passed = all(diagnostics.values())
+
+    return {
+        "expected_system": "Sys-1c",
+        "passed": passed,
+        "diagnostics": diagnostics,
+    }

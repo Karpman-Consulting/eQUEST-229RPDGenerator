@@ -3,6 +3,7 @@ import re
 import io
 import traceback
 import threading
+import time
 from contextlib import redirect_stdout
 from tkinter import filedialog
 from pathlib import Path
@@ -21,7 +22,8 @@ class StdoutInterceptor(io.StringIO):
         self._buffer = ""
 
     def write(self, s):
-        self._buffer += s
+        # Normalize carriage-return updates into standard line breaks.
+        self._buffer += s.replace("\r", "\n")
         while "\n" in self._buffer:
             line, self._buffer = self._buffer.split("\n", 1)
             self.on_line(line.rstrip())
@@ -125,13 +127,31 @@ class RCTPanel(ctk.CTkFrame):
             try:
                 # Load the RPD file
                 rpd = deserialize_rpd_file(data.active_rpd_path)
+                last_message_update = 0.0
 
                 def handle_line(line: str):
-                    # forward text to loading window
-                    self.after(0, lambda l=line: loading.set_message(l))
+                    nonlocal last_message_update
+                    # Avoid formatting artifacts from upstream prints.
+                    clean_line = line.expandtabs(4).replace("\x00", "")
+                    clean_line = re.sub(r"\x1B\[[0-?]*[ -/]*[@-~]", "", clean_line)
+                    clean_line = re.sub(
+                        r"Project Evaluation Session ID:\s*.*?=>\s*",
+                        "",
+                        clean_line,
+                        flags=re.I,
+                    )
+                    clean_line = re.sub(r"^\s{3,}", "  ", clean_line).strip()
+                    if not clean_line:
+                        return
+
+                    # Forward text to loading window, capped at 1 UI update/second.
+                    now = time.monotonic()
+                    if now - last_message_update >= 1.0:
+                        self.after(0, lambda l=clean_line: loading.set_message(l))
+                        last_message_update = now
 
                     # parse progress if present
-                    m = re.search(r"progress:\s*(\d+)%", line, re.I)
+                    m = re.search(r"progress:\s*(\d+)%", clean_line, re.I)
                     if m:
                         pct = int(m.group(1))
                         self.after(0, lambda p=pct: loading.set_progress(p / 100.0))

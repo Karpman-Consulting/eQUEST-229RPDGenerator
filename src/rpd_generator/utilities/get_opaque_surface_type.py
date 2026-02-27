@@ -1,4 +1,5 @@
 from rpd_generator.config import Config
+from rpd_generator.schema.schema_utils import get_q
 
 ureg = Config.ureg
 
@@ -44,7 +45,7 @@ def get_opaque_surface_type(surface: dict, has_radiant_heat: bool = False) -> st
         One of the following surface types: "ABOVE-GRADE WALL", "BELOW-GRADE WALL",
         "FLOOR", "HEATED SLAB-ON-GRADE", "ROOF", "UNHEATED SLAB-ON-GRADE"
     """
-    surface_tilt = surface["tilt"]
+    surface_tilt = get_q(surface, "tilt", 0 * DEGREES)
 
     # Check for roof
     if MIN_ROOF_TILT <= surface_tilt < MAX_ROOF_TILT:

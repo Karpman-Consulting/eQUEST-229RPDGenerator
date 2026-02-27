@@ -2,8 +2,9 @@ import logging
 from typing import TypedDict
 from pydash import curry
 from pint import Quantity
-from rpd_generator.utilities.pint_utils import ZERO
 
+from rpd_generator.utilities.pint_utils import ZERO
+from rpd_generator.schema.schema_utils import get_q
 from rpd_generator.utilities.ashrae9012019.data_fns.table_lighting_to_hvac_bat_map_fns import (
     building_lighting_to_hvac_bat,
     space_lighting_to_hvac_bat,
@@ -48,12 +49,13 @@ class BuildingAreaTypesWithTotalAreaZones(TypedDict):
 
 
 def get_hvac_building_area_types_and_zones_dict(
-    climate_zone: str, rmd: dict
+    climate_zone: str, rmd: dict, zone_conditioning_category_dict: dict | None = None
 ) -> dict[str, BuildingAreaTypesWithTotalAreaZones]:
 
-    zone_conditioning_category_dict = get_zone_conditioning_category_rmd_dict(
-        climate_zone, rmd
-    )
+    if zone_conditioning_category_dict is None:
+        zone_conditioning_category_dict = get_zone_conditioning_category_rmd_dict(
+            climate_zone, rmd
+        )
 
     building_area_types_with_total_area_and_zones_dict = {}
 
@@ -99,7 +101,7 @@ def get_hvac_building_area_types_and_zones_dict(
                         if space_type:
                             space_area_by_type[space_type] = space_area_by_type.get(
                                 space_type, ZERO.AREA
-                            ) + space.get("floor_area", ZERO.AREA)
+                            ) + get_q(space, "floor_area", ZERO.AREA)
 
                 assert space_area_by_type, (
                     f"Failed to determine hvac area type for building segment: "
@@ -136,7 +138,7 @@ def get_hvac_building_area_types_and_zones_dict(
                 }:
                     conditioned_zones.append(zone_id)
                     for space in zone.get("spaces", []):
-                        total_floor_area += space.get("floor_area", ZERO.AREA)
+                        total_floor_area += get_q(space, "floor_area", ZERO.AREA)
 
             if not conditioned_zones:
                 continue

@@ -3,7 +3,6 @@ from rpd_generator.utilities.ashrae9012019.get_zone_conditioning_category_dict i
     get_zone_conditioning_category_rmd_dict,
 )
 from rpd_generator.schema.schema_enums import SchemaEnums
-from rpd_generator.utilities.jsonpath_utils import find_all
 
 LightingSpaceOptions2019ASHRAE901TG37 = SchemaEnums.schema_enums[
     "LightingSpaceOptions2019ASHRAE901TG37"
@@ -67,11 +66,16 @@ def get_number_of_floors(
                 [
                     space.get("lighting_space_type", None)
                     != LightingSpaceOptions2019ASHRAE901TG37.PARKING_AREA_INTERIOR
-                    for space in find_all("$.spaces[*]", zone)
+                    for space in zone.get("spaces", [])
                 ]
             )
 
-        zone_list = find_all("$.buildings[*].building_segments[*].zones[*]", rmd)
+        zone_list = [
+            zone
+            for b in rmd.get("buildings", [])
+            for seg in b.get("building_segments", [])
+            for zone in seg.get("zones", [])
+        ]
         conditioned_zone_list = filter(is_zone_conditioned, zone_list)
         no_parking_conditioned_zone_list = filter(
             any_space_in_zone_parking_garage, conditioned_zone_list

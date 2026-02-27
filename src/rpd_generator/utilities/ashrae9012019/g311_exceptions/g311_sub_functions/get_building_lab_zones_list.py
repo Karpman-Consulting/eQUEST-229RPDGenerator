@@ -1,5 +1,4 @@
 from rpd_generator.schema.schema_enums import SchemaEnums
-from rpd_generator.utilities.jsonpath_utils import find_all
 
 SpaceFunctionOptions = SchemaEnums.schema_enums["SpaceFunctionOptions"]
 LightingSpaceOptions = SchemaEnums.schema_enums["LightingSpaceOptions2019ASHRAE901TG37"]
@@ -19,7 +18,13 @@ def get_building_lab_zones_list(rmd: dict) -> list[dict]:
     a list of zones for all zones that have a laboratory space in the building
     """
     laboratory_zone_list = []
-    for zone in find_all("$.buildings[*].building_segments[*].zones[*]", rmd):
+    zones = [
+        zone
+        for b in rmd.get("buildings", [])
+        for seg in b.get("building_segments", [])
+        for zone in seg.get("zones", [])
+    ]
+    for zone in zones:
         if any(
             [
                 space.get("function") == SpaceFunctionOptions.LABORATORY
@@ -29,7 +34,7 @@ def get_building_lab_zones_list(rmd: dict) -> list[dict]:
                 == LightingSpaceOptions.LABORATORY_EXCEPT_IN_OR_AS_A_CLASSROOM
                 or space.get("function") == SpaceFunctionOptions.LABORATORY
                 and LightingSpaceOptions.LABORATORY_EXCEPT_IN_OR_AS_A_CLASSROOM
-                for space in find_all("$.spaces[*]", zone)
+                for space in zone.get("spaces", [])
             ]
         ):
             laboratory_zone_list.append(zone)

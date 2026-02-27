@@ -7,8 +7,6 @@ from rpd_generator.utilities.ashrae9012019.g311_exceptions.g311_sub_functions.ge
 from rpd_generator.utilities.ashrae9012019.g311_exceptions.g311_sub_functions.get_zones_computer_rooms import (
     get_zone_computer_rooms,
 )
-from rpd_generator.utilities.pint_utils import ZERO
-
 from rpd_generator.config import Config
 
 ureg = Config.ureg
@@ -26,8 +24,10 @@ def get_g3_1_1g_diagnostics(
     rmd: dict,
     zone: dict,
     total_computer_peak_cooling_load: Quantity | None = None,
+    computer_room_zones_dict: dict | None = None,
 ) -> G311GDiagnostics:
-    computer_room_zones_dict = get_zone_computer_rooms(rmd)
+    if computer_room_zones_dict is None:
+        computer_room_zones_dict = get_zone_computer_rooms(rmd)
 
     if total_computer_peak_cooling_load is None:
         total_computer_peak_cooling_load = get_computer_zones_peak_cooling_load(rmd)

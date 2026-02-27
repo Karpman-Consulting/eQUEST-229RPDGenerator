@@ -3,6 +3,7 @@ from typing import Literal
 from pint import Quantity
 from rpd_generator.utilities.pint_utils import ZERO
 from rpd_generator.config import Config
+from rpd_generator.schema.schema_utils import get_q
 
 ureg = Config.ureg
 
@@ -33,7 +34,7 @@ def get_zone_peak_internal_load_floor_area_dict(
     zone_load = ZERO.POWER
     schedules_map = {sch["id"]: sch for sch in rmd.get("schedules", [])}
     for space in zone.get("spaces", []):
-        space_area = space.get("floor_area", ZERO.AREA)
+        space_area = get_q(space, "floor_area", ZERO.AREA)
         zone_area += space_area
 
         for light in space.get("interior_lighting", []):
@@ -55,7 +56,7 @@ def get_zone_peak_internal_load_floor_area_dict(
             else:
                 lighting_design_schedule_max_fraction = 0.0
             zone_load += (
-                light.get("power_per_area", ZERO.POWER_PER_AREA)
+                get_q(light, "power_per_area", ZERO.POWER_PER_AREA)
                 * space_area
                 * lighting_design_schedule_max_fraction
             )
@@ -79,7 +80,7 @@ def get_zone_peak_internal_load_floor_area_dict(
             else:
                 equipment_design_schedule_max_fraction = 0.0
             zone_load += (
-                equipment.get("power", ZERO.POWER)
+                get_q(equipment, "power", ZERO.POWER)
                 * equipment_design_schedule_max_fraction
             )
 
@@ -105,8 +106,8 @@ def get_zone_peak_internal_load_floor_area_dict(
                 occupant_design_schedule_max_fraction = 0.0
 
         zone_load += (
-            space.get("occupant_sensible_heat_gain", ZERO.POWER)
-            + space.get("occupant_latent_heat_gain", ZERO.POWER)
+            get_q(space, "occupant_sensible_heat_gain", ZERO.POWER)
+            + get_q(space, "occupant_latent_heat_gain", ZERO.POWER)
         ) * occupant_design_schedule_max_fraction
 
     return {"peak": zone_load, "area": zone_area}

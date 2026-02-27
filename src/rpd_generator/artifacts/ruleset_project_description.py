@@ -1,6 +1,8 @@
 from time import strftime, gmtime
 
-from rpd_generator.schema.schema_utils import quantify_rmd
+from rpd_generator.utilities.ashrae9012019.baseline_systems.baseline_system_util import (
+    HVAC_SYS,
+)
 from rpd_generator.utilities.ashrae9012019.get_zone_target_baseline_system import (
     get_zone_target_baseline_system,
 )
@@ -64,7 +66,7 @@ class RulesetProjectDescription:
 
     def specify_supply_ducting(self):
         """Determine the expected system types for the baseline RMDs, then populate is_supply_ducted accordingly."""
-        rpd = quantify_rmd(self.rpd_data_structure)
+        rpd = self.rpd_data_structure
         rmd_p = next(
             (
                 rmd
@@ -99,14 +101,28 @@ class RulesetProjectDescription:
                         "expected_system_type"
                     ]
                     if expected_system_type in [
-                        "Sys-3",
-                        "Sys-4",
-                        "Sys-5",
-                        "Sys-6",
-                        "Sys-7",
-                        "Sys-8",
-                        "Sys-12",
-                        "Sys-13",
+                        HVAC_SYS.SYS_3,
+                        HVAC_SYS.SYS_3A,
+                        HVAC_SYS.SYS_3B,
+                        HVAC_SYS.SYS_3C,
+                        HVAC_SYS.SYS_4,
+                        HVAC_SYS.SYS_5,
+                        HVAC_SYS.SYS_5B,
+                        HVAC_SYS.SYS_6,
+                        HVAC_SYS.SYS_6B,
+                        HVAC_SYS.SYS_7,
+                        HVAC_SYS.SYS_7A,
+                        HVAC_SYS.SYS_7B,
+                        HVAC_SYS.SYS_7C,
+                        HVAC_SYS.SYS_8,
+                        HVAC_SYS.SYS_8A,
+                        HVAC_SYS.SYS_8B,
+                        HVAC_SYS.SYS_8C,
+                        HVAC_SYS.SYS_12,
+                        HVAC_SYS.SYS_12A,
+                        HVAC_SYS.SYS_12B,
+                        HVAC_SYS.SYS_13,
+                        HVAC_SYS.SYS_13A,
                     ]:
                         for terminal in find_all("$.terminals[*]", zone):
                             terminal["is_supply_ducted"] = True

@@ -1,10 +1,13 @@
 from typing import TypedDict
 
+from pint import Quantity
 from rpd_generator.utilities.jsonpath_utils import find_all
+from rpd_generator.utilities.pint_utils import ZERO
+from rpd_generator.schema.schema_utils import get_q
 
 
 class HVACZoneListArea(TypedDict):
-    total_area: float
+    total_area: Quantity
     zones_list: list[str]
 
 
@@ -50,8 +53,10 @@ def get_hvac_zone_list_w_area_dict(building: dict) -> dict[str, HVACZoneListArea
 
             # Cache spaces and zone area once
             spaces = zone.get("spaces", [])
-            zone_area = sum((space.get("floor_area", 0) for space in spaces), 0)
-            assert zone_area > 0, f"zone:{zone['id']} has zero floor area"
+            zone_area = sum(
+                (get_q(space, "floor_area", ZERO.AREA) for space in spaces), ZERO.AREA
+            )
+            assert zone_area > ZERO.AREA, f"zone:{zone['id']} has zero floor area"
 
             zone_id = zone["id"]
 
@@ -66,7 +71,7 @@ def get_hvac_zone_list_w_area_dict(building: dict) -> dict[str, HVACZoneListArea
                 if hvac_entry is None:
                     hvac_entry = {
                         "zones_list": [],
-                        "total_area": 0,
+                        "total_area": ZERO.AREA,
                     }
                     hvac_zone_list_w_area_dict[hvac_sys_id] = hvac_entry
 
@@ -76,7 +81,7 @@ def get_hvac_zone_list_w_area_dict(building: dict) -> dict[str, HVACZoneListArea
                     hvac_entry["total_area"] += zone_area
 
                 assert (
-                    hvac_entry["total_area"] > 0
+                    hvac_entry["total_area"] > ZERO.AREA
                 ), f"terminal:{terminal['id']} serves zero floor area"
 
     return hvac_zone_list_w_area_dict

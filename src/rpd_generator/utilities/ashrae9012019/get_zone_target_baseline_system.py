@@ -3,11 +3,24 @@ from typing import TypedDict, NotRequired
 from rpd_generator.utilities.ashrae9012019.baseline_systems.baseline_system_util import (
     HVAC_SYS,
 )
+from rpd_generator.utilities.pint_utils import ZERO
 from rpd_generator.utilities.ashrae9012019.g311_exceptions.does_zone_meet_G3_1_1c import (
     get_g3_1_1c_diagnostics,
 )
+from rpd_generator.utilities.ashrae9012019.g311_exceptions.g311_sub_functions.get_zone_eflh import (
+    get_zone_eflh,
+)
+from rpd_generator.utilities.get_zone_peak_internal_load_floor_area_dict import (
+    get_zone_peak_internal_load_floor_area_dict,
+)
 from rpd_generator.utilities.ashrae9012019.g311_exceptions.does_zone_meet_G3_1_1d import (
     get_g3_1_1d_diagnostics,
+)
+from rpd_generator.utilities.ashrae9012019.g311_exceptions.g311_sub_functions.get_building_lab_zones_list import (
+    get_building_lab_zones_list,
+)
+from rpd_generator.utilities.ashrae9012019.g311_exceptions.g311_sub_functions.get_building_total_lab_exhaust_from_zone_exhaust_fans import (
+    get_building_total_lab_exhaust_from_zone_exhaust_fans,
 )
 from rpd_generator.utilities.ashrae9012019.g311_exceptions.does_zone_meet_G3_1_1e import (
     get_g3_1_1e_diagnostics,
@@ -30,12 +43,19 @@ from rpd_generator.utilities.ashrae9012019.g311_exceptions.g311_sub_functions.ge
 from rpd_generator.utilities.ashrae9012019.g311_exceptions.g311_sub_functions.get_number_of_floors import (
     get_number_of_floors,
 )
+from rpd_generator.utilities.ashrae9012019.g311_exceptions.g311_sub_functions.get_zones_computer_rooms import (
+    get_zone_computer_rooms,
+)
 from rpd_generator.utilities.ashrae9012019.g311_exceptions.g311_sub_functions.get_predominant_hvac_building_area_type import (
     get_predominant_hvac_building_area_type,
 )
 from rpd_generator.utilities.ashrae9012019.g311_exceptions.g311_sub_functions.get_zone_hvac_bat import (
     get_zone_hvac_bat_dict,
 )
+from rpd_generator.utilities.get_dict_of_zones_and_terminals_served_by_hvac_sys import (
+    get_dict_of_zones_and_terminals_served_by_hvac_sys,
+)
+from rpd_generator.utilities.jsonpath_utils import find_all
 from rpd_generator.utilities.ashrae9012019.get_zone_conditioning_category_dict import (
     ZoneConditioningCategory as ZCC,
     get_zone_conditioning_category_rmd_dict,
@@ -99,19 +119,56 @@ def get_zone_target_baseline_system(
     # ------------------------------------------------------------------
     # Precompute shared expensive data
     # ------------------------------------------------------------------
+    # Pre-lookup HVAC systems to avoid repeated JSONPath searches
+    hvac_systems_list_b = [
+        hvac
+        for b in rmd_b.get("buildings", [])
+        for seg in b.get("building_segments", [])
+        for hvac in seg.get("heating_ventilating_air_conditioning_systems", [])
+    ]
+    hvac_systems_map_b = {h["id"]: h for h in hvac_systems_list_b}
+
+    hvac_systems_list_p = [
+        hvac
+        for b in rmd_p.get("buildings", [])
+        for seg in b.get("building_segments", [])
+        for hvac in seg.get("heating_ventilating_air_conditioning_systems", [])
+    ]
+    hvac_systems_map_p = {h["id"]: h for h in hvac_systems_list_p}
+
+    dict_of_zones_and_terminal_units_served_by_hvac_sys_b = (
+        get_dict_of_zones_and_terminals_served_by_hvac_sys(rmd_b)
+    )
+
     zone_conditioning_category_dict = get_zone_conditioning_category_rmd_dict(
         climate_zone_b, rmd_b
     )
 
     list_building_area_types_and_zones_b = get_hvac_building_area_types_and_zones_dict(
-        climate_zone_b, rmd_b
+        climate_zone_b, rmd_b, zone_conditioning_category_dict
     )
+
     predominant_building_area_type_b = get_predominant_hvac_building_area_type(
         climate_zone_b, rmd_b
     )
     num_floors_b = get_number_of_floors(
         climate_zone_b, rmd_b, zone_conditioning_category_dict
     )
+
+    # Precompute zone loads, eflh, and floors for all zones once
+    zone_internal_load_dict = {
+        zid: get_zone_peak_internal_load_floor_area_dict(rmd_b, zone_b)
+        for zid, zone_b in zone_id_to_zone_b_map.items()
+    }
+    zone_eflh_dict = {
+        zid: get_zone_eflh(rmd_b, zone_b, hvac_systems_map=hvac_systems_map_b)
+        for zid, zone_b in zone_id_to_zone_b_map.items()
+    }
+    zones_by_floor_map: dict[str, list[dict]] = {}
+    for zone_b in zones_b:
+        floor_name = zone_b.get("floor_name")
+        if floor_name:
+            zones_by_floor_map.setdefault(floor_name, []).append(zone_b)
 
     # Convert zone lists → sets for fast membership
     for v in list_building_area_types_and_zones_b.values():
@@ -125,8 +182,16 @@ def get_zone_target_baseline_system(
         predominant_building_area_type_b, climate_zone_b, num_floors_b, floor_area_b
     )
 
-    total_computer_zones_peak_cooling_load_b = get_computer_zones_peak_cooling_load(
-        rmd_b
+    laboratory_zones_list_b = get_building_lab_zones_list(rmd_b)
+    building_total_lab_exhaust_b = (
+        get_building_total_lab_exhaust_from_zone_exhaust_fans(rmd_b)
+    )
+
+    computer_room_zones_dict_b = get_zone_computer_rooms(rmd_b)
+
+    total_computer_zones_peak_cooling_load_b = sum(
+        (zone_internal_load_dict[zid]["peak"] for zid in computer_room_zones_dict_b),
+        ZERO.POWER,
     )
     is_cz_0_to_3a_result_bool = is_cz_0_to_3a_bool(climate_zone_b)
 
@@ -220,7 +285,15 @@ def get_zone_target_baseline_system(
         exc = debug.setdefault("exceptions", {})
 
         # ---- G3.1.1c
-        c_diag = get_g3_1_1c_diagnostics(rmd_b, zone_b, zones_and_systems_b)
+        c_diag = get_g3_1_1c_diagnostics(
+            rmd_b,
+            zone_b,
+            zones_and_systems_b,
+            zone_internal_load_dict=zone_internal_load_dict,
+            zone_eflh_dict=zone_eflh_dict,
+            zones_by_floor_map=zones_by_floor_map,
+            computer_room_zones_dict=computer_room_zones_dict_b,
+        )
         exc["g3_1_1c"] = {
             "does_zone_meet_g3_1_1c": c_diag["meets"],
             "zone_internal_load_per_area": c_diag["zone_load_per_area"],
@@ -240,7 +313,14 @@ def get_zone_target_baseline_system(
             )
 
         # ---- G3.1.1d
-        d_diag = get_g3_1_1d_diagnostics(rmd_b, zid)
+        d_diag = get_g3_1_1d_diagnostics(
+            rmd_b,
+            zid,
+            laboratory_zones_list=laboratory_zones_list_b,
+            building_total_lab_exhaust=building_total_lab_exhaust_b,
+            dict_of_zones_and_terminals_served_by_hvac_sys=dict_of_zones_and_terminal_units_served_by_hvac_sys_b,
+            hvac_systems_map=hvac_systems_map_b,
+        )
         exc["g3_1_1d"] = {
             "does_zone_meet_g3_1_1d": d_diag["meets"],
             "building_total_lab_exhaust": d_diag["building_total_lab_exhaust"],
@@ -256,7 +336,15 @@ def get_zone_target_baseline_system(
             )
 
         # ---- G3.1.1e
-        e_diag = get_g3_1_1e_diagnostics(rmd_b, rmd_p, zone_p)
+        e_diag = get_g3_1_1e_diagnostics(
+            rmd_b,
+            rmd_p,
+            zone_b,
+            zone_p,
+            zones_by_floor_map_b=zones_by_floor_map,
+            zone_map_b=zone_id_to_zone_b_map,
+            hvac_systems_map_p=hvac_systems_map_p,
+        )
         exc["g3_1_1e"] = {
             "does_zone_meet_g3_1_1e": e_diag["meets"],
             "all_spaces_exception_E": e_diag["all_spaces_exception_E"],
@@ -274,7 +362,13 @@ def get_zone_target_baseline_system(
 
         # ---- G3.1.1f (only relevant for 9/10)
         if zs["expected_system_type"] in (HVAC_SYS.SYS_9, HVAC_SYS.SYS_10):
-            f_diag = get_g3_1_1f_diagnostics(rmd_b, zone_b, zs["expected_system_type"])
+            f_diag = get_g3_1_1f_diagnostics(
+                rmd_b,
+                zone_b,
+                zs["expected_system_type"],
+                hvac_systems_map=hvac_systems_map_b,
+                zone_map=zone_id_to_zone_b_map,
+            )
             exc["g3_1_1f"] = {
                 "does_zone_meet_g3_1_1f": f_diag["meets"],
                 "is_zone_mechanically_cooled": f_diag["is_zone_mechanically_cooled"],
@@ -297,7 +391,10 @@ def get_zone_target_baseline_system(
 
         # ---- G3.1.1g
         g_diag = get_g3_1_1g_diagnostics(
-            rmd_b, zone_b, total_computer_zones_peak_cooling_load_b
+            rmd_b,
+            zone_b,
+            total_computer_peak_cooling_load=total_computer_zones_peak_cooling_load_b,
+            computer_room_zones_dict=computer_room_zones_dict_b,
         )
         exc["g3_1_1g"] = {
             "does_zone_meet_g3_1_1g": g_diag["meets"],

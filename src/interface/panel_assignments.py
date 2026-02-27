@@ -84,21 +84,20 @@ class RulesetValuesPanel(ctk.CTkFrame):
             try:
                 return int(float(x))
             except (TypeError, ValueError):
-                return ""
+                return None
 
         if isinstance(raw, list):
-            cleaned = list(raw)
-            while cleaned:
-                last = to_int_or_none(cleaned[-1])
-                if last == 0:
-                    cleaned.pop()
-                else:
-                    break
-            if not cleaned:
-                return ""
-            raw = cleaned[0]
-        occ_int = to_int_or_none(raw)
-        if occ_int is None:
+            occ_int = None
+            for candidate in reversed(raw):
+                val = to_int_or_none(candidate)
+                if not val:
+                    continue
+                occ_int = val
+                break
+        else:
+            occ_int = to_int_or_none(raw)
+
+        if not occ_int:
             return ""
         return Space.lighting_space_map.get(occ_int)
 
@@ -116,24 +115,22 @@ class RulesetValuesPanel(ctk.CTkFrame):
                 return None
 
         if isinstance(raw, list):
-            cleaned = list(raw)
-            while cleaned:
-                last = to_int_or_none(cleaned[-1])
-                if last == 0:
-                    cleaned.pop()
-                else:
-                    break
-            if not cleaned:
-                return ""
-            raw = cleaned[0]
-        bldg_int = to_int_or_none(raw)
-        if bldg_int is None:
+            bldg_int = None
+            for candidate in reversed(raw):
+                val = to_int_or_none(candidate)
+                if not val:
+                    continue
+                bldg_int = val
+                break
+        else:
+            bldg_int = to_int_or_none(raw)
+
+        if not bldg_int:
             return ""
-        return (
-            BuildingSegment.lighting_building_area_map.get(bldg_int)
-            .replace("_", " ")
-            .title()
-        )
+        label = BuildingSegment.lighting_building_area_map.get(bldg_int)
+        if not label:
+            return ""
+        return label.replace("_", " ").title()
 
     @staticmethod
     def _levenshtein(a, b):

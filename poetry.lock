@@ -921,7 +921,7 @@ pint = "*"
 type = "git"
 url = "https://github.com/Karpman-Consulting/RECI-ReportProjectEval.git"
 reference = "main"
-resolved_reference = "e21823ad65d9944a11f9ecd6ae326d5d3f5bb8de"
+resolved_reference = "8e475cbe05d7cd5d3aac88d2cce02e5b7c3f2033"
 
 [[package]]
 name = "referencing"

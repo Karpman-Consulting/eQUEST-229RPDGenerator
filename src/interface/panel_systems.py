@@ -1,4 +1,3 @@
-import time
 import threading
 import traceback
 import customtkinter as ctk
@@ -6,12 +5,14 @@ from jsonpath_ng.ext import parse
 
 from interface.constants import HEADER_FONT, TEXT_FONT
 from interface.error_window import ErrorWindow
-from rpd_generator.schema.schema_utils import quantify_only_needed_rmds
 from rpd_generator.utilities.ashrae9012019.get_baseline_system_types import (
     get_baseline_system_types,
 )
 from rpd_generator.utilities.ashrae9012019.get_zone_target_baseline_system import (
     get_zone_target_baseline_system,
+)
+from rpd_generator.utilities.ashrae9012019.diagnose_modeled_vs_expected_system import (
+    diagnose_modeled_vs_expected_system,
 )
 
 
@@ -113,19 +114,14 @@ class BaselineSystemTypesPanel(ctk.CTkFrame):
                 }
             ]
         """
-        t_start = time.perf_counter()
 
         try:
             rpd = self.main_app.data.rpd.rpd_data_structure
         except Exception:
             return {"error": "RPD structure unavailable."}
 
-        rpd = quantify_only_needed_rmds(
-            rpd,
-            needed_types={"PROPOSED", "BASELINE_0"},
-        )
-        t_quantified = time.perf_counter()
-        print("quantify_rmd:", t_quantified - t_start)
+        rpd = self.main_app.data.rpd.rpd_data_structure
+
         results = {}
 
         # -----------------------------
@@ -169,8 +165,7 @@ class BaselineSystemTypesPanel(ctk.CTkFrame):
                     if hvac_id:
                         hvacs.add(hvac_id)
                 hvacs_serving_zones[zone["id"]] = list(hvacs)
-            t_setup = time.perf_counter()
-            print("hvacs serving zones:", t_setup - t_quantified)
+
             # ---- Modeled baseline types ----
             baseline_system_types = get_baseline_system_types(rmd_b)
             baseline_type_by_hvac_id = {
@@ -178,18 +173,11 @@ class BaselineSystemTypesPanel(ctk.CTkFrame):
                 for sys_type, hvac_list in baseline_system_types.items()
                 for hvac_id in hvac_list
             }
-            t_modeled_system_types = time.perf_counter()
-            print("modeled baseline types:", t_modeled_system_types - t_setup)
 
             # ---- Expected baseline types & debug ----
             climate_zone = rmd_b.get("weather", {}).get("climate_zone", "")
             zone_target_baseline_systems = get_zone_target_baseline_system(
                 rmd_b, rmd_p, climate_zone
-            )
-            t_expected_system_types = time.perf_counter()
-            print(
-                "expected baseline types:",
-                t_expected_system_types - t_modeled_system_types,
             )
 
             rmd_results = []
@@ -217,6 +205,13 @@ class BaselineSystemTypesPanel(ctk.CTkFrame):
 
                 result = "PASS" if modeled_system == expected_system else "FAIL"
 
+                # ---- Comparative diagnostics for failures ----
+                failure_diagnostics = {}
+                if result == "FAIL" and len(hvac_ids) == 1:
+                    failure_diagnostics = diagnose_modeled_vs_expected_system(
+                        rmd_b, hvac_ids[0], expected_system
+                    )
+
                 rmd_results.append(
                     {
                         "zone_id": zone_id,
@@ -225,12 +220,12 @@ class BaselineSystemTypesPanel(ctk.CTkFrame):
                         "result": result,
                         "hvac_ids": hvac_ids,
                         "debug": debug_data,
+                        "failure_diagnostics": failure_diagnostics,
                     }
                 )
 
             results[rmd_type] = rmd_results
-            t_comparisons = time.perf_counter()
-            print("zone comparisons:", t_comparisons - t_expected_system_types)
+
         return results
 
     # ------------------------------------------------------------------
@@ -375,7 +370,11 @@ class BaselineSystemTypesPanel(ctk.CTkFrame):
                     width=70,
                     command=lambda zid=zone, debug=entry[
                         "debug"
-                    ], rmd=rmd_type: self._open_zone_debug_window(zid, debug, rmd),
+                    ], rmd=rmd_type, fail_diag=entry[
+                        "failure_diagnostics"
+                    ]: self._open_zone_debug_window(
+                        zid, debug, rmd, fail_diag
+                    ),
                 )
                 details_btn.grid(row=row_i, column=5, padx=6, pady=5, sticky="w")
 
@@ -413,6 +412,49 @@ class BaselineSystemTypesPanel(ctk.CTkFrame):
         "does_zone_meet_g3_1_1g": "Meets G3.1.1g Exception",
         "total_computer_zones_peak_cooling_load_b": "Total Computer Zones Peak Cooling Load",
         "zone_is_computer_room_zone": "Is Computer Room Zone",
+        # Failure Diagnostics Mapping
+        "has_no_preheat_system": "Has No Preheat System",
+        "has_no_preheat_heating_fan_systems": "Has No Preheat, Heating, or Fan Systems (Baseline 1a/1c/9b requirement)",
+        "fan_system_cv": "Constant Volume Supply Fan",
+        "fan_system_vav": "Variable Volume Supply Fan",
+        "serves_single_zone": "Serves a Single Zone",
+        "one_terminal_per_zone": "Each Zone has Exactly One Terminal",
+        "no_terminal_heat_sources": "Terminals have No Heating Sources",
+        "no_terminal_cool_sources": "Terminals have No Cooling Sources",
+        "no_terminal_fans": "Terminals have No Fans",
+        "terminal_types_cav": "All Terminals are CAV",
+        "terminal_types_vav": "All Terminals are VAV",
+        "terminal_supplies_ducted": "All Terminal Supplies are Ducted",
+        "terminal_supplies_not_all_ducted": "Terminal Supplies are NOT all Ducted",
+        "heating_type_furnace": "System Heating Type is Furnace",
+        "heating_type_fluid_loop": "System Heating Type is Fluid Loop",
+        "heating_type_heat_pump": "System Heating Type is Heat Pump",
+        "cooling_type_dx": "System Cooling Type is DX",
+        "cooling_type_fluid_loop": "System Cooling Type is Fluid Loop",
+        "cooling_type_none": "System has No Cooling System",
+        "cooling_none_or_non_mechanical": "System has No Mechanical Cooling",
+        "purchased_cooling_loop": "Attached to Purchased Chilled Water Loop",
+        "purchased_heating_loop": "Attached to Purchased Hot Water/Steam Loop",
+        "boiler_attached": "Attached to a Boiler Loop",
+        "chiller_attached": "Attached to a Chiller Loop",
+        "terminal_heat_sources_hw": "Terminals use Hot Water Heating",
+        "terminal_cool_sources_chw": "Terminals use Chilled Water Cooling",
+        "terminals_have_one_fan": "Each Terminal has exactly One Fan",
+        "terminal_heating_loops_attached_to_boiler": "Terminal Heating Loops attached to Boiler",
+        "terminal_heating_loops_purchased": "Terminal Heating Loops use Purchased Heating",
+        "terminal_chw_loops_purchased": "Terminal Chilled Water Loops use Purchased Cooling",
+        "terminal_cool_sources_not_chw": "Terminals do NOT use Chilled Water Cooling",
+        "terminal_chw_loops_not_purchased": "Terminal Chilled Water Loops do NOT use Purchased Cooling",
+        "heating_type_elec_resistance": "System Heating Type is Electric Resistance",
+        "heating_loop_attached_to_boiler": "Heating Loop is Attached to a Boiler",
+        "cooling_loop_attached_to_chiller": "Cooling Loop is Attached to a Chiller",
+        "cooling_loop_purchased_chw": "Cooling Loop uses Purchased Chilled Water",
+        "heating_type_furnace_or_electric": "System Heating Type is Furnace or Electric Resistance",
+        "heating_type_electric_resistance": "System Heating Type is Electric Resistance",
+        "heating_loop_purchased_heating": "Heating Loop uses Purchased Heating",
+        "passes_sys_9b": "Matches Sys-9b (Purchased Heating)",
+        "passes_sys_1a": "Matches Sys-1a (Purchased Cooling)",
+        "passes_sys_1c": "Matches Sys-1c (Purchased Cooling & Heating)",
     }
     conversion_keys = {
         "floor_area": "ft2",
@@ -424,28 +466,33 @@ class BaselineSystemTypesPanel(ctk.CTkFrame):
         "total_computer_zones_peak_cooling_load_b": "Btu/hr",
     }
 
-    def _open_zone_debug_window(self, zone_id, debug, rmd_type):
+    def _open_zone_debug_window(
+        self, zone_id, debug, rmd_type, failure_diagnostics=None
+    ):
         if not debug:
             ErrorWindow(self, error_message="No debug info available for this zone.")
             return
 
         win = ctk.CTkToplevel(self)
         win.title(f"Debug Details – Zone {zone_id} ({rmd_type})")
-        win.geometry("650x750")
+        win.geometry("650x850")
         win.grab_set()
 
         scroll = ctk.CTkScrollableFrame(win, fg_color="#F9FAFB")
         scroll.pack(fill="both", expand=True, padx=10, pady=10)
 
-        def add_section(title, data):
-            frame = ctk.CTkFrame(scroll, fg_color="#FFFFFF", corner_radius=6)
+        def add_section(title, data, is_failure=False):
+            fg = "#FFF5F5" if is_failure else "#FFFFFF"
+            title_color = "#C62828" if is_failure else "#1F2937"
+
+            frame = ctk.CTkFrame(scroll, fg_color=fg, corner_radius=6)
             frame.pack(fill="x", pady=10, padx=4)
 
-            ctk.CTkLabel(frame, text=title, font=HEADER_FONT, anchor="w").pack(
-                anchor="w", padx=10, pady=6
-            )
+            ctk.CTkLabel(
+                frame, text=title, font=HEADER_FONT, anchor="w", text_color=title_color
+            ).pack(anchor="w", padx=10, pady=6)
 
-            def _convert_val(val):
+            def _convert_val(key, val):
                 try:
                     unit = self.conversion_keys.get(key)
                     quantity = val.to(unit)
@@ -454,15 +501,45 @@ class BaselineSystemTypesPanel(ctk.CTkFrame):
                     return str(val)
 
             for key, value in data.items():
-                if key in self.conversion_keys:
-                    value = _convert_val(value)
+                if key in ["diagnostics", "branch_info", "failed_checks"]:
+                    continue
+
+                display_val = (
+                    _convert_val(key, value)
+                    if key in self.conversion_keys
+                    else str(value)
+                )
+
+                label_text = f"{self.key_str_map.get(key, key)}: {display_val}"
+
+                # Add indicator for failed checks in comparative diagnostics
+                if is_failure and isinstance(value, bool) and not value:
+                    label_text = f"❌ {label_text}"
+                elif is_failure and isinstance(value, bool) and value:
+                    label_text = f"✅ {label_text}"
+
                 ctk.CTkLabel(
                     frame,
-                    text=f"{self.key_str_map.get(key, key)}: {value}",
+                    text=label_text,
                     font=TEXT_FONT,
                     anchor="w",
                     wraplength=550,
+                    justify="left",
                 ).pack(anchor="w", padx=16, pady=2)
+
+        # ---- Comparative Diagnostics (Failure Analysis) ----
+        if failure_diagnostics:
+            add_section(
+                f"WHY IT FAILED (Expected: {failure_diagnostics.get('expected_system')})",
+                failure_diagnostics.get("diagnostics", {}),
+                is_failure=True,
+            )
+            if failure_diagnostics.get("branch_info"):
+                add_section(
+                    "System Component Details",
+                    failure_diagnostics.get("branch_info"),
+                    is_failure=True,
+                )
 
         # ---- Zone conditioning ----
         add_section(

@@ -7,6 +7,7 @@ from rpd_generator.utilities.ashrae9012019.g311_exceptions.g311_sub_functions.is
 from rpd_generator.schema.schema_enums import SchemaEnums
 from rpd_generator.utilities.jsonpath_utils import find_all
 from rpd_generator.utilities.pint_utils import ZERO
+from rpd_generator.schema.schema_utils import get_q
 
 LightingSpaceOptions2019ASHRAE901TG37 = SchemaEnums.schema_enums[
     "LightingSpaceOptions2019ASHRAE901TG37"
@@ -53,15 +54,15 @@ def get_zone_computer_rooms(
             zone_with_computer_room_dict[zone["id"]] = {
                 "zone_computer_room_floor_area": sum(
                     [
-                        space.get("floor_area", 0)
+                        get_q(space, "floor_area", ZERO.AREA)
                         for space in find_all("$.spaces[*]", zone)
-                        if is_space_a_computer_room(rmd, space["id"])
+                        if is_space_a_computer_room(rmd, space)
                     ],
-                    0,
+                    ZERO.AREA,
                 ),
                 "total_zone_floor_area": sum(
                     [
-                        space.get("floor_area", ZERO.AREA)
+                        get_q(space, "floor_area", ZERO.AREA)
                         for space in find_all("$.spaces[*]", zone)
                     ],
                     ZERO.AREA,

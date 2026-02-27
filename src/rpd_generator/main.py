@@ -245,7 +245,7 @@ def finalize_and_write_rpd(
     unit_converter.convert_to_schema_units(rpd.rpd_data_structure)
     if not rpd_testing:
         print("Adding supply ducting specifications...")
-        # rpd.specify_supply_ducting()
+        rpd.specify_supply_ducting()
 
     safe_file = safe_path(rpd_file_path)
     with open(safe_file, "w") as f:

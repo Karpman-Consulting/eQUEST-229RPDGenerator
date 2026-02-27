@@ -1,9 +1,9 @@
 from rpd_generator.schema.schema_enums import SchemaEnums
+from rpd_generator.schema.schema_utils import get_q
 from rpd_generator.utilities.jsonpath_utils import find_all
 from rpd_generator.utilities.schedule_utils import (
     get_max_schedule_multiplier_hourly_value_or_default,
 )
-
 from rpd_generator.utilities.pint_utils import ZERO
 from rpd_generator.config import Config
 
@@ -43,7 +43,7 @@ def is_space_a_computer_room(rmd: dict, space: dict) -> bool:
     if not is_space_a_computer_room_flag:
         total_space_misc_wattage_including_multiplier = sum(
             [
-                misc_equip.get("power", ZERO.POWER)
+                get_q(misc_equip, "power", ZERO.POWER)
                 * max(
                     1.0,
                     get_max_schedule_multiplier_hourly_value_or_default(
@@ -58,7 +58,7 @@ def is_space_a_computer_room(rmd: dict, space: dict) -> bool:
             ZERO.POWER,
         )
 
-        space_floor_area = space["floor_area"]
+        space_floor_area = get_q(space, "floor_area", ZERO.AREA)
         # exception handling if the space has zero floor area
         assert space_floor_area > ZERO.AREA, f"Space {space['id']} has zero floor area"
 

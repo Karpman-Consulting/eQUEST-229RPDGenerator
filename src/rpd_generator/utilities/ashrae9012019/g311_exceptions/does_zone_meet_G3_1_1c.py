@@ -1,10 +1,8 @@
 from typing import TypedDict
 from pint import Quantity
+
 from rpd_generator.utilities.pint_utils import ZERO
 from rpd_generator.config import Config
-
-ureg = Config.ureg
-
 from rpd_generator.utilities.ashrae9012019.baseline_system_type_compare import (
     baseline_system_type_compare,
 )
@@ -24,6 +22,8 @@ from rpd_generator.utilities.get_zone_peak_internal_load_floor_area_dict import 
     get_zone_peak_internal_load_floor_area_dict,
 )
 from rpd_generator.utilities.jsonpath_utils import find_all
+
+ureg = Config.ureg
 
 
 class ZoneandSystem(TypedDict):
@@ -74,13 +74,25 @@ def get_g3_1_1c_diagnostics(
     rmd: dict,
     zone: dict,
     zones_and_systems: dict[str, ZoneandSystem],
+    zone_internal_load_dict: dict[str, dict] | None = None,
+    zone_eflh_dict: dict[str, float] | None = None,
+    zones_by_floor_map: dict[str, list[dict]] | None = None,
+    computer_room_zones_dict: dict | None = None,
 ) -> G311CDiagnostics:
 
     num_hours = _infer_num_hours_per_year(rmd)
     num_weeks = num_hours / 168.0
 
-    zone_internal = get_zone_peak_internal_load_floor_area_dict(rmd, zone)
-    zone_eflh = _get_zone_weekly_eflh(rmd, zone, num_weeks)
+    if zone_internal_load_dict is not None:
+        zone_internal = zone_internal_load_dict[zone["id"]]
+    else:
+        zone_internal = get_zone_peak_internal_load_floor_area_dict(rmd, zone)
+
+    if zone_eflh_dict is not None:
+        zone_eflh_raw = zone_eflh_dict[zone["id"]]
+    else:
+        zone_eflh_raw = get_zone_eflh(rmd, zone)
+    zone_eflh = zone_eflh_raw / num_weeks if num_weeks else 0.0
 
     zone_load_per_area = (
         zone_internal["peak"] / zone_internal["area"]
@@ -95,23 +107,44 @@ def get_g3_1_1c_diagnostics(
         for sys_type in ELIGIBLE_PRIMARY_SYSTEM_TYPES
     )
 
-    zones_on_same_floor = [
-        z
-        for z in get_zones_on_same_floor_list(rmd, zone)
-        if z.get("id") != zone.get("id")
-        and zones_and_systems.get(z.get("id"))
-        and zones_and_systems[z["id"]]["expected_system_type"] == expected_system_type
-    ]
+    if zones_by_floor_map is not None:
+        floor_name = zone.get("floor_name")
+        zones_on_same_floor = [
+            z
+            for z in zones_by_floor_map.get(floor_name, [])
+            if z.get("id") != zone.get("id")
+            and zones_and_systems.get(z.get("id"))
+            and zones_and_systems[z["id"]]["expected_system_type"]
+            == expected_system_type
+        ]
+    else:
+        zones_on_same_floor = [
+            z
+            for z in get_zones_on_same_floor_list(rmd, zone)
+            if z.get("id") != zone.get("id")
+            and zones_and_systems.get(z.get("id"))
+            and zones_and_systems[z["id"]]["expected_system_type"]
+            == expected_system_type
+        ]
 
     comparison_zones = zones_on_same_floor or [zone]
 
-    zone_load_eflh_pairs = [
-        (
-            get_zone_peak_internal_load_floor_area_dict(rmd, z),
-            _get_zone_weekly_eflh(rmd, z, num_weeks),
-        )
-        for z in comparison_zones
-    ]
+    if zone_internal_load_dict is not None and zone_eflh_dict is not None:
+        zone_load_eflh_pairs = [
+            (
+                zone_internal_load_dict[z["id"]],
+                zone_eflh_dict[z["id"]] / num_weeks if num_weeks else 0.0,
+            )
+            for z in comparison_zones
+        ]
+    else:
+        zone_load_eflh_pairs = [
+            (
+                get_zone_peak_internal_load_floor_area_dict(rmd, z),
+                _get_zone_weekly_eflh(rmd, z, num_weeks),
+            )
+            for z in comparison_zones
+        ]
 
     total_area: Quantity = sum(
         (zl["area"] for zl, _ in zone_load_eflh_pairs), ZERO.AREA
@@ -139,10 +172,13 @@ def get_g3_1_1c_diagnostics(
     load_diff = abs(zone_load_per_area - avg_internal_load_area)
     eflh_diff = abs(zone_eflh - avg_eflh)
 
+    if computer_room_zones_dict is None:
+        computer_room_zones_dict = get_zone_computer_rooms(rmd)
+
     meets = (
         system_matched
         and (load_diff > LOAD_THRESHOLD or eflh_diff > EFLH_THRESHOLD)
-        and zone["id"] not in get_zone_computer_rooms(rmd)
+        and zone["id"] not in computer_room_zones_dict
     )
 
     return G311CDiagnostics(

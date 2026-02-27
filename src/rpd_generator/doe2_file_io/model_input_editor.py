@@ -303,10 +303,27 @@ class ModelInputEditor:
             must be found outside of quotes and parentheses. Handles multi-line
             parentheses; ignores anything after '$' on a line.
             """
+
+            def _strip_comment(line: str) -> str:
+                in_quote = False
+                for idx, ch in enumerate(line):
+                    if ch == '"':
+                        in_quote = not in_quote
+                    elif ch == "$" and not in_quote:
+                        return line[:idx]
+                return line
+
+            def _has_standalone_terminator(line: str) -> bool:
+                # Accept a standalone ".." line even if parens look unbalanced.
+                cleaned = _strip_comment(line)
+                return re.match(r"^\s*\.\.\s*$", cleaned) is not None
+
             paren = 0
             in_quote = False
             for i in range(start_idx, len(lines)):
                 s = lines[i]
+                if _has_standalone_terminator(s):
+                    return i
                 j = 0
                 while j < len(s):
                     ch = s[j]
@@ -452,6 +469,7 @@ class ModelInputEditor:
                             return True
                 return False
 
+            last_match = None
             for i in range(block_start + 1, block_end + 1):
                 line = lines[i].rstrip("\n")
 
@@ -471,12 +489,13 @@ class ModelInputEditor:
                 if eq_index is None:
                     continue
 
-                prefix = line[: eq_index + 1]  # text up through '='
-                remainder = line[
-                    eq_index + 1 :
-                ]  # everything after '=' (spaces, value, terminator)
-
+                remainder = line[eq_index + 1 :]
                 had_term = has_inline_terminator(remainder)
+                last_match = (i, line, eq_index, had_term)
+
+            if last_match:
+                i, line, eq_index, had_term = last_match
+                prefix = line[: eq_index + 1]  # text up through '='
 
                 # Build replacement line; we insert exactly one space after '='
                 new_line = f"{prefix} {value}"
@@ -496,50 +515,56 @@ class ModelInputEditor:
             Remove the keyword line; if the value is multi-line (parentheses not closed),
             remove subsequent lines until the closing ')', respecting quotes/comments.
             """
-            kw_start_idx = None
             kw_re = re.compile(rf"^\s*{re.escape(keyword)}\s*=\s*(.*)$")
-            for i in range(block_start + 1, block_end + 1):
-                m = kw_re.match(lines[i])
-                if m:
-                    kw_start_idx = i
-                    break
-            if kw_start_idx is None:
-                return  # already default / not present
+            search_start = block_start + 1
+            search_end = block_end
 
-            # Determine if the RHS on the first line closes all parentheses.
-            # Start counting from the '=' onward of that line; then continue to next lines.
-            rhs = kw_re.match(lines[kw_start_idx]).group(1)
-            paren = 0
-            in_quote = False
-
-            def _eat_line_segment(seg: str):
-                nonlocal paren, in_quote
-                j = 0
-                while j < len(seg):
-                    ch = seg[j]
-                    if ch == "$" and not in_quote:
+            while True:
+                kw_start_idx = None
+                for i in range(search_start, search_end + 1):
+                    m = kw_re.match(lines[i])
+                    if m:
+                        kw_start_idx = i
                         break
-                    if ch == '"':
-                        in_quote = not in_quote
-                    elif not in_quote:
-                        if ch == "(":
-                            paren += 1
-                        elif ch == ")":
-                            paren = max(0, paren - 1)
-                    j += 1
+                if kw_start_idx is None:
+                    return  # already default / not present
 
-            _eat_line_segment(rhs)
-            end_del = kw_start_idx
-            if paren > 0:
-                # keep consuming lines until all parentheses close
-                for i in range(kw_start_idx + 1, block_end + 1):
-                    _eat_line_segment(lines[i])
-                    end_del = i
-                    if paren == 0:
-                        break
+                # Determine if the RHS on the first line closes all parentheses.
+                # Start counting from the '=' onward of that line; then continue to next lines.
+                rhs = kw_re.match(lines[kw_start_idx]).group(1)
+                paren = 0
+                in_quote = False
 
-            # Delete the span
-            del lines[kw_start_idx : end_del + 1]
+                def _eat_line_segment(seg: str):
+                    nonlocal paren, in_quote
+                    j = 0
+                    while j < len(seg):
+                        ch = seg[j]
+                        if ch == "$" and not in_quote:
+                            break
+                        if ch == '"':
+                            in_quote = not in_quote
+                        elif not in_quote:
+                            if ch == "(":
+                                paren += 1
+                            elif ch == ")":
+                                paren = max(0, paren - 1)
+                        j += 1
+
+                _eat_line_segment(rhs)
+                end_del = kw_start_idx
+                if paren > 0:
+                    # keep consuming lines until all parentheses close
+                    for i in range(kw_start_idx + 1, search_end + 1):
+                        _eat_line_segment(lines[i])
+                        end_del = i
+                        if paren == 0:
+                            break
+
+                # Delete the span
+                del lines[kw_start_idx : end_del + 1]
+                removed = (end_del - kw_start_idx) + 1
+                search_end -= removed
 
         def _delete_command(block_start: int, block_end: int):
             del lines[block_start : block_end + 1]

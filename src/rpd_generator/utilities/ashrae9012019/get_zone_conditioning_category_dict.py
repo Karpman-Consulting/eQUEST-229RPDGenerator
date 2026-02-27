@@ -12,6 +12,7 @@ from rpd_generator.utilities.get_opaque_surface_type import (
 from rpd_generator.utilities.jsonpath_utils import find_all
 from rpd_generator.utilities.pint_utils import ZERO
 from rpd_generator.config import Config
+from rpd_generator.schema.schema_utils import get_q
 
 ureg = Config.ureg
 
@@ -52,7 +53,7 @@ def get_zone_conditioning_category_rmd_dict(
     """
     zone_conditioning_category_rmd_dict = {}
     constructions = rmd.get("constructions", [])
-    for building in find_all("$.buildings[*]", rmd):
+    for building in rmd.get("buildings", []):
         zone_conditioning_category_dict = get_zone_conditioning_category_dict(
             climate_zone, building, constructions
         )
@@ -72,16 +73,19 @@ def get_zone_conditioning_category_dict(
     # -----------------------------
     # Precompute / cache lookups
     # -----------------------------
-    zones = list(find_all("$.building_segments[*].zones[*]", building))
+    # Optimization: Iterate building structure manually instead of broad JSONPath find_all
+    zones = [
+        zone
+        for seg in building.get("building_segments", [])
+        for zone in seg.get("zones", [])
+    ]
 
     construction_by_id = {c["id"]: c for c in constructions}
 
     hvac_systems_dict = {
         hvac["id"]: hvac
-        for hvac in find_all(
-            "building_segments[*].heating_ventilating_air_conditioning_systems[*]",
-            building,
-        )
+        for seg in building.get("building_segments", [])
+        for hvac in seg.get("heating_ventilating_air_conditioning_systems", [])
     }
 
     hvac_zone_list_w_area_dict = get_hvac_zone_list_w_area_dict(building)
@@ -100,13 +104,13 @@ def get_zone_conditioning_category_dict(
         preheat = hvac.get("preheat_system", {})
 
         hvac_cool_capacity_dict[hvac_id] = (
-            cooling.get("design_sensible_cool_capacity", ZERO.POWER)
+            get_q(cooling, "design_sensible_cool_capacity", ZERO.POWER)
             / hvac_values["total_area"]
         )
 
         hvac_heat_capacity_dict[hvac_id] = (
-            heating.get("design_capacity", ZERO.POWER)
-            + preheat.get("design_capacity", ZERO.POWER)
+            get_q(heating, "design_capacity", ZERO.POWER)
+            + get_q(preheat, "design_capacity", ZERO.POWER)
         ) / hvac_values["total_area"]
 
     system_min_heating_output = table_3_2_lookup(climate_zone)[
@@ -121,7 +125,7 @@ def get_zone_conditioning_category_dict(
     for zone in zones:
         zone_id = zone["id"]
         spaces = zone.get("spaces", [])
-        zone_area = sum((s.get("floor_area", ZERO.AREA) for s in spaces), ZERO.AREA)
+        zone_area = sum((get_q(s, "floor_area", ZERO.AREA) for s in spaces), ZERO.AREA)
         assert zone_area > ZERO.AREA, f"zone:{zone_id} has no floor area"
 
         zone_cap = {
@@ -140,7 +144,7 @@ def get_zone_conditioning_category_dict(
             )
             zone_cap["heating"] += (
                 hvac_heat_capacity_dict.get(hvac_id, ZERO.THERMAL_CAPACITY)
-                + terminal.get("heating_capacity", ZERO.POWER) / zone_area
+                + get_q(terminal, "heating_capacity", ZERO.POWER) / zone_area
             )
 
     # -----------------------------
@@ -186,7 +190,8 @@ def get_zone_conditioning_category_dict(
 
             subsurf_area = sum(
                 (
-                    ss.get("glazed_area", ZERO.AREA) + ss.get("opaque_area", ZERO.AREA)
+                    get_q(ss, "glazed_area", ZERO.AREA)
+                    + get_q(ss, "opaque_area", ZERO.AREA)
                     for ss in subsurfaces
                 ),
                 ZERO.AREA,
@@ -194,31 +199,37 @@ def get_zone_conditioning_category_dict(
 
             subsurf_ua = sum(
                 (
-                    ss["u_factor"]
+                    get_q(ss, "u_factor", ZERO.U_FACTOR)
                     * (
-                        ss.get("glazed_area", ZERO.AREA)
-                        + ss.get("opaque_area", ZERO.AREA)
+                        get_q(ss, "glazed_area", ZERO.AREA)
+                        + get_q(ss, "opaque_area", ZERO.AREA)
                     )
                     for ss in subsurfaces
                 ),
                 ZERO.UA,
             )
 
-            non_sub_area = surface["area"] - subsurf_area
+            non_sub_area = get_q(surface, "area", ZERO.AREA) - subsurf_area
 
             surface_construction = construction_by_id.get(surface["construction"], {})
             construction = surface_construction.get("construction", {})
 
             factor = next(
                 (
-                    construction[k]
+                    get_q(
+                        construction,
+                        k,
+                        getattr(ZERO, k.upper() if k != "u_factor" else "U_FACTOR"),
+                    )
                     for k in ("u_factor", "f_factor", "c_factor")
                     if k in construction
                 ),
                 None,
             )
 
-            surface_ua = factor * non_sub_area + subsurf_ua if factor else ZERO.UA
+            surface_ua = (
+                factor * non_sub_area + subsurf_ua if factor is not None else ZERO.UA
+            )
 
             if (
                 surface["adjacent_to"] == "INTERIOR"
@@ -234,7 +245,7 @@ def get_zone_conditioning_category_dict(
     # -----------------------------
     # Final category assignment
     # -----------------------------
-    for building_segment in find_all("building_segments[*]", building):
+    for building_segment in building.get("building_segments", []):
         seg_type = building_segment.get("lighting_building_area_type")
 
         seg_res = seg_type in {"DORMITORY", "HOTEL_MOTEL", "MULTIFAMILY"}
@@ -285,11 +296,11 @@ def get_zone_conditioning_category_dict(
                 ] = ZoneConditioningCategory.SEMI_HEATED
 
             else:
-                zone_volume = zone.get("volume", ZERO.VOLUME)
+                zone_volume = get_q(zone, "volume", ZERO.VOLUME)
                 assert zone_volume > ZERO.VOLUME, f"zone:{zid} has no volume"
 
                 zone_floor_area = sum(
-                    (s.get("floor_area", ZERO.AREA) for s in spaces), ZERO.AREA
+                    (get_q(s, "floor_area", ZERO.AREA) for s in spaces), ZERO.AREA
                 )
                 assert zone_floor_area > ZERO.AREA, f"zone:{zid} has no floor area"
 

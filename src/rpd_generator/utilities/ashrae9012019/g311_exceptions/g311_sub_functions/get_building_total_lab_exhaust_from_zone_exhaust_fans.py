@@ -1,9 +1,9 @@
 from pint import Quantity
 from rpd_generator.utilities.pint_utils import ZERO
+from rpd_generator.schema.schema_utils import get_q
 from rpd_generator.utilities.ashrae9012019.g311_exceptions.g311_sub_functions.get_building_lab_zones_list import (
     get_building_lab_zones_list,
 )
-from rpd_generator.utilities.jsonpath_utils import find_all
 
 
 def get_building_total_lab_exhaust_from_zone_exhaust_fans(rmd: dict) -> Quantity:
@@ -24,12 +24,12 @@ def get_building_total_lab_exhaust_from_zone_exhaust_fans(rmd: dict) -> Quantity
     laboratory_zone_list = get_building_lab_zones_list(rmd)
     for zone in laboratory_zone_list:
         design_airflow = sum(
-            find_all(
-                "$.zonal_exhaust_fans[*].design_airflow",
-                zone,
-            )
+            (
+                get_q(fan, "design_airflow", ZERO.FLOW)
+                for fan in zone.get("zonal_exhaust_fans", [])
+            ),
+            ZERO.FLOW,
         )
-        if design_airflow:
-            total_exhaust += design_airflow
+        total_exhaust += design_airflow
 
     return total_exhaust

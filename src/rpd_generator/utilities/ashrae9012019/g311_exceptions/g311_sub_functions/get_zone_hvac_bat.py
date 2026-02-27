@@ -2,7 +2,6 @@ from pint import Quantity
 from rpd_generator.utilities.ashrae9012019.data_fns.table_lighting_to_hvac_bat_map_fns import (
     space_lighting_to_hvac_bat,
 )
-from rpd_generator.utilities.jsonpath_utils import find_all
 
 
 def get_zone_hvac_bat_dict(zone: dict) -> dict[str, Quantity]:
@@ -23,7 +22,7 @@ def get_zone_hvac_bat_dict(zone: dict) -> dict[str, Quantity]:
 
     """
     zone_hvac_bat_dict = dict()
-    for space in find_all("$.spaces[*]", zone):
+    for space in zone.get("spaces", []):
         # set default to None to not fail the data retrieving (space could have no lighting space type)
         space_hvac_bat = space_lighting_to_hvac_bat(
             space.get("lighting_space_type", "NONE")

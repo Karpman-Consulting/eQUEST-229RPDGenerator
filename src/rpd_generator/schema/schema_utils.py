@@ -1,10 +1,7 @@
 import json
 import os
 import re
-from copy import deepcopy
-
-from jsonpath_ng.ext import parse as parse_jsonpath
-from pydash.objects import set_
+from pint import Quantity
 
 from rpd_generator.config import Config
 
@@ -131,92 +128,33 @@ def find_schema_unit_for_json_path(key_list):
 # ------------------------------------------------------------------------------
 
 
+def get_q(obj: dict, key: str, default: Quantity) -> Quantity:
+    """
+    Get a value from a dictionary and return it as a Pint Quantity.
+    If the value is already a Quantity, it's returned as is.
+    If it's a number, the unit from 'default' is applied.
+    """
+    val = obj.get(key)
+    if val is None:
+        return default
+    if isinstance(val, Quantity):
+        return val
+    if isinstance(val, (int, float)):
+        return val * default.units
+    return default
+
+
 def quantify_only_needed_rmds(rpd: dict, needed_types: set[str]) -> dict:
     """
-    Quantify only selected RMDs while preserving full schema path context.
+    Deprecated: No longer needed with on-the-fly quantification.
+    Returns the original dictionary.
     """
-    rpd_copy = deepcopy(rpd)
-    rmds = rpd_copy.get("ruleset_model_descriptions", [])
-
-    keep_idxs = [
-        i for i, rmd in enumerate(rmds) if rmd.get("type", "").upper() in needed_types
-    ]
-    if not keep_idxs:
-        return rpd_copy
-
-    wrapper = {
-        "ruleset_model_descriptions": [
-            rmds[i] if i in keep_idxs else {} for i in range(len(rmds))
-        ]
-    }
-
-    wrapper_q = quantify_rmd(wrapper)
-
-    for i in keep_idxs:
-        rpd_copy["ruleset_model_descriptions"][i] = wrapper_q[
-            "ruleset_model_descriptions"
-        ][i]
-
-    return rpd_copy
+    return rpd
 
 
 def quantify_rmd(rmd):
     """
-    Replace numeric values with Pint quantities using schema-defined units.
-    Optimized but behavior-identical.
+    Deprecated: No longer needed with on-the-fly quantification.
+    Returns the original dictionary.
     """
-    rmd = deepcopy(rmd)
-
-    ureg = Config.ureg
-    set_value = set_
-
-    schema_unit_cache = {}
-    path_key_cache = {}
-
-    for match in parse_jsonpath("$..*").find(rmd):
-        val = match.value
-
-        if isinstance(val, (int, float)):
-            is_list = False
-        elif (
-            isinstance(val, list)
-            and val
-            and all(isinstance(v, (int, float)) for v in val)
-        ):
-            is_list = True
-        else:
-            continue
-
-        full_path = str(match.full_path)
-
-        key_list = path_key_cache.get(full_path)
-        if key_list is None:
-            key_list = re.split(r"\.\[\d+\]\.|\.", full_path)
-            path_key_cache[full_path] = key_list
-
-        key_tuple = tuple(key_list)
-        schema_unit_str = schema_unit_cache.get(key_tuple)
-
-        if schema_unit_str is None:
-            schema_unit_str = find_schema_unit_for_json_path(key_list)
-            schema_unit_cache[key_tuple] = schema_unit_str
-
-        if schema_unit_str is None:
-            continue
-
-        pint_unit_str = clean_schema_units(schema_unit_str)
-
-        if is_list:
-            set_value(
-                rmd,
-                full_path,
-                [v * ureg(pint_unit_str) for v in val],
-            )
-        else:
-            set_value(
-                rmd,
-                full_path,
-                val * ureg(pint_unit_str),
-            )
-
     return rmd

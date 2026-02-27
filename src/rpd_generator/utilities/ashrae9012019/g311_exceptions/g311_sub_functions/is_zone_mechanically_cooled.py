@@ -5,66 +5,72 @@ from rpd_generator.utilities.get_list_hvac_systems_associated_with_zone import (
 from rpd_generator.schema.schema_enums import SchemaEnums
 from rpd_generator.utilities.jsonpath_utils import find_all, find_one
 from rpd_generator.utilities.pint_utils import ZERO
+from rpd_generator.schema.schema_utils import get_q
 
 CoolingSystemOptions = SchemaEnums.schema_enums["CoolingSystemOptions"]
 CoolingSourceOptions = SchemaEnums.schema_enums["CoolingSourceOptions"]
 
 
-def is_zone_mechanically_cooled(rmd: dict, zone: dict) -> bool:
+def is_zone_mechanically_cooled(
+    rmd: dict,
+    zone: dict,
+    hvac_systems_map: dict[str, dict] | None = None,
+    zone_map: dict[str, dict] | None = None,
+) -> bool:
     """
     Function determines whether a zone is cooled. Checks for transfer air
-
-    Parameters
-    ----------
-    rmd: dict
-        A dictionary representing a ruleset model description as defined by the ASHRAE229 schema
-    zone: dict
-        A dictionary representing a zone as defined by the ASHRAE229 schema
-
-    Returns
-    -------
-    Boolean True if it is determined to be cooled, False otherwise.
     """
-    list_hvac_systems = get_list_hvac_systems_associated_with_zone(rmd, zone)
-    zone_id_to_zone_map = {
-        zn["id"]: zn
-        for zn in find_all("$.buildings[*].building_segments[*].zones[*]", rmd)
-    }
+    if hvac_systems_map is not None:
+        hvac_ids_serving_zone = {
+            t["served_by_heating_ventilating_air_conditioning_system"]
+            for t in zone.get("terminals", [])
+            if t.get("served_by_heating_ventilating_air_conditioning_system")
+        }
+        list_hvac_systems = [
+            hvac_systems_map[hid]
+            for hid in hvac_ids_serving_zone
+            if hid in hvac_systems_map
+        ]
+    else:
+        list_hvac_systems = get_list_hvac_systems_associated_with_zone(rmd, zone)
+
+    if zone_map is None:
+        zone_map = {
+            zn["id"]: zn
+            for b in rmd.get("buildings", [])
+            for seg in b.get("building_segments", [])
+            for zn in seg.get("zones", [])
+        }
 
     def does_hvac_has_cooling_sys(hvac: dict) -> bool:
-        cooling_type = find_one("$.cooling_system.type", hvac)
+        cooling_type = hvac.get("cooling_system", {}).get("type")
         return cooling_type not in [None, CoolingSourceOptions.NONE]
 
-    def does_zone_terminals_have_cooling_type(zone_id: str) -> bool:
-        terminal_list = find_all("$.terminals[*]", zone_id_to_zone_map[zone_id])
+    def does_zone_terminals_have_cooling_type(zn: dict) -> bool:
+        terminal_list = zn.get("terminals", [])
         return any(
             [
-                find_one("$.cooling_source", terminal)
-                not in [None, CoolingSourceOptions.NONE]
-                for terminal in terminal_list
+                t.get("cooling_source") not in [None, CoolingSourceOptions.NONE]
+                for t in terminal_list
             ]
         )
 
     has_cooling_system = any(
-        flat_map(
-            list_hvac_systems,
-            lambda hvac_system: does_hvac_has_cooling_sys(hvac_system),
-        )
-    ) or does_zone_terminals_have_cooling_type(zone["id"])
+        [does_hvac_has_cooling_sys(hvac) for hvac in list_hvac_systems]
+    ) or does_zone_terminals_have_cooling_type(zone)
 
     if not has_cooling_system:
-        if zone.get("transfer_airflow_rate", ZERO.FLOW) > ZERO.FLOW:
-            # in this case, we are checking the source zone
-            transfer_source_zone_id = zone["transfer_airflow_source_zone"]
-            # get the HVAC system list from the source zone
-            list_hvac_systems = get_list_hvac_systems_associated_with_zone(
-                rmd, zone_id_to_zone_map[transfer_source_zone_id]
-            )
-            has_cooling_system = any(
-                flat_map(
-                    list_hvac_systems,
-                    lambda hvac_system: does_hvac_has_cooling_sys(hvac_system),
+        transfer_flow = get_q(zone, "transfer_airflow_rate", ZERO.FLOW)
+        if transfer_flow > ZERO.FLOW:
+            transfer_source_zone_id = zone.get("transfer_airflow_source_zone")
+            source_zone = zone_map.get(transfer_source_zone_id)
+            if source_zone:
+                # Recursion (shallow)
+                return is_zone_mechanically_cooled(
+                    rmd,
+                    source_zone,
+                    hvac_systems_map=hvac_systems_map,
+                    zone_map=zone_map,
                 )
-            ) or does_zone_terminals_have_cooling_type(transfer_source_zone_id)
 
     return has_cooling_system

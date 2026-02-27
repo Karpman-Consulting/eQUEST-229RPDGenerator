@@ -16,8 +16,27 @@ class LeapYear:
     REGULAR_YEAR_HOURS = 8760
 
 
-def get_zone_eflh(rmd: dict, zone: dict) -> int:
-    hvac_systems_list = get_list_hvac_systems_associated_with_zone(rmd, zone)
+def get_zone_eflh(
+    rmd: dict, zone: dict, hvac_systems_map: dict[str, dict] | None = None
+) -> int:
+    if hvac_systems_map is not None:
+        hvac_ids_serving_zone = set(
+            [
+                terminal["served_by_heating_ventilating_air_conditioning_system"]
+                for terminal in zone.get("terminals", [])
+            ]
+        )
+        hvac_systems_list = sorted(
+            [
+                hvac_system
+                for hvac_id, hvac_system in hvac_systems_map.items()
+                if hvac_id in hvac_ids_serving_zone
+            ],
+            key=lambda d: d["id"],
+        )
+    else:
+        hvac_systems_list = get_list_hvac_systems_associated_with_zone(rmd, zone)
+
     schedules_map = {sch.get("id"): sch for sch in rmd.get("schedules", [])}
 
     num_hours = None
@@ -46,7 +65,9 @@ def get_zone_eflh(rmd: dict, zone: dict) -> int:
     def get_fan_operation_schedule(hvac_sys):
         sched_id = hvac_sys.get("fan_system", {}).get("operating_schedule")
         hourly_values = schedules_map.get(sched_id, {}).get("hourly_values")
-        return hourly_values if hourly_values else [1.0] * num_hours
+        # If fan operation is unscheduled/unspecified, do not assume continuous
+        # operation. Treat as not operating for EFLH significance checks.
+        return hourly_values if hourly_values else [0.0] * num_hours
 
     hvac_operation_schedule_list = [
         get_fan_operation_schedule(hvac) for hvac in hvac_systems_list

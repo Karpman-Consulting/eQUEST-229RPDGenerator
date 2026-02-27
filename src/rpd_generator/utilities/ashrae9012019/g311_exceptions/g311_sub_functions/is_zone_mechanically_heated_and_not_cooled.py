@@ -11,22 +11,28 @@ HeatingSystemOptions = SchemaEnums.schema_enums["HeatingSystemOptions"]
 HeatingSourceOptions = SchemaEnums.schema_enums["HeatingSourceOptions"]
 
 
-def is_zone_mechanically_heated_and_not_cooled(rmd: dict, zone: dict) -> bool:
+def is_zone_mechanically_heated_and_not_cooled(
+    rmd: dict,
+    zone: dict,
+    hvac_systems_map: dict[str, dict] | None = None,
+    zone_map: dict[str, dict] | None = None,
+) -> bool:
     """
     Determines whether a zone is mechanically heated, but not cooled. Checks for transfer air
-
-    Parameters
-    ----------
-    rmd: dict
-        A dictionary representing a ruleset model description as defined by the ASHRAE229 schema
-    zone: dict
-        A dictionary representing a zone data group as defined by the ASHRAE229 schema
-
-    Returns
-    -------
-    Boolean True if it is determined to be heated, but not cooled, False otherwise.
     """
-    list_hvac_systems = get_list_hvac_systems_associated_with_zone(rmd, zone)
+    if hvac_systems_map is not None:
+        hvac_ids_serving_zone = {
+            t["served_by_heating_ventilating_air_conditioning_system"]
+            for t in zone.get("terminals", [])
+            if t.get("served_by_heating_ventilating_air_conditioning_system")
+        }
+        list_hvac_systems = [
+            hvac_systems_map[hid]
+            for hid in hvac_ids_serving_zone
+            if hid in hvac_systems_map
+        ]
+    else:
+        list_hvac_systems = get_list_hvac_systems_associated_with_zone(rmd, zone)
 
     def does_hvac_has_heating_sys(hvac: dict) -> bool:
         heating_type = hvac.get("heating_system", {}).get("type")
@@ -42,13 +48,12 @@ def is_zone_mechanically_heated_and_not_cooled(rmd: dict, zone: dict) -> bool:
         )
 
     is_heated = any(
-        flat_map(
-            list_hvac_systems,
-            lambda hvac_system: does_hvac_has_heating_sys(hvac_system),
-        )
+        [does_hvac_has_heating_sys(hvac) for hvac in list_hvac_systems]
     ) or does_zone_terminals_have_heating_type(zone)
 
     # Check if a zone is mechanically cooled
-    is_cooled = is_zone_mechanically_cooled(rmd, zone)
+    is_cooled = is_zone_mechanically_cooled(
+        rmd, zone, hvac_systems_map=hvac_systems_map, zone_map=zone_map
+    )
 
     return is_heated and not is_cooled

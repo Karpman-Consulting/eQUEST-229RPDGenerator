@@ -15,9 +15,15 @@ class G311FDiagnostics(TypedDict):
 
 
 def get_g3_1_1f_diagnostics(
-    rmd: dict, zone: dict, expected_sys_type: str
+    rmd: dict,
+    zone: dict,
+    expected_sys_type: str,
+    hvac_systems_map: dict[str, dict] | None = None,
+    zone_map: dict[str, dict] | None = None,
 ) -> G311FDiagnostics:
-    cooled = is_zone_mechanically_cooled(rmd, zone)
+    cooled = is_zone_mechanically_cooled(
+        rmd, zone, hvac_systems_map=hvac_systems_map, zone_map=zone_map
+    )
     is_sys_9_or_10 = expected_sys_type in [HVAC_SYS.SYS_9, HVAC_SYS.SYS_10]
     return G311FDiagnostics(
         meets=is_sys_9_or_10 and cooled,
