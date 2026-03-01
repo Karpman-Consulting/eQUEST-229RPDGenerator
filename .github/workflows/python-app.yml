@@ -15,24 +15,24 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Poetry
-        run: pip install poetry
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
 
-      - name: Cache Poetry Virtualenv
+      - name: Cache uv Virtualenv
         uses: actions/cache@v4
-        id: cache-poetry-black
+        id: cache-uv-black
         with:
           path: .venv
-          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+          key: ${{ runner.os }}-uv-${{ hashFiles('uv.lock') }}
           restore-keys: |
-            ${{ runner.os }}-poetry-
+            ${{ runner.os }}-uv-
 
-      - name: Install Dependencies (No Root Package)
-        if: steps.cache-poetry-black.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
+      - name: Sync Dependencies (No Project Install)
+        if: steps.cache-uv-black.outputs.cache-hit != 'true'
+        run: uv sync --frozen --no-install-project
 
       - name: Run Black
-        run: poetry run black --check .
+        run: uv run black --check .
 
 
   run-tests:
@@ -48,24 +48,21 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Poetry
-        run: pip install poetry
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
 
-      - name: Cache Poetry Virtualenv
+      - name: Cache uv Virtualenv
         uses: actions/cache@v4
-        id: cache-poetry-tests
+        id: cache-uv-tests
         with:
           path: .venv
-          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+          key: ${{ runner.os }}-uv-${{ hashFiles('uv.lock') }}
           restore-keys: |
-            ${{ runner.os }}-poetry-
+            ${{ runner.os }}-uv-
 
-      - name: Install Dependencies (No Root Package)
-        if: steps.cache-poetry-tests.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
-
-      - name: Install Project (editable)
-        run: poetry install --no-interaction
+      - name: Sync Project and Dependencies
+        if: steps.cache-uv-tests.outputs.cache-hit != 'true'
+        run: uv sync --frozen
 
       - name: Run Unit Tests
-        run: poetry run pytest -q
+        run: uv run pytest -q
