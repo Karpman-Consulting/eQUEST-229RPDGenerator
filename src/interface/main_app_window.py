@@ -18,7 +18,6 @@ from interface.CTkToolTip import CTkToolTip
 from interface.error_window import ErrorWindow
 from interface.constants import *
 
-
 RULESET_MODEL_MATRIX = {
     "ASHRAE 90.1-2019 PRM": [
         # Optional Design model

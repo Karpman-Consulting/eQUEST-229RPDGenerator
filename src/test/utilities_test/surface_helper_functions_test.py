@@ -9,7 +9,6 @@ from rpd_generator.utilities.get_opaque_surface_type import (
     get_opaque_surface_type,
 )
 
-
 ureg = Config.ureg
 
 

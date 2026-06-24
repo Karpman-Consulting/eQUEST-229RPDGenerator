@@ -17,7 +17,7 @@ class CTkXYFrame(customtkinter.CTkFrame):
         scrollbar_fg_color=None,
         scrollbar_button_color=None,
         scrollbar_button_hover_color=None,
-        **kwargs
+        **kwargs,
     ):
         # Create a parent frame for the canvas and scrollbars.
         self.parent_frame = customtkinter.CTkFrame(master=master, **kwargs)

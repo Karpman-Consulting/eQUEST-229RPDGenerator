@@ -13,7 +13,6 @@ from rpd_generator.utilities.ashrae9012019.is_cz_0_to_3a_bool import (
 )
 from rpd_generator.schema.schema_enums import SchemaEnums
 
-
 PUBLIC_ASSEMBLY_BUILDING_AREA_THRESHOLD = 120_000 * ureg("ft2")
 RETAIL_FLOOR_NUMBER_THRESHOLD = 3
 HOSPITAL_BUILDING_AREA_THRESHOLD = 150_000 * ureg("ft2")

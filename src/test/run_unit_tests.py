@@ -2,7 +2,6 @@ import unittest
 import os
 import sys
 
-
 current_dir = os.path.dirname(os.path.abspath(__file__))
 bdl_commands_test_dir = os.path.join(current_dir, "populate_test", "bdl_commands_test")
 loader = unittest.TestLoader()

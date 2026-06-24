@@ -148,12 +148,12 @@ def diagnose_baseline_system_3(
     diagnostics["one_terminal_per_zone"] = does_each_zone_have_only_one_terminal(
         zones_list
     )
-    diagnostics[
-        "no_terminal_heat_sources"
-    ] = are_all_terminal_heat_sources_none_or_null(terminals_list)
-    diagnostics[
-        "no_terminal_cool_sources"
-    ] = are_all_terminal_cool_sources_none_or_null(terminals_list)
+    diagnostics["no_terminal_heat_sources"] = (
+        are_all_terminal_heat_sources_none_or_null(terminals_list)
+    )
+    diagnostics["no_terminal_cool_sources"] = (
+        are_all_terminal_cool_sources_none_or_null(terminals_list)
+    )
     diagnostics["no_terminal_fans"] = are_all_terminal_fans_null(terminals_list)
     diagnostics["terminal_types_cav"] = are_all_terminal_types_cav(terminals_list)
     diagnostics["terminal_supplies_ducted"] = are_all_terminal_supplies_ducted(

@@ -5,7 +5,6 @@ from rpd_generator.schema.schema_enums import SchemaEnums
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 from rpd_generator.utilities import curve_funcs
 
-
 EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
 ChillerCompressorOptions = SchemaEnums.schema_enums["ChillerCompressorOptions"]
 ChillerEfficiencyMetricOptions = SchemaEnums.schema_enums[

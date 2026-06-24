@@ -5,7 +5,6 @@ from rpd_generator.config import Config
 from rpd_generator.utilities import validate_configuration
 from rpd_generator.doe2_worker.api import get_string_result_32, get_multiple_results_32
 
-
 # THIS CAN ONLY BE RUN LOCALLY. DO NOT RUN ON CI/CD
 validate_configuration.find_equest_installation()
 

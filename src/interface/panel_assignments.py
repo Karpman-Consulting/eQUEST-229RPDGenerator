@@ -23,7 +23,6 @@ from rpd_generator.doe2_file_io.model_input_reader import ModelInputReader
 from rpd_generator.doe2_file_io.model_input_editor import ModelInputEditor, INPEdits
 from interface.space_type_guessing import *
 
-
 LightingBuildingAreaOptions = SchemaEnums.schema_enums[
     "LightingBuildingAreaOptions2019ASHRAE901T951TG38"
 ]

@@ -278,22 +278,22 @@ def get_zone_conditioning_category_dict(
                         nonres = True
 
                 if res and nonres:
-                    zone_conditioning_category_dict[
-                        zid
-                    ] = ZoneConditioningCategory.CONDITIONED_MIXED
+                    zone_conditioning_category_dict[zid] = (
+                        ZoneConditioningCategory.CONDITIONED_MIXED
+                    )
                 elif res:
-                    zone_conditioning_category_dict[
-                        zid
-                    ] = ZoneConditioningCategory.CONDITIONED_RESIDENTIAL
+                    zone_conditioning_category_dict[zid] = (
+                        ZoneConditioningCategory.CONDITIONED_RESIDENTIAL
+                    )
                 else:
-                    zone_conditioning_category_dict[
-                        zid
-                    ] = ZoneConditioningCategory.CONDITIONED_NON_RESIDENTIAL
+                    zone_conditioning_category_dict[zid] = (
+                        ZoneConditioningCategory.CONDITIONED_NON_RESIDENTIAL
+                    )
 
             elif zid in semiheated_zone_ids:
-                zone_conditioning_category_dict[
-                    zid
-                ] = ZoneConditioningCategory.SEMI_HEATED
+                zone_conditioning_category_dict[zid] = (
+                    ZoneConditioningCategory.SEMI_HEATED
+                )
 
             else:
                 zone_volume = get_q(zone, "volume", ZERO.VOLUME)
@@ -316,9 +316,9 @@ def get_zone_conditioning_category_dict(
                     and surface["adjacent_to"] == "GROUND"
                     for surface in zone.get("surfaces", [])
                 ):
-                    zone_conditioning_category_dict[
-                        zid
-                    ] = ZoneConditioningCategory.UNENCLOSED
+                    zone_conditioning_category_dict[zid] = (
+                        ZoneConditioningCategory.UNENCLOSED
+                    )
 
                 # ---- Attic
                 elif any(
@@ -332,14 +332,14 @@ def get_zone_conditioning_category_dict(
                     and surface["adjacent_to"] == "EXTERIOR"
                     for surface in zone.get("surfaces", [])
                 ):
-                    zone_conditioning_category_dict[
-                        zid
-                    ] = ZoneConditioningCategory.UNENCLOSED
+                    zone_conditioning_category_dict[zid] = (
+                        ZoneConditioningCategory.UNENCLOSED
+                    )
 
                 else:
-                    zone_conditioning_category_dict[
-                        zid
-                    ] = ZoneConditioningCategory.UNCONDITIONED
+                    zone_conditioning_category_dict[zid] = (
+                        ZoneConditioningCategory.UNCONDITIONED
+                    )
 
     return zone_conditioning_category_dict
 

@@ -829,9 +829,9 @@ class FluidLoopDesignAndControl:
         return "FluidLoopDesignAndControl()"
 
     def populate_data_elements(self, mode):
-        self.data_structure[
-            "id"
-        ] = f"{self.loop.u_name} {mode.capitalize()}Design/Control"
+        self.data_structure["id"] = (
+            f"{self.loop.u_name} {mode.capitalize()}Design/Control"
+        )
 
         if mode == "heating":
             self.design_supply_temperature = self.loop.try_float(

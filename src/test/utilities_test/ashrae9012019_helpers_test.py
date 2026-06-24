@@ -11,7 +11,6 @@ from rpd_generator.utilities.ashrae9012019.is_cz_0_to_3a_bool import (
     is_cz_0_to_3a_bool,
 )
 
-
 CLIMATE_ZONES = SchemaEnums.schema_enums["ClimateZoneOptions2019ASHRAE901"]
 
 

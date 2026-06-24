@@ -9,7 +9,6 @@ from rpd_generator.utilities.pint_utils import (
 )
 from rpd_generator.utilities.unit_converter import try_convert_units
 
-
 ureg = Config.ureg
 
 

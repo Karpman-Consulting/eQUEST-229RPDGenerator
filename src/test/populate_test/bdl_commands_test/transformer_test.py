@@ -11,7 +11,6 @@ from rpd_generator.bdl_structure.bdl_commands.utility_and_economics import (
 )
 from rpd_generator.schema.schema_enums import SchemaEnums
 
-
 ElectricalPhaseOptions = SchemaEnums.schema_enums["ElectricalPhaseOptions"]
 
 

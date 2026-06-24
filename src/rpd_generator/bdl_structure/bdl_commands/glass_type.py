@@ -1,7 +1,6 @@
 from rpd_generator.bdl_structure.base_definition import BaseDefinition
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
-
 BDL_Commands = BDLEnums.bdl_enums["Commands"]
 BDL_GlassTypeKeywords = BDLEnums.bdl_enums["GlassTypeKeywords"]
 

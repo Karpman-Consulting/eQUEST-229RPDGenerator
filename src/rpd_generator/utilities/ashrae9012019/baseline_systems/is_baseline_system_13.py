@@ -121,21 +121,21 @@ def diagnose_baseline_system_13(
     diagnostics["has_no_preheat_system"] = not has_preheat_system(hvac)
 
     # Core eligibility checks
-    diagnostics[
-        "heating_type_elec_resistance"
-    ] = is_hvac_sys_heating_type_elec_resistance(hvac)
+    diagnostics["heating_type_elec_resistance"] = (
+        is_hvac_sys_heating_type_elec_resistance(hvac)
+    )
     diagnostics["cooling_type_fluid_loop"] = is_hvac_sys_cooling_type_fluid_loop(hvac)
     diagnostics["fan_system_cv"] = is_hvac_sys_fan_sys_cv(hvac)
     diagnostics["serves_single_zone"] = does_hvac_sys_serve_single_zone(zones_list)
     diagnostics["one_terminal_per_zone"] = does_each_zone_have_only_one_terminal(
         zones_list
     )
-    diagnostics[
-        "no_terminal_heat_sources"
-    ] = are_all_terminal_heat_sources_none_or_null(terminals_list)
-    diagnostics[
-        "no_terminal_cool_sources"
-    ] = are_all_terminal_cool_sources_none_or_null(terminals_list)
+    diagnostics["no_terminal_heat_sources"] = (
+        are_all_terminal_heat_sources_none_or_null(terminals_list)
+    )
+    diagnostics["no_terminal_cool_sources"] = (
+        are_all_terminal_cool_sources_none_or_null(terminals_list)
+    )
     diagnostics["no_terminal_fans"] = are_all_terminal_fans_null(terminals_list)
     diagnostics["terminal_types_cav"] = are_all_terminal_types_cav(terminals_list)
 
@@ -144,9 +144,9 @@ def diagnose_baseline_system_13(
     # Branch diagnostics
     branch = {}
 
-    branch[
-        "cooling_loop_attached_to_chiller"
-    ] = is_hvac_sys_fluid_loop_attached_to_chiller(hvac, chiller_loop_id_list)
+    branch["cooling_loop_attached_to_chiller"] = (
+        is_hvac_sys_fluid_loop_attached_to_chiller(hvac, chiller_loop_id_list)
+    )
     branch["cooling_loop_purchased_chw"] = is_hvac_sys_fluid_loop_purchased_chw(
         hvac, purchased_cooling_loop_id_list
     )

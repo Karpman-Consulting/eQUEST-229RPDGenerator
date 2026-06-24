@@ -148,17 +148,17 @@ def diagnose_baseline_system_9(
     diagnostics["one_terminal_per_zone"] = does_each_zone_have_only_one_terminal(
         zones_list
     )
-    diagnostics[
-        "no_terminal_heat_sources"
-    ] = are_all_terminal_heat_sources_none_or_null(terminals_list)
-    diagnostics[
-        "no_terminal_cool_sources"
-    ] = are_all_terminal_cool_sources_none_or_null(terminals_list)
+    diagnostics["no_terminal_heat_sources"] = (
+        are_all_terminal_heat_sources_none_or_null(terminals_list)
+    )
+    diagnostics["no_terminal_cool_sources"] = (
+        are_all_terminal_cool_sources_none_or_null(terminals_list)
+    )
     diagnostics["no_terminal_fans"] = are_all_terminal_fans_null(terminals_list)
     diagnostics["terminal_types_cav"] = are_all_terminal_types_cav(terminals_list)
-    diagnostics[
-        "cooling_none_or_non_mechanical"
-    ] = is_hvac_sys_cooling_type_none_or_non_mechanical(hvac)
+    diagnostics["cooling_none_or_non_mechanical"] = (
+        is_hvac_sys_cooling_type_none_or_non_mechanical(hvac)
+    )
     diagnostics["heating_type_furnace"] = is_hvac_sys_heating_type_furnace(hvac)
 
     passed_core = all(diagnostics.values())

@@ -182,9 +182,9 @@ def get_hvac_building_area_types_and_zones_dict(
                 HVAC_BUILDING_AREA_TYPE_OPTIONS.OTHER_NON_RESIDENTIAL
             ] = assign(HVAC_BUILDING_AREA_TYPE_OPTIONS.OTHER_NON_RESIDENTIAL)
         else:
-            building_area_types_with_total_area_and_zones_dict[
-                predominate_hvac_bat
-            ] = assign(predominate_hvac_bat)
+            building_area_types_with_total_area_and_zones_dict[predominate_hvac_bat] = (
+                assign(predominate_hvac_bat)
+            )
 
     assert building_area_types_with_total_area_and_zones_dict, (
         "No building area is found in the model. "

@@ -14,7 +14,6 @@ from rpd_generator.bdl_structure.bdl_commands.utility_and_economics import (
 )
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
-
 BDL_CirculationLoopKeywords = BDLEnums.bdl_enums["CirculationLoopKeywords"]
 BDL_CirculationLoopTypes = BDLEnums.bdl_enums["CirculationLoopTypes"]
 

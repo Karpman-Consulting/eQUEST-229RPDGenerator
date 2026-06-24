@@ -15,7 +15,7 @@ class FloatSpinbox(ctk.CTkFrame):
         default_value: Union[int, float] = 0.0,
         minimum_value: Union[int, float] = 0.0,
         maxmimum_value: Union[int, float] = 100.0,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(*args, width=width, height=height, **kwargs)
 
@@ -100,7 +100,7 @@ class IntSpinbox(ctk.CTkFrame):
         default_value: int = 0,
         minimum_value: int = 0,
         maximum_value: int = 100,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(*args, width=width, height=height, **kwargs)
 

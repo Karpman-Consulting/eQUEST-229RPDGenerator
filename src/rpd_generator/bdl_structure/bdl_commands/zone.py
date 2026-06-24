@@ -718,17 +718,17 @@ class Zone(ChildNode):
                 terminal_suffix = (
                     " - " + str(floor(replication_index / self.floors_per_system))
                 ).replace(" - 0", "")
-                terminal[
-                    "served_by_heating_ventilating_air_conditioning_system"
-                ] = f"{self.parent.sys_id}{terminal_suffix}"
+                terminal["served_by_heating_ventilating_air_conditioning_system"] = (
+                    f"{self.parent.sys_id}{terminal_suffix}"
+                )
 
     @staticmethod
     def increment_floor_name(zone_data_structure, replication_index):
         """Increment floor name for replicated zones."""
         if "floor_name" in zone_data_structure:
-            zone_data_structure[
-                "floor_name"
-            ] = f"{zone_data_structure['floor_name']} - {replication_index}"
+            zone_data_structure["floor_name"] = (
+                f"{zone_data_structure['floor_name']} - {replication_index}"
+            )
 
     def insert_to_rpd(self):
         """Insert zone object into the rpd data structure."""

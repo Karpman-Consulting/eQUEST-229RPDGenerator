@@ -17,7 +17,6 @@ from rpd_generator.bdl_structure.bdl_commands.space import Space
 from rpd_generator.bdl_structure.bdl_commands.construction import Construction
 from rpd_generator.bdl_structure.bdl_commands.interior_wall import *
 
-
 BDL_ShadingSurfaceOptions = BDLEnums.bdl_enums["ShadingSurfaceOptions"]
 
 

@@ -150,12 +150,12 @@ def diagnose_baseline_system_12(
     diagnostics["one_terminal_per_zone"] = does_each_zone_have_only_one_terminal(
         zones_list
     )
-    diagnostics[
-        "no_terminal_heat_sources"
-    ] = are_all_terminal_heat_sources_none_or_null(terminals_list)
-    diagnostics[
-        "no_terminal_cool_sources"
-    ] = are_all_terminal_cool_sources_none_or_null(terminals_list)
+    diagnostics["no_terminal_heat_sources"] = (
+        are_all_terminal_heat_sources_none_or_null(terminals_list)
+    )
+    diagnostics["no_terminal_cool_sources"] = (
+        are_all_terminal_cool_sources_none_or_null(terminals_list)
+    )
     diagnostics["no_terminal_fans"] = are_all_terminal_fans_null(terminals_list)
     diagnostics["terminal_types_cav"] = are_all_terminal_types_cav(terminals_list)
 
@@ -164,16 +164,16 @@ def diagnose_baseline_system_12(
     # Branch diagnostics
     branch = {}
 
-    branch[
-        "cooling_loop_attached_to_chiller"
-    ] = is_hvac_sys_fluid_loop_attached_to_chiller(hvac, chiller_loop_id_list)
+    branch["cooling_loop_attached_to_chiller"] = (
+        is_hvac_sys_fluid_loop_attached_to_chiller(hvac, chiller_loop_id_list)
+    )
     branch["cooling_loop_purchased_chw"] = is_hvac_sys_fluid_loop_purchased_chw(
         hvac, purchased_cooling_loop_id_list
     )
 
-    branch[
-        "heating_loop_attached_to_boiler"
-    ] = is_hvac_sys_fluid_loop_attached_to_boiler(hvac, boiler_loop_id_list)
+    branch["heating_loop_attached_to_boiler"] = (
+        is_hvac_sys_fluid_loop_attached_to_boiler(hvac, boiler_loop_id_list)
+    )
     branch["heating_loop_purchased_heating"] = is_hvac_sys_fluid_loop_purchased_heating(
         hvac, purchased_heating_loop_id_list
     )

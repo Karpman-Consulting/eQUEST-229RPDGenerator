@@ -2,7 +2,6 @@ from typing import Dict, List
 
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
-
 BDL_CurveFitKeywords = BDLEnums.bdl_enums["CurveFitKeywords"]
 BDL_CurveFitInputTypes = BDLEnums.bdl_enums["CurveFitInputTypes"]
 BDL_CurveFitTypes = BDLEnums.bdl_enums["CurveFitTypes"]

@@ -182,12 +182,12 @@ def diagnose_baseline_system_7(
     diagnostics["one_terminal_per_zone"] = does_each_zone_have_only_one_terminal(
         zones_list
     )
-    diagnostics[
-        "terminal_heat_sources_hot_water"
-    ] = are_all_terminal_heat_sources_hot_water(terminals_list)
-    diagnostics[
-        "no_terminal_cool_sources"
-    ] = are_all_terminal_cool_sources_none_or_null(terminals_list)
+    diagnostics["terminal_heat_sources_hot_water"] = (
+        are_all_terminal_heat_sources_hot_water(terminals_list)
+    )
+    diagnostics["no_terminal_cool_sources"] = (
+        are_all_terminal_cool_sources_none_or_null(terminals_list)
+    )
     diagnostics["no_terminal_fans"] = are_all_terminal_fans_null(terminals_list)
     diagnostics["terminal_types_vav"] = are_all_terminal_types_vav(terminals_list)
 
@@ -209,31 +209,31 @@ def diagnose_baseline_system_7(
     # Branch diagnostics
     branch = {}
 
-    branch[
-        "cooling_loop_attached_to_chiller"
-    ] = is_hvac_sys_fluid_loop_attached_to_chiller(hvac, chiller_loop_id_list)
+    branch["cooling_loop_attached_to_chiller"] = (
+        is_hvac_sys_fluid_loop_attached_to_chiller(hvac, chiller_loop_id_list)
+    )
     branch["cooling_loop_purchased_chw"] = is_hvac_sys_fluid_loop_purchased_chw(
         hvac, purchased_cooling_loop_id_list
     )
 
-    branch[
-        "preheat_loop_attached_to_boiler"
-    ] = is_hvac_sys_preheat_fluid_loop_attached_to_boiler(hvac, boiler_loop_id_list)
-    branch[
-        "terminal_loops_attached_to_boiler"
-    ] = are_all_terminal_heating_loops_attached_to_boiler(
-        terminals_list, boiler_loop_id_list
+    branch["preheat_loop_attached_to_boiler"] = (
+        is_hvac_sys_preheat_fluid_loop_attached_to_boiler(hvac, boiler_loop_id_list)
+    )
+    branch["terminal_loops_attached_to_boiler"] = (
+        are_all_terminal_heating_loops_attached_to_boiler(
+            terminals_list, boiler_loop_id_list
+        )
     )
 
-    branch[
-        "preheat_loop_purchased_heating"
-    ] = is_hvac_sys_preheat_fluid_loop_purchased_heating(
-        hvac, purchased_heating_loop_id_list
+    branch["preheat_loop_purchased_heating"] = (
+        is_hvac_sys_preheat_fluid_loop_purchased_heating(
+            hvac, purchased_heating_loop_id_list
+        )
     )
-    branch[
-        "terminal_loops_purchased_heating"
-    ] = are_all_terminal_heating_loops_purchased_heating(
-        terminals_list, purchased_heating_loop_id_list
+    branch["terminal_loops_purchased_heating"] = (
+        are_all_terminal_heating_loops_purchased_heating(
+            terminals_list, purchased_heating_loop_id_list
+        )
     )
 
     matched_system = HVAC_SYS.UNMATCHED

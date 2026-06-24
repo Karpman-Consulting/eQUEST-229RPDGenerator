@@ -3,7 +3,6 @@ from rpd_generator.bdl_structure.base_definition import BaseDefinition
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 from rpd_generator.schema.schema_enums import SchemaEnums
 
-
 EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
 ElectricalPhaseOptions = SchemaEnums.schema_enums["ElectricalPhaseOptions"]
 BDL_Commands = BDLEnums.bdl_enums["Commands"]

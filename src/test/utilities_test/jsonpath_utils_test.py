@@ -12,7 +12,6 @@ from rpd_generator.utilities.jsonpath_utils import (
     split_path,
 )
 
-
 SAMPLE_OBJECT = {
     "ruleset_model_descriptions": [
         {

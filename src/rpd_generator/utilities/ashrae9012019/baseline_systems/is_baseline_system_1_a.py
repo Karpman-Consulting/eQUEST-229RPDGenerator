@@ -104,24 +104,24 @@ def diagnose_baseline_system_1_a(
     diagnostics["terminal_heat_sources_hw"] = are_all_terminal_heat_sources_hot_water(
         terminals_list
     )
-    diagnostics[
-        "terminal_cool_sources_chw"
-    ] = are_all_terminal_cool_sources_chilled_water(terminals_list)
+    diagnostics["terminal_cool_sources_chw"] = (
+        are_all_terminal_cool_sources_chilled_water(terminals_list)
+    )
     diagnostics["terminals_have_one_fan"] = do_all_terminals_have_one_fan(
         terminals_list
     )
-    diagnostics[
-        "terminal_types_cav"
-    ] = are_all_terminal_types_cav_with_none_equal_to_null(terminals_list)
-    diagnostics[
-        "terminal_heating_loops_attached_to_boiler"
-    ] = are_all_terminal_heating_loops_attached_to_boiler(
-        terminals_list, boiler_loop_id_list
+    diagnostics["terminal_types_cav"] = (
+        are_all_terminal_types_cav_with_none_equal_to_null(terminals_list)
     )
-    diagnostics[
-        "terminal_chw_loops_purchased"
-    ] = are_all_terminal_chw_loops_purchased_cooling(
-        terminals_list, purchased_cooling_loop_id_list
+    diagnostics["terminal_heating_loops_attached_to_boiler"] = (
+        are_all_terminal_heating_loops_attached_to_boiler(
+            terminals_list, boiler_loop_id_list
+        )
+    )
+    diagnostics["terminal_chw_loops_purchased"] = (
+        are_all_terminal_chw_loops_purchased_cooling(
+            terminals_list, purchased_cooling_loop_id_list
+        )
     )
 
     passed = all(diagnostics.values())

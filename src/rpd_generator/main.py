@@ -163,10 +163,10 @@ def generate_rmd_objects_from_bdls(
             command_class = bdl_input_reader.bdl_command_dict[command]
             special_handling = {}
             if command == "ZONE":
-                special_handling[
-                    "ZONE"
-                ] = lambda obj, cmd_dict, u_name: rmd.space_map.setdefault(
-                    cmd_dict["SPACE"], obj
+                special_handling["ZONE"] = (
+                    lambda obj, cmd_dict, u_name: rmd.space_map.setdefault(
+                        cmd_dict["SPACE"], obj
+                    )
                 )
             if command == "SPACE":
                 special_handling["SPACE"] = lambda obj, cmd_dict, u_name: setattr(

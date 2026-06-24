@@ -11,7 +11,6 @@ from rpd_generator.schema.schema_utils import (
     return_json_schema_reference,
 )
 
-
 ureg = Config.ureg
 
 

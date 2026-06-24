@@ -4,7 +4,6 @@ from rpd_generator.utilities import schedule_funcs
 from rpd_generator.schema.schema_enums import SchemaEnums
 from rpd_generator.bdl_structure.bdl_enumerations.bdl_enums import BDLEnums
 
-
 ClimateZoneOptions2019ASHRAE901 = SchemaEnums.schema_enums[
     "ClimateZoneOptions2019ASHRAE901"
 ]
