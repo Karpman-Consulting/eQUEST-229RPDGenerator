@@ -1,0 +1,86 @@
+from pathlib import Path
+import json
+import pint
+from jsonpath_ng.ext import parse
+
+from rpd_generator.config import Config
+
+# Directory of this file
+BASE_DIR = Path(__file__).resolve().parent
+
+# Paths to resource files
+path_to_schema_units = BASE_DIR.parent / "schema" / "resources" / "schema_units.json"
+path_to_equest_units = BASE_DIR / "resources" / "equest_units.json"
+path_to_json_paths = BASE_DIR / "resources" / "manual_item_json_paths.json"
+
+ureg = Config.ureg
+
+
+def convert_to_schema_units(rpd_json):
+    """Converts the units of the json data to the standard units defined in the schema"""
+    with open(path_to_equest_units) as f:
+        equest_units = json.load(f)
+
+    with open(path_to_schema_units) as f:
+        schema_units = json.load(f)
+
+    with open(path_to_json_paths) as f:
+        item_paths = json.load(f)
+
+    processed_ids = set()
+
+    def convert_units(dg, json_data, unit_dict):
+        for element in json_data:
+            if id(element) in processed_ids:
+                continue  # Prevent processing the same object multiple times
+
+            processed_ids.add(id(element))  # Mark this object as processed
+
+            if isinstance(element, list):
+                convert_units(dg, element, unit_dict)  # Recurse into lists
+            elif isinstance(element, dict):
+                for key, value in element.items():
+                    if key in unit_dict and isinstance(value, (int, float)):
+                        element[key] = value * ureg(unit_dict[key])
+                        schema_unit = schema_units.get(dg).get(key)
+                        try:
+                            element[key] = element[key].to(schema_unit)
+                        except pint.errors.DimensionalityError:
+                            if unit_dict[key] == "":
+                                print(f"Units for {key} are blank in equest_units.json")
+                            else:
+                                print(
+                                    f"Cannot convert {key} from {unit_dict[key]} to {schema_unit}"
+                                )
+                        element[key] = element[key].magnitude
+
+    for data_group in equest_units:
+        elements_w_units = equest_units[data_group]
+        json_paths = item_paths.get(data_group)
+
+        for json_path in json_paths:
+            jsonpath_expr = parse(json_path)
+            matches = [m.value for m in jsonpath_expr.find(rpd_json)]
+            unique_matches = [obj for obj in matches if id(obj) not in processed_ids]
+            convert_units(data_group, unique_matches, elements_w_units)
+
+
+def try_convert_units(value: any, from_units: str, to_units: str) -> float | None:
+    """
+    Convert a value from one unit to another.
+
+    Parameters:
+    value (any): The value to convert.
+    from_units (str): The units to convert from.
+    to_units (str): The units to convert to.
+
+    Returns:
+    float | None: The converted value or None if not possible to convert.
+    """
+    if isinstance(value, (int, float)):
+        try:
+            return value * ureg(from_units).to(to_units).magnitude
+        except pint.errors.DimensionalityError:
+            return None
+    else:
+        return None

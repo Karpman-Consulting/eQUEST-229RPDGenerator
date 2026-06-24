@@ -20,13 +20,16 @@ The RCT development continues at: [https://github.com/pnnl/ruleset-checking-tool
 **This package will change significantly during the next several versions.**
 
 ## Developing the eQUEST-229RPDGenerator
-This package is developed using Pipenv to manage packages during the build process.  First, make sure Pipenv is installed on your system using the following commands. Any new dependencies that are added to the package must be included in the Pipfile. The package is currently being developed for Python 3.11.  IMPORTANT - 32-bit version of Python must be installed on your machine and selected as your interpreter for Pipenv to work properly.
+This package is developed using `uv` to manage dependencies and environments.
 
-Install `pipenv` using `pip` with the following command.
-`pip install pipenv`
+Install `uv` (Windows PowerShell):
+`powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
 
-All project dependencies can be installed with the following command.
-`pipenv install --dev`
+Sync all dependencies (including dev dependencies) and install the project:
+`uv sync`
+
+Run tests:
+`uv run pytest -q`
 
 ### Developer Notes
 #### GitFlow

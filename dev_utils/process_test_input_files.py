@@ -4,13 +4,14 @@ from pathlib import Path
 
 from rpd_generator import main as rpd_generator
 from rpd_generator.config import Config
-from rpd_generator.doe2_file_readers.bdlcio32 import process_input_file
+from rpd_generator.doe2_file_io.prepare_inp_for_rpd import prepare_inp
+from rpd_generator.doe2_worker.api import process_inp
 from rpd_generator.utilities import validate_configuration
 
 
 def process_test_input_files():
     validate_configuration.find_equest_installation()
-    test_directory = Path(__file__).parents[1] / "test" / "full_rpd_test"
+    test_directory = Path(__file__).parents[1] / "src" / "test" / "full_rpd_test"
     test_inp_files = list(test_directory.rglob("*.inp"))
 
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -19,9 +20,7 @@ def process_test_input_files():
             print(f"Processing INP File for Test Case {test_inp_file.parent.name}...")
 
             # Prepare the inp file for processing and save the revised copy to the temporary directory
-            temp_file_path = rpd_generator.prepare_inp(
-                Path(test_inp_file), Path(temp_dir)
-            )
+            temp_file_path = prepare_inp(Path(test_inp_file), Path(temp_dir))
 
             # Set the paths for the inp file, json file, and the directories
             temp_inp_path = Path(temp_file_path)
@@ -30,11 +29,11 @@ def process_test_input_files():
             bdlcio32_path = Path(Config.EQUEST_INSTALL_PATH) / "Bdlcio32.dll"
 
             # Process the inp file to create the BDL file with Diagnostic Comments (defaults and evaluated values) in the temporary directory
-            process_input_file(
-                str(bdlcio32_path),
-                str(doe23_path) + "\\",
-                str(temp_inp_path.parent) + "\\",
-                temp_inp_path.name,
+            process_inp(
+                bdlcio_dll=str(bdlcio32_path),
+                doe2_data_dir=str(doe23_path) + "\\",
+                work_dir=str(temp_inp_path.parent) + "\\",
+                file_name=temp_inp_path.name,
             )
 
             # Copy the BDL file from the temporary directory back to the project directory

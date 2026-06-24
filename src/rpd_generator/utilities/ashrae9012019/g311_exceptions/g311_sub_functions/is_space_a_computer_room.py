@@ -1,0 +1,70 @@
+from rpd_generator.schema.schema_enums import SchemaEnums
+from rpd_generator.schema.schema_utils import get_q
+from rpd_generator.utilities.jsonpath_utils import find_all
+from rpd_generator.utilities.schedule_utils import (
+    get_max_schedule_multiplier_hourly_value_or_default,
+)
+from rpd_generator.utilities.pint_utils import ZERO
+from rpd_generator.config import Config
+
+ureg = Config.ureg
+
+COMPUTER_ROOM_MISC_POWER_DENSITY_THRESHOLD = 20 * ureg("watt/ft2")
+
+LightingSpaceOptions2019ASHRAE901TG37 = SchemaEnums.schema_enums[
+    "LightingSpaceOptions2019ASHRAE901TG37"
+]
+MISCELLANEOUS_EQUIPMENT = SchemaEnums.schema_enums["MiscellaneousEquipmentOptions"]
+
+EnergySourceOptions = SchemaEnums.schema_enums["EnergySourceOptions"]
+
+
+def is_space_a_computer_room(rmd: dict, space: dict) -> bool:
+    """
+    Returns true or false whether space is a computer room. The criteria such that it is considered a computer room if the total of misc INFORMATION_TECHNOLOGY_EQUIPMENT Power density in W/sf exceeds 20 W/sf per the definition of a computer room in 90.1 Section 3.
+
+    Parameters
+    ----------
+    rmd: dict
+        RMD at RuleSetModelDescription level
+    space: dict
+        space to evaluate
+
+    Returns
+    -------
+    is_space_a_computer_room_flag: bool
+        The function returns true or false whether space is a computer room. The criteria is such that it is considered a computer room if the total of misc INFORMATION_TECHNOLOGY_EQUIPMENT Power density in W/sf exceeds 20 W/sf per the definition of a computer room in 90.1 Section 3.
+    """
+    is_space_a_computer_room_flag = (
+        space.get("lighting_space_type")
+        == LightingSpaceOptions2019ASHRAE901TG37.COMPUTER_ROOM
+    )
+
+    if not is_space_a_computer_room_flag:
+        total_space_misc_wattage_including_multiplier = sum(
+            [
+                get_q(misc_equip, "power", ZERO.POWER)
+                * max(
+                    1.0,
+                    get_max_schedule_multiplier_hourly_value_or_default(
+                        rmd, misc_equip.get("multiplier_schedule"), 1.0
+                    ),
+                )
+                for misc_equip in find_all("$.miscellaneous_equipment[*]", space)
+                if misc_equip.get("energy_type") == EnergySourceOptions.ELECTRICITY
+                and misc_equip.get("type")
+                == MISCELLANEOUS_EQUIPMENT.INFORMATION_TECHNOLOGY_EQUIPMENT
+            ],
+            ZERO.POWER,
+        )
+
+        space_floor_area = get_q(space, "floor_area", ZERO.AREA)
+        # exception handling if the space has zero floor area
+        assert space_floor_area > ZERO.AREA, f"Space {space['id']} has zero floor area"
+
+        space_epd = total_space_misc_wattage_including_multiplier / space_floor_area
+        is_space_a_computer_room_flag = (
+            space_epd > COMPUTER_ROOM_MISC_POWER_DENSITY_THRESHOLD
+        )
+
+    return is_space_a_computer_room_flag
