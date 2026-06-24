@@ -117,8 +117,8 @@ def check_schedule_association(rpd: dict) -> list:
         "$.ruleset_model_descriptions[*].fluid_loops[*].heating_design_and_control.operation_schedule",
         "$.ruleset_model_descriptions[*].fluid_loops[*].child_loops[*].cooling_or_condensing_design_and_control.operation_schedule",
         "$.ruleset_model_descriptions[*].fluid_loops[*].child_loops[*].heating_design_and_control.operation_schedule",
-        "$.ruleset_model_descriptions[*].heating_ventilation_air_conditioning_systems[*].fan_system.supply_air_temperature_reset_schedule",
-        "$.ruleset_model_descriptions[*].heating_ventilation_air_conditioning_systems[*].fan_system.operating_schedule",
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.supply_air_temperature_reset_schedule",
+        "$.ruleset_model_descriptions[*].buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*].fan_system.operating_schedule",
     ]
 
     referenced_id_list = find_all_by_jsonpaths(schedule_reference_jsonpaths, rpd)

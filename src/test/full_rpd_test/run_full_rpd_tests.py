@@ -33,6 +33,9 @@ class TestOutcomeOptions(Enum):
     UNKNOWN = "UNKNOWN"
 
 
+TestOutcomeOptions.__test__ = False
+
+
 # RPD Generation Test Report
 results_data = {
     "generation_software_name": "",

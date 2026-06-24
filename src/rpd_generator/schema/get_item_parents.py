@@ -23,8 +23,11 @@ def extract_parent_element_data(schema, parent_key=None, refs=None):
 
             else:
                 # Recursively search for more '$ref' entries
+                next_parent_key = (
+                    parent_key if key in {"items", "oneOf", "anyOf", "allOf"} else key
+                )
                 extract_parent_element_data(
-                    value, parent_key=key if key != "items" else parent_key, refs=refs
+                    value, parent_key=next_parent_key, refs=refs
                 )
     elif isinstance(schema, list):
         for item in schema:

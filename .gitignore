@@ -1,0 +1,24 @@
+# Python bytecode and test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Virtual environments and local tooling
+.venv/
+.idea/
+.ruff_cache/
+.mypy_cache/
+
+# Packaging/build outputs
+*.egg-info/
+build/
+dist/
+
+# Local/generated project artifacts
+.output.txt
+rpd_tests.json
+workers_x86/doe2_worker/bdl_worker/_internal/
+workers_x86/doe2_worker/doe2_worker.spec

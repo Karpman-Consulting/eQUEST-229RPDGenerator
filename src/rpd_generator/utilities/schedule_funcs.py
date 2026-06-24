@@ -128,12 +128,13 @@ def get_official_us_holidays(day_types_365: dict) -> dict:
     """
 
     # New Year's Day
-    if day_types_365["12/31"] == FRIDAY:
-        day_types_365["12/31"] = HOLIDAY
-    elif day_types_365["1/1"] not in WEEKEND:
+    if day_types_365["1/1"] not in WEEKEND:
         day_types_365["1/1"] = HOLIDAY
     elif day_types_365["1/2"] == MONDAY:
         day_types_365["1/2"] = HOLIDAY
+
+    if day_types_365["12/31"] == FRIDAY:
+        day_types_365["12/31"] = HOLIDAY
 
     # Martin Luther King Jr. Day (Third Monday in January)
     mlk_day = find_nth_weekday_in_range(day_types_365, 1, 15, 21, MONDAY)

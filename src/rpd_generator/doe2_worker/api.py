@@ -16,6 +16,7 @@ else:
     BASE = Path(__file__).resolve().parents[3]
     PY32 = Path(Config.PYTHON32_PATH)
     WORKER = BASE / "workers_x86" / "doe2_worker" / "bdl_worker.py"
+    WORKER_EXE = BASE / "workers_x86" / "doe2_worker" / "bdl_worker" / "bdl_worker.exe"
 
 # ========================
 # Worker process singleton
@@ -34,7 +35,14 @@ def _ensure_worker():
     if getattr(sys, "frozen", False):
         cmd = [str(WORKER)]  # Run EXE when frozen
     else:
-        cmd = [str(PY32), str(WORKER)]  # Run .py with 32-bit python during dev
+        if PY32.exists():
+            cmd = [str(PY32), str(WORKER)]  # Run .py with 32-bit python during dev
+        elif WORKER_EXE.exists():
+            cmd = [str(WORKER_EXE)]  # Fall back to bundled EXE when python32 is absent
+        else:
+            raise FileNotFoundError(
+                f"DOE-2 worker runtime not found. Expected either '{PY32}' or '{WORKER_EXE}'."
+            )
 
     _worker_proc = subprocess.Popen(
         cmd,

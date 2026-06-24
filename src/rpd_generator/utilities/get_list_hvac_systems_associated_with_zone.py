@@ -20,12 +20,11 @@ def get_list_hvac_systems_associated_with_zone(rmd: dict, zone: dict) -> list[di
         "$.buildings[*].building_segments[*].heating_ventilating_air_conditioning_systems[*]",
         rmd,
     )
-    hvac_ids_serving_zone = set(
-        [
-            terminal["served_by_heating_ventilating_air_conditioning_system"]
-            for terminal in zone.get("terminals", [])
-        ]
-    )
+    hvac_ids_serving_zone = {
+        terminal.get("served_by_heating_ventilating_air_conditioning_system")
+        for terminal in zone.get("terminals", [])
+        if terminal.get("served_by_heating_ventilating_air_conditioning_system")
+    }
 
     # return a sorted list of hvac systems associated with the ids serving the zone
     return sorted(
