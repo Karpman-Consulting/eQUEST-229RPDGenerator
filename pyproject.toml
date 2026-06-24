@@ -51,7 +51,7 @@ exclude = ["*.egg-info*", "__pycache__*"]
 
 [tool.uv.sources]
 rctreportviewer = { git = "https://github.com/Karpman-Consulting/RECI-ReportProjectEval.git", branch = "main" }
-ruleset-checking-tool = { path = "../ruleset-checking-tool", editable = true }
+ruleset-checking-tool = { git = "https://github.com/pnnl/ruleset-checking-tool.git", branch = "develop" }
 
 [tool.uv]
 override-dependencies = [
