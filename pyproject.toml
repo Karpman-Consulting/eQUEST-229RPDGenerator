@@ -32,7 +32,7 @@ Repository = "https://github.com/Karpman-Consulting/eQUEST-229RPDGenerator"
 
 [dependency-groups]
 dev = [
-  "black>=26.10.1,<27.0.0",
+  "black==26.10.1",
   "pre-commit>=4.4.0,<5.0.0",
   "pygments>=2.20.0,<3.0.0",
   "pytest>=9.0.3,<10.0.0",
@@ -59,10 +59,11 @@ constraint-dependencies = [
   "virtualenv>=21.14.9",
 ]
 override-dependencies = [
-  "black>=26.10.1,<27.0.0",
+  "black==26.10.1",
 ]
 
 [tool.black]
+required-version = "26.10.1"
 target-version = ["py311"]
 
 [tool.pytest.ini_options]

@@ -28,11 +28,13 @@ jobs:
             ${{ runner.os }}-uv-
 
       - name: Sync Dependencies (No Project Install)
-        if: steps.cache-uv-black.outputs.cache-hit != 'true'
         run: uv sync --frozen --no-install-project
 
+      - name: Show Black Version
+        run: uv run --no-sync black --version
+
       - name: Run Black
-        run: uv run black --check .
+        run: uv run --no-sync black --check .
 
 
   run-tests:
